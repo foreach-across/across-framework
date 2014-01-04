@@ -1,18 +1,21 @@
 package com.foreach.across.core;
 
-import org.springframework.context.annotation.Configuration;
+import com.foreach.across.core.installers.AcrossCoreInstaller;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
-@Configuration(AcrossCoreModule.NAME)
-@DependsOn("AcrossCoreInstaller")
-public class AcrossCoreModule implements AcrossModule
+@Component(AcrossCoreModule.NAME)
+@DependsOn("AcrossCoreSchemaInstaller")
+public class AcrossCoreModule extends AcrossModule
 {
 	public static final String NAME = "Across";
 
-	@PostConstruct
-	public void construct() {
-		System.out.println( "hi from core" );
+	public String getName() {
+		return NAME;
+	}
+
+	@Override
+	protected Class[] installerClasses() {
+		return new Class[] { AcrossCoreInstaller.class };
 	}
 }

@@ -28,33 +28,12 @@ public class Test
 	@Bean
 	public AcrossContext acrossContext() {
 		AcrossContext context = new AcrossContext();
-		context.setAllowInstallers( false );
+		context.setAllowInstallers( true );
 
 		return context;
 	}
 
 	public static void main( String[] args ) throws Exception {
 		ApplicationContext ctx = new AnnotationConfigApplicationContext( Test.class );
-
-		//ApplicationContext spring = new ClassPathXmlApplicationContext( "/config/spring-context.xml" );
-
-		//	PathMatchingResourcePatternResolver resolver =
-		new PathMatchingResourcePatternResolver( ClassLoader.getSystemClassLoader() );
-
-		//Resource[] resources = resolver.getResources( "classpath*:**/modules.across" );
-
-		/*for ( Resource resource : resources ) {
-			Properties props = new Properties();
-			props.load( resource.getInputStream() );
-
-			for ( String moduleClass : props.stringPropertyNames() ) {
-
-				Class c = Class.forName( moduleClass );
-
-				AcrossModule module = (AcrossModule) c.newInstance();
-
-				System.out.println( module );
-			}
-		}*/
 	}
 }

@@ -2,59 +2,65 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/liquibase/AcrossCoreSchemaInstaller.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstaller.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerDao.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossSchemaInstaller.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/installers/DebugWebSchemaInstaller.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_dbcp_commons_dbcp_1_4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_pool_commons_pool_1_5_4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__oracle_ojdbc_10_2_0_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_liquibase_liquibase_core_3_0_8.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jdbc_3_2_3_RELEASE.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_tx_3_2_3_RELEASE.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_13.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
-      <change type="DELETED" beforePath="C:\code\across\debug-web\src\main\resources\modules.across" afterPath="" />
-      <change type="MOVED" beforePath="C:\code\across\container\src\main\resources\modules.across" afterPath="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/liquibase/base/create_001.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossBootstrapFinishedEvent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModuleRepository.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_0_13.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_0_13.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_5.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestInstaller.java" />
+      <change type="DELETED" beforePath="C:\code\across\core\src\main\resources\com\foreach\across\core\installers\liquibase\base\create_001.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\code\across\debug-web\src\main\java\com\foreach\across\modules\debugweb\installers\DebugWebSchemaInstaller.java" afterPath="" />
+      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\AcrossInstallerDao.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerRepository.java" />
+      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\AcrossSchemaInstaller.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossLiquibaseInstaller.java" />
+      <change type="MOVED" beforePath="C:\code\across\core\src\main\resources\com\foreach\across\core\installers\liquibase\AcrossCoreSchemaInstaller.xml" afterPath="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstaller.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstaller.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/container/src/main/java/Test.java" afterPath="$PROJECT_DIR$/container/src/main/java/Test.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/container/container.iml" afterPath="$PROJECT_DIR$/container/container.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/core.iml" afterPath="$PROJECT_DIR$/core/core.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/debug-web.iml" afterPath="$PROJECT_DIR$/debug-web/debug-web.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/container/pom.xml" afterPath="$PROJECT_DIR$/container/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/pom.xml" afterPath="$PROJECT_DIR$/core/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/pom.xml" afterPath="$PROJECT_DIR$/debug-web/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="across.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388762779070" ignored="false" />
-    <file path="/Test.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388763067963" ignored="false" />
-    <file path="/pom.xml" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388757269993" ignored="false" />
+    <file path="/Dummy.txt" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388834024237" ignored="false" />
+    <file path="/Test.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388841303361" ignored="false" />
+    <file path="/pom.xml" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388834244977" ignored="false" />
     <file path="/debugweb.across" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1382552231838" ignored="false" />
-    <file path="/DebugWebModule.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388754060390" ignored="false" />
+    <file path="/DebugWebModule.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388850181954" ignored="false" />
     <file path="/modules.across" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1382553144946" ignored="false" />
     <file path="/.gitignore" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1382553502164" ignored="false" />
     <file path="/Bootstrap.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388753327701" ignored="false" />
-    <file path="/AcrossCoreInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388761616749" ignored="false" />
-    <file path="/AcrossCoreModule.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388758127317" ignored="false" />
+    <file path="/AcrossCoreInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388846464092" ignored="false" />
+    <file path="/AcrossCoreModule.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388846022963" ignored="false" />
     <file path="/changelog.xml" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388756387221" ignored="false" />
-    <file path="/create_001.xml" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388760986281" ignored="false" />
+    <file path="/create_001.xml" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388845529346" ignored="false" />
     <file path="/AcrossInstallerDao.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388761276917" ignored="false" />
-    <file path="/AcrossCoreSchemaInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388759903898" ignored="false" />
-    <file path="/AcrossSchemaInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388763083362" ignored="false" />
-    <file path="/DebugWebSchemaInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388760631882" ignored="false" />
+    <file path="/AcrossCoreSchemaInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388846008304" ignored="false" />
+    <file path="/AcrossSchemaInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388843954926" ignored="false" />
+    <file path="/DebugWebSchemaInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388845449527" ignored="false" />
     <file path="/Installer.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388760385718" ignored="false" />
     <file path="/a.dummy" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388762786524" ignored="false" />
-    <file path="/AcrossInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388762021066" ignored="false" />
+    <file path="/AcrossInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388844253020" ignored="false" />
     <file path="/AcrossContext.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388762859980" ignored="false" />
     <file path="$PROJECT_DIR$/../mme/webmvc/src/main/java/be/mediafin/mme/web/BaseWebConfig.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388762342683" ignored="false" />
+    <file path="$PROJECT_DIR$/../image-server/pom.xml" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388834054153" ignored="false" />
+    <file path="/AcrossInstallerRepository.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388844449643" ignored="false" />
+    <file path="/AcrossModule.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388850767501" ignored="false" />
+    <file path="/AcrossModuleRepository.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388850439345" ignored="false" />
+    <file path="/fragment.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388850327092" ignored="false" />
+    <file path="/AcrossLiquibaseInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388845407412" ignored="false" />
+    <file path="/TestInstaller.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388846595188" ignored="false" />
+    <file path="/BootstrapFinished.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388847136568" ignored="false" />
+    <file path="/AcrossEventPublisher.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388848944234" ignored="false" />
+    <file path="/AcrossEvents.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388850147826" ignored="false" />
+    <file path="/BootstrapFinishedEvent.java" changelist="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" time="1388850404528" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,19 +124,19 @@
       <file leaf-file-name="Test.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/container/src/main/java/Test.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="0" selection-start="515" selection-end="515" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="13" column="14" selection-start="586" selection-end="586" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AcrossContext.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java">
+      <file leaf-file-name="AcrossCoreModule.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="0" selection-start="97" selection-end="97" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="20" column="0" selection-start="529" selection-end="529" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -138,10 +144,8 @@
       <file leaf-file-name="AcrossCoreInstaller.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="24" selection-start="379" selection-end="379" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="14" column="46" selection-start="357" selection-end="357" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -149,32 +153,8 @@
       <file leaf-file-name="AcrossCoreSchemaInstaller.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="63" selection-start="252" selection-end="252" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AcrossInstallerDao.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerDao.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="58" selection-start="840" selection-end="840" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AcrossSchemaInstaller.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossSchemaInstaller.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="0" selection-start="774" selection-end="774" vertical-scroll-proportion="0.43333334">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="29" column="14" selection-start="991" selection-end="991" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -182,16 +162,37 @@
       <file leaf-file-name="AcrossModule.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="0" selection-start="68" selection-end="68" vertical-scroll-proportion="0.0">
+            <state line="61" column="50" selection-start="2010" selection-end="2010" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#622#639#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AcrossCoreSchemaInstaller.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DebugWebSchemaInstaller.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/installers/DebugWebSchemaInstaller.java">
+      <file leaf-file-name="TestInstaller.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestInstaller.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="62" selection-start="261" selection-end="261" vertical-scroll-proportion="0.0">
+            <state line="13" column="49" selection-start="331" selection-end="331" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DebugWebModule.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="42" selection-start="535" selection-end="535" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -199,11 +200,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AcrossCoreSchemaInstaller.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/liquibase/AcrossCoreSchemaInstaller.xml">
+      <file leaf-file-name="AcrossBootstrapFinishedEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossBootstrapFinishedEvent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="8" column="19" selection-start="235" selection-end="235" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AcrossModuleRepository.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModuleRepository.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="50" column="14" selection-start="1505" selection-end="1505" vertical-scroll-proportion="0.67490494">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -226,22 +240,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/debug-web/pom.xml" />
-        <option value="$PROJECT_DIR$/container/pom.xml" />
-        <option value="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/liquibase/changelog.xml" />
-        <option value="$PROJECT_DIR$/core/pom.xml" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/Installer.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/installers/DebugWebSchemaInstaller.java" />
         <option value="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/liquibase/base/create_001.xml" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerDao.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" />
+        <option value="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/installers/DebugWebSchemaInstaller.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstaller.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java" />
-        <option value="$PROJECT_DIR$/container/src/main/java/Test.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossSchemaInstaller.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestInstaller.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/BootstrapFinished.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossEvents.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/BootstrapFinishedEvent.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossBootstrapFinishedEvent.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossEventPublisher.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModuleRepository.java" />
       </list>
     </option>
   </component>
@@ -288,8 +302,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -321,18 +333,6 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="debugweb" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -359,74 +359,54 @@
               <option name="myItemId" value="debugweb" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="installers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="liquibase" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="liquibase" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="base" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -483,6 +463,36 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="installers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="events" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -493,6 +503,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="container" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="container" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -520,6 +548,8 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -538,12 +568,13 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="options.searchVisible" value="true" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\code\across\core\src\main\resources\com\foreach\across\core\installers" />
       <recent name="C:\code\across\container" />
     </key>
   </component>
@@ -561,7 +592,13 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="container" />
       <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -662,29 +699,29 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="1186" extended-state="0" />
+    <frame x="-8" y="-8" width="1616" height="1186" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39922103" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32840237" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32814023" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925257" sideWeight="0.67159766" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32882884" sideWeight="0.6728335" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24935567" sideWeight="0.67159766" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32840237" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24903475" sideWeight="0.57059395" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.42940605" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32947233" sideWeight="0.60375494" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -758,94 +795,69 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/3.2.3.RELEASE/spring-beans-3.2.3.RELEASE-sources.jar!/org/springframework/beans/factory/config/AutowireCapableBeanFactory.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_25/jre/lib/rt.jar!/java/util/EventObject.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="135" column="9" selection-start="5469" selection-end="5469" vertical-scroll-proportion="0.33333334">
+        <state line="6" column="13" selection-start="152" selection-end="152" vertical-scroll-proportion="0.15769945">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/3.2.3.RELEASE/spring-context-3.2.3.RELEASE-sources.jar!/org/springframework/stereotype/Component.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/3.2.3.RELEASE/spring-context-3.2.3.RELEASE-sources.jar!/org/springframework/context/ApplicationEvent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="0" selection-start="1501" selection-end="1562" vertical-scroll-proportion="0.0">
+        <state line="18" column="24" selection-start="684" selection-end="684" vertical-scroll-proportion="0.12615955">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/liquibase/liquibase-core/3.0.8/liquibase-core-3.0.8-sources.jar!/liquibase/integration/spring/SpringLiquibase.java">
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="272" column="16" selection-start="8145" selection-end="8145" vertical-scroll-proportion="2.6">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="33" selection-start="264" selection-end="264" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="0" selection-start="466" selection-end="466" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstaller.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="51" selection-start="579" selection-end="579" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="58" selection-start="840" selection-end="840" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="68" selection-end="68" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/liquibase/AcrossCoreSchemaInstaller.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="29" column="0" selection-start="997" selection-end="997" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="97" selection-end="97" vertical-scroll-proportion="0.0">
+        <state line="2" column="13" selection-start="47" selection-end="47" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/liquibase/base/create_001.xml">
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstaller.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="48" selection-start="396" selection-end="396" vertical-scroll-proportion="0.18888889">
+        <state line="12" column="22" selection-start="346" selection-end="346" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossLiquibaseInstaller.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="63" selection-start="438" selection-end="438" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/installers/DebugWebSchemaInstaller.java">
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestInstaller.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="62" selection-start="261" selection-end="261" vertical-scroll-proportion="0.0">
+        <state line="13" column="49" selection-start="331" selection-end="331" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossBootstrapFinishedEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="19" selection-start="235" selection-end="235" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -854,34 +866,56 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="24" selection-start="379" selection-end="379" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/container/src/main/java/Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="515" selection-end="515" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="14" column="46" selection-start="357" selection-end="357" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="63" selection-start="252" selection-end="252" vertical-scroll-proportion="0.0">
+        <state line="29" column="14" selection-start="991" selection-end="991" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/container/src/main/java/Test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="14" selection-start="586" selection-end="586" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="0" selection-start="529" selection-end="529" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossSchemaInstaller.java">
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="0" selection-start="774" selection-end="774" vertical-scroll-proportion="0.43333334">
+        <state line="12" column="42" selection-start="535" selection-end="535" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="50" selection-start="2010" selection-end="2010" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#622#639#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModuleRepository.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="50" column="14" selection-start="1505" selection-end="1505" vertical-scroll-proportion="0.67490494">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

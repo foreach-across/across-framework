@@ -4,11 +4,18 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
 	<changeSet id="201401031443" author="arne">
 		<comment>Creates modules table</comment>
 		<createTable tableName="ACROSSMODULES">
+			<column name="module" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
 			<column name="installer" type="varchar(255)">
 				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="description" type="varchar(500)">
+				<constraints nullable="true"/>
 			</column>
 			<column name="created" type="datetime">
 				<constraints nullable="false"/>
