@@ -12,6 +12,5 @@ public class AcrossCoreInstaller extends AcrossInstaller
 	@Override
 	protected void install() {
 		// Nothing to do
-		System.out.println("installing core");
 	}
 }

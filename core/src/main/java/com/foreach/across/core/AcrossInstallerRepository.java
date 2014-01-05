@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.Date;
 
-@Repository
+//@Repository
 public class AcrossInstallerRepository
 {
 	private final JdbcTemplate jdbcTemplate;

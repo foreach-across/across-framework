@@ -5,8 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.context.support.GenericApplicationContext;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -23,12 +24,10 @@ public abstract class AcrossModule
 		return installers;
 	}
 
-	@PostConstruct
-	private void install() throws Exception {
+	public void install() throws RuntimeException {
 		AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
 
 		for ( Class installerClass : installerClasses() ) {
-
 			if ( !AcrossInstaller.class.isAssignableFrom( installerClass ) ) {
 				LOG.error( "Installer {} does not extend from {}", installerClass, AcrossInstaller.class );
 
@@ -48,7 +47,22 @@ public abstract class AcrossModule
 			}
 		}
 
-		bootstrap();
+		// Load all beans of the module
+		GenericApplicationContext ctx = new GenericApplicationContext( applicationContext );
+		ClassPathBeanDefinitionScanner scanner =
+				new ClassPathBeanDefinitionScanner( ctx.getDefaultListableBeanFactory() );
+		scanner.setEnvironment( applicationContext.getEnvironment() );
+
+		scanner.scan( getComponentScanPackages() );
+
+		ctx.refresh();
+	}
+
+	/**
+	 * @return Array of packages that should be scanned for components.
+	 */
+	protected String[] getComponentScanPackages() {
+		return new String[] { getClass().getPackage().getName() };
 	}
 
 	/**
@@ -62,9 +76,16 @@ public abstract class AcrossModule
 	protected abstract Class[] installerClasses();
 
 	/**
-	 * Called after the module has been constructed.
-	 * This is after any @PostConstruct methods have been called for a module.
+	 * Called after all modules have been installed and - depending on the registration order in the context -
+	 * the other modules have been bootstrapped.
 	 */
 	public void bootstrap() {
+	}
+
+	/**
+	 * Called in case of a context shutdown.  Modules registered after this one in the context will have
+	 * been shutdown already.
+	 */
+	public void shutdown() {
 	}
 }

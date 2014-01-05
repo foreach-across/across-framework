@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/container/container.iml" filepath="$PROJECT_DIR$/container/container.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/debug-web/debug-web.iml" filepath="$PROJECT_DIR$/debug-web/debug-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test-web/test-web.iml" filepath="$PROJECT_DIR$/test-web/test-web.iml" />
     </modules>
   </component>
 </project>
