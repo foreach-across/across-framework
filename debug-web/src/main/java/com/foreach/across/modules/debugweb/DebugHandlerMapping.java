@@ -2,7 +2,6 @@ package com.foreach.across.modules.debugweb;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.condition.*;
@@ -11,8 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import java.lang.reflect.Method;
 
-@DependsOn(DebugWebModule.NAME)
-//@Component
+@Component
 public class DebugHandlerMapping extends RequestMappingHandlerMapping
 {
 	@Autowired
@@ -34,8 +32,7 @@ public class DebugHandlerMapping extends RequestMappingHandlerMapping
 	}
 */
 	@Override
-	protected RequestMappingInfo getMappingForMethod(
-			Method method, Class<?> handlerType ) {
+	protected RequestMappingInfo getMappingForMethod( Method method, Class<?> handlerType ) {
 		RequestMappingInfo info = super.getMappingForMethod( method, handlerType );
 
 		if ( info != null ) {

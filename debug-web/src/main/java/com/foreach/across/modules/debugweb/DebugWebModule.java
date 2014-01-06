@@ -6,8 +6,6 @@ import org.springframework.context.ApplicationListener;
 
 public class DebugWebModule extends AcrossModule implements ApplicationListener<AcrossBootstrapFinishedEvent>
 {
-	public static final String NAME = "DebugWebModule";
-
 	private String rootPath = "/debug";
 
 	public void setRootPath( String rootPath ) {
@@ -24,7 +22,12 @@ public class DebugWebModule extends AcrossModule implements ApplicationListener<
 	}
 
 	public String getName() {
-		return NAME;
+		return "DebugWebModule";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Provides a debug web path and functionality to easily register additional debug controllers.";
 	}
 
 	public void onApplicationEvent( AcrossBootstrapFinishedEvent event ) {

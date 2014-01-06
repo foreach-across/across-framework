@@ -71,6 +71,11 @@ public abstract class AcrossModule
 	public abstract String getName();
 
 	/**
+	 * @return Description of the content of this module.
+	 */
+	public abstract String getDescription();
+
+	/**
 	 * @return Array containing the installer classes in the order of which they should be run.
 	 */
 	protected abstract Class[] installerClasses();

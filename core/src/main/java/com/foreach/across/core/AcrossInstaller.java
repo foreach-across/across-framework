@@ -4,14 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
-
 /**
  * Base class to configure installer beans that will be registered in the repository,
  * and will only be executed once.
  */
 public abstract class AcrossInstaller
 {
+	private final static Logger INSTALL_LOG = LoggerFactory.getLogger( AcrossInstaller.class );
+
 	protected final Logger LOG = LoggerFactory.getLogger( getClass() );
 
 	@Autowired
@@ -32,25 +32,25 @@ public abstract class AcrossInstaller
 
 	public void execute() {
 		if ( !isInstalled() ) {
-			if ( context.isAllowInstallers() ) {
+			if ( context.isAllowInstallers() || ( context.isSkipSchemaInstallers() && this instanceof AcrossLiquibaseInstaller ) ) {
 				if ( !context.isOnlyRegisterInstallers() ) {
-					LOG.info( "Installing {}", getClass() );
+					INSTALL_LOG.info( "Installing {}", getClass() );
 					install();
 				}
 				else {
 					// Skipping installer execution
-					LOG.info( "Setting {} as installed without executing install()", getClass() );
+					INSTALL_LOG.info( "Setting {} as installed without executing install()", getClass() );
 				}
 
 				installerRepository.setInstalled( this );
 			}
 			else {
 				// Skip installer
-				LOG.info( "Skipping installer {}", getClass() );
+				INSTALL_LOG.info( "Skipping installer {}", getClass() );
 			}
 		}
 		else {
-			LOG.debug( "{} was already installed", getClass() );
+			INSTALL_LOG.debug( "{} was already installed", getClass() );
 		}
 	}
 

@@ -31,9 +31,6 @@ public class AcrossContext
 
 	private LinkedList<AcrossModule> modules = new LinkedList<AcrossModule>();
 
-	@Autowired
-	List<ApplicationListener<AcrossBootstrapFinishedEvent>> listeners;
-
 	private boolean isBootstrapped = false;
 
 	public void addModule( AcrossModule module ) {
