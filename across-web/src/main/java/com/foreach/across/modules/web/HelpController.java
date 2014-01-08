@@ -1,15 +1,15 @@
-package com.foreach.across.testweb;
+package com.foreach.across.modules.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class TestController
+public class HelpController
 {
-	@RequestMapping("/")
+	@RequestMapping("/help")
 	@ResponseBody
-	public String hello() {
-		return "hello from TestController...";
+	public String help() {
+		return "I need somebody...";
 	}
 }

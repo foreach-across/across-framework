@@ -1,10 +1,10 @@
 package com.foreach.across.modules.debugweb;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.events.AcrossBootstrapFinishedEvent;
+import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import org.springframework.context.ApplicationListener;
 
-public class DebugWebModule extends AcrossModule implements ApplicationListener<AcrossBootstrapFinishedEvent>
+public class DebugWebModule extends AcrossModule implements ApplicationListener<AcrossContextBootstrappedEvent>
 {
 	private String rootPath = "/debug";
 
@@ -17,8 +17,8 @@ public class DebugWebModule extends AcrossModule implements ApplicationListener<
 	}
 
 	@Override
-	protected Class[] installerClasses() {
-		return new Class[] { TestInstaller.class };
+	public Object[] getInstallers() {
+		return new Object[] { new TestInstaller() };
 	}
 
 	public String getName() {
@@ -30,7 +30,7 @@ public class DebugWebModule extends AcrossModule implements ApplicationListener<
 		return "Provides a debug web path and functionality to easily register additional debug controllers.";
 	}
 
-	public void onApplicationEvent( AcrossBootstrapFinishedEvent event ) {
+	public void onApplicationEvent( AcrossContextBootstrappedEvent event ) {
 		System.out.println( "finished bootstrapping " + event.getModules().size() + " modules" );
 	}
 }

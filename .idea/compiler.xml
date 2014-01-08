@@ -24,6 +24,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="across-core" />
+        <module name="across-web" />
         <module name="container" />
         <module name="core" />
         <module name="debug-web" />

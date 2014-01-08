@@ -1,15 +1,12 @@
 package com.foreach.across.core.installers;
 
-import com.foreach.across.core.AcrossInstaller;
+import com.foreach.across.core.*;
 
-public class AcrossCoreInstaller extends AcrossInstaller
+@Installer(description = "Installs the core Across base configuration.", runCondition = InstallerRunCondition.VersionDifferent,
+           phase = InstallerPhase.BeforeContextBootstrap)
+public class AcrossCoreInstaller
 {
-	@Override
-	public String getDescription() {
-		return "Installs the core Across base configuration.";
-	}
-
-	@Override
+	@InstallerMethod
 	protected void install() {
 		// Nothing to do
 	}

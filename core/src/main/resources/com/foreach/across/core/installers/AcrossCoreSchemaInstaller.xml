@@ -8,13 +8,16 @@
 	<changeSet id="201401031443" author="arne">
 		<comment>Creates modules table</comment>
 		<createTable tableName="ACROSSMODULES">
-			<column name="module" type="varchar(255)">
+			<column name="module" type="varchar2(255)">
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
-			<column name="installer" type="varchar(255)">
+			<column name="installer" type="varchar2(255)">
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
-			<column name="description" type="varchar(500)">
+			<column name="version" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="description" type="varchar2(500)">
 				<constraints nullable="true"/>
 			</column>
 			<column name="created" type="datetime">

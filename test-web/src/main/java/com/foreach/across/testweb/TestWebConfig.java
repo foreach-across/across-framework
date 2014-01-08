@@ -1,27 +1,46 @@
 package com.foreach.across.testweb;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.modules.debugweb.DebugHandlerMapping;
 import com.foreach.across.modules.debugweb.DebugWebModule;
+import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.ControllerOnlyRequestMappingHandlerMapping;
+import com.foreach.across.testweb.sub.TestWebModule;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.sql.DataSource;
 
-@ComponentScan({ "com.foreach.across.testweb" })
-public class TestWebConfig extends WebMvcConfigurationSupport
+@EnableWebMvc
+@Configuration
+public class TestWebConfig
 {
 	@Bean
-	public AcrossContext acrossContext() {
-		AcrossContext context = new AcrossContext();
+	@Autowired
+	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+		AcrossContext context = new AcrossContext( applicationContext );
+		context.setDataSource( acrossDataSource() );
 		context.setAllowInstallers( false );
 
+		context.addModule( acrossWebModule() );
 		context.addModule( debugWebModule() );
+		context.addModule( testWebModule() );
 
 		return context;
+	}
+
+	@Bean
+	public TestWebModule testWebModule() {
+		return new TestWebModule();
+	}
+
+	@Bean
+	public AcrossWebModule acrossWebModule() {
+		return new AcrossWebModule();
 	}
 
 	@Bean
@@ -33,24 +52,22 @@ public class TestWebConfig extends WebMvcConfigurationSupport
 	}
 
 	@Bean
-	@Override
 	public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-		DebugHandlerMapping mapping = new DebugHandlerMapping();
+		ControllerOnlyRequestMappingHandlerMapping mapping = new ControllerOnlyRequestMappingHandlerMapping();
 		mapping.setOrder( 0 );
-		mapping.setInterceptors( getInterceptors() );
+//		mapping.setInterceptors( getInterceptors() );
 
 		return mapping;
 	}
 
 	@Bean
-	public DataSource installDataSource() throws Exception {
-		BasicDataSource ds = new BasicDataSource();
-		ds.setDriverClassName( "oracle.jdbc.driver.OracleDriver" );
-		ds.setUrl( "jdbc:oracle:thin:@192.168.2.215:1522:fe" );
-		ds.setUsername( "vkstub" );
-		ds.setPassword( "vkstub" );
-		ds.setDefaultAutoCommit( true );
+	public DataSource acrossDataSource() throws Exception {
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
+		dataSource.setUrl( "jdbc:hsqldb:mem:acrossTestWeb" );
+		dataSource.setUsername( "sa" );
+		dataSource.setPassword( "" );
 
-		return ds;
+		return dataSource;
 	}
 }

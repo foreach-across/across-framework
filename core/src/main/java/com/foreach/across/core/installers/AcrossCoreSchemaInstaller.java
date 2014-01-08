@@ -4,13 +4,9 @@ import com.foreach.across.core.AcrossContext;
 import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 
 /**
  * Special bean that takes care of installing the very minimum schema for module installation versioning.
@@ -19,32 +15,29 @@ public class AcrossCoreSchemaInstaller
 {
 	private final static Logger LOG = LoggerFactory.getLogger( AcrossCoreSchemaInstaller.class );
 
-	@Autowired
 	private AcrossContext acrossContext;
 
-	@Autowired
-	private ApplicationContext applicationContext;
-
-	@Autowired
-	@Qualifier("installDataSource")
-	private DataSource dataSource;
+	public AcrossCoreSchemaInstaller( AcrossContext acrossContext ) {
+		this.acrossContext = acrossContext;
+	}
 
 	@PostConstruct
 	protected void installCoreSchema() {
-		if ( acrossContext.isAllowInstallers() && !acrossContext.isSkipSchemaInstallers() ) {
+		if ( acrossContext.isAllowInstallers() ) {
 			LOG.info( "Installing the core schema for Across" );
 
-			AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
+			AutowireCapableBeanFactory beanFactory =
+					acrossContext.getApplicationContext().getAutowireCapableBeanFactory();
 
 			SpringLiquibase liquibase = new SpringLiquibase();
 			liquibase.setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );
-			liquibase.setDataSource( dataSource );
+			liquibase.setDataSource( acrossContext.getDataSource() );
 
 			beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false );
 			beanFactory.initializeBean( liquibase, "" );
 		}
 		else {
-			LOG.info( "Skipping the core schema installer because installers or schema installers are not allowed." );
+			LOG.info( "Skipping the core schema installer because installers are not allowed." );
 		}
 	}
 }

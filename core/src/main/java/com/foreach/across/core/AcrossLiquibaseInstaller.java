@@ -4,17 +4,17 @@ import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
 
 import javax.sql.DataSource;
 
-public abstract class AcrossLiquibaseInstaller extends AcrossInstaller
+@InstallerGroup(InstallerGroup.SCHEMA)
+public abstract class AcrossLiquibaseInstaller
 {
 	@Autowired
-	private ApplicationContext applicationContext;
+	private AcrossContext acrossContext;
 
 	@Autowired
-	@Qualifier("installDataSource")
+	@Qualifier(AcrossContext.DATASOURCE)
 	private DataSource dataSource;
 
 	private final String changelog;
@@ -27,9 +27,9 @@ public abstract class AcrossLiquibaseInstaller extends AcrossInstaller
 		this.changelog = changelog;
 	}
 
-	@Override
-	protected void install() {
-		AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
+	@InstallerMethod
+	public void install() {
+		AutowireCapableBeanFactory beanFactory = acrossContext.getApplicationContext().getAutowireCapableBeanFactory();
 
 		SpringLiquibase liquibase = new SpringLiquibase();
 		liquibase.setChangeLog( changelog );

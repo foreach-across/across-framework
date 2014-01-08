@@ -8,6 +8,9 @@
 	<artifactId>across-container</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
+	<properties>
+		<spring.version>4.0.0.RELEASE</spring.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -23,7 +26,12 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>3.2.3.RELEASE</version>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>

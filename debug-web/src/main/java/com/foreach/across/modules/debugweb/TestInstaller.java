@@ -1,16 +1,13 @@
 package com.foreach.across.modules.debugweb;
 
-import com.foreach.across.core.AcrossInstaller;
+import com.foreach.across.core.Installer;
+import com.foreach.across.core.InstallerMethod;
 
-public class TestInstaller extends AcrossInstaller
+@Installer(description = "installing something for debugwebmodule")
+public class TestInstaller
 {
-	@Override
-	public String getDescription() {
-		return "installing something for debugwebmodule";
-	}
-
-	@Override
+	@InstallerMethod
 	protected void install() {
-		System.out.println("doing installation");
+		System.out.println( "doing installation" );
 	}
 }

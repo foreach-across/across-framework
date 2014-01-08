@@ -14,7 +14,7 @@ public class AcrossCoreModule extends AcrossModule
 	}
 
 	@Override
-	protected Class[] installerClasses() {
-		return new Class[] { AcrossCoreInstaller.class };
+	public Object[] getInstallers() {
+		return new Object[] { new AcrossCoreInstaller() };
 	}
 }

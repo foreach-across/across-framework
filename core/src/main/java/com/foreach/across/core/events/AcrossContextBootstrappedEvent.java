@@ -6,14 +6,13 @@ import org.springframework.context.ApplicationEvent;
 
 import java.util.Collection;
 
-public class AcrossBootstrapFinishedEvent extends ApplicationEvent
+public class AcrossContextBootstrappedEvent extends ApplicationEvent
 {
 	private final AcrossContext context;
 	private final Collection<AcrossModule> modules;
 
-	public AcrossBootstrapFinishedEvent(
-			Object source, AcrossContext context, Collection<AcrossModule> modules ) {
-		super( source );
+	public AcrossContextBootstrappedEvent( AcrossContext context, Collection<AcrossModule> modules ) {
+		super( context );
 		this.context = context;
 		this.modules = modules;
 	}
