@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -183,7 +184,7 @@ class AcrossBootstrap
 					beanFactory.autowireBeanProperties( installer, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false );
 					beanFactory.initializeBean( installer, "" );
 
-					for ( Method method : installer.getClass().getDeclaredMethods() ) {
+					for ( Method method : ReflectionUtils.getAllDeclaredMethods( installer.getClass() ) ) {
 						if ( method.isAnnotationPresent(
 								InstallerMethod.class ) && method.getParameterTypes().length == 0 ) {
 							try {
@@ -227,7 +228,7 @@ class AcrossBootstrap
 					}
 
 					boolean methodFound = false;
-					for ( Method method : installer.getClass().getDeclaredMethods() ) {
+					for ( Method method : ReflectionUtils.getAllDeclaredMethods( installer.getClass() ) ) {
 						if ( method.isAnnotationPresent(
 								InstallerMethod.class ) && method.getParameterTypes().length == 0 ) {
 							methodFound = true;
@@ -278,6 +279,8 @@ class AcrossBootstrap
 	                                  ConfigurableListableBeanFactory beanFactory ) {
 		addPostProcessors( applicationContext, acrossContext.getBeanFactoryPostProcessors() );
 
+		beanFactory.registerSingleton( "acrossContext", acrossContext );
+
 		applicationContext.refresh();
 		applicationContext.start();
 
@@ -296,7 +299,7 @@ class AcrossBootstrap
 	}
 
 	private void registerDataSource( AcrossContext context, ConfigurableListableBeanFactory beanFactory ) {
-		if ( Arrays.asList( beanFactory.getSingletonNames() ).contains( AcrossContext.DATASOURCE ) ) {
+		if ( !Arrays.asList( beanFactory.getSingletonNames() ).contains( AcrossContext.DATASOURCE ) ) {
 			beanFactory.registerSingleton( AcrossContext.DATASOURCE, context.getDataSource() );
 		}
 	}

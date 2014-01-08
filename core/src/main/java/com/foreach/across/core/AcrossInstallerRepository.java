@@ -1,12 +1,11 @@
 package com.foreach.across.core;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 //@Repository
 public class AcrossInstallerRepository
@@ -20,22 +19,29 @@ public class AcrossInstallerRepository
 	public int getInstalledVersion( AcrossModule module, Object installer ) {
 		String SQL = "select version from ACROSSMODULES where module = ? and installer = ?";
 
-		List<Map<String, Object>> rows =
-				jdbcTemplate.queryForList( SQL, module.getName(), installer.getClass().getName() );
-
-		if ( rows.isEmpty() ) {
+		try {
+			return jdbcTemplate.queryForObject( SQL, Integer.class, module.getName(), installer.getClass().getName() );
+		}
+		catch ( EmptyResultDataAccessException erdae ) {
 			return -1;
 		}
-
-		return (Integer) rows.get( 0 ).get( "version" );
 	}
 
 	public void setInstalled( AcrossModule module, Installer config, Object installer ) {
-		String SQL =
-				"insert into ACROSSMODULES (module, installer, version, created, description) VALUES (?, ?, ?, ?, ?)";
+		if ( getInstalledVersion( module, installer ) != -1 ) {
+			String SQL =
+					"update ACROSSMODULES set version = ?, description = ?, created = ? where module = ? and installer = ?";
 
-		jdbcTemplate.update( SQL, module.getName(), installer.getClass().getName(), config.version(), new Date(),
-		                     StringUtils.abbreviate( config.description(), 500 ) );
+			jdbcTemplate.update( SQL, config.version(), StringUtils.abbreviate( config.description(), 500 ), new Date(),
+			                     module.getName(), installer.getClass().getName() );
+		}
+		else {
+			String SQL =
+					"insert into ACROSSMODULES (module, installer, version, created, description) VALUES (?, ?, ?, ?, ?)";
+
+			jdbcTemplate.update( SQL, module.getName(), installer.getClass().getName(), config.version(), new Date(),
+			                     StringUtils.abbreviate( config.description(), 500 ) );
+		}
 	}
 
 }

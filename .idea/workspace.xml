@@ -2,78 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossModuleBootstrappedEvent.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebConfig.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebMappingHandlerMapping.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebModule.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/CallbackHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ConstructedBeanModule1.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/ConstructedBeanModule2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/ControllerOnlyRequestMappingHandlerMapping.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/HelpController.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/Installer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/InstallerGroup.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/InstallerMethod.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/InstallerPhase.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/InstallerRunCondition.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_11.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hsqldb_hsqldb_2_3_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_test_4_0_0_RELEASE.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ScannedBeanModule1.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/ScannedBeanModule2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ScannedPrototypeBeanModule1.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/SimpleController.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/TestAcrossContextBoot.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/TestModule1.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/TestModule1Config.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/TestModule2.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/TestModule2Config.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebModule.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/WebTester.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/across-core.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/across-web.iml" />
-      <change type="DELETED" beforePath="C:\code\across\core\core.iml" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\AcrossInstaller.java" afterPath="" />
-      <change type="MOVED" beforePath="C:\code\across\.idea\libraries\Maven__org_springframework_spring_aop_3_2_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_4_0_0_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\across\.idea\libraries\Maven__org_springframework_spring_beans_3_2_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_4_0_0_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\across\.idea\libraries\Maven__org_springframework_spring_context_3_2_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_4_0_0_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\across\.idea\libraries\Maven__org_springframework_spring_core_3_2_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jdbc_4_0_0_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\across\.idea\libraries\Maven__org_springframework_spring_expression_3_2_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_4_0_0_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\across\.idea\libraries\Maven__org_springframework_spring_jdbc_3_2_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_4_0_0_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\across\.idea\libraries\Maven__org_springframework_spring_tx_3_2_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_tx_4_0_0_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\across\.idea\libraries\Maven__org_springframework_spring_web_3_2_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_4_0_0_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\across\.idea\libraries\Maven__org_springframework_spring_webmvc_3_2_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_webmvc_4_0_0_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\events\AcrossBootstrapFinishedEvent.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossContextBootstrappedEvent.java" />
-      <change type="MOVED" beforePath="C:\code\across\test-web\src\main\java\com\foreach\across\testweb\TestController.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml" afterPath="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerRepository.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerRepository.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossLiquibaseInstaller.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossLiquibaseInstaller.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/container/src/main/java/Test.java" afterPath="$PROJECT_DIR$/container/src/main/java/Test.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestHandler.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestInstaller.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestInstaller.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/container/container.iml" afterPath="$PROJECT_DIR$/container/container.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/debug-web.iml" afterPath="$PROJECT_DIR$/debug-web/debug-web.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/container/pom.xml" afterPath="$PROJECT_DIR$/container/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/pom.xml" afterPath="$PROJECT_DIR$/core/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/pom.xml" afterPath="$PROJECT_DIR$/debug-web/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/pom.xml" afterPath="$PROJECT_DIR$/test-web/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/test-web.iml" afterPath="$PROJECT_DIR$/test-web/test-web.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/test_web_war_exploded.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/test_web_war_exploded.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="across.iws" />
@@ -138,24 +69,66 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="TestWebConfig.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="TestWebConfig.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="1" selection-start="873" selection-end="873" vertical-scroll-proportion="-0.63355047" vertical-offset="508" max-vertical-offset="1122">
+            <state line="50" column="30" selection-start="1640" selection-end="1640" vertical-scroll-proportion="0.0" vertical-offset="355" max-vertical-offset="1122">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AcrossBootstrap.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="AcrossCoreSchemaInstaller.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="21" selection-start="670" selection-end="670" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AcrossBootstrap.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="149" column="9" selection-start="5595" selection-end="5595" vertical-scroll-proportion="0.0" vertical-offset="2064" max-vertical-offset="5695">
+            <state line="296" column="76" selection-start="11320" selection-end="11320" vertical-scroll-proportion="0.26331967" vertical-offset="4639" max-vertical-offset="5746">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1328#1336#0" expanded="true" />
-                <element signature="e#8103#8129#0" expanded="true" />
+                <element signature="e#1377#1385#0" expanded="true" />
+                <element signature="e#8172#8198#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AcrossInstallerRepository.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerRepository.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="0" selection-start="755" selection-end="755" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="816">
+              <folding>
+                <marker date="1389199726197" expanded="true" signature="564:632" placeholder="select versi..ACROSSMODULES..." />
+                <marker date="1389199726197" expanded="true" signature="999:1100" placeholder="update ACROS..." />
+                <marker date="1389199726197" expanded="true" signature="1327:1426" placeholder="insert into ..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestAcrossContextBoot.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/TestAcrossContextBoot.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="61" column="24" selection-start="2067" selection-end="2067" vertical-scroll-proportion="0.0" vertical-offset="728" max-vertical-offset="2805">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ReflectionUtils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE-sources.jar!/org/springframework/util/ReflectionUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="493" column="27" selection-start="18708" selection-end="18708" vertical-scroll-proportion="0.0" vertical-offset="7769" max-vertical-offset="11169">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -174,72 +147,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state line="50" column="7" selection-start="2100" selection-end="2100" vertical-scroll-proportion="0.0" vertical-offset="331" max-vertical-offset="1632">
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GenericApplicationContext.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE-sources.jar!/org/springframework/context/support/GenericApplicationContext.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="287" column="16" selection-start="11115" selection-end="11115" vertical-scroll-proportion="0.0" vertical-offset="4088" max-vertical-offset="5049">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AnnotationConfigWebApplicationContext.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar!/org/springframework/web/context/support/AnnotationConfigWebApplicationContext.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="119" selection-start="288" selection-end="288" vertical-scroll-proportion="-3.4" vertical-offset="0" max-vertical-offset="544">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AbstractRefreshableWebApplicationContext.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE.jar!/org/springframework/web/context/support/AbstractRefreshableWebApplicationContext.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="139" selection-start="308" selection-end="308" vertical-scroll-proportion="-3.4" vertical-offset="0" max-vertical-offset="816">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AbstractRefreshableConfigApplicationContext.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE-sources.jar!/org/springframework/context/support/AbstractRefreshableConfigApplicationContext.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="94" selection-start="1621" selection-end="1621" vertical-scroll-proportion="0.0" vertical-offset="130" max-vertical-offset="2431">
-              <folding>
-                <element signature="e#0#5136#0" expanded="false" />
-                <element signature="imports" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AbstractRefreshableApplicationContext.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE-sources.jar!/org/springframework/context/support/AbstractRefreshableApplicationContext.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="63" column="22" selection-start="3073" selection-end="3073" vertical-scroll-proportion="0.0" vertical-offset="517" max-vertical-offset="3740">
-              <folding>
-                <element signature="e#0#9774#0" expanded="false" />
-                <element signature="imports" expanded="false" />
-                <element signature="e#4244#4245#0" expanded="false" />
-                <element signature="e#4317#4318#0" expanded="false" />
-                <element signature="e#4747#4748#0" expanded="false" />
-                <element signature="e#4808#4809#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AcrossContext.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="0" selection-start="872" selection-end="872" vertical-scroll-proportion="0.0" vertical-offset="122" max-vertical-offset="1853">
-              <folding>
-                <element signature="e#3537#3551#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -289,14 +196,12 @@
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossBootstrapFinishedEvent.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossContextBootstrappedEvent.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstaller.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerRepository.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModule.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/TestModule1.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/TestModule2.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebModule.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebModule.java" />
-        <option value="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossLiquibaseInstaller.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java" />
@@ -311,8 +216,10 @@
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestInstaller.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java" />
         <option value="$PROJECT_DIR$/test-web/pom.xml" />
+        <option value="$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerRepository.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java" />
       </list>
     </option>
   </component>
@@ -436,6 +343,112 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="installers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="across-web" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -531,7 +544,7 @@
       <recent name="C:\code\across\container" />
     </key>
   </component>
-  <component name="RunManager" selected="Tomcat Server.Test Web">
+  <component name="RunManager">
     <configuration default="false" name="Test" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="Test" />
@@ -953,8 +966,8 @@
     </list>
     <recent_temporary>
       <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="Application.Test" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.moduleContextLoadingOrder" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.moduleContextLoadingOrder" />
+        <item index="1" class="java.lang.String" itemvalue="Application.Test" />
         <item index="2" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot" />
         <item index="3" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.moduleContextIsLoadedInOrder" />
       </list>
@@ -988,12 +1001,12 @@
       <created>1382550853949</created>
       <updated>1382550853949</updated>
       <workItem from="1388993922064" duration="4663000" />
-      <workItem from="1389080525813" duration="39598000" />
+      <workItem from="1389080525813" duration="42389000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44261000" />
+    <option name="totallyTimeSpent" value="47052000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1042,7 +1055,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32862645" sideWeight="0.600779" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25417203" sideWeight="0.53333336" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33846155" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33846155" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32947233" sideWeight="0.60375494" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -1107,64 +1120,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE-sources.jar!/org/springframework/beans/factory/config/AutowireCapableBeanFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="276" column="11" selection-start="13147" selection-end="13147" vertical-scroll-proportion="0.64300203" vertical-offset="4069" max-vertical-offset="5389">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE-sources.jar!/org/springframework/beans/factory/support/AbstractAutowireCapableBeanFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1552" column="0" selection-start="62653" selection-end="62653" vertical-scroll-proportion="0.0" vertical-offset="24419" max-vertical-offset="27574">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/util/SortedMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="94" column="17" selection-start="4596" selection-end="4596" vertical-scroll-proportion="0.0" vertical-offset="1184" max-vertical-offset="4539">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/util/TreeMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="13" selection-start="4261" selection-end="4261" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="41089">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE-sources.jar!/org/springframework/beans/factory/annotation/InitDestroyAnnotationBeanPostProcessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="135" column="0" selection-start="5400" selection-end="5400" vertical-scroll-proportion="0.0" vertical-offset="1294" max-vertical-offset="5542">
-          <folding>
-            <element signature="e#0#13365#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-            <element signature="e#3163#3190#0" expanded="false" />
-            <element signature="e#3700#3729#0" expanded="false" />
-            <element signature="e#4167#4168#0" expanded="false" />
-            <element signature="e#4218#4219#0" expanded="false" />
-            <element signature="e#4658#4659#0" expanded="false" />
-            <element signature="e#4715#4716#0" expanded="false" />
-            <element signature="e#4751#4752#0" expanded="false" />
-            <element signature="e#4776#4777#0" expanded="false" />
-            <element signature="e#4813#4814#0" expanded="false" />
-            <element signature="e#4837#4838#0" expanded="false" />
-            <element signature="e#7278#7296#0" expanded="false" />
-            <element signature="e#7362#7380#0" expanded="false" />
-            <element signature="e#7488#7506#0" expanded="false" />
-            <element signature="e#7577#7595#0" expanded="false" />
-            <element signature="e#9844#9862#0" expanded="false" />
-            <element signature="e#10411#10429#0" expanded="false" />
-            <element signature="e#12732#12733#0" expanded="false" />
-            <element signature="e#12759#12760#0" expanded="false" />
-            <element signature="e#12794#12795#0" expanded="false" />
-            <element signature="e#12825#12826#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="38" column="45" selection-start="1410" selection-end="1410" vertical-scroll-proportion="0.0" vertical-offset="391" max-vertical-offset="1139">
@@ -1201,25 +1156,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/TestAcrossContextBoot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="51" selection-start="1919" selection-end="1919" vertical-scroll-proportion="0.0" vertical-offset="728" max-vertical-offset="2805">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebModule.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="7" column="29" selection-start="174" selection-end="174" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="57" selection-start="806" selection-end="806" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578">
           <folding />
         </state>
       </provider>
@@ -1242,16 +1181,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="0" selection-start="200" selection-end="200" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="442">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerRepository.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="57" selection-start="509" selection-end="509" vertical-scroll-proportion="0.0" vertical-offset="7" max-vertical-offset="697">
-          <folding>
-            <marker date="1389195021943" expanded="true" signature="-1:-1" placeholder="select versi..ACROSSMODULES..." />
-            <marker date="1389195021943" expanded="true" signature="-1:-1" placeholder="insert into ..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1502,17 +1431,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="149" column="9" selection-start="5595" selection-end="5595" vertical-scroll-proportion="0.0" vertical-offset="2064" max-vertical-offset="5695">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1328#1336#0" expanded="true" />
-            <element signature="e#8103#8129#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test-web/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="42" column="50" selection-start="1296" selection-end="1296" vertical-scroll-proportion="0.0" vertical-offset="474" max-vertical-offset="1088">
@@ -1522,8 +1440,81 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="1" selection-start="873" selection-end="873" vertical-scroll-proportion="-0.63355047" vertical-offset="508" max-vertical-offset="1122">
+        <state line="50" column="30" selection-start="1640" selection-end="1640" vertical-scroll-proportion="0.0" vertical-offset="355" max-vertical-offset="1122">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/resources/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="21" selection-start="670" selection-end="670" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/lang/Class.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1404" column="30" selection-start="56858" selection-end="56868" vertical-scroll-proportion="1.3794872" vertical-offset="22245" max-vertical-offset="51782">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE-sources.jar!/org/springframework/util/ReflectionUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="493" column="27" selection-start="18708" selection-end="18708" vertical-scroll-proportion="0.0" vertical-offset="7769" max-vertical-offset="11169">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE-sources.jar!/org/springframework/beans/factory/config/SingletonBeanRegistry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="9" selection-start="2578" selection-end="2578" vertical-scroll-proportion="0.6936299" vertical-offset="11" max-vertical-offset="1989">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/TestAcrossContextBoot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="24" selection-start="2067" selection-end="2067" vertical-scroll-proportion="0.0" vertical-offset="728" max-vertical-offset="2805">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE.jar!/org/springframework/jdbc/core/JdbcTemplate.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="16" selection-start="2021" selection-end="2021" vertical-scroll-proportion="0.0" vertical-offset="591" max-vertical-offset="4726">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-jdbc/4.0.0.RELEASE/spring-jdbc-4.0.0.RELEASE-sources.jar!/org/springframework/jdbc/core/JdbcTemplate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="297" column="16" selection-start="10872" selection-end="10872" vertical-scroll-proportion="4.991987" vertical-offset="710" max-vertical-offset="25687">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossInstallerRepository.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="0" selection-start="755" selection-end="755" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="816">
+          <folding>
+            <marker date="1389199726197" expanded="true" signature="564:632" placeholder="select versi..ACROSSMODULES..." />
+            <marker date="1389199726197" expanded="true" signature="999:1100" placeholder="update ACROS..." />
+            <marker date="1389199726197" expanded="true" signature="1327:1426" placeholder="insert into ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="296" column="76" selection-start="11320" selection-end="11320" vertical-scroll-proportion="0.26331967" vertical-offset="4639" max-vertical-offset="5746">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1377#1385#0" expanded="true" />
+            <element signature="e#8172#8198#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
