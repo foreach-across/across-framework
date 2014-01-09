@@ -2,20 +2,19 @@ package com.foreach.across.core;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AcrossBeanCopyHelper
 {
 	private Map<String, Object> singletonsCopied = new HashMap<String, Object>();
 	private Map<String, BeanDefinition> definitionsCopied = new HashMap<String, BeanDefinition>();
+	private List<ApplicationListener> applicationListeners = new LinkedList<ApplicationListener>();
 
 	public Map<String, Object> getSingletonsCopied() {
 		return singletonsCopied;
@@ -25,11 +24,21 @@ public class AcrossBeanCopyHelper
 		return definitionsCopied;
 	}
 
-	public void copy( GenericApplicationContext child, GenericApplicationContext parent ) {
+	public List<ApplicationListener> getApplicationListeners() {
+		return applicationListeners;
+	}
+
+	public void copy( ConfigurableApplicationContext child, ConfigurableApplicationContext parent ) {
 		List<String> singletons = Arrays.asList( child.getBeanFactory().getSingletonNames() );
 
+		BeanDefinitionRegistry registry = null;
+
+		if ( parent instanceof BeanDefinitionRegistry ) {
+			registry = (BeanDefinitionRegistry) parent;
+		}
+
 		for ( String defName : child.getBeanDefinitionNames() ) {
-			BeanDefinition def = child.getBeanDefinition( defName );
+			BeanDefinition def = child.getBeanFactory().getBeanDefinition( defName );
 
 			if ( !StringUtils.startsWithIgnoreCase( defName, "org.springframework" ) ) {
 
@@ -40,21 +49,31 @@ public class AcrossBeanCopyHelper
 
 					singletonsCopied.put( defName, bean );
 
-					if ( !( def instanceof GenericBeanDefinition ) ) {
-						parent.registerBeanDefinition( defName, def );
+					if ( !( def instanceof GenericBeanDefinition ) && registry != null ) {
+						registry.registerBeanDefinition( defName, def );
 						definitionsCopied.put( defName, def );
 					}
-
-					if ( bean instanceof ApplicationListener ) {
-						parent.addApplicationListener( (ApplicationListener) bean );
-					}
 				}
-				else {
+				else if ( registry != null ) {
 					// Copy definition
-					parent.registerBeanDefinition( defName, def );
+					registry.registerBeanDefinition( defName, def );
 
 					definitionsCopied.put( defName, def );
 				}
+			}
+		}
+	}
+
+	public void copyApplicationListeners( ConfigurableApplicationContext child, ConfigurableApplicationContext parent ) {
+		ConfigurableListableBeanFactory beanFactory = child.getBeanFactory();
+		List<String> singletons = Arrays.asList( child.getBeanFactory().getSingletonNames() );
+
+		for ( String name : singletons ) {
+			Object singleton = beanFactory.getSingleton( name );
+
+			if ( singleton instanceof ApplicationListener ) {
+				applicationListeners.add( (ApplicationListener) singleton );
+				parent.addApplicationListener( (ApplicationListener) singleton );
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package com.foreach.across.core;
 
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
@@ -34,23 +35,36 @@ public class AcrossContext
 
 	private boolean isBootstrapped = false;
 
-	private AnnotationConfigApplicationContext ctx;
+	private ConfigurableApplicationContext applicationContext;
 
 	public AcrossContext() {
-		ctx = new AnnotationConfigApplicationContext();
+		applicationContext = createApplicationContext( null );
 
-		modules.addFirst( new AcrossCoreModule() );
+		setDefaultModules();
 	}
 
 	public AcrossContext( ApplicationContext parentContext ) {
-		ctx = new AnnotationConfigApplicationContext();
-		ctx.setParent( parentContext );
+		applicationContext = createApplicationContext( parentContext );
 
-		if ( parentContext.getEnvironment() instanceof ConfigurableEnvironment ) {
-			ctx.setEnvironment( (ConfigurableEnvironment) parentContext.getEnvironment() );
+		setDefaultModules();
+	}
+
+	protected void setDefaultModules() {
+		modules.addFirst( new AcrossCoreModule() );
+	}
+
+	protected ConfigurableApplicationContext createApplicationContext( ApplicationContext parent ) {
+		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
+
+		if ( parent != null ) {
+			applicationContext.setParent( parent );
+
+			if ( parent.getEnvironment() instanceof ConfigurableEnvironment ) {
+				applicationContext.setEnvironment( (ConfigurableEnvironment) parent.getEnvironment() );
+			}
 		}
 
-		modules.addFirst( new AcrossCoreModule() );
+		return applicationContext;
 	}
 
 	public DataSource getDataSource() {
@@ -101,7 +115,7 @@ public class AcrossContext
 	}
 
 	public ApplicationContext getApplicationContext() {
-		return ctx;
+		return applicationContext;
 	}
 
 	public void setBeanFactoryPostProcessors( BeanFactoryPostProcessor... postProcessors ) {
@@ -117,8 +131,12 @@ public class AcrossContext
 		if ( !isBootstrapped ) {
 			isBootstrapped = true;
 
-			new AcrossBootstrap().bootstrap( this );
+			new AcrossBootstrap( createBootstrapHandler() ).bootstrap( this );
 		}
+	}
+
+	protected AcrossBootstrapApplicationContextHandler createBootstrapHandler() {
+		return new AcrossBootstrapApplicationContextHandler();
 	}
 
 	@PreDestroy

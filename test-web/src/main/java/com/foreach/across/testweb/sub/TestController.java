@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class TestController
 {
-	@Autowired
-	private WebTester webTester;
-
 	public TestController() {
 		System.out.println("hm");
 	}

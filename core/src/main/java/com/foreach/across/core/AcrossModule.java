@@ -8,11 +8,13 @@ public abstract class AcrossModule
 
 	private ApplicationContext applicationContext;
 
+	private boolean exposeBeansToParent = true;
+
 	public AcrossContext getContext() {
 		return context;
 	}
 
-	void setContext( AcrossContext context ) {
+	protected void setContext( AcrossContext context ) {
 		this.context = context;
 	}
 
@@ -22,6 +24,14 @@ public abstract class AcrossModule
 
 	void setApplicationContext( ApplicationContext applicationContext ) {
 		this.applicationContext = applicationContext;
+	}
+
+	public boolean isExposeBeansToParent() {
+		return exposeBeansToParent;
+	}
+
+	public void setExposeBeansToParent( boolean exposeBeansToParent ) {
+		this.exposeBeansToParent = exposeBeansToParent;
 	}
 
 	/**

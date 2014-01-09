@@ -2,8 +2,10 @@ package com.foreach.across.testweb;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.debugweb.DebugWebModule;
+import com.foreach.across.modules.web.AcrossWebContext;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.ControllerOnlyRequestMappingHandlerMapping;
+import com.foreach.across.testweb.other.TestWebOtherModule;
 import com.foreach.across.testweb.sub.TestWebModule;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +17,28 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.sql.DataSource;
 
-@EnableWebMvc
+//@EnableWebMvc
 @Configuration
 public class TestWebConfig
 {
 	@Bean
 	@Autowired
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
-		AcrossContext context = new AcrossContext( applicationContext );
+		AcrossWebContext context = new AcrossWebContext( applicationContext );
 		context.setDataSource( acrossDataSource() );
 		context.setAllowInstallers( false );
 
-		context.addModule( acrossWebModule() );
-		context.addModule( debugWebModule() );
+		//context.addModule( acrossWebModule() );
+		//context.addModule( debugWebModule() );
+		context.addModule( otherModule() );
 		context.addModule( testWebModule() );
 
 		return context;
+	}
+
+	@Bean
+	public TestWebOtherModule otherModule() {
+		return new TestWebOtherModule();
 	}
 
 	@Bean
@@ -49,15 +57,6 @@ public class TestWebConfig
 		debugWebModule.setRootPath( "/test" );
 
 		return debugWebModule;
-	}
-
-	@Bean
-	public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-		ControllerOnlyRequestMappingHandlerMapping mapping = new ControllerOnlyRequestMappingHandlerMapping();
-		mapping.setOrder( 0 );
-//		mapping.setInterceptors( getInterceptors() );
-
-		return mapping;
 	}
 
 	@Bean

@@ -33,7 +33,7 @@ public class AcrossCoreSchemaInstaller
 			liquibase.setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );
 			liquibase.setDataSource( acrossContext.getDataSource() );
 
-			beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false );
+			beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
 			beanFactory.initializeBean( liquibase, "" );
 		}
 		else {

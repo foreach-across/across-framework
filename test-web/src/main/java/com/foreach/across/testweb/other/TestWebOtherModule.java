@@ -1,12 +1,13 @@
-package com.foreach.across.testweb.sub;
+package com.foreach.across.testweb.other;
 
 import com.foreach.across.core.AcrossModule;
 
-public class TestWebModule extends AcrossModule
+
+public class TestWebOtherModule extends AcrossModule
 {
 	@Override
 	public String getName() {
-		return "TestWebModule";
+		return "TestWebOtherModule";
 	}
 
 	@Override

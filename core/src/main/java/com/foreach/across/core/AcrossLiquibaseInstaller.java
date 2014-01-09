@@ -35,7 +35,7 @@ public abstract class AcrossLiquibaseInstaller
 		liquibase.setChangeLog( changelog );
 		liquibase.setDataSource( dataSource );
 
-		beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false );
+		beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
 		beanFactory.initializeBean( liquibase, "" );
 	}
 }
