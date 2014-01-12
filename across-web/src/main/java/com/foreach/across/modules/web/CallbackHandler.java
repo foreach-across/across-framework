@@ -1,4 +1,4 @@
-package com.foreach.across.modules.web.scan;
+package com.foreach.across.modules.web;
 
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import org.springframework.context.ApplicationContext;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-@Component
+
 public class CallbackHandler implements ApplicationListener<AcrossContextBootstrappedEvent>
 {
 	//@Autowired

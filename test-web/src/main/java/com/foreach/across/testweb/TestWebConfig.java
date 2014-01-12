@@ -28,10 +28,11 @@ public class TestWebConfig
 		context.setDataSource( acrossDataSource() );
 		context.setAllowInstallers( false );
 
-		//context.addModule( acrossWebModule() );
+		context.addModule( acrossWebModule() );
 		//context.addModule( debugWebModule() );
 		context.addModule( otherModule() );
 		context.addModule( testWebModule() );
+
 
 		return context;
 	}

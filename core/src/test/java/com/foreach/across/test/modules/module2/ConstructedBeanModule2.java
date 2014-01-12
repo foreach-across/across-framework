@@ -1,10 +1,11 @@
 package com.foreach.across.test.modules.module2;
 
+import com.foreach.across.test.modules.TestModuleEventListener;
 import com.foreach.across.test.modules.module1.ConstructedBeanModule1;
 import com.foreach.across.test.modules.module1.ScannedBeanModule1;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ConstructedBeanModule2
+public class ConstructedBeanModule2 extends TestModuleEventListener
 {
 	private final String text;
 

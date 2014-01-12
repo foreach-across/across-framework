@@ -1,6 +1,8 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.test.modules.TestContextEventListener;
+import com.foreach.across.test.modules.TestEvent;
 import com.foreach.across.test.modules.module1.ConstructedBeanModule1;
 import com.foreach.across.test.modules.module1.ScannedBeanModule1;
 import com.foreach.across.test.modules.module1.ScannedPrototypeBeanModule1;
@@ -8,10 +10,12 @@ import com.foreach.across.test.modules.module1.TestModule1;
 import com.foreach.across.test.modules.module2.ConstructedBeanModule2;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;
+import com.google.common.eventbus.EventBus;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +36,9 @@ import static org.junit.Assert.*;
 public class TestAcrossContextBoot
 {
 	@Autowired
+	private AcrossContext context;
+
+	@Autowired
 	private TestModule1 module1;
 
 	@Autowired
@@ -50,10 +57,18 @@ public class TestAcrossContextBoot
 	private ConstructedBeanModule2 constructedBeanModule2;
 
 	@Autowired
+	@Qualifier("refreshable")
+	private ConstructedBeanModule1 refreshedBeanModule1;
+
+	@Autowired
 	private ScannedPrototypeBeanModule1 prototype1;
 
 	@Autowired
 	private ScannedPrototypeBeanModule1 prototype2;
+
+	@Autowired
+	@Qualifier("testListener")
+	private TestContextEventListener testListener;
 
 	@Value("${general.version}")
 	private String version;
@@ -87,13 +102,18 @@ public class TestAcrossContextBoot
 		assertSame( module2, scannedBeanModule1.getReferenceToModule2() );
 		assertNull( scannedBeanModule1.getReferenceToBeanFromModule2() );
 
-		// If beans are constructed using configs, there is a subtle difference as then references can be set after refresh
 		assertNotNull( constructedBeanModule1 );
 		assertEquals( "helloFromModule1", constructedBeanModule1.getText() );
 		assertSame( scannedBeanModule1, constructedBeanModule1.getScannedBeanModule1() );
-		assertSame( scannedBeanModule2, constructedBeanModule1.getScannedBeanModule2() );
+		assertNull( constructedBeanModule1.getScannedBeanModule2() );
 
-		// Module 2 however should have the references to beans from module 1
+		// The refreshable constructed bean in module 1 does hold all references
+		assertNotNull( refreshedBeanModule1 );
+		assertEquals( "helloFromModule1-refreshable", refreshedBeanModule1.getText() );
+		assertSame( scannedBeanModule1, refreshedBeanModule1.getScannedBeanModule1() );
+		assertSame( scannedBeanModule2, refreshedBeanModule1.getScannedBeanModule2() );
+
+		// Module 2 should have the references to beans from module 1
 		assertNotNull( scannedBeanModule2 );
 		assertSame( module1, scannedBeanModule2.getReferenceToModule1() );
 		assertSame( scannedBeanModule1, scannedBeanModule2.getReferenceToBeanFromModule1() );
@@ -101,13 +121,68 @@ public class TestAcrossContextBoot
 		assertNotNull( constructedBeanModule2 );
 		assertEquals( "helloFromModule2", constructedBeanModule2.getText() );
 		assertSame( scannedBeanModule1, constructedBeanModule1.getScannedBeanModule1() );
-		assertSame( scannedBeanModule2, constructedBeanModule1.getScannedBeanModule2() );
 		assertSame( constructedBeanModule1, constructedBeanModule2.getConstructedBeanModule1() );
+	}
+
+	@Test
+	public void eventsOnTheContextAreReceivedOnceByAllContextListeners() {
+		assertNotNull( scannedBeanModule1 );
+		assertNotNull( scannedBeanModule2 );
+		assertNotNull( testListener );
+		assertNotSame( scannedBeanModule1, testListener );
+		assertNotSame( scannedBeanModule2, testListener );
+
+		assertTrue( scannedBeanModule1.getEventsReceived().isEmpty() );
+		assertTrue( scannedBeanModule2.getEventsReceived().isEmpty() );
+		assertTrue( testListener.getEventsReceived().isEmpty() );
+
+		TestEvent testEvent = new TestEvent( this );
+		context.publishEvent( testEvent );
+
+		assertEquals( 1, scannedBeanModule1.getEventsReceived().size() );
+		assertEquals( 1, scannedBeanModule2.getEventsReceived().size() );
+		assertEquals( 1, testListener.getEventsReceived().size() );
+
+		assertSame( testEvent, scannedBeanModule1.getEventsReceived().get( 0 ) );
+		assertSame( testEvent, scannedBeanModule2.getEventsReceived().get( 0 ) );
+		assertSame( testEvent, testListener.getEventsReceived().get( 0 ) );
+
+		// The module listeners should not have received any event
+		assertTrue( constructedBeanModule1.getEventsReceived().isEmpty() );
+		assertTrue( constructedBeanModule2.getEventsReceived().isEmpty() );
+	}
+
+	@Test
+	public void eventsOnTheModuleAreReceivedOnceByAllModuleAndUpwardsListeners() {
+		assertNotNull( scannedBeanModule1 );
+		assertNotNull( scannedBeanModule2 );
+		assertNotNull( testListener );
+		assertNotSame( scannedBeanModule1, testListener );
+		assertNotSame( scannedBeanModule2, testListener );
+
+		assertTrue( scannedBeanModule1.getEventsReceived().isEmpty() );
+		assertTrue( scannedBeanModule2.getEventsReceived().isEmpty() );
+		assertTrue( testListener.getEventsReceived().isEmpty() );
+
+		TestEvent testEvent = new TestEvent( this );
+		module1.publishEvent( testEvent );
+
+		assertEquals( 1, scannedBeanModule1.getEventsReceived().size() );
+		assertTrue( scannedBeanModule2.getEventsReceived().isEmpty() );
+		assertEquals( 1, testListener.getEventsReceived().size() );
+
+		assertSame( testEvent, scannedBeanModule1.getEventsReceived().get( 0 ) );
+		assertSame( testEvent, testListener.getEventsReceived().get( 0 ) );
 	}
 
 	@Configuration
 	public static class Config
 	{
+		@Bean
+		public TestContextEventListener testListener() {
+			return new TestContextEventListener();
+		}
+
 		@Bean
 		public PropertySourcesPlaceholderConfigurer properties() {
 			PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();

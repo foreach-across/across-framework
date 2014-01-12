@@ -1,5 +1,6 @@
 package com.foreach.across.core;
 
+import com.foreach.across.core.events.AcrossEvent;
 import org.springframework.context.ApplicationContext;
 
 public abstract class AcrossModule
@@ -70,5 +71,16 @@ public abstract class AcrossModule
 	 * been shutdown already.
 	 */
 	public void shutdown() {
+	}
+
+	/**
+	 * Publishes an event in the ApplicationContext of this module.  All AcrossContextEventListeners from all modules,
+	 * all AcrossModuleEventListeners in this module and any other listeners in the parent ApplicationContexts will
+	 * receive this event.
+	 *
+	 * @param event Event instance that will be published.
+	 */
+	public void publishEvent( AcrossEvent event ) {
+		applicationContext.publishEvent( event );
 	}
 }

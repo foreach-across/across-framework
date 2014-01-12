@@ -7,6 +7,7 @@ public class AcrossBootstrapApplicationContextHandler
 {
 	public ConfigurableApplicationContext createModuleApplicationContext( ConfigurableApplicationContext parent,
 	                                                                      AcrossModule module ) {
+
 		AnnotationConfigApplicationContext child = new AnnotationConfigApplicationContext();
 		child.setParent( parent );
 		child.setEnvironment( parent.getEnvironment() );

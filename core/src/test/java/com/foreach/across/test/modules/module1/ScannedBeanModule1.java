@@ -1,5 +1,6 @@
 package com.foreach.across.test.modules.module1;
 
+import com.foreach.across.test.modules.TestContextEventListener;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import javax.annotation.PostConstruct;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class ScannedBeanModule1
+public class ScannedBeanModule1 extends TestContextEventListener
 {
 	public static final AtomicInteger CONSTRUCTION_COUNTER = new AtomicInteger();
 

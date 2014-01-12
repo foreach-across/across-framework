@@ -1,6 +1,8 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
+import com.foreach.across.core.events.AcrossEvent;
+import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.core.installers.AcrossCoreSchemaInstaller;
 import org.slf4j.Logger;
@@ -9,9 +11,10 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.type.MethodMetadata;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -58,6 +61,9 @@ class AcrossBootstrap
 
 	private final AcrossBootstrapApplicationContextHandler handler;
 
+	private ConfigurableApplicationContext applicationContext;
+	private AcrossEventPublisher eventPublisher;
+
 	AcrossBootstrap( AcrossBootstrapApplicationContextHandler handler ) {
 		this.handler = handler;
 	}
@@ -66,8 +72,7 @@ class AcrossBootstrap
 	 * Bootstraps all modules in the context.
 	 */
 	public void bootstrap( AcrossContext context ) {
-		ConfigurableApplicationContext applicationContext =
-				(ConfigurableApplicationContext) context.getApplicationContext();
+		applicationContext = (ConfigurableApplicationContext) context.getApplicationContext();
 
 		applicationContext.refresh();
 		applicationContext.start();
@@ -112,13 +117,7 @@ class AcrossBootstrap
 			module.bootstrap();
 
 			// Send event that this module has bootstrapped
-			AcrossModuleBootstrappedEvent e = new AcrossModuleBootstrappedEvent( context, module );
-			applicationContext.publishEvent( e );
-
-			// As beans are not yet pushed to the parent context, publish the event there as well
-			if ( parentContext != null ) {
-				parentContext.publishEvent( e );
-			}
+			publishEvent( new AcrossModuleBootstrappedEvent( context, module ) );
 
 			// Run installers after module itself has bootstrapped
 			runInstallers( context, child.getAutowireCapableBeanFactory(), installerRepository, config,
@@ -142,19 +141,61 @@ class AcrossBootstrap
 			pushDefinitionsToParent( beanHelper, parentContext );
 		}
 
-		// Bootstrap finished - publish the event on the highest level
-		AcrossContextBootstrappedEvent e =
-				new AcrossContextBootstrappedEvent( context, new ArrayList<AcrossModule>( context.getModules() ) );
-		( parentContext != null ? parentContext : applicationContext ).publishEvent( e );
+		// Refresh beans
+		refreshModuleBeans( context.getModules() );
+
+		// Bootstrap finished - publish the event
+		publishEvent( new AcrossContextBootstrappedEvent( context ) );
 	}
 
-	private void pushDefinitionsToParent( AcrossBeanCopyHelper beanCopyHelper,
-	                                      ConfigurableApplicationContext applicationContext ) {
+	private void publishEvent( AcrossEvent event ) {
+		if ( eventPublisher == null ) {
+			eventPublisher = applicationContext.getBean( AcrossEventPublisher.class );
+		}
 
+		eventPublisher.publish( event );
+	}
+
+	private void refreshModuleBeans( Collection<AcrossModule> modules ) {
+
+		for ( AcrossModule module : modules ) {
+			ApplicationContext moduleContext = module.getApplicationContext();
+			ConfigurableListableBeanFactory beanFactory =
+					(ConfigurableListableBeanFactory) moduleContext.getAutowireCapableBeanFactory();
+
+			Set<Object> refreshableBeans = new HashSet<Object>();
+
+			// Add all singletons having the Refreshable annotation
+			for ( Object singleton : moduleContext.getBeansWithAnnotation( Refreshable.class ).values() ) {
+				refreshableBeans.add( singleton );
+			}
+
+			// Get all bean definitions declared by method having the annotation
+			for ( String name : beanFactory.getBeanDefinitionNames() ) {
+				BeanDefinition def = beanFactory.getBeanDefinition( name );
+
+				if ( def.getSource() instanceof MethodMetadata ) {
+					MethodMetadata metadata = (MethodMetadata) def.getSource();
+
+					if ( metadata.isAnnotated( Refreshable.class.getName() ) && def.isSingleton() ) {
+						refreshableBeans.add( beanFactory.getBean( name ) );
+					}
+				}
+			}
+
+			for ( Object singleton : refreshableBeans ) {
+				beanFactory.autowireBeanProperties( singleton, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+			}
+		}
+	}
+
+	private void pushDefinitionsToParent(
+			AcrossBeanCopyHelper beanCopyHelper, ConfigurableApplicationContext applicationContext ) {
+/*
 		for ( ApplicationListener listener : beanCopyHelper.getApplicationListeners() ) {
 			applicationContext.addApplicationListener( listener );
 		}
-
+*/
 		for ( Map.Entry<String, Object> singleton : beanCopyHelper.getSingletonsCopied().entrySet() ) {
 			applicationContext.getBeanFactory().registerSingleton( singleton.getKey(), singleton.getValue() );
 		}
@@ -167,21 +208,23 @@ class AcrossBootstrap
 		}
 	}
 
-	private void runInstallers( AcrossContext context,
-	                            AutowireCapableBeanFactory beanFactory,
-	                            AcrossInstallerRepository repository,
-	                            Collection<ModuleInstallationConfig> installationConfigs,
-	                            InstallerPhase phase ) {
+	private void runInstallers(
+			AcrossContext context,
+			AutowireCapableBeanFactory beanFactory,
+			AcrossInstallerRepository repository,
+			Collection<ModuleInstallationConfig> installationConfigs,
+			InstallerPhase phase ) {
 		for ( ModuleInstallationConfig config : installationConfigs ) {
 			runInstallers( context, beanFactory, repository, config, phase );
 		}
 	}
 
-	private void runInstallers( AcrossContext context,
-	                            AutowireCapableBeanFactory beanFactory,
-	                            AcrossInstallerRepository repository,
-	                            ModuleInstallationConfig config,
-	                            InstallerPhase phase ) {
+	private void runInstallers(
+			AcrossContext context,
+			AutowireCapableBeanFactory beanFactory,
+			AcrossInstallerRepository repository,
+			ModuleInstallationConfig config,
+			InstallerPhase phase ) {
 		for ( Object installer : config.getInstallers() ) {
 			Installer doc = installer.getClass().getAnnotation( Installer.class );
 
@@ -216,9 +259,8 @@ class AcrossBootstrap
 		}
 	}
 
-	private Collection<ModuleInstallationConfig> buildModuleConfigs( AcrossContext context,
-	                                                                 AcrossInstallerRepository repository,
-	                                                                 Collection<AcrossModule> modules ) {
+	private Collection<ModuleInstallationConfig> buildModuleConfigs(
+			AcrossContext context, AcrossInstallerRepository repository, Collection<AcrossModule> modules ) {
 		List<ModuleInstallationConfig> list = new ArrayList<ModuleInstallationConfig>( modules.size() );
 
 		for ( AcrossModule module : modules ) {
@@ -283,9 +325,10 @@ class AcrossBootstrap
 		return list;
 	}
 
-	private void prepareBasicContext( AcrossContext acrossContext,
-	                                  ConfigurableApplicationContext applicationContext,
-	                                  ConfigurableListableBeanFactory beanFactory ) {
+	private void prepareBasicContext(
+			AcrossContext acrossContext,
+			ConfigurableApplicationContext applicationContext,
+			ConfigurableListableBeanFactory beanFactory ) {
 		addPostProcessors( applicationContext, acrossContext.getBeanFactoryPostProcessors() );
 
 		beanFactory.registerSingleton( "acrossContext", acrossContext );
@@ -300,8 +343,8 @@ class AcrossBootstrap
 		registerCoreModule( acrossContext, beanFactory );
 	}
 
-	private void addPostProcessors( ConfigurableApplicationContext applicationContext,
-	                                BeanFactoryPostProcessor[] postProcessors ) {
+	private void addPostProcessors(
+			ConfigurableApplicationContext applicationContext, BeanFactoryPostProcessor[] postProcessors ) {
 		for ( BeanFactoryPostProcessor postProcessor : postProcessors ) {
 			applicationContext.addBeanFactoryPostProcessor( postProcessor );
 		}
@@ -328,8 +371,8 @@ class AcrossBootstrap
 		}
 	}
 
-	private AcrossInstallerRepository fetchInstallerRepository( AcrossContext context,
-	                                                            ConfigurableListableBeanFactory beanFactory ) {
+	private AcrossInstallerRepository fetchInstallerRepository(
+			AcrossContext context, ConfigurableListableBeanFactory beanFactory ) {
 		if ( beanFactory.getBeansOfType( AcrossInstallerRepository.class ).isEmpty() ) {
 			AcrossInstallerRepository installerRepository = new AcrossInstallerRepository( context.getDataSource() );
 			beanFactory.autowireBeanProperties( installerRepository, AutowireCapableBeanFactory.AUTOWIRE_NO, false );

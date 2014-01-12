@@ -5,7 +5,6 @@ import com.foreach.across.core.AcrossModule;
 public class AcrossWebModule extends AcrossModule
 {
 	public AcrossWebModule() {
-//setExposeBeansToParent( false );
 	}
 
 	@Override
@@ -25,6 +24,6 @@ public class AcrossWebModule extends AcrossModule
 
 	@Override
 	public String[] getComponentScanPackages() {
-		return new String[] { "com.foreach.across.modules.web.scan" };
+		return new String[] { "com.foreach.across.modules.web.menu", "com.foreach.across.modules.web.ui" };
 	}
 }

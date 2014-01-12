@@ -1,12 +1,13 @@
 package com.foreach.across.core;
 
+import com.foreach.across.core.events.AcrossContextEventListener;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.ApplicationEventMulticaster;
 
 import java.util.*;
 
@@ -33,8 +34,8 @@ public class AcrossBeanCopyHelper
 
 		BeanDefinitionRegistry registry = null;
 
-		if ( parent instanceof BeanDefinitionRegistry ) {
-			registry = (BeanDefinitionRegistry) parent;
+		if ( parent.getBeanFactory() instanceof BeanDefinitionRegistry ) {
+			registry = (BeanDefinitionRegistry) parent.getBeanFactory();
 		}
 
 		for ( String defName : child.getBeanDefinitionNames() ) {
@@ -49,10 +50,10 @@ public class AcrossBeanCopyHelper
 
 					singletonsCopied.put( defName, bean );
 
-					if ( !( def instanceof GenericBeanDefinition ) && registry != null ) {
-						registry.registerBeanDefinition( defName, def );
-						definitionsCopied.put( defName, def );
-					}
+//					if ( !( def instanceof GenericBeanDefinition ) && registry != null ) {
+//						registry.registerBeanDefinition( defName, def );
+//						definitionsCopied.put( defName, def );
+//					}
 				}
 				else if ( registry != null ) {
 					// Copy definition
@@ -64,17 +65,16 @@ public class AcrossBeanCopyHelper
 		}
 	}
 
-	public void copyApplicationListeners( ConfigurableApplicationContext child, ConfigurableApplicationContext parent ) {
-		ConfigurableListableBeanFactory beanFactory = child.getBeanFactory();
-		List<String> singletons = Arrays.asList( child.getBeanFactory().getSingletonNames() );
+	public void copyApplicationListeners(
+			ConfigurableApplicationContext child, ConfigurableApplicationContext parent ) {
+		ApplicationEventMulticaster childMulticaster = child.getBean( ApplicationEventMulticaster.class );
+		Collection<AcrossContextEventListener> contextEventListeners =
+				child.getBeansOfType( AcrossContextEventListener.class ).values();
 
-		for ( String name : singletons ) {
-			Object singleton = beanFactory.getSingleton( name );
-
-			if ( singleton instanceof ApplicationListener ) {
-				applicationListeners.add( (ApplicationListener) singleton );
-				parent.addApplicationListener( (ApplicationListener) singleton );
-			}
+		// Only an AcrossContextEventListener is moved up to the parent context and removed from the child
+		for ( AcrossContextEventListener bean : contextEventListeners ) {
+			parent.addApplicationListener( bean );
+			childMulticaster.removeApplicationListener( bean );
 		}
 	}
 }
