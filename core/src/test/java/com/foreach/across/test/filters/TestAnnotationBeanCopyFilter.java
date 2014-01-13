@@ -1,11 +1,12 @@
 package com.foreach.across.test.filters;
 
-import com.foreach.across.core.util.ApplicationContextScanner;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
+import com.foreach.across.core.filters.ClassBeanFilter;
 import com.foreach.across.core.filters.PackageBeanFilter;
+import com.foreach.across.core.util.ApplicationContextScanner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,40 @@ public class TestAnnotationBeanCopyFilter
 
 	@Autowired
 	private BeanWithRefreshableAnnotation otherBeanWithExposedAnnotation;
+
+	@Test
+	public void filterByClass() {
+		BeanFilter filter = new ClassBeanFilter( BeanWithServiceAnnotation.class );
+
+		Map<String, Object> beans = ApplicationContextScanner.findSingletonsMatching( applicationContext, filter );
+		assertEquals( 1, beans.size() );
+		assertSame( beanWithServiceAnnotation, beans.get( "beanWithServiceAnnotation" ) );
+
+		Map<String, BeanDefinition> definitions =
+				ApplicationContextScanner.findBeanDefinitionsMatching( applicationContext, filter );
+		assertEquals( 2, definitions.size() );
+		assertTrue( definitions.containsKey( "beanWithServiceAnnotation" ) );
+		assertTrue( definitions.containsKey( "prototypeExposedBean" ) );
+	}
+
+	@Test
+	public void filterByInterface() {
+		BeanFilter filter = new ClassBeanFilter( Marker.class );
+
+		Map<String, Object> beans = ApplicationContextScanner.findSingletonsMatching( applicationContext, filter );
+		assertEquals( 3, beans.size() );
+		assertSame( beanWithExposedAnnotation, beans.get( "beanWithExposedAnnotation" ) );
+		assertSame( otherBeanWithRefreshableAnnotation, beans.get( "otherBeanWithRefreshableAnnotation" ) );
+		assertSame( beanWithServiceAnnotation, beans.get( "beanWithServiceAnnotation" ) );
+
+		Map<String, BeanDefinition> definitions =
+				ApplicationContextScanner.findBeanDefinitionsMatching( applicationContext, filter );
+		assertEquals( 4, definitions.size() );
+		assertTrue( definitions.containsKey( "beanWithServiceAnnotation" ) );
+		assertTrue( definitions.containsKey( "prototypeExposedBean" ) );
+		assertTrue( definitions.containsKey( "beanWithExposedAnnotation" ) );
+		assertTrue( definitions.containsKey( "otherBeanWithRefreshableAnnotation" ) );
+	}
 
 	@Test
 	public void filterByPackage() {
@@ -173,8 +208,13 @@ public class TestAnnotationBeanCopyFilter
 		}
 	}
 
+	public static interface Marker
+	{
+
+	}
+
 	@Service
-	public static class BeanWithServiceAnnotation
+	public static class BeanWithServiceAnnotation implements Marker
 	{
 	}
 
@@ -184,7 +224,7 @@ public class TestAnnotationBeanCopyFilter
 	}
 
 	@Exposed
-	public static class BeanWithExposedAnnotation
+	public static class BeanWithExposedAnnotation implements Marker
 	{
 	}
 

@@ -1,7 +1,9 @@
 package com.foreach.across.core;
 
-import com.foreach.across.core.util.ApplicationContextScanner;
 import com.foreach.across.core.filters.BeanFilter;
+import com.foreach.across.core.util.ApplicationContextScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -12,6 +14,8 @@ import java.util.Map;
 
 public class AcrossBeanCopyHelper
 {
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossBeanCopyHelper.class );
+
 	private Map<String, Object> singletonsCopied = new HashMap<String, Object>();
 	private Map<String, BeanDefinition> definitionsCopied = new HashMap<String, BeanDefinition>();
 
@@ -47,6 +51,8 @@ public class AcrossBeanCopyHelper
 		}
 
 		for ( Map.Entry<String, Object> singleton : beans.entrySet() ) {
+			LOG.debug( "Exposing bean to parent context: {}", singleton );
+
 			parentFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			singletonsCopied.put( singleton.getKey(), singleton.getValue() );
 		}

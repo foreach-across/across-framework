@@ -1,5 +1,6 @@
 package com.foreach.across.core.filters;
 
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.MethodMetadata;
@@ -21,8 +22,9 @@ public class AnnotationBeanFilter implements BeanFilter
 
 	public boolean apply( Object bean, BeanDefinition definition ) {
 		if ( bean != null ) {
+			Class beanClass = AopUtils.getTargetClass( bean );
 			for ( Class<? extends Annotation> annotation : annotations ) {
-				if ( AnnotationUtils.getAnnotation( bean.getClass(), annotation ) != null ) {
+				if ( AnnotationUtils.getAnnotation( beanClass, annotation ) != null ) {
 					return true;
 				}
 			}

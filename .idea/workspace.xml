@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" name="Default" comment="">
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\test\filters\AnnotationBeanFilter.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\test\filters\BeanFilter.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\test\filters\PackageBeanFilter.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AbstractNameBeanFilter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilterComposite.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/ClassBeanFilter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/util/ApplicationContextScanner.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/util/ApplicationContextScanner.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/pom.xml" afterPath="$PROJECT_DIR$/core/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -74,64 +74,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="TestWebConfig.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java">
+      <file leaf-file-name="AcrossBeanCopyHelper.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="42" column="40" selection-start="1551" selection-end="1551" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1105">
+            <state line="42" column="49" selection-start="1583" selection-end="1583" vertical-scroll-proportion="0.0" vertical-offset="263" max-vertical-offset="1037">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ExtensionMenuGenerator.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/ExtensionMenuGenerator.java">
+      <file leaf-file-name="AnnotationBeanFilter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="13" selection-start="283" selection-end="283" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="306">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TestController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="13" selection-start="180" selection-end="180" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="306">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TestWebModule.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebModule.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="0" selection-start="270" selection-end="270" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SpecificUiContextFactory.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/SpecificUiContextFactory.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="0" selection-start="576" selection-end="576" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="306">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TestWebWebConfig.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="13" selection-start="1014" selection-end="1014" vertical-scroll-proportion="0.0" vertical-offset="935" max-vertical-offset="1326">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BeanFilter.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="103" selection-start="627" selection-end="627" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
+            <state line="26" column="61" selection-start="965" selection-end="965" vertical-scroll-proportion="0.0" vertical-offset="160" max-vertical-offset="1411">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -139,28 +94,88 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/core/pom.xml">
+      <file leaf-file-name="PackageBeanFilter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="74" selection-start="529" selection-end="529" vertical-scroll-proportion="0.30357143" vertical-offset="0" max-vertical-offset="1411">
+            <state line="7" column="50" selection-start="211" selection-end="211" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestOtherController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/TestOtherController.java">
+      <file leaf-file-name="AbstractNameBeanFilter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AbstractNameBeanFilter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="33" selection-start="795" selection-end="795" vertical-scroll-proportion="0.0" vertical-offset="187" max-vertical-offset="578">
+            <state line="10" column="1" selection-start="362" selection-end="363" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1241">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#522#523#0" expanded="true" />
+                <element signature="e#548#549#0" expanded="true" />
+                <element signature="e#604#605#0" expanded="true" />
+                <element signature="e#643#644#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ClassBeanFilter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/ClassBeanFilter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="5" selection-start="293" selection-end="293" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestWebOtherModule.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/TestWebOtherModule.java">
+      <file leaf-file-name="TestAnnotationBeanCopyFilter.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="13" selection-start="103" selection-end="103" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="391">
+            <state line="76" column="23" selection-start="3115" selection-end="3115" vertical-scroll-proportion="0.5169147" vertical-offset="910" max-vertical-offset="4029">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Class.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/lang/Class.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="422" column="26" selection-start="17946" selection-end="17946" vertical-scroll-proportion="0.0" vertical-offset="5677" max-vertical-offset="51782">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AopUtils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE-sources.jar!/org/springframework/aop/support/AopUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="108" column="77" selection-start="3934" selection-end="3934" vertical-scroll-proportion="0.0" vertical-offset="1153" max-vertical-offset="5185">
+              <folding>
+                <element signature="e#0#12469#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#8355#8365#0" expanded="false" />
+                <element signature="e#10774#10783#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BeanFilter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="7" selection-start="379" selection-end="379" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BeanFilterComposite.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilterComposite.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="57" selection-start="348" selection-end="348" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="646">
               <folding />
             </state>
           </provider>
@@ -184,9 +199,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossContextBootstrappedEvent.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossModuleBootstrappedEvent.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossEvent.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/BeanScanner.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/TestContextEventListener.java" />
@@ -208,18 +220,14 @@
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AnnotationBeanCopyFilter.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanCopyFilter.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/InstallerPhase.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/core/filters/TestAnnotationBeanCopyFilter.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" />
-        <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ScannedBeanModule1.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/TestModule1Config.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/ScannedBeanModule2.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/TestModule2Config.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ScannedPrototypeBeanModule1.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/ApplicationContextScanner.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/annotations/PostRefresh.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContextUtil.java" />
@@ -234,7 +242,14 @@
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/filters/BeanFilter.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java" />
         <option value="$PROJECT_DIR$/core/pom.xml" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilterComposite.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AbstractNameBeanFilter.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/ClassBeanFilter.java" />
+        <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java" />
       </list>
     </option>
   </component>
@@ -530,6 +545,36 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="filters" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="across-web" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -698,63 +743,7 @@
       <recent name="com.foreach.across.test.modules.module2" />
     </key>
   </component>
-  <component name="RunManager" selected="Tomcat Server.Test Web">
-    <configuration default="false" name="TestAnnotationBeanCopyFilter.filterOnRefreshableAnnotation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="com.foreach.across.test.filters.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="across-core" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.across.test.filters" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.filters.TestAnnotationBeanCopyFilter" />
-      <option name="METHOD_NAME" value="filterOnRefreshableAnnotation" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="TestAnnotationBeanCopyFilter.filterOnServiceAndExposedAnnotation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="com.foreach.across.test.filters.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="across-core" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.across.test.filters" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.filters.TestAnnotationBeanCopyFilter" />
-      <option name="METHOD_NAME" value="filterOnServiceAndExposedAnnotation" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="JUnit.TestAnnotationBeanCopyFilter.filterByInterface">
     <configuration default="false" name="TestAnnotationBeanCopyFilter" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -830,6 +819,62 @@
       <option name="PACKAGE_NAME" value="com.foreach.across.test" />
       <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.TestAcrossContextBoot" />
       <option name="METHOD_NAME" value="allAcrossEventHandlersShouldReceiveTheEvents" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TestAnnotationBeanCopyFilter.filterByClass" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.foreach.across.test.filters.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="across-core" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.foreach.across.test.filters" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.filters.TestAnnotationBeanCopyFilter" />
+      <option name="METHOD_NAME" value="filterByClass" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TestAnnotationBeanCopyFilter.filterByInterface" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.foreach.across.test.filters.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="across-core" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.foreach.across.test.filters" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.filters.TestAnnotationBeanCopyFilter" />
+      <option name="METHOD_NAME" value="filterByInterface" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -1140,19 +1185,19 @@
     </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Tomcat Server.Test Web" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter.filterOnRefreshableAnnotation" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter.filterOnServiceAndExposedAnnotation" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.moduleContextLoadingOrder" />
-      <item index="5" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.allAcrossEventHandlersShouldReceiveTheEvents" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.moduleContextLoadingOrder" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.allAcrossEventHandlersShouldReceiveTheEvents" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter.filterByClass" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter.filterByInterface" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.moduleContextLoadingOrder" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.allAcrossEventHandlersShouldReceiveTheEvents" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter" />
-        <item index="3" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter.filterOnServiceAndExposedAnnotation" />
-        <item index="4" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter.filterOnRefreshableAnnotation" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter.filterByInterface" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter.filterByClass" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.moduleContextLoadingOrder" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.allAcrossEventHandlersShouldReceiveTheEvents" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.TestAnnotationBeanCopyFilter" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -1191,12 +1236,12 @@
       <workItem from="1389287032965" duration="891000" />
       <workItem from="1389291581048" duration="768000" />
       <workItem from="1389432698052" duration="38520000" />
-      <workItem from="1389597488446" duration="15394000" />
+      <workItem from="1389597488446" duration="21894000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="119007000" />
+    <option name="totallyTimeSpent" value="125507000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1236,7 +1281,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6615385" sideWeight="0.4114249" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32681563" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32681563" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1244,7 +1289,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32862645" sideWeight="0.600779" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34146342" sideWeight="0.53333336" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26443204" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26443204" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32947233" sideWeight="0.60375494" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -1310,48 +1355,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE-sources.jar!/org/springframework/core/type/classreading/MethodMetadataReadingVisitor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="56" selection-start="1534" selection-end="1534" vertical-scroll-proportion="0.28721175" vertical-offset="169" max-vertical-offset="2023">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE-sources.jar!/org/springframework/core/type/MethodMetadata.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="51" selection-start="1090" selection-end="1090" vertical-scroll-proportion="-0.1376673" vertical-offset="361" max-vertical-offset="884">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/lang/Class.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="98" column="10" selection-start="3681" selection-end="3681" vertical-scroll-proportion="0.33333334" vertical-offset="688" max-vertical-offset="51782">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/lang/reflect/AnnotatedElement.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="17" selection-start="1506" selection-end="1506" vertical-scroll-proportion="0.8003247" vertical-offset="51" max-vertical-offset="1530">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/InstallerPhase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="12" selection-start="732" selection-end="732" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="425">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreSchemaInstaller.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="13" selection-start="445" selection-end="445" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="731">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="7" column="13" selection-start="359" selection-end="359" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
@@ -1366,15 +1369,6 @@
             <marker date="1389612876146" expanded="true" signature="-1:-1" placeholder="select versi..ACROSSMODULES..." />
             <marker date="1389612876146" expanded="true" signature="-1:-1" placeholder="update ACROS..." />
             <marker date="1389612876146" expanded="true" signature="-1:-1" placeholder="insert into ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="0" selection-start="1625" selection-end="1625" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="1105">
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1404,15 +1398,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="62" column="34" selection-start="2980" selection-end="2980" vertical-scroll-proportion="0.0" vertical-offset="619" max-vertical-offset="1989">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="38" selection-start="2036" selection-end="2036" vertical-scroll-proportion="0.0" vertical-offset="636" max-vertical-offset="1377">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1462,15 +1447,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="75" selection-start="1657" selection-end="1657" vertical-scroll-proportion="0.0" vertical-offset="365" max-vertical-offset="3298">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/ScannedBeanModule2.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="8" selection-start="567" selection-end="567" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
@@ -1499,13 +1475,6 @@
             <element signature="e#2288#2304#0" expanded="true" />
             <element signature="e#3186#3210#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="0" selection-start="2352" selection-end="2352" vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="986">
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1683,19 +1652,104 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/core/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="0" selection-start="545" selection-end="545" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1683">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="49" selection-start="1583" selection-end="1583" vertical-scroll-proportion="0.0" vertical-offset="263" max-vertical-offset="1037">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE.jar!/org/springframework/aop/support/AopUtils.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="37" selection-start="866" selection-end="866" vertical-scroll-proportion="0.0" vertical-offset="223" max-vertical-offset="935">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-aop/4.0.0.RELEASE/spring-aop-4.0.0.RELEASE-sources.jar!/org/springframework/aop/support/AopUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="108" column="77" selection-start="3934" selection-end="3934" vertical-scroll-proportion="0.0" vertical-offset="1153" max-vertical-offset="5185">
+          <folding>
+            <element signature="e#0#12469#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#8355#8365#0" expanded="false" />
+            <element signature="e#10774#10783#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="103" selection-start="627" selection-end="627" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
+        <state line="12" column="7" selection-start="379" selection-end="379" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/pom.xml">
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="74" selection-start="529" selection-end="529" vertical-scroll-proportion="0.30357143" vertical-offset="0" max-vertical-offset="1411">
+        <state line="26" column="61" selection-start="965" selection-end="965" vertical-scroll-proportion="0.0" vertical-offset="160" max-vertical-offset="1411">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilterComposite.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="57" selection-start="348" selection-end="348" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="646">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AbstractNameBeanFilter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="1" selection-start="362" selection-end="363" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1241">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#522#523#0" expanded="true" />
+            <element signature="e#548#549#0" expanded="true" />
+            <element signature="e#604#605#0" expanded="true" />
+            <element signature="e#643#644#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="50" selection-start="211" selection-end="211" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/lang/Class.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="422" column="26" selection-start="17946" selection-end="17946" vertical-scroll-proportion="0.0" vertical-offset="5677" max-vertical-offset="51782">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/ClassBeanFilter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="5" selection-start="293" selection-end="293" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="23" selection-start="3115" selection-end="3115" vertical-scroll-proportion="0.5169147" vertical-offset="910" max-vertical-offset="4029">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
