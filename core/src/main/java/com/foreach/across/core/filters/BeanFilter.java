@@ -1,4 +1,4 @@
-package com.foreach.across.test.filters;
+package com.foreach.across.core.filters;
 
 import com.foreach.across.core.annotations.Exposed;
 import org.springframework.beans.factory.config.BeanDefinition;

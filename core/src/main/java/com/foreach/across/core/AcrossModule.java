@@ -1,6 +1,6 @@
 package com.foreach.across.core;
 
-import com.foreach.across.test.filters.BeanFilter;
+import com.foreach.across.core.filters.BeanFilter;
 import org.springframework.context.ApplicationContext;
 
 public abstract class AcrossModule

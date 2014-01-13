@@ -2,55 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/util/AcrossContextUtil.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossCoreModuleConfig.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/annotations/AcrossEventHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/test/filters/AnnotationBeanFilter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/util/ApplicationContextScanner.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/test/filters/BeanFilter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/annotations/Exposed.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/test/filters/PackageBeanFilter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/annotations/PostRefresh.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/SpringContextRefreshedEventListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\events\AcrossContextEventListener.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\events\AcrossModuleEventListener.java" afterPath="" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\AcrossInstallerRepository.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossInstallerRepository.java" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\AcrossLiquibaseInstaller.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossLiquibaseInstaller.java" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\Installer.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/annotations/Installer.java" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\InstallerGroup.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/annotations/InstallerGroup.java" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\InstallerMethod.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/annotations/InstallerMethod.java" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\InstallerPhase.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/InstallerPhase.java" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\InstallerRunCondition.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/InstallerRunCondition.java" />
-      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\Refreshable.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/annotations/Refreshable.java" />
+      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\test\filters\AnnotationBeanFilter.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java" />
+      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\test\filters\BeanFilter.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java" />
+      <change type="MOVED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\test\filters\PackageBeanFilter.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBeanCopyHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossBootstrap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/AcrossCoreInstaller.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossEvent.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossEvent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossEventPublisher.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossEventPublisher.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/CallbackHandler.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/CallbackHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ConstructedBeanModule1.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ConstructedBeanModule1.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/MainMenuGenerator.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/MainMenuGenerator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ScannedBeanModule1.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ScannedBeanModule1.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/ScannedBeanModule2.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/ScannedBeanModule2.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ScannedPrototypeBeanModule1.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/ScannedPrototypeBeanModule1.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/TestAcrossContextBoot.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/TestAcrossContextBoot.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/TestContextEventListener.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/TestContextEventListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/TestEvent.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/TestEvent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestHandler.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestInstaller.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/TestInstaller.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/TestModule1Config.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module1/TestModule1Config.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/TestModule2Config.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/module2/TestModule2Config.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/TestModuleEventListener.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/modules/TestModuleEventListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/TestOtherController.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/TestOtherController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/across-web.iml" afterPath="$PROJECT_DIR$/across-web/across-web.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/container/container.iml" afterPath="$PROJECT_DIR$/container/container.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/debug-web.iml" afterPath="$PROJECT_DIR$/debug-web/debug-web.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/test-web.iml" afterPath="$PROJECT_DIR$/test-web/test-web.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/util/ApplicationContextScanner.java" afterPath="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/util/ApplicationContextScanner.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java" afterPath="$PROJECT_DIR$/core/src/test/java/com/foreach/across/test/filters/TestAnnotationBeanCopyFilter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/pom.xml" afterPath="$PROJECT_DIR$/core/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="across.iws" />
@@ -115,21 +74,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="AcrossContextUtil.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/util/AcrossContextUtil.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="55" column="89" selection-start="2366" selection-end="2366" vertical-scroll-proportion="0.0" vertical-offset="388" max-vertical-offset="1411">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TestWebConfig.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="TestWebConfig.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="48" selection-start="1363" selection-end="1363" vertical-scroll-proportion="0.6956522" vertical-offset="0" max-vertical-offset="1105">
+            <state line="42" column="40" selection-start="1551" selection-end="1551" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1105">
               <folding />
             </state>
           </provider>
@@ -181,12 +129,21 @@
         </entry>
       </file>
       <file leaf-file-name="BeanFilter.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/test/filters/BeanFilter.java">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="16" column="103" selection-start="627" selection-end="627" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="74" selection-start="529" selection-end="529" vertical-scroll-proportion="0.30357143" vertical-offset="0" max-vertical-offset="1411">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -227,8 +184,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/Refreshable.java" />
-        <option value="$PROJECT_DIR$/core/pom.xml" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossContextBootstrappedEvent.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossModuleBootstrappedEvent.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/AcrossEvent.java" />
@@ -253,7 +208,6 @@
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AnnotationBeanCopyFilter.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanCopyFilter.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/installers/InstallerPhase.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java" />
         <option value="$PROJECT_DIR$/core/src/test/java/com/foreach/across/core/filters/TestAnnotationBeanCopyFilter.java" />
@@ -278,6 +232,9 @@
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/util/AcrossContextUtil.java" />
         <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/test/filters/BeanFilter.java" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/filters/BeanFilter.java" />
+        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java" />
+        <option value="$PROJECT_DIR$/core/pom.xml" />
       </list>
     </option>
   </component>
@@ -339,180 +296,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="across" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sub" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="other" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testweb" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testweb" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sub" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testweb" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="other" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -737,109 +520,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="filters" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="util" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="events" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1010,6 +691,7 @@
       <recent name="C:\code\across\container" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.foreach.across.core" />
       <recent name="com.foreach.across.test" />
       <recent name="com.foreach.across.core.installers" />
       <recent name="com.foreach.across.core.filters" />
@@ -1509,12 +1191,12 @@
       <workItem from="1389287032965" duration="891000" />
       <workItem from="1389291581048" duration="768000" />
       <workItem from="1389432698052" duration="38520000" />
-      <workItem from="1389597488446" duration="14991000" />
+      <workItem from="1389597488446" duration="15394000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="118604000" />
+    <option name="totallyTimeSpent" value="119007000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1554,7 +1236,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6615385" sideWeight="0.4114249" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32681563" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32681563" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1562,7 +1244,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32862645" sideWeight="0.600779" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34146342" sideWeight="0.53333336" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.58845437" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26443204" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32947233" sideWeight="0.60375494" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -1628,13 +1310,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE-sources.jar!/org/springframework/asm/MethodVisitor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="7" selection-start="3070" selection-end="3070" vertical-scroll-proportion="0.162" vertical-offset="531" max-vertical-offset="10880">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE-sources.jar!/org/springframework/core/type/classreading/MethodMetadataReadingVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="43" column="56" selection-start="1534" selection-end="1534" vertical-scroll-proportion="0.28721175" vertical-offset="169" max-vertical-offset="2023">
@@ -1695,7 +1370,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/test/filters/PackageBeanFilter.java">
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/PackageBeanFilter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="58" column="0" selection-start="1625" selection-end="1625" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="1105">
           <folding>
@@ -1732,7 +1407,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/test/filters/AnnotationBeanFilter.java">
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/AnnotationBeanFilter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="58" column="38" selection-start="2036" selection-end="2036" vertical-scroll-proportion="0.0" vertical-offset="636" max-vertical-offset="1377">
           <folding>
@@ -1980,15 +1655,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/test/filters/BeanFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="103" selection-start="627" selection-end="627" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/TestOtherController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="28" column="33" selection-start="795" selection-end="795" vertical-scroll-proportion="0.0" vertical-offset="187" max-vertical-offset="578">
@@ -2012,7 +1678,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="48" selection-start="1363" selection-end="1363" vertical-scroll-proportion="0.6956522" vertical-offset="0" max-vertical-offset="1105">
+        <state line="42" column="40" selection-start="1551" selection-end="1551" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1105">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/filters/BeanFilter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="103" selection-start="627" selection-end="627" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="74" selection-start="529" selection-end="529" vertical-scroll-proportion="0.30357143" vertical-offset="0" max-vertical-offset="1411">
           <folding />
         </state>
       </provider>

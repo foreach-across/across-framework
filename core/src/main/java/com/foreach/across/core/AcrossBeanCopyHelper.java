@@ -1,7 +1,7 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.util.ApplicationContextScanner;
-import com.foreach.across.test.filters.BeanFilter;
+import com.foreach.across.core.filters.BeanFilter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
