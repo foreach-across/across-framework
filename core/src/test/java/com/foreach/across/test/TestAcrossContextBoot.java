@@ -10,7 +10,6 @@ import com.foreach.across.test.modules.module1.TestModule1;
 import com.foreach.across.test.modules.module2.ConstructedBeanModule2;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;
-import com.google.common.eventbus.EventBus;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -109,7 +108,7 @@ public class TestAcrossContextBoot
 
 		// The refreshable constructed bean in module 1 does hold all references
 		assertNotNull( refreshedBeanModule1 );
-		assertEquals( "helloFromModule1-refreshable", refreshedBeanModule1.getText() );
+		assertEquals( "i have been refreshed", refreshedBeanModule1.getText() );
 		assertSame( scannedBeanModule1, refreshedBeanModule1.getScannedBeanModule1() );
 		assertSame( scannedBeanModule2, refreshedBeanModule1.getScannedBeanModule2() );
 
@@ -125,7 +124,7 @@ public class TestAcrossContextBoot
 	}
 
 	@Test
-	public void eventsOnTheContextAreReceivedOnceByAllContextListeners() {
+	public void allAcrossEventHandlersShouldReceiveTheEvents() {
 		assertNotNull( scannedBeanModule1 );
 		assertNotNull( scannedBeanModule2 );
 		assertNotNull( testListener );
@@ -134,44 +133,23 @@ public class TestAcrossContextBoot
 
 		assertTrue( scannedBeanModule1.getEventsReceived().isEmpty() );
 		assertTrue( scannedBeanModule2.getEventsReceived().isEmpty() );
+		assertTrue( constructedBeanModule1.getEventsReceived().isEmpty() );
+		assertTrue( constructedBeanModule2.getEventsReceived().isEmpty() );
 		assertTrue( testListener.getEventsReceived().isEmpty() );
 
-		TestEvent testEvent = new TestEvent( this );
+		TestEvent testEvent = new TestEvent();
 		context.publishEvent( testEvent );
 
 		assertEquals( 1, scannedBeanModule1.getEventsReceived().size() );
 		assertEquals( 1, scannedBeanModule2.getEventsReceived().size() );
+		assertEquals( 1, constructedBeanModule1.getEventsReceived().size() );
+		assertEquals( 1, constructedBeanModule2.getEventsReceived().size() );
 		assertEquals( 1, testListener.getEventsReceived().size() );
 
 		assertSame( testEvent, scannedBeanModule1.getEventsReceived().get( 0 ) );
 		assertSame( testEvent, scannedBeanModule2.getEventsReceived().get( 0 ) );
-		assertSame( testEvent, testListener.getEventsReceived().get( 0 ) );
-
-		// The module listeners should not have received any event
-		assertTrue( constructedBeanModule1.getEventsReceived().isEmpty() );
-		assertTrue( constructedBeanModule2.getEventsReceived().isEmpty() );
-	}
-
-	@Test
-	public void eventsOnTheModuleAreReceivedOnceByAllModuleAndUpwardsListeners() {
-		assertNotNull( scannedBeanModule1 );
-		assertNotNull( scannedBeanModule2 );
-		assertNotNull( testListener );
-		assertNotSame( scannedBeanModule1, testListener );
-		assertNotSame( scannedBeanModule2, testListener );
-
-		assertTrue( scannedBeanModule1.getEventsReceived().isEmpty() );
-		assertTrue( scannedBeanModule2.getEventsReceived().isEmpty() );
-		assertTrue( testListener.getEventsReceived().isEmpty() );
-
-		TestEvent testEvent = new TestEvent( this );
-		module1.publishEvent( testEvent );
-
-		assertEquals( 1, scannedBeanModule1.getEventsReceived().size() );
-		assertTrue( scannedBeanModule2.getEventsReceived().isEmpty() );
-		assertEquals( 1, testListener.getEventsReceived().size() );
-
-		assertSame( testEvent, scannedBeanModule1.getEventsReceived().get( 0 ) );
+		assertSame( testEvent, constructedBeanModule1.getEventsReceived().get( 0 ) );
+		assertSame( testEvent, constructedBeanModule2.getEventsReceived().get( 0 ) );
 		assertSame( testEvent, testListener.getEventsReceived().get( 0 ) );
 	}
 

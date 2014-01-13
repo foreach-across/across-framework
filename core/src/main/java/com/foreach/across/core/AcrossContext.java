@@ -1,11 +1,11 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.events.AcrossEvent;
+import com.foreach.across.core.events.AcrossEventPublisher;
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.bus.config.BusConfiguration;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -133,13 +133,13 @@ public class AcrossContext
 	}
 
 	/**
-	 * Publishes an event in the Across ApplicationContext.  All AcrossContextEventListeners from the modules, and any
-	 * listeners in the parent ApplicationContexts will receive this event.
+	 * Shortcut method to publish an event synchronously on the AcrossContext event bus.
+	 * For more fine-grained functionality like asynchronous publishing, use the AcrossEventPublisher.
 	 *
 	 * @param event Event instance that will be published.
 	 */
 	public void publishEvent( AcrossEvent event ) {
-		applicationContext.publishEvent( event );
+		applicationContext.getBean( AcrossEventPublisher.class ).publish( event );
 	}
 
 	@PostConstruct

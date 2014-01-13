@@ -1,11 +1,13 @@
 package com.foreach.across.test.modules;
 
-import com.foreach.across.core.events.AcrossModuleEventListener;
+import com.foreach.across.core.annotations.AcrossEventHandler;
+import net.engio.mbassy.listener.Handler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestModuleEventListener implements AcrossModuleEventListener<TestEvent>
+@AcrossEventHandler
+public class TestModuleEventListener
 {
 	public List<TestEvent> eventsReceived = new ArrayList<TestEvent>();
 
@@ -13,7 +15,8 @@ public class TestModuleEventListener implements AcrossModuleEventListener<TestEv
 		return eventsReceived;
 	}
 
-	public void onApplicationEvent( TestEvent event ) {
+	@Handler
+	public void receiveEvent( TestEvent event ) {
 		eventsReceived.add( event );
 	}
 }

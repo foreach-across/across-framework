@@ -1,6 +1,5 @@
 package com.foreach.across.testweb.other;
 
-import com.foreach.across.core.Refreshable;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.MenuConstructEvent;
 import com.foreach.across.testweb.SpecificUiContext;

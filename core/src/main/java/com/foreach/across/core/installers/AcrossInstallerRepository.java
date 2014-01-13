@@ -1,5 +1,7 @@
-package com.foreach.across.core;
+package com.foreach.across.core.installers;
 
+import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.Installer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -1,4 +1,4 @@
-package com.foreach.across.core;
+package com.foreach.across.core.installers;
 
 /**
  * Determines during which phase the installer should execute.  The phase determines which beans will be available.

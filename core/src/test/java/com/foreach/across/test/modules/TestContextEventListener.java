@@ -1,12 +1,13 @@
 package com.foreach.across.test.modules;
 
-import com.foreach.across.core.events.AcrossContextEventListener;
-import org.springframework.context.ApplicationListener;
+import com.foreach.across.core.annotations.AcrossEventHandler;
+import net.engio.mbassy.listener.Handler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestContextEventListener implements AcrossContextEventListener<TestEvent>
+@AcrossEventHandler
+public class TestContextEventListener
 {
 	public List<TestEvent> eventsReceived = new ArrayList<TestEvent>();
 
@@ -14,6 +15,7 @@ public class TestContextEventListener implements AcrossContextEventListener<Test
 		return eventsReceived;
 	}
 
+	@Handler
 	public void onApplicationEvent( TestEvent event ) {
 		eventsReceived.add( event );
 	}

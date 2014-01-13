@@ -1,5 +1,8 @@
-package com.foreach.across.core;
+package com.foreach.across.core.installers;
 
+import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.annotations.InstallerGroup;
+import com.foreach.across.core.annotations.InstallerMethod;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

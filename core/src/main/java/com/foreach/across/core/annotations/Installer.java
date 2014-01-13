@@ -1,4 +1,7 @@
-package com.foreach.across.core;
+package com.foreach.across.core.annotations;
+
+import com.foreach.across.core.installers.InstallerPhase;
+import com.foreach.across.core.installers.InstallerRunCondition;
 
 import java.lang.annotation.*;
 

@@ -1,4 +1,4 @@
-package com.foreach.across.core;
+package com.foreach.across.core.installers;
 
 /**
  * Determines when to execute an installer:

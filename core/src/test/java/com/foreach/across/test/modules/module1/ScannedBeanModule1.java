@@ -1,5 +1,7 @@
 package com.foreach.across.test.modules.module1;
 
+import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.test.modules.TestContextEventListener;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;
@@ -11,6 +13,8 @@ import javax.annotation.PostConstruct;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
+@Exposed
+@AcrossEventHandler
 public class ScannedBeanModule1 extends TestContextEventListener
 {
 	public static final AtomicInteger CONSTRUCTION_COUNTER = new AtomicInteger();

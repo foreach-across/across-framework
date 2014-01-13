@@ -1,6 +1,6 @@
 package com.foreach.across.testweb.other;
 
-import com.foreach.across.core.Refreshable;
+import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.modules.web.menu.MenuFactory;
 import com.foreach.across.modules.web.ui.WebUiContext;
 import org.springframework.beans.factory.annotation.Autowired;

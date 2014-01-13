@@ -1,6 +1,6 @@
 package com.foreach.across.core;
 
-import com.foreach.across.core.events.AcrossEvent;
+import com.foreach.across.test.filters.BeanFilter;
 import org.springframework.context.ApplicationContext;
 
 public abstract class AcrossModule
@@ -9,7 +9,7 @@ public abstract class AcrossModule
 
 	private ApplicationContext applicationContext;
 
-	private boolean exposeBeansToParent = true;
+	private BeanFilter exposeFilter = BeanFilter.DEFAULT;
 
 	public AcrossContext getContext() {
 		return context;
@@ -27,12 +27,21 @@ public abstract class AcrossModule
 		this.applicationContext = applicationContext;
 	}
 
-	public boolean isExposeBeansToParent() {
-		return exposeBeansToParent;
+	/**
+	 * @return The filter that beans should match to exposed to other modules in the AcrossContext.
+	 */
+	public BeanFilter getExposeFilter() {
+		return exposeFilter;
 	}
 
-	public void setExposeBeansToParent( boolean exposeBeansToParent ) {
-		this.exposeBeansToParent = exposeBeansToParent;
+	/**
+	 * Sets the filter that will be used after module bootstrap to copy beans to the parent context and make
+	 * them available to other modules in the AcrossContext.
+	 *
+	 * @param exposeFilter The filter that beans should match to exposed to other modules in the AcrossContext.
+	 */
+	public void setExposeFilter( BeanFilter exposeFilter ) {
+		this.exposeFilter = exposeFilter;
 	}
 
 	/**
@@ -71,16 +80,5 @@ public abstract class AcrossModule
 	 * been shutdown already.
 	 */
 	public void shutdown() {
-	}
-
-	/**
-	 * Publishes an event in the ApplicationContext of this module.  All AcrossContextEventListeners from all modules,
-	 * all AcrossModuleEventListeners in this module and any other listeners in the parent ApplicationContexts will
-	 * receive this event.
-	 *
-	 * @param event Event instance that will be published.
-	 */
-	public void publishEvent( AcrossEvent event ) {
-		applicationContext.publishEvent( event );
 	}
 }

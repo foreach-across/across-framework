@@ -1,31 +1,31 @@
 package com.foreach.across.modules.web;
 
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
+import com.foreach.across.core.annotations.AcrossEventHandler;
+import net.engio.mbassy.listener.Handler;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-
-public class CallbackHandler implements ApplicationListener<AcrossContextBootstrappedEvent>
+@AcrossEventHandler
+public class CallbackHandler
 {
 	//@Autowired
 	//private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
-
-	public void onApplicationEvent( AcrossContextBootstrappedEvent acrossContextBootstrappedEvent ) {
+	@Handler
+	public void contextBootstrapped( AcrossContextBootstrappedEvent acrossContextBootstrappedEvent ) {
 		/*System.out.println("called back!");
 		mapping.scan( acrossBootstrapFinishedEvent.getContext().getApplicationContext() );*/
 
-		System.out.println("re-registering");
+		System.out.println( "re-registering" );
 
-		ApplicationContext applicationContext = acrossContextBootstrappedEvent.getContext().getApplicationContext().getParent();
+		ApplicationContext applicationContext =
+				acrossContextBootstrappedEvent.getContext().getApplicationContext().getParent();
 		//applicationContext.getAutowireCapableBeanFactory().createBean( TestMvcConfiguration.class );
 
 		if ( applicationContext.containsBean( "requestMappingHandlerMapping" ) ) {
 			applicationContext.getBean( RequestMappingHandlerMapping.class ).afterPropertiesSet();
-			System.out.println("Web MVC beans created...");
+			System.out.println( "Web MVC beans created..." );
 		}
 
 
