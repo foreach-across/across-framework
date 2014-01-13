@@ -1,15 +1,30 @@
 package com.foreach.across.core;
 
+import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
+import com.foreach.across.core.filters.BeanFilterComposite;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 public abstract class AcrossModule
 {
+	/**
+	 * By default all @Service and @Controller beans are exposed, along with any other beans
+	 * annotated explicitly with @Exposed or created through an @Exposed BeanFactory.
+	 */
+	@SuppressWarnings( "unchecked" )
+	public static BeanFilter defaultExposeFilter() {
+		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class, Controller.class ),
+		                                new AnnotationBeanFilter( true, Exposed.class ) );
+	}
+
 	private AcrossContext context;
 
 	private ApplicationContext applicationContext;
 
-	private BeanFilter exposeFilter = BeanFilter.DEFAULT;
+	private BeanFilter exposeFilter = defaultExposeFilter();
 
 	public AcrossContext getContext() {
 		return context;

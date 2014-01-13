@@ -1,9 +1,7 @@
 package com.foreach.across.core.filters;
 
-import com.foreach.across.core.annotations.Exposed;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 /**
  * Helper used to filter the beans that should be exposed to the parent context.
@@ -11,17 +9,12 @@ import org.springframework.stereotype.Service;
 public interface BeanFilter
 {
 	/**
-	 * By default all @Service beans are exposed, along with any other beans annotated explicitly with @Exposed.
-	 */
-	@SuppressWarnings("unchecked")
-	public static final BeanFilter DEFAULT = new AnnotationBeanFilter( Service.class, Controller.class, Exposed.class );
-
-	/**
 	 * Checks if a bean or its corresponding BeanDefinition match the filter.
 	 *
-	 * @param bean       Bean instance to check (can be null).
-	 * @param definition BeanDefinition corresponding to this bean (can be null).
+	 * @param beanFactory BeanFactory that owns the bean and definition.
+	 * @param bean        Bean instance to check (can be null).
+	 * @param definition  BeanDefinition corresponding to this bean (can be null).
 	 * @return True if the bean and bean definition match.
 	 */
-	boolean apply( Object bean, BeanDefinition definition );
+	boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition );
 }

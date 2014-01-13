@@ -1,9 +1,10 @@
 package com.foreach.across.core.filters;
 
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.MethodMetadata;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
@@ -14,15 +15,41 @@ import java.lang.reflect.Method;
  */
 public class AnnotationBeanFilter implements BeanFilter
 {
-	private final Class<? extends Annotation>[] annotations;
+	private boolean matchIfBeanFactoryApplies = false;
+	private Class<? extends Annotation>[] annotations;
 
 	public AnnotationBeanFilter( Class<? extends Annotation>... annotations ) {
 		this.annotations = annotations;
 	}
 
-	public boolean apply( Object bean, BeanDefinition definition ) {
+	public AnnotationBeanFilter(
+			boolean matchIfBeanFactoryApplies, Class<? extends Annotation>... annotations ) {
+		this.matchIfBeanFactoryApplies = matchIfBeanFactoryApplies;
+		this.annotations = annotations;
+	}
+
+	public Class<? extends Annotation>[] getAnnotations() {
+		return annotations;
+	}
+
+	public void setAnnotations( Class<? extends Annotation>[] annotations ) {
+		this.annotations = annotations;
+	}
+
+	public boolean isMatchIfBeanFactoryApplies() {
+		return matchIfBeanFactoryApplies;
+	}
+
+	/**
+	 * @param matchIfBeanFactoryApplies True if the bean should be returned if the bean factory matches.
+	 */
+	public void setMatchIfBeanFactoryApplies( boolean matchIfBeanFactoryApplies ) {
+		this.matchIfBeanFactoryApplies = matchIfBeanFactoryApplies;
+	}
+
+	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {
 		if ( bean != null ) {
-			Class beanClass = AopUtils.getTargetClass( bean );
+			Class beanClass = ClassUtils.getUserClass( bean );
 			for ( Class<? extends Annotation> annotation : annotations ) {
 				if ( AnnotationUtils.getAnnotation( beanClass, annotation ) != null ) {
 					return true;
@@ -42,12 +69,28 @@ public class AnnotationBeanFilter implements BeanFilter
 					}
 				}
 
-				if ( bean == null ) {
-					// If the target of the method has the annotation, it applies - in case of a bean
-					// this has already been tested
-					try {
-						Method method = ReflectionUtils.findMethod( Class.forName( metadata.getDeclaringClassName() ),
-						                                            metadata.getMethodName() );
+				try {
+					Class factoryClass = Class.forName( metadata.getDeclaringClassName() );
+
+					Object factory = beanFactory.getSingleton( definition.getFactoryBeanName() );
+
+					if ( factory != null ) {
+						factoryClass = ClassUtils.getUserClass( factory );
+					}
+
+					if ( isMatchIfBeanFactoryApplies() ) {
+						// If the bean factory has the annotation, then it should apply as well
+						for ( Class<? extends Annotation> annotation : annotations ) {
+							if ( AnnotationUtils.getAnnotation( factoryClass, annotation ) != null ) {
+								return true;
+							}
+						}
+					}
+
+					if ( bean == null ) {
+						// If the target of the method has the annotation, it applies - in case of a bean
+						// this has already been tested
+						Method method = ReflectionUtils.findMethod( factoryClass, metadata.getMethodName() );
 
 						for ( Class<? extends Annotation> annotation : annotations ) {
 							if ( AnnotationUtils.getAnnotation( method.getReturnType(), annotation ) != null ) {
@@ -55,8 +98,8 @@ public class AnnotationBeanFilter implements BeanFilter
 							}
 						}
 					}
-					catch ( Exception e ) { /* Ignore any exceptions */ }
 				}
+				catch ( Exception e ) { /* Ignore any exceptions */ }
 			}
 			else if ( bean == null && definition.getBeanClassName() != null ) {
 				try {

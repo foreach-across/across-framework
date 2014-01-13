@@ -11,6 +11,14 @@ public class ClassBeanFilter extends AbstractNameBeanFilter<Class>
 		super( allowedClasses );
 	}
 
+	public Class[] getAllowedClasses() {
+		return getAllowedItems();
+	}
+
+	public void setAllowedClasses( Class[] allowedClasses ) {
+		setAllowedItems( allowedClasses );
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean matches( Class beanClass, Class expected ) {

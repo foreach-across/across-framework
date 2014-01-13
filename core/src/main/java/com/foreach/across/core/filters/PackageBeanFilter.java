@@ -11,6 +11,14 @@ public class PackageBeanFilter extends AbstractNameBeanFilter<String>
 		super( allowedPackages );
 	}
 
+	public String[] getAllowedPackages() {
+		return getAllowedItems();
+	}
+
+	public void setAllowedPackages( String[] allowedPackages ) {
+		setAllowedItems( allowedPackages );
+	}
+
 	@Override
 	protected boolean matches( Class beanClass, String expectedPackage ) {
 		return matches( beanClass.getName(), expectedPackage );

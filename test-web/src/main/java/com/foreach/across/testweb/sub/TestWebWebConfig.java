@@ -1,5 +1,6 @@
 package com.foreach.across.testweb.sub;
 
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.ui.AbstractWebUiContextHandlerInterceptor;
 import com.foreach.across.testweb.SpecificUiContext;
 import com.foreach.across.testweb.SpecificUiContextImpl;
@@ -17,6 +18,7 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Exposed
 @Configuration
 public class TestWebWebConfig extends WebMvcConfigurationSupport
 {

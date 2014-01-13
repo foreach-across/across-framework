@@ -1,5 +1,6 @@
 package com.foreach.across.modules.web.menu;
 
+import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.MenuConstructEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +11,13 @@ import org.springframework.stereotype.Service;
 public class MenuFactory
 {
 	@Autowired
-	private ApplicationContext applicationContext;
+	private AcrossEventPublisher publisher;
 
 	public Menu generate( String name ) {
 		Menu menu = new Menu( name );
 
 		MenuConstructEvent e = new MenuConstructEvent( this, menu );
-		applicationContext.publishEvent( e );
+		publisher.publish( e );
 
 		return menu;
 	}

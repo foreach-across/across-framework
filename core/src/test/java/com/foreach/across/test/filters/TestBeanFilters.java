@@ -1,5 +1,6 @@
 package com.foreach.across.test.filters;
 
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
@@ -25,9 +26,9 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestAnnotationBeanCopyFilter.Config.class)
+@ContextConfiguration(classes = TestBeanFilters.Config.class)
 @DirtiesContext
-public class TestAnnotationBeanCopyFilter
+public class TestBeanFilters
 {
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -149,7 +150,7 @@ public class TestAnnotationBeanCopyFilter
 
 	@Test
 	public void filterOnServiceAndExposedAnnotation() {
-		BeanFilter filter = BeanFilter.DEFAULT;
+		BeanFilter filter = AcrossModule.defaultExposeFilter();
 
 		Map<String, Object> beans = ApplicationContextScanner.findSingletonsMatching( applicationContext, filter );
 		assertEquals( 4, beans.size() );

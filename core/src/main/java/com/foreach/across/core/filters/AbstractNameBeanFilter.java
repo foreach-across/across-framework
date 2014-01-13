@@ -1,7 +1,9 @@
 package com.foreach.across.core.filters;
 
 import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.util.ReflectionUtils;
 
@@ -23,7 +25,7 @@ public abstract class AbstractNameBeanFilter<T> implements BeanFilter
 		this.allowedItems = allowedItems;
 	}
 
-	public boolean apply( Object bean, BeanDefinition definition ) {
+	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {
 		if ( bean != null ) {
 			Class targetClass = AopUtils.getTargetClass( bean );
 

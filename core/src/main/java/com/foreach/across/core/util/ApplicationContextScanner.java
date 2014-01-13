@@ -26,32 +26,6 @@ public class ApplicationContextScanner
 	                                                          Class<? extends Annotation> annotation ) {
 
 		return findSingletonsMatching( context, new AnnotationBeanFilter( annotation ) ).values();
-
-		  /*
-		ConfigurableListableBeanFactory beanFactory =
-				(ConfigurableListableBeanFactory) context.getAutowireCapableBeanFactory();
-
-		Set<Object> matchingBeans = new HashSet<Object>();
-
-		// Add all singletons having the Refreshable annotation
-		for ( Object singleton : context.getBeansWithAnnotation( annotation ).values() ) {
-			matchingBeans.add( singleton );
-		}
-
-		// Get all bean definitions declared by method having the annotation
-		for ( String name : beanFactory.getBeanDefinitionNames() ) {
-			BeanDefinition def = beanFactory.getBeanDefinition( name );
-
-			if ( def.getSource() instanceof MethodMetadata ) {
-				MethodMetadata metadata = (MethodMetadata) def.getSource();
-
-				if ( metadata.isAnnotated( annotation.getName() ) && def.isSingleton() ) {
-					matchingBeans.add( beanFactory.getBean( name ) );
-				}
-			}
-		}
-
-		return matchingBeans;*/
 	}
 
 	public static Map<String, Object> findSingletonsMatching( ApplicationContext context, BeanFilter filter ) {
@@ -67,7 +41,7 @@ public class ApplicationContextScanner
 					definitions.contains( singletonName ) ? beanFactory.getBeanDefinition( singletonName ) : null;
 			Object bean = ctx.getBeanFactory().getSingleton( singletonName );
 
-			if ( filter.apply( bean, definition ) ) {
+			if ( filter.apply( beanFactory, bean, definition ) ) {
 				beanMap.put( singletonName, bean );
 			}
 		}
@@ -86,7 +60,7 @@ public class ApplicationContextScanner
 			BeanDefinition def = ctx.getBeanFactory().getBeanDefinition( defName );
 			Object bean = beanFactory.getSingleton( defName );
 
-			if ( filter.apply( bean, def ) ) {
+			if ( filter.apply( beanFactory, bean, def ) ) {
 				definitionMap.put( defName, def );
 			}
 

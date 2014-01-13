@@ -1,15 +1,13 @@
 package com.foreach.across.modules.web.menu;
 
-import org.springframework.context.ApplicationEvent;
+import com.foreach.across.core.events.AcrossEvent;
 
-public class MenuConstructEvent extends ApplicationEvent
+public class MenuConstructEvent implements AcrossEvent
 {
 	private MenuFactory owner;
 	private Menu menu;
 
 	public MenuConstructEvent( MenuFactory owner, Menu menu ) {
-		super( owner );
-
 		this.owner = owner;
 		this.menu = menu;
 	}

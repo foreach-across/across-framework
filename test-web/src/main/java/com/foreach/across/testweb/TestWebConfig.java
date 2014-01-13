@@ -30,8 +30,9 @@ public class TestWebConfig
 
 		context.addModule( acrossWebModule() );
 		//context.addModule( debugWebModule() );
-		context.addModule( testWebModule() );
 		context.addModule( otherModule() );
+		context.addModule( testWebModule() );
+
 
 
 
