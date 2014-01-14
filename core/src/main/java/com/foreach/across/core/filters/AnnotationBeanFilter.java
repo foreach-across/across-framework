@@ -1,5 +1,6 @@
 package com.foreach.across.core.filters;
 
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -22,8 +23,7 @@ public class AnnotationBeanFilter implements BeanFilter
 		this.annotations = annotations;
 	}
 
-	public AnnotationBeanFilter(
-			boolean matchIfBeanFactoryApplies, Class<? extends Annotation>... annotations ) {
+	public AnnotationBeanFilter( boolean matchIfBeanFactoryApplies, Class<? extends Annotation>... annotations ) {
 		this.matchIfBeanFactoryApplies = matchIfBeanFactoryApplies;
 		this.annotations = annotations;
 	}
@@ -49,7 +49,7 @@ public class AnnotationBeanFilter implements BeanFilter
 
 	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {
 		if ( bean != null ) {
-			Class beanClass = ClassUtils.getUserClass( bean );
+			Class beanClass = ClassUtils.getUserClass( AopUtils.getTargetClass( bean ) );
 			for ( Class<? extends Annotation> annotation : annotations ) {
 				if ( AnnotationUtils.getAnnotation( beanClass, annotation ) != null ) {
 					return true;
@@ -70,12 +70,12 @@ public class AnnotationBeanFilter implements BeanFilter
 				}
 
 				try {
-					Class factoryClass = Class.forName( metadata.getDeclaringClassName() );
+					Class factoryClass = ClassUtils.getUserClass( Class.forName( metadata.getDeclaringClassName() ) );
 
 					Object factory = beanFactory.getSingleton( definition.getFactoryBeanName() );
 
 					if ( factory != null ) {
-						factoryClass = ClassUtils.getUserClass( factory );
+						factoryClass = ClassUtils.getUserClass( AopUtils.getTargetClass( factory ) );
 					}
 
 					if ( isMatchIfBeanFactoryApplies() ) {

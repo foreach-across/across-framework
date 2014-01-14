@@ -1,10 +1,10 @@
 package com.foreach.across.core.filters;
 
 import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.type.MethodMetadata;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -27,7 +27,7 @@ public abstract class AbstractNameBeanFilter<T> implements BeanFilter
 
 	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {
 		if ( bean != null ) {
-			Class targetClass = AopUtils.getTargetClass( bean );
+			Class targetClass = ClassUtils.getUserClass( AopUtils.getTargetClass( bean ) );
 
 			for ( T allowed : allowedItems ) {
 				if ( matches( targetClass, allowed ) ) {
@@ -40,8 +40,9 @@ public abstract class AbstractNameBeanFilter<T> implements BeanFilter
 				MethodMetadata metadata = (MethodMetadata) definition.getSource();
 
 				try {
-					Method method = ReflectionUtils.findMethod( Class.forName( metadata.getDeclaringClassName() ),
-					                                            metadata.getMethodName() );
+					Method method = ReflectionUtils.findMethod(
+							ClassUtils.getUserClass( Class.forName( metadata.getDeclaringClassName() ) ),
+							metadata.getMethodName() );
 
 					for ( T allowed : allowedItems ) {
 						if ( matches( method.getReturnType(), allowed ) ) {
