@@ -2,8 +2,6 @@ package com.foreach.across.core;
 
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
-import net.engio.mbassy.bus.MBassador;
-import net.engio.mbassy.bus.config.BusConfiguration;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,8 +36,6 @@ public class AcrossContext
 	private LinkedList<AcrossModule> modules = new LinkedList<AcrossModule>();
 
 	private boolean isBootstrapped = false;
-
-	private MBassador<AcrossEvent> eventBus = new MBassador<AcrossEvent>( BusConfiguration.Default() );
 
 	private ConfigurableApplicationContext applicationContext;
 

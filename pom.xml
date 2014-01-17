@@ -35,4 +35,21 @@
 		<module>across-web</module>
 	</modules>
 
+	<distributionManagement>
+		<repository>
+			<id>foreach-nexus</id>
+			<name>Foreach nexus</name>
+			<url>http://java.libs.foreach.com/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>foreach-nexus</id>
+			<name>Foreach nexus</name>
+			<url>http://java.libs.foreach.com/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<connection>scm:git:http://stash.foreach.be/scm/fe/across.git</connection>
+		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/across.git</developerConnection>
+	</scm>
+
 </project>
