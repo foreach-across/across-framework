@@ -17,7 +17,7 @@ public class DebugPageViewFactory
 	@Autowired
 	private DebugWebModule debugWebModule;
 
-	private String debugPageTemplate = "layouts/debugPage";
+	private String debugPageTemplate = "th/layouts/debugPage";
 
 	public String getDebugPageTemplate() {
 		return debugPageTemplate;

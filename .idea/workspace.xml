@@ -11,11 +11,11 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/table/Table.java" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/table/TableHeader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/resources/views/across.thtml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/resources/views/th/across.thtml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test-web/src/main/webapp/WEB-INF/jsp/debug-page.jsp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/layouts/debugPage.thtml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/listProperties.thtml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/layouts/debugPage.thtml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/listProperties.thtml" />
       <change type="DELETED" beforePath="C:\code\across\debug-web\src\main\java\com\foreach\across\modules\debugweb\SimpleController.java" afterPath="" />
       <change type="DELETED" beforePath="C:\code\across\debug-web\src\main\java\com\foreach\across\modules\debugweb\TestHandler.java" afterPath="" />
       <change type="DELETED" beforePath="C:\code\across\debug-web\src\main\java\com\foreach\across\modules\debugweb\TestInstaller.java" afterPath="" />
@@ -100,7 +100,7 @@
       <file leaf-file-name="TestWebWebConfig.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="104" column="37" selection-start="3775" selection-end="3775" vertical-scroll-proportion="0.0" vertical-offset="1210" max-vertical-offset="2176">
+            <state line="109" column="9" selection-start="3831" selection-end="3831" vertical-scroll-proportion="0.0" vertical-offset="1170" max-vertical-offset="2176">
               <folding>
                 <element signature="e#2297#2688#0" expanded="true" />
                 <element signature="e#2683#2684#0" expanded="true" />
@@ -109,101 +109,96 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DelegatingWebMvcConfiguration.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE-sources.jar!/org/springframework/web/servlet/config/annotation/DelegatingWebMvcConfiguration.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="0" selection-start="1819" selection-end="1819" vertical-scroll-proportion="0.0" vertical-offset="122" max-vertical-offset="1700">
-              <folding>
-                <element signature="e#0#3962#0" expanded="false" />
-                <element signature="imports" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CustomDebugController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CustomDebugController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="13" selection-start="491" selection-end="491" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DebugWebController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugWebController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="29" selection-start="343" selection-end="343" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DefaultDebugWebController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/DefaultDebugWebController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="13" selection-start="284" selection-end="284" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="306">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PropertiesController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="37" selection-start="974" selection-end="974" vertical-scroll-proportion="0.0" vertical-offset="54" max-vertical-offset="680">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SpringInfoController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="104" column="39" selection-start="3738" selection-end="3738" vertical-scroll-proportion="0.0" vertical-offset="1560" max-vertical-offset="2584">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2999#3006#0" expanded="true" />
-                <element signature="e#4005#4012#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ThreadsController.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="65" selection-start="2613" selection-end="2613" vertical-scroll-proportion="0.656051" vertical-offset="948" max-vertical-offset="3230">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2202#2215#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="LogController.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="34" selection-start="1325" selection-end="1325" vertical-scroll-proportion="0.0" vertical-offset="370" max-vertical-offset="1768">
+            <state line="86" column="13" selection-start="3085" selection-end="3085" vertical-scroll-proportion="0.0" vertical-offset="779" max-vertical-offset="1768">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1616#1631#0" expanded="true" />
-                <element signature="e#1682#1698#0" expanded="true" />
+                <element signature="e#1619#1634#0" expanded="true" />
+                <element signature="e#1685#1701#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DebugHandlerMapping.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugHandlerMapping.java">
+      <file leaf-file-name="listBeans.thtml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/listBeans.thtml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="61" selection-start="1301" selection-end="1301" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="884">
+            <state line="6" column="26" selection-start="174" selection-end="174" vertical-scroll-proportion="-3.9230769" vertical-offset="0" max-vertical-offset="238">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="listInterceptors.thtml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/listInterceptors.thtml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="30" selection-start="226" selection-end="226" vertical-scroll-proportion="-5.230769" vertical-offset="0" max-vertical-offset="289">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="listLoggers.thtml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/listLoggers.thtml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="36" column="26" selection-start="919" selection-end="919" vertical-scroll-proportion="-18.73077" vertical-offset="125" max-vertical-offset="748">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="listProperties.thtml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/listProperties.thtml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="26" selection-start="264" selection-end="264" vertical-scroll-proportion="-4.576923" vertical-offset="0" max-vertical-offset="255">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SpringInfoController.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="42" column="77" selection-start="1846" selection-end="1846" vertical-scroll-proportion="0.4340278" vertical-offset="464" max-vertical-offset="2533">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#3017#3024#0" expanded="true" />
+                <element signature="e#4026#4033#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="across.thtml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/across-web/src/main/resources/views/th/across.thtml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="103" selection-start="354" selection-end="354" vertical-scroll-proportion="-5.8846154" vertical-offset="0" max-vertical-offset="561">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ThreadsController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="37" selection-start="831" selection-end="831" vertical-scroll-proportion="0.0" vertical-offset="226" max-vertical-offset="3230">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#2205#2218#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DebugPageViewFactory.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="19" column="60" selection-start="600" selection-end="600" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="646">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -226,14 +221,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/core/pom.xml" />
-        <option value="$PROJECT_DIR$/across-web/pom.xml" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossContext.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/events/SpringContextRefreshedEventListener.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebController.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugHandlerMapping.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/include.thtml" />
         <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/list-environment-variables.thtml" />
         <option value="$PROJECT_DIR$/test-web/src/main/webapp/WEB-INF/jsp/debug-page.jsp" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugViewFactory.java" />
@@ -251,7 +238,6 @@
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/MainMenuGenerator.java" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/ExtensionMenuGenerator.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuRenderer.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/resources/views/across.thtml" />
@@ -259,24 +245,33 @@
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/table/TableHeader.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/BuildMenuEvent.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/listProperties.thtml" />
         <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/listThreads.thtml" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/listLoggers.thtml" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/listBeans.thtml" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/table/TableRow.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/table/Table.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/listInterceptors.thtml" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/DefaultDebugWebController.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/layouts/debugPage.thtml" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CustomDebugController.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugHandlerMapping.java" />
-        <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugWebController.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java" />
+        <option value="$PROJECT_DIR$/debug-web/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/test-web/src/main/webapp/WEB-INF/jsp/sub/test.jsp" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/listBeans.thtml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/listInterceptors.thtml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/listLoggers.thtml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/listProperties.thtml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/layouts/debugPage.thtml" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/th/listBeans.thtml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/th/listInterceptors.thtml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/th/listLoggers.thtml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/th/listProperties.thtml" />
+        <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java" />
+        <option value="$PROJECT_DIR$/across-web/src/main/resources/views/th/across.thtml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java" />
       </list>
     </option>
   </component>
@@ -382,6 +377,150 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WEB-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WEB-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jsp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webapp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WEB-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jsp" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sub" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sub" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -523,41 +662,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="across" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="debug-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="layouts" />
+              <option name="myItemId" value="th" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -597,7 +702,91 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="across-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="th" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -665,10 +854,11 @@
       <recent name="com.foreach.across.test.modules.module2" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\code\across\debug-web\src\main\resources\views\th" />
+      <recent name="C:\code\across\across-web\src\main\resources\views\th" />
       <recent name="C:\code\across\debug-web\src\main\resources\views\layouts" />
       <recent name="C:\code\across\test-web\src\main\resources\views\" />
       <recent name="C:\code\across\core\src\main\resources\com\foreach\across\core\installers" />
-      <recent name="C:\code\across\container" />
     </key>
   </component>
   <component name="RunManager" selected="Tomcat Server.Test Web">
@@ -1173,12 +1363,12 @@
       <workItem from="1389963556668" duration="693000" />
       <workItem from="1389974982416" duration="2017000" />
       <workItem from="1390374276006" duration="370000" />
-      <workItem from="1390463038897" duration="25451000" />
+      <workItem from="1390463038897" duration="30165000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="167412000" />
+    <option name="totallyTimeSpent" value="172126000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1202,7 +1392,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1618" height="1184" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" x="91" y="91" width="1418" height="984" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1217,14 +1407,14 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36328626" sideWeight="0.53333336" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.7839851" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.52403843" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32692307" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39711538" sideWeight="0.5885751" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39711538" sideWeight="0.5885751" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25417203" sideWeight="0.46666667" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.325" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.325" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32862645" sideWeight="0.600779" order="10" side_tool="false" content_ui="tabs" />
@@ -1293,74 +1483,9 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="24" selection-start="484" selection-end="484" vertical-scroll-proportion="0.0" vertical-offset="187" max-vertical-offset="1360">
-          <folding>
-            <element signature="e#357#358#0" expanded="true" />
-            <element signature="e#375#376#0" expanded="true" />
-            <element signature="e#414#415#0" expanded="true" />
-            <element signature="e#437#438#0" expanded="true" />
-            <element signature="e#536#537#0" expanded="true" />
-            <element signature="e#557#558#0" expanded="true" />
-            <element signature="e#586#587#0" expanded="true" />
-            <element signature="e#605#606#0" expanded="true" />
-            <element signature="e#699#700#0" expanded="true" />
-            <element signature="e#724#725#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="267" selection-end="267" vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="578">
-          <folding>
-            <element signature="e#400#401#0" expanded="true" />
-            <element signature="e#431#432#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="39" selection-start="587" selection-end="587" vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="680">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="36" selection-start="116" selection-end="116" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/table/TableHeader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="13" selection-start="60" selection-end="60" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/BuildMenuEvent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="26" selection-start="622" selection-end="622" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/listThreads.thtml">
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/listThreads.thtml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="19" selection-start="176" selection-end="176" vertical-scroll-proportion="-3.9230769" vertical-offset="0" max-vertical-offset="272">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/listProperties.thtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="62" selection-start="297" selection-end="297" vertical-scroll-proportion="-4.576923" vertical-offset="0" max-vertical-offset="255">
           <folding />
         </state>
       </provider>
@@ -1368,20 +1493,6 @@
     <entry file="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/1.0.13/logback-classic-1.0.13-sources.jar!/ch/qos/logback/classic/Level.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="200" column="22" selection-start="5591" selection-end="5591" vertical-scroll-proportion="0.0" vertical-offset="3525" max-vertical-offset="4964">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/resources/views/across.thtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="93" selection-start="643" selection-end="643" vertical-scroll-proportion="0.55791503" vertical-offset="17" max-vertical-offset="561">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/listLoggers.thtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="14" selection-start="415" selection-end="415" vertical-scroll-proportion="-7.5" vertical-offset="94" max-vertical-offset="748">
           <folding />
         </state>
       </provider>
@@ -1440,13 +1551,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/listInterceptors.thtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="198" selection-end="198" vertical-scroll-proportion="-4.576923" vertical-offset="0" max-vertical-offset="289">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE-sources.jar!/org/springframework/web/servlet/handler/AbstractHandlerMapping.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="295" column="23" selection-start="10991" selection-end="11001" vertical-scroll-proportion="0.3329776" vertical-offset="3972" max-vertical-offset="5508">
@@ -1475,44 +1579,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="966">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1020">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test-web/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="8" selection-start="522" selection-end="809" vertical-scroll-proportion="0.0" vertical-offset="162" max-vertical-offset="1513">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/util/LinkedHashSet.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-1.9479166" vertical-offset="1122" max-vertical-offset="2635">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/layouts/debugPage.thtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="7" selection-start="293" selection-end="293" vertical-scroll-proportion="-9.153846" vertical-offset="0" max-vertical-offset="340">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/listBeans.thtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="7" selection-start="215" selection-end="215" vertical-scroll-proportion="-5.230769" vertical-offset="0" max-vertical-offset="238">
           <folding />
         </state>
       </provider>
@@ -1661,9 +1730,128 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/core/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="4" selection-start="400" selection-end="515" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1462">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="17" selection-start="925" selection-end="925" vertical-scroll-proportion="0.0" vertical-offset="12" max-vertical-offset="1037">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="0" selection-start="299" selection-end="299" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="663">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="966">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-web/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="39" column="43" selection-start="1202" selection-end="1202" vertical-scroll-proportion="0.0" vertical-offset="162" max-vertical-offset="1513">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-web/src/main/webapp/WEB-INF/jsp/sub/test.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="8" selection-start="8" selection-end="8" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="623">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/TestOtherController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="13" selection-start="478" selection-end="478" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="27" selection-start="243" selection-end="243" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="306">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/layouts/debugPage.thtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="25" selection-start="133" selection-end="133" vertical-scroll-proportion="-4.576923" vertical-offset="0" max-vertical-offset="340">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="40" selection-start="977" selection-end="977" vertical-scroll-proportion="0.0" vertical-offset="31" max-vertical-offset="680">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="37" selection-start="831" selection-end="831" vertical-scroll-proportion="0.0" vertical-offset="226" max-vertical-offset="3230">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2205#2218#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="60" selection-start="600" selection-end="600" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="646">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/listBeans.thtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="26" selection-start="174" selection-end="174" vertical-scroll-proportion="-3.9230769" vertical-offset="0" max-vertical-offset="238">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/listInterceptors.thtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="30" selection-start="226" selection-end="226" vertical-scroll-proportion="-5.230769" vertical-offset="0" max-vertical-offset="289">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/listLoggers.thtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="26" selection-start="919" selection-end="919" vertical-scroll-proportion="-18.73077" vertical-offset="125" max-vertical-offset="748">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/listProperties.thtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="26" selection-start="264" selection-end="264" vertical-scroll-proportion="-4.576923" vertical-offset="0" max-vertical-offset="255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="37" selection-start="3775" selection-end="3775" vertical-scroll-proportion="0.0" vertical-offset="1210" max-vertical-offset="2176">
+        <state line="109" column="9" selection-start="3831" selection-end="3831" vertical-scroll-proportion="0.0" vertical-offset="1170" max-vertical-offset="2176">
           <folding>
             <element signature="e#2297#2688#0" expanded="true" />
             <element signature="e#2683#2684#0" expanded="true" />
@@ -1673,41 +1861,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="34" selection-start="1325" selection-end="1325" vertical-scroll-proportion="0.0" vertical-offset="370" max-vertical-offset="1768">
+        <state line="86" column="13" selection-start="3085" selection-end="3085" vertical-scroll-proportion="0.0" vertical-offset="779" max-vertical-offset="1768">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1616#1631#0" expanded="true" />
-            <element signature="e#1682#1698#0" expanded="true" />
+            <element signature="e#1619#1634#0" expanded="true" />
+            <element signature="e#1685#1701#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java">
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/resources/views/th/across.thtml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="37" selection-start="974" selection-end="974" vertical-scroll-proportion="0.0" vertical-offset="54" max-vertical-offset="680">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="9" column="103" selection-start="354" selection-end="354" vertical-scroll-proportion="-5.8846154" vertical-offset="0" max-vertical-offset="561">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="39" selection-start="3738" selection-end="3738" vertical-scroll-proportion="0.0" vertical-offset="1560" max-vertical-offset="2584">
+        <state line="42" column="77" selection-start="1846" selection-end="1846" vertical-scroll-proportion="0.4340278" vertical-offset="464" max-vertical-offset="2533">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2999#3006#0" expanded="true" />
-            <element signature="e#4005#4012#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="65" selection-start="2613" selection-end="2613" vertical-scroll-proportion="0.656051" vertical-offset="948" max-vertical-offset="3230">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2202#2215#0" expanded="true" />
+            <element signature="e#3017#3024#0" expanded="true" />
+            <element signature="e#4026#4033#0" expanded="true" />
           </folding>
         </state>
       </provider>

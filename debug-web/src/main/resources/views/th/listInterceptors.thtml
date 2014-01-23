@@ -6,7 +6,7 @@
 <body th:fragment="content">
 <div th:each="handler : ${handlerTables}">
 
-	<div th:replace="across :: table (${handler})"></div>
+	<div th:replace="th/across :: table (${handler})"></div>
 </div>
 </body>
 </html>

@@ -112,7 +112,7 @@ public class TestWebWebConfig extends WebMvcConfigurationSupport
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
 		resolver.setTemplateEngine( springTemplateEngine() );
 		resolver.setOrder( 1 );
-		//resolver.setViewNames( new String[] { "*.thtml" } );
+		resolver.setViewNames( new String[] { "th/*" } );
 
 		return resolver;
 	}

@@ -38,17 +38,20 @@ public class SpringInfoController
 
 	@RequestMapping("/spring/beans")
 	public DebugPageView showBeans( DebugPageView view ) {
-		view.setPage( "listBeans" );
+		view.setPage( "th/listBeans" );
 
-		String[] beanDefinitionNames = getStrings();
+		String[] beanDefinitionNames = BeanFactoryUtils.beanNamesIncludingAncestors(
+				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory() );
 		Table table = new Table();
 
 		List<String> sortedNames = Arrays.asList( beanDefinitionNames );
 		Collections.sort( sortedNames );
 
 		for ( String beanDefinitionName : sortedNames ) {
-			Object bean = applicationContext.getBean( beanDefinitionName );
-			table.addRow( beanDefinitionName, bean != null ? bean.getClass().getName() : "" );
+			if ( applicationContext.isSingleton( beanDefinitionName ) ) {
+				Object bean = applicationContext.getBean( beanDefinitionName );
+				table.addRow( beanDefinitionName, bean != null ? bean.getClass().getName() : "" );
+			}
 		}
 
 		table.setTitle( "Registered beans: " + table.size() );
@@ -58,15 +61,10 @@ public class SpringInfoController
 		return view;
 	}
 
-	private String[] getStrings() {
-		return BeanFactoryUtils.beanNamesIncludingAncestors(
-				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory() );
-	}
-
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/spring/interceptors")
 	public DebugPageView showInterceptors( DebugPageView view ) {
-		view.setPage( "listInterceptors" );
+		view.setPage( "th/listInterceptors" );
 
 		try {
 			Map<String, AbstractHandlerMapping> handlers = BeanFactoryUtils.beansOfTypeIncludingAncestors(
@@ -102,7 +100,7 @@ public class SpringInfoController
 
 	@RequestMapping("/spring/handlers")
 	public DebugPageView showHandlers( DebugPageView view ) {
-		view.setPage( "listInterceptors" );
+		view.setPage( "th/listInterceptors" );
 
 		Map<String, AbstractHandlerMethodMapping> handlers = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory(),
@@ -132,8 +130,7 @@ public class SpringInfoController
 					methodLabel = methodsRequestCondition.getMethods().iterator().next();
 				}
 
-				table.addRow( patternLabel, methodLabel,
-				              mapping.getValue() );
+				table.addRow( patternLabel, methodLabel, mapping.getValue() );
 			}
 
 			tables.add( table );

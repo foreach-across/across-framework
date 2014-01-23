@@ -34,6 +34,6 @@
 		</div>
 	</form>
 </div>
-<div th:replace="across :: table (${appenders})"></div>
+<div th:replace="th/across :: table (${appenders})"></div>
 </body>
 </html>

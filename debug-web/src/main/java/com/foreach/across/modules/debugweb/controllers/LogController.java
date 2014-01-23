@@ -32,7 +32,7 @@ public class LogController
 
 	@RequestMapping(value = "/loggers", method = RequestMethod.GET)
 	public DebugPageView showLoggers( DebugPageView view ) {
-		view.setPage( "listLoggers" );
+		view.setPage( "th/listLoggers" );
 
 		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 		List<Logger> loggers = loggerContext.getLoggerList();

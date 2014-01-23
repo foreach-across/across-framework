@@ -4,7 +4,7 @@
 	<title>List system properties and environment variables</title>
 </head>
 <body th:fragment="content">
-<div th:replace="across :: table (${environmentVariables})"></div>
-<div th:replace="across :: table (${systemProperties})"></div>
+<div th:replace="th/across :: table (${environmentVariables})"></div>
+<div th:replace="th/across :: table (${systemProperties})"></div>
 </body>
 </html>

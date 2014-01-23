@@ -21,7 +21,7 @@ public class ThreadsController
 
 	@RequestMapping("/threadStack")
 	public DebugPageView showThreads( DebugPageView view ) {
-		view.setPage( "listThreads" );
+		view.setPage( "th/listThreads" );
 
 		ArrayList<ThreadGroup> threadGroups = loadThreadData();
 

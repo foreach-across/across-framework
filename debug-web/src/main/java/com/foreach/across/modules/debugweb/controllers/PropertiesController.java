@@ -24,7 +24,7 @@ public class PropertiesController
 
 	@RequestMapping("/properties/environment")
 	public DebugPageView listEnvironmentProperties( DebugPageView view ) {
-		view.setPage( "listProperties" );
+		view.setPage( "th/listProperties" );
 
 		view.addObject( "systemProperties", Table.fromMap( "System properties", System.getProperties() ) );
 		view.addObject( "environmentVariables", Table.fromMap( "Environment variables", System.getenv() ) );
