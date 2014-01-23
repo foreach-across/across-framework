@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<h1>Debug controller</h1>
+
+<ul th:replace="across :: menu (${debugMenu},'debug-menu')" th:if="${debugMenu}"></ul>
+
+<div th:if="${subPage}">
+	<div th:replace="${subPage} :: content">
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>List system properties and environment variables</title>
+</head>
+<body th:fragment="content">
+<div th:replace="across :: table (${environmentVariables})"></div>
+<div th:replace="across :: table (${systemProperties})"></div>
+</body>
+</html>

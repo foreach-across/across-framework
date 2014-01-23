@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>List registered Spring interceptors</title>
+</head>
+<body th:fragment="content">
+<div th:each="handler : ${handlerTables}">
+
+	<div th:replace="across :: table (${handler})"></div>
+</div>
+</body>
+</html>

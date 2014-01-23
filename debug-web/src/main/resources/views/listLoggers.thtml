@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>List and configure loggers</title>
+</head>
+<body th:fragment="content">
+<div>
+	<div th:if="${feedback}" th:text="${feedback}" class="feedback">
+		XX loggers have been updated.
+	</div>
+
+	<h3>Loggers</h3>
+
+	<form method="post">
+		<div class="form-actions">
+			<input type="reset" value="Reset"/>
+			<input type="submit" value="Save"/>
+		</div>
+		<table>
+			<tr th:each="entry : ${loggers}">
+				<td th:text="${entry.key}">logger name</td>
+				<td>
+					<select th:name="${entry.key}">
+						<option th:each="level : ${levels}" th:value="${level}" th:text="${level}"
+						        th:selected="${level eq entry.value}">log level
+						</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		<div class="form-actions">
+			<input type="reset" value="Reset"/>
+			<input type="submit" value="Save"/>
+		</div>
+	</form>
+</div>
+<div th:replace="across :: table (${appenders})"></div>
+</body>
+</html>

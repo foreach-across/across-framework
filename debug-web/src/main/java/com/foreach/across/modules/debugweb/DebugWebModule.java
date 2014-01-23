@@ -5,7 +5,6 @@ import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import net.engio.mbassy.listener.Handler;
 
-@AcrossEventHandler
 public class DebugWebModule extends AcrossModule
 {
 	private String rootPath = "/debug";
@@ -18,11 +17,10 @@ public class DebugWebModule extends AcrossModule
 		return rootPath;
 	}
 
+	/**
+	 * @return Name of this module.  The spring bean should also be using this name.
+	 */
 	@Override
-	public Object[] getInstallers() {
-		return new Object[] { new TestInstaller() };
-	}
-
 	public String getName() {
 		return "DebugWebModule";
 	}
@@ -30,11 +28,6 @@ public class DebugWebModule extends AcrossModule
 	@Override
 	public String getDescription() {
 		return "Provides a debug web path and functionality to easily register additional debug controllers.";
-	}
-
-	@Handler
-	public void onApplicationEvent( AcrossContextBootstrappedEvent event ) {
-		System.out.println( "finished bootstrapping " + event.getContext().getModules().size() + " modules" );
 	}
 }
 

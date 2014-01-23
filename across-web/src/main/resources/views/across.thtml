@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Page containing default Across render templates</title>
+</head>
+<body>
+<h2>Render list menu with infinite children</h2>
+
+<ul th:fragment="menu (data, css)" th:attr="class=${css}">
+	<li th:each="item : ${data.items}"><a href="#" th:text="${item.title}" th:attr="href=${item.url}">menu item</a></li>
+</ul>
+
+<h2>Render generic Table instance</h2>
+
+<div th:fragment="table (data)">
+	<h3 th:if="${data.title}" th:text="${data.title}">Table title</h3>
+	<table>
+		<tr th:if="${data.header}">
+			<th th:each="field : ${data.header.fields}" th:text="${field}">table heading</th>
+		</tr>
+		<tr th:each="row : ${data.rows}">
+			<td th:each="field : ${row.fields}" th:text="${field}">table field</td>
+		</tr>
+	</table>
+</div>
+
+</body>
+</html>

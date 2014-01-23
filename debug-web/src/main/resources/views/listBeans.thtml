@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>List registered Spring beans</title>
+</head>
+<body th:fragment="content">
+<div th:replace="across :: table (${beans})"></div>
+</body>
+</html>

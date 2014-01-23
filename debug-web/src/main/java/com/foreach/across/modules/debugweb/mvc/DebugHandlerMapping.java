@@ -1,5 +1,7 @@
-package com.foreach.across.modules.debugweb;
+package com.foreach.across.modules.debugweb.mvc;
 
+import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.debugweb.DebugWebModule;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -10,7 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import java.lang.reflect.Method;
 
-@Component
 public class DebugHandlerMapping extends RequestMappingHandlerMapping
 {
 	@Autowired
@@ -21,16 +22,6 @@ public class DebugHandlerMapping extends RequestMappingHandlerMapping
 		return AnnotationUtils.findAnnotation( beanType, DebugWebController.class ) != null;
 	}
 
-	/*
-	@Override
-	protected void registerHandlerMethod(
-			Object handler, Method method, RequestMappingInfo mapping ) {
-		System.out.println( method );
-
-		super.registerHandlerMethod( handler, method,
-		                             mapping );    //To change body of overridden methods use File | Settings | File Templates.
-	}
-*/
 	@Override
 	protected RequestMappingInfo getMappingForMethod( Method method, Class<?> handlerType ) {
 		RequestMappingInfo info = super.getMappingForMethod( method, handlerType );

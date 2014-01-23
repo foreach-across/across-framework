@@ -29,12 +29,9 @@ public class TestWebConfig
 		context.setAllowInstallers( false );
 
 		context.addModule( acrossWebModule() );
-		//context.addModule( debugWebModule() );
+		context.addModule( debugWebModule() );
 		context.addModule( otherModule() );
 		context.addModule( testWebModule() );
-
-
-
 
 		return context;
 	}
@@ -57,7 +54,7 @@ public class TestWebConfig
 	@Bean
 	public DebugWebModule debugWebModule() {
 		DebugWebModule debugWebModule = new DebugWebModule();
-		debugWebModule.setRootPath( "/test" );
+		debugWebModule.setRootPath( "/debug" );
 
 		return debugWebModule;
 	}

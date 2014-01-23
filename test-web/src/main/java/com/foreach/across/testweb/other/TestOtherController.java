@@ -29,6 +29,6 @@ public class TestOtherController
 	public ModelAndView hello() {
 		//System.out.println( context.getName() );
 		System.out.println( helper.getHelloFromHelper() );
-		return new ModelAndView( "other/test" ).addObject( "menu", menuFactory.generate( "mainMenu" ) );
+		return new ModelAndView( "other/test" ).addObject( "menu", menuFactory.buildMenu( "mainMenu" ) );
 	}
 }
