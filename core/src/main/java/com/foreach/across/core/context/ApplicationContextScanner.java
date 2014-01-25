@@ -1,4 +1,4 @@
-package com.foreach.across.core.util;
+package com.foreach.across.core.context;
 
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
@@ -10,8 +10,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.lang.annotation.Annotation;
 import java.util.*;
 
-public class ApplicationContextScanner
+public final class ApplicationContextScanner
 {
+	private ApplicationContextScanner() {
+	}
+
 	/**
 	 * Will find all beans in the ApplicationContext that have been created with the given annotation.
 	 * This includes both beans having the annotation directly, as beans created through a Configuration

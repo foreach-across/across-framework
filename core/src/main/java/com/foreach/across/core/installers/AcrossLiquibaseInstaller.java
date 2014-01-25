@@ -1,8 +1,9 @@
 package com.foreach.across.core.installers;
 
-import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
+import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.AcrossContextUtil;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +33,7 @@ public abstract class AcrossLiquibaseInstaller
 
 	@InstallerMethod
 	public void install() {
-		AutowireCapableBeanFactory beanFactory = acrossContext.getApplicationContext().getAutowireCapableBeanFactory();
+		AutowireCapableBeanFactory beanFactory = AcrossContextUtil.getBeanFactory( acrossContext );
 
 		SpringLiquibase liquibase = new SpringLiquibase();
 		liquibase.setChangeLog( changelog );

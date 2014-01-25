@@ -7,7 +7,7 @@ import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.ClassBeanFilter;
 import com.foreach.across.core.filters.PackageBeanFilter;
-import com.foreach.across.core.util.ApplicationContextScanner;
+import com.foreach.across.core.context.ApplicationContextScanner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

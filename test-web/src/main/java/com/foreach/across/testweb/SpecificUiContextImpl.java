@@ -11,6 +11,5 @@ public class SpecificUiContextImpl extends AbstractWebUiContext<User> implements
 	public SpecificUiContextImpl(
 			HttpServletRequest request, HttpServletResponse response ) {
 		super( request, response );
-		System.out.println("newly created...");
 	}
 }

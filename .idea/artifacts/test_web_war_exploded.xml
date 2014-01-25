@@ -37,9 +37,12 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: javax.servlet:servlet-api:2.4" />
-          <element id="archive" name="across-debug-web-1.0-SNAPSHOT.jar">
-            <element id="module-output" name="debug-web" />
+          <element id="library" level="project" name="Maven: across:across-debug-web:1.0-SNAPSHOT" />
+          <element id="archive" name="across-ehcache-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="across-ehcache" />
           </element>
+          <element id="library" level="project" name="Maven: net.sf.ehcache:ehcache-core:2.6.6" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-context-support:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: cglib:cglib:2.2.2" />
           <element id="library" level="project" name="Maven: asm:asm:3.3.1" />
           <element id="library" level="project" name="Maven: org.springframework:spring-jdbc:4.0.0.RELEASE" />

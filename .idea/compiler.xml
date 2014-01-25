@@ -25,6 +25,7 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="across-core" />
+        <module name="across-ehcache" />
         <module name="across-web" />
         <module name="container" />
         <module name="core" />

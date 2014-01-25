@@ -1,9 +1,6 @@
 package com.foreach.across.modules.debugweb;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
-import com.foreach.across.core.annotations.AcrossEventHandler;
-import net.engio.mbassy.listener.Handler;
 
 public class DebugWebModule extends AcrossModule
 {

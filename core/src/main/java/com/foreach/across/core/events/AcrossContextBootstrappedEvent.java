@@ -1,10 +1,6 @@
 package com.foreach.across.core.events;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
-import org.springframework.context.ApplicationEvent;
-
-import java.util.Collection;
 
 public class AcrossContextBootstrappedEvent implements AcrossEvent
 {

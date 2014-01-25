@@ -1,6 +1,7 @@
 package com.foreach.across.core.installers;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.AcrossContextUtil;
 import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,7 @@ public class AcrossCoreSchemaInstaller
 		if ( acrossContext.isAllowInstallers() ) {
 			LOG.info( "Installing the core schema for Across" );
 
-			AutowireCapableBeanFactory beanFactory =
-					acrossContext.getApplicationContext().getAutowireCapableBeanFactory();
+			AutowireCapableBeanFactory beanFactory = AcrossContextUtil.getBeanFactory( acrossContext );
 
 			SpringLiquibase liquibase = new SpringLiquibase();
 			liquibase.setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );

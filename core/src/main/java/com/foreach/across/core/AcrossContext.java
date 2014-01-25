@@ -1,12 +1,12 @@
 package com.foreach.across.core;
 
+import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AcrossContextUtil;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -21,15 +21,14 @@ import java.util.List;
  * This class takes care of managing the global Spring ApplicationContext related to all modules,
  * and will make sure that different modules are handled in the order in which they are registered.
  */
-public class AcrossContext
+public class AcrossContext extends AcrossApplicationContextHolder
 {
 	public static final String DATASOURCE = "acrossDataSource";
 
-	private boolean allowInstallers;
-	private boolean onlyRegisterInstallers;
-
 	private DataSource dataSource;
 
+	private boolean allowInstallers;
+	private boolean onlyRegisterInstallers;
 	private String[] skipInstallerGroups = new String[0];
 	private BeanFactoryPostProcessor[] beanFactoryPostProcessors = new BeanFactoryPostProcessor[0];
 
@@ -37,36 +36,35 @@ public class AcrossContext
 
 	private boolean isBootstrapped = false;
 
-	private ConfigurableApplicationContext applicationContext;
+	private ApplicationContext parentApplicationContext;
 
+	/**
+	 * Constructs a new AcrossContext in its own ApplicationContext.
+	 * Modules in this context will not be able to use any beans defined outside the AcrossContext.
+	 */
 	public AcrossContext() {
-		applicationContext = createApplicationContext( null );
+		this( null );
+	}
+
+	/**
+	 * Constructs a new AcrossContext that is a child of the parent ApplicationContext passed in.
+	 * Modules can access all beans from the parent context, and exposed beans will be copied to the parent
+	 * context so non-Across beans can access them.
+	 *
+	 * @param parentContext Parent ApplicationContext.
+	 */
+	public AcrossContext( ApplicationContext parentContext ) {
+		parentApplicationContext = parentContext;
 
 		setDefaultModules();
 	}
 
-	public AcrossContext( ApplicationContext parentContext ) {
-		applicationContext = createApplicationContext( parentContext );
-
-		setDefaultModules();
+	public ApplicationContext getParentApplicationContext() {
+		return parentApplicationContext;
 	}
 
 	protected void setDefaultModules() {
 		modules.addFirst( new AcrossCoreModule() );
-	}
-
-	protected ConfigurableApplicationContext createApplicationContext( ApplicationContext parent ) {
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
-
-		if ( parent != null ) {
-			applicationContext.setParent( parent );
-
-			if ( parent.getEnvironment() instanceof ConfigurableEnvironment ) {
-				applicationContext.setEnvironment( (ConfigurableEnvironment) parent.getEnvironment() );
-			}
-		}
-
-		return applicationContext;
 	}
 
 	public DataSource getDataSource() {
@@ -116,10 +114,6 @@ public class AcrossContext
 		this.skipInstallerGroups = skipInstallerGroups;
 	}
 
-	public ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
-
 	public void setBeanFactoryPostProcessors( BeanFactoryPostProcessor... postProcessors ) {
 		this.beanFactoryPostProcessors = postProcessors;
 	}
@@ -135,7 +129,7 @@ public class AcrossContext
 	 * @param event Event instance that will be published.
 	 */
 	public void publishEvent( AcrossEvent event ) {
-		applicationContext.getBean( AcrossEventPublisher.class ).publish( event );
+		AcrossContextUtil.getBeanOfType( this, AcrossEventPublisher.class ).publish( event );
 	}
 
 	@PostConstruct
@@ -143,18 +137,15 @@ public class AcrossContext
 		if ( !isBootstrapped ) {
 			isBootstrapped = true;
 
-			new AcrossBootstrap( createBootstrapHandler() ).bootstrap( this );
+			new AcrossBootstrapper( this ).bootstrap();
 		}
-	}
-
-	protected AcrossBootstrapApplicationContextHandler createBootstrapHandler() {
-		return new AcrossBootstrapApplicationContextHandler();
 	}
 
 	@PreDestroy
 	public void shutdown() {
 		if ( isBootstrapped ) {
-			// Shutdown all modules in reverse order
+			// Shutdown all modules in reverse order - note that it is quite possible to beans might have been destroyed
+			// already by Spring in the meantime
 			List<AcrossModule> reverseList = new LinkedList<AcrossModule>( modules );
 			Collections.reverse( reverseList );
 

@@ -4,7 +4,6 @@ import com.foreach.across.core.AcrossContext;
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.bus.config.BusConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * EventBus implementation for the AcrossContext.  Allows for publishing AcrossEvent
