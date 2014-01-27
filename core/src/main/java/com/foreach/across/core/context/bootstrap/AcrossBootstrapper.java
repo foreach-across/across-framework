@@ -1,30 +1,23 @@
 package com.foreach.across.core.context.bootstrap;
 
-import com.foreach.across.core.AcrossCoreModule;
-import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossContextUtil;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
-import com.foreach.across.core.installers.AcrossCoreSchemaInstaller;
 import com.foreach.across.core.installers.AcrossInstallerRegistry;
-import com.foreach.across.core.installers.AcrossInstallerRepository;
 import com.foreach.across.core.installers.InstallerPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -59,17 +52,13 @@ public class AcrossBootstrapper
 		runModuleBootstrapCustomizations();
 
 		AcrossApplicationContext root = createRootContext();
-		AcrossContextUtil.setAcrossApplicationContext( context, root );
+		AcrossContextUtils.setAcrossApplicationContext( context, root );
+
+		applicationContextFactory.loadApplicationContext( context, root );
 
 		AbstractApplicationContext rootContext = root.getApplicationContext();
-		rootContext.refresh();
-		rootContext.start();
 
 		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
-
-		prepareBasicContext( context, rootContext, root.getBeanFactory() );
-
-		createInstallerRepository( context, root.getBeanFactory() );
 
 		Collection<AcrossModule> modulesInOrder = createOrderedModulesList( context );
 		AcrossInstallerRegistry installerRegistry = new AcrossInstallerRegistry( context, modulesInOrder );
@@ -88,14 +77,11 @@ public class AcrossBootstrapper
 			// Create the module context
 			AbstractApplicationContext child =
 					applicationContextFactory.createApplicationContext( context, module, root );
-			addPostProcessors( child, context.getBeanFactoryPostProcessors() );
 
 			AcrossApplicationContext moduleApplicationContext = new AcrossApplicationContext( child, root );
-			AcrossContextUtil.setAcrossApplicationContext( module, moduleApplicationContext );
+			AcrossContextUtils.setAcrossApplicationContext( module, moduleApplicationContext );
 
-			if ( !( module instanceof AcrossCoreModule ) ) {
-				context.publishEvent( new AcrossModuleBeforeBootstrapEvent( context, module ) );
-			}
+			context.publishEvent( new AcrossModuleBeforeBootstrapEvent( context, module ) );
 
 			applicationContextFactory.loadApplicationContext( context, module, moduleApplicationContext );
 
@@ -103,9 +89,7 @@ public class AcrossBootstrapper
 			module.bootstrap();
 
 			// Send event that this module has bootstrapped
-			if ( !( module instanceof AcrossCoreModule ) ) {
-				context.publishEvent( new AcrossModuleBootstrappedEvent( context, module ) );
-			}
+			context.publishEvent( new AcrossModuleBootstrappedEvent( context, module ) );
 
 			// Run installers after module itself has bootstrapped
 			installerRegistry.runInstallersForModule( module, InstallerPhase.AfterModuleBootstrap );
@@ -113,7 +97,7 @@ public class AcrossBootstrapper
 			// Copy the beans to the parent context
 			beanHelper.copy( child, rootContext, module.getExposeFilter() );
 
-			AcrossContextUtil.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
+			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
 		}
 
 		// Bootstrapping done, run installers that require context bootstrap finished
@@ -126,7 +110,7 @@ public class AcrossBootstrapper
 		}
 
 		// Refresh beans
-		AcrossContextUtil.refreshBeans( context );
+		AcrossContextUtils.refreshBeans( context );
 
 		// Bootstrap finished - publish the event
 		context.publishEvent( new AcrossContextBootstrappedEvent( context ) );
@@ -147,7 +131,7 @@ public class AcrossBootstrapper
 	}
 
 	private AcrossApplicationContext createRootContext() {
-		ApplicationContext parent = AcrossContextUtil.getParentApplicationContext( context );
+		ApplicationContext parent = AcrossContextUtils.getParentApplicationContext( context );
 
 		AbstractApplicationContext rootApplicationContext =
 				applicationContextFactory.createApplicationContext( context, parent );
@@ -167,62 +151,5 @@ public class AcrossBootstrapper
 				                                                                           beanDef.getValue() );
 			}
 		}
-	}
-
-	private void prepareBasicContext( AcrossContext acrossContext,
-	                                  ConfigurableApplicationContext applicationContext,
-	                                  ConfigurableListableBeanFactory beanFactory ) {
-		addPostProcessors( applicationContext, acrossContext.getBeanFactoryPostProcessors() );
-
-		beanFactory.registerSingleton( "acrossContext", acrossContext );
-
-		registerDataSource( acrossContext, beanFactory );
-
-		runBaseSchemaInstaller( acrossContext, beanFactory );
-
-		registerCoreModule( acrossContext, beanFactory );
-	}
-
-	private void addPostProcessors( ConfigurableApplicationContext applicationContext,
-	                                BeanFactoryPostProcessor[] postProcessors ) {
-		for ( BeanFactoryPostProcessor postProcessor : postProcessors ) {
-			applicationContext.addBeanFactoryPostProcessor( postProcessor );
-		}
-	}
-
-	private void registerDataSource( AcrossContext context, ConfigurableListableBeanFactory beanFactory ) {
-		if ( !Arrays.asList( beanFactory.getSingletonNames() ).contains( AcrossContext.DATASOURCE ) ) {
-			beanFactory.registerSingleton( AcrossContext.DATASOURCE, context.getDataSource() );
-		}
-	}
-
-	private void registerCoreModule( AcrossContext context, ConfigurableListableBeanFactory beanFactory ) {
-		AcrossModule coreModule = context.getModules().iterator().next();
-
-		if ( coreModule == null || !( coreModule instanceof AcrossCoreModule ) ) {
-			throw new RuntimeException(
-					"Unable to bootstrap Across without the first module being the AcrossCoreModule.  Has it been explicitly removed?" );
-		}
-
-		if ( beanFactory.getBeansOfType( AcrossCoreModule.class ).isEmpty() ) {
-			beanFactory.autowireBeanProperties( coreModule, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
-			beanFactory.initializeBean( coreModule, "acrossCoreModule" );
-			beanFactory.registerSingleton( "acrossCoreModule", coreModule );
-		}
-	}
-
-	private void createInstallerRepository( AcrossContext context, ConfigurableListableBeanFactory beanFactory ) {
-		if ( beanFactory.getBeansOfType( AcrossInstallerRepository.class ).isEmpty() ) {
-			AcrossInstallerRepository installerRepository = new AcrossInstallerRepository( context.getDataSource() );
-			beanFactory.autowireBeanProperties( installerRepository, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
-			beanFactory.initializeBean( installerRepository, "" );
-			beanFactory.registerSingleton( AcrossInstallerRepository.class.getName(), installerRepository );
-		}
-	}
-
-	private void runBaseSchemaInstaller( AcrossContext context, ConfigurableListableBeanFactory beanFactory ) {
-		AcrossCoreSchemaInstaller installer = new AcrossCoreSchemaInstaller( context );
-		beanFactory.autowireBeanProperties( installer, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
-		beanFactory.initializeBean( installer, "" );
 	}
 }

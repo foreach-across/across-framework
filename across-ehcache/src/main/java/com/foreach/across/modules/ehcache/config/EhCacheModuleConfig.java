@@ -1,4 +1,4 @@
-package com.foreach.across.modules.ehcache;
+package com.foreach.across.modules.ehcache.config;
 
 import com.foreach.across.core.annotations.Exposed;
 import org.springframework.cache.CacheManager;
@@ -9,10 +9,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
-@EnableCaching
+/**
+ * Declares the cache manager instance that is shared between all modules.
+ */
 @Configuration
 @Exposed
-public class CacheConfig
+public class EhCacheModuleConfig
 {
 	@Bean
 	public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {

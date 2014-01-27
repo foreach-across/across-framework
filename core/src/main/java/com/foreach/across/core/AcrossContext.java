@@ -1,20 +1,20 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
-import com.foreach.across.core.context.AcrossContextUtil;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.PostProcessorConfigurer;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.PropertyResourceConfigurer;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Main class representing a set of Across modules.
@@ -30,7 +30,9 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	private boolean allowInstallers;
 	private boolean onlyRegisterInstallers;
 	private String[] skipInstallerGroups = new String[0];
-	private BeanFactoryPostProcessor[] beanFactoryPostProcessors = new BeanFactoryPostProcessor[0];
+
+	private Map<ApplicationContextConfigurer, Boolean> applicationContextConfigurers =
+			new HashMap<ApplicationContextConfigurer, Boolean>();
 
 	private LinkedList<AcrossModule> modules = new LinkedList<AcrossModule>();
 
@@ -56,15 +58,11 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	public AcrossContext( ApplicationContext parentContext ) {
 		parentApplicationContext = parentContext;
 
-		setDefaultModules();
+		addApplicationContextConfigurer( new AnnotatedClassConfigurer( AcrossConfig.class ), false );
 	}
 
 	public ApplicationContext getParentApplicationContext() {
 		return parentApplicationContext;
-	}
-
-	protected void setDefaultModules() {
-		modules.addFirst( new AcrossCoreModule() );
 	}
 
 	public DataSource getDataSource() {
@@ -114,12 +112,29 @@ public class AcrossContext extends AcrossApplicationContextHolder
 		this.skipInstallerGroups = skipInstallerGroups;
 	}
 
-	public void setBeanFactoryPostProcessors( BeanFactoryPostProcessor... postProcessors ) {
-		this.beanFactoryPostProcessors = postProcessors;
+	public Map<ApplicationContextConfigurer, Boolean> getApplicationContextConfigurers() {
+		return applicationContextConfigurers;
 	}
 
-	public BeanFactoryPostProcessor[] getBeanFactoryPostProcessors() {
-		return beanFactoryPostProcessors;
+	/**
+	 * <p>Add an ApplicationContextConfigurer to the AcrossContext.  Depending on the boolean the configurer
+	 * will be applied to the root ApplicationContext only or to every ApplicationContext of every module registered.</p>
+	 * <p>The latter is required for configurers providing BeanFactoryPostProcessor beans like property sources.</p>
+	 *
+	 * @param configurer        Configurer instance.
+	 * @param applyToAllModules True if the configurer should be applied to every modules ApplicationContext.
+	 */
+	public void addApplicationContextConfigurer( ApplicationContextConfigurer configurer, boolean applyToAllModules ) {
+		applicationContextConfigurers.put( configurer, applyToAllModules );
+	}
+
+	/**
+	 * Shortcut to add one more PropertyResourceConfigurer post processors to all modules.
+	 *
+	 * @param propertySources One or more PropertyResourceConfigurer instances.
+	 */
+	public void addPropertySources( PropertyResourceConfigurer... propertySources ) {
+		addApplicationContextConfigurer( new PostProcessorConfigurer( propertySources ), true );
 	}
 
 	/**
@@ -129,7 +144,7 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	 * @param event Event instance that will be published.
 	 */
 	public void publishEvent( AcrossEvent event ) {
-		AcrossContextUtil.getBeanOfType( this, AcrossEventPublisher.class ).publish( event );
+		AcrossContextUtils.getBeanOfType( this, AcrossEventPublisher.class ).publish( event );
 	}
 
 	@PostConstruct

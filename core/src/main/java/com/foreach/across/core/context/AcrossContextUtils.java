@@ -5,6 +5,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,15 +18,18 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Helper methods for AcrossContext configuration.
  */
-public final class AcrossContextUtil
+public final class AcrossContextUtils
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextUtil.class );
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextUtils.class );
 
-	private AcrossContextUtil() {
+	private AcrossContextUtils() {
 	}
 
 	/**
@@ -48,8 +52,8 @@ public final class AcrossContextUtil
 	 */
 	public static void refreshBeans( AcrossContext context ) {
 		for ( AcrossModule module : context.getModules() ) {
-			ApplicationContext moduleContext = AcrossContextUtil.getApplicationContext( module );
-			ConfigurableListableBeanFactory beanFactory = AcrossContextUtil.getBeanFactory( module );
+			ApplicationContext moduleContext = AcrossContextUtils.getApplicationContext( module );
+			ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( module );
 
 			Collection<Object> refreshableBeans =
 					ApplicationContextScanner.findBeansWithAnnotation( moduleContext, Refreshable.class );
@@ -141,5 +145,27 @@ public final class AcrossContextUtil
 	 */
 	public static <T> T getBeanOfType( AcrossApplicationContextHolder contextOrModule, Class<T> requiredType ) {
 		return contextOrModule.getAcrossApplicationContext().getBeanFactory().getBean( requiredType );
+	}
+
+	/**
+	 * Will list all ApplicationContextConfigurers in the module, combined with the ones registered on the
+	 * AcrossContext that are specified to apply to all modules.
+	 *
+	 * @param context AcrossContext instance.
+	 * @param module  AcrossModule instance.
+	 * @return Merged set of ApplicationContextConfigurers.
+	 */
+	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context,
+	                                                                              AcrossModule module ) {
+		Set<ApplicationContextConfigurer> configurers = new HashSet<ApplicationContextConfigurer>();
+		configurers.addAll( module.getApplicationContextConfigurers() );
+
+		for ( Map.Entry<ApplicationContextConfigurer, Boolean> configurerEntry : context.getApplicationContextConfigurers().entrySet() ) {
+			if ( configurerEntry.getValue() ) {
+				configurers.add( configurerEntry.getKey() );
+			}
+		}
+
+		return configurers;
 	}
 }

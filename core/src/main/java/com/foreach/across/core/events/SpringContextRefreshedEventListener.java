@@ -1,7 +1,7 @@
 package com.foreach.across.core.events;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossContextUtil;
+import com.foreach.across.core.context.AcrossContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -29,17 +29,16 @@ public class SpringContextRefreshedEventListener implements ApplicationListener<
 
 	@PostConstruct
 	private void registerInParentContext() {
-		( (ConfigurableApplicationContext) AcrossContextUtil.getParentApplicationContext(
-				context ) ).addApplicationListener( this );
+		( (ConfigurableApplicationContext) AcrossContextUtils.getParentApplicationContext( context ) ).addApplicationListener( this );
 	}
 
 	public void onApplicationEvent( ContextRefreshedEvent event ) {
-		if ( event.getApplicationContext() == AcrossContextUtil.getParentApplicationContext( context ) ) {
+		if ( event.getApplicationContext() == AcrossContextUtils.getParentApplicationContext( context ) ) {
 			// Scan for event handlers
-			AcrossContextUtil.autoRegisterEventHandlers( event.getApplicationContext(), publisher );
+			AcrossContextUtils.autoRegisterEventHandlers( event.getApplicationContext(), publisher );
 
 			// Refresh the different beans
-			AcrossContextUtil.refreshBeans( context );
+			AcrossContextUtils.refreshBeans( context );
 		}
 	}
 }

@@ -2,28 +2,28 @@ package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class AcrossModule extends AcrossApplicationContextHolder
 {
-	/**
-	 * By default all @Service and @Controller beans are exposed, along with any other beans
-	 * annotated explicitly with @Exposed or created through an @Exposed BeanFactory.
-	 */
-	@SuppressWarnings("unchecked")
-	public static BeanFilter defaultExposeFilter() {
-		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class, Controller.class ),
-		                                new AnnotationBeanFilter( true, Exposed.class ) );
-	}
-
 	private AcrossContext context;
 
-
 	private BeanFilter exposeFilter = defaultExposeFilter();
+	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
+			new HashSet<ApplicationContextConfigurer>();
+
+	public AcrossModule() {
+		registerDefaultApplicationContextConfigurers( applicationContextConfigurers );
+	}
 
 	public AcrossContext getContext() {
 		return context;
@@ -58,8 +58,26 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	}
 
 	/**
+	 * Register the default ApplicationContextConfigurers for this module.
+	 *
+	 * @param contextConfigurers Set of existing configurers to add to.
+	 */
+	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+		contextConfigurers.add( new ComponentScanConfigurer( getClass().getPackage().getName() ) );
+	}
+
+	public Set<ApplicationContextConfigurer> getApplicationContextConfigurers() {
+		return applicationContextConfigurers;
+	}
+
+	public void addApplicationContextConfigurer( ApplicationContextConfigurer configurer ) {
+		applicationContextConfigurers.add( configurer );
+	}
+
+	/**
 	 * @return Array of packages that should be scanned for components.
 	 */
+	@Deprecated
 	public String[] getComponentScanPackages() {
 		return new String[] { getClass().getPackage().getName() };
 	}
@@ -86,5 +104,15 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	 * been shutdown already.
 	 */
 	public void shutdown() {
+	}
+
+	/**
+	 * By default all @Service and @Controller beans are exposed, along with any other beans
+	 * annotated explicitly with @Exposed or created through an @Exposed BeanFactory.
+	 */
+	@SuppressWarnings("unchecked")
+	public static BeanFilter defaultExposeFilter() {
+		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class, Controller.class ),
+		                                new AnnotationBeanFilter( true, Exposed.class ) );
 	}
 }

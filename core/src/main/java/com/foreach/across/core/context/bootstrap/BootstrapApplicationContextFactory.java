@@ -1,8 +1,8 @@
 package com.foreach.across.core.context.bootstrap;
 
-import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.AcrossApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
@@ -13,7 +13,7 @@ public interface BootstrapApplicationContextFactory
 {
 	/**
 	 * Create the Spring ApplicationContext for the root of the AcrossContext.
-	 * Optionally a parent ApplicationContext can be
+	 * Optionally a parent ApplicationContext can be specified.
 	 *
 	 * @param across                   AcrossContext being created.
 	 * @param parentApplicationContext Parent ApplicationContext, can be null.
@@ -35,7 +35,15 @@ public interface BootstrapApplicationContextFactory
 	                                                     AcrossApplicationContext parentContext );
 
 	/**
-	 * Loads beans and definitions in the ApplicationContext.
+	 * Loads beans and definitions in the root ApplicationContext.
+	 *
+	 * @param across  AcrossContext being loaded.
+	 * @param context Contains the root Spring ApplicationContext.
+	 */
+	void loadApplicationContext( AcrossContext across, AcrossApplicationContext context );
+
+	/**
+	 * Loads beans and definitions in the module ApplicationContext.
 	 *
 	 * @param across  AcrossContext being loaded.
 	 * @param module  AcrossModule being loaded.

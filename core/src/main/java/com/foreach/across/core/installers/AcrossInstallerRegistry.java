@@ -5,7 +5,7 @@ import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossContextUtil;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.AcrossModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class AcrossInstallerRegistry
 	public AcrossInstallerRegistry( AcrossContext context, Collection<AcrossModule> modulesInOrder ) {
 		this.context = context;
 
-		installerRepository = AcrossContextUtil.getBeanOfType( context, AcrossInstallerRepository.class );
+		installerRepository = AcrossContextUtils.getBeanOfType( context, AcrossInstallerRepository.class );
 		installationConfigs = buildModuleConfigs(modulesInOrder );
 	}
 
@@ -170,11 +170,11 @@ public class AcrossInstallerRegistry
 	}
 
 	private ConfigurableListableBeanFactory getBeanFactoryForInstallerWiring( ModuleInstallationConfig config ) {
-		AcrossApplicationContext moduleContext = AcrossContextUtil.getAcrossApplicationContext( config.getModule() );
+		AcrossApplicationContext moduleContext = AcrossContextUtils.getAcrossApplicationContext( config.getModule() );
 
 		if ( moduleContext == null ) {
 			// If module context not yet available, use the root context
-			return AcrossContextUtil.getBeanFactory( context );
+			return AcrossContextUtils.getBeanFactory( context );
 		}
 		else {
 			return moduleContext.getBeanFactory();

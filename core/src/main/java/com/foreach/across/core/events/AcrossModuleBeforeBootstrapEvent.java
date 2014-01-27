@@ -2,9 +2,7 @@ package com.foreach.across.core.events;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 
 public class AcrossModuleBeforeBootstrapEvent implements AcrossEvent
 {
@@ -24,6 +22,14 @@ public class AcrossModuleBeforeBootstrapEvent implements AcrossEvent
 		return module;
 	}
 
-	private Map<String, Object> additionalSingletons = new HashMap<String, Object>();
-
+	/**
+	 * Add any number of configurers to the module being bootstrapped.
+	 *
+	 * @param configurers One or more ApplicationContextConfigurer instances to add.
+	 */
+	public void addApplicationContextConfigurers( ApplicationContextConfigurer... configurers ) {
+		for ( ApplicationContextConfigurer configurer : configurers ) {
+			module.addApplicationContextConfigurer( configurer );
+		}
+	}
 }

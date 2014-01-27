@@ -190,8 +190,7 @@ public class TestAcrossContextBoot
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
 			context.setAllowInstallers( true );
-
-			context.setBeanFactoryPostProcessors( properties() );
+			context.addPropertySources( properties() );
 
 			context.addModule( testModule1() );
 			context.addModule( testModule2() );
