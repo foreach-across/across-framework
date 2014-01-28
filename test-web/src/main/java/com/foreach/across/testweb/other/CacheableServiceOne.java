@@ -4,5 +4,7 @@ public interface CacheableServiceOne
 {
 	int getNumber();
 
+	int getNumberWithId( int id );
+
 	int getNumberNotCached();
 }

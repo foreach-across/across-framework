@@ -31,7 +31,7 @@
 	</build>
 
 	<modules>
-		<module>core</module>
+		<module>across-core</module>
 		<module>across-web</module>
 		<module>debug-web</module>
 		<module>across-ehcache</module>

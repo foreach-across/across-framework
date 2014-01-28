@@ -13,6 +13,11 @@ public class CacheableServiceOneImpl implements CacheableServiceOne
 		return getNumberNotCached();
 	}
 
+	@Cacheable( "numberCache" )
+	public int getNumberWithId( int id ) {
+		return getNumberNotCached();
+	}
+
 	public int getNumberNotCached() {
 		return ++number;
 	}

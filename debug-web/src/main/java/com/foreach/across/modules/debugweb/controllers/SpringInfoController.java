@@ -1,6 +1,7 @@
 package com.foreach.across.modules.debugweb.controllers;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
+import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenu;
 import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
@@ -8,11 +9,11 @@ import com.foreach.across.modules.web.menu.BuildMenuEvent;
 import com.foreach.across.modules.web.table.Table;
 import net.engio.mbassy.listener.Handler;
 import org.springframework.aop.framework.AopProxyUtils;
-import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
@@ -40,7 +41,7 @@ public class SpringInfoController
 
 	@RequestMapping("/spring/beans")
 	public DebugPageView showBeans( DebugPageView view ) {
-		view.setPage( "th/listBeans" );
+		view.setPage( DebugWeb.VIEW_SPRING_BEANS );
 
 		String[] beanDefinitionNames = BeanFactoryUtils.beanNamesIncludingAncestors(
 				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory() );
@@ -52,7 +53,8 @@ public class SpringInfoController
 		for ( String beanDefinitionName : sortedNames ) {
 			if ( applicationContext.isSingleton( beanDefinitionName ) ) {
 				Object bean = applicationContext.getBean( beanDefinitionName );
-				table.addRow( beanDefinitionName, bean != null ? AopProxyUtils.ultimateTargetClass( bean ).getName() : "" );
+				table.addRow( beanDefinitionName, bean != null ? ClassUtils.getUserClass(
+						AopProxyUtils.ultimateTargetClass( bean ) ).getName() : "" );
 			}
 		}
 
@@ -66,7 +68,7 @@ public class SpringInfoController
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/spring/interceptors")
 	public DebugPageView showInterceptors( DebugPageView view ) {
-		view.setPage( "th/listInterceptors" );
+		view.setPage( DebugWeb.VIEW_SPRING_INTERCEPTORS );
 
 		try {
 			Map<String, AbstractHandlerMapping> handlers = BeanFactoryUtils.beansOfTypeIncludingAncestors(
@@ -102,7 +104,7 @@ public class SpringInfoController
 
 	@RequestMapping("/spring/handlers")
 	public DebugPageView showHandlers( DebugPageView view ) {
-		view.setPage( "th/listInterceptors" );
+		view.setPage( DebugWeb.VIEW_SPRING_INTERCEPTORS );
 
 		Map<String, AbstractHandlerMethodMapping> handlers = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory(),

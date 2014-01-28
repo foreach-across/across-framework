@@ -2,7 +2,9 @@ package com.foreach.across.testweb.sub;
 
 public interface CacheableServiceTwo
 {
-	int getNumber();
+	int getOtherNumber();
 
-	int getNumberNotCached();
+	int getNumberWithId( int id );
+
+	int getOtherNumberNotCached();
 }

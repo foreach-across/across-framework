@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/across.iml" filepath="$PROJECT_DIR$/across.iml" />
-      <module fileurl="file://$PROJECT_DIR$/core/across-core.iml" filepath="$PROJECT_DIR$/core/across-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/across-core/across-core.iml" filepath="$PROJECT_DIR$/across-core/across-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/across-ehcache/across-ehcache.iml" filepath="$PROJECT_DIR$/across-ehcache/across-ehcache.iml" />
       <module fileurl="file://$PROJECT_DIR$/across-web/across-web.iml" filepath="$PROJECT_DIR$/across-web/across-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/container/container.iml" filepath="$PROJECT_DIR$/container/container.iml" />

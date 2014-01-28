@@ -1,6 +1,7 @@
 package com.foreach.across.modules.debugweb.controllers;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
+import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenu;
 import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
@@ -21,7 +22,7 @@ public class ThreadsController
 
 	@RequestMapping("/threadStack")
 	public DebugPageView showThreads( DebugPageView view ) {
-		view.setPage( "th/listThreads" );
+		view.setPage( DebugWeb.VIEW_THREADS );
 
 		ArrayList<ThreadGroup> threadGroups = loadThreadData();
 

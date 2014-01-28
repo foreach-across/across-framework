@@ -8,7 +8,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Exposed
 @Component
 public @interface DebugWebController
 {

@@ -14,7 +14,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 @Configuration
 @Exposed
-public class EhCacheModuleConfig
+public class EhcacheModuleConfig
 {
 	@Bean
 	public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {

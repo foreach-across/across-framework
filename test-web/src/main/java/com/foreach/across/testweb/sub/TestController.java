@@ -21,8 +21,10 @@ public class TestController
 	public String hello( Model model ) {
 		model.addAttribute( "oneCached", serviceOne.getNumber() );
 		model.addAttribute( "oneNotCached", serviceOne.getNumberNotCached() );
-		model.addAttribute( "twoCached", serviceTwo.getNumber() );
-		model.addAttribute( "twoNotCached", serviceTwo.getNumberNotCached() );
+		model.addAttribute( "oneWithId", serviceOne.getNumberWithId( 1 ) );
+		model.addAttribute( "twoCached", serviceTwo.getOtherNumber() );
+		model.addAttribute( "twoNotCached", serviceTwo.getOtherNumberNotCached() );
+		model.addAttribute( "twoWithId", serviceOne.getNumberWithId( 2 ) );
 
 		return "sub/test";
 	}

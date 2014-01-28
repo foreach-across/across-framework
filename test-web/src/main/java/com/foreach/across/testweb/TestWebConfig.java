@@ -2,7 +2,7 @@ package com.foreach.across.testweb;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.debugweb.DebugWebModule;
-import com.foreach.across.modules.ehcache.EhCacheModule;
+import com.foreach.across.modules.ehcache.EhcacheModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.testweb.other.TestWebOtherModule;
 import com.foreach.across.testweb.sub.TestWebModule;
@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
-//@EnableCaching
 @Configuration
 public class TestWebConfig
 {
@@ -35,8 +34,8 @@ public class TestWebConfig
 	}
 
 	@Bean
-	public EhCacheModule ehCacheModule() {
-		return new EhCacheModule();
+	public EhcacheModule ehCacheModule() {
+		return new EhcacheModule();
 	}
 
 	@Bean
@@ -51,7 +50,10 @@ public class TestWebConfig
 
 	@Bean
 	public AcrossWebModule acrossWebModule() {
-		return new AcrossWebModule();
+		AcrossWebModule webModule = new AcrossWebModule();
+		webModule.setViewsResourcePath( "/static" );
+
+		return webModule;
 	}
 
 	@Bean

@@ -1,4 +1,4 @@
-package com.foreach.across.modules.web;
+package com.foreach.across.modules.web.context;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;

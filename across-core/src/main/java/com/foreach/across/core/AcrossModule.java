@@ -75,14 +75,6 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	}
 
 	/**
-	 * @return Array of packages that should be scanned for components.
-	 */
-	@Deprecated
-	public String[] getComponentScanPackages() {
-		return new String[] { getClass().getPackage().getName() };
-	}
-
-	/**
 	 * @return Name of this module.  The spring bean should also be using this name.
 	 */
 	public abstract String getName();

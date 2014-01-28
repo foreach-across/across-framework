@@ -56,7 +56,7 @@ public class Table
 	 * @return Table instance.
 	 */
 	public static Table fromMap( String title, Map data ) {
-		Set<Object> sortedKeys = new TreeSet<Object>( data.keySet() );
+		Set<Object> sortedKeys = new LinkedHashSet<Object>( data.keySet() );
 
 		Table table = new Table( title );
 

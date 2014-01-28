@@ -37,7 +37,9 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: javax.servlet:servlet-api:2.4" />
-          <element id="library" level="project" name="Maven: across:across-debug-web:1.0-SNAPSHOT" />
+          <element id="archive" name="across-debug-web-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="debug-web" />
+          </element>
           <element id="archive" name="across-ehcache-1.0-SNAPSHOT.jar">
             <element id="module-output" name="across-ehcache" />
           </element>

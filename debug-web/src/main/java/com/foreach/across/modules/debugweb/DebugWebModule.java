@@ -1,6 +1,10 @@
 package com.foreach.across.modules.debugweb;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+
+import java.util.Set;
 
 public class DebugWebModule extends AcrossModule
 {
@@ -19,12 +23,22 @@ public class DebugWebModule extends AcrossModule
 	 */
 	@Override
 	public String getName() {
-		return "DebugWebModule";
+		return DebugWeb.MODULE;
 	}
 
 	@Override
 	public String getDescription() {
 		return "Provides a debug web path and functionality to easily register additional debug controllers.";
+	}
+
+	/**
+	 * Register the default ApplicationContextConfigurers for this module.
+	 *
+	 * @param contextConfigurers Set of existing configurers to add to.
+	 */
+	@Override
+	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+		contextConfigurers.add( new AnnotatedClassConfigurer( DebugWebConfig.class ) );
 	}
 }
 

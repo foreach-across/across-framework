@@ -7,6 +7,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
 import com.foreach.across.core.annotations.AcrossEventHandler;
+import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenu;
 import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
@@ -32,7 +33,7 @@ public class LogController
 
 	@RequestMapping(value = "/loggers", method = RequestMethod.GET)
 	public DebugPageView showLoggers( DebugPageView view ) {
-		view.setPage( "th/listLoggers" );
+		view.setPage( DebugWeb.VIEW_LOGGERS );
 
 		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 		List<Logger> loggers = loggerContext.getLoggerList();

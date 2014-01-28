@@ -5,14 +5,14 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 
 import java.util.Set;
 
-public class EhCacheModule extends AcrossModule
+public class EhcacheModule extends AcrossModule
 {
 	/**
 	 * @return Name of this module.  The spring bean should also be using this name.
 	 */
 	@Override
 	public String getName() {
-		return "EhCacheModule";
+		return "EhcacheModule";
 	}
 
 	/**
@@ -20,7 +20,7 @@ public class EhCacheModule extends AcrossModule
 	 */
 	@Override
 	public String getDescription() {
-		return "Registers an EhCache cachemanager and ensures all other modules use it as well.";
+		return "Registers an Ehcache cachemanager and ensures all other modules use it as well.";
 	}
 
 	/**

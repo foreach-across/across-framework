@@ -8,12 +8,17 @@ public class CacheableServiceTwoImpl implements CacheableServiceTwo
 {
 	private int number = 0;
 
-	@Cacheable( "numberCache" )
-	public int getNumber() {
-		return getNumberNotCached();
+	@Cacheable("numberCache")
+	public int getOtherNumber() {
+		return getOtherNumberNotCached();
 	}
 
-	public int getNumberNotCached() {
+	@Cacheable("numberCache")
+	public int getNumberWithId( int id ) {
+		return getOtherNumberNotCached();
+	}
+
+	public int getOtherNumberNotCached() {
 		return ++number;
 	}
 }
