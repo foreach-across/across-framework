@@ -1,6 +1,8 @@
 package com.foreach.across.modules.ehcache.config;
 
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.ehcache.EhcacheModule;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
@@ -16,10 +18,13 @@ import org.springframework.core.io.ClassPathResource;
 @Exposed
 public class EhcacheModuleConfig
 {
+	@Autowired
+	private EhcacheModule ehcacheModule;
+
 	@Bean
 	public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
 		EhCacheManagerFactoryBean ehCacheManagerFactoryBean = new EhCacheManagerFactoryBean();
-		ehCacheManagerFactoryBean.setConfigLocation( new ClassPathResource( "ehcache.xml" ) );
+		ehCacheManagerFactoryBean.setConfigLocation( ehcacheModule.getConfigLocation() );
 		return ehCacheManagerFactoryBean;
 	}
 
