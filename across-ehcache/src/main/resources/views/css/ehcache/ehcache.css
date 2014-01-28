@@ -1,2 +1,18 @@
-body {
-  color: red; }
+table.cache-details {
+  border: solid 1px silver;
+  margin: 10px; }
+  table.cache-details tr th, table.cache-details tr td {
+    border: solid 1px silver;
+    padding: 5px; }
+  table.cache-details tr th {
+    text-align: left; }
+    table.cache-details tr th.cache-name {
+      background-color: whitesmoke;
+      text-align: center; }
+      table.cache-details tr th.cache-name a {
+        text-decoration: none;
+        color: black; }
+        table.cache-details tr th.cache-name a:hover {
+          color: orange; }
+  table.cache-details tr td {
+    width: 100px; }

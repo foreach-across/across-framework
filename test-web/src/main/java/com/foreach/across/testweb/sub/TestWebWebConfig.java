@@ -53,6 +53,8 @@ public class TestWebWebConfig extends WebMvcConfigurationSupport
 	protected void addResourceHandlers( ResourceHandlerRegistry registry ) {
 		registry.addResourceHandler( "/static/**" ).addResourceLocations( "classpath:/views/" );
 
+		registry.addResourceHandler( "/static/css/debugweb/**" ).addResourceLocations(
+						new File( "c:/code/across/debug-web/src/main/resources/views/css/debugweb" ).toURI().toString() );
 		registry.addResourceHandler( "/static/css/ehcache/**" ).addResourceLocations(
 				new File( "c:/code/across/across-ehcache/src/main/resources/views/css/ehcache" ).toURI().toString() );
 	}

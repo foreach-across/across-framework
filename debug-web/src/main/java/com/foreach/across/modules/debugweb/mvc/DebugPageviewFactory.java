@@ -4,6 +4,9 @@ import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.web.menu.MenuFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Service responsible for creating a DebugView instance.

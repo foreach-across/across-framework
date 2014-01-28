@@ -2,123 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/context/AcrossWebArgumentResolver.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebConfig.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/events/BuildRegistryEvent.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/controllers/DebugEhcacheController.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWeb.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/handlers/DebugWebEventHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResource.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceRegistry.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceRegistryInterceptor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceTranslator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceUtils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-ehcache/src/main/resources/views/th/ehcache/cacheDetail.thtml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-ehcache/src/main/resources/views/th/ehcache/cacheList.thtml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" />
-      <change type="DELETED" beforePath="C:\code\across\.idea\libraries\Maven__across_across_debug_web_1_0_SNAPSHOT.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\across-core.iml" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\pom.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\AcrossConfig.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\AcrossContext.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\AcrossModule.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\annotations\AcrossEventHandler.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\annotations\Exposed.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\annotations\Installer.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\annotations\InstallerGroup.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\annotations\InstallerMethod.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\annotations\PostRefresh.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\annotations\Refreshable.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\AcrossApplicationContext.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\AcrossApplicationContextHolder.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\AcrossContextUtils.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\ApplicationContextScanner.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\bootstrap\AcrossBeanCopyHelper.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\bootstrap\AcrossBootstrapper.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\bootstrap\AnnotationConfigBootstrapApplicationContextFactory.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\bootstrap\BootstrapAdapter.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\bootstrap\BootstrapApplicationContextFactory.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\configurer\AnnotatedClassConfigurer.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\configurer\ApplicationContextConfigurer.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\configurer\ApplicationContextConfigurerAdapter.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\configurer\ComponentScanConfigurer.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\context\configurer\PostProcessorConfigurer.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\events\AcrossContextBootstrappedEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\events\AcrossEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\events\AcrossEventPublisher.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\events\AcrossModuleBeforeBootstrapEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\events\AcrossModuleBootstrappedEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\events\SpringContextRefreshedEventListener.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\filters\AbstractNameBeanFilter.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\filters\AnnotationBeanFilter.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\filters\BeanFilter.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\filters\BeanFilterComposite.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\filters\ClassBeanFilter.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\filters\PackageBeanFilter.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\installers\AcrossCoreInstaller.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\installers\AcrossCoreSchemaInstaller.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\installers\AcrossInstallerRegistry.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\installers\AcrossInstallerRepository.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\installers\AcrossLiquibaseInstaller.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\installers\InstallerPhase.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\java\com\foreach\across\core\installers\InstallerRunCondition.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\main\resources\com\foreach\across\core\installers\AcrossCoreSchemaInstaller.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\TestAcrossContextBoot.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\filters\TestBeanFilters.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\TestContextEventListener.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\TestEvent.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\TestModuleEventListener.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\module1\ConstructedBeanModule1.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\module1\ScannedBeanModule1.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\module1\ScannedPrototypeBeanModule1.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\module1\TestModule1.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\module1\TestModule1Config.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\module2\ConstructedBeanModule2.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\module2\ScannedBeanModule2.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\module2\TestModule2.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\java\com\foreach\across\test\modules\module2\TestModule2Config.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\across\core\src\test\resources\com\foreach\across\test\TestAcrossContextBoot.properties" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/EhcacheModule.java" afterPath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/EhcacheModule.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/config/EhcacheClientModuleConfig.java" afterPath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/config/EhcacheClientModuleConfig.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/config/EhcacheModuleConfig.java" afterPath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/config/EhcacheModuleConfig.java" />
-      <change type="MOVED" beforePath="C:\code\across\across-web\src\main\java\com\foreach\across\modules\web\WebBootstrapApplicationContextFactory.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/context/WebBootstrapApplicationContextFactory.java" />
-      <change type="MOVED" beforePath="C:\code\across\debug-web\src\main\resources\views\th\layouts\debugPage.thtml" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/layouts/debugPage.thtml" />
-      <change type="MOVED" beforePath="C:\code\across\debug-web\src\main\resources\views\th\listBeans.thtml" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/listBeans.thtml" />
-      <change type="MOVED" beforePath="C:\code\across\debug-web\src\main\resources\views\th\listInterceptors.thtml" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/listInterceptors.thtml" />
-      <change type="MOVED" beforePath="C:\code\across\debug-web\src\main\resources\views\th\listLoggers.thtml" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/listLoggers.thtml" />
-      <change type="MOVED" beforePath="C:\code\across\debug-web\src\main\resources\views\th\listProperties.thtml" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/listProperties.thtml" />
-      <change type="MOVED" beforePath="C:\code\across\debug-web\src\main\resources\views\th\listThreads.thtml" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/listThreads.thtml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebModule.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebModule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CacheableServiceOne.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CacheableServiceOne.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CacheableServiceOneImpl.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CacheableServiceOneImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/CacheableServiceTwo.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/CacheableServiceTwo.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/CacheableServiceTwoImpl.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/CacheableServiceTwoImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugHandlerMapping.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugHandlerMapping.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageView.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewArgumentResolver.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewArgumentResolver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebConfig.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugWebController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugWebController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/handlers/RegisterClientModuleConfigHandler.java" afterPath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/handlers/RegisterClientModuleConfigHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/table/Table.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/table/Table.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestController.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/test/java/com/foreach/across/test/modules/web/menu/TestMenu.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-core/across-core.iml" afterPath="$PROJECT_DIR$/across-core/across-core.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-ehcache/across-ehcache.iml" afterPath="$PROJECT_DIR$/across-ehcache/across-ehcache.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/resources/views/th/across.thtml" afterPath="$PROJECT_DIR$/across-web/src/main/resources/views/th/across.thtml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/container/container.iml" afterPath="$PROJECT_DIR$/container/container.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/across-web.iml" afterPath="$PROJECT_DIR$/across-web/across-web.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across.iml" afterPath="$PROJECT_DIR$/across.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-ehcache/src/main/resources/views/th/ehcache/cacheList.thtml" afterPath="$PROJECT_DIR$/across-ehcache/src/main/resources/views/th/ehcache/cacheList.thtml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/debug-web.iml" afterPath="$PROJECT_DIR$/debug-web/debug-web.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/layouts/debugPage.thtml" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/layouts/debugPage.thtml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.css" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.css" afterPath="$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.scss" afterPath="$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.scss" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/test-web.iml" afterPath="$PROJECT_DIR$/test-web/test-web.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/webapp/WEB-INF/jsp/sub/test.jsp" afterPath="$PROJECT_DIR$/test-web/src/main/webapp/WEB-INF/jsp/sub/test.jsp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/test_web_war_exploded.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/test_web_war_exploded.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-core/pom.xml" afterPath="$PROJECT_DIR$/across-core/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="across.iws" />
@@ -183,46 +85,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="LogController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java">
+      <file leaf-file-name="TestWebWebConfig.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="24" selection-start="1368" selection-end="1368" vertical-scroll-proportion="0.0" vertical-offset="456" max-vertical-offset="1445">
-              <folding />
+            <state line="56" column="59" selection-start="2364" selection-end="2364" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="3315">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PropertiesController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="20" selection-start="1190" selection-end="1190" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SpringInfoController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="55" selection-start="4008" selection-end="4008" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2210">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DebugPageViewFactory.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="33" selection-start="436" selection-end="436" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TestWebConfig.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="TestWebConfig.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="47" selection-start="1095" selection-end="1095" vertical-scroll-proportion="0.6219512" vertical-offset="51" max-vertical-offset="1411">
+            <state line="61" column="14" selection-start="1778" selection-end="1778" vertical-scroll-proportion="0.0" vertical-offset="496" max-vertical-offset="1411">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -230,48 +107,73 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DebugWeb.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWeb.java">
+      <file leaf-file-name="listLoggers.thtml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/listLoggers.thtml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="42" selection-start="278" selection-end="289" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="391">
+            <state line="12" column="0" selection-start="277" selection-end="277" vertical-scroll-proportion="-7.8461537" vertical-offset="0" max-vertical-offset="748">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DefaultDebugWebController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/DefaultDebugWebController.java">
+      <file leaf-file-name="WebResourceRegistryInterceptor.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceRegistryInterceptor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="13" selection-start="284" selection-end="284" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="306">
+            <state line="80" column="0" selection-start="2528" selection-end="2528" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="1394">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ThreadsController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java">
+      <file leaf-file-name="MenuFactory.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="0" selection-start="953" selection-end="953" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3094">
+            <state line="18" column="36" selection-start="445" selection-end="445" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="544">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DebugWebModule.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java">
+      <file leaf-file-name="ehcache.scss" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="30" selection-start="646" selection-end="646" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="20" column="26" selection-start="382" selection-end="382" vertical-scroll-proportion="-13.076923" vertical-offset="0" max-vertical-offset="595">
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DebugWebConfig.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebConfig.java">
+      <file leaf-file-name="debugweb.scss" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="53" column="81" selection-start="1969" selection-end="1969" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="1156">
+            <state line="8" column="1" selection-start="156" selection-end="156" vertical-scroll-proportion="-5.230769" vertical-offset="0" max-vertical-offset="238">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DebugPageViewFactory.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="33" column="0" selection-start="1019" selection-end="1019" vertical-scroll-proportion="1.077135" vertical-offset="0" max-vertical-offset="595">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RequestContextHolder.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE-sources.jar!/org/springframework/web/context/request/RequestContextHolder.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2414">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="cacheList.thtml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/across-ehcache/src/main/resources/views/th/ehcache/cacheList.thtml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="56" column="7" selection-start="1558" selection-end="1558" vertical-scroll-proportion="-19.807692" vertical-offset="437" max-vertical-offset="1054">
               <folding />
             </state>
           </provider>
@@ -295,13 +197,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/handlers/RegisterClientModuleConfigHandler.java" />
-        <option value="$PROJECT_DIR$/core/src/main/java/com/foreach/across/core/AcrossModule.java" />
-        <option value="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/controllers/DebugEhCacheController.java" />
-        <option value="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/EhCacheModule.java" />
-        <option value="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/EhcacheModule.java" />
-        <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CacheableServiceOneImpl.java" />
-        <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/CacheableServiceTwoImpl.java" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/CacheableServiceTwo.java" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CacheableServiceOne.java" />
         <option value="$PROJECT_DIR$/test-web/src/main/webapp/WEB-INF/jsp/sub/test.jsp" />
@@ -311,7 +206,6 @@
         <option value="$PROJECT_DIR$/across-ehcache/src/main/resources/views/th/module/ehcache/cacheDetail.thtml" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageView.java" />
         <option value="$PROJECT_DIR$/across-ehcache/src/main/resources/views/th/module/ehcache/cacheList.thtml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceDescriptor.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewArgumentResolver.java" />
         <option value="$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/events/BuildRegistryEvent.java" />
@@ -323,19 +217,16 @@
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResource.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/scss/module/debugweb/debugweb.scss" />
         <option value="$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/module/ehcache/ehcache.scss" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss" />
         <option value="$PROJECT_DIR$/across-core/across-core.iml" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceUtils.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/context/AcrossWebArgumentResolver.java" />
         <option value="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/controllers/DebugEhcacheController.java" />
-        <option value="$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.scss" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebMappingConfig.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/handlers/BuildHandlers.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/handlers/DebugWebEventHandler.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugWebController.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebConfig.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugHandlerMapping.java" />
-        <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebModule.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebModule.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebConfig.java" />
@@ -344,8 +235,19 @@
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWeb.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/layouts/debugPage.thtml" />
+        <option value="$PROJECT_DIR$/across-core/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java" />
+        <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java" />
+        <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java" />
+        <option value="$PROJECT_DIR$/across-web/src/test/java/com/foreach/across/test/modules/web/menu/TestMenu.java" />
+        <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss" />
+        <option value="$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.scss" />
+        <option value="$PROJECT_DIR$/across-ehcache/src/main/resources/views/th/ehcache/cacheList.thtml" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java" />
       </list>
     </option>
   </component>
@@ -370,8 +272,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-9" />
     <option name="y" value="-9" />
-    <option name="width" value="1618" />
-    <option name="height" value="1184" />
+    <option name="width" value="1938" />
+    <option name="height" value="1064" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -429,7 +331,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
+              <option name="myItemId" value="across-web" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -443,7 +345,25 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
+              <option name="myItemId" value="across-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across-web" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -465,7 +385,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="test-web" />
+              <option name="myItemId" value="across-web" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -481,7 +401,73 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="testweb" />
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="menu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across-core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across-core" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -533,6 +519,7 @@
     <property name="LayoutCode.rearrangeEntriesXHTML" value="false" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="LayoutCode.rearrangeEntriesCSS" value="false" />
+    <property name="LayoutCode.rearrangeEntriesSCSS" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -558,19 +545,19 @@
       <recent name="C:\code\across\debug-web\src\main\resources\views\css\module" />
     </key>
   </component>
-  <component name="RunManager" selected="Tomcat Server.Test Web">
-    <configuration default="false" name="TestAcrossContextBoot" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.TestMenu">
+    <configuration default="false" name="TestMenu" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.foreach.across.test.*" />
+          <option name="PATTERN" value="com.foreach.across.test.modules.web.menu.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="across-core" />
+      <module name="across-web" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.across.test" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.TestAcrossContextBoot" />
+      <option name="PACKAGE_NAME" value="com.foreach.across.test.modules.web.menu" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.modules.web.menu.TestMenu" />
       <option name="METHOD_NAME" />
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" />
@@ -587,19 +574,19 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="TestBeanFilters.filterOnExposedAnnotation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="TestMenu.comparatorCanBeInherited" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.foreach.across.test.filters.*" />
+          <option name="PATTERN" value="com.foreach.across.test.modules.web.menu.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="across-core" />
+      <module name="across-web" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.across.test.filters" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.filters.TestBeanFilters" />
-      <option name="METHOD_NAME" value="filterOnExposedAnnotation" />
+      <option name="PACKAGE_NAME" value="com.foreach.across.test.modules.web.menu" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.modules.web.menu.TestMenu" />
+      <option name="METHOD_NAME" value="comparatorCanBeInherited" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -615,19 +602,19 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="TestBeanFilters.filterOnRefreshableAnnotation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="TestMenu.comparatorCanBeNonInheritable" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.foreach.across.test.filters.*" />
+          <option name="PATTERN" value="com.foreach.across.test.modules.web.menu.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="across-core" />
+      <module name="across-web" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.across.test.filters" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.filters.TestBeanFilters" />
-      <option name="METHOD_NAME" value="filterOnRefreshableAnnotation" />
+      <option name="PACKAGE_NAME" value="com.foreach.across.test.modules.web.menu" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.modules.web.menu.TestMenu" />
+      <option name="METHOD_NAME" value="comparatorCanBeNonInheritable" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -643,19 +630,19 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="TestBeanFilters.filterOnServiceAndExposedAnnotation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="TestMenu.comparatorIsInheritedUnlessOverruled" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.foreach.across.test.filters.*" />
+          <option name="PATTERN" value="com.foreach.across.test.modules.web.menu.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="across-core" />
+      <module name="across-web" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.across.test.filters" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.filters.TestBeanFilters" />
-      <option name="METHOD_NAME" value="filterOnServiceAndExposedAnnotation" />
+      <option name="PACKAGE_NAME" value="com.foreach.across.test.modules.web.menu" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.modules.web.menu.TestMenu" />
+      <option name="METHOD_NAME" value="comparatorIsInheritedUnlessOverruled" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -671,19 +658,19 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="TestAcrossContextBoot.moduleContextLoadingOrder" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="TestMenu.orderedHasPriorityOverAComparator" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.foreach.across.test.*" />
+          <option name="PATTERN" value="com.foreach.across.test.modules.web.menu.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="across-core" />
+      <module name="across-web" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.across.test" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.TestAcrossContextBoot" />
-      <option name="METHOD_NAME" value="moduleContextLoadingOrder" />
+      <option name="PACKAGE_NAME" value="com.foreach.across.test.modules.web.menu" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.across.test.modules.web.menu.TestMenu" />
+      <option name="METHOD_NAME" value="orderedHasPriorityOverAComparator" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -695,13 +682,7 @@
       </option>
       <envs />
       <patterns />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -1001,19 +982,19 @@
     </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Tomcat Server.Test Web" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.TestBeanFilters.filterOnExposedAnnotation" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.TestBeanFilters.filterOnRefreshableAnnotation" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.TestBeanFilters.filterOnServiceAndExposedAnnotation" />
-      <item index="5" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.moduleContextLoadingOrder" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.TestMenu" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.TestMenu.comparatorCanBeInherited" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.TestMenu.comparatorCanBeNonInheritable" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.TestMenu.comparatorIsInheritedUnlessOverruled" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.TestMenu.orderedHasPriorityOverAComparator" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.TestAcrossContextBoot.moduleContextLoadingOrder" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.TestBeanFilters.filterOnServiceAndExposedAnnotation" />
-        <item index="3" class="java.lang.String" itemvalue="JUnit.TestBeanFilters.filterOnRefreshableAnnotation" />
-        <item index="4" class="java.lang.String" itemvalue="JUnit.TestBeanFilters.filterOnExposedAnnotation" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.TestMenu" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.TestMenu.orderedHasPriorityOverAComparator" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.TestMenu.comparatorIsInheritedUnlessOverruled" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.TestMenu.comparatorCanBeNonInheritable" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.TestMenu.comparatorCanBeInherited" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -1062,12 +1043,12 @@
       <workItem from="1390374276006" duration="370000" />
       <workItem from="1390463038897" duration="34186000" />
       <workItem from="1390566985729" duration="14539000" />
-      <workItem from="1390656262110" duration="52889000" />
+      <workItem from="1390656262110" duration="60813000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="243575000" />
+    <option name="totallyTimeSpent" value="251499000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1090,19 +1071,19 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1618" height="1184" extended-state="6" />
-    <editor active="true" />
+    <frame x="-9" y="-9" width="1938" height="1064" extended-state="6" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28846154" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28804347" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991013" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3201923" sideWeight="0.5885751" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.55" sideWeight="0.5885751" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25417203" sideWeight="0.46666667" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6615385" sideWeight="0.4114249" order="9" side_tool="true" content_ui="tabs" />
@@ -1115,8 +1096,8 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32862645" sideWeight="0.600779" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3652118" sideWeight="0.53333336" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3903846" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30298188" sideWeight="0.53333336" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2152174" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" x="91" y="91" width="1418" height="984" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32947233" sideWeight="0.60375494" order="8" side_tool="true" content_ui="tabs" />
@@ -1182,122 +1163,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/layouts/debugPage.thtml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="266" selection-end="266" vertical-scroll-proportion="-6.5384617" vertical-offset="0" max-vertical-offset="408">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="70" selection-start="328" selection-end="328" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceRegistry.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="227" column="55" selection-start="7272" selection-end="7272" vertical-scroll-proportion="0.7712215" vertical-offset="3046" max-vertical-offset="4165">
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#888#901#0" expanded="false" />
-            <element signature="e#6884#6897#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="47" selection-start="988" selection-end="988" vertical-scroll-proportion="0.0" vertical-offset="341" max-vertical-offset="1394">
-          <folding>
-            <element signature="e#1557#1558#0" expanded="true" />
-            <element signature="e#1578#1579#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceRegistryInterceptor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="77" column="57" selection-start="2414" selection-end="2414" vertical-scroll-proportion="0.0" vertical-offset="1123" max-vertical-offset="1683">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#931#954#0" expanded="true" />
-            <element signature="e#1008#1009#0" expanded="true" />
-            <element signature="e#1037#1038#0" expanded="true" />
-            <element signature="e#1111#1112#0" expanded="true" />
-            <element signature="e#1156#1157#0" expanded="true" />
-            <element signature="e#1229#1230#0" expanded="true" />
-            <element signature="e#1265#1266#0" expanded="true" />
-            <element signature="e#1367#1368#0" expanded="true" />
-            <element signature="e#1426#1427#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE-sources.jar!/org/springframework/web/servlet/handler/SimpleUrlHandlerMapping.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="63" selection-start="2205" selection-end="2205" vertical-scroll-proportion="-1.3375" vertical-offset="1361" max-vertical-offset="2023">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE-sources.jar!/org/springframework/core/io/ClassPathResource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="188" column="20" selection-start="6028" selection-end="6028" vertical-scroll-proportion="0.33214286" vertical-offset="2602" max-vertical-offset="3927">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/4.0.0.RELEASE/spring-core-4.0.0.RELEASE-sources.jar!/org/springframework/core/io/Resource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="116" column="46" selection-start="3895" selection-end="3895" vertical-scroll-proportion="0.0" vertical-offset="1497" max-vertical-offset="2125">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE-sources.jar!/org/springframework/web/servlet/resource/ResourceHttpRequestHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="119" column="0" selection-start="5587" selection-end="5587" vertical-scroll-proportion="0.3327616" vertical-offset="1183" max-vertical-offset="4573">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/4.0.0.RELEASE/spring-webmvc-4.0.0.RELEASE-sources.jar!/org/springframework/web/servlet/handler/AbstractUrlHandlerMapping.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="101" column="0" selection-start="3813" selection-end="3813" vertical-scroll-proportion="0.3327616" vertical-offset="945" max-vertical-offset="6137">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="989">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="22" selection-start="22" selection-end="22" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="989">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-core/across-core.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="80" selection-start="379" selection-end="379" vertical-scroll-proportion="0.06967213" vertical-offset="0" max-vertical-offset="976">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-ehcache/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="989">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="21" column="107" selection-start="718" selection-end="718" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578">
@@ -1313,13 +1178,6 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="1" selection-start="22" selection-end="22" vertical-scroll-proportion="-1.3076923" vertical-offset="0" max-vertical-offset="136">
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1450,17 +1308,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="13" selection-start="2075" selection-end="2075" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="3383">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3498#3889#0" expanded="true" />
-            <element signature="e#3884#3885#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/handlers/DebugWebEventHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="11" column="54" selection-start="524" selection-end="524" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="544">
@@ -1477,13 +1324,6 @@
             <element signature="imports" expanded="true" />
             <element signature="e#1836#1845#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="31" selection-start="38" selection-end="38" vertical-scroll-proportion="0.018085107" vertical-offset="0" max-vertical-offset="940">
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1573,19 +1413,158 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/layouts/debugPage.thtml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="33" selection-start="436" selection-end="436" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
+        <state line="15" column="7" selection-start="445" selection-end="445" vertical-scroll-proportion="-9.807693" vertical-offset="0" max-vertical-offset="374">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="215" selection-end="215" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="646">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-core/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="0" selection-start="989" selection-end="989" vertical-scroll-proportion="0.0" vertical-offset="212" max-vertical-offset="1258">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="34" selection-start="949" selection-end="949" vertical-scroll-proportion="0.0" vertical-offset="501" max-vertical-offset="1309">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="32" selection-start="78" selection-end="78" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="340">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1-sources.jar!/org/apache/commons/lang3/StringUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5520" column="25" selection-start="221991" selection-end="221991" vertical-scroll-proportion="0.3329918" vertical-offset="93124" max-vertical-offset="111605">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="170" column="35" selection-start="4559" selection-end="4559" vertical-scroll-proportion="0.0" vertical-offset="2332" max-vertical-offset="3264">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1043#1251#0" expanded="true" />
+            <element signature="e#1247#1248#0" expanded="true" />
+            <element signature="e#1586#1587#0" expanded="true" />
+            <element signature="e#1607#1608#0" expanded="true" />
+            <element signature="e#1911#1912#0" expanded="true" />
+            <element signature="e#1940#1941#0" expanded="true" />
+            <element signature="e#2554#2555#0" expanded="true" />
+            <element signature="e#2578#2579#0" expanded="true" />
+            <element signature="e#2764#2765#0" expanded="true" />
+            <element signature="e#2799#2800#0" expanded="true" />
+            <element signature="e#3169#3170#0" expanded="true" />
+            <element signature="e#3194#3195#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/test/java/com/foreach/across/test/modules/web/menu/TestMenu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="17" selection-start="282" selection-end="282" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3791">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#343#470#0" expanded="true" />
+            <element signature="e#466#467#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="989">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/TestWebConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="47" selection-start="1095" selection-end="1095" vertical-scroll-proportion="0.6219512" vertical-offset="51" max-vertical-offset="1411">
+        <state line="61" column="14" selection-start="1778" selection-end="1778" vertical-scroll-proportion="0.0" vertical-offset="496" max-vertical-offset="1411">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="56" column="59" selection-start="2364" selection-end="2364" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="3315">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-ehcache/src/main/resources/views/th/ehcache/cacheList.thtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="56" column="7" selection-start="1558" selection-end="1558" vertical-scroll-proportion="-19.807692" vertical-offset="437" max-vertical-offset="1054">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="1" selection-start="156" selection-end="156" vertical-scroll-proportion="-5.230769" vertical-offset="0" max-vertical-offset="238">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="26" selection-start="382" selection-end="382" vertical-scroll-proportion="-13.076923" vertical-offset="0" max-vertical-offset="595">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/listLoggers.thtml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="0" selection-start="277" selection-end="277" vertical-scroll-proportion="-7.8461537" vertical-offset="0" max-vertical-offset="748">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceRegistryInterceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="0" selection-start="2528" selection-end="2528" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="1394">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="36" selection-start="445" selection-end="445" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="544">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/4.0.0.RELEASE/spring-web-4.0.0.RELEASE-sources.jar!/org/springframework/web/context/request/RequestContextHolder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2414">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="0" selection-start="1019" selection-end="1019" vertical-scroll-proportion="1.077135" vertical-offset="0" max-vertical-offset="595">
+          <folding />
         </state>
       </provider>
     </entry>

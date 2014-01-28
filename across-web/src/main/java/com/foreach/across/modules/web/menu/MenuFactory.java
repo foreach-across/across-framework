@@ -20,6 +20,9 @@ public class MenuFactory
 		BuildMenuEvent<T> e = new BuildMenuEvent<T>( this, menu );
 		publisher.publish( e );
 
+		// Always sort a menu after the initial build
+		menu.sort();
+
 		return menu;
 	}
 }

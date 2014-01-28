@@ -1,2 +1,6 @@
-body {
-  background-color: whitesmoke; }
+div.feedback {
+  background-color: whitesmoke;
+  padding: 5px;
+  border-radius: 3px;
+  border: solid 1px green;
+  margin-bottom: 15px; }
