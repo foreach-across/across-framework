@@ -32,7 +32,9 @@ public class DebugPageViewFactory
 
 	public DebugPageView buildView() {
 		DebugPageView view = new DebugPageView( debugPageTemplate, debugWebModule.getRootPath() );
-		view.addObject( "debugMenu", menuFactory.buildMenu( new DebugMenu( debugWebModule.getRootPath() ) ) );
+		menuFactory.buildMenu( "debugMenu", DebugMenu.class );
+
+//		view.addObject( "debugMenu", menuFactory.buildMenu( new DebugMenu( debugWebModule.getRootPath() ) ) );
 
 		return view;
 	}

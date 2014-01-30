@@ -4,20 +4,14 @@ import com.foreach.across.core.events.AcrossEvent;
 
 public class BuildMenuEvent<T extends Menu> implements AcrossEvent
 {
-	private MenuFactory owner;
 	private T menu;
 
-	public BuildMenuEvent( MenuFactory owner, T menu ) {
-		this.owner = owner;
+	public BuildMenuEvent( T menu ) {
 		this.menu = menu;
 	}
 
 	public String getMenuName() {
 		return menu.getPath();
-	}
-
-	public MenuFactory getOwner() {
-		return owner;
 	}
 
 	public T getMenu() {

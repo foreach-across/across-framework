@@ -2,9 +2,8 @@ package com.foreach.across.modules.debugweb;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.debugweb.handlers.DebugWebEventHandler;
-import com.foreach.across.modules.debugweb.mvc.DebugHandlerMapping;
-import com.foreach.across.modules.debugweb.mvc.DebugPageViewArgumentResolver;
-import com.foreach.across.modules.debugweb.mvc.DebugPageViewFactory;
+import com.foreach.across.modules.debugweb.mvc.*;
+import com.foreach.across.modules.web.menu.MenuFactory;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
@@ -15,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Declares a separate handler for debug mappings.
@@ -28,6 +29,19 @@ public class DebugWebConfig
 
 	@Autowired(required = false)
 	private WebResourceTranslator viewsWebResourceTranslator;
+
+	@Autowired
+	private MenuFactory menuFactory;
+
+	@PostConstruct
+	public void initialize() {
+		menuFactory.addMenuBuilder( debugMenuBuilder(), DebugMenu.class );
+	}
+
+	@Bean
+	public DebugMenuBuilder debugMenuBuilder() {
+		return new DebugMenuBuilder();
+	}
 
 	@Bean
 	public DebugPageViewFactory debugPageViewFactory() {

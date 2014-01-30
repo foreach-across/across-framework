@@ -2,6 +2,9 @@ package com.foreach.across.modules.web;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.context.AcrossWebArgumentResolver;
+import com.foreach.across.modules.web.menu.MenuBuilder;
+import com.foreach.across.modules.web.menu.MenuFactory;
+import com.foreach.across.modules.web.menu.MenuStore;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
 import com.foreach.across.modules.web.resource.WebResourceTranslator;
@@ -25,6 +28,15 @@ public class AcrossWebConfig
 	@Bean
 	public WebResourceRegistryInterceptor webResourceRegistryInterceptor() {
 		return new WebResourceRegistryInterceptor();
+	}
+
+	@Bean
+	public MenuFactory menuFactory( MenuBuilder requestMenuBuilder, MenuStore requestMenuStore ) {
+		MenuFactory menuFactory = new MenuFactory();
+		menuFactory.setDefaultMenuBuilder( requestMenuBuilder );
+		menuFactory.setDefaultMenuStore( requestMenuStore );
+
+		return menuFactory;
 	}
 
 	@Bean

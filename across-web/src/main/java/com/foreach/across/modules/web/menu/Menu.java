@@ -30,15 +30,27 @@ public class Menu
 	};
 
 	private boolean ordered = false;
-	private String path, title, url;
+	private String name, path, title, url;
 	private LinkedList<MenuItem> items = new LinkedList<MenuItem>();
 
 	private Comparator<Menu> comparator = null;
 	private boolean comparatorInheritable = false;
 
-	public Menu( String path ) {
-		this.path = path;
-		this.title = path;
+	public Menu() {
+		this.path = "";
+	}
+
+	public Menu( String name ) {
+		this();
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName( String name ) {
+		this.name = name;
 	}
 
 	public boolean isOrdered() {

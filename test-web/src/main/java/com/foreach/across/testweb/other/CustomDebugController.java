@@ -1,10 +1,9 @@
 package com.foreach.across.testweb.other;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
-import com.foreach.across.modules.debugweb.mvc.DebugMenu;
+import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
 import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
-import com.foreach.across.modules.web.menu.BuildMenuEvent;
 import net.engio.mbassy.listener.Handler;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class CustomDebugController
 {
 	@Handler
-	public void buildMenu( BuildMenuEvent<DebugMenu> event ) {
+	public void buildMenu( DebugMenuEvent event ) {
 		event.addMenuItem( "/custom", "Custom debug page" );
 	}
 

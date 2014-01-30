@@ -11,7 +11,10 @@ public class DebugMenu extends Menu
 	private final String rootPath;
 
 	public DebugMenu( String rootPath ) {
-		super( NAME );
+		super(NAME);
+
+		setPath( rootPath );
+		setTitle( NAME );
 
 		this.rootPath = rootPath;
 	}
