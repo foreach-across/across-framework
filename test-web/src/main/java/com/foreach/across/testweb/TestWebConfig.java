@@ -24,11 +24,11 @@ public class TestWebConfig
 		context.setDataSource( acrossDataSource() );
 		context.setAllowInstallers( false );
 
-		context.addModule( ehCacheModule() );
-		context.addModule( acrossWebModule() );
-		context.addModule( debugWebModule() );
 		context.addModule( otherModule() );
 		context.addModule( testWebModule() );
+		context.addModule( ehCacheModule() );
+		context.addModule( debugWebModule() );
+		context.addModule( acrossWebModule() );
 
 		return context;
 	}

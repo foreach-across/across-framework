@@ -1,15 +1,21 @@
 package com.foreach.across.modules.ehcache;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.AcrossRole;
+import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import org.springframework.context.annotation.Role;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.util.Set;
 
+@AcrossRole(AcrossModuleRole.INFRASTRUCTURE)
+@AcrossDepends(optional = "DebugWebModule")
 public class EhcacheModule extends AcrossModule
 {
-	private Resource configLocation = new ClassPathResource("ehcache.xml");
+	private Resource configLocation = new ClassPathResource( "ehcache.xml" );
 
 	public Resource getConfigLocation() {
 		return configLocation;

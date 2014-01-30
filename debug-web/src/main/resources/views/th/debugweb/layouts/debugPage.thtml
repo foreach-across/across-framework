@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>test debug pagina</title>
-	<link rel="stylesheet" type="text/css" th:each="css : ${webResourceRegistry.getResources('css')}" th:href="${css.data}"/>
+	<link rel="stylesheet" type="text/css" th:each="css : ${webResourceRegistry.getResources('css')}" th:href="@{${css.data}}"/>
 </head>
 <body>
 <h1>Debug controller</h1>

@@ -1,5 +1,6 @@
 package com.foreach.across.modules.ehcache.controllers;
 
+import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.modules.debugweb.mvc.DebugMenu;
 import com.foreach.across.modules.debugweb.mvc.DebugPageView;
@@ -26,6 +27,7 @@ import java.util.LinkedList;
 
 @AcrossEventHandler
 @DebugWebController
+@AcrossDepends(required = "DebugWebModule")
 public class DebugEhcacheController
 {
 	@Autowired
@@ -57,7 +59,7 @@ public class DebugEhcacheController
 	}
 
 	@RequestMapping(value = "/ehcache/flush", method = RequestMethod.GET)
-	public DebugPageView flushCache( DebugPageView view,
+	public String flushCache( DebugPageView view,
 	                          @RequestParam(value = "cache", required = false) String cacheName,
 	                          @RequestParam(value = "from", required = false) String from ) {
 		String[] cachesToFlush = cacheName == null ? cacheManager.getCacheNames() : new String[] { cacheName };
@@ -66,9 +68,7 @@ public class DebugEhcacheController
 			cacheManager.getCache( cache ).flush();
 		}
 
-		view.redirect( "/ehcache?flushed=" + cachesToFlush.length );
-
-		return view;
+		return view.redirect( "/ehcache?flushed=" + cachesToFlush.length );
 	}
 
 	@RequestMapping(value = "/ehcache/view", method = RequestMethod.GET)

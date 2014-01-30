@@ -1,11 +1,13 @@
 package com.foreach.across.modules.debugweb;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 
 import java.util.Set;
 
+@AcrossDepends(required = "AcrossWebModule")
 public class DebugWebModule extends AcrossModule
 {
 	private String rootPath = "/debug";

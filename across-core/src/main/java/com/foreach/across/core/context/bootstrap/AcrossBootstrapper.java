@@ -61,14 +61,19 @@ public class AcrossBootstrapper
 		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
 
 		Collection<AcrossModule> modulesInOrder = createOrderedModulesList( context );
+
+		LOG.debug( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
+		int order = 1;
+		for ( AcrossModule module : modulesInOrder ) {
+			LOG.debug( "{} - {}: {}", order++, module.getName(), module.getClass() );
+		}
+
 		AcrossInstallerRegistry installerRegistry = new AcrossInstallerRegistry( context, modulesInOrder );
 
 		// Run installers that don't need anything bootstrapped
 		installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
 
-		LOG.debug( "Bootstrapping {} modules - start", modulesInOrder.size() );
-
-		for ( AcrossModule module : context.getModules() ) {
+		for ( AcrossModule module : modulesInOrder ) {
 			LOG.debug( "Bootstrapping {} module", module.getName() );
 
 			// Run installers before bootstrapping this particular module
@@ -117,9 +122,7 @@ public class AcrossBootstrapper
 	}
 
 	private Collection<AcrossModule> createOrderedModulesList( AcrossContext context ) {
-		// Extend this method once the adding order of modules is no longer important, but inter-module
-		// dependencies and annotations are used
-		return context.getModules();
+		return BootstrapAcrossModuleOrder.create( context.getModules() );
 	}
 
 	private void runModuleBootstrapCustomizations() {
