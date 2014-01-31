@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 import java.util.Date;
 
-//@Repository
 public class AcrossInstallerRepository
 {
 	private final JdbcTemplate jdbcTemplate;

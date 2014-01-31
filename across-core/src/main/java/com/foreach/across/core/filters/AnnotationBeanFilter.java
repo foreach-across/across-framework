@@ -2,7 +2,9 @@ package com.foreach.across.core.filters;
 
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.util.ClassUtils;
@@ -112,6 +114,16 @@ public class AnnotationBeanFilter implements BeanFilter
 					}
 				}
 				catch ( Exception e ) { /* Ignore any exceptions */ }
+			}
+
+			// Still possible that we are dealing with a ScopedProxyFactoryBean, in which case we need to check the target
+			if ( definition instanceof RootBeanDefinition ) {
+				BeanDefinitionHolder targetHolder = ( (RootBeanDefinition) definition ).getDecoratedDefinition();
+
+				if ( targetHolder != null ) {
+					Object targetBean = beanFactory.getSingleton( targetHolder.getBeanName() );
+					return apply( beanFactory, targetBean, targetHolder.getBeanDefinition() );
+				}
 			}
 		}
 
