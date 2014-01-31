@@ -2,29 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuEvent.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuStore.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/RequestMenuBuilder.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/RequestMenuStore.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/controllers/DebugEhcacheController.java" afterPath="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/controllers/DebugEhcacheController.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/context/AcrossWebArgumentResolver.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/context/AcrossWebArgumentResolver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebConfig.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/BuildMenuEvent.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/BuildMenuEvent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CustomDebugController.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/CustomDebugController.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/events/AbstractMenuFilter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/events/BuildMenuEvent.java" />
+      <change type="DELETED" beforePath="C:\code\across\across-web\src\main\java\com\foreach\across\modules\web\menu\BuildMenuEvent.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebConfig.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/DefaultDebugWebController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/DefaultDebugWebController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuBuilder.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuBuilder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuEvent.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuEvent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/ExtensionMenuGenerator.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/ExtensionMenuGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/MainMenuGenerator.java" afterPath="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/other/MainMenuGenerator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuBuilder.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuBuilder.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/PropertiesController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java" afterPath="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/layouts/debugPage.thtml" afterPath="$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/layouts/debugPage.thtml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/RequestMenuBuilder.java" afterPath="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/RequestMenuBuilder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-web/src/test/java/com/foreach/across/test/modules/web/menu/TestMenu.java" afterPath="$PROJECT_DIR$/across-web/src/test/java/com/foreach/across/test/modules/web/menu/TestMenu.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="across.iws" />
@@ -89,10 +79,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="DebugWebConfig.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="DebugWebConfig.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="61" column="9" selection-start="1843" selection-end="1843" vertical-scroll-proportion="1.4782609" vertical-offset="0" max-vertical-offset="1377">
+            <state line="35" column="18" selection-start="1310" selection-end="1310" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1377">
               <folding />
             </state>
           </provider>
@@ -101,21 +91,27 @@
       <file leaf-file-name="Menu.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="0" selection-start="1506" selection-end="1506" vertical-scroll-proportion="0.0" vertical-offset="280" max-vertical-offset="3162">
+            <state line="23" column="56" selection-start="1068" selection-end="1068" vertical-scroll-proportion="0.0" vertical-offset="87" max-vertical-offset="3893">
               <folding>
-                <element signature="e#1617#1618#0" expanded="true" />
-                <element signature="e#1635#1636#0" expanded="true" />
-                <element signature="e#1674#1675#0" expanded="true" />
-                <element signature="e#1697#1698#0" expanded="true" />
+                <element signature="e#1451#1467#0" expanded="true" />
+                <element signature="e#1600#1601#0" expanded="true" />
+                <element signature="e#1618#1619#0" expanded="true" />
+                <element signature="e#1657#1658#0" expanded="true" />
+                <element signature="e#1680#1681#0" expanded="true" />
+                <element signature="e#3366#3367#0" expanded="true" />
+                <element signature="e#3390#3391#0" expanded="true" />
+                <element signature="e#3454#3455#0" expanded="true" />
+                <element signature="e#3489#3490#0" expanded="true" />
+                <element signature="e#3587#3619#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RequestMenuBuilder.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="RequestMenuBuilder.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/RequestMenuBuilder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="31" selection-start="819" selection-end="819" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="765">
+            <state line="30" column="5" selection-start="925" selection-end="925" vertical-scroll-proportion="0.5828221" vertical-offset="130" max-vertical-offset="782">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -126,7 +122,7 @@
       <file leaf-file-name="DebugMenu.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="0" selection-start="366" selection-end="366" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="697">
+            <state line="15" column="28" selection-start="389" selection-end="389" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="697">
               <folding />
             </state>
           </provider>
@@ -135,12 +131,32 @@
       <file leaf-file-name="MenuFactory.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="65" column="0" selection-start="1817" selection-end="1817" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2295">
+            <state line="90" column="70" selection-start="2452" selection-end="2452" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2482">
               <folding>
-                <element signature="e#405#423#0" expanded="true" />
-                <element signature="e#488#508#0" expanded="true" />
-                <element signature="e#640#651#0" expanded="true" />
+                <element signature="e#466#484#0" expanded="true" />
+                <element signature="e#549#569#0" expanded="true" />
+                <element signature="e#701#712#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BuildMenuEvent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/events/BuildMenuEvent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="34" column="0" selection-start="792" selection-end="792" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractMenuFilter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/events/AbstractMenuFilter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="0" selection-start="393" selection-end="393" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -148,7 +164,7 @@
       <file leaf-file-name="MenuItem.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="24" selection-start="262" selection-end="262" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
+            <state line="2" column="32" selection-start="78" selection-end="78" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
               <folding />
             </state>
           </provider>
@@ -167,17 +183,12 @@
         <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="19" column="14" selection-start="696" selection-end="696" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="629">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DebugMenuBuilder.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuBuilder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="73" selection-start="590" selection-end="590" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="544">
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#835#836#0" expanded="false" />
+                <element signature="e#866#867#0" expanded="false" />
+                <element signature="e#931#932#0" expanded="false" />
+                <element signature="e#980#981#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -201,8 +212,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/across-web/src/test/java/com/foreach/across/test/modules/web/menu/TestMenu.java" />
         <option value="$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss" />
         <option value="$PROJECT_DIR$/across-ehcache/src/main/resources/views/css/ehcache/ehcache.scss" />
@@ -233,7 +242,6 @@
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/context/AcrossWebArgumentResolver.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/AcrossWebConfig.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuBuilder.java" />
-        <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/BuildMenuEvent.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuBuildEvent.java" />
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuEvent.java" />
         <option value="$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/controllers/DebugEhcacheController.java" />
@@ -249,9 +257,12 @@
         <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/DefaultDebugWebController.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/RequestMenuBuilder.java" />
-        <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java" />
-        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java" />
         <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java" />
+        <option value="$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java" />
+        <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/BuildMenuEvent.java" />
+        <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/events/AbstractMenuFilter.java" />
+        <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/events/BuildMenuEvent.java" />
+        <option value="$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java" />
       </list>
     </option>
   </component>
@@ -753,7 +764,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="context" />
+              <option name="myItemId" value="events" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1334,12 +1345,12 @@
       <workItem from="1390566985729" duration="14539000" />
       <workItem from="1390656262110" duration="63365000" />
       <workItem from="1391016210038" duration="4055000" />
-      <workItem from="1391064803436" duration="22895000" />
+      <workItem from="1391064803436" duration="29132000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="281001000" />
+    <option name="totallyTimeSpent" value="287238000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1374,13 +1385,13 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991013" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44230768" sideWeight="0.5885751" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44230768" sideWeight="0.5885751" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25417203" sideWeight="0.46666667" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6615385" sideWeight="0.4114249" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32960895" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32403848" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32403848" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1454,13 +1465,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/context/WebBootstrapApplicationContextFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="127" column="0" selection-start="5621" selection-end="5621" vertical-scroll-proportion="0.0" vertical-offset="1793" max-vertical-offset="2091">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test-web/src/main/java/com/foreach/across/testweb/sub/TestWebWebConfig.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="13" selection-start="1577" selection-end="1577" vertical-scroll-proportion="0.0" vertical-offset="1907" max-vertical-offset="2873">
@@ -1618,8 +1622,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="16" column="1" selection-start="579" selection-end="579" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="663">
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#860#890#0" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1712,15 +1715,8 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="60" selection-start="340" selection-end="340" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="340">
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/BuildMenuEvent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="5" selection-start="302" selection-end="302" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="544">
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1782,9 +1778,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenuBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="73" selection-start="590" selection-end="590" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="544">
+        <state line="15" column="73" selection-start="592" selection-end="592" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="544">
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1792,7 +1788,13 @@
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="19" column="14" selection-start="696" selection-end="696" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="629">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#835#836#0" expanded="false" />
+            <element signature="e#866#867#0" expanded="false" />
+            <element signature="e#931#932#0" expanded="false" />
+            <element signature="e#980#981#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1803,52 +1805,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="24" selection-start="262" selection-end="262" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="0" selection-start="1506" selection-end="1506" vertical-scroll-proportion="0.0" vertical-offset="280" max-vertical-offset="3162">
-          <folding>
-            <element signature="e#1617#1618#0" expanded="true" />
-            <element signature="e#1635#1636#0" expanded="true" />
-            <element signature="e#1674#1675#0" expanded="true" />
-            <element signature="e#1697#1698#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/RequestMenuBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="31" selection-start="819" selection-end="819" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="765">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="366" selection-end="366" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="697">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="0" selection-start="1817" selection-end="1817" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2295">
-          <folding>
-            <element signature="e#405#423#0" expanded="true" />
-            <element signature="e#488#508#0" expanded="true" />
-            <element signature="e#640#651#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/DefaultDebugWebController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="0" selection-start="541" selection-end="541" vertical-scroll-proportion="0.17246377" vertical-offset="0" max-vertical-offset="690">
@@ -1856,10 +1812,78 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugMenu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="28" selection-start="389" selection-end="389" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="697">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="61" column="9" selection-start="1843" selection-end="1843" vertical-scroll-proportion="1.4782609" vertical-offset="0" max-vertical-offset="1377">
+        <state line="35" column="18" selection-start="1310" selection-end="1310" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1377">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/events/AbstractMenuFilter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="0" selection-start="393" selection-end="393" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuItem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="32" selection-start="78" selection-end="78" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/Menu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="56" selection-start="1068" selection-end="1068" vertical-scroll-proportion="0.0" vertical-offset="87" max-vertical-offset="3893">
+          <folding>
+            <element signature="e#1451#1467#0" expanded="true" />
+            <element signature="e#1600#1601#0" expanded="true" />
+            <element signature="e#1618#1619#0" expanded="true" />
+            <element signature="e#1657#1658#0" expanded="true" />
+            <element signature="e#1680#1681#0" expanded="true" />
+            <element signature="e#3366#3367#0" expanded="true" />
+            <element signature="e#3390#3391#0" expanded="true" />
+            <element signature="e#3454#3455#0" expanded="true" />
+            <element signature="e#3489#3490#0" expanded="true" />
+            <element signature="e#3587#3619#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/events/BuildMenuEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="0" selection-start="792" selection-end="792" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/MenuFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="90" column="70" selection-start="2452" selection-end="2452" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2482">
+          <folding>
+            <element signature="e#466#484#0" expanded="true" />
+            <element signature="e#549#569#0" expanded="true" />
+            <element signature="e#701#712#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/menu/RequestMenuBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="5" selection-start="925" selection-end="925" vertical-scroll-proportion="0.5828221" vertical-offset="130" max-vertical-offset="782">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -120,8 +120,8 @@ public class TestMenu
 		menu.sort();
 
 		assertMenu( menu, "ccc", "bbb", "aaa" );
-		assertMenu( menu.getItem( "/aaa" ), "333", "222", "111" );
-		assertMenu( menu.getItem( "/ccc" ), "333", "222", "111" );
+		assertMenu( menu.getItemWithPath( "/aaa" ), "333", "222", "111" );
+		assertMenu( menu.getItemWithPath( "/ccc" ), "333", "222", "111" );
 	}
 
 	@Test
@@ -147,8 +147,8 @@ public class TestMenu
 		menu.sort();
 
 		assertMenu( menu, "ccc", "bbb", "aaa" );
-		assertMenu( menu.getItem( "/aaa" ), "111", "222", "333" );
-		assertMenu( menu.getItem( "/aaa" ).getItem( "333" ), "333", "222", "111" );
+		assertMenu( menu.getItemWithPath( "/aaa" ), "111", "222", "333" );
+		assertMenu( menu.getItemWithPath( "/aaa" ).getItemWithPath( "333" ), "333", "222", "111" );
 	}
 
 	@Test
@@ -174,8 +174,8 @@ public class TestMenu
 		menu.sort();
 
 		assertMenu( menu, "ccc", "bbb", "aaa" );
-		assertMenu( menu.getItem( "/aaa" ), "111", "222", "333" );
-		assertMenu( menu.getItem( "/aaa" ).getItem( "333" ), "111", "222", "333" );
+		assertMenu( menu.getItemWithPath( "/aaa" ), "111", "222", "333" );
+		assertMenu( menu.getItemWithPath( "/aaa" ).getItemWithPath( "333" ), "111", "222", "333" );
 	}
 
 	@Test
@@ -203,8 +203,8 @@ public class TestMenu
 		menu.sort();
 
 		assertMenu( menu, "ccc", "bbb", "aaa" );
-		assertMenu( menu.getItem( "/aaa" ), "333", "222", "111" );
-		assertMenu( menu.getItem( "/aaa" ).getItem( "333" ), "111", "222", "333" );
+		assertMenu( menu.getItemWithPath( "/aaa" ), "333", "222", "111" );
+		assertMenu( menu.getItemWithPath( "/aaa" ).getItemWithPath( "333" ), "111", "222", "333" );
 	}
 
 	public void assertMenu( Menu menu, String... expected ) {

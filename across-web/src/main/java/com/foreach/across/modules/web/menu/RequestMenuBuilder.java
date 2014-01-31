@@ -1,5 +1,6 @@
 package com.foreach.across.modules.web.menu;
 
+import com.foreach.across.modules.web.events.BuildMenuEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;

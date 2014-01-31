@@ -1,7 +1,7 @@
 package com.foreach.across.modules.debugweb.mvc;
 
 import com.foreach.across.modules.debugweb.DebugWebModule;
-import com.foreach.across.modules.web.menu.BuildMenuEvent;
+import com.foreach.across.modules.web.events.BuildMenuEvent;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.RequestMenuBuilder;
 import org.springframework.beans.factory.annotation.Autowired;

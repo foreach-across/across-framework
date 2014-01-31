@@ -2,10 +2,7 @@ package com.foreach.across.modules.web.menu;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>Represents a hierarchical menu (tree) structure.</p>
@@ -35,6 +32,8 @@ public class Menu
 
 	private Comparator<Menu> comparator = null;
 	private boolean comparatorInheritable = false;
+
+	private Map<String, Object> attributes = new HashMap<String, Object>();
 
 	public Menu() {
 		this.path = "";
@@ -122,15 +121,54 @@ public class Menu
 		this.title = title;
 	}
 
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes( Map<String, Object> attributes ) {
+		this.attributes = attributes;
+	}
+
+	public void setAttribute( String name, Object value ) {
+		attributes.put( name, value );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T> T getAttribute( String name ) {
+		return (T) attributes.get( name );
+	}
+
+	public boolean hasAttribute( String name ) {
+		return attributes.containsKey( name );
+	}
+
 	/**
 	 * Fetches the first item with the path specified.
 	 *
 	 * @param path Path of the item.
 	 * @return MenuItem instance or null if not found.
 	 */
-	public MenuItem getItem( String path ) {
+	public MenuItem getItemWithPath( String path ) {
 		for ( MenuItem item : items ) {
 			if ( StringUtils.equals( path, item.getPath() ) ) {
+				return item;
+			}
+		}
+		return null;
+	}
+
+	public MenuItem getItemWithTitle( String title ) {
+		for ( MenuItem item : items ) {
+			if ( StringUtils.equals( title, item.getTitle() ) ) {
+				return item;
+			}
+		}
+		return null;
+	}
+
+	public MenuItem getItemWithName( String name ) {
+		for ( MenuItem item : items ) {
+			if ( StringUtils.equals( name, item.getName() ) ) {
 				return item;
 			}
 		}
@@ -145,19 +183,21 @@ public class Menu
 		return !items.isEmpty();
 	}
 
-	public void addItem( String path ) {
-		addItem( path, path );
+	public MenuItem addItem( String path ) {
+		return addItem( path, path );
 	}
 
-	public void addItem( String path, String title ) {
+	public MenuItem addItem( String path, String title ) {
 		MenuItem item = new MenuItem( path );
 		item.setTitle( title );
 
-		addItem( item );
+		return addItem( item );
 	}
 
-	public void addItem( MenuItem item ) {
+	public MenuItem addItem( MenuItem item ) {
 		items.add( item );
+
+		return item;
 	}
 
 	/**
@@ -192,7 +232,7 @@ public class Menu
 				Collections.sort( items, comparatorToUse );
 			}
 
-			for ( MenuItem item : items ){
+			for ( MenuItem item : items ) {
 				item.sort( inheritable ? comparatorToInherit : null );
 			}
 		}

@@ -2,7 +2,7 @@ package com.foreach.across.testweb.sub;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Refreshable;
-import com.foreach.across.modules.web.menu.BuildMenuEvent;
+import com.foreach.across.modules.web.events.BuildMenuEvent;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.testweb.SpecificUiContext;
 import net.engio.mbassy.listener.Handler;

@@ -1,6 +1,7 @@
 package com.foreach.across.modules.web.menu;
 
 import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.modules.web.events.BuildMenuEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -80,6 +81,17 @@ public class MenuFactory
 
 			menuStore.save( name, menu );
 		}
+
+		return menu;
+	}
+
+	public <T extends Menu> T buildMenu( T menu ) {
+		MenuBuilder builder = getMenuBuilder( menu.getClass() );
+
+		BuildMenuEvent<T> buildMenuEvent = builder.buildEvent( menu );
+		publisher.publish( buildMenuEvent );
+
+		menu.sort();
 
 		return menu;
 	}

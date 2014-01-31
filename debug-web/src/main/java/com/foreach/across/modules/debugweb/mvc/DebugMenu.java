@@ -20,7 +20,7 @@ public class DebugMenu extends Menu
 	}
 
 	@Override
-	public void addItem( MenuItem item ) {
+	public MenuItem addItem( MenuItem item ) {
 		if ( !item.hasUrl() ) {
 			String path = item.getPath();
 
@@ -32,6 +32,6 @@ public class DebugMenu extends Menu
 			}
 		}
 
-		super.addItem( item );
+		return super.addItem( item );
 	}
 }
