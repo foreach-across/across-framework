@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>List Across modules</title>
+</head>
+<body th:fragment="content">
+<h3>Across modules in bootstrap order</h3>
+<table>
+	<tr>
+		<th>#</th>
+		<th>Module name</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+	<tr th:each="module,status : ${modules}">
+		<td th:text="${status.count}"></td>
+		<td th:text="${module.name}">module name</td>
+		<td th:text="${moduleRegistry.getModuleRole(module)}"></td>
+		<td>
+			<div th:text="${module.description}"> module description</div>
+			<div>
+				<strong>Required dependencies:</strong>
+				<span th:if="${moduleRegistry.getRequiredDependencies(module).isEmpty()}">none</span>
+				<span th:each="dependency : ${moduleRegistry.getRequiredDependencies(module)}" th:text="${dependency.name}">modulename</span>
+			</div>
+			<div>
+				<strong>Optional dependencies:</strong>
+				<span th:if="${moduleRegistry.getOptionalDependencies(module).isEmpty()}">none</span>
+				<span th:each="dependency : ${moduleRegistry.getOptionalDependencies(module)}" th:text="${dependency.name}">modulename</span>
+			</div>
+		</td>
+
+	</tr>
+</table>
+</body>
+</html>

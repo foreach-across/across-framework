@@ -17,6 +17,7 @@ import java.util.*;
 public class BootstrapAcrossModuleOrder
 {
 	private Collection<AcrossModule> source;
+	private LinkedList<AcrossModule> orderedModules;
 
 	private Map<String, AcrossModule> modulesById = new HashMap<String, AcrossModule>();
 	private Map<AcrossModule, Collection<AcrossModule>> requiredDependencies =
@@ -27,18 +28,34 @@ public class BootstrapAcrossModuleOrder
 
 	public BootstrapAcrossModuleOrder( Collection<AcrossModule> source ) {
 		this.source = source;
+
+		orderModules();
 	}
 
 	public Collection<AcrossModule> getOrderedModules() {
-		reset();
+		return orderedModules;
+	}
 
-		LinkedList<AcrossModule> ordered = new LinkedList<AcrossModule>();
+	public Collection<AcrossModule> getRequiredDependencies( AcrossModule module ) {
+		return requiredDependencies.get( module );
+	}
+
+	public Collection<AcrossModule> getOptionalDependencies( AcrossModule module ) {
+		return optionalDependencies.get( module );
+	}
+
+	public AcrossModuleRole getModuleRole( AcrossModule module ) {
+		return moduleRoles.get( module );
+	}
+
+	private void orderModules() {
+		orderedModules = new LinkedList<AcrossModule>();
 
 		for ( AcrossModule module : source ) {
 			modulesById.put( module.getName(), module );
 			modulesById.put( module.getClass().getName(), module );
 
-			ordered.add( module );
+			orderedModules.add( module );
 		}
 
 		for ( AcrossModule module : source ) {
@@ -49,31 +66,23 @@ public class BootstrapAcrossModuleOrder
 		applyInfrastructureModules();
 
 		for ( AcrossModule module : source ) {
-			int currentPosition = ordered.indexOf( module );
+			int currentPosition = orderedModules.indexOf( module );
 
 			if ( currentPosition == -1 ) {
-				currentPosition = ordered.isEmpty() ? 0 : ordered.size() - 1;
-				ordered.add( currentPosition, module );
+				currentPosition = orderedModules.isEmpty() ? 0 : orderedModules.size() - 1;
+				orderedModules.add( currentPosition, module );
 			}
 
 			// Dependencies push actual module to the back
 			if ( moduleRoles.get( module ) != AcrossModuleRole.INFRASTRUCTURE ) {
 				// optional dependencies do not influence the order of infrastructure modules
-				ordered.addAll( currentPosition, optionalDependencies.get( module ) );
+				orderedModules.addAll( currentPosition, getOptionalDependencies( module ) );
 			}
 
-			ordered.addAll( currentPosition, requiredDependencies.get( module ) );
+			orderedModules.addAll( currentPosition, getRequiredDependencies( module ) );
 		}
 
-		verifyModuleList( ordered );
-
-		return ordered;
-	}
-
-	private void reset() {
-		modulesById.clear();
-		requiredDependencies.clear();
-		optionalDependencies.clear();
+		verifyModuleList( orderedModules );
 	}
 
 	private void applyInfrastructureModules() {

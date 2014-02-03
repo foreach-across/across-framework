@@ -16,7 +16,7 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +37,7 @@ public class DebugEhcacheController
 		event.addMenuItem( "/ehcache", "Cache overview" );
 	}
 
-	@InitBinder
+	@ModelAttribute
 	public void init( WebResourceRegistry registry ) {
 		registry.addWithKey( WebResource.CSS, "EhcacheModule", "/css/ehcache/ehcache.css", WebResource.VIEWS );
 	}
@@ -82,11 +82,13 @@ public class DebugEhcacheController
 		for ( Object key : cache.getKeys() ) {
 			Element cacheElement = cache.getQuiet( key );
 
-			long age = System.currentTimeMillis() - cacheElement.getLatestOfCreationAndUpdateTime();
-			long accessed = System.currentTimeMillis() - cacheElement.getLastAccessTime();
+			if ( cacheElement != null && !cacheElement.isExpired() ) {
+				long age = System.currentTimeMillis() - cacheElement.getLatestOfCreationAndUpdateTime();
+				long accessed = System.currentTimeMillis() - cacheElement.getLastAccessTime();
 
-			table.addRow( key, cacheElement.getObjectValue(), DurationFormatUtils.formatDurationHMS( age ),
-			              DurationFormatUtils.formatDurationHMS( accessed ), cacheElement.getHitCount() );
+				table.addRow( key, cacheElement.getObjectValue(), DurationFormatUtils.formatDurationHMS( age ),
+				              DurationFormatUtils.formatDurationHMS( accessed ), cacheElement.getHitCount() );
+			}
 		}
 
 		view.addObject( "cache", cache );

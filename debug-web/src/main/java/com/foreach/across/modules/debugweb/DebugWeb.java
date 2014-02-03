@@ -14,4 +14,5 @@ public final class DebugWeb
 	public static final String VIEW_SPRING_INTERCEPTORS = "th/debugweb/listInterceptors";
 	public static final String VIEW_PROPERTIES = "th/debugweb/listProperties";
 	public static final String VIEW_THREADS = "th/debugweb/listThreads";
+	public static final String VIEW_MODULES = "th/debugweb/listAcrossModules";
 }
