@@ -1,6 +1,7 @@
 package com.foreach.across.core.registry;
 
 import com.foreach.across.core.annotations.PostRefresh;
+import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import net.engio.mbassy.listener.Handler;
@@ -14,6 +15,7 @@ import javax.annotation.PostConstruct;
  * all members added by previous modules.</p>
  * <p>Note that this implementation slows down AcrossContext bootstrap duration, so use only if necessary.</p>
  */
+@Refreshable
 public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 {
 	@Autowired
