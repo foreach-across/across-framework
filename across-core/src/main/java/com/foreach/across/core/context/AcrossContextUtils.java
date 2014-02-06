@@ -9,11 +9,17 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -59,9 +65,10 @@ public final class AcrossContextUtils
 					ApplicationContextScanner.findBeansWithAnnotation( moduleContext, Refreshable.class );
 
 			for ( Object singleton : refreshableBeans ) {
-				beanFactory.autowireBeanProperties( singleton, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+				Object bean = AcrossContextUtils.getProxyTarget( singleton );
+				beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
 
-				Class beanClass = singleton.getClass();
+				Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
 
 				for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
 					if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
@@ -72,7 +79,7 @@ public final class AcrossContextUtils
 						else {
 							try {
 								method.setAccessible( true );
-								method.invoke( singleton );
+								method.invoke( bean );
 							}
 							catch ( Exception e ) {
 								LOG.error( "Exception executing @PostRefresh method", e );
@@ -88,10 +95,10 @@ public final class AcrossContextUtils
 	 * Returns the Spring ApplicationContext associated with the given AcrossContext or AcrossModule.
 	 *
 	 * @param contextOrModule AcrossApplicationHolder instance.
-	 * @return ApplicationContext defined in the holder.
+	 * @return ApplicationContext defined in the holder or null if none.
 	 */
 	public static AbstractApplicationContext getApplicationContext( AcrossApplicationContextHolder contextOrModule ) {
-		return contextOrModule.getAcrossApplicationContext().getApplicationContext();
+		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext().getApplicationContext() : null;
 	}
 
 	/**
@@ -108,10 +115,10 @@ public final class AcrossContextUtils
 	 * Returns the Spring BeanFactory associated with the given AcrossContext or AcrossModule.
 	 *
 	 * @param contextOrModule AcrossApplicationHolder instance.
-	 * @return BeanFactory linked to the ApplicationContext in the holder.
+	 * @return BeanFactory linked to the ApplicationContext in the holder or null if not yet available.
 	 */
 	public static ConfigurableListableBeanFactory getBeanFactory( AcrossApplicationContextHolder contextOrModule ) {
-		return contextOrModule.getAcrossApplicationContext().getBeanFactory();
+		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext().getBeanFactory() : null;
 	}
 
 	/**
@@ -148,6 +155,46 @@ public final class AcrossContextUtils
 	}
 
 	/**
+	 * Searches the AcrossContext and its parent for beans of the given type.  Will only include exposed beans.
+	 *
+	 * @param context      AcrossContext instance.
+	 * @param requiredType Type the bean should match.
+	 * @param <T>          Type of the matching beans.
+	 */
+	public static <T> Collection<T> getBeansOfType( AcrossContext context, Class<T> requiredType ) {
+		return getBeansOfType( context, requiredType, false );
+	}
+
+	/**
+	 * Searches the AcrossContext for beans of the given type.  Depending on the scanModules boolean, this
+	 * will scan the base context and its parent, or all modules separately (including non-exposed beans).
+	 *
+	 * @param context      AcrossContext instance.
+	 * @param requiredType Type the bean should match.
+	 * @param scanModules  True if the individual AcrossModules should be scanned.
+	 * @param <T>          Type of the matching beans.
+	 */
+	public static <T> Collection<T> getBeansOfType( AcrossContext context,
+	                                                Class<T> requiredType,
+	                                                boolean scanModules ) {
+		Set<T> beans = new HashSet<T>();
+		beans.addAll(
+				BeanFactoryUtils.beansOfTypeIncludingAncestors( getBeanFactory( context ), requiredType ).values() );
+
+		if ( scanModules ) {
+			for ( AcrossModule module : context.getModules() ) {
+				ListableBeanFactory beanFactory = getBeanFactory( module );
+
+				if ( beanFactory != null ) {
+					beans.addAll( beanFactory.getBeansOfType( requiredType ).values() );
+				}
+			}
+		}
+
+		return beans;
+	}
+
+	/**
 	 * Will list all ApplicationContextConfigurers in the module, combined with the ones registered on the
 	 * AcrossContext that are specified to apply to all modules.
 	 *
@@ -167,5 +214,24 @@ public final class AcrossContextUtils
 		}
 
 		return configurers;
+	}
+
+	/**
+	 * Unwraps the target from a proxy (or multiple proxy) hierarchy.
+	 *
+	 * @param instance Bean that can be proxied or not.
+	 * @return Bean itself or final target of a set of proxies.
+	 */
+	public static Object getProxyTarget( Object instance ) {
+		try {
+			if ( AopUtils.isJdkDynamicProxy( instance ) ) {
+				return getProxyTarget( ( (Advised) instance ).getTargetSource().getTarget() );
+			}
+		}
+		catch ( Exception e ) {
+			throw new RuntimeException( e );
+		}
+
+		return instance;
 	}
 }

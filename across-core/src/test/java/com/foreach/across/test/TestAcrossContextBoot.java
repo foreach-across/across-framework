@@ -104,6 +104,7 @@ public class TestAcrossContextBoot
 		assertNotNull( constructedBeanModule1 );
 		assertEquals( "helloFromModule1", constructedBeanModule1.getText() );
 		assertSame( scannedBeanModule1, constructedBeanModule1.getScannedBeanModule1() );
+		assertEquals( 1, constructedBeanModule1.getSomeInterfaces().size() );
 		assertNull( constructedBeanModule1.getScannedBeanModule2() );
 
 		// The refreshable constructed bean in module 1 does hold all references
@@ -111,6 +112,7 @@ public class TestAcrossContextBoot
 		assertEquals( "i have been refreshed", refreshedBeanModule1.getText() );
 		assertSame( scannedBeanModule1, refreshedBeanModule1.getScannedBeanModule1() );
 		assertSame( scannedBeanModule2, refreshedBeanModule1.getScannedBeanModule2() );
+		assertEquals( 2, refreshedBeanModule1.getSomeInterfaces().size() );
 
 		// Module 2 should have the references to beans from module 1
 		assertNotNull( scannedBeanModule2 );

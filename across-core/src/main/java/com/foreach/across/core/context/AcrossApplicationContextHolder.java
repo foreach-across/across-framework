@@ -11,4 +11,8 @@ public abstract class AcrossApplicationContextHolder
 	void setAcrossApplicationContext( AcrossApplicationContext acrossApplicationContext ) {
 		this.acrossApplicationContext = acrossApplicationContext;
 	}
+
+	boolean hasApplicationContext() {
+		return acrossApplicationContext != null;
+	}
 }

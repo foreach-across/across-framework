@@ -28,7 +28,7 @@ public final class ApplicationContextScanner
 	public static Collection<Object> findBeansWithAnnotation( ApplicationContext context,
 	                                                          Class<? extends Annotation> annotation ) {
 
-		return findSingletonsMatching( context, new AnnotationBeanFilter( annotation ) ).values();
+		return findSingletonsMatching( context, new AnnotationBeanFilter( true, annotation ) ).values();
 	}
 
 	public static Map<String, Object> findSingletonsMatching( ApplicationContext context, BeanFilter filter ) {

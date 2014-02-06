@@ -9,7 +9,7 @@ import java.util.List;
 @AcrossEventHandler
 public class TestModuleEventListener
 {
-	public List<TestEvent> eventsReceived = new ArrayList<TestEvent>();
+	private List<TestEvent> eventsReceived = new ArrayList<TestEvent>();
 
 	public List<TestEvent> getEventsReceived() {
 		return eventsReceived;

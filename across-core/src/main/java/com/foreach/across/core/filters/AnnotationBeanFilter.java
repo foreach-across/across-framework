@@ -1,6 +1,6 @@
 package com.foreach.across.core.filters;
 
-import org.springframework.aop.support.AopUtils;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -51,7 +51,7 @@ public class AnnotationBeanFilter implements BeanFilter
 
 	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {
 		if ( bean != null ) {
-			Class beanClass = ClassUtils.getUserClass( AopUtils.getTargetClass( bean ) );
+			Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( bean ) );
 			for ( Class<? extends Annotation> annotation : annotations ) {
 				if ( AnnotationUtils.getAnnotation( beanClass, annotation ) != null ) {
 					return true;
@@ -77,7 +77,7 @@ public class AnnotationBeanFilter implements BeanFilter
 					Object factory = beanFactory.getSingleton( definition.getFactoryBeanName() );
 
 					if ( factory != null ) {
-						factoryClass = ClassUtils.getUserClass( AopUtils.getTargetClass( factory ) );
+						factoryClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( factory ) );
 					}
 
 					if ( isMatchIfBeanFactoryApplies() ) {
