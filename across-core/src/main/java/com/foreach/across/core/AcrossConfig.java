@@ -1,6 +1,7 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.core.events.MBassadorEventPublisher;
 import com.foreach.across.core.events.SpringContextRefreshedEventListener;
 import com.foreach.across.core.installers.AcrossCoreSchemaInstaller;
 import com.foreach.across.core.installers.AcrossInstallerRepository;
@@ -15,34 +16,33 @@ import javax.sql.DataSource;
  * Contains the base configuration for Across.
  */
 @Configuration
-public class AcrossConfig
-{
-	@Autowired
-	private AcrossContext acrossContext;
+public class AcrossConfig {
+    @Autowired
+    private AcrossContext acrossContext;
 
-	@Bean(name = AcrossContext.DATASOURCE)
-	public DataSource acrossDataSource() {
-		return acrossContext.getDataSource();
-	}
+    @Bean(name = AcrossContext.DATASOURCE)
+    public DataSource acrossDataSource() {
+        return acrossContext.getDataSource();
+    }
 
-	@Bean
-	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
-		return new AcrossCoreSchemaInstaller( acrossContext );
-	}
+    @Bean
+    public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
+        return new AcrossCoreSchemaInstaller(acrossContext);
+    }
 
-	@Bean
-	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
-	public AcrossInstallerRepository installerRepository() {
-		return new AcrossInstallerRepository( acrossDataSource() );
-	}
+    @Bean
+    @DependsOn({"acrossCoreSchemaInstaller", AcrossContext.DATASOURCE})
+    public AcrossInstallerRepository installerRepository() {
+        return new AcrossInstallerRepository(acrossDataSource());
+    }
 
-	@Bean
-	public AcrossEventPublisher eventPublisher() {
-		return new AcrossEventPublisher();
-	}
+    @Bean
+    public AcrossEventPublisher eventPublisher() {
+        return new MBassadorEventPublisher();
+    }
 
-	@Bean
-	public SpringContextRefreshedEventListener refreshedEventListener() {
-		return new SpringContextRefreshedEventListener();
-	}
+    @Bean
+    public SpringContextRefreshedEventListener refreshedEventListener() {
+        return new SpringContextRefreshedEventListener();
+    }
 }

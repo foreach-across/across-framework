@@ -20,4 +20,10 @@ public class TestModule2Config
 	public SomeInterfaceImplTwo someInterfaceImplTwo() {
 		return new SomeInterfaceImplTwo();
 	}
+
+    @Bean
+    @Exposed
+    public CustomEventHandlers customEventHandlers() {
+        return new CustomEventHandlers();
+    }
 }
