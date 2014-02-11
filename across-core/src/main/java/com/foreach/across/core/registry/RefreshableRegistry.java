@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.OrderComparator;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <p>The RefreshableRegistry is a simple bean holding a collection of instances and provides more flexibility than
@@ -94,6 +91,13 @@ public class RefreshableRegistry<T>
 	public void remove( T member ) {
 		fixedMembers.remove( member );
 		members.remove( member );
+	}
+
+	/**
+	 * @return All current members of the registry.
+	 */
+	public Collection<T> getMembers() {
+		return members;
 	}
 
 	public boolean isEmpty() {
