@@ -7,3 +7,47 @@ div {
     margin-bottom: 15px;
   }
 }
+
+.hidden {
+  display: none;
+}
+
+.debug-across-info {
+  h2 {
+    background-color: whitesmoke;
+    padding: 5px;
+    border: solid 1px gainsboro;
+  }
+
+  table.bean-list {
+    tr {
+      color: gray;
+
+      &:hover {
+        background-color: gainsboro;
+      }
+      &.exposed {
+       color: black;
+      }
+      &.inherited {
+        color: gray;
+      }
+
+      th {
+        color: black;
+      }
+
+      td {
+        padding: 3px;
+
+        &.bean-name {
+          width: 300px;
+        }
+        &.bean-role {
+          width: 85px;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

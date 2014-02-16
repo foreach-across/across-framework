@@ -4,3 +4,28 @@ div.feedback {
   border-radius: 3px;
   border: solid 1px green;
   margin-bottom: 15px; }
+
+.hidden {
+  display: none; }
+
+.debug-across-info h2 {
+  background-color: whitesmoke;
+  padding: 5px;
+  border: solid 1px gainsboro; }
+.debug-across-info table.bean-list tr {
+  color: gray; }
+  .debug-across-info table.bean-list tr:hover {
+    background-color: gainsboro; }
+  .debug-across-info table.bean-list tr.exposed {
+    color: black; }
+  .debug-across-info table.bean-list tr.inherited {
+    color: gray; }
+  .debug-across-info table.bean-list tr th {
+    color: black; }
+  .debug-across-info table.bean-list tr td {
+    padding: 3px; }
+    .debug-across-info table.bean-list tr td.bean-name {
+      width: 300px; }
+    .debug-across-info table.bean-list tr td.bean-role {
+      width: 85px;
+      text-align: center; }

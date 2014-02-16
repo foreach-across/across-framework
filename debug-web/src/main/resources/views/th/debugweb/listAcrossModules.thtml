@@ -5,32 +5,83 @@
 </head>
 <body th:fragment="content">
 <h3>Across modules in bootstrap order</h3>
-<table>
-	<tr>
-		<th>#</th>
-		<th>Module name</th>
-		<th>Type</th>
-		<th>Description</th>
-	</tr>
-	<tr th:each="module,status : ${modules}">
-		<td th:text="${status.count}"></td>
-		<td th:text="${module.name}">module name</td>
-		<td th:text="${moduleRegistry.getModuleRole(module)}"></td>
-		<td>
-			<div th:text="${module.description}"> module description</div>
-			<div>
-				<strong>Required dependencies:</strong>
-				<span th:if="${moduleRegistry.getRequiredDependencies(module).isEmpty()}">none</span>
-				<span th:each="dependency : ${moduleRegistry.getRequiredDependencies(module)}" th:text="${dependency.name}">modulename</span>
-			</div>
-			<div>
-				<strong>Optional dependencies:</strong>
-				<span th:if="${moduleRegistry.getOptionalDependencies(module).isEmpty()}">none</span>
-				<span th:each="dependency : ${moduleRegistry.getOptionalDependencies(module)}" th:text="${dependency.name}">modulename</span>
-			</div>
-		</td>
 
-	</tr>
-</table>
+<div class="debug-across-info">
+	<div class="form-filters">
+		<label><input type="checkbox" id="hide-spring-standard" checked="checked" />hide default Spring beans</label>
+		<label><input type="checkbox" id="hide-non-exposed" />show only exposed beans</label>
+	</div>
+	<div th:each="moduleInfo,status : ${moduleInfoList}">
+		<!-- Module info -->
+		<h2 th:text="${moduleInfo.module.name}">module name</h2>
+
+		<div class="moduleInfo" th:with="module = ${moduleInfo.module}">
+			<p th:text="${module.description}">module description</p>
+			<ul>
+				<li><strong>Role</strong>: <span th:text="${moduleRegistry.getModuleRole(module)}">module role</span>
+				</li>
+				<li>
+					<strong>Required dependencies:</strong>
+					<span th:if="${moduleRegistry.getRequiredDependencies(module).isEmpty()}">none</span>
+					<span th:each="dependency : ${moduleRegistry.getRequiredDependencies(module)}" th:text="${dependency.name}">modulename</span>
+				</li>
+				<li>
+					<strong>Optional dependencies:</strong>
+					<span th:if="${moduleRegistry.getOptionalDependencies(module).isEmpty()}">none</span>
+					<span th:each="dependency : ${moduleRegistry.getOptionalDependencies(module)}" th:text="${dependency.name}">modulename</span>
+				</li>
+			</ul>
+		</div>
+
+		<!-- Beans -->
+		<table class="bean-list">
+			<tr>
+				<th>Bean name</th>
+				<th>Scope</th>
+				<th>Bean type</th>
+			</tr>
+			<tr th:each="beanInfo : ${moduleInfo.beans}" th:class="${beanInfo.exposed ? 'exposed' : ''}"
+					th:attr="data-spring-standard=${beanInfo.standardSpring}">
+				<td class="bean-name" th:text="${beanInfo.name}">bean name</td>
+				<td class="bean-role" th:text="${beanInfo.singleton ? '' : beanInfo.scope}">scope</td>
+				<td class="bean-type">
+					<span th:text="${beanInfo.beanType}">bean type</span>
+					<span class="enhanced" th:if="${beanInfo.proxiedOrEnhanced}" title="The actual bean is either a proxy or cglib enhanced.">*</span>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<br /><br />
+<script type="text/javascript">
+	/*<![CDATA[*/
+	$( function ()
+	   {
+		   function toggleBeans() {
+			   var hideStandard = $('#hide-spring-standard' ).prop('checked');
+			   var hideNonExposed = $('#hide-non-exposed' ).prop('checked');
+
+			   $('.bean-name').each( function() {
+				   var row = $(this).parent();
+				   var visible = true;
+
+				   if ( hideStandard && row.attr('data-spring-standard') == 'true' ) {
+					visible = false;
+				   }
+				   if ( hideNonExposed && !row.hasClass('exposed')) {
+					visible = false;
+				   }
+
+				   $(row).toggleClass('hidden', !visible);
+			   });
+		   }
+
+		   toggleBeans();
+
+		   $('#hide-spring-standard' ).on( 'click', toggleBeans );
+		   $('#hide-non-exposed' ).on( 'click', toggleBeans );
+	   } );
+	/*]]>*/
+</script>
 </body>
 </html>
