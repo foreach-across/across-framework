@@ -4,12 +4,17 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.events.*;
+import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
+import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
+import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.core.installers.AcrossInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -21,135 +26,144 @@ import java.util.Map;
 /**
  * Takes care of bootstrapping an entire across context.
  */
-public class AcrossBootstrapper
-{
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossBootstrapper.class );
+public class AcrossBootstrapper {
+    private static final Logger LOG = LoggerFactory.getLogger(AcrossBootstrapper.class);
 
-	private final AcrossContext context;
-	private BootstrapApplicationContextFactory applicationContextFactory;
+    private final AcrossContext context;
+    private BootstrapApplicationContextFactory applicationContextFactory;
 
-	public AcrossBootstrapper( AcrossContext context ) {
-		this.context = context;
+    public AcrossBootstrapper(AcrossContext context) {
+        this.context = context;
 
-		applicationContextFactory = new AnnotationConfigBootstrapApplicationContextFactory();
-	}
+        applicationContextFactory = new AnnotationConfigBootstrapApplicationContextFactory();
+    }
 
-	public BootstrapApplicationContextFactory getApplicationContextFactory() {
-		return applicationContextFactory;
-	}
+    public BootstrapApplicationContextFactory getApplicationContextFactory() {
+        return applicationContextFactory;
+    }
 
-	public void setApplicationContextFactory( BootstrapApplicationContextFactory applicationContextFactory ) {
-		this.applicationContextFactory = applicationContextFactory;
-	}
+    public void setApplicationContextFactory(BootstrapApplicationContextFactory applicationContextFactory) {
+        this.applicationContextFactory = applicationContextFactory;
+    }
 
-	/**
-	 * Bootstraps all modules in the context.
-	 */
-	public void bootstrap() {
-		runModuleBootstrapCustomizations();
+    /**
+     * Bootstraps all modules in the context.
+     */
+    public void bootstrap() {
+        runModuleBootstrapCustomizations();
 
-		AcrossApplicationContext root = createRootContext();
-		AcrossContextUtils.setAcrossApplicationContext( context, root );
+        AcrossApplicationContext root = createRootContext();
+        AcrossContextUtils.setAcrossApplicationContext(context, root);
 
-		applicationContextFactory.loadApplicationContext( context, root );
+        applicationContextFactory.loadApplicationContext(context, root);
 
-		AbstractApplicationContext rootContext = root.getApplicationContext();
+        AbstractApplicationContext rootContext = root.getApplicationContext();
 
-		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
+        // Register module beans
+        ConfigurableListableBeanFactory rootBeanFactory = rootContext.getBeanFactory();
 
-		Collection<AcrossModule> modulesInOrder = createOrderedModulesList( context );
+        for (AcrossModule module : context.getModules()) {
+            if (BeanFactoryUtils.beansOfTypeIncludingAncestors(rootBeanFactory, module.getClass()).isEmpty()) {
+                rootBeanFactory.registerSingleton(module.getClass().getName(), module);
+            }
+        }
 
-		LOG.debug( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
-		int order = 1;
-		for ( AcrossModule module : modulesInOrder ) {
-			LOG.debug( "{} - {}: {}", order++, module.getName(), module.getClass() );
-		}
+        AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
 
-		AcrossInstallerRegistry installerRegistry = new AcrossInstallerRegistry( context, modulesInOrder );
+        Collection<AcrossModule> modulesInOrder = createOrderedModulesList(context);
 
-		// Run installers that don't need anything bootstrapped
-		installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
+        LOG.debug("Bootstrapping {} modules in the following order:", modulesInOrder.size());
+        int order = 1;
+        for (AcrossModule module : modulesInOrder) {
+            LOG.debug("{} - {}: {}", order++, module.getName(), module.getClass());
+        }
 
-		for ( AcrossModule module : modulesInOrder ) {
-			LOG.debug( "Bootstrapping {} module", module.getName() );
+        AcrossInstallerRegistry installerRegistry = new AcrossInstallerRegistry(context, modulesInOrder);
 
-			// Run installers before bootstrapping this particular module
-			installerRegistry.runInstallersForModule( module, InstallerPhase.BeforeModuleBootstrap );
+        // Run installers that don't need anything bootstrapped
+        installerRegistry.runInstallers(InstallerPhase.BeforeContextBootstrap);
 
-			// Create the module context
-			AbstractApplicationContext child =
-					applicationContextFactory.createApplicationContext( context, module, root );
 
-			AcrossApplicationContext moduleApplicationContext = new AcrossApplicationContext( child, root );
-			AcrossContextUtils.setAcrossApplicationContext( module, moduleApplicationContext );
+        for (AcrossModule module : modulesInOrder) {
+            LOG.debug("Bootstrapping {} module", module.getName());
 
-			context.publishEvent( new AcrossModuleBeforeBootstrapEvent( context, module ) );
+            // Run installers before bootstrapping this particular module
+            installerRegistry.runInstallersForModule(module, InstallerPhase.BeforeModuleBootstrap);
 
-			applicationContextFactory.loadApplicationContext( context, module, moduleApplicationContext );
+            // Create the module context
+            AbstractApplicationContext child =
+                    applicationContextFactory.createApplicationContext(context, module, root);
 
-			// Bootstrap the module
-			module.bootstrap();
+            AcrossApplicationContext moduleApplicationContext = new AcrossApplicationContext(child, root);
+            AcrossContextUtils.setAcrossApplicationContext(module, moduleApplicationContext);
 
-			// Send event that this module has bootstrapped
-			context.publishEvent( new AcrossModuleBootstrappedEvent( context, module ) );
+            context.publishEvent(new AcrossModuleBeforeBootstrapEvent(context, module));
 
-			// Run installers after module itself has bootstrapped
-			installerRegistry.runInstallersForModule( module, InstallerPhase.AfterModuleBootstrap );
+            applicationContextFactory.loadApplicationContext(context, module, moduleApplicationContext);
 
-			// Copy the beans to the parent context
-			beanHelper.copy( child, rootContext, module.getExposeFilter() );
+            // Bootstrap the module
+            module.bootstrap();
 
-			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
-		}
+            // Send event that this module has bootstrapped
+            context.publishEvent(new AcrossModuleBootstrappedEvent(context, module));
 
-		// Bootstrapping done, run installers that require context bootstrap finished
-		installerRegistry.runInstallers( InstallerPhase.AfterContextBoostrap );
+            // Run installers after module itself has bootstrapped
+            installerRegistry.runInstallersForModule(module, InstallerPhase.AfterModuleBootstrap);
 
-		LOG.debug( "Bootstrapping {} modules - finished", modulesInOrder.size() );
+            // Copy the beans to the parent context
+            beanHelper.copy(child, rootContext, module.getExposeFilter());
 
-		if ( rootContext.getParent() != null && rootContext.getParent() instanceof ConfigurableApplicationContext ) {
-			pushDefinitionsToParent( beanHelper, (ConfigurableApplicationContext) rootContext.getParent() );
-		}
+            AcrossContextUtils.autoRegisterEventHandlers(child, rootContext.getBean(AcrossEventPublisher.class));
+        }
 
-		// Refresh beans
-		AcrossContextUtils.refreshBeans( context );
+        // Bootstrapping done, run installers that require context bootstrap finished
+        installerRegistry.runInstallers(InstallerPhase.AfterContextBoostrap);
 
-		// Bootstrap finished - publish the event
-		context.publishEvent( new AcrossContextBootstrappedEvent( context ) );
-	}
+        LOG.debug("Bootstrapping {} modules - finished", modulesInOrder.size());
 
-	private Collection<AcrossModule> createOrderedModulesList( AcrossContext context ) {
-		return BootstrapAcrossModuleOrder.create( context.getModules() );
-	}
+        if (rootContext.getParent() != null && rootContext.getParent() instanceof ConfigurableApplicationContext) {
+            pushDefinitionsToParent(beanHelper, (ConfigurableApplicationContext) rootContext.getParent());
+        }
 
-	private void runModuleBootstrapCustomizations() {
-		for ( AcrossModule module : context.getModules() ) {
-			if ( module instanceof BootstrapAdapter ) {
-				( (BootstrapAdapter) module ).customizeBootstrapper( this );
-			}
-		}
-	}
+        // Refresh beans
+        AcrossContextUtils.refreshBeans(context);
 
-	private AcrossApplicationContext createRootContext() {
-		ApplicationContext parent = AcrossContextUtils.getParentApplicationContext( context );
+        // Bootstrap finished - publish the event
+        context.publishEvent(new AcrossContextBootstrappedEvent(context));
+    }
 
-		AbstractApplicationContext rootApplicationContext =
-				applicationContextFactory.createApplicationContext( context, parent );
+    private Collection<AcrossModule> createOrderedModulesList(AcrossContext context) {
+        return BootstrapAcrossModuleOrder.create(context.getModules());
+    }
 
-		return new AcrossApplicationContext( rootApplicationContext );
-	}
+    private void runModuleBootstrapCustomizations() {
+        for (AcrossModule module : context.getModules()) {
+            if (module instanceof BootstrapAdapter) {
+                ((BootstrapAdapter) module).customizeBootstrapper(this);
+            }
+        }
+    }
 
-	private void pushDefinitionsToParent( AcrossBeanCopyHelper beanCopyHelper,
-	                                      ConfigurableApplicationContext applicationContext ) {
-		for ( Map.Entry<String, Object> singleton : beanCopyHelper.getSingletonsCopied().entrySet() ) {
-			applicationContext.getBeanFactory().registerSingleton( singleton.getKey(), singleton.getValue() );
-		}
+    private AcrossApplicationContext createRootContext() {
+        ApplicationContext parent = context.getParentApplicationContext();
 
-		if ( applicationContext instanceof GenericApplicationContext ) {
-			for ( Map.Entry<String, BeanDefinition> beanDef : beanCopyHelper.getDefinitionsCopied().entrySet() ) {
-				( (GenericApplicationContext) applicationContext ).registerBeanDefinition( beanDef.getKey(),
-				                                                                           beanDef.getValue() );
-			}
-		}
-	}
+        AbstractApplicationContext rootApplicationContext =
+                applicationContextFactory.createApplicationContext(context, parent);
+
+        return new AcrossApplicationContext(rootApplicationContext);
+    }
+
+    private void pushDefinitionsToParent(AcrossBeanCopyHelper beanCopyHelper,
+                                         ConfigurableApplicationContext applicationContext) {
+        for (Map.Entry<String, Object> singleton : beanCopyHelper.getSingletonsCopied().entrySet()) {
+            applicationContext.getBeanFactory().registerSingleton(singleton.getKey(), singleton.getValue());
+        }
+
+        if (applicationContext instanceof GenericApplicationContext) {
+            for (Map.Entry<String, BeanDefinition> beanDef : beanCopyHelper.getDefinitionsCopied().entrySet()) {
+                ((GenericApplicationContext) applicationContext).registerBeanDefinition(beanDef.getKey(),
+                        beanDef.getValue());
+            }
+        }
+    }
 }

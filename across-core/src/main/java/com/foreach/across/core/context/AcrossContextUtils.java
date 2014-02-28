@@ -108,7 +108,7 @@ public final class AcrossContextUtils
 	 * @return ApplicationContext that is the parent.
 	 */
 	public static ApplicationContext getParentApplicationContext( AcrossContext context ) {
-		return context.getParentApplicationContext();
+		return getApplicationContext( context ).getParent();
 	}
 
 	/**
