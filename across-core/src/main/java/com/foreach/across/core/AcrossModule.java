@@ -10,6 +10,7 @@ import com.foreach.across.core.filters.BeanFilterComposite;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -83,6 +84,16 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	 * @return Description of the content of this module.
 	 */
 	public abstract String getDescription();
+
+	/**
+	 * Called when a context is preparing to bootstrap, but before the actual bootstrap happens.
+	 * This is the last chance for a module to modify itself or its siblings before the actual
+	 * bootstrapping will occur.
+	 *
+	 * @param modules AcrossModules in the order that they will be bootstrapped.
+	 */
+	public void prepareForBootstrap( Collection<AcrossModule> modules ) {
+	}
 
 	/**
 	 * Called after all modules have been installed and - depending on the registration order in the context -

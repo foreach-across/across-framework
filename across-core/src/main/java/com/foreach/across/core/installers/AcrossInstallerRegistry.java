@@ -1,12 +1,12 @@
 package com.foreach.across.core.installers;
 
+import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.AcrossApplicationContext;
-import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.AcrossModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -33,7 +33,7 @@ public class AcrossInstallerRegistry
 		this.context = context;
 
 		installerRepository = AcrossContextUtils.getBeanOfType( context, AcrossInstallerRepository.class );
-		installationConfigs = buildModuleConfigs(modulesInOrder );
+		installationConfigs = buildModuleConfigs( modulesInOrder );
 	}
 
 	private Collection<ModuleInstallationConfig> buildModuleConfigs( Collection<AcrossModule> modules ) {
@@ -109,7 +109,7 @@ public class AcrossInstallerRegistry
 	 */
 	public void runInstallers( InstallerPhase phase ) {
 		for ( ModuleInstallationConfig config : installationConfigs ) {
-			runInstallers( config, phase  );
+			runInstallers( config, phase );
 		}
 	}
 
@@ -117,7 +117,7 @@ public class AcrossInstallerRegistry
 	 * Runs all installers for the given module and bootstrap phase.
 	 *
 	 * @param module AcrossModule instance.
-	 * @param phase Bootstrap phase for installers.
+	 * @param phase  Bootstrap phase for installers.
 	 */
 	public void runInstallersForModule( AcrossModule module, InstallerPhase phase ) {
 		runInstallers( findConfigForModule( module ), phase );

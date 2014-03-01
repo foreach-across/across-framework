@@ -1,7 +1,7 @@
 package com.foreach.across.test.modules.module1;
 
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.AcrossEventHandler;
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.test.modules.TestContextEventListener;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;

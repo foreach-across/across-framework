@@ -2,7 +2,6 @@ package com.foreach.across.test.modules.module1;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.PostRefresh;
-import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.test.modules.TestModuleEventListener;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import org.springframework.beans.factory.annotation.Autowired;

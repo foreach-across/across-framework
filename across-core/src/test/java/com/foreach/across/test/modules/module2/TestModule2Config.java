@@ -21,9 +21,9 @@ public class TestModule2Config
 		return new SomeInterfaceImplTwo();
 	}
 
-    @Bean
-    @Exposed
-    public CustomEventHandlers customEventHandlers() {
-        return new CustomEventHandlers();
-    }
+	@Bean
+	@Exposed
+	public CustomEventHandlers customEventHandlers() {
+		return new CustomEventHandlers();
+	}
 }

@@ -25,98 +25,99 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestEventFilters.Config.class)
 @DirtiesContext
-public class TestEventFilters {
-    @Autowired
-    private AcrossContext context;
+public class TestEventFilters
+{
+	@Autowired
+	private AcrossContext context;
 
-    @Autowired
-    private CustomEventHandlers eventHandlers;
+	@Autowired
+	private CustomEventHandlers eventHandlers;
 
-    @Test
-    public void simpleEventIsNotReceivedByNamedHandlers() {
-        SimpleEvent event = new SimpleEvent();
+	@Test
+	public void simpleEventIsNotReceivedByNamedHandlers() {
+		SimpleEvent event = new SimpleEvent();
 
-        context.publishEvent(event);
+		context.publishEvent( event );
 
-        assertTrue(eventHandlers.getReceivedAll().contains(event));
-        assertFalse(eventHandlers.getReceivedOne().contains(event));
-        assertFalse(eventHandlers.getReceivedTwo().contains(event));
-    }
+		assertTrue( eventHandlers.getReceivedAll().contains( event ) );
+		assertFalse( eventHandlers.getReceivedOne().contains( event ) );
+		assertFalse( eventHandlers.getReceivedTwo().contains( event ) );
+	}
 
-    @Test
-    public void specificNamedEventIsReceivedByMatchingHandlers() {
-        NamedEvent event = new NamedEvent("one");
+	@Test
+	public void specificNamedEventIsReceivedByMatchingHandlers() {
+		NamedEvent event = new NamedEvent( "one" );
 
-        context.publishEvent(event);
+		context.publishEvent( event );
 
-        assertTrue(eventHandlers.getReceivedAll().contains(event));
-        assertTrue(eventHandlers.getReceivedOne().contains(event));
-        assertFalse(eventHandlers.getReceivedTwo().contains(event));
+		assertTrue( eventHandlers.getReceivedAll().contains( event ) );
+		assertTrue( eventHandlers.getReceivedOne().contains( event ) );
+		assertFalse( eventHandlers.getReceivedTwo().contains( event ) );
 
-        event = new NamedEvent("two");
+		event = new NamedEvent( "two" );
 
-        context.publishEvent(event);
+		context.publishEvent( event );
 
-        assertTrue(eventHandlers.getReceivedAll().contains(event));
-        assertFalse(eventHandlers.getReceivedOne().contains(event));
-        assertTrue(eventHandlers.getReceivedTwo().contains(event));
+		assertTrue( eventHandlers.getReceivedAll().contains( event ) );
+		assertFalse( eventHandlers.getReceivedOne().contains( event ) );
+		assertTrue( eventHandlers.getReceivedTwo().contains( event ) );
 
-        event = new NamedEvent("three");
+		event = new NamedEvent( "three" );
 
-        context.publishEvent(event);
+		context.publishEvent( event );
 
-        assertTrue(eventHandlers.getReceivedAll().contains(event));
-        assertTrue(eventHandlers.getReceivedOne().contains(event));
-        assertTrue(eventHandlers.getReceivedTwo().contains(event));
-    }
+		assertTrue( eventHandlers.getReceivedAll().contains( event ) );
+		assertTrue( eventHandlers.getReceivedOne().contains( event ) );
+		assertTrue( eventHandlers.getReceivedTwo().contains( event ) );
+	}
 
-    @Test
-    public void unknownNamedEventIsOnlyReceivedByAllHandler() {
-        NamedEvent event = new NamedEvent("nomatch");
+	@Test
+	public void unknownNamedEventIsOnlyReceivedByAllHandler() {
+		NamedEvent event = new NamedEvent( "nomatch" );
 
-        context.publishEvent(event);
+		context.publishEvent( event );
 
-        assertTrue(eventHandlers.getReceivedAll().contains(event));
-        assertFalse(eventHandlers.getReceivedOne().contains(event));
-        assertFalse(eventHandlers.getReceivedTwo().contains(event));
-    }
+		assertTrue( eventHandlers.getReceivedAll().contains( event ) );
+		assertFalse( eventHandlers.getReceivedOne().contains( event ) );
+		assertFalse( eventHandlers.getReceivedTwo().contains( event ) );
+	}
 
+	@Configuration
+	public static class Config
+	{
+		@Bean
+		public DataSource acrossDataSource() throws Exception {
+			BasicDataSource dataSource = new BasicDataSource();
+			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
+			dataSource.setUrl( "jdbc:hsqldb:mem:acrossTest" );
+			dataSource.setUsername( "sa" );
+			dataSource.setPassword( "" );
 
-    @Configuration
-    public static class Config {
-        @Bean
-        public DataSource acrossDataSource() throws Exception {
-            BasicDataSource dataSource = new BasicDataSource();
-            dataSource.setDriverClassName("org.hsqldb.jdbc.JDBCDriver");
-            dataSource.setUrl("jdbc:hsqldb:mem:acrossTest");
-            dataSource.setUsername("sa");
-            dataSource.setPassword("");
+			return dataSource;
+		}
 
-            return dataSource;
-        }
+		@Bean
+		@Autowired
+		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+			AcrossContext context = new AcrossContext( applicationContext );
+			context.setDataSource( acrossDataSource() );
+			context.setAllowInstallers( false );
 
-        @Bean
-        @Autowired
-        public AcrossContext acrossContext(ConfigurableApplicationContext applicationContext) throws Exception {
-            AcrossContext context = new AcrossContext(applicationContext);
-            context.setDataSource(acrossDataSource());
-            context.setAllowInstallers(false);
+			context.addModule( testModule1() );
+			context.addModule( testModule2() );
 
-            context.addModule(testModule1());
-            context.addModule(testModule2());
+			return context;
+		}
 
-            return context;
-        }
+		@Bean
+		public TestModule1 testModule1() {
+			return new TestModule1();
+		}
 
-        @Bean
-        public TestModule1 testModule1() {
-            return new TestModule1();
-        }
-
-        @Bean
-        public TestModule2 testModule2() {
-            return new TestModule2();
-        }
-    }
+		@Bean
+		public TestModule2 testModule2() {
+			return new TestModule2();
+		}
+	}
 }
 

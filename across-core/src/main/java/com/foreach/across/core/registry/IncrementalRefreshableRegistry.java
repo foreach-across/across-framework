@@ -19,31 +19,32 @@ import javax.annotation.PostConstruct;
  * <p>Note that this implementation slows down AcrossContext bootstrap duration, so use only if necessary.</p>
  */
 @Refreshable
-public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T> {
-    @Autowired
-    private AcrossEventPublisher eventBus;
+public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
+{
+	@Autowired
+	private AcrossEventPublisher eventBus;
 
-    public IncrementalRefreshableRegistry(Class<T> memberType) {
-        super(memberType);
-    }
+	public IncrementalRefreshableRegistry( Class<T> memberType ) {
+		super( memberType );
+	}
 
-    public IncrementalRefreshableRegistry(Class<T> type, boolean scanModules) {
-        super(type, scanModules);
-    }
+	public IncrementalRefreshableRegistry( Class<T> type, boolean scanModules ) {
+		super( type, scanModules );
+	}
 
-    @PostConstruct
-    private void hookupEventHandler() {
-        eventBus.subscribe(this);
-    }
+	@PostConstruct
+	private void hookupEventHandler() {
+		eventBus.subscribe( this );
+	}
 
-    @Handler(filters = @Filter(EventNameFilter.class))
-    private void moduleBootstrapped(@EventName("test") AcrossModuleBootstrappedEvent moduleBootstrapped) {
-        refresh();
-    }
+	@Handler(filters = @Filter(EventNameFilter.class))
+	private void moduleBootstrapped( @EventName("test") AcrossModuleBootstrappedEvent moduleBootstrapped ) {
+		refresh();
+	}
 
-    @PostRefresh
-    @Override
-    public void refresh() {
-        super.refresh();
-    }
+	@PostRefresh
+	@Override
+	public void refresh() {
+		super.refresh();
+	}
 }

@@ -1,8 +1,6 @@
 package com.foreach.across.core.annotations;
 
-import com.foreach.across.core.context.AcrossDependsCondition;
 import com.foreach.across.core.context.AcrossModuleRole;
-import org.springframework.context.annotation.Conditional;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

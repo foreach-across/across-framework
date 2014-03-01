@@ -19,8 +19,8 @@ public class BeanFilterComposite implements BeanFilter
 	 * of the filters have returned true.
 	 *
 	 * @param beanFactory BeanFactory that owns the bean and definition.
-	 * @param bean       Bean instance to check (can be null).
-	 * @param definition BeanDefinition corresponding to this bean (can be null).
+	 * @param bean        Bean instance to check (can be null).
+	 * @param definition  BeanDefinition corresponding to this bean (can be null).
 	 * @return True if any of the filters match.
 	 */
 	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {

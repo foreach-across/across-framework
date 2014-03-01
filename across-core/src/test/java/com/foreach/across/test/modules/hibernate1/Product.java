@@ -7,55 +7,63 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "product")
-public class Product {
+public class Product
+{
+	@Id
+	private int id;
 
-    @Id
-    private int id;
+	@Column
+	private String name;
 
-    @Column
-    private String name;
+	public Product() {
+	}
 
-    public Product() {
-    }
+	public Product( int id, String name ) {
+		this.id = id;
+		this.name = name;
+	}
 
-    public Product(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public void setId( int id ) {
+		this.id = id;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setName( String name ) {
+		this.name = name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+		Product product = (Product) o;
 
-        Product product = (Product) o;
+		if ( getId() != product.getId() ) {
+			return false;
+		}
+		if ( getName() != null ? !getName().equals( product.getName() ) : product.getName() != null ) {
+			return false;
+		}
 
-        if (getId() != product.getId()) return false;
-        if (getName() != null ? !getName().equals(product.getName()) : product.getName() != null) return false;
+		return true;
+	}
 
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = id;
+		result = 31 * result + ( getName() != null ? getName().hashCode() : 0 );
+		return result;
+	}
 }

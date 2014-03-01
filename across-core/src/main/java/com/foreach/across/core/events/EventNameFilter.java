@@ -13,30 +13,33 @@ import java.lang.annotation.Annotation;
  * Filters events based on the @EventName annotation and the eventName property of the message.
  * If the message is not a NamedAcrossEvent instance, it will not be handled.
  */
-public class EventNameFilter implements IMessageFilter {
+public class EventNameFilter implements IMessageFilter
+{
 
-    private static final Logger LOG = LoggerFactory.getLogger(EventNameFilter.class);
+	private static final Logger LOG = LoggerFactory.getLogger( EventNameFilter.class );
 
-    public boolean accepts(Object message, MessageHandlerMetadata metadata) {
-        if (message instanceof NamedAcrossEvent) {
-            String eventName = ((NamedAcrossEvent) message).getEventName();
+	public boolean accepts( Object message, MessageHandlerMetadata metadata ) {
+		if ( message instanceof NamedAcrossEvent ) {
+			String eventName = ( (NamedAcrossEvent) message ).getEventName();
 
-            Annotation[][] annotationMap = metadata.getHandler().getParameterAnnotations();
+			Annotation[][] annotationMap = metadata.getHandler().getParameterAnnotations();
 
-            if (annotationMap.length > 0) {
-                for (Annotation annotation : annotationMap[0]) {
-                    if (annotation instanceof EventName) {
-                        String[] acceptable = ((EventName) annotation).value();
+			if ( annotationMap.length > 0 ) {
+				for ( Annotation annotation : annotationMap[0] ) {
+					if ( annotation instanceof EventName ) {
+						String[] acceptable = ( (EventName) annotation ).value();
 
-                        return ArrayUtils.contains(acceptable, eventName);
-                    }
-                }
-            }
+						return ArrayUtils.contains( acceptable, eventName );
+					}
+				}
+			}
 
-        } else {
-            LOG.trace("Message type {} does not implement NamedAcrossEvent", message != null ? message.getClass() : null);
-        }
+		}
+		else {
+			LOG.trace( "Message type {} does not implement NamedAcrossEvent",
+			           message != null ? message.getClass() : null );
+		}
 
-        return false;
-    }
+		return false;
+	}
 }

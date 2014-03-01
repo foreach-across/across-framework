@@ -10,36 +10,37 @@ import java.util.HashSet;
 import java.util.Set;
 
 @AcrossEventHandler
-public class CustomEventHandlers {
+public class CustomEventHandlers
+{
 
-    private Set<SimpleEvent> receivedAll = new HashSet<SimpleEvent>();
-    private Set<SimpleEvent> receivedOne = new HashSet<SimpleEvent>();
-    private Set<SimpleEvent> receivedTwo = new HashSet<SimpleEvent>();
+	private Set<SimpleEvent> receivedAll = new HashSet<SimpleEvent>();
+	private Set<SimpleEvent> receivedOne = new HashSet<SimpleEvent>();
+	private Set<SimpleEvent> receivedTwo = new HashSet<SimpleEvent>();
 
-    public Set<SimpleEvent> getReceivedAll() {
-        return receivedAll;
-    }
+	public Set<SimpleEvent> getReceivedAll() {
+		return receivedAll;
+	}
 
-    public Set<SimpleEvent> getReceivedOne() {
-        return receivedOne;
-    }
+	public Set<SimpleEvent> getReceivedOne() {
+		return receivedOne;
+	}
 
-    public Set<SimpleEvent> getReceivedTwo() {
-        return receivedTwo;
-    }
+	public Set<SimpleEvent> getReceivedTwo() {
+		return receivedTwo;
+	}
 
-    @Handler
-    public void allEvents(SimpleEvent event) {
-        receivedAll.add(event);
-    }
+	@Handler
+	public void allEvents( SimpleEvent event ) {
+		receivedAll.add( event );
+	}
 
-    @Handler(filters = @Filter(EventNameFilter.class))
-    public void namedOne(@EventName({"one", "three"}) NamedEvent event) {
-        receivedOne.add(event);
-    }
+	@Handler(filters = @Filter(EventNameFilter.class))
+	public void namedOne( @EventName({ "one", "three" }) NamedEvent event ) {
+		receivedOne.add( event );
+	}
 
-    @Handler(filters = @Filter(EventNameFilter.class))
-    public void namedTwo(@EventName({"two", "three"}) NamedEvent event) {
-        receivedTwo.add(event);
-    }
+	@Handler(filters = @Filter(EventNameFilter.class))
+	public void namedTwo( @EventName({ "two", "three" }) NamedEvent event ) {
+		receivedTwo.add( event );
+	}
 }
