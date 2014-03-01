@@ -2,33 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0dbc3bb2-d7a6-44d0-be5f-d1a19471e0c9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate1/Hibernate1Module.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate2/Hibernate2Module.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__antlr_antlr_2_7_7.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__dom4j_dom4j_1_6_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_common_hibernate_commons_annotations_4_0_2_Final.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_hibernate_core_4_2_8_Final.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_hibernate_entitymanager_4_2_8_Final.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_javax_persistence_hibernate_jpa_2_0_api_1_0_1_Final.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_javassist_javassist_3_18_1_GA.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_logging_jboss_logging_3_1_0_GA.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_spec_javax_transaction_jboss_transaction_api_1_1_spec_1_0_1_Final.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_orm_4_0_0_RELEASE.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate1/Product.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate1/ProductRepository.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate1/ProductRepositoryImpl.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/TestTransactionalSupport.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/configurer/TransactionManagementConfigurer.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate2/User.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate2/UserRepository.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate2/UserRepositoryImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/bootstrap/AcrossBootstrapper.java" afterPath="$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/bootstrap/AcrossBootstrapper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/AcrossContextUtils.java" afterPath="$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/AcrossContextUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/bootstrap/AnnotationConfigBootstrapApplicationContextFactory.java" afterPath="$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/bootstrap/AnnotationConfigBootstrapApplicationContextFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-core/across-core.iml" afterPath="$PROJECT_DIR$/across-core/across-core.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-core/pom.xml" afterPath="$PROJECT_DIR$/across-core/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test-web/test-web.iml" afterPath="$PROJECT_DIR$/test-web/test-web.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/TestTransactionalSupport.java" afterPath="$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/TestTransactionalSupport.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
     </list>
     <ignored path="across.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -95,7 +70,7 @@
       <file leaf-file-name="TestTransactionalSupport.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/TestTransactionalSupport.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="150" column="0" selection-start="5058" selection-end="5058" vertical-scroll-proportion="0.27449077" vertical-offset="2267" max-vertical-offset="3349">
+            <state line="64" column="56" selection-start="2542" selection-end="2542" vertical-scroll-proportion="0.6260069" vertical-offset="544" max-vertical-offset="3400">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -106,10 +81,8 @@
       <file leaf-file-name="TransactionManagementConfigurer.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/configurer/TransactionManagementConfigurer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="77" selection-start="275" selection-end="275" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="425">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="6" column="77" selection-start="275" selection-end="275" vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="425">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -117,10 +90,8 @@
       <file leaf-file-name="AcrossBootstrapper.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/bootstrap/AcrossBootstrapper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="101" column="53" selection-start="4377" selection-end="4377" vertical-scroll-proportion="0.0" vertical-offset="1379" max-vertical-offset="2907">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="101" column="53" selection-start="4377" selection-end="4377" vertical-scroll-proportion="0.0" vertical-offset="1717" max-vertical-offset="2975">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -128,7 +99,7 @@
       <file leaf-file-name="BootstrapApplicationContextFactory.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/bootstrap/BootstrapApplicationContextFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="9" selection-start="2143" selection-end="2143" vertical-scroll-proportion="0.0" vertical-offset="318" max-vertical-offset="935">
+            <state line="51" column="9" selection-start="2143" selection-end="2143" vertical-scroll-proportion="0.0" vertical-offset="867" max-vertical-offset="1003">
               <folding />
             </state>
           </provider>
@@ -138,9 +109,7 @@
         <entry file="file://$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/bootstrap/AnnotationConfigBootstrapApplicationContextFactory.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="90" column="50" selection-start="4366" selection-end="4366" vertical-scroll-proportion="0.0" vertical-offset="1274" max-vertical-offset="2057">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -148,7 +117,7 @@
       <file leaf-file-name="UserRepository.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate2/UserRepository.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="42" selection-start="250" selection-end="250" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="306">
+            <state line="10" column="42" selection-start="250" selection-end="250" vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="306">
               <folding />
             </state>
           </provider>
@@ -158,9 +127,7 @@
         <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate2/UserRepositoryImpl.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="32" column="38" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.0" vertical-offset="20" max-vertical-offset="799">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -168,10 +135,8 @@
       <file leaf-file-name="ProductRepositoryImpl.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate1/ProductRepositoryImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="5" selection-start="346" selection-end="744" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="527">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="23" column="5" selection-start="346" selection-end="744" vertical-scroll-proportion="0.0" vertical-offset="391" max-vertical-offset="527">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -179,7 +144,7 @@
       <file leaf-file-name="ProductRepository.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate1/ProductRepository.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="3" selection-start="94" selection-end="165" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="238">
+            <state line="4" column="3" selection-start="94" selection-end="165" vertical-scroll-proportion="0.0" vertical-offset="68" max-vertical-offset="238">
               <folding />
             </state>
           </provider>
@@ -276,10 +241,10 @@
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1616" />
-    <option name="height" value="1186" />
+    <option name="x" value="-9" />
+    <option name="y" value="-9" />
+    <option name="width" value="1938" />
+    <option name="height" value="1064" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -307,7 +272,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -337,6 +302,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="across-ehcache" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="across-ehcache" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -728,7 +711,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -739,7 +722,7 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="options.lastSelected" value="settings" />
+    <property name="options.lastSelected" value="preferences.sourceCode" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="MemberChooser.copyJavadoc" value="false" />
@@ -1327,11 +1310,12 @@
       <workItem from="1392104275392" duration="4769000" />
       <workItem from="1392545197954" duration="9008000" />
       <workItem from="1393612012300" duration="5996000" />
+      <workItem from="1393668473763" duration="28000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="333981000" />
+    <option name="totallyTimeSpent" value="334009000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -1354,7 +1338,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="1186" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1064" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1362,42 +1346,42 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28664193" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32991013" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43784785" sideWeight="0.5885751" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6615385" sideWeight="0.4114249" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25417203" sideWeight="0.46666667" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6615385" sideWeight="0.4114249" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32960895" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3237477" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32862645" sideWeight="0.600779" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32862645" sideWeight="0.600779" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.320625" sideWeight="0.53333336" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32055378" sideWeight="0.53333336" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38404453" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" x="91" y="91" width="1418" height="984" />
-      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32947233" sideWeight="0.60375494" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28664193" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3237477" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1419,13 +1403,13 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3278846" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32862645" sideWeight="0.600779" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
-    <option name="RECENTLY_FILTERED_USERS">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
       <collection />
     </option>
   </component>
@@ -1446,32 +1430,31 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
+    <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate1/ProductRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="41" selection-start="1054" selection-end="1054" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="629">
+        <state line="4" column="3" selection-start="94" selection-end="165" vertical-scroll-proportion="0.0" vertical-offset="68" max-vertical-offset="238">
           <folding />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageViewFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="41" selection-start="1054" selection-end="1054" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="629" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugPageView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="4" selection-start="346" selection-end="346" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="697">
-          <folding />
-        </state>
+        <state line="14" column="4" selection-start="346" selection-end="346" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="697" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/mvc/DebugHandlerMapping.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="13" selection-start="848" selection-end="848" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1870">
-          <folding />
-        </state>
+        <state line="19" column="13" selection-start="848" selection-end="848" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1870" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/ThreadsController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="13" selection-start="534" selection-end="534" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3094">
-          <folding />
-        </state>
+        <state line="13" column="13" selection-start="534" selection-end="534" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3094" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/LogController.java">
@@ -1483,9 +1466,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWeb.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="19" selection-start="65" selection-end="65" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
-          <folding />
-        </state>
+        <state line="2" column="19" selection-start="65" selection-end="65" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/DebugWebConfig.java">
@@ -1497,23 +1478,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResourceRegistry.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="46" selection-start="815" selection-end="815" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4114">
-          <folding />
-        </state>
+        <state line="18" column="46" selection-start="815" selection-end="815" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4114" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/across-web/src/main/java/com/foreach/across/modules/web/resource/WebResource.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="0" selection-start="1688" selection-end="1688" vertical-scroll-proportion="0.0" vertical-offset="894" max-vertical-offset="1360">
-          <folding />
-        </state>
+        <state line="69" column="0" selection-start="1688" selection-end="1688" vertical-scroll-proportion="0.0" vertical-offset="894" max-vertical-offset="1360" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/SpringInfoController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="57" selection-start="2559" selection-end="2559" vertical-scroll-proportion="0.0" vertical-offset="544" max-vertical-offset="2210">
-          <folding />
-        </state>
+        <state line="59" column="57" selection-start="2559" selection-end="2559" vertical-scroll-proportion="0.0" vertical-offset="544" max-vertical-offset="2210" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/java/com/foreach/across/modules/debugweb/controllers/AcrossInfoController.java">
@@ -1525,9 +1500,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/listAcrossModules.thtml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="7" selection-start="2943" selection-end="2943" vertical-scroll-proportion="0.0" vertical-offset="1462" max-vertical-offset="1564">
-          <folding />
-        </state>
+        <state line="86" column="7" selection-start="2943" selection-end="2943" vertical-scroll-proportion="0.0" vertical-offset="1462" max-vertical-offset="1564" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/th/debugweb/layouts/debugPage.thtml">
@@ -1539,23 +1512,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/debug-web/src/main/resources/views/css/debugweb/debugweb.scss">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="19" selection-start="325" selection-end="325" vertical-scroll-proportion="-13.730769" vertical-offset="0" max-vertical-offset="986">
-          <folding />
-        </state>
+        <state line="21" column="19" selection-start="325" selection-end="325" vertical-scroll-proportion="-13.730769" vertical-offset="0" max-vertical-offset="986" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-core/4.2.8.Final/hibernate-core-4.2.8.Final-sources.jar!/org/hibernate/Session.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="791" column="32" selection-start="30559" selection-end="30559" vertical-scroll-proportion="0.33268672" vertical-offset="12645" max-vertical-offset="18122">
-          <folding />
-        </state>
+        <state line="791" column="32" selection-start="30559" selection-end="30559" vertical-scroll-proportion="0.33268672" vertical-offset="12645" max-vertical-offset="18122" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.1.Final/hibernate-jpa-2.0-api-1.0.1.Final-sources.jar!/javax/persistence/Column.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="18" selection-start="1795" selection-end="1795" vertical-scroll-proportion="0.33268672" vertical-offset="269" max-vertical-offset="1887">
-          <folding />
-        </state>
+        <state line="55" column="18" selection-start="1795" selection-end="1795" vertical-scroll-proportion="0.33268672" vertical-offset="269" max-vertical-offset="1887" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
@@ -1574,27 +1541,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/installers/AcrossInstallerRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="50" selection-start="302" selection-end="302" vertical-scroll-proportion="0.14956012" vertical-offset="0" max-vertical-offset="918">
-          <folding>
-            <marker date="1392056891448" expanded="true" signature="-1:-1" placeholder="select versi..ACROSSMODULES..." />
-            <marker date="1392056891448" expanded="true" signature="-1:-1" placeholder="update ACROS..." />
-            <marker date="1392056891448" expanded="true" signature="-1:-1" placeholder="insert into ..." />
-          </folding>
-        </state>
+        <state line="6" column="50" selection-start="302" selection-end="302" vertical-scroll-proportion="0.14956012" vertical-offset="0" max-vertical-offset="918" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-orm/4.0.0.RELEASE/spring-orm-4.0.0.RELEASE.jar!/org/springframework/orm/hibernate3/support/HibernateDaoSupport.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="22" selection-start="194" selection-end="194" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
-          <folding />
-        </state>
+        <state line="6" column="22" selection-start="194" selection-end="194" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-orm/4.0.0.RELEASE/spring-orm-4.0.0.RELEASE-sources.jar!/org/springframework/orm/hibernate3/support/HibernateDaoSupport.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="22" selection-start="2339" selection-end="2339" vertical-scroll-proportion="0.88168555" vertical-offset="0" max-vertical-offset="3145">
-          <folding />
-        </state>
+        <state line="54" column="22" selection-start="2339" selection-end="2339" vertical-scroll-proportion="0.88168555" vertical-offset="0" max-vertical-offset="3145" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate2/Hibernate2Module.java">
@@ -1627,16 +1584,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/events/SpringContextRefreshedEventListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="0" selection-start="1001" selection-end="1001" vertical-scroll-proportion="0.0" vertical-offset="172" max-vertical-offset="731">
-          <folding />
-        </state>
+        <state line="31" column="0" selection-start="1001" selection-end="1001" vertical-scroll-proportion="0.0" vertical-offset="172" max-vertical-offset="731" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE-sources.jar!/org/springframework/beans/factory/BeanFactoryUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="376" column="24" selection-start="18160" selection-end="18160" vertical-scroll-proportion="-0.10475267" vertical-offset="6126" max-vertical-offset="7157">
-          <folding />
-        </state>
+        <state line="376" column="24" selection-start="18160" selection-end="18160" vertical-scroll-proportion="-0.10475267" vertical-offset="6126" max-vertical-offset="7157" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/4.0.0.RELEASE/spring-beans-4.0.0.RELEASE-sources.jar!/org/springframework/beans/factory/ListableBeanFactory.java">
@@ -1655,9 +1608,7 @@
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE.jar!/org/springframework/transaction/annotation/EnableTransactionManagement.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="18" selection-start="513" selection-end="513" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
-          <folding />
-        </state>
+        <state line="10" column="18" selection-start="513" selection-end="513" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/across-ehcache/src/main/java/com/foreach/across/modules/ehcache/config/EhcacheClientModuleConfig.java">
@@ -1676,50 +1627,32 @@
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE-sources.jar!/org/springframework/transaction/annotation/EnableTransactionManagement.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="168" column="50" selection-start="6017" selection-end="7226" vertical-scroll-proportion="0.0" vertical-offset="1604" max-vertical-offset="2635">
-          <folding />
-        </state>
+        <state line="168" column="50" selection-start="6017" selection-end="7226" vertical-scroll-proportion="0.0" vertical-offset="1604" max-vertical-offset="2635" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE-sources.jar!/org/springframework/context/annotation/AdviceModeImportSelector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="22" selection-start="1294" selection-end="1294" vertical-scroll-proportion="0.0" vertical-offset="214" max-vertical-offset="1224">
-          <folding />
-        </state>
+        <state line="34" column="22" selection-start="1294" selection-end="1294" vertical-scroll-proportion="0.0" vertical-offset="214" max-vertical-offset="1224" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/4.0.0.RELEASE/spring-context-4.0.0.RELEASE-sources.jar!/org/springframework/context/annotation/AutoProxyRegistrar.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="61" selection-start="2524" selection-end="2524" vertical-scroll-proportion="0.0" vertical-offset="248" max-vertical-offset="1258">
-          <folding />
-        </state>
+        <state line="57" column="61" selection-start="2524" selection-end="2524" vertical-scroll-proportion="0.0" vertical-offset="248" max-vertical-offset="1258" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE-sources.jar!/org/springframework/transaction/annotation/TransactionManagementConfigurationSelector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="105" selection-start="1963" selection-end="1963" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
-          <folding>
-            <element signature="e#0#2149#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
+        <state line="46" column="105" selection-start="1963" selection-end="1963" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE-sources.jar!/org/springframework/transaction/annotation/ProxyTransactionManagementConfiguration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="83" selection-start="1625" selection-end="1625" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="884">
-          <folding />
-        </state>
+        <state line="37" column="83" selection-start="1625" selection-end="1625" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="884" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-tx/4.0.0.RELEASE/spring-tx-4.0.0.RELEASE-sources.jar!/org/springframework/transaction/annotation/AbstractTransactionManagementConfiguration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="22" selection-start="1439" selection-end="1439" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="833">
-          <folding>
-            <element signature="e#0#2413#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
+        <state line="38" column="22" selection-start="1439" selection-end="1439" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="833" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate2/User.java">
@@ -1765,27 +1698,21 @@
     <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate1/ProductRepositoryImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="23" column="5" selection-start="346" selection-end="744" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="527">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/modules/hibernate2/UserRepositoryImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="38" selection-start="1020" selection-end="1020" vertical-scroll-proportion="0.0" vertical-offset="20" max-vertical-offset="799">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/bootstrap/AcrossBootstrapper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="101" column="53" selection-start="4377" selection-end="4377" vertical-scroll-proportion="0.0" vertical-offset="1379" max-vertical-offset="2907">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1809,24 +1736,20 @@
     <entry file="file://$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/bootstrap/AnnotationConfigBootstrapApplicationContextFactory.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="90" column="50" selection-start="4366" selection-end="4366" vertical-scroll-proportion="0.0" vertical-offset="1274" max-vertical-offset="2057">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/across-core/src/main/java/com/foreach/across/core/context/configurer/TransactionManagementConfigurer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="77" selection-start="275" selection-end="275" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="425">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/across-core/src/test/java/com/foreach/across/test/TestTransactionalSupport.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="150" column="0" selection-start="5058" selection-end="5058" vertical-scroll-proportion="0.27449077" vertical-offset="2267" max-vertical-offset="3349">
+        <state line="64" column="56" selection-start="2542" selection-end="2542" vertical-scroll-proportion="0.6260069" vertical-offset="544" max-vertical-offset="3400">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
