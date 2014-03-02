@@ -1,8 +1,7 @@
-package com.foreach.across.test.modules.hibernatebase;
+package com.foreach.across.modules.adminweb.config;
 
 import com.foreach.across.core.annotations.Exposed;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -15,20 +14,18 @@ import java.util.Properties;
 
 @Configuration
 @Exposed
+@EnableTransactionManagement
 public class HibernateSessionFactoryConfig
 {
-	@Autowired
-	private HibernateBaseModule baseModule;
-
 	@Bean
 	public LocalSessionFactoryBean sessionFactory( DataSource dataSource ) throws Exception {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource( dataSource );
-		sessionFactory.setPackagesToScan(
-				baseModule.getPackagesToScan().toArray( new String[baseModule.getPackagesToScan().size()] ) );
+		sessionFactory.setPackagesToScan( "com.foreach.across.modules.adminweb" );
 
 		Properties p = new Properties();
-		p.setProperty( "hibernate.hbm2ddl.auto", "create-drop" );
+		p.setProperty( "connection.autocommit", "false" );
+		p.setProperty( "hibernate.hbm2ddl.auto", "validate" );
 
 		sessionFactory.setHibernateProperties( p );
 

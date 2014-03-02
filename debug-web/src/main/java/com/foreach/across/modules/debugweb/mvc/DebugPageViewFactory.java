@@ -34,7 +34,7 @@ public class DebugPageViewFactory
 		DebugPageView view = new DebugPageView( debugPageTemplate, debugWebModule.getRootPath() );
 		menuFactory.buildMenu( "debugMenu", DebugMenu.class );
 
-//		view.addObject( "debugMenu", menuFactory.buildMenu( new DebugMenu( debugWebModule.getRootPath() ) ) );
+//		view.addObject( "debugMenu", menuFactory.buildMenu( new DebugMenu( debugWebModule.getPrefixPath() ) ) );
 
 		return view;
 	}

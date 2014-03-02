@@ -27,6 +27,7 @@
         <module name="across-core" />
         <module name="across-ehcache" />
         <module name="across-web" />
+        <module name="admin-web" />
         <module name="core" />
         <module name="debug-web" />
         <module name="test-web" />

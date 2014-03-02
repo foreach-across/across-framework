@@ -1,10 +1,6 @@
-package com.foreach.across.modules.debugweb.mvc;
+package com.foreach.across.modules.web.mvc;
 
-import com.foreach.across.modules.debugweb.DebugWebModule;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -16,12 +12,24 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.lang.reflect.Method;
 import java.util.Set;
 
-public class DebugHandlerMapping extends RequestMappingHandlerMapping
+/**
+ * Scans matching beans for RequestMapping annotations and (optionally) prefixes all mappings.
+ */
+public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandlerMapping
 {
-	@Autowired
-	private DebugWebModule debugWebModule;
+	private final String prefixPath;
+	private final ClassFilter handlerMatcher;
 
 	private ApplicationContext contextBeingScanned;
+
+	public PrefixingRequestMappingHandlerMapping( String prefixPath, ClassFilter handlerMatcher ) {
+		this.prefixPath = prefixPath;
+		this.handlerMatcher = handlerMatcher;
+	}
+
+	public String getPrefixPath() {
+		return prefixPath;
+	}
 
 	@Override
 	protected void initHandlerMethods() {
@@ -32,7 +40,7 @@ public class DebugHandlerMapping extends RequestMappingHandlerMapping
 	 *
 	 * @param context
 	 */
-	public void scanContext( ApplicationContext context ) {
+	public synchronized void scan( ApplicationContext context ) {
 		contextBeingScanned = context;
 
 		if ( logger.isDebugEnabled() ) {
@@ -85,7 +93,7 @@ public class DebugHandlerMapping extends RequestMappingHandlerMapping
 
 	@Override
 	protected boolean isHandler( Class<?> beanType ) {
-		return AnnotationUtils.findAnnotation( beanType, DebugWebController.class ) != null;
+		return handlerMatcher.matches( beanType );
 	}
 
 	@Override
@@ -93,6 +101,7 @@ public class DebugHandlerMapping extends RequestMappingHandlerMapping
 		RequestMappingInfo info = super.getMappingForMethod( method, handlerType );
 
 		if ( info != null ) {
+			/*
 			DebugWebController annotation = AnnotationUtils.findAnnotation( handlerType, DebugWebController.class );
 
 			// Use the parent path
@@ -105,14 +114,15 @@ public class DebugHandlerMapping extends RequestMappingHandlerMapping
 				                                                   new ProducesRequestCondition(), null );
 
 				info = other.combine( info );
-			}
+			}*/
 
 			// Add the subpath
-			RequestMappingInfo other =
-					new RequestMappingInfo( new PatternsRequestCondition( debugWebModule.getRootPath() ),
-					                        new RequestMethodsRequestCondition(), new ParamsRequestCondition(),
-					                        new HeadersRequestCondition(), new ConsumesRequestCondition(),
-					                        new ProducesRequestCondition(), null );
+			RequestMappingInfo other = new RequestMappingInfo( new PatternsRequestCondition( prefixPath ),
+			                                                   new RequestMethodsRequestCondition(),
+			                                                   new ParamsRequestCondition(),
+			                                                   new HeadersRequestCondition(),
+			                                                   new ConsumesRequestCondition(),
+			                                                   new ProducesRequestCondition(), null );
 
 			info = other.combine( info );
 		}

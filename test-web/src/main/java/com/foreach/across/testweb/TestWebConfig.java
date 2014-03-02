@@ -1,6 +1,7 @@
 package com.foreach.across.testweb;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.ehcache.EhcacheModule;
 import com.foreach.across.modules.web.AcrossWebModule;
@@ -22,13 +23,14 @@ public class TestWebConfig
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 		AcrossContext context = new AcrossContext( applicationContext );
 		context.setDataSource( acrossDataSource() );
-		context.setAllowInstallers( false );
+		context.setAllowInstallers( true );
 
 		context.addModule( otherModule() );
 		context.addModule( testWebModule() );
 		context.addModule( ehCacheModule() );
 		context.addModule( debugWebModule() );
 		context.addModule( acrossWebModule() );
+		context.addModule( adminWebModule() );
 
 		return context;
 	}
@@ -46,6 +48,11 @@ public class TestWebConfig
 	@Bean
 	public TestWebModule testWebModule() {
 		return new TestWebModule();
+	}
+
+	@Bean
+	public AdminWebModule adminWebModule() {
+		return new AdminWebModule();
 	}
 
 	@Bean
@@ -68,7 +75,7 @@ public class TestWebConfig
 	public DataSource acrossDataSource() throws Exception {
 		BasicDataSource dataSource = new BasicDataSource();
 		dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-		dataSource.setUrl( "jdbc:hsqldb:mem:acrossTestWeb" );
+		dataSource.setUrl( "jdbc:hsqldb:/hsql/acrossTestWeb" );
 		dataSource.setUsername( "sa" );
 		dataSource.setPassword( "" );
 

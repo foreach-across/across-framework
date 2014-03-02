@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<property name="long.type" value="NUMBER(19,0)" />
+	<property name="varchar.suffix" value="" />
+	<property name="varchar.suffix" value=" char" dbms="oracle" />
+
+	<changeSet id="201403011519" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="sequences"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates sequences table</comment>
+
+		<createTable tableName="sequences">
+			<column name="seq_name" type="varchar2(25 ${varchar.suffix})"/>
+			<column name="seq_number" type="${long.type}"/>
+		</createTable>
+
+		<addPrimaryKey tableName="sequences" columnNames="seq_name"/>
+	</changeSet>
+
+	<changeSet id="201403011520" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="permission"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates permission table</comment>
+
+		<createTable tableName="permission">
+			<column name="id" type="${long.type}"/>
+			<column name="name" type="varchar2(250 ${varchar.suffix})"/>
+			<column name="description" type="varchar2(2000 ${varchar.suffix})"/>
+		</createTable>
+
+		<addPrimaryKey tableName="permission" columnNames="id"/>
+
+		<createIndex tableName="permission" indexName="ix_permission_name" unique="true">
+			<column name="name"/>
+		</createIndex>
+
+		<insert tableName="sequences">
+			<column name="seq_name">seq_permission_id</column>
+			<column name="seq_number">1000</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="201403011524" author="arne" dbms="oracle">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="seq_permission_id"/>
+			</not>
+		</preConditions>
+		<createSequence sequenceName="seq_permission_id"/>
+	</changeSet>
+
+	<changeSet id="201403011521" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="role"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates role and role_permission table</comment>
+
+		<createTable tableName="role">
+			<column name="id" type="${long.type}"/>
+			<column name="name" type="varchar2(250 ${varchar.suffix})"/>
+			<column name="description" type="varchar2(2000 ${varchar.suffix})"/>
+		</createTable>
+
+		<addPrimaryKey tableName="role" columnNames="id"/>
+
+		<createIndex tableName="role" indexName="ix_role_name" unique="true">
+			<column name="name"/>
+		</createIndex>
+
+		<insert tableName="sequences">
+			<column name="seq_name">seq_role_id</column>
+			<column name="seq_number">1000</column>
+		</insert>
+
+		<createTable tableName="role_permission">
+			<column name="role_id" type="${long.type}"/>
+			<column name="permission_id" type="${long.type}"/>
+		</createTable>
+
+		<addPrimaryKey tableName="role_permission" columnNames="role_id, permission_id"/>
+
+		<addForeignKeyConstraint baseTableName="role_permission" baseColumnNames="role_id"
+		                         constraintName="fk_role_permission_role_id"
+		                         referencedTableName="role"
+		                         referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="role_permission" baseColumnNames="permission_id"
+		                         constraintName="fk_role_permission_permission_id"
+		                         referencedTableName="permission"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+</databaseChangeLog>

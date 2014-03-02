@@ -35,6 +35,7 @@
 		<module>across-web</module>
 		<module>debug-web</module>
 		<module>across-ehcache</module>
+		<module>admin-web</module>
 	</modules>
 
 	<distributionManagement>
