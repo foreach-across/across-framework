@@ -25,7 +25,7 @@ public class HibernateSessionFactoryConfig
 
 		Properties p = new Properties();
 		p.setProperty( "connection.autocommit", "false" );
-		p.setProperty( "hibernate.hbm2ddl.auto", "validate" );
+		p.setProperty( "hibernate.hbm2ddl.auto", "create-drop" );
 
 		sessionFactory.setHibernateProperties( p );
 
