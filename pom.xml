@@ -33,8 +33,9 @@
 	<modules>
 		<module>across-core</module>
 		<module>across-web</module>
-		<module>debug-web</module>
+		<module>across-hibernate</module>
 		<module>across-ehcache</module>
+		<module>debug-web</module>
 		<module>admin-web</module>
 	</modules>
 

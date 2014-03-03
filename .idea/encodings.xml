@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/across-core" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/across-ehcache" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/across-hibernate" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/across-web" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/admin-web" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/debug-web" charset="UTF-8" />

@@ -16,6 +16,9 @@ import java.util.Set;
 
 public abstract class AcrossModule extends AcrossApplicationContextHolder
 {
+	// The current module will always be referenced under this qualifier
+	public static final String CURRENT_MODULE_QUALIFIER = "across.currentModule";
+
 	private AcrossContext context;
 
 	private BeanFilter exposeFilter = defaultExposeFilter();

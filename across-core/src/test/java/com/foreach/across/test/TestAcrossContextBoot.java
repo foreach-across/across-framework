@@ -155,6 +155,12 @@ public class TestAcrossContextBoot
 		assertSame( testEvent, testListener.getEventsReceived().get( 0 ) );
 	}
 
+	@Test
+	public void currentModuleShouldAlwaysReferenceRightOne() {
+		assertSame( module1, scannedBeanModule1.getCurrentModule() );
+		assertSame( module2, scannedBeanModule2.getCurrentModule() );
+	}
+
 	@Configuration
 	public static class Config
 	{

@@ -1,11 +1,13 @@
 package com.foreach.across.test.modules.module1;
 
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.test.modules.TestContextEventListener;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,10 @@ public class ScannedBeanModule1 extends TestContextEventListener
 
 	@Value("${module1.beanValue}")
 	private String beanValue;
+
+	@Autowired
+	@Qualifier(AcrossModule.CURRENT_MODULE_QUALIFIER)
+	private AcrossModule currentModule;
 
 	public TestModule2 getReferenceToModule2() {
 		return referenceToModule2;
@@ -54,5 +60,9 @@ public class ScannedBeanModule1 extends TestContextEventListener
 	public void postConstruct() {
 		postConstructed = true;
 		CONSTRUCTION_COUNTER.incrementAndGet();
+	}
+
+	public AcrossModule getCurrentModule() {
+		return currentModule;
 	}
 }
