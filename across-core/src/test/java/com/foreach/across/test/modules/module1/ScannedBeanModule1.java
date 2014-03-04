@@ -33,7 +33,7 @@ public class ScannedBeanModule1 extends TestContextEventListener
 	private String beanValue;
 
 	@Autowired
-	@Qualifier(AcrossModule.CURRENT_MODULE_QUALIFIER)
+	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private AcrossModule currentModule;
 
 	public TestModule2 getReferenceToModule2() {

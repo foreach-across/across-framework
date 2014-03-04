@@ -15,26 +15,20 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Creates WebApplicationContext versions of the standard ApplicationContext.
  */
 public class WebBootstrapApplicationContextFactory extends AnnotationConfigBootstrapApplicationContextFactory
 {
-	/**
-	 * Create the Spring ApplicationContext for the root of the AcrossContext.
-	 * Optionally a parent ApplicationContext can be specified.
-	 *
-	 * @param across                   AcrossContext being created.
-	 * @param parentApplicationContext Parent ApplicationContext, can be null.
-	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
-	 */
 	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                            ApplicationContext parentApplicationContext ) {
+	                                                            ApplicationContext parentApplicationContext,
+	                                                            Map<String, Object> singletons ) {
 		if ( parentApplicationContext == null || parentApplicationContext instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentApplicationContext;
-			AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
+			AcrossSpringWebApplicationContext applicationContext = new AcrossSpringWebApplicationContext( singletons );
 
 			if ( parentApplicationContext != null ) {
 				applicationContext.setParent( parentApplicationContext );
@@ -49,24 +43,17 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 			return applicationContext;
 		}
 
-		return super.createApplicationContext( across, parentApplicationContext );
+		return super.createApplicationContext( across, parentApplicationContext, singletons );
 	}
 
-	/**
-	 * Create the Spring ApplicationContext.
-	 *
-	 * @param across        AcrossContext being loaded.
-	 * @param module        AcrossModule being loaded.
-	 * @param parentContext Contains the parent context.
-	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
-	 */
 	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            AcrossModule module,
-	                                                            AcrossApplicationContext parentContext ) {
+	                                                            AcrossApplicationContext parentContext,
+	                                                            Map<String, Object> singletons ) {
 		if ( parentContext.getApplicationContext() instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentContext.getApplicationContext();
-			AnnotationConfigWebApplicationContext child = new AnnotationConfigWebApplicationContext();
+			AcrossSpringWebApplicationContext child = new AcrossSpringWebApplicationContext( singletons );
 
 			child.setServletContext( parentWebContext.getServletContext() );
 			child.setParent( parentContext.getApplicationContext() );
@@ -75,7 +62,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 			return child;
 		}
 
-		return super.createApplicationContext( across, module, parentContext );
+		return super.createApplicationContext( across, module, parentContext, singletons );
 	}
 
 	/**
@@ -86,8 +73,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 	 */
 	@Override
 	public void loadApplicationContext( AcrossContext across, AcrossApplicationContext context ) {
-		AnnotationConfigWebApplicationContext root =
-				(AnnotationConfigWebApplicationContext) context.getApplicationContext();
+		AcrossSpringWebApplicationContext root = (AcrossSpringWebApplicationContext) context.getApplicationContext();
 		Collection<ApplicationContextConfigurer> configurers = across.getApplicationContextConfigurers().keySet();
 
 		loadApplicationContext( root, configurers );
@@ -101,8 +87,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 	 * @param context Contains the Spring ApplicationContext for the module.
 	 */
 	public void loadApplicationContext( AcrossContext across, AcrossModule module, AcrossApplicationContext context ) {
-		AnnotationConfigWebApplicationContext child =
-				(AnnotationConfigWebApplicationContext) context.getApplicationContext();
+		AcrossSpringWebApplicationContext child = (AcrossSpringWebApplicationContext) context.getApplicationContext();
 		Collection<ApplicationContextConfigurer> configurers =
 				AcrossContextUtils.getConfigurersToApply( across, module );
 

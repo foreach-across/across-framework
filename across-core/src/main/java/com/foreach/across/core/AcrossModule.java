@@ -16,8 +16,8 @@ import java.util.Set;
 
 public abstract class AcrossModule extends AcrossApplicationContextHolder
 {
-	// The current module will always be referenced under this qualifier
-	public static final String CURRENT_MODULE_QUALIFIER = "across.currentModule";
+	// The current module (owning the ApplicationContext) can always be referenced under this qualifier
+	public static final String CURRENT_MODULE = "across.currentModule";
 
 	private AcrossContext context;
 

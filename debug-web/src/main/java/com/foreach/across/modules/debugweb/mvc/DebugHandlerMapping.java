@@ -1,8 +1,10 @@
 package com.foreach.across.modules.debugweb.mvc;
 
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
@@ -19,6 +21,7 @@ import java.util.Set;
 public class DebugHandlerMapping extends RequestMappingHandlerMapping
 {
 	@Autowired
+	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private DebugWebModule debugWebModule;
 
 	private ApplicationContext contextBeingScanned;

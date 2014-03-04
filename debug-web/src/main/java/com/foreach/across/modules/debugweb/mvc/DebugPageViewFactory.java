@@ -1,12 +1,11 @@
 package com.foreach.across.modules.debugweb.mvc;
 
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.web.menu.MenuFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Service responsible for creating a DebugView instance.
@@ -18,6 +17,7 @@ public class DebugPageViewFactory
 	private MenuFactory menuFactory;
 
 	@Autowired
+	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private DebugWebModule debugWebModule;
 
 	private String debugPageTemplate = DebugWeb.LAYOUT_MAIN;

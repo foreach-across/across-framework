@@ -13,6 +13,7 @@ import com.foreach.across.modules.debugweb.mvc.DebugWebController;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import net.engio.mbassy.listener.Handler;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -63,31 +64,55 @@ public class AcrossInfoController
 
 			ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( module );
 
-			for ( String name : beanFactory.getBeanDefinitionNames() ) {
-				BeanDefinition definition = beanFactory.getBeanDefinition( name );
+			String[] definitions = beanFactory.getBeanDefinitionNames();
+			Set<String> names = new HashSet<String>();
+			names.addAll( Arrays.asList( definitions ) );
+			names.addAll( Arrays.asList( beanFactory.getSingletonNames() ) );
 
+			for ( String name : names ) {
 				BeanInfo info = new BeanInfo();
 				info.setName( name );
 				info.setExposed( exposed.contains( name ) );
-				info.setSingleton( definition.isSingleton() );
-				info.setScope( definition.getScope() );
 
 				Class beanType = Object.class;
 				Class actual = Object.class;
 
-				try {
-					if ( beanFactory.isSingleton( name ) ) {
-						Object value = beanFactory.getSingleton( name );
-						actual = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( value ) );
+				if ( ArrayUtils.contains( definitions, name ) ) {
+					BeanDefinition definition = beanFactory.getBeanDefinition( name );
+					info.setSingleton( definition.isSingleton() );
+					info.setScope( definition.getScope() );
+
+					try {
+						if ( beanFactory.isSingleton( name ) ) {
+							Object value = beanFactory.getSingleton( name );
+							actual = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( value ) );
+
+							if ( value != null ) {
+								beanType = value.getClass();
+							}
+						}
+						else {
+							beanType = Class.forName( definition.getBeanClassName() );
+							actual = ClassUtils.getUserClass( beanType );
+						}
 					}
-					else {
-						beanType = Class.forName( definition.getBeanClassName() );
-						actual = ClassUtils.getUserClass( beanType );
+					catch ( Exception e ) {
+						beanType = null;
+						actual = null;
 					}
 				}
-				catch ( Exception e ) {
-					beanType = null;
-					actual = null;
+				else {
+					info.setSingleton( true );
+					info.setScope( BeanDefinition.SCOPE_SINGLETON );
+
+					Object value = beanFactory.getSingleton( name );
+					try {
+						actual = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( value ) );
+					}
+					catch ( Exception e ) {
+						beanType = null;
+						actual = null;
+					}
 				}
 
 				if ( actual != null ) {

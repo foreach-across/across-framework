@@ -2,10 +2,8 @@ package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.AcrossModuleConfig;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
@@ -17,15 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Takes care of bootstrapping an entire across context.
@@ -64,9 +59,6 @@ public class AcrossBootstrapper
 
 		AbstractApplicationContext rootContext = root.getApplicationContext();
 
-		// Register bootstrap context
-		AcrossBootstrapContext bootstrapContext = new AcrossBootstrapContext();
-
 		// Register module beans
 		ConfigurableListableBeanFactory rootBeanFactory = rootContext.getBeanFactory();
 
@@ -75,8 +67,6 @@ public class AcrossBootstrapper
 				rootBeanFactory.registerSingleton( module.getClass().getName(), module );
 			}
 		}
-
-		rootBeanFactory.registerSingleton( "acrossBootstrapContext", bootstrapContext );
 
 		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
 
@@ -98,21 +88,21 @@ public class AcrossBootstrapper
 		for ( AcrossModule module : modulesInOrder ) {
 			LOG.debug( "Bootstrapping {} module", module.getName() );
 
-			bootstrapContext.setCurrentModule( module );
+			Map<String, Object> providedSingletons = new HashMap<String, Object>();
+			providedSingletons.put( AcrossModule.CURRENT_MODULE, module );
 
 			// Run installers before bootstrapping this particular module
 			installerRegistry.runInstallersForModule( module, InstallerPhase.BeforeModuleBootstrap );
 
 			// Create the module context
 			AbstractApplicationContext child =
-					applicationContextFactory.createApplicationContext( context, module, root );
+					applicationContextFactory.createApplicationContext( context, module, root, providedSingletons );
 
 			AcrossApplicationContext moduleApplicationContext = new AcrossApplicationContext( child, root );
 			AcrossContextUtils.setAcrossApplicationContext( module, moduleApplicationContext );
 
 			context.publishEvent( new AcrossModuleBeforeBootstrapEvent( context, module ) );
 
-			module.addApplicationContextConfigurer( new AnnotatedClassConfigurer( AcrossModuleConfig.class ) );
 			applicationContextFactory.loadApplicationContext( context, module, moduleApplicationContext );
 
 			// Bootstrap the module
@@ -130,8 +120,6 @@ public class AcrossBootstrapper
 			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
 		}
 
-		bootstrapContext.setCurrentModule( null );
-
 		// Bootstrapping done, run installers that require context bootstrap finished
 		installerRegistry.runInstallers( InstallerPhase.AfterContextBoostrap );
 
@@ -146,11 +134,6 @@ public class AcrossBootstrapper
 
 		// Bootstrap finished - publish the event
 		context.publishEvent( new AcrossContextBootstrappedEvent( context ) );
-
-		// Destroy the across bootstrap
-		if ( rootBeanFactory instanceof DefaultListableBeanFactory ) {
-			( (DefaultListableBeanFactory) rootBeanFactory ).destroySingleton( "acrossBootstrapContext" );
-		}
 	}
 
 	private Collection<AcrossModule> createOrderedModulesList( AcrossContext context ) {
@@ -169,7 +152,8 @@ public class AcrossBootstrapper
 		ApplicationContext parent = context.getParentApplicationContext();
 
 		AbstractApplicationContext rootApplicationContext =
-				applicationContextFactory.createApplicationContext( context, parent );
+				applicationContextFactory.createApplicationContext( context, parent,
+				                                                    Collections.<String, Object>emptyMap() );
 
 		return new AcrossApplicationContext( rootApplicationContext );
 	}

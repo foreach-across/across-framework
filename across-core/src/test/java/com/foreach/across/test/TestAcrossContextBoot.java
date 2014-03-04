@@ -161,6 +161,12 @@ public class TestAcrossContextBoot
 		assertSame( module2, scannedBeanModule2.getCurrentModule() );
 	}
 
+	@Test
+	public void currentModuleCantBeUsedDirectlyInExposedScopedBeans() {
+		assertNull( prototype1.getCurrentModule() );
+		assertNull( prototype2.getCurrentModule() );
+	}
+
 	@Configuration
 	public static class Config
 	{

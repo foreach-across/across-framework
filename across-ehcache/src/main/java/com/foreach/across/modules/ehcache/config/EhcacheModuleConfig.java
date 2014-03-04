@@ -1,15 +1,15 @@
 package com.foreach.across.modules.ehcache.config;
 
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.ehcache.EhcacheModule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * Declares the cache manager instance that is shared between all modules.
@@ -19,6 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 public class EhcacheModuleConfig
 {
 	@Autowired
+	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private EhcacheModule ehcacheModule;
 
 	@Bean

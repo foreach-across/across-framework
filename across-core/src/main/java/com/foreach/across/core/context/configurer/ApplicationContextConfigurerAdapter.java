@@ -2,6 +2,8 @@ package com.foreach.across.core.context.configurer;
 
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 
+import java.util.Arrays;
+
 /**
  * Adapter class that implements the ApplicationContextConfigurer interface.
  * Provides default empty implementations for all beans.
@@ -34,5 +36,37 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 	 */
 	public BeanFactoryPostProcessor[] postProcessors() {
 		return new BeanFactoryPostProcessor[0];
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( !( o instanceof ApplicationContextConfigurerAdapter ) ) {
+			return false;
+		}
+
+		ApplicationContextConfigurerAdapter that = (ApplicationContextConfigurerAdapter) o;
+
+		if ( !Arrays.equals( annotatedClasses(), that.annotatedClasses() ) ) {
+			return false;
+		}
+		if ( !Arrays.equals( componentScanPackages(), that.componentScanPackages() ) ) {
+			return false;
+		}
+		if ( !Arrays.equals( postProcessors(), that.postProcessors() ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = annotatedClasses() != null ? Arrays.hashCode( annotatedClasses() ) : 0;
+		result = 31 * result + ( componentScanPackages() != null ? Arrays.hashCode( componentScanPackages() ) : 0 );
+		result = 31 * result + ( postProcessors() != null ? Arrays.hashCode( postProcessors() ) : 0 );
+		return result;
 	}
 }

@@ -6,6 +6,8 @@ import com.foreach.across.core.context.AcrossApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
+import java.util.Map;
+
 /**
  * In charge of creating the ApplicationContext and loading all the beans.
  */
@@ -13,14 +15,18 @@ public interface BootstrapApplicationContextFactory
 {
 	/**
 	 * Create the Spring ApplicationContext for the root of the AcrossContext.
-	 * Optionally a parent ApplicationContext can be specified.
+	 * Optionally a parent ApplicationContext can be specified and a map of singletons that are guaranteed
+	 * to be available when the ApplicationContext has been created.
 	 *
 	 * @param across                   AcrossContext being created.
 	 * @param parentApplicationContext Parent ApplicationContext, can be null.
+	 * @param singletons               Map of singleton objects that should be registered
+	 *                                 upon creation of the ApplicationContext.
 	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
 	 */
 	AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                     ApplicationContext parentApplicationContext );
+	                                                     ApplicationContext parentApplicationContext,
+	                                                     Map<String, Object> singletons );
 
 	/**
 	 * Create the Spring ApplicationContext for a particular AcrossModule.
@@ -28,11 +34,14 @@ public interface BootstrapApplicationContextFactory
 	 * @param across        AcrossContext being loaded.
 	 * @param module        AcrossModule being created.
 	 * @param parentContext Contains the parent context.
+	 * @param singletons    Map of singleton objects that should be registered
+	 *                      upon creation of the ApplicationContext.
 	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
 	 */
 	AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                     AcrossModule module,
-	                                                     AcrossApplicationContext parentContext );
+	                                                     AcrossApplicationContext parentContext,
+	                                                     Map<String, Object> singletons );
 
 	/**
 	 * Loads beans and definitions in the root ApplicationContext.

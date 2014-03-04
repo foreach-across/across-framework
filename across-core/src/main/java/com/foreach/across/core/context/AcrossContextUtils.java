@@ -23,10 +23,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Helper methods for AcrossContext configuration.
@@ -204,7 +201,7 @@ public final class AcrossContextUtils
 	 */
 	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context,
 	                                                                              AcrossModule module ) {
-		Set<ApplicationContextConfigurer> configurers = new HashSet<ApplicationContextConfigurer>();
+		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
 		configurers.addAll( module.getApplicationContextConfigurers() );
 
 		for ( Map.Entry<ApplicationContextConfigurer, Boolean> configurerEntry : context.getApplicationContextConfigurers().entrySet() ) {

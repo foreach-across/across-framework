@@ -25,7 +25,7 @@ public class ScannedBeanModule2 extends TestContextEventListener
 	private ScannedBeanModule1 referenceToBeanFromModule1;
 
 	@Autowired
-	@Qualifier(AcrossModule.CURRENT_MODULE_QUALIFIER)
+	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private AcrossModule currentModule;
 
 	public TestModule1 getReferenceToModule1() {
