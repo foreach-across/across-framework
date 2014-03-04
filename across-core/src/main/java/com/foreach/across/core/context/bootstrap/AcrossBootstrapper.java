@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -50,6 +49,8 @@ public class AcrossBootstrapper
 	 * Bootstraps all modules in the context.
 	 */
 	public void bootstrap() {
+		checkBootstrapIsPossible();
+
 		runModuleBootstrapCustomizations();
 
 		AcrossApplicationContext root = createRootContext();
@@ -136,6 +137,24 @@ public class AcrossBootstrapper
 		context.publishEvent( new AcrossContextBootstrappedEvent( context ) );
 	}
 
+	private void checkBootstrapIsPossible() {
+		if ( context.isAllowInstallers() && context.getDataSource() == null ) {
+			throw new RuntimeException(
+					"A datasource must be configured if installers are allowed when bootstrapping the AcrossContext" );
+		}
+
+		Set<String> moduleNames = new HashSet<String>();
+
+		for ( AcrossModule module : context.getModules() ) {
+			if ( moduleNames.contains( module.getName() ) ) {
+				throw new RuntimeException(
+						"Each module must have a unique name, duplicate found for " + module.getName() );
+			}
+
+			moduleNames.add( module.getName() );
+		}
+	}
+
 	private Collection<AcrossModule> createOrderedModulesList( AcrossContext context ) {
 		return BootstrapAcrossModuleOrder.create( context.getModules() );
 	}
@@ -149,11 +168,19 @@ public class AcrossBootstrapper
 	}
 
 	private AcrossApplicationContext createRootContext() {
-		ApplicationContext parent = context.getParentApplicationContext();
+		Map<String, Object> providedBeans = new HashMap<String, Object>();
+
+		// Put the context as a fixed singleton
+		providedBeans.put( AcrossContext.BEAN, context );
+
+		// Put the modules as singletons in the context
+		for ( AcrossModule module : context.getModules() ) {
+			providedBeans.put( module.getName(), module );
+		}
 
 		AbstractApplicationContext rootApplicationContext =
-				applicationContextFactory.createApplicationContext( context, parent,
-				                                                    Collections.<String, Object>emptyMap() );
+				applicationContextFactory.createApplicationContext( context, context.getParentApplicationContext(),
+				                                                    providedBeans );
 
 		return new AcrossApplicationContext( rootApplicationContext );
 	}

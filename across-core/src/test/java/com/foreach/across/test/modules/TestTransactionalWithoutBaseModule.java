@@ -1,6 +1,7 @@
 package com.foreach.across.test.modules;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.TransactionManagementConfigurer;
 import com.foreach.across.test.modules.hibernate1.Hibernate1Module;
 import com.foreach.across.test.modules.hibernate1.Product;
@@ -176,7 +177,8 @@ public class TestTransactionalWithoutBaseModule
 			acrossContext.setDataSource( dataSource() );
 			acrossContext.addModule( hibernate1Module() );
 			acrossContext.addModule( hibernate2Module() );
-			acrossContext.addApplicationContextConfigurer( new TransactionManagementConfigurer(), true );
+			acrossContext.addApplicationContextConfigurer( new TransactionManagementConfigurer(),
+			                                               ConfigurerScope.CONTEXT_AND_MODULES );
 
 			return acrossContext;
 		}

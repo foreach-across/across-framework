@@ -3,8 +3,9 @@ package com.foreach.across.core;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
-import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
+import com.foreach.across.core.context.bootstrap.BootstrapAcrossModuleOrder;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PostProcessorConfigurer;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
@@ -23,6 +24,7 @@ import java.util.*;
  */
 public class AcrossContext extends AcrossApplicationContextHolder
 {
+	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
 
 	private DataSource dataSource;
@@ -31,8 +33,8 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	private boolean onlyRegisterInstallers;
 	private String[] skipInstallerGroups = new String[0];
 
-	private Map<ApplicationContextConfigurer, Boolean> applicationContextConfigurers =
-			new HashMap<ApplicationContextConfigurer, Boolean>();
+	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
+			new HashMap<ApplicationContextConfigurer, ConfigurerScope>();
 
 	private LinkedList<AcrossModule> modules = new LinkedList<AcrossModule>();
 
@@ -57,8 +59,6 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	 */
 	public AcrossContext( ApplicationContext parentContext ) {
 		parentApplicationContext = parentContext;
-
-		addApplicationContextConfigurer( new AnnotatedClassConfigurer( AcrossConfig.class ), false );
 	}
 
 	public ApplicationContext getParentApplicationContext() {
@@ -78,15 +78,22 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	}
 
 	public void addModule( AcrossModule module ) {
-		if ( !modules.contains( module ) ) {
-			modules.add( module );
-			module.setContext( this );
-
-			if ( isBootstrapped ) {
-				throw new RuntimeException(
-						"Adding a module to an already bootstrapped AcrossContext is currently not supported." );
-			}
+		if ( modules.contains( module ) ) {
+			throw new RuntimeException(
+					"Not allowed to add the same module instance to a single AcrossContext: " + module );
 		}
+
+		if ( module.getContext() != null ) {
+			throw new RuntimeException( "Module is already attached to another AcrossContext: " + module );
+		}
+
+		if ( isBootstrapped ) {
+			throw new RuntimeException(
+					"Adding a module to an already bootstrapped AcrossContext is currently not supported." );
+		}
+
+		modules.add( module );
+		module.setContext( this );
 	}
 
 	public boolean isAllowInstallers() {
@@ -113,7 +120,7 @@ public class AcrossContext extends AcrossApplicationContextHolder
 		this.skipInstallerGroups = skipInstallerGroups;
 	}
 
-	public Map<ApplicationContextConfigurer, Boolean> getApplicationContextConfigurers() {
+	public Map<ApplicationContextConfigurer, ConfigurerScope> getApplicationContextConfigurers() {
 		return applicationContextConfigurers;
 	}
 
@@ -122,11 +129,12 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	 * will be applied to the root ApplicationContext only or to every ApplicationContext of every module registered.</p>
 	 * <p>The latter is required for configurers providing BeanFactoryPostProcessor beans like property sources.</p>
 	 *
-	 * @param configurer        Configurer instance.
-	 * @param applyToAllModules True if the configurer should be applied to every modules ApplicationContext.
+	 * @param configurer Configurer instance.
+	 * @param scope      Scope to which this configurer should be applied.
+	 * @see com.foreach.across.core.context.configurer.ConfigurerScope
 	 */
-	public void addApplicationContextConfigurer( ApplicationContextConfigurer configurer, boolean applyToAllModules ) {
-		applicationContextConfigurers.put( configurer, applyToAllModules );
+	public void addApplicationContextConfigurer( ApplicationContextConfigurer configurer, ConfigurerScope scope ) {
+		applicationContextConfigurers.put( configurer, scope );
 	}
 
 	/**
@@ -135,7 +143,8 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	 * @param propertySources One or more PropertyResourceConfigurer instances.
 	 */
 	public void addPropertySources( PropertyResourceConfigurer... propertySources ) {
-		addApplicationContextConfigurer( new PostProcessorConfigurer( propertySources ), true );
+		addApplicationContextConfigurer( new PostProcessorConfigurer( propertySources ),
+		                                 ConfigurerScope.CONTEXT_AND_MODULES );
 	}
 
 	/**
@@ -149,7 +158,7 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	}
 
 	@PostConstruct
-	public void bootstrap() throws Exception {
+	public void bootstrap() {
 		if ( !isBootstrapped ) {
 			isBootstrapped = true;
 
@@ -162,10 +171,12 @@ public class AcrossContext extends AcrossApplicationContextHolder
 		if ( isBootstrapped ) {
 			// Shutdown all modules in reverse order - note that it is quite possible to beans might have been destroyed
 			// already by Spring in the meantime
-			List<AcrossModule> reverseList = new LinkedList<AcrossModule>( modules );
+			List<AcrossModule> reverseList =
+					new LinkedList<AcrossModule>( BootstrapAcrossModuleOrder.create( modules ) );
 			Collections.reverse( reverseList );
 
 			for ( AcrossModule module : reverseList ) {
+				AcrossContextUtils.getApplicationContext( module ).stop();
 				module.shutdown();
 			}
 

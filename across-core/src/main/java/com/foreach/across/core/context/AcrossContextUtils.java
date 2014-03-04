@@ -1,11 +1,15 @@
 package com.foreach.across.core.context;
 
+import com.foreach.across.core.AcrossConfig;
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossInstallerConfig;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,6 +196,29 @@ public final class AcrossContextUtils
 	}
 
 	/**
+	 * Will list all ApplicationContextConfigurers to apply for the AcrossContext itself.
+	 *
+	 * @param context AcrossContext instance.
+	 * @return Merges set of ApplicationContextConfigurers.
+	 */
+	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context ) {
+		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
+		configurers.add( new AnnotatedClassConfigurer( AcrossConfig.class ) );
+
+		if ( context.isAllowInstallers() ) {
+			configurers.add( new AnnotatedClassConfigurer( AcrossInstallerConfig.class ) );
+		}
+
+		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context.getApplicationContextConfigurers().entrySet() ) {
+			if ( configurerEntry.getValue() != ConfigurerScope.MODULES_ONLY ) {
+				configurers.add( configurerEntry.getKey() );
+			}
+		}
+
+		return configurers;
+	}
+
+	/**
 	 * Will list all ApplicationContextConfigurers in the module, combined with the ones registered on the
 	 * AcrossContext that are specified to apply to all modules.
 	 *
@@ -204,8 +231,8 @@ public final class AcrossContextUtils
 		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
 		configurers.addAll( module.getApplicationContextConfigurers() );
 
-		for ( Map.Entry<ApplicationContextConfigurer, Boolean> configurerEntry : context.getApplicationContextConfigurers().entrySet() ) {
-			if ( configurerEntry.getValue() ) {
+		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context.getApplicationContextConfigurers().entrySet() ) {
+			if ( configurerEntry.getValue() != ConfigurerScope.CONTEXT_ONLY ) {
 				configurers.add( configurerEntry.getKey() );
 			}
 		}

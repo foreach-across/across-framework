@@ -29,11 +29,21 @@ public class AcrossInstallerRegistry
 
 	private final Collection<ModuleInstallationConfig> installationConfigs;
 
+	private final boolean enabled;
+
 	public AcrossInstallerRegistry( AcrossContext context, Collection<AcrossModule> modulesInOrder ) {
 		this.context = context;
 
-		installerRepository = AcrossContextUtils.getBeanOfType( context, AcrossInstallerRepository.class );
-		installationConfigs = buildModuleConfigs( modulesInOrder );
+		if ( context.isAllowInstallers() ) {
+			installerRepository = AcrossContextUtils.getBeanOfType( context, AcrossInstallerRepository.class );
+			installationConfigs = buildModuleConfigs( modulesInOrder );
+		}
+		else {
+			installerRepository = null;
+			installationConfigs = Collections.emptyList();
+		}
+
+		enabled = installerRepository != null;
 	}
 
 	private Collection<ModuleInstallationConfig> buildModuleConfigs( Collection<AcrossModule> modules ) {
@@ -108,8 +118,10 @@ public class AcrossInstallerRegistry
 	 * @param phase Bootstrap phase for installers.
 	 */
 	public void runInstallers( InstallerPhase phase ) {
-		for ( ModuleInstallationConfig config : installationConfigs ) {
-			runInstallers( config, phase );
+		if ( enabled ) {
+			for ( ModuleInstallationConfig config : installationConfigs ) {
+				runInstallers( config, phase );
+			}
 		}
 	}
 
@@ -120,7 +132,9 @@ public class AcrossInstallerRegistry
 	 * @param phase  Bootstrap phase for installers.
 	 */
 	public void runInstallersForModule( AcrossModule module, InstallerPhase phase ) {
-		runInstallers( findConfigForModule( module ), phase );
+		if ( enabled ) {
+			runInstallers( findConfigForModule( module ), phase );
+		}
 	}
 
 	private void runInstallers( ModuleInstallationConfig config, InstallerPhase phase ) {

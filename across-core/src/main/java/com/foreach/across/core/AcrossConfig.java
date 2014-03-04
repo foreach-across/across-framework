@@ -13,30 +13,11 @@ import org.springframework.context.annotation.DependsOn;
 import javax.sql.DataSource;
 
 /**
- * Contains the base configuration for Across.
+ * Installs the common beans that are always available.
  */
 @Configuration
 public class AcrossConfig
 {
-	@Autowired
-	private AcrossContext acrossContext;
-
-	@Bean(name = AcrossContext.DATASOURCE)
-	public DataSource acrossDataSource() {
-		return acrossContext.getDataSource();
-	}
-
-	@Bean
-	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
-		return new AcrossCoreSchemaInstaller( acrossContext );
-	}
-
-	@Bean
-	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
-	public AcrossInstallerRepository installerRepository() {
-		return new AcrossInstallerRepository( acrossDataSource() );
-	}
-
 	@Bean
 	public AcrossEventPublisher eventPublisher() {
 		return new MBassadorEventPublisher();

@@ -35,6 +35,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	                                                            Map<String, Object> singletons ) {
 		AcrossSpringApplicationContext applicationContext = new AcrossSpringApplicationContext( singletons );
 
+		/*
 		if ( parentApplicationContext == null ) {
 			Map<String, Object> parentSingletons = new HashMap<String, Object>();
 			parentSingletons.put( "acrossContext", across );
@@ -44,11 +45,11 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 			parent.start();
 
 			parentApplicationContext = parent;
-		}
+		}*/
 
 		applicationContext.setParent( parentApplicationContext );
 
-		if ( parentApplicationContext.getEnvironment() instanceof ConfigurableEnvironment ) {
+		if ( parentApplicationContext != null && parentApplicationContext.getEnvironment() instanceof ConfigurableEnvironment ) {
 			applicationContext.setEnvironment( (ConfigurableEnvironment) parentApplicationContext.getEnvironment() );
 		}
 
@@ -84,7 +85,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 */
 	public void loadApplicationContext( AcrossContext across, AcrossApplicationContext context ) {
 		AcrossSpringApplicationContext root = (AcrossSpringApplicationContext) context.getApplicationContext();
-		Collection<ApplicationContextConfigurer> configurers = across.getApplicationContextConfigurers().keySet();
+		Collection<ApplicationContextConfigurer> configurers = AcrossContextUtils.getConfigurersToApply( across );
 
 		loadApplicationContext( root, configurers );
 	}
