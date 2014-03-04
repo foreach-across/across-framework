@@ -1,6 +1,8 @@
 package com.foreach.across.modules.web.context;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.util.Map;
@@ -29,7 +31,12 @@ public class AcrossSpringWebApplicationContext extends AnnotationConfigWebApplic
 		// Register additional singletons
 		if ( providedSingletons != null ) {
 			for ( Map.Entry<String, Object> singleton : providedSingletons.entrySet() ) {
-				beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
+				DefaultListableBeanFactory listableBeanFactory = (DefaultListableBeanFactory) beanFactory;
+				GenericBeanDefinition definition = new GenericBeanDefinition();
+				definition.isSingleton();
+				definition.setPrimary( true );
+				listableBeanFactory.registerBeanDefinition( singleton.getKey(), definition );
+				listableBeanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}
 	}

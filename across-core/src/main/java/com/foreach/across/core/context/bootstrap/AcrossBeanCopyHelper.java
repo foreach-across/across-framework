@@ -50,13 +50,6 @@ public class AcrossBeanCopyHelper
 			registry = (BeanDefinitionRegistry) parentFactory;
 		}
 
-		for ( Map.Entry<String, Object> singleton : beans.entrySet() ) {
-			LOG.debug( "Exposing bean to parent context: {}", singleton );
-
-			parentFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
-			singletonsCopied.put( singleton.getKey(), singleton.getValue() );
-		}
-
 		for ( Map.Entry<String, BeanDefinition> definition : definitions.entrySet() ) {
 			if ( !definition.getValue().isSingleton() || !beans.containsKey( definition.getKey() ) ) {
 				if ( registry != null ) {
@@ -64,6 +57,13 @@ public class AcrossBeanCopyHelper
 					definitionsCopied.put( definition.getKey(), definition.getValue() );
 				}
 			}
+		}
+
+		for ( Map.Entry<String, Object> singleton : beans.entrySet() ) {
+			LOG.debug( "Exposing bean to parent context: {}", singleton );
+
+			parentFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
+			singletonsCopied.put( singleton.getKey(), singleton.getValue() );
 		}
 	}
 }

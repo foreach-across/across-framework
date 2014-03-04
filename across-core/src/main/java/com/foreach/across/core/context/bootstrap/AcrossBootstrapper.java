@@ -160,15 +160,15 @@ public class AcrossBootstrapper
 
 	private void pushDefinitionsToParent( AcrossBeanCopyHelper beanCopyHelper,
 	                                      ConfigurableApplicationContext applicationContext ) {
-		for ( Map.Entry<String, Object> singleton : beanCopyHelper.getSingletonsCopied().entrySet() ) {
-			applicationContext.getBeanFactory().registerSingleton( singleton.getKey(), singleton.getValue() );
-		}
-
 		if ( applicationContext instanceof GenericApplicationContext ) {
 			for ( Map.Entry<String, BeanDefinition> beanDef : beanCopyHelper.getDefinitionsCopied().entrySet() ) {
 				( (GenericApplicationContext) applicationContext ).registerBeanDefinition( beanDef.getKey(),
 				                                                                           beanDef.getValue() );
 			}
+		}
+
+		for ( Map.Entry<String, Object> singleton : beanCopyHelper.getSingletonsCopied().entrySet() ) {
+			applicationContext.getBeanFactory().registerSingleton( singleton.getKey(), singleton.getValue() );
 		}
 	}
 }
