@@ -7,6 +7,7 @@ import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
+import com.foreach.across.core.transformers.BeanDefinitionTransformer;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	private AcrossContext context;
 
 	private BeanFilter exposeFilter = defaultExposeFilter();
+	private BeanDefinitionTransformer exposeTransformer = null;
 	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
 			new HashSet<ApplicationContextConfigurer>();
 
@@ -55,6 +57,23 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	}
 
 	/**
+	 * @return The transformer that will be applied to all exposed beans before copying them to the parent context.
+	 */
+	public BeanDefinitionTransformer getExposeTransformer() {
+		return exposeTransformer;
+	}
+
+	/**
+	 * Sets the transformer that will be applied to all exposed beans before actually copying them
+	 * to the parent context.
+	 *
+	 * @param exposeTransformer The transformer that should be applies to all exposed beans.
+	 */
+	public void setExposeTransformer( BeanDefinitionTransformer exposeTransformer ) {
+		this.exposeTransformer = exposeTransformer;
+	}
+
+	/**
 	 * @return Array containing the installer classes in the order of which they should be run.
 	 */
 	public Object[] getInstallers() {
@@ -79,7 +98,7 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	}
 
 	/**
-	 * @return Name of this module.  The spring bean should also be using this name.
+	 * @return Name of this module.  Should be unique within a configured AcrossContext.
 	 */
 	public abstract String getName();
 

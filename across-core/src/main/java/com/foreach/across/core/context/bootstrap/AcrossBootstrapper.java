@@ -115,7 +115,7 @@ public class AcrossBootstrapper
 			installerRegistry.runInstallersForModule( module, InstallerPhase.AfterModuleBootstrap );
 
 			// Copy the beans to the parent context
-			beanHelper.copy( child, rootContext, module.getExposeFilter() );
+			beanHelper.copy( child, rootContext, module.getExposeFilter(), module.getExposeTransformer() );
 
 			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
 		}

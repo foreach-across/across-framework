@@ -33,7 +33,6 @@ public class AcrossSpringWebApplicationContext extends AnnotationConfigWebApplic
 			for ( Map.Entry<String, Object> singleton : providedSingletons.entrySet() ) {
 				DefaultListableBeanFactory listableBeanFactory = (DefaultListableBeanFactory) beanFactory;
 				GenericBeanDefinition definition = new GenericBeanDefinition();
-				definition.isSingleton();
 				definition.setPrimary( true );
 				listableBeanFactory.registerBeanDefinition( singleton.getKey(), definition );
 				listableBeanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );

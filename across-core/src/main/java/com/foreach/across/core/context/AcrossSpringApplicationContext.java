@@ -35,7 +35,6 @@ public class AcrossSpringApplicationContext extends AnnotationConfigApplicationC
 		if ( providedSingletons != null ) {
 			for ( Map.Entry<String, Object> singleton : providedSingletons.entrySet() ) {
 				GenericBeanDefinition definition = new GenericBeanDefinition();
-				definition.isSingleton();
 				definition.setPrimary( true );
 				registerBeanDefinition( singleton.getKey(), definition );
 				beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
