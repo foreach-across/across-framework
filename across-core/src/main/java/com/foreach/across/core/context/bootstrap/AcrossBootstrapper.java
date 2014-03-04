@@ -13,9 +13,10 @@ import com.foreach.across.core.installers.InstallerPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.*;
 
@@ -49,7 +50,15 @@ public class AcrossBootstrapper
 	public void bootstrap() {
 		checkBootstrapIsPossible();
 
+		checkUniqueModuleNames( context.getModules() );
+
 		Collection<AcrossModule> modulesInOrder = createOrderedModulesList( context );
+
+		LOG.debug( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
+		int order = 1;
+		for ( AcrossModule module : modulesInOrder ) {
+			LOG.debug( "{} - {}: {}", order++, module.getName(), module.getClass() );
+		}
 
 		runModuleBootstrapCustomizations( modulesInOrder );
 
@@ -60,24 +69,9 @@ public class AcrossBootstrapper
 
 		AbstractApplicationContext rootContext = root.getApplicationContext();
 
-		/*
-		// Register module beans
-		ConfigurableListableBeanFactory rootBeanFactory = rootContext.getBeanFactory();
-
-		for ( AcrossModule module : context.getModules() ) {
-			if ( BeanFactoryUtils.beansOfTypeIncludingAncestors( rootBeanFactory, module.getClass() ).isEmpty() ) {
-				rootBeanFactory.registerSingleton( module.getClass().getName(), module );
-			}
-		}
-		*/
-
 		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
 
-		LOG.debug( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
-		int order = 1;
 		for ( AcrossModule module : new LinkedList<AcrossModule>( modulesInOrder ) ) {
-			LOG.debug( "{} - {}: {}", order++, module.getName(), module.getClass() );
-
 			module.prepareForBootstrap( modulesInOrder );
 		}
 
@@ -134,7 +128,7 @@ public class AcrossBootstrapper
 		AcrossContextUtils.refreshBeans( context );
 
 		// Bootstrap finished - publish the event
-		context.publishEvent( new AcrossContextBootstrappedEvent( context ) );
+		context.publishEvent( new AcrossContextBootstrappedEvent( context, modulesInOrder ) );
 	}
 
 	private void checkBootstrapIsPossible() {
@@ -142,10 +136,12 @@ public class AcrossBootstrapper
 			throw new RuntimeException(
 					"A datasource must be configured if installers are allowed when bootstrapping the AcrossContext" );
 		}
+	}
 
+	private void checkUniqueModuleNames( Collection<AcrossModule> modules ) {
 		Set<String> moduleNames = new HashSet<String>();
 
-		for ( AcrossModule module : context.getModules() ) {
+		for ( AcrossModule module : modules ) {
 			if ( moduleNames.contains( module.getName() ) ) {
 				throw new RuntimeException(
 						"Each module must have a unique name, duplicate found for " + module.getName() );
@@ -156,7 +152,7 @@ public class AcrossBootstrapper
 	}
 
 	private Collection<AcrossModule> createOrderedModulesList( AcrossContext context ) {
-		return BootstrapAcrossModuleOrder.create( context.getModules() );
+		return BootstrapAcrossModuleOrder.create( context.getModules(), true );
 	}
 
 	private void runModuleBootstrapCustomizations( Collection<AcrossModule> modules ) {
@@ -187,15 +183,21 @@ public class AcrossBootstrapper
 
 	private void pushDefinitionsToParent( AcrossBeanCopyHelper beanCopyHelper,
 	                                      ConfigurableApplicationContext applicationContext ) {
-		if ( applicationContext instanceof GenericApplicationContext ) {
+		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
+		BeanDefinitionRegistry registry = null;
+
+		if ( beanFactory instanceof BeanDefinitionRegistry ) {
+			registry = (BeanDefinitionRegistry) beanFactory;
+		}
+
+		if ( registry != null ) {
 			for ( Map.Entry<String, BeanDefinition> beanDef : beanCopyHelper.getDefinitionsCopied().entrySet() ) {
-				( (GenericApplicationContext) applicationContext ).registerBeanDefinition( beanDef.getKey(),
-				                                                                           beanDef.getValue() );
+				registry.registerBeanDefinition( beanDef.getKey(), beanDef.getValue() );
 			}
 		}
 
 		for ( Map.Entry<String, Object> singleton : beanCopyHelper.getSingletonsCopied().entrySet() ) {
-			applicationContext.getBeanFactory().registerSingleton( singleton.getKey(), singleton.getValue() );
+			beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 		}
 	}
 }

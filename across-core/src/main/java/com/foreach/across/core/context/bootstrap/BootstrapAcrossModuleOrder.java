@@ -16,7 +16,9 @@ import java.util.*;
  */
 public class BootstrapAcrossModuleOrder
 {
-	private Collection<AcrossModule> source;
+	private final boolean removeDisabledModules;
+	private final Collection<AcrossModule> source;
+
 	private LinkedList<AcrossModule> orderedModules;
 
 	private Map<String, AcrossModule> modulesById = new HashMap<String, AcrossModule>();
@@ -26,8 +28,9 @@ public class BootstrapAcrossModuleOrder
 			new HashMap<AcrossModule, Collection<AcrossModule>>();
 	private Map<AcrossModule, AcrossModuleRole> moduleRoles = new HashMap<AcrossModule, AcrossModuleRole>();
 
-	public BootstrapAcrossModuleOrder( Collection<AcrossModule> source ) {
+	public BootstrapAcrossModuleOrder( Collection<AcrossModule> source, boolean removeDisabledModules ) {
 		this.source = source;
+		this.removeDisabledModules = removeDisabledModules;
 
 		orderModules();
 	}
@@ -63,7 +66,7 @@ public class BootstrapAcrossModuleOrder
 			determineRole( module );
 		}
 
-		applyInfrastructureModules();
+		applyEnabledInfrastructureModules();
 
 		for ( AcrossModule module : source ) {
 			int currentPosition = orderedModules.indexOf( module );
@@ -85,19 +88,21 @@ public class BootstrapAcrossModuleOrder
 		verifyModuleList( orderedModules );
 	}
 
-	private void applyInfrastructureModules() {
+	private void applyEnabledInfrastructureModules() {
 		for ( Map.Entry<AcrossModule, AcrossModuleRole> moduleRole : moduleRoles.entrySet() ) {
 			if ( moduleRole.getValue() == AcrossModuleRole.INFRASTRUCTURE ) {
 				AcrossModule infrastructure = moduleRole.getKey();
 
-				// Infrastructure modules are added as required dependencies to all non-infrastructure modules
-				// Indirect dependencies
-				for ( Map.Entry<AcrossModule, AcrossModuleRole> targetModuleRole : moduleRoles.entrySet() ) {
-					AcrossModule target = targetModuleRole.getKey();
+				if ( infrastructure.isEnabled() ) {
+					// Infrastructure modules are added as required dependencies to all non-infrastructure modules
+					// Indirect dependencies
+					for ( Map.Entry<AcrossModule, AcrossModuleRole> targetModuleRole : moduleRoles.entrySet() ) {
+						AcrossModule target = targetModuleRole.getKey();
 
-					if ( targetModuleRole.getValue() != AcrossModuleRole.INFRASTRUCTURE && !requiredDependencies.get(
-							infrastructure ).contains( target ) ) {
-						requiredDependencies.get( targetModuleRole.getKey() ).add( moduleRole.getKey() );
+						if ( targetModuleRole.getValue() != AcrossModuleRole.INFRASTRUCTURE && !requiredDependencies.get(
+								infrastructure ).contains( target ) ) {
+							requiredDependencies.get( targetModuleRole.getKey() ).add( moduleRole.getKey() );
+						}
 					}
 				}
 			}
@@ -126,6 +131,11 @@ public class BootstrapAcrossModuleOrder
 			}
 			else {
 				handled.add( module );
+
+				// Remove module if disabled and disabled should be removed
+				if ( removeDisabledModules && !module.isEnabled() ) {
+					iterator.remove();
+				}
 			}
 		}
 	}
@@ -145,6 +155,10 @@ public class BootstrapAcrossModuleOrder
 				if ( !modulesById.containsKey( requiredModule ) ) {
 					throw new RuntimeException(
 							"Unable to bootstrap AcrossContext as module " + module.getName() + " requires module " + requiredModule + ".  Module " + requiredModule + " is not present in the context." );
+				}
+				else if ( !modulesById.get( requiredModule ).isEnabled() ) {
+					throw new RuntimeException(
+							"Unable to bootstrap AcrossContext as module " + module.getName() + " requires module " + requiredModule + ".  Module " + requiredModule + " is present but is not enabled." );
 				}
 
 				requiredByModule.add( modulesById.get( requiredModule ) );
@@ -174,6 +188,10 @@ public class BootstrapAcrossModuleOrder
 	}
 
 	public static Collection<AcrossModule> create( Collection<AcrossModule> modules ) {
-		return new BootstrapAcrossModuleOrder( modules ).getOrderedModules();
+		return create( modules, false );
+	}
+
+	public static Collection<AcrossModule> create( Collection<AcrossModule> modules, boolean removeDisabledModules ) {
+		return new BootstrapAcrossModuleOrder( modules, removeDisabledModules ).getOrderedModules();
 	}
 }

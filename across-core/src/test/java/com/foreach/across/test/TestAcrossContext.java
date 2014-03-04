@@ -6,10 +6,25 @@ import com.foreach.across.test.modules.module1.TestModule1;
 import com.foreach.across.test.modules.module2.TestModule2;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestAcrossContext
 {
+	@Test
+	public void getModuleByName() {
+		TestModule1 module = new TestModule1();
+		ExposingModule other = new ExposingModule( "my module" );
+
+		AcrossContext context = new AcrossContext();
+		context.addModule( module );
+		context.addModule( other );
+
+		assertNull( context.getModule( "not present" ) );
+		assertSame( module, context.getModule( module.getName() ) );
+		assertSame( other, context.getModule( "my module" ) );
+		assertSame( other, context.getModule( "com.foreach.across.test.modules.exposing.ExposingModule" ) );
+	}
+
 	@Test
 	public void moduleWithTheSameNameIsNotAllowedWhenBootstrapping() {
 		AcrossContext context = new AcrossContext();
@@ -30,11 +45,6 @@ public class TestAcrossContext
 		}
 
 		assertTrue( "Bootstrapping modules with the same name should not be possible", failed );
-	}
-
-	@Test
-	public void modulesWithSameNameAreAllowedIfOnlyOneEnabled() {
-
 	}
 
 	@Test

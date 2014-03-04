@@ -49,7 +49,7 @@ public class AcrossInfoController
 	public DebugPageView showBeans( DebugPageView view ) {
 		view.setPage( DebugWeb.VIEW_MODULES );
 
-		BootstrapAcrossModuleOrder modules = new BootstrapAcrossModuleOrder( acrossContext.getModules() );
+		BootstrapAcrossModuleOrder modules = new BootstrapAcrossModuleOrder( acrossContext.getModules(), false );
 
 		view.addObject( "moduleRegistry", modules );
 		view.addObject( "modules", modules.getOrderedModules() );
@@ -60,73 +60,75 @@ public class AcrossInfoController
 			ModuleInfo moduleInfo = new ModuleInfo();
 			moduleInfo.setModule( module );
 
-			Set<String> exposed = getExposedBeanNames( module );
+			if ( module.isEnabled() ) {
+				Set<String> exposed = getExposedBeanNames( module );
 
-			ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( module );
+				ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( module );
 
-			String[] definitions = beanFactory.getBeanDefinitionNames();
-			Set<String> names = new HashSet<String>();
-			names.addAll( Arrays.asList( definitions ) );
-			names.addAll( Arrays.asList( beanFactory.getSingletonNames() ) );
+				String[] definitions = beanFactory.getBeanDefinitionNames();
+				Set<String> names = new HashSet<String>();
+				names.addAll( Arrays.asList( definitions ) );
+				names.addAll( Arrays.asList( beanFactory.getSingletonNames() ) );
 
-			for ( String name : names ) {
-				BeanInfo info = new BeanInfo();
-				info.setName( name );
-				info.setExposed( exposed.contains( name ) );
+				for ( String name : names ) {
+					BeanInfo info = new BeanInfo();
+					info.setName( name );
+					info.setExposed( exposed.contains( name ) );
 
-				Class beanType = Object.class;
-				Class actual = Object.class;
+					Class beanType = Object.class;
+					Class actual = Object.class;
 
-				if ( ArrayUtils.contains( definitions, name ) ) {
-					BeanDefinition definition = beanFactory.getBeanDefinition( name );
-					info.setSingleton( definition.isSingleton() );
-					info.setScope( definition.getScope() );
+					if ( ArrayUtils.contains( definitions, name ) ) {
+						BeanDefinition definition = beanFactory.getBeanDefinition( name );
+						info.setSingleton( definition.isSingleton() );
+						info.setScope( definition.getScope() );
 
-					try {
-						if ( beanFactory.isSingleton( name ) ) {
-							Object value = beanFactory.getSingleton( name );
-							actual = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( value ) );
+						try {
+							if ( beanFactory.isSingleton( name ) ) {
+								Object value = beanFactory.getSingleton( name );
+								actual = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( value ) );
 
-							if ( value != null ) {
-								beanType = value.getClass();
+								if ( value != null ) {
+									beanType = value.getClass();
+								}
+							}
+							else {
+								beanType = Class.forName( definition.getBeanClassName() );
+								actual = ClassUtils.getUserClass( beanType );
 							}
 						}
-						else {
-							beanType = Class.forName( definition.getBeanClassName() );
-							actual = ClassUtils.getUserClass( beanType );
+						catch ( Exception e ) {
+							beanType = null;
+							actual = null;
 						}
 					}
-					catch ( Exception e ) {
-						beanType = null;
-						actual = null;
-					}
-				}
-				else {
-					info.setSingleton( true );
-					info.setScope( BeanDefinition.SCOPE_SINGLETON );
+					else {
+						info.setSingleton( true );
+						info.setScope( BeanDefinition.SCOPE_SINGLETON );
 
-					Object value = beanFactory.getSingleton( name );
-					try {
-						actual = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( value ) );
+						Object value = beanFactory.getSingleton( name );
+						try {
+							actual = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( value ) );
+						}
+						catch ( Exception e ) {
+							beanType = null;
+							actual = null;
+						}
 					}
-					catch ( Exception e ) {
-						beanType = null;
-						actual = null;
-					}
-				}
 
-				if ( actual != null ) {
-					info.setBeanType( actual.getName() );
-				}
-				if ( beanType != actual ) {
-					info.setProxiedOrEnhanced( true );
+					if ( actual != null ) {
+						info.setBeanType( actual.getName() );
+					}
+					if ( beanType != actual ) {
+						info.setProxiedOrEnhanced( true );
+					}
+
+					moduleInfo.addBean( info );
 				}
 
-				moduleInfo.addBean( info );
+				Collections.sort( moduleInfo.getBeans() );
+
 			}
-
-			Collections.sort( moduleInfo.getBeans() );
-
 			moduleInfoList.add( moduleInfo );
 		}
 
@@ -169,6 +171,10 @@ public class AcrossInfoController
 
 		public List<BeanInfo> getBeans() {
 			return beans;
+		}
+
+		public boolean isEnabled() {
+			return module.isEnabled();
 		}
 	}
 

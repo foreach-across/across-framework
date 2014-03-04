@@ -60,30 +60,34 @@ public final class AcrossContextUtils
 	public static void refreshBeans( AcrossContext context ) {
 		for ( AcrossModule module : context.getModules() ) {
 			ApplicationContext moduleContext = AcrossContextUtils.getApplicationContext( module );
-			ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( module );
 
-			Collection<Object> refreshableBeans =
-					ApplicationContextScanner.findBeansWithAnnotation( moduleContext, Refreshable.class );
+			// If no ApplicationContext the module will not have bootstrapped
+			if ( moduleContext != null ) {
+				ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( module );
 
-			for ( Object singleton : refreshableBeans ) {
-				Object bean = AcrossContextUtils.getProxyTarget( singleton );
-				beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+				Collection<Object> refreshableBeans =
+						ApplicationContextScanner.findBeansWithAnnotation( moduleContext, Refreshable.class );
 
-				Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
+				for ( Object singleton : refreshableBeans ) {
+					Object bean = AcrossContextUtils.getProxyTarget( singleton );
+					beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
 
-				for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
-					if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
+					Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
 
-						if ( method.getParameterTypes().length != 0 ) {
-							LOG.error( "@PostRefresh method {} should be parameter-less", method );
-						}
-						else {
-							try {
-								method.setAccessible( true );
-								method.invoke( bean );
+					for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
+						if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
+
+							if ( method.getParameterTypes().length != 0 ) {
+								LOG.error( "@PostRefresh method {} should be parameter-less", method );
 							}
-							catch ( Exception e ) {
-								LOG.error( "Exception executing @PostRefresh method", e );
+							else {
+								try {
+									method.setAccessible( true );
+									method.invoke( bean );
+								}
+								catch ( Exception e ) {
+									LOG.error( "Exception executing @PostRefresh method", e );
+								}
 							}
 						}
 					}

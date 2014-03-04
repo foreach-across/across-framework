@@ -12,6 +12,8 @@ div.feedback {
   background-color: whitesmoke;
   padding: 5px;
   border: solid 1px gainsboro; }
+  .debug-across-info h2 span.module-disabled {
+    color: red; }
 .debug-across-info table.bean-list tr {
   color: gray; }
   .debug-across-info table.bean-list tr:hover {

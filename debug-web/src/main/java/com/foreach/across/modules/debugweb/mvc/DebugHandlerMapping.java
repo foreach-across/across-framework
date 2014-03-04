@@ -36,23 +36,25 @@ public class DebugHandlerMapping extends RequestMappingHandlerMapping
 	 * @param context
 	 */
 	public void scanContext( ApplicationContext context ) {
-		contextBeingScanned = context;
+		if ( context != null ) {
+			contextBeingScanned = context;
 
-		if ( logger.isDebugEnabled() ) {
-			logger.debug( "Looking for request mappings in application context: " + context );
-		}
-
-		String[] beanNames = context.getBeanNamesForType( Object.class );
-
-		for ( String beanName : beanNames ) {
-			if ( isHandler( context.getType( beanName ) ) ) {
-				detectHandlerMethods( context, beanName );
+			if ( logger.isDebugEnabled() ) {
+				logger.debug( "Looking for request mappings in application context: " + context );
 			}
+
+			String[] beanNames = context.getBeanNamesForType( Object.class );
+
+			for ( String beanName : beanNames ) {
+				if ( isHandler( context.getType( beanName ) ) ) {
+					detectHandlerMethods( context, beanName );
+				}
+			}
+
+			contextBeingScanned = null;
+
+			handlerMethodsInitialized( getHandlerMethods() );
 		}
-
-		contextBeingScanned = null;
-
-		handlerMethodsInitialized( getHandlerMethods() );
 	}
 
 	protected void detectHandlerMethods( ApplicationContext context, final Object handler ) {

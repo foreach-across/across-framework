@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TestAcrossModuleLoadingOrder
 {
@@ -22,6 +23,11 @@ public class TestAcrossModuleLoadingOrder
 	private ModuleSix cyclicOne = new ModuleSix();
 	private ModuleSeven cyclicTwo = new ModuleSeven();
 	private ModuleEight infrastructureRequiringTwo = new ModuleEight();
+
+	@Test
+	public void resetEnabled() {
+		infrastructureRequiringTwo.setEnabled( true );
+	}
 
 	@Test
 	public void addingOrderIsKeptIfNoDependencies() {
@@ -54,6 +60,26 @@ public class TestAcrossModuleLoadingOrder
 	}
 
 	@Test
+	public void disabledOptionalDependencyHasNoImpact() {
+		one.setEnabled( false );
+
+		Collection<AcrossModule> added = list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three );
+		Collection<AcrossModule> ordered = BootstrapAcrossModuleOrder.create( added );
+
+		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void disabledRequiredDependencyCausesException() {
+		two.setEnabled( false );
+
+		Collection<AcrossModule> added = list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three );
+		Collection<AcrossModule> ordered = BootstrapAcrossModuleOrder.create( added );
+
+		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
+	}
+
+	@Test
 	public void infrastructureModuleGetsPushedToTheFirstPossibleSpot() {
 		Collection<AcrossModule> added =
 				list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three, infrastructureRequiringTwo );
@@ -61,6 +87,21 @@ public class TestAcrossModuleLoadingOrder
 
 		assertEquals( list( two, infrastructureRequiringTwo, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ),
 		              ordered );
+	}
+
+	@Test
+	public void disablingInfrastructureModuleIsNoProblem() {
+		Collection<AcrossModule> added =
+				list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three, infrastructureRequiringTwo );
+		infrastructureRequiringTwo.setEnabled( false );
+
+		BootstrapAcrossModuleOrder bootstrapAcrossModuleOrder = new BootstrapAcrossModuleOrder( added, true );
+		Collection<AcrossModule> ordered = bootstrapAcrossModuleOrder.getOrderedModules();
+
+		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
+
+		Collection<AcrossModule> dependencies = bootstrapAcrossModuleOrder.getRequiredDependencies( one );
+		assertFalse( dependencies.contains( infrastructureRequiringTwo ) );
 	}
 
 	@Test(expected = RuntimeException.class)

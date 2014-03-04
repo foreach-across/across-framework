@@ -68,11 +68,13 @@ public class AcrossDependsCondition implements Condition
 
 	private boolean hasModule( AcrossContext context, String moduleId ) {
 		for ( AcrossModule module : context.getModules() ) {
-			if ( StringUtils.equals( moduleId, module.getName() ) ) {
-				return true;
-			}
-			if ( StringUtils.equals( module.getClass().getName(), moduleId ) ) {
-				return true;
+			if ( module.isEnabled() ) {
+				if ( StringUtils.equals( moduleId, module.getName() ) ) {
+					return true;
+				}
+				if ( StringUtils.equals( module.getClass().getName(), moduleId ) ) {
+					return true;
+				}
 			}
 		}
 

@@ -13,7 +13,10 @@
 	</div>
 	<div th:each="moduleInfo,status : ${moduleInfoList}">
 		<!-- Module info -->
-		<h2 th:text="${moduleInfo.module.name}">module name</h2>
+		<h2>
+			<span th:text="${moduleInfo.module.name}">module name</span>
+			<span th:if="${not moduleInfo.enabled}" class="module-disabled">(disabled)</span>
+		</h2>
 
 		<div class="moduleInfo" th:with="module = ${moduleInfo.module}">
 			<p th:text="${module.description}">module description</p>
@@ -34,7 +37,7 @@
 		</div>
 
 		<!-- Beans -->
-		<table class="bean-list">
+		<table class="bean-list" th:if="${moduleInfo.enabled}">
 			<tr>
 				<th>Bean name</th>
 				<th>Scope</th>

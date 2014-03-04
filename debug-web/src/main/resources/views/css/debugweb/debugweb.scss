@@ -17,6 +17,10 @@ div {
     background-color: whitesmoke;
     padding: 5px;
     border: solid 1px gainsboro;
+
+    span.module-disabled {
+      color: red;
+    }
   }
 
   table.bean-list {

@@ -51,9 +51,9 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	/**
 	 * <p>A module can be attached to an AcrossContext but still not enabled.  In that case
 	 * it will not be bootstrapped and other enabled modules depending on this one will cause
-	 * the entire bootstrap to fail (dependency misconfiguration).  Disabling a module has the
-	 * same effect as not adding it to the AcrossContext.</p>
-	 *
+	 * the entire bootstrap to fail (dependency misconfiguration).</p>
+	 * <p>A disabled module still influences the boostrap order of modules (as if it would be enabled),
+	 * but will otherwise have no further impact.</p>
 	 * <p>By default a module is enabled.</p>
 	 *
 	 * @param enabled

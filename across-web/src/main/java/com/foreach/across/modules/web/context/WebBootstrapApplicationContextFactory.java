@@ -74,7 +74,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 	@Override
 	public void loadApplicationContext( AcrossContext across, AcrossApplicationContext context ) {
 		AcrossSpringWebApplicationContext root = (AcrossSpringWebApplicationContext) context.getApplicationContext();
-		Collection<ApplicationContextConfigurer> configurers = across.getApplicationContextConfigurers().keySet();
+		Collection<ApplicationContextConfigurer> configurers = AcrossContextUtils.getConfigurersToApply( across );
 
 		loadApplicationContext( root, configurers );
 	}

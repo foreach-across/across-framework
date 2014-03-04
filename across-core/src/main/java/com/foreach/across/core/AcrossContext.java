@@ -9,6 +9,7 @@ import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PostProcessorConfigurer;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.PropertyResourceConfigurer;
 import org.springframework.context.ApplicationContext;
 
@@ -94,6 +95,24 @@ public class AcrossContext extends AcrossApplicationContextHolder
 
 		modules.add( module );
 		module.setContext( this );
+	}
+
+	/**
+	 * Gets the module with the given name (or fully qualified class name) if present on the context.
+	 * Only the first module matching the name will be returned.
+	 *
+	 * @param name Name or fully qualified class name of the module.
+	 * @return AcrossModule or null if not present.
+	 */
+	public AcrossModule getModule( String name ) {
+		for ( AcrossModule module : modules ) {
+			if ( StringUtils.equals( module.getName(), name ) || StringUtils.equals( module.getClass().getName(),
+			                                                                         name ) ) {
+				return module;
+			}
+		}
+
+		return null;
 	}
 
 	public boolean isAllowInstallers() {
