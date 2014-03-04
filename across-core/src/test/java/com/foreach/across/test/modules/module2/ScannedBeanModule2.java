@@ -25,6 +25,9 @@ public class ScannedBeanModule2 extends TestContextEventListener
 	private ScannedBeanModule1 referenceToBeanFromModule1;
 
 	@Autowired
+	private AcrossModule defaultModule;
+
+	@Autowired
 	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private AcrossModule currentModule;
 
@@ -47,5 +50,9 @@ public class ScannedBeanModule2 extends TestContextEventListener
 
 	public AcrossModule getCurrentModule() {
 		return currentModule;
+	}
+
+	public AcrossModule getDefaultModule() {
+		return defaultModule;
 	}
 }

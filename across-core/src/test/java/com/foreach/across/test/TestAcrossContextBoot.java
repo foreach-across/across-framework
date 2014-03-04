@@ -156,6 +156,12 @@ public class TestAcrossContextBoot
 	}
 
 	@Test
+	public void defaultModuleShouldAlwaysReferenceCurrentAsPrimary() {
+		assertSame( module1, scannedBeanModule1.getDefaultModule() );
+		assertSame( module2, scannedBeanModule2.getDefaultModule() );
+	}
+
+	@Test
 	public void currentModuleShouldAlwaysReferenceRightOne() {
 		assertSame( module1, scannedBeanModule1.getCurrentModule() );
 		assertSame( module2, scannedBeanModule2.getCurrentModule() );

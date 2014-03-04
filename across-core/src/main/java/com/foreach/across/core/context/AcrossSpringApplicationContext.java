@@ -1,6 +1,7 @@
 package com.foreach.across.core.context;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Map;
@@ -33,6 +34,10 @@ public class AcrossSpringApplicationContext extends AnnotationConfigApplicationC
 		// Register additional singletons
 		if ( providedSingletons != null ) {
 			for ( Map.Entry<String, Object> singleton : providedSingletons.entrySet() ) {
+				GenericBeanDefinition definition = new GenericBeanDefinition();
+				definition.isSingleton();
+				definition.setPrimary( true );
+				registerBeanDefinition( singleton.getKey(), definition );
 				beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}
