@@ -27,6 +27,8 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
 			new HashSet<ApplicationContextConfigurer>();
 
+	private boolean enabled = true;
+
 	public AcrossModule() {
 		registerDefaultApplicationContextConfigurers( applicationContextConfigurers );
 	}
@@ -37,6 +39,27 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 
 	protected void setContext( AcrossContext context ) {
 		this.context = context;
+	}
+
+	/**
+	 * @return True if this module will be bootstrapped if configured in an AcrossContext.
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * <p>A module can be attached to an AcrossContext but still not enabled.  In that case
+	 * it will not be bootstrapped and other enabled modules depending on this one will cause
+	 * the entire bootstrap to fail (dependency misconfiguration).  Disabling a module has the
+	 * same effect as not adding it to the AcrossContext.</p>
+	 *
+	 * <p>By default a module is enabled.</p>
+	 *
+	 * @param enabled
+	 */
+	public void setEnabled( boolean enabled ) {
+		this.enabled = enabled;
 	}
 
 	/**

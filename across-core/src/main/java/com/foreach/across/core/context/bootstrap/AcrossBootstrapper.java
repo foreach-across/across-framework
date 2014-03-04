@@ -12,9 +12,7 @@ import com.foreach.across.core.installers.AcrossInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -51,15 +49,18 @@ public class AcrossBootstrapper
 	public void bootstrap() {
 		checkBootstrapIsPossible();
 
-		runModuleBootstrapCustomizations();
+		Collection<AcrossModule> modulesInOrder = createOrderedModulesList( context );
 
-		AcrossApplicationContext root = createRootContext();
+		runModuleBootstrapCustomizations( modulesInOrder );
+
+		AcrossApplicationContext root = createRootContext( modulesInOrder );
 		AcrossContextUtils.setAcrossApplicationContext( context, root );
 
 		applicationContextFactory.loadApplicationContext( context, root );
 
 		AbstractApplicationContext rootContext = root.getApplicationContext();
 
+		/*
 		// Register module beans
 		ConfigurableListableBeanFactory rootBeanFactory = rootContext.getBeanFactory();
 
@@ -68,10 +69,9 @@ public class AcrossBootstrapper
 				rootBeanFactory.registerSingleton( module.getClass().getName(), module );
 			}
 		}
+		*/
 
 		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
-
-		Collection<AcrossModule> modulesInOrder = createOrderedModulesList( context );
 
 		LOG.debug( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
 		int order = 1;
@@ -159,22 +159,22 @@ public class AcrossBootstrapper
 		return BootstrapAcrossModuleOrder.create( context.getModules() );
 	}
 
-	private void runModuleBootstrapCustomizations() {
-		for ( AcrossModule module : context.getModules() ) {
+	private void runModuleBootstrapCustomizations( Collection<AcrossModule> modules ) {
+		for ( AcrossModule module : modules ) {
 			if ( module instanceof BootstrapAdapter ) {
 				( (BootstrapAdapter) module ).customizeBootstrapper( this );
 			}
 		}
 	}
 
-	private AcrossApplicationContext createRootContext() {
+	private AcrossApplicationContext createRootContext( Collection<AcrossModule> modules ) {
 		Map<String, Object> providedBeans = new HashMap<String, Object>();
 
 		// Put the context as a fixed singleton
 		providedBeans.put( AcrossContext.BEAN, context );
 
 		// Put the modules as singletons in the context
-		for ( AcrossModule module : context.getModules() ) {
+		for ( AcrossModule module : modules ) {
 			providedBeans.put( module.getName(), module );
 		}
 
