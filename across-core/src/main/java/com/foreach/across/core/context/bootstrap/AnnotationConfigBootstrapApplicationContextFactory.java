@@ -3,19 +3,18 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.AcrossSpringApplicationContext;
+import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AnnotationConfigBootstrapApplicationContextFactory implements BootstrapApplicationContextFactory
 {
@@ -26,31 +25,19 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 *
 	 * @param across                   AcrossContext being created.
 	 * @param parentApplicationContext Parent ApplicationContext, can be null.
-	 * @param singletons               Map of singleton objects that should be registered
-	 *                                 upon creation of the ApplicationContext.
 	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
 	 */
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                            ApplicationContext parentApplicationContext,
-	                                                            Map<String, Object> singletons ) {
-		AcrossSpringApplicationContext applicationContext = new AcrossSpringApplicationContext( singletons );
+	                                                            ApplicationContext parentApplicationContext ) {
+		AcrossSpringApplicationContext applicationContext = new AcrossSpringApplicationContext();
 
-		/*
-		if ( parentApplicationContext == null ) {
-			Map<String, Object> parentSingletons = new HashMap<String, Object>();
-			parentSingletons.put( "acrossContext", across );
+		if ( parentApplicationContext != null ) {
+			applicationContext.setParent( parentApplicationContext );
 
-			AcrossSpringApplicationContext parent = new AcrossSpringApplicationContext( parentSingletons );
-			parent.refresh();
-			parent.start();
-
-			parentApplicationContext = parent;
-		}*/
-
-		applicationContext.setParent( parentApplicationContext );
-
-		if ( parentApplicationContext != null && parentApplicationContext.getEnvironment() instanceof ConfigurableEnvironment ) {
-			applicationContext.setEnvironment( (ConfigurableEnvironment) parentApplicationContext.getEnvironment() );
+			if ( parentApplicationContext.getEnvironment() instanceof ConfigurableEnvironment ) {
+				applicationContext.setEnvironment(
+						(ConfigurableEnvironment) parentApplicationContext.getEnvironment() );
+			}
 		}
 
 		return applicationContext;
@@ -62,15 +49,12 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 * @param across        AcrossContext being loaded.
 	 * @param module        AcrossModule being created.
 	 * @param parentContext Contains the parent context.
-	 * @param singletons    Map of singleton objects that should be registered
-	 *                      upon creation of the ApplicationContext.
 	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
 	 */
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            AcrossModule module,
-	                                                            AcrossApplicationContext parentContext,
-	                                                            Map<String, Object> singletons ) {
-		AcrossSpringApplicationContext child = new AcrossSpringApplicationContext( singletons );
+	                                                            AcrossApplicationContext parentContext ) {
+		AcrossSpringApplicationContext child = new AcrossSpringApplicationContext();
 		child.setParent( parentContext.getApplicationContext() );
 		child.setEnvironment( parentContext.getApplicationContext().getEnvironment() );
 
@@ -105,9 +89,15 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 		loadApplicationContext( child, configurers );
 	}
 
-	private void loadApplicationContext( AnnotationConfigApplicationContext context,
+	private void loadApplicationContext( AcrossConfigurableApplicationContext context,
 	                                     Collection<ApplicationContextConfigurer> configurers ) {
 		for ( ApplicationContextConfigurer configurer : configurers ) {
+			ProvidedBeansMap providedBeans = configurer.providedBeans();
+
+			if ( providedBeans != null ) {
+				context.provide( providedBeans );
+			}
+
 			for ( BeanFactoryPostProcessor postProcessor : configurer.postProcessors() ) {
 				context.addBeanFactoryPostProcessor( postProcessor );
 			}

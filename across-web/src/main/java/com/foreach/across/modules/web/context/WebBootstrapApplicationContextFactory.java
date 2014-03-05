@@ -3,7 +3,9 @@ package com.foreach.across.modules.web.context;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.bootstrap.AnnotationConfigBootstrapApplicationContextFactory;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import org.apache.commons.lang3.ArrayUtils;
@@ -12,10 +14,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Creates WebApplicationContext versions of the standard ApplicationContext.
@@ -24,11 +24,10 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 {
 	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                            ApplicationContext parentApplicationContext,
-	                                                            Map<String, Object> singletons ) {
+	                                                            ApplicationContext parentApplicationContext ) {
 		if ( parentApplicationContext == null || parentApplicationContext instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentApplicationContext;
-			AcrossSpringWebApplicationContext applicationContext = new AcrossSpringWebApplicationContext( singletons );
+			AcrossSpringWebApplicationContext applicationContext = new AcrossSpringWebApplicationContext();
 
 			if ( parentApplicationContext != null ) {
 				applicationContext.setParent( parentApplicationContext );
@@ -43,17 +42,16 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 			return applicationContext;
 		}
 
-		return super.createApplicationContext( across, parentApplicationContext, singletons );
+		return super.createApplicationContext( across, parentApplicationContext );
 	}
 
 	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            AcrossModule module,
-	                                                            AcrossApplicationContext parentContext,
-	                                                            Map<String, Object> singletons ) {
+	                                                            AcrossApplicationContext parentContext ) {
 		if ( parentContext.getApplicationContext() instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentContext.getApplicationContext();
-			AcrossSpringWebApplicationContext child = new AcrossSpringWebApplicationContext( singletons );
+			AcrossSpringWebApplicationContext child = new AcrossSpringWebApplicationContext();
 
 			child.setServletContext( parentWebContext.getServletContext() );
 			child.setParent( parentContext.getApplicationContext() );
@@ -62,7 +60,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 			return child;
 		}
 
-		return super.createApplicationContext( across, module, parentContext, singletons );
+		return super.createApplicationContext( across, module, parentContext );
 	}
 
 	/**
@@ -94,9 +92,15 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 		loadApplicationContext( child, configurers );
 	}
 
-	private void loadApplicationContext( AnnotationConfigWebApplicationContext context,
+	private void loadApplicationContext( AcrossConfigurableApplicationContext context,
 	                                     Collection<ApplicationContextConfigurer> configurers ) {
 		for ( ApplicationContextConfigurer configurer : configurers ) {
+			ProvidedBeansMap providedBeans = configurer.providedBeans();
+
+			if ( providedBeans != null ) {
+				context.provide( providedBeans );
+			}
+
 			for ( BeanFactoryPostProcessor postProcessor : configurer.postProcessors() ) {
 				context.addBeanFactoryPostProcessor( postProcessor );
 			}

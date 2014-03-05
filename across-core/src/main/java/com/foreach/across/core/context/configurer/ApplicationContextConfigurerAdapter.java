@@ -1,5 +1,7 @@
 package com.foreach.across.core.context.configurer;
 
+import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 
 import java.util.Arrays;
@@ -10,6 +12,18 @@ import java.util.Arrays;
  */
 public abstract class ApplicationContextConfigurerAdapter implements ApplicationContextConfigurer
 {
+	/**
+	 * Returns a map of beans to register directly in the ApplicationContext.
+	 * Provided beans will be registered first, before any of the annotated classes
+	 * or defined packages are loaded.
+	 *
+	 * @return Map of bean name and value.
+	 * @see com.foreach.across.core.context.beans.ProvidedBeansMap
+	 */
+	public ProvidedBeansMap providedBeans() {
+		return null;
+	}
+
 	/**
 	 * Returns a set of annotated classes to register as components in the ApplicationContext.
 	 * These can be annotated with @Configuration.
@@ -58,15 +72,24 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 		if ( !Arrays.equals( postProcessors(), that.postProcessors() ) ) {
 			return false;
 		}
+		if ( !ObjectUtils.equals( providedBeans(), that.providedBeans() ) ) {
+			return false;
+		}
 
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		int result = annotatedClasses() != null ? Arrays.hashCode( annotatedClasses() ) : 0;
-		result = 31 * result + ( componentScanPackages() != null ? Arrays.hashCode( componentScanPackages() ) : 0 );
-		result = 31 * result + ( postProcessors() != null ? Arrays.hashCode( postProcessors() ) : 0 );
+		Object providedBeans = providedBeans();
+		String[] componentScanPackages = componentScanPackages();
+		Class<?>[] annotatedClasses = annotatedClasses();
+		BeanFactoryPostProcessor[] postProcessors = postProcessors();
+
+		int result = annotatedClasses != null ? Arrays.hashCode( annotatedClasses ) : 0;
+		result = 31 * result + ( componentScanPackages != null ? Arrays.hashCode( componentScanPackages ) : 0 );
+		result = 31 * result + ( postProcessors != null ? Arrays.hashCode( postProcessors ) : 0 );
+		result = 31 * result + ( providedBeans != null ? providedBeans.hashCode() : 0 );
 		return result;
 	}
 }

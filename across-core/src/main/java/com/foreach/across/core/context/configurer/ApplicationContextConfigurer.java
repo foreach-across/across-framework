@@ -1,9 +1,20 @@
 package com.foreach.across.core.context.configurer;
 
+import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 
 public interface ApplicationContextConfigurer
 {
+	/**
+	 * Returns a map of beans to register directly in the ApplicationContext.
+	 * Provided beans will be registered first, before any of the annotated classes
+	 * or defined packages are loaded.
+	 *
+	 * @return Map of bean name and value.
+	 * @see com.foreach.across.core.context.beans.ProvidedBeansMap
+	 */
+	ProvidedBeansMap providedBeans();
+
 	/**
 	 * Returns a set of annotated classes to register as components in the ApplicationContext.
 	 * These can be annotated with @Configuration.

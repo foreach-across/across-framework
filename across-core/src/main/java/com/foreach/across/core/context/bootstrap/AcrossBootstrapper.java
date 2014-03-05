@@ -4,6 +4,10 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.beans.PrimarySingletonBean;
+import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import com.foreach.across.core.context.configurer.ConfigurerScope;
+import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
@@ -63,10 +67,6 @@ public class AcrossBootstrapper
 		runModuleBootstrapCustomizations( modulesInOrder );
 
 		AcrossApplicationContext root = createRootContext( modulesInOrder );
-		AcrossContextUtils.setAcrossApplicationContext( context, root );
-
-		applicationContextFactory.loadApplicationContext( context, root );
-
 		AbstractApplicationContext rootContext = root.getApplicationContext();
 
 		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
@@ -84,14 +84,16 @@ public class AcrossBootstrapper
 			LOG.debug( "Bootstrapping {} module", module.getName() );
 
 			Map<String, Object> providedSingletons = new HashMap<String, Object>();
-			providedSingletons.put( AcrossModule.CURRENT_MODULE, module );
+			providedSingletons.put( AcrossModule.CURRENT_MODULE, new PrimarySingletonBean( module ) );
+
+			module.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
 
 			// Run installers before bootstrapping this particular module
 			installerRegistry.runInstallersForModule( module, InstallerPhase.BeforeModuleBootstrap );
 
 			// Create the module context
 			AbstractApplicationContext child =
-					applicationContextFactory.createApplicationContext( context, module, root, providedSingletons );
+					applicationContextFactory.createApplicationContext( context, module, root );
 
 			AcrossApplicationContext moduleApplicationContext = new AcrossApplicationContext( child, root );
 			AcrossContextUtils.setAcrossApplicationContext( module, moduleApplicationContext );
@@ -164,21 +166,28 @@ public class AcrossBootstrapper
 	}
 
 	private AcrossApplicationContext createRootContext( Collection<AcrossModule> modules ) {
-		Map<String, Object> providedBeans = new HashMap<String, Object>();
+		AbstractApplicationContext rootApplicationContext =
+				applicationContextFactory.createApplicationContext( context, context.getParentApplicationContext() );
+
+		ProvidedBeansMap providedBeans = new ProvidedBeansMap();
 
 		// Put the context as a fixed singleton
-		providedBeans.put( AcrossContext.BEAN, context );
+		providedBeans.put( AcrossContext.BEAN, new PrimarySingletonBean( context ) );
 
 		// Put the modules as singletons in the context
 		for ( AcrossModule module : modules ) {
-			providedBeans.put( module.getName(), module );
+			providedBeans.put( module.getName(), new PrimarySingletonBean( module ) );
 		}
 
-		AbstractApplicationContext rootApplicationContext =
-				applicationContextFactory.createApplicationContext( context, context.getParentApplicationContext(),
-				                                                    providedBeans );
+		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),
+		                                         ConfigurerScope.CONTEXT_ONLY );
 
-		return new AcrossApplicationContext( rootApplicationContext );
+		AcrossApplicationContext root = new AcrossApplicationContext( rootApplicationContext );
+		AcrossContextUtils.setAcrossApplicationContext( context, root );
+
+		applicationContextFactory.loadApplicationContext( context, root );
+
+		return root;
 	}
 
 	private void pushDefinitionsToParent( AcrossBeanCopyHelper beanCopyHelper,

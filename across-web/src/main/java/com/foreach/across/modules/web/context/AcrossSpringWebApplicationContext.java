@@ -1,21 +1,34 @@
 package com.foreach.across.modules.web.context;
 
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
+import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
  * WebApplicationContext that allows a set of preregistered singletons to be passed in.
  */
-public class AcrossSpringWebApplicationContext extends AnnotationConfigWebApplicationContext
+public class AcrossSpringWebApplicationContext extends AnnotationConfigWebApplicationContext implements AcrossConfigurableApplicationContext
 {
-	private Map<String, Object> providedSingletons;
+	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
 
-	public AcrossSpringWebApplicationContext( Map<String, Object> providedSingletons ) {
-		this.providedSingletons = providedSingletons;
+	/**
+	 * Adds a collection of provided beans to application context.
+	 *
+	 * @param beans One or more ProvidedBeansMaps to add.
+	 */
+	public void provide( ProvidedBeansMap... beans ) {
+		for ( ProvidedBeansMap map : beans ) {
+			if ( map != null ) {
+				providedBeansMaps.add( map );
+			}
+		}
 	}
 
 	/**
@@ -28,13 +41,13 @@ public class AcrossSpringWebApplicationContext extends AnnotationConfigWebApplic
 	protected void prepareBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
 		super.prepareBeanFactory( beanFactory );
 
-		// Register additional singletons
-		if ( providedSingletons != null ) {
-			for ( Map.Entry<String, Object> singleton : providedSingletons.entrySet() ) {
-				DefaultListableBeanFactory listableBeanFactory = (DefaultListableBeanFactory) beanFactory;
-				GenericBeanDefinition definition = new GenericBeanDefinition();
-				definition.setPrimary( true );
-				listableBeanFactory.registerBeanDefinition( singleton.getKey(), definition );
+		DefaultListableBeanFactory listableBeanFactory = (DefaultListableBeanFactory) beanFactory;
+
+		for ( ProvidedBeansMap providedBeans : providedBeansMaps ) {
+			for ( Map.Entry<String, BeanDefinition> definition : providedBeans.getBeanDefinitions().entrySet() ) {
+				listableBeanFactory.registerBeanDefinition( definition.getKey(), definition.getValue() );
+			}
+			for ( Map.Entry<String, Object> singleton : providedBeans.getSingletons().entrySet() ) {
 				listableBeanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}

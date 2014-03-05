@@ -1,24 +1,32 @@
 package com.foreach.across.core.context;
 
+import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
  * ApplicationContext that allows a set of preregistered singletons to be passed in.
  */
-public class AcrossSpringApplicationContext extends AnnotationConfigApplicationContext
+public class AcrossSpringApplicationContext extends AnnotationConfigApplicationContext implements AcrossConfigurableApplicationContext
 {
-	private Map<String, Object> providedSingletons;
+	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
 
 	/**
-	 * Create a new AnnotationConfigApplicationContext that needs to be populated
-	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
+	 * Adds a collection of provided beans to application context.
+	 *
+	 * @param beans One or more ProvidedBeansMaps to add.
 	 */
-	public AcrossSpringApplicationContext( Map<String, Object> providedSingletons ) {
-		this.providedSingletons = providedSingletons;
+	public void provide( ProvidedBeansMap... beans ) {
+		for ( ProvidedBeansMap map : beans ) {
+			if ( map != null ) {
+				providedBeansMaps.add( map );
+			}
+		}
 	}
 
 	/**
@@ -31,12 +39,11 @@ public class AcrossSpringApplicationContext extends AnnotationConfigApplicationC
 	protected void prepareBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
 		super.prepareBeanFactory( beanFactory );
 
-		// Register additional singletons
-		if ( providedSingletons != null ) {
-			for ( Map.Entry<String, Object> singleton : providedSingletons.entrySet() ) {
-				GenericBeanDefinition definition = new GenericBeanDefinition();
-				definition.setPrimary( true );
-				registerBeanDefinition( singleton.getKey(), definition );
+		for ( ProvidedBeansMap providedBeans : providedBeansMaps ) {
+			for ( Map.Entry<String, BeanDefinition> definition : providedBeans.getBeanDefinitions().entrySet() ) {
+				registerBeanDefinition( definition.getKey(), definition.getValue() );
+			}
+			for ( Map.Entry<String, Object> singleton : providedBeans.getSingletons().entrySet() ) {
 				beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}
