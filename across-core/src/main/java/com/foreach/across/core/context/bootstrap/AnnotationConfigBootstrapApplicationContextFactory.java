@@ -1,7 +1,6 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
@@ -46,13 +45,13 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	/**
 	 * Create the Spring ApplicationContext for a particular AcrossModule.
 	 *
-	 * @param across        AcrossContext being loaded.
-	 * @param module        AcrossModule being created.
-	 * @param parentContext Contains the parent context.
+	 * @param across                AcrossContext being loaded.
+	 * @param moduleBootstrapConfig Bootstrap configuration of the AcrossModule being created.
+	 * @param parentContext         Contains the parent context.
 	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
 	 */
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                            AcrossModule module,
+	                                                            ModuleBootstrapConfig moduleBootstrapConfig,
 	                                                            AcrossApplicationContext parentContext ) {
 		AcrossSpringApplicationContext child = new AcrossSpringApplicationContext();
 		child.setParent( parentContext.getApplicationContext() );
@@ -77,16 +76,16 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	/**
 	 * Loads beans and definitions in the module ApplicationContext.
 	 *
-	 * @param across  AcrossContext being loaded.
-	 * @param module  AcrossModule being loaded.
-	 * @param context Contains the Spring ApplicationContext for the module.
+	 * @param across                AcrossContext being loaded.
+	 * @param moduleBootstrapConfig Bootstrap configuration of the AcrossModule being created.
+	 * @param context               Contains the Spring ApplicationContext for the module.
 	 */
-	public void loadApplicationContext( AcrossContext across, AcrossModule module, AcrossApplicationContext context ) {
+	public void loadApplicationContext( AcrossContext across,
+	                                    ModuleBootstrapConfig moduleBootstrapConfig,
+	                                    AcrossApplicationContext context ) {
 		AcrossSpringApplicationContext child = (AcrossSpringApplicationContext) context.getApplicationContext();
-		Collection<ApplicationContextConfigurer> configurers =
-				AcrossContextUtils.getConfigurersToApply( across, module );
 
-		loadApplicationContext( child, configurers );
+		loadApplicationContext( child, moduleBootstrapConfig.getApplicationContextConfigurers() );
 	}
 
 	private void loadApplicationContext( AcrossConfigurableApplicationContext context,

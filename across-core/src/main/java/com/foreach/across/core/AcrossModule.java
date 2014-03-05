@@ -2,6 +2,7 @@ package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
@@ -11,8 +12,8 @@ import com.foreach.across.core.transformers.BeanDefinitionTransformer;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class AcrossModule extends AcrossApplicationContextHolder
@@ -55,8 +56,6 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	 * <p>A disabled module still influences the boostrap order of modules (as if it would be enabled),
 	 * but will otherwise have no further impact.</p>
 	 * <p>By default a module is enabled.</p>
-	 *
-	 * @param enabled
 	 */
 	public void setEnabled( boolean enabled ) {
 		this.enabled = enabled;
@@ -131,13 +130,17 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	public abstract String getDescription();
 
 	/**
-	 * Called when a context is preparing to bootstrap, but before the actual bootstrap happens.
+	 * <p>Called when a context is preparing to bootstrap, but before the actual bootstrap happens.
 	 * This is the last chance for a module to modify itself or its siblings before the actual
-	 * bootstrapping will occur.
+	 * bootstrapping will occur.</p>
+	 * <p>Only modules that will actually bootstrap will be passed as parameters to this method.
+	 * Any disabled modules will not be present.</p>
 	 *
-	 * @param modules AcrossModules in the order that they will be bootstrapped.
+	 * @param currentModule  Bootstrap configuration of the current module.
+	 * @param modulesInOrder Map of all modules that are being bootstrapped, in the bootstrap order and with their corresponding config.
 	 */
-	public void prepareForBootstrap( Collection<AcrossModule> modules ) {
+	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
+	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
 	}
 
 	/**

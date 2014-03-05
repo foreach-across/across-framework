@@ -1,12 +1,12 @@
 package com.foreach.across.modules.web.context;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.bootstrap.AnnotationConfigBootstrapApplicationContextFactory;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -47,7 +47,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 
 	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                            AcrossModule module,
+	                                                            ModuleBootstrapConfig moduleBootstrapConfig,
 	                                                            AcrossApplicationContext parentContext ) {
 		if ( parentContext.getApplicationContext() instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentContext.getApplicationContext();
@@ -60,15 +60,9 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 			return child;
 		}
 
-		return super.createApplicationContext( across, module, parentContext );
+		return super.createApplicationContext( across, moduleBootstrapConfig, parentContext );
 	}
 
-	/**
-	 * Loads beans and definitions in the root ApplicationContext.
-	 *
-	 * @param across  AcrossContext being loaded.
-	 * @param context Contains the root Spring ApplicationContext.
-	 */
 	@Override
 	public void loadApplicationContext( AcrossContext across, AcrossApplicationContext context ) {
 		AcrossSpringWebApplicationContext root = (AcrossSpringWebApplicationContext) context.getApplicationContext();
@@ -77,19 +71,12 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 		loadApplicationContext( root, configurers );
 	}
 
-	/**
-	 * Loads beans and definitions in the module ApplicationContext.
-	 *
-	 * @param across  AcrossContext being loaded.
-	 * @param module  AcrossModule being loaded.
-	 * @param context Contains the Spring ApplicationContext for the module.
-	 */
-	public void loadApplicationContext( AcrossContext across, AcrossModule module, AcrossApplicationContext context ) {
+	public void loadApplicationContext( AcrossContext across,
+	                                    ModuleBootstrapConfig moduleBootstrapConfig,
+	                                    AcrossApplicationContext context ) {
 		AcrossSpringWebApplicationContext child = (AcrossSpringWebApplicationContext) context.getApplicationContext();
-		Collection<ApplicationContextConfigurer> configurers =
-				AcrossContextUtils.getConfigurersToApply( across, module );
 
-		loadApplicationContext( child, configurers );
+		loadApplicationContext( child, moduleBootstrapConfig.getApplicationContextConfigurers() );
 	}
 
 	private void loadApplicationContext( AcrossConfigurableApplicationContext context,

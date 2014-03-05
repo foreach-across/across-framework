@@ -23,11 +23,10 @@ public class HibernateConfiguration
 	private AcrossHibernateModule module;
 
 	@Bean
-	public LocalSessionFactoryBean sessionFactory() throws Exception {
+	public LocalSessionFactoryBean sessionFactory( HibernatePackage hibernatePackage ) throws Exception {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource( module.getDataSource() );
 
-		HibernatePackage hibernatePackage = module.getHibernatePackage();
 		sessionFactory.setAnnotatedClasses( hibernatePackage.getAnnotatedClasses() );
 		sessionFactory.setPackagesToScan( hibernatePackage.getPackagesToScan() );
 		sessionFactory.setMappingResources( hibernatePackage.getMappingResources() );

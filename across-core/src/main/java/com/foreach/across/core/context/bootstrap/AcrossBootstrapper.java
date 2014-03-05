@@ -69,50 +69,45 @@ public class AcrossBootstrapper
 		AcrossApplicationContext root = createRootContext( modulesInOrder );
 		AbstractApplicationContext rootContext = root.getApplicationContext();
 
-		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
+		Map<AcrossModule, ModuleBootstrapConfig> moduleBootstrapConfigs = createModuleBootstrapConfig( modulesInOrder );
+		prepareForBootstrap( moduleBootstrapConfigs );
 
-		for ( AcrossModule module : new LinkedList<AcrossModule>( modulesInOrder ) ) {
-			module.prepareForBootstrap( modulesInOrder );
-		}
-
-		AcrossInstallerRegistry installerRegistry = new AcrossInstallerRegistry( context, modulesInOrder );
+		AcrossInstallerRegistry installerRegistry =
+				new AcrossInstallerRegistry( context, moduleBootstrapConfigs.values() );
 
 		// Run installers that don't need anything bootstrapped
 		installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
 
-		for ( AcrossModule module : modulesInOrder ) {
-			LOG.debug( "Bootstrapping {} module", module.getName() );
+		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
 
-			Map<String, Object> providedSingletons = new HashMap<String, Object>();
-			providedSingletons.put( AcrossModule.CURRENT_MODULE, new PrimarySingletonBean( module ) );
+		for ( ModuleBootstrapConfig config : moduleBootstrapConfigs.values() ) {
+			LOG.debug( "Bootstrapping {} module", config.getModuleName() );
 
-			module.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
+			context.publishEvent( new AcrossModuleBeforeBootstrapEvent( context, config ) );
 
 			// Run installers before bootstrapping this particular module
-			installerRegistry.runInstallersForModule( module, InstallerPhase.BeforeModuleBootstrap );
+			installerRegistry.runInstallersForModule( config, InstallerPhase.BeforeModuleBootstrap );
 
 			// Create the module context
 			AbstractApplicationContext child =
-					applicationContextFactory.createApplicationContext( context, module, root );
+					applicationContextFactory.createApplicationContext( context, config, root );
 
 			AcrossApplicationContext moduleApplicationContext = new AcrossApplicationContext( child, root );
-			AcrossContextUtils.setAcrossApplicationContext( module, moduleApplicationContext );
+			AcrossContextUtils.setAcrossApplicationContext( config.getModule(), moduleApplicationContext );
 
-			context.publishEvent( new AcrossModuleBeforeBootstrapEvent( context, module ) );
-
-			applicationContextFactory.loadApplicationContext( context, module, moduleApplicationContext );
+			applicationContextFactory.loadApplicationContext( context, config, moduleApplicationContext );
 
 			// Bootstrap the module
-			module.bootstrap();
+			config.getModule().bootstrap();
 
 			// Send event that this module has bootstrapped
-			context.publishEvent( new AcrossModuleBootstrappedEvent( context, module ) );
+			context.publishEvent( new AcrossModuleBootstrappedEvent( context, config.getModule() ) );
 
 			// Run installers after module itself has bootstrapped
-			installerRegistry.runInstallersForModule( module, InstallerPhase.AfterModuleBootstrap );
+			installerRegistry.runInstallersForModule( config, InstallerPhase.AfterModuleBootstrap );
 
 			// Copy the beans to the parent context
-			beanHelper.copy( child, rootContext, module.getExposeFilter(), module.getExposeTransformer() );
+			beanHelper.copy( child, rootContext, config.getExposeFilter(), config.getExposeTransformer() );
 
 			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
 		}
@@ -131,6 +126,37 @@ public class AcrossBootstrapper
 
 		// Bootstrap finished - publish the event
 		context.publishEvent( new AcrossContextBootstrappedEvent( context, modulesInOrder ) );
+	}
+
+	private void prepareForBootstrap( Map<AcrossModule, ModuleBootstrapConfig> configs ) {
+		for ( AcrossModule module : new LinkedList<AcrossModule>( configs.keySet() ) ) {
+			module.prepareForBootstrap( configs.get( module ), configs );
+		}
+	}
+
+	/**
+	 * Create map of all modules and their corresponding config in order.
+	 */
+	private Map<AcrossModule, ModuleBootstrapConfig> createModuleBootstrapConfig( Collection<AcrossModule> modulesInOrder ) {
+		Map<AcrossModule, ModuleBootstrapConfig> configs = new LinkedHashMap<AcrossModule, ModuleBootstrapConfig>();
+
+		for ( AcrossModule module : modulesInOrder ) {
+			ModuleBootstrapConfig config = new ModuleBootstrapConfig( module );
+			config.setExposeFilter( module.getExposeFilter() );
+			config.setExposeTransformer( module.getExposeTransformer() );
+			config.getInstallers().addAll( Arrays.asList( module.getInstallers() ) );
+
+			// Provide the current module bean
+			Map<String, Object> providedSingletons = new HashMap<String, Object>();
+			providedSingletons.put( AcrossModule.CURRENT_MODULE, new PrimarySingletonBean( module ) );
+
+			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
+			config.addApplicationContextConfigurers( AcrossContextUtils.getConfigurersToApply( context, module ) );
+
+			configs.put( module, config );
+		}
+
+		return configs;
 	}
 
 	private void checkBootstrapIsPossible() {

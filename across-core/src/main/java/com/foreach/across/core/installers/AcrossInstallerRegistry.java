@@ -1,12 +1,12 @@
 package com.foreach.across.core.installers;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -31,12 +31,12 @@ public class AcrossInstallerRegistry
 
 	private final boolean enabled;
 
-	public AcrossInstallerRegistry( AcrossContext context, Collection<AcrossModule> modulesInOrder ) {
+	public AcrossInstallerRegistry( AcrossContext context, Collection<ModuleBootstrapConfig> modulesInOrder ) {
 		this.context = context;
 
 		if ( context.isAllowInstallers() ) {
 			installerRepository = AcrossContextUtils.getBeanOfType( context, AcrossInstallerRepository.class );
-			installationConfigs = buildModuleConfigs( modulesInOrder );
+			installationConfigs = buildInstallationConfigs( modulesInOrder );
 		}
 		else {
 			installerRepository = null;
@@ -46,17 +46,15 @@ public class AcrossInstallerRegistry
 		enabled = installerRepository != null;
 	}
 
-	private Collection<ModuleInstallationConfig> buildModuleConfigs( Collection<AcrossModule> modules ) {
+	private Collection<ModuleInstallationConfig> buildInstallationConfigs( Collection<ModuleBootstrapConfig> modules ) {
 		List<ModuleInstallationConfig> list = new ArrayList<ModuleInstallationConfig>( modules.size() );
 
-		for ( AcrossModule module : modules ) {
-			ModuleInstallationConfig config = new ModuleInstallationConfig( module );
-			config.setName( module.getName() );
+		for ( ModuleBootstrapConfig bootstrapConfig : modules ) {
+			ModuleInstallationConfig config = new ModuleInstallationConfig( bootstrapConfig );
+			config.setName( bootstrapConfig.getModuleName() );
 
 			if ( context.isAllowInstallers() ) {
-				Object[] installers = module.getInstallers();
-
-				for ( Object installer : installers ) {
+				for ( Object installer : bootstrapConfig.getInstallers() ) {
 					Installer doc = installer.getClass().getAnnotation( Installer.class );
 
 					if ( doc == null ) {
@@ -87,7 +85,8 @@ public class AcrossInstallerRegistry
 						}
 						else if ( doc.runCondition() == InstallerRunCondition.VersionDifferent ) {
 							int installedVersion =
-									installerRepository.getInstalledVersion( config.getModule(), installer );
+									installerRepository.getInstalledVersion( config.getBootstrapConfig().getModule(),
+									                                         installer );
 							int currentVersion = doc.version();
 
 							if ( currentVersion > installedVersion ) {
@@ -128,10 +127,10 @@ public class AcrossInstallerRegistry
 	/**
 	 * Runs all installers for the given module and bootstrap phase.
 	 *
-	 * @param module AcrossModule instance.
+	 * @param module ModuleBootstrapConfig instance.
 	 * @param phase  Bootstrap phase for installers.
 	 */
-	public void runInstallersForModule( AcrossModule module, InstallerPhase phase ) {
+	public void runInstallersForModule( ModuleBootstrapConfig module, InstallerPhase phase ) {
 		if ( enabled ) {
 			runInstallers( findConfigForModule( module ), phase );
 		}
@@ -168,14 +167,14 @@ public class AcrossInstallerRegistry
 					LOG.info( "Registering installer {} instead of actually running it", installer );
 				}
 
-				installerRepository.setInstalled( config.getModule(), doc, installer );
+				installerRepository.setInstalled( config.getBootstrapConfig().getModule(), doc, installer );
 			}
 		}
 	}
 
-	private ModuleInstallationConfig findConfigForModule( AcrossModule module ) {
+	private ModuleInstallationConfig findConfigForModule( ModuleBootstrapConfig module ) {
 		for ( ModuleInstallationConfig config : installationConfigs ) {
-			if ( config.getModule() == module ) {
+			if ( config.getBootstrapConfig() == module ) {
 				return config;
 			}
 		}
@@ -184,7 +183,8 @@ public class AcrossInstallerRegistry
 	}
 
 	private ConfigurableListableBeanFactory getBeanFactoryForInstallerWiring( ModuleInstallationConfig config ) {
-		AcrossApplicationContext moduleContext = AcrossContextUtils.getAcrossApplicationContext( config.getModule() );
+		AcrossApplicationContext moduleContext =
+				AcrossContextUtils.getAcrossApplicationContext( config.getBootstrapConfig().getModule() );
 
 		if ( moduleContext == null ) {
 			// If module context not yet available, use the root context
@@ -198,11 +198,11 @@ public class AcrossInstallerRegistry
 	static class ModuleInstallationConfig
 	{
 		private String name;
-		private final AcrossModule module;
+		private final ModuleBootstrapConfig bootstrapConfig;
 		private final Collection<Object> installers = new LinkedList<Object>();
 
-		ModuleInstallationConfig( AcrossModule module ) {
-			this.module = module;
+		ModuleInstallationConfig( ModuleBootstrapConfig bootstrapConfig ) {
+			this.bootstrapConfig = bootstrapConfig;
 		}
 
 		public Collection<Object> getInstallers() {
@@ -213,8 +213,8 @@ public class AcrossInstallerRegistry
 			installers.add( installer );
 		}
 
-		public AcrossModule getModule() {
-			return module;
+		public ModuleBootstrapConfig getBootstrapConfig() {
+			return bootstrapConfig;
 		}
 
 		public String getName() {

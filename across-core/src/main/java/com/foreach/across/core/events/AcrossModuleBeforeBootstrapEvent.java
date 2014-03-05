@@ -2,16 +2,23 @@ package com.foreach.across.core.events;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 
+/**
+ * Event that is sent right before the module is bootstrapped.
+ * The ModuleBootstrapConfig can still be modified at this point.
+ *
+ * @see com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig
+ */
 public class AcrossModuleBeforeBootstrapEvent implements AcrossEvent
 {
 	private final AcrossContext context;
-	private final AcrossModule module;
+	private final ModuleBootstrapConfig bootstrapConfig;
 
-	public AcrossModuleBeforeBootstrapEvent( AcrossContext context, AcrossModule module ) {
+	public AcrossModuleBeforeBootstrapEvent( AcrossContext context, ModuleBootstrapConfig bootstrapConfig ) {
 		this.context = context;
-		this.module = module;
+		this.bootstrapConfig = bootstrapConfig;
 	}
 
 	public AcrossContext getContext() {
@@ -19,7 +26,11 @@ public class AcrossModuleBeforeBootstrapEvent implements AcrossEvent
 	}
 
 	public AcrossModule getModule() {
-		return module;
+		return bootstrapConfig.getModule();
+	}
+
+	public ModuleBootstrapConfig getBootstrapConfig() {
+		return bootstrapConfig;
 	}
 
 	/**
@@ -28,8 +39,6 @@ public class AcrossModuleBeforeBootstrapEvent implements AcrossEvent
 	 * @param configurers One or more ApplicationContextConfigurer instances to add.
 	 */
 	public void addApplicationContextConfigurers( ApplicationContextConfigurer... configurers ) {
-		for ( ApplicationContextConfigurer configurer : configurers ) {
-			module.addApplicationContextConfigurer( configurer );
-		}
+		bootstrapConfig.addApplicationContextConfigurer( configurers );
 	}
 }

@@ -1,8 +1,10 @@
 package com.foreach.across.modules.hibernate;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
 import com.foreach.across.core.context.configurer.TransactionManagementConfigurer;
 import com.foreach.across.modules.hibernate.provider.HasHibernatePackageProvider;
 import com.foreach.across.modules.hibernate.provider.HibernatePackage;
@@ -22,8 +24,6 @@ public class AcrossHibernateModule extends AcrossModule
 	private boolean autoEnableModules = true;
 	private Set<HibernatePackageProvider> hibernatePackageProviders = new HashSet<HibernatePackageProvider>();
 	private DataSource dataSource;
-
-	private HibernatePackage hibernatePackage;
 
 	public AcrossHibernateModule() {
 	}
@@ -90,19 +90,6 @@ public class AcrossHibernateModule extends AcrossModule
 		hibernateProperties.put( name, value );
 	}
 
-	public void setHibernatePackage( HibernatePackage hibernatePackage ) {
-		this.hibernatePackage = hibernatePackage;
-	}
-
-	/**
-	 * Gets the entire HibernatePackage configured.  This is only available after the context bootstrap has started.
-	 *
-	 * @return HibernatePackage configured.
-	 */
-	HibernatePackage getHibernatePackage() {
-		return hibernatePackage;
-	}
-
 	/**
 	 * Get the datasource associated with this module.  Will return the context datasource if none
 	 * has been set explicitly.
@@ -134,14 +121,18 @@ public class AcrossHibernateModule extends AcrossModule
 	}
 
 	/**
-	 * Called when a context is preparing to bootstrap, but before the actual bootstrap happens.
+	 * <p>Called when a context is preparing to bootstrap, but before the actual bootstrap happens.
 	 * This is the last chance for a module to modify itself or its siblings before the actual
-	 * bootstrapping will occur.
+	 * bootstrapping will occur.</p>
+	 * <p>Only modules that will actually bootstrap will be passed as parameters to this method.
+	 * Any disabled modules will not be present.</p>
 	 *
-	 * @param modules AcrossModules in the order that they will be bootstrapped.
+	 * @param currentModule  Bootstrap configuration of the current module.
+	 * @param modulesInOrder Map of all modules that are being bootstrapped, in the bootstrap order and with their corresponding config.
 	 */
 	@Override
-	public void prepareForBootstrap( Collection<AcrossModule> modules ) {
+	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
+	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
 		HibernatePackage hibernatePackage = new HibernatePackage();
 
 		for ( HibernatePackageProvider provider : getHibernatePackageProviders() ) {
@@ -149,7 +140,9 @@ public class AcrossHibernateModule extends AcrossModule
 		}
 
 		if ( autoEnableModules ) {
-			for ( AcrossModule module : modules ) {
+			for ( ModuleBootstrapConfig config : modulesInOrder.values() ) {
+				AcrossModule module = config.getModule();
+
 				if ( module instanceof HasHibernatePackageProvider ) {
 					HibernatePackageProvider provider =
 							( (HasHibernatePackageProvider) module ).getHibernatePackageProvider( this );
@@ -160,10 +153,11 @@ public class AcrossHibernateModule extends AcrossModule
 				}
 
 				// Activate transaction management
-				module.addApplicationContextConfigurer( new TransactionManagementConfigurer() );
+				config.addApplicationContextConfigurer( new TransactionManagementConfigurer() );
 			}
 		}
 
-		this.hibernatePackage = hibernatePackage;
+		currentModule.addApplicationContextConfigurer(
+				new SingletonBeanConfigurer( "hibernatePackage", hibernatePackage, true ) );
 	}
 }

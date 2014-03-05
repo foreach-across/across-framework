@@ -1,7 +1,6 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -26,13 +25,13 @@ public interface BootstrapApplicationContextFactory
 	/**
 	 * Create the Spring ApplicationContext for a particular AcrossModule.
 	 *
-	 * @param across        AcrossContext being loaded.
-	 * @param module        AcrossModule being created.
-	 * @param parentContext Contains the parent context.
+	 * @param across                AcrossContext being loaded.
+	 * @param moduleBootstrapConfig Bootstrap configuration of the AcrossModule being created.
+	 * @param parentContext         Contains the parent context.
 	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
 	 */
 	AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                     AcrossModule module,
+	                                                     ModuleBootstrapConfig moduleBootstrapConfig,
 	                                                     AcrossApplicationContext parentContext );
 
 	/**
@@ -46,9 +45,11 @@ public interface BootstrapApplicationContextFactory
 	/**
 	 * Loads beans and definitions in the module ApplicationContext.
 	 *
-	 * @param across  AcrossContext being loaded.
-	 * @param module  AcrossModule being loaded.
-	 * @param context Contains the Spring ApplicationContext for the module.
+	 * @param across                AcrossContext being loaded.
+	 * @param moduleBootstrapConfig Bootstrap configuration of the AcrossModule being loaded.
+	 * @param context               Contains the Spring ApplicationContext for the module.
 	 */
-	void loadApplicationContext( AcrossContext across, AcrossModule module, AcrossApplicationContext context );
+	void loadApplicationContext( AcrossContext across,
+	                             ModuleBootstrapConfig moduleBootstrapConfig,
+	                             AcrossApplicationContext context );
 }
