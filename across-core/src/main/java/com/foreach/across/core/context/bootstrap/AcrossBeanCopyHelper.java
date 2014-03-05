@@ -63,17 +63,22 @@ public class AcrossBeanCopyHelper
 
 		for ( Map.Entry<String, BeanDefinition> definition : definitions.entrySet() ) {
 			if ( registry != null ) {
-				if ( !definition.getValue().isSingleton() || !beans.containsKey( definition.getKey() ) ) {
-					registry.registerBeanDefinition( definition.getKey(), definition.getValue() );
-					definitionsCopied.put( definition.getKey(), definition.getValue() );
-				}
-				else if ( definition.getValue().isPrimary() ) {
-					// We want primary singletons to be primary in the parent as well, so create a new GenericBeanDefinition
-					GenericBeanDefinition copy = new GenericBeanDefinition();
-					copy.setPrimary( true );
+				BeanDefinition original = definition.getValue();
 
-					registry.registerBeanDefinition( definition.getKey(), copy );
-					definitionsCopied.put( definition.getKey(), copy );
+				if ( original.isSingleton() ) {
+					GenericBeanDefinition simplified = new GenericBeanDefinition();
+					simplified.setPrimary( original.isPrimary() );
+					simplified.setAutowireCandidate( original.isAutowireCandidate() );
+					simplified.setDescription( original.getDescription() );
+					simplified.setRole( original.getRole() );
+					simplified.setBeanClassName( original.getBeanClassName() );
+
+					registry.registerBeanDefinition( definition.getKey(), simplified );
+					definitionsCopied.put( definition.getKey(), simplified );
+				}
+				else {
+					registry.registerBeanDefinition( definition.getKey(), original );
+					definitionsCopied.put( definition.getKey(), original );
 				}
 			}
 		}
