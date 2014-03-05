@@ -25,6 +25,18 @@ public class HibernatePackage
 		return mappingResources.toArray( new String[mappingResources.size()] );
 	}
 
+	public void addPackageToScan( String... packageToScan ) {
+		packagesToScan.addAll( Arrays.asList( packageToScan ) );
+	}
+
+	public void addAnnotatedClass( Class<?>... annotatedClass ) {
+		annotatedClasses.addAll( Arrays.asList( annotatedClass ) );
+	}
+
+	public void addMappingResource( String... mappingResource ) {
+		mappingResources.addAll( Arrays.asList( mappingResource ) );
+	}
+
 	public void add( HibernatePackageProvider provider ) {
 		packagesToScan.addAll( Arrays.asList( provider.getPackagesToScan() ) );
 		annotatedClasses.addAll( Arrays.asList( provider.getAnnotatedClasses() ) );

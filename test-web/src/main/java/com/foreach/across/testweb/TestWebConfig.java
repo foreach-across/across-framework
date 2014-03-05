@@ -4,10 +4,12 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.ehcache.EhcacheModule;
+import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.testweb.other.TestWebOtherModule;
 import com.foreach.across.testweb.sub.TestWebModule;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +33,7 @@ public class TestWebConfig
 		context.addModule( debugWebModule() );
 		context.addModule( acrossWebModule() );
 		context.addModule( adminWebModule() );
+		context.addModule( acrossHibernateModule() );
 
 		return context;
 	}
@@ -38,7 +41,7 @@ public class TestWebConfig
 	@Bean
 	public EhcacheModule ehCacheModule() {
 		EhcacheModule ehcacheModule = new EhcacheModule();
-		ehcacheModule.setEnabled( false );
+		ehcacheModule.setEnabled( true );
 
 		return ehcacheModule;
 	}
@@ -51,6 +54,15 @@ public class TestWebConfig
 	@Bean
 	public TestWebModule testWebModule() {
 		return new TestWebModule();
+	}
+
+	@Bean
+	public AcrossHibernateModule acrossHibernateModule() {
+		AcrossHibernateModule hibernateModule = new AcrossHibernateModule();
+		hibernateModule.setHibernateProperty( AvailableSettings.AUTOCOMMIT, "false" );
+		hibernateModule.setHibernateProperty( AvailableSettings.HBM2DDL_AUTO, "validate" );
+
+		return hibernateModule;
 	}
 
 	@Bean

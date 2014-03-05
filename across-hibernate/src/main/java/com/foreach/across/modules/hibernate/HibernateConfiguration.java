@@ -14,7 +14,6 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@Exposed
 @EnableTransactionManagement
 public class HibernateConfiguration
 {
@@ -23,6 +22,7 @@ public class HibernateConfiguration
 	private AcrossHibernateModule module;
 
 	@Bean
+	@Exposed
 	public LocalSessionFactoryBean sessionFactory( HibernatePackage hibernatePackage ) throws Exception {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource( module.getDataSource() );
@@ -37,11 +37,13 @@ public class HibernateConfiguration
 	}
 
 	@Bean
+	@Exposed
 	public HibernateTransactionManager transactionManager( SessionFactory sessionFactory ) {
 		return new HibernateTransactionManager( sessionFactory );
 	}
 
 	@Bean
+	@Exposed
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
 		return new PersistenceExceptionTranslationPostProcessor();
 	}

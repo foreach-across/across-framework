@@ -43,9 +43,9 @@
           <element id="archive" name="admin-web-1.0-SNAPSHOT.jar">
             <element id="module-output" name="admin-web" />
           </element>
-          <element id="library" level="project" name="Maven: org.springframework:spring-orm:4.0.0.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework:spring-jdbc:4.0.0.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework:spring-tx:4.0.0.RELEASE" />
+          <element id="archive" name="across-hibernate-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="across-hibernate" />
+          </element>
           <element id="library" level="project" name="Maven: org.hibernate:hibernate-entitymanager:4.2.8.Final" />
           <element id="library" level="project" name="Maven: org.jboss.logging:jboss-logging:3.1.0.GA" />
           <element id="library" level="project" name="Maven: org.hibernate:hibernate-core:4.2.8.Final" />
@@ -54,6 +54,9 @@
           <element id="library" level="project" name="Maven: org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final" />
           <element id="library" level="project" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final" />
           <element id="library" level="project" name="Maven: org.hibernate.common:hibernate-commons-annotations:4.0.2.Final" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-orm:4.0.0.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-jdbc:4.0.0.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-tx:4.0.0.RELEASE" />
           <element id="archive" name="across-ehcache-1.0-SNAPSHOT.jar">
             <element id="module-output" name="across-ehcache" />
           </element>

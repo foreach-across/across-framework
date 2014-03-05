@@ -1,8 +1,7 @@
 package com.foreach.across.modules.adminweb.repositories;
 
+import com.foreach.across.modules.adminweb.TestDatabaseConfig;
 import com.foreach.across.modules.adminweb.business.Permission;
-import com.foreach.across.modules.adminweb.config.HibernateSessionFactoryConfig;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.After;
@@ -19,8 +18,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import javax.sql.DataSource;
 
 import static org.junit.Assert.*;
 
@@ -73,20 +70,9 @@ public class TestPermissionRepository
 	}
 
 	@Configuration
-	@Import(HibernateSessionFactoryConfig.class)
+	@Import(TestDatabaseConfig.class)
 	static class Config
 	{
-		@Bean
-		public DataSource dataSource() throws Exception {
-			BasicDataSource dataSource = new BasicDataSource();
-			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setUrl( "jdbc:hsqldb:/hsql/adminweb" );
-			dataSource.setUsername( "sa" );
-			dataSource.setPassword( "" );
-
-			return dataSource;
-		}
-
 		@Bean
 		public PermissionRepository permissionRepository() {
 			return new PermissionRepositoryImpl();
