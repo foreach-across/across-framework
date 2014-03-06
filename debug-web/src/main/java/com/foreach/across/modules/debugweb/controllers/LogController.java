@@ -36,7 +36,7 @@ public class LogController
 
 		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 		List<Logger> loggers = loggerContext.getLoggerList();
-		List<Level> levels = Arrays.asList( Level.OFF, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG );
+		List<Level> levels = Arrays.asList( Level.OFF, Level.TRACE, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG );
 
 		Map<String, Level> loggerMap = new TreeMap<String, Level>();
 		Map<String, String> appenderMap = new TreeMap<String, String>();
