@@ -1,6 +1,7 @@
 package com.foreach.across.modules.hibernate.unitofwork;
 
 import com.foreach.across.core.annotations.Refreshable;
+import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate4.SessionFactoryUtils;
@@ -48,11 +49,27 @@ public class UnitOfWorkFactoryImpl implements UnitOfWorkFactory
 	 * Starts a new unit of work: opens all Sessions.
 	 */
 	public void start() {
+		start( false );
+	}
+
+	/**
+	 * When called, this will close and reopen all Sessions attached
+	 * to the current thread.
+	 */
+	public void restart() {
+		stop();
+		start();
+	}
+
+	private void start( boolean ignoreCache ) {
 		for ( SessionFactory sessionFactory : sessionFactories ) {
 			try {
 				if ( !TransactionSynchronizationManager.hasResource( sessionFactory ) ) {
 					LOG.trace( "Opening session for {}", sessionFactory );
 					Session session = sessionFactory.openSession();
+					if ( ignoreCache ) {
+						session.setCacheMode( CacheMode.IGNORE );
+					}
 					TransactionSynchronizationManager.bindResource( sessionFactory, new SessionHolder( session ) );
 				}
 				else {
@@ -63,15 +80,6 @@ public class UnitOfWorkFactoryImpl implements UnitOfWorkFactory
 				LOG.error( "Exception starting unit of work for {}", sessionFactory, e );
 			}
 		}
-	}
-
-	/**
-	 * When called, this will close and reopen all Sessions attached
-	 * to the current thread.
-	 */
-	public void restart() {
-		stop();
-		start();
 	}
 
 	/**
