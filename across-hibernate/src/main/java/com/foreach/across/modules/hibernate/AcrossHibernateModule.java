@@ -22,6 +22,7 @@ public class AcrossHibernateModule extends AcrossModule
 	private Properties hibernateProperties = new Properties();
 
 	private boolean autoEnableModules = true;
+	private boolean configureUnitOfWorkFactory = false;
 	private Set<HibernatePackageProvider> hibernatePackageProviders = new HashSet<HibernatePackageProvider>();
 	private DataSource dataSource;
 
@@ -59,6 +60,21 @@ public class AcrossHibernateModule extends AcrossModule
 
 	public void setAutoEnableModules( boolean autoEnableModules ) {
 		this.autoEnableModules = autoEnableModules;
+	}
+
+	/**
+	 * If true a UnitOfWorkFactory will be created for the sessionFactory defined in this module.
+	 * It can then be used to start and stop sessions without using the SessionFactory directly.
+	 *
+	 * @return True if a UnitOfWorkFactory will be created.
+	 * @see com.foreach.across.modules.hibernate.unitofwork.UnitOfWorkFactory
+	 */
+	public boolean isConfigureUnitOfWorkFactory() {
+		return configureUnitOfWorkFactory;
+	}
+
+	public void setConfigureUnitOfWorkFactory( boolean configureUnitOfWorkFactory ) {
+		this.configureUnitOfWorkFactory = configureUnitOfWorkFactory;
 	}
 
 	/**
@@ -159,5 +175,10 @@ public class AcrossHibernateModule extends AcrossModule
 
 		currentModule.addApplicationContextConfigurer(
 				new SingletonBeanConfigurer( "hibernatePackage", hibernatePackage, true ) );
+
+		if ( configureUnitOfWorkFactory ) {
+			currentModule.addApplicationContextConfigurer(
+					new AnnotatedClassConfigurer( UnitOfWorkConfiguration.class ) );
+		}
 	}
 }

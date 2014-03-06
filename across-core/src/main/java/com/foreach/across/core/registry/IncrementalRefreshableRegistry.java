@@ -1,12 +1,9 @@
 package com.foreach.across.core.registry;
 
-import com.foreach.across.core.annotations.EventName;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
-import com.foreach.across.core.events.EventNameFilter;
-import net.engio.mbassy.listener.Filter;
 import net.engio.mbassy.listener.Handler;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,8 +34,8 @@ public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 		eventBus.subscribe( this );
 	}
 
-	@Handler(filters = @Filter(EventNameFilter.class))
-	private void moduleBootstrapped( @EventName("test") AcrossModuleBootstrappedEvent moduleBootstrapped ) {
+	@Handler
+	private void moduleBootstrapped( AcrossModuleBootstrappedEvent moduleBootstrapped ) {
 		refresh();
 	}
 

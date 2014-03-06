@@ -25,7 +25,7 @@ import java.util.*;
  * @see org.springframework.core.OrderComparator
  */
 @Refreshable
-public class RefreshableRegistry<T>
+public class RefreshableRegistry<T> implements Collection<T>
 {
 	private Class<T> memberType;
 	private boolean scanModules;
@@ -72,14 +72,34 @@ public class RefreshableRegistry<T>
 	 *
 	 * @param member Member instance to add.
 	 */
-	public void add( T member ) {
+	public boolean add( T member ) {
 		fixedMembers.add( member );
 
+		boolean added = false;
+
 		if ( !members.contains( member ) ) {
-			members.add( member );
+			added = members.add( member );
 		}
 
 		OrderComparator.sort( members );
+
+		return added;
+	}
+
+	public boolean addAll( Collection<? extends T> c ) {
+		fixedMembers.addAll( c );
+
+		boolean added = true;
+
+		for ( T member : c ) {
+			if ( !members.contains( member ) ) {
+				added &= members.add( member );
+			}
+		}
+
+		OrderComparator.sort( members );
+
+		return added;
 	}
 
 	/**
@@ -88,13 +108,20 @@ public class RefreshableRegistry<T>
 	 *
 	 * @param member Member instance to remove.
 	 */
-	public void remove( T member ) {
+	public boolean remove( Object member ) {
 		fixedMembers.remove( member );
-		members.remove( member );
+		return members.remove( member );
 	}
 
 	/**
-	 * @return All current members of the registry.
+	 * @return All manually added members of the registry.
+	 */
+	public Collection<T> getFixedMembers() {
+		return fixedMembers;
+	}
+
+	/**
+	 * @return All current members of the registry: manually added and scanned.
 	 */
 	public Collection<T> getMembers() {
 		return members;
@@ -106,6 +133,46 @@ public class RefreshableRegistry<T>
 
 	public int size() {
 		return members.size();
+	}
+
+	public boolean contains( Object o ) {
+		return members.contains( o );
+	}
+
+	public Iterator<T> iterator() {
+		return members.iterator();
+	}
+
+	public Object[] toArray() {
+		return members.toArray();
+	}
+
+	public <T1> T1[] toArray( T1[] a ) {
+		return members.toArray( a );
+	}
+
+	public boolean containsAll( Collection<?> c ) {
+		return members.contains( c );
+	}
+
+	public boolean removeAll( Collection<?> c ) {
+		boolean removed = true;
+
+		for ( Object member : c ) {
+			removed &= remove( member );
+		}
+
+		return removed;
+	}
+
+	public boolean retainAll( Collection<?> c ) {
+		fixedMembers.retainAll( c );
+		return members.retainAll( c );
+	}
+
+	public void clear() {
+		fixedMembers.clear();
+		members.clear();
 	}
 }
 
