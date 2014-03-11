@@ -1,6 +1,8 @@
 package com.foreach.across.core.events;
 
 import com.foreach.across.core.context.AcrossContextUtils;
+import net.engio.mbassy.IPublicationErrorHandler;
+import net.engio.mbassy.PublicationError;
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.bus.config.BusConfiguration;
 
@@ -16,6 +18,13 @@ public class MBassadorEventPublisher extends MBassador<AcrossEvent> implements A
 {
 	public MBassadorEventPublisher() {
 		super( BusConfiguration.Default() );
+
+		this.addErrorHandler( new IPublicationErrorHandler()
+		{
+			public void handleError( PublicationError error ) {
+				LOG.error( "Event handling error occurred: {}", error, error.getCause() );
+			}
+		} );
 	}
 
 	public boolean unsubscribe( Object listener ) {

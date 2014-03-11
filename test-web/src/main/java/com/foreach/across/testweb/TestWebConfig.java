@@ -6,6 +6,7 @@ import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.ehcache.EhcacheModule;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.AcrossWebViewSupport;
 import com.foreach.across.testweb.other.TestWebOtherModule;
 import com.foreach.across.testweb.sub.TestWebModule;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -25,15 +26,15 @@ public class TestWebConfig
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 		AcrossContext context = new AcrossContext( applicationContext );
 		context.setDataSource( acrossDataSource() );
-		context.setAllowInstallers( true );
+		context.setAllowInstallers( false );
 
 		context.addModule( otherModule() );
 		context.addModule( testWebModule() );
 		context.addModule( ehCacheModule() );
 		context.addModule( debugWebModule() );
 		context.addModule( acrossWebModule() );
-		context.addModule( adminWebModule() );
-		context.addModule( acrossHibernateModule() );
+		//context.addModule( adminWebModule() );
+		//context.addModule( acrossHibernateModule() );
 
 		return context;
 	}
@@ -74,6 +75,11 @@ public class TestWebConfig
 	public AcrossWebModule acrossWebModule() {
 		AcrossWebModule webModule = new AcrossWebModule();
 		webModule.setViewsResourcePath( "/static" );
+		webModule.setSupportViews( AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF );
+
+		webModule.setDevelopmentMode( true );
+		webModule.addDevelopmentViews( "debugweb", "c:/code/across/debug-web/src/main/resources/views/");
+		webModule.addDevelopmentViews( "ehcache", "c:/code/across/across-ehcache/src/main/resources/views/" );
 
 		return webModule;
 	}

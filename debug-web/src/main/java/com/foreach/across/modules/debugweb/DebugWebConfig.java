@@ -14,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * Declares a separate handler for debug mappings.
@@ -23,7 +26,7 @@ import javax.annotation.PostConstruct;
 @ComponentScan({ "com.foreach.across.modules.debugweb.controllers" })
 @Configuration
 @Exposed
-public class DebugWebConfig
+public class DebugWebConfig extends WebMvcConfigurerAdapter
 {
 	private static final Logger LOG = LoggerFactory.getLogger( DebugWebModule.class );
 
@@ -36,6 +39,11 @@ public class DebugWebConfig
 	@PostConstruct
 	public void initialize() {
 		menuFactory.addMenuBuilder( debugMenuBuilder(), DebugMenu.class );
+	}
+
+	@Override
+	public void addArgumentResolvers( List<HandlerMethodArgumentResolver> argumentResolvers ) {
+		argumentResolvers.add( debugPageViewArgumentResolver() );
 	}
 
 	@Bean

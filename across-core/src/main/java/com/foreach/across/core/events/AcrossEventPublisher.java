@@ -2,6 +2,8 @@ package com.foreach.across.core.events;
 
 import net.engio.mbassy.bus.MessagePublication;
 import net.engio.mbassy.bus.publication.SyncAsyncPostCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,6 +14,8 @@ import java.util.concurrent.TimeUnit;
  */
 public interface AcrossEventPublisher
 {
+	Logger LOG = LoggerFactory.getLogger( AcrossEventPublisher.class );
+
 	boolean unsubscribe( Object listener );
 
 	void subscribe( Object listener );
