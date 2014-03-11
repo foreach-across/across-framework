@@ -35,6 +35,7 @@ public class ThymeleafViewSupportConfiguration
 	private ApplicationContext applicationContext;
 
 	@Bean
+	@Exposed
 	public SpringTemplateEngine springTemplateEngine() {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.addTemplateResolver( templateResolver() );
@@ -87,6 +88,7 @@ public class ThymeleafViewSupportConfiguration
 	}
 
 	@Bean
+	@Exposed
 	public TemplateResolver templateResolver() {
 		TemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setTemplateMode( "HTML5" );
