@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TestMenu
+public class TestMenuSorting
 {
 	private static final Comparator<Menu> REVERSE_SORT = new Comparator<Menu>()
 	{
@@ -180,7 +180,6 @@ public class TestMenu
 
 	@Test
 	public void orderedHasPriorityOverAComparator() {
-
 		Menu menu = new Menu( "any" );
 		menu.setComparator( REVERSE_SORT, true );
 

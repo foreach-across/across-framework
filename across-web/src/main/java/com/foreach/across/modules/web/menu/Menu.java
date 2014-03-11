@@ -27,11 +27,15 @@ public class Menu
 	};
 
 	private boolean ordered = false;
+	private boolean selected = false;
 	private String name, path, title, url;
 	private LinkedList<MenuItem> items = new LinkedList<MenuItem>();
+	private List<MenuItem> readonlyItems = Collections.unmodifiableList( items );
 
 	private Comparator<Menu> comparator = null;
 	private boolean comparatorInheritable = false;
+
+	private Menu parent;
 
 	private Map<String, Object> attributes = new HashMap<String, Object>();
 
@@ -42,6 +46,38 @@ public class Menu
 	public Menu( String name ) {
 		this();
 		this.name = name;
+	}
+
+	void setParent( Menu parent ) {
+		this.parent = parent;
+	}
+
+	/**
+	 * @return The direct parent of this menu item or null if it is the root of the tree.
+	 */
+	public Menu getParent() {
+		return parent;
+	}
+
+	/**
+	 * @return The root of the menu tree this item belongs to.
+	 */
+	public Menu getRoot() {
+		return parent != null ? parent.getRoot() : this;
+	}
+
+	/**
+	 * @return True if this menu item has a parent menu item, false if it is the root.
+	 */
+	public boolean hasParent() {
+		return parent != null;
+	}
+
+	/**
+	 * @return True if this menu item is the root of the tree.
+	 */
+	public boolean isRoot() {
+		return !hasParent();
 	}
 
 	public String getName() {
@@ -133,7 +169,7 @@ public class Menu
 		attributes.put( name, value );
 	}
 
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	public <T> T getAttribute( String name ) {
 		return (T) attributes.get( name );
 	}
@@ -143,17 +179,89 @@ public class Menu
 	}
 
 	/**
+	 * @return True if this MenuItem is selected (can be the lowest selected item or not).
+	 */
+	public boolean isSelected() {
+		return selected;
+	}
+
+	/**
+	 * Set the selected status of the menu item (and its parents).  Selecting a child will automatically
+	 * select its parents.  Deselecting it will not deselect its parents, but deselecting a parent will
+	 * deselect the children.
+	 *
+	 * @param selected True if the menu item and its parents should be selected.
+	 */
+	public void setSelected( boolean selected ) {
+		if ( selected && hasParent() ) {
+			getRoot().setSelected( false );
+			getParent().setSelected( true );
+		}
+		else if ( !selected && isSelected() && hasItems() ) {
+			for ( MenuItem item : items ) {
+				item.setSelected( false );
+			}
+		}
+
+		this.selected = selected;
+	}
+
+	/**
+	 * Returns the selected direct child of this menu.  Will return null if {@link #isSelected()} returns false.
+	 *
+	 * @return MenuItem or null if none selected.
+	 */
+	public MenuItem getSelectedItem() {
+		for ( MenuItem item : items ) {
+			if ( item.isSelected() ) {
+				return item;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the lowest selected item of this menu tree.  Will return null if {@link #isSelected()} returns false.
+	 *
+	 * @return MenuItem or null if none selected.
+	 */
+	public MenuItem getLowestSelectedItem() {
+		MenuItem item = getSelectedItem();
+
+		if ( item != null && item.hasItems() ) {
+			MenuItem child = item.getLowestSelectedItem();
+
+			if ( child != null ) {
+				item = child;
+			}
+		}
+
+		return item;
+	}
+
+	/**
 	 * Fetches the first item with the path specified.
 	 *
 	 * @param path Path of the item.
 	 * @return MenuItem instance or null if not found.
 	 */
 	public MenuItem getItemWithPath( String path ) {
+		MenuItem found = null;
+
 		for ( MenuItem item : items ) {
 			if ( StringUtils.equals( path, item.getPath() ) ) {
-				return item;
+				found = item;
+			}
+			else if ( item.hasItems() ) {
+				found = item.getItemWithPath( path );
+			}
+
+			if ( found != null ) {
+				return found;
 			}
 		}
+
 		return null;
 	}
 
@@ -176,7 +284,7 @@ public class Menu
 	}
 
 	public List<MenuItem> getItems() {
-		return items;
+		return readonlyItems;
 	}
 
 	public boolean hasItems() {
@@ -195,9 +303,37 @@ public class Menu
 	}
 
 	public MenuItem addItem( MenuItem item ) {
+		if ( item.hasParent() ) {
+			throw new RuntimeException( "A MenuItem can only belong to a single parent menu." );
+		}
+
 		items.add( item );
+		item.setParent( this );
 
 		return item;
+	}
+
+	/**
+	 * Removes the menu item from the tree - disconnects it from its parent.
+	 *
+	 * @param item MenuItem to remove.
+	 * @return True if found anywhere in the tree and removed successfully.
+	 */
+	public boolean remove( MenuItem item ) {
+		if ( !item.hasParent() || item.getRoot() == getRoot() ) {
+			if ( item.getParent() == this ) {
+				boolean removed = items.remove( item );
+				if ( removed ) {
+					item.setParent( null );
+				}
+				return removed;
+			}
+			else {
+				return item.getParent().remove( item );
+			}
+		}
+
+		return false;
 	}
 
 	/**
