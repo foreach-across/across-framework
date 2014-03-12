@@ -1,7 +1,6 @@
 package com.foreach.across.modules.debugweb.mvc;
 
 import com.foreach.across.modules.web.menu.Menu;
-import com.foreach.across.modules.web.menu.MenuItem;
 import org.apache.commons.lang3.StringUtils;
 
 public class DebugMenu extends Menu
@@ -11,7 +10,7 @@ public class DebugMenu extends Menu
 	private final String rootPath;
 
 	public DebugMenu( String rootPath ) {
-		super(NAME);
+		super( NAME );
 
 		setPath( rootPath );
 		setTitle( NAME );
@@ -20,7 +19,7 @@ public class DebugMenu extends Menu
 	}
 
 	@Override
-	public MenuItem addItem( MenuItem item ) {
+	public Menu addItem( Menu item ) {
 		if ( !item.hasUrl() ) {
 			String path = item.getPath();
 

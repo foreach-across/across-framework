@@ -1,3 +1,8 @@
+ul.debug-menu li.selected {
+  font-weight: bold; }
+  ul.debug-menu li.selected a {
+    text-decoration: none; }
+
 div.feedback {
   background-color: whitesmoke;
   padding: 5px;

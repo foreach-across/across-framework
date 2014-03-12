@@ -78,6 +78,7 @@ public class TestWebConfig
 		webModule.setSupportViews( AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF );
 
 		webModule.setDevelopmentMode( true );
+		webModule.addDevelopmentViews( "", "c:/code/across/across-web/src/main/resources/views/" );
 		webModule.addDevelopmentViews( "debugweb", "c:/code/across/debug-web/src/main/resources/views/");
 		webModule.addDevelopmentViews( "ehcache", "c:/code/across/across-ehcache/src/main/resources/views/" );
 

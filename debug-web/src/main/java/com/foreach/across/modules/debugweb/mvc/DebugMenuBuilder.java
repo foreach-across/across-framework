@@ -23,7 +23,7 @@ public class DebugMenuBuilder extends RequestMenuBuilder
 	}
 
 	@Override
-	public <T extends Menu> BuildMenuEvent<T> buildEvent( T menu ) {
+	protected <T extends Menu> BuildMenuEvent<T> createEvent( T menu ) {
 		return (BuildMenuEvent<T>) new DebugMenuEvent( (DebugMenu) menu );
 	}
 }

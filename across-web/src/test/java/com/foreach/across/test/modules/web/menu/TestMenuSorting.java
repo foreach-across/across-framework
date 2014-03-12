@@ -1,7 +1,6 @@
 package com.foreach.across.test.modules.web.menu;
 
 import com.foreach.across.modules.web.menu.Menu;
-import com.foreach.across.modules.web.menu.MenuItem;
 import org.junit.Test;
 
 import java.util.Comparator;
@@ -34,7 +33,7 @@ public class TestMenuSorting
 	public void multiLevelSorting() {
 		Menu menu = new Menu( "any" );
 
-		MenuItem subMenu = new MenuItem( "/aaa", "ccc" );
+		Menu subMenu = new Menu( "/aaa", "ccc" );
 		subMenu.addItem( "111", "333" );
 		subMenu.addItem( "222", "222" );
 		subMenu.addItem( "333", "111" );
@@ -42,7 +41,7 @@ public class TestMenuSorting
 
 		menu.addItem( "/bbb", "aaa" );
 
-		MenuItem otherSubMenu = new MenuItem( "/ccc", "bbb" );
+		Menu otherSubMenu = new Menu( "/ccc", "bbb" );
 		otherSubMenu.addItem( "111", "111" );
 		otherSubMenu.addItem( "222", "333" );
 		otherSubMenu.addItem( "333", "222" );
@@ -76,7 +75,7 @@ public class TestMenuSorting
 		Menu menu = new Menu( "any" );
 		menu.setOrdered( true );
 
-		MenuItem subMenu = new MenuItem( "/aaa", "ccc" );
+		Menu subMenu = new Menu( "/aaa", "ccc" );
 		subMenu.setOrdered( true );
 		subMenu.addItem( "111", "333" );
 		subMenu.addItem( "222", "222" );
@@ -85,7 +84,7 @@ public class TestMenuSorting
 
 		menu.addItem( "/bbb", "aaa" );
 
-		MenuItem otherSubMenu = new MenuItem( "/ccc", "bbb" );
+		Menu otherSubMenu = new Menu( "/ccc", "bbb" );
 		otherSubMenu.addItem( "111", "111" );
 		otherSubMenu.addItem( "222", "333" );
 		otherSubMenu.addItem( "333", "222" );
@@ -103,7 +102,7 @@ public class TestMenuSorting
 		Menu menu = new Menu( "any" );
 		menu.setComparator( REVERSE_SORT, true );
 
-		MenuItem subMenu = new MenuItem( "/aaa", "ccc" );
+		Menu subMenu = new Menu( "/aaa", "ccc" );
 		subMenu.addItem( "111", "333" );
 		subMenu.addItem( "222", "222" );
 		subMenu.addItem( "333", "111" );
@@ -111,7 +110,7 @@ public class TestMenuSorting
 
 		menu.addItem( "/bbb", "aaa" );
 
-		MenuItem otherSubMenu = new MenuItem( "/ccc", "bbb" );
+		Menu otherSubMenu = new Menu( "/ccc", "bbb" );
 		otherSubMenu.addItem( "111", "111" );
 		otherSubMenu.addItem( "222", "333" );
 		otherSubMenu.addItem( "333", "222" );
@@ -129,13 +128,13 @@ public class TestMenuSorting
 		Menu menu = new Menu( "any" );
 		menu.setComparator( REVERSE_SORT, true );
 
-		MenuItem subMenu = new MenuItem( "/aaa", "ccc" );
+		Menu subMenu = new Menu( "/aaa", "ccc" );
 		subMenu.setComparator( Menu.SORT_BY_TITLE, false );
 		subMenu.addItem( "111", "333" );
 		subMenu.addItem( "222", "222" );
 		menu.addItem( subMenu );
 
-		MenuItem subSubMenu = new MenuItem( "333", "111" );
+		Menu subSubMenu = new Menu( "333", "111" );
 		subSubMenu.addItem( "111", "111" );
 		subSubMenu.addItem( "222", "333" );
 		subSubMenu.addItem( "333", "222" );
@@ -156,13 +155,13 @@ public class TestMenuSorting
 		Menu menu = new Menu( "any" );
 		menu.setComparator( REVERSE_SORT, true );
 
-		MenuItem subMenu = new MenuItem( "/aaa", "ccc" );
+		Menu subMenu = new Menu( "/aaa", "ccc" );
 		subMenu.setComparator( Menu.SORT_BY_TITLE, true );
 		subMenu.addItem( "111", "333" );
 		subMenu.addItem( "222", "222" );
 		menu.addItem( subMenu );
 
-		MenuItem subSubMenu = new MenuItem( "333", "111" );
+		Menu subSubMenu = new Menu( "333", "111" );
 		subSubMenu.addItem( "111", "111" );
 		subSubMenu.addItem( "222", "333" );
 		subSubMenu.addItem( "333", "222" );
@@ -183,14 +182,14 @@ public class TestMenuSorting
 		Menu menu = new Menu( "any" );
 		menu.setComparator( REVERSE_SORT, true );
 
-		MenuItem subMenu = new MenuItem( "/aaa", "ccc" );
+		Menu subMenu = new Menu( "/aaa", "ccc" );
 		subMenu.setComparator( Menu.SORT_BY_TITLE, true );
 		subMenu.setOrdered( true );
 		subMenu.addItem( "111", "333" );
 		subMenu.addItem( "222", "222" );
 		menu.addItem( subMenu );
 
-		MenuItem subSubMenu = new MenuItem( "333", "111" );
+		Menu subSubMenu = new Menu( "333", "111" );
 		subSubMenu.addItem( "111", "111" );
 		subSubMenu.addItem( "222", "333" );
 		subSubMenu.addItem( "333", "222" );
@@ -202,12 +201,12 @@ public class TestMenuSorting
 		menu.sort();
 
 		assertMenu( menu, "ccc", "bbb", "aaa" );
-		assertMenu( menu.getItemWithPath( "/aaa" ), "333", "222", "111" );
-		assertMenu( menu.getItemWithPath( "/aaa" ).getItemWithPath( "333" ), "111", "222", "333" );
+		assertMenu( menu.getItem( Menu.byPath( "/aaa" ) ), "333", "222", "111" );
+		assertMenu( menu.getItem( Menu.byPath( "/aaa" ) ).getItem( Menu.byPath( "333" ) ), "111", "222", "333" );
 	}
 
 	public void assertMenu( Menu menu, String... expected ) {
-		List<MenuItem> items = menu.getItems();
+		List<Menu> items = menu.getItems();
 		assertEquals( expected.length, items.size() );
 		for ( int i = 0; i < items.size(); i++ ) {
 			assertEquals( expected[i], items.get( i ).getTitle() );

@@ -10,7 +10,7 @@ public class MenuRenderer
 		this.menu = menu;
 	}
 
-	public Collection<MenuItem> getItems() {
+	public Collection<Menu> getItems() {
 		return menu.getItems();
 	}
 }

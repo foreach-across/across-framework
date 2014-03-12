@@ -6,7 +6,7 @@
     <deployment>
       <artifact name="test-web:war exploded">
         <settings>
-          <option name="CONTEXT_PATH" value="/" />
+          <option name="CONTEXT_PATH" value="/test" />
         </settings>
       </artifact>
     </deployment>

@@ -1,7 +1,6 @@
 package com.foreach.across.test.modules.web.menu;
 
 import com.foreach.across.modules.web.menu.Menu;
-import com.foreach.across.modules.web.menu.MenuItem;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -14,7 +13,7 @@ public class TestMenuHierarchy
 		assertFalse( menu.hasParent() );
 		assertTrue( menu.isRoot() );
 
-		MenuItem sub = menu.addItem( "sub" );
+		Menu sub = menu.addItem( "sub" );
 		assertFalse( menu.hasParent() );
 		assertTrue( menu.isRoot() );
 		assertTrue( sub.hasParent() );
@@ -22,7 +21,7 @@ public class TestMenuHierarchy
 		assertSame( menu, sub.getParent() );
 		assertSame( menu, sub.getRoot() );
 
-		MenuItem subsub = sub.addItem( "subsub" );
+		Menu subsub = sub.addItem( "subsub" );
 		assertFalse( menu.hasParent() );
 		assertTrue( menu.isRoot() );
 		assertTrue( sub.hasParent() );
@@ -36,10 +35,41 @@ public class TestMenuHierarchy
 	}
 
 	@Test
-	public void sameMenuItemCanOnlyBelongToSingleMenu() {
+	public void menuLevelsAreDynamicallyCalculated() {
+		Menu menu = new Menu( "", "" );
+		assertEquals( Menu.ROOT_LEVEL, menu.getLevel() );
+
+		Menu item1 = menu.addItem( "path1" );
+		Menu item2 = menu.addItem( "path2" );
+		Menu subItem1 = item2.addItem( "sub1" );
+		Menu subItem2 = item2.addItem( "sub2" );
+		Menu subSubItem1 = subItem1.addItem( "subsub1" );
+		Menu subSubItem2 = subItem2.addItem( "subsub2" );
+
+		assertEquals( 1, item1.getLevel() );
+		assertEquals( 1, item2.getLevel() );
+		assertEquals( 2, subItem1.getLevel() );
+		assertEquals( 2, subItem2.getLevel() );
+		assertEquals( 3, subSubItem1.getLevel() );
+		assertEquals( 3, subSubItem2.getLevel() );
+
+		Menu newRoot = new Menu();
+		newRoot.addItem( menu );
+		assertEquals( Menu.ROOT_LEVEL, newRoot.getLevel() );
+		assertEquals( 1, menu.getLevel() );
+		assertEquals( 2, item1.getLevel() );
+		assertEquals( 2, item2.getLevel() );
+		assertEquals( 3, subItem1.getLevel() );
+		assertEquals( 3, subItem2.getLevel() );
+		assertEquals( 4, subSubItem1.getLevel() );
+		assertEquals( 4, subSubItem2.getLevel() );
+	}
+
+	@Test
+	public void sameMenuCanOnlyBelongToSingleMenu() {
 		Menu menu = new Menu();
 
-		MenuItem item = new MenuItem( "path" );
+		Menu item = new Menu( "path" );
 		assertFalse( item.hasParent() );
 		assertNull( item.getParent() );
 
@@ -61,10 +91,10 @@ public class TestMenuHierarchy
 	}
 
 	@Test
-	public void removedMenuItemCanBeAddedToAnotherMenu() {
+	public void removedMenuCanBeAddedToAnotherMenu() {
 		Menu menu = new Menu();
-		MenuItem item = new MenuItem( "sub" );
-		MenuItem subSub = new MenuItem( "subsub" );
+		Menu item = new Menu( "sub" );
+		Menu subSub = new Menu( "subsub" );
 
 		menu.addItem( item );
 		item.addItem( subSub );
@@ -93,9 +123,9 @@ public class TestMenuHierarchy
 		Menu menu = new Menu();
 		menu.addItem( "path1" );
 
-		MenuItem item = menu.addItem( "path2" );
+		Menu item = menu.addItem( "path2" );
 		item.addItem( "sub1" );
-		MenuItem subItem = item.addItem( "sub2" );
+		Menu subItem = item.addItem( "sub2" );
 
 		subItem.addItem( "subsub1" ).setSelected( true );
 		subItem.addItem( "subsub2" );
@@ -113,9 +143,9 @@ public class TestMenuHierarchy
 		Menu menu = new Menu();
 		menu.addItem( "path1" );
 
-		MenuItem item = menu.addItem( "path2" );
+		Menu item = menu.addItem( "path2" );
 		item.addItem( "sub1" );
-		MenuItem subItem = item.addItem( "sub2" );
+		Menu subItem = item.addItem( "sub2" );
 
 		subItem.addItem( "subsub1" ).setSelected( true );
 		subItem.addItem( "subsub2" );
@@ -135,9 +165,9 @@ public class TestMenuHierarchy
 		Menu menu = new Menu();
 		menu.addItem( "path1" );
 
-		MenuItem item = menu.addItem( "path2" );
+		Menu item = menu.addItem( "path2" );
 		item.addItem( "sub1" );
-		MenuItem subItem = item.addItem( "sub2" );
+		Menu subItem = item.addItem( "sub2" );
 
 		subItem.addItem( "subsub1" ).setSelected( true );
 		subItem.addItem( "subsub2" );
@@ -157,9 +187,9 @@ public class TestMenuHierarchy
 		Menu menu = new Menu();
 		menu.addItem( "path1" );
 
-		MenuItem item = menu.addItem( "path2" );
+		Menu item = menu.addItem( "path2" );
 		item.addItem( "sub1" );
-		MenuItem subItem = item.addItem( "sub2" );
+		Menu subItem = item.addItem( "sub2" );
 
 		subItem.addItem( "subsub1" ).setSelected( true );
 		subItem.addItem( "subsub2" );
@@ -179,14 +209,14 @@ public class TestMenuHierarchy
 		Menu menu = new Menu();
 		menu.addItem( "path1" );
 
-		MenuItem item = menu.addItem( "path2" );
+		Menu item = menu.addItem( "path2" );
 		item.addItem( "sub1" );
-		MenuItem subItem = item.addItem( "sub2" );
+		Menu subItem = item.addItem( "sub2" );
 
 		subItem.addItem( "subsub1" ).setSelected( true );
 		subItem.addItem( "subsub2" );
 
-		MenuItem selected = menu.getSelectedItem();
+		Menu selected = menu.getSelectedItem();
 		assertSame( item, selected );
 
 		selected = menu.getLowestSelectedItem();

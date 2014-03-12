@@ -18,6 +18,8 @@ import java.util.*;
  */
 public class Menu
 {
+	public static final int ROOT_LEVEL = 0;
+
 	public static final Comparator<Menu> SORT_BY_TITLE = new Comparator<Menu>()
 	{
 		public int compare( Menu o1, Menu o2 ) {
@@ -29,8 +31,8 @@ public class Menu
 	private boolean ordered = false;
 	private boolean selected = false;
 	private String name, path, title, url;
-	private LinkedList<MenuItem> items = new LinkedList<MenuItem>();
-	private List<MenuItem> readonlyItems = Collections.unmodifiableList( items );
+	private LinkedList<Menu> items = new LinkedList<Menu>();
+	private List<Menu> readonlyItems = Collections.unmodifiableList( items );
 
 	private Comparator<Menu> comparator = null;
 	private boolean comparatorInheritable = false;
@@ -46,6 +48,14 @@ public class Menu
 	public Menu( String name ) {
 		this();
 		this.name = name;
+
+		setPath( name );
+		setTitle( name );
+	}
+
+	public Menu( String path, String title ) {
+		this( path );
+		setTitle( title );
 	}
 
 	void setParent( Menu parent ) {
@@ -78,6 +88,21 @@ public class Menu
 	 */
 	public boolean isRoot() {
 		return !hasParent();
+	}
+
+	/**
+	 * @return The level this item is currently at, level 0 (Menu.ROOT_LEVEL) means it is the root of the menu tree.
+	 */
+	public int getLevel() {
+		int level = 0;
+
+		Menu item = this;
+		while ( item.hasParent() ) {
+			item = item.getParent();
+			level++;
+		}
+
+		return level;
 	}
 
 	public String getName() {
@@ -179,7 +204,7 @@ public class Menu
 	}
 
 	/**
-	 * @return True if this MenuItem is selected (can be the lowest selected item or not).
+	 * @return True if this Menu is selected (can be the lowest selected item or not).
 	 */
 	public boolean isSelected() {
 		return selected;
@@ -198,7 +223,7 @@ public class Menu
 			getParent().setSelected( true );
 		}
 		else if ( !selected && isSelected() && hasItems() ) {
-			for ( MenuItem item : items ) {
+			for ( Menu item : items ) {
 				item.setSelected( false );
 			}
 		}
@@ -209,10 +234,10 @@ public class Menu
 	/**
 	 * Returns the selected direct child of this menu.  Will return null if {@link #isSelected()} returns false.
 	 *
-	 * @return MenuItem or null if none selected.
+	 * @return Menu or null if none selected.
 	 */
-	public MenuItem getSelectedItem() {
-		for ( MenuItem item : items ) {
+	public Menu getSelectedItem() {
+		for ( Menu item : items ) {
 			if ( item.isSelected() ) {
 				return item;
 			}
@@ -224,13 +249,13 @@ public class Menu
 	/**
 	 * Returns the lowest selected item of this menu tree.  Will return null if {@link #isSelected()} returns false.
 	 *
-	 * @return MenuItem or null if none selected.
+	 * @return Menu or null if none selected.
 	 */
-	public MenuItem getLowestSelectedItem() {
-		MenuItem item = getSelectedItem();
+	public Menu getLowestSelectedItem() {
+		Menu item = getSelectedItem();
 
 		if ( item != null && item.hasItems() ) {
-			MenuItem child = item.getLowestSelectedItem();
+			Menu child = item.getLowestSelectedItem();
 
 			if ( child != null ) {
 				item = child;
@@ -241,15 +266,46 @@ public class Menu
 	}
 
 	/**
+	 * Fetches the item that matches the given MenuSelector.
+	 *
+	 * @param selector MenuSelector the item should match.
+	 * @return Menu instance or null if not found.
+	 */
+	public Menu getItem( MenuSelector selector ) {
+		if ( selector != null ) {
+			return selector.find( this );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Sets the item matching the MenuSelector as as selected.
+	 *
+	 * @param selector MenuSelector the item should match.
+	 * @return True if an item was selected.
+	 */
+	public boolean select( MenuSelector selector ) {
+		Menu item = getItem( selector );
+
+		if ( item != null ) {
+			item.setSelected( true );
+		}
+
+		return item != null;
+	}
+
+	/**
 	 * Fetches the first item with the path specified.
 	 *
 	 * @param path Path of the item.
-	 * @return MenuItem instance or null if not found.
+	 * @return Menu instance or null if not found.
 	 */
-	public MenuItem getItemWithPath( String path ) {
-		MenuItem found = null;
+	@Deprecated
+	public Menu getItemWithPath( String path ) {
+		Menu found = null;
 
-		for ( MenuItem item : items ) {
+		for ( Menu item : items ) {
 			if ( StringUtils.equals( path, item.getPath() ) ) {
 				found = item;
 			}
@@ -265,8 +321,9 @@ public class Menu
 		return null;
 	}
 
-	public MenuItem getItemWithTitle( String title ) {
-		for ( MenuItem item : items ) {
+	@Deprecated
+	public Menu getItemWithTitle( String title ) {
+		for ( Menu item : items ) {
 			if ( StringUtils.equals( title, item.getTitle() ) ) {
 				return item;
 			}
@@ -274,8 +331,9 @@ public class Menu
 		return null;
 	}
 
-	public MenuItem getItemWithName( String name ) {
-		for ( MenuItem item : items ) {
+	@Deprecated
+	public Menu getItemWithName( String name ) {
+		for ( Menu item : items ) {
 			if ( StringUtils.equals( name, item.getName() ) ) {
 				return item;
 			}
@@ -283,7 +341,7 @@ public class Menu
 		return null;
 	}
 
-	public List<MenuItem> getItems() {
+	public List<Menu> getItems() {
 		return readonlyItems;
 	}
 
@@ -291,20 +349,20 @@ public class Menu
 		return !items.isEmpty();
 	}
 
-	public MenuItem addItem( String path ) {
+	public Menu addItem( String path ) {
 		return addItem( path, path );
 	}
 
-	public MenuItem addItem( String path, String title ) {
-		MenuItem item = new MenuItem( path );
+	public Menu addItem( String path, String title ) {
+		Menu item = new Menu( path );
 		item.setTitle( title );
 
 		return addItem( item );
 	}
 
-	public MenuItem addItem( MenuItem item ) {
+	public Menu addItem( Menu item ) {
 		if ( item.hasParent() ) {
-			throw new RuntimeException( "A MenuItem can only belong to a single parent menu." );
+			throw new RuntimeException( "A Menu can only belong to a single parent menu." );
 		}
 
 		items.add( item );
@@ -316,10 +374,10 @@ public class Menu
 	/**
 	 * Removes the menu item from the tree - disconnects it from its parent.
 	 *
-	 * @param item MenuItem to remove.
+	 * @param item Menu to remove.
 	 * @return True if found anywhere in the tree and removed successfully.
 	 */
-	public boolean remove( MenuItem item ) {
+	public boolean remove( Menu item ) {
 		if ( !item.hasParent() || item.getRoot() == getRoot() ) {
 			if ( item.getParent() == this ) {
 				boolean removed = items.remove( item );
@@ -368,7 +426,7 @@ public class Menu
 				Collections.sort( items, comparatorToUse );
 			}
 
-			for ( MenuItem item : items ) {
+			for ( Menu item : items ) {
 				item.sort( inheritable ? comparatorToInherit : null );
 			}
 		}
@@ -380,5 +438,21 @@ public class Menu
 				"name='" + path + '\'' +
 				", items=" + items +
 				'}';
+	}
+
+	/**
+	 * Creates a MenuSelector that will look for the MenuItem with the given path.
+	 *
+	 * @param path Path to look for.
+	 * @return MenuSelector instance.
+	 */
+	public static MenuSelector byPath( final String path ) {
+		return new TraversingMenuSelector( false )
+		{
+			@Override
+			protected boolean matches( Menu item ) {
+				return StringUtils.equals( path, item.getPath() );
+			}
+		};
 	}
 }

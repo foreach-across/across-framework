@@ -2,45 +2,66 @@ package com.foreach.across.modules.web.events;
 
 import com.foreach.across.core.events.NamedAcrossEvent;
 import com.foreach.across.modules.web.menu.Menu;
-import com.foreach.across.modules.web.menu.MenuItem;
+import com.foreach.across.modules.web.menu.MenuSelector;
 import org.apache.commons.lang3.StringUtils;
 
-public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent {
-    private T menu;
+/**
+ * Event fired by the MenuFactory whenever a menu is being generated.  After menu generation,
+ * a menu will be sorted and selected.
+ *
+ * @param <T> Specific Menu implementation
+ * @see com.foreach.across.modules.web.menu.MenuFactory
+ * @see com.foreach.across.modules.web.menu.MenuBuilder
+ */
+public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent
+{
+	private T menu;
+	private MenuSelector selector;
 
-    public BuildMenuEvent(T menu) {
-        this.menu = menu;
-    }
+	public BuildMenuEvent( T menu ) {
+		this.menu = menu;
+	}
 
-    public String getEventName() {
-        return getMenuName();
-    }
+	public String getEventName() {
+		return getMenuName();
+	}
 
-    public String getMenuName() {
-        return menu.getName();
-    }
+	public String getMenuName() {
+		return menu.getName();
+	}
 
-    public boolean forMenu(String menuName) {
-        return StringUtils.equals(menuName, getMenuName());
-    }
+	/**
+	 * @return The MenuSelector attached to this event.
+	 */
+	public MenuSelector getSelector() {
+		return selector;
+	}
 
-    public T getMenu() {
-        return menu;
-    }
+	public void setSelector( MenuSelector selector ) {
+		this.selector = selector;
+	}
 
-    public MenuItem getMenuItemWithName(String name) {
-        return menu.getItemWithName(name);
-    }
+	public boolean forMenu( String menuName ) {
+		return StringUtils.equals( menuName, getMenuName() );
+	}
 
-    public MenuItem getMenuItemWithPath(String path) {
-        return menu.getItemWithPath(path);
-    }
+	public T getMenu() {
+		return menu;
+	}
 
-    public MenuItem addMenuItem(String path, String title) {
-        return menu.addItem(path, title);
-    }
+	public Menu getMenuItemWithName( String name ) {
+		return menu.getItemWithName( name );
+	}
 
-    public MenuItem addMenuItem(MenuItem item) {
-        return menu.addItem(item);
-    }
+	public Menu getMenuItemWithPath( String path ) {
+		return menu.getItemWithPath( path );
+	}
+
+	public Menu addMenuItem( String path, String title ) {
+		return menu.addItem( path, title );
+	}
+
+	public Menu addMenuItem( Menu item ) {
+		return menu.addItem( item );
+	}
 }

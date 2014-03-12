@@ -31,6 +31,12 @@ public class RequestMenuBuilder implements MenuBuilder
 	}
 
 	public <T extends Menu> BuildMenuEvent<T> buildEvent( T menu ) {
+		BuildMenuEvent<T> e = createEvent( menu );
+		e.setSelector( new RequestMenuSelector( request ) );
+		return e;
+	}
+
+	protected <T extends Menu> BuildMenuEvent<T> createEvent( T menu ) {
 		return new BuildMenuEvent<T>( menu );
 	}
 

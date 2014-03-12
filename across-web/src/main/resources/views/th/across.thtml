@@ -7,7 +7,7 @@
 <h2>Render list menu with infinite children</h2>
 
 <ul th:fragment="menu (data, css)" th:attr="class=${css}">
-	<li th:each="item : ${data.items}"><a href="#" th:text="${item.title}" th:attr="href=@{${item.url}}">menu item</a></li>
+	<li th:each="item : ${data.items}" th:attr="class=${item.selected ? 'selected' : ''}"><a href="#" th:text="${item.title}" th:attr="href=@{${item.url}}">menu item</a></li>
 </ul>
 
 <h2>Render generic Table instance</h2>

@@ -1,3 +1,13 @@
+ul.debug-menu {
+  li.selected {
+    font-weight: bold;
+
+    a {
+      text-decoration: none;
+    }
+  }
+}
+
 div {
   &.feedback {
     background-color: whitesmoke;
