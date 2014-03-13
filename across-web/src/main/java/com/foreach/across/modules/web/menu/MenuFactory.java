@@ -2,6 +2,8 @@ package com.foreach.across.modules.web.menu;
 
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.web.events.BuildMenuEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -11,6 +13,8 @@ import java.util.Set;
 
 public class MenuFactory
 {
+	private static final Logger LOG = LoggerFactory.getLogger( MenuFactory.class );
+
 	@Autowired
 	private AcrossEventPublisher publisher;
 
@@ -48,6 +52,7 @@ public class MenuFactory
 
 	public void addMenuBuilder( MenuBuilder builder, Class<? extends Menu>... menuTypes ) {
 		for ( Class menuType : menuTypes ) {
+			LOG.info( "Registering menu builder for type {}: {}", menuType, builder );
 			menuBuilderMap.put( menuType, builder );
 		}
 	}
@@ -90,7 +95,7 @@ public class MenuFactory
 	 * and executes the selector attached to the event.
 	 *
 	 * @param menu Menu instance being built.
-	 * @param <T> Actual Menu implementation.
+	 * @param <T>  Actual Menu implementation.
 	 * @return Menu instance after build has completed.
 	 */
 	public <T extends Menu> T buildMenu( T menu ) {
