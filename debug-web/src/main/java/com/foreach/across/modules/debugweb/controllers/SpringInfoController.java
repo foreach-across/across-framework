@@ -24,7 +24,6 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import java.lang.reflect.Field;
 import java.util.*;
 
-@AcrossEventHandler
 @DebugWebController
 public class SpringInfoController
 {
@@ -33,9 +32,9 @@ public class SpringInfoController
 
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addMenuItem( "/spring/beans", "Spring beans" );
-		event.addMenuItem( "/spring/interceptors", "Spring interceptors" );
-		event.addMenuItem( "/spring/handlers", "Spring handlers" );
+		event.addItem( "/spring/beans", "Spring beans" );
+		event.addItem( "/spring/interceptors", "Spring interceptors" );
+		event.addItem( "/spring/handlers", "Spring handlers" );
 	}
 
 	@RequestMapping("/spring/beans")

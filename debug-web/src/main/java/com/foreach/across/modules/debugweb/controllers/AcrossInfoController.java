@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 
-@AcrossEventHandler
 @DebugWebController
 public class AcrossInfoController
 {
@@ -35,7 +34,7 @@ public class AcrossInfoController
 
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addMenuItem( "/across/modules", "Across modules" );
+		event.addItem( "/across/modules", "Across modules" );
 	}
 
 	@ModelAttribute

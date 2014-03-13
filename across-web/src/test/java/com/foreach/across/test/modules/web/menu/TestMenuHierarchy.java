@@ -130,7 +130,7 @@ public class TestMenuHierarchy
 		subItem.addItem( "subsub1" ).setSelected( true );
 		subItem.addItem( "subsub2" );
 
-		assertFalse( menu.getItemWithPath( "path1" ).isSelected() );
+		assertFalse( menu.getItem( Menu.byPath( "path1" )).isSelected() );
 		assertTrue( menu.getItemWithPath( "path2" ).isSelected() );
 		assertFalse( menu.getItemWithPath( "sub1" ).isSelected() );
 		assertTrue( menu.getItemWithPath( "sub2" ).isSelected() );

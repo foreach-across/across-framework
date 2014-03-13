@@ -10,13 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 
-@AcrossEventHandler
 @DebugWebController
 public class ThreadsController
 {
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addMenuItem( "/threadStack", "Threads and stack" );
+		event.addItem( "/threadStack", "Threads and stack" );
 	}
 
 	@RequestMapping("/threadStack")

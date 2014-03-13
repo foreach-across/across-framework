@@ -21,13 +21,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-@AcrossEventHandler
 @DebugWebController
 public class LogController
 {
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addMenuItem( "/loggers", "Logger overview" );
+		event.addItem( "/loggers", "Logger overview" );
 	}
 
 	@RequestMapping(value = "/loggers", method = RequestMethod.GET)

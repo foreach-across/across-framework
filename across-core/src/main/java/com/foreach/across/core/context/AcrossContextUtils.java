@@ -11,6 +11,9 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.core.filters.AnnotationBeanFilter;
+import com.foreach.across.core.filters.BeanFilter;
+import com.foreach.across.core.filters.BeanFilterComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.Advised;
@@ -23,6 +26,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -45,8 +49,11 @@ public final class AcrossContextUtils
 	 */
 	public static void autoRegisterEventHandlers( ApplicationContext applicationContext,
 	                                              AcrossEventPublisher publisher ) {
+		BeanFilter eventHandlerFilter =
+				new BeanFilterComposite( new AnnotationBeanFilter( true, AcrossEventHandler.class ),
+				                         new AnnotationBeanFilter( Controller.class ) );
 		Collection<Object> handlers =
-				ApplicationContextScanner.findBeansWithAnnotation( applicationContext, AcrossEventHandler.class );
+				ApplicationContextScanner.findSingletonsMatching( applicationContext, eventHandlerFilter ).values();
 
 		for ( Object handler : handlers ) {
 			publisher.subscribe( handler );

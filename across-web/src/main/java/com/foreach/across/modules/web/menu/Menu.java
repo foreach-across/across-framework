@@ -301,44 +301,18 @@ public class Menu
 	 * @param path Path of the item.
 	 * @return Menu instance or null if not found.
 	 */
-	@Deprecated
 	public Menu getItemWithPath( String path ) {
-		Menu found = null;
-
-		for ( Menu item : items ) {
-			if ( StringUtils.equals( path, item.getPath() ) ) {
-				found = item;
-			}
-			else if ( item.hasItems() ) {
-				found = item.getItemWithPath( path );
-			}
-
-			if ( found != null ) {
-				return found;
-			}
-		}
-
-		return null;
+		return getItem( Menu.byPath( path ) );
 	}
 
-	@Deprecated
-	public Menu getItemWithTitle( String title ) {
-		for ( Menu item : items ) {
-			if ( StringUtils.equals( title, item.getTitle() ) ) {
-				return item;
-			}
-		}
-		return null;
-	}
-
-	@Deprecated
+	/**
+	 * Fetches the first item with the name specified.
+	 *
+	 * @param name Name of the item.
+	 * @return Menu instance or null if not found.
+	 */
 	public Menu getItemWithName( String name ) {
-		for ( Menu item : items ) {
-			if ( StringUtils.equals( name, item.getName() ) ) {
-				return item;
-			}
-		}
-		return null;
+		return getItem( Menu.byName( name ) );
 	}
 
 	public List<Menu> getItems() {
@@ -452,6 +426,54 @@ public class Menu
 			@Override
 			protected boolean matches( Menu item ) {
 				return StringUtils.equals( path, item.getPath() );
+			}
+		};
+	}
+
+	/**
+	 * Creates a MenuSelector that will look for the MenuItem with the given url.
+	 *
+	 * @param url URL to look for.
+	 * @return MenuSelector instance.
+	 */
+	public static MenuSelector byUrl( final String url ) {
+		return new TraversingMenuSelector( false )
+		{
+			@Override
+			protected boolean matches( Menu item ) {
+				return StringUtils.equals( url, item.getUrl() );
+			}
+		};
+	}
+
+	/**
+	 * Creates a MenuSelector that will look for the MenuItem with the given name.
+	 *
+	 * @param name Name to look for.
+	 * @return MenuSelector instance.
+	 */
+	public static MenuSelector byName( final String name ) {
+		return new TraversingMenuSelector( false )
+		{
+			@Override
+			protected boolean matches( Menu item ) {
+				return StringUtils.equals( name, item.getName() );
+			}
+		};
+	}
+
+	/**
+	 * Creates a MenuSelector that will look for the MenuItem with the given title.
+	 *
+	 * @param title Title to look for.
+	 * @return MenuSelector instance.
+	 */
+	public static MenuSelector byTitle( final String title ) {
+		return new TraversingMenuSelector( false )
+		{
+			@Override
+			protected boolean matches( Menu item ) {
+				return StringUtils.equals( title, item.getTitle() );
 			}
 		};
 	}

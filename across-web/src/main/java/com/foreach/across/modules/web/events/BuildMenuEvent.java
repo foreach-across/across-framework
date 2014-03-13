@@ -49,19 +49,23 @@ public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent
 		return menu;
 	}
 
-	public Menu getMenuItemWithName( String name ) {
+	public Menu getItem( MenuSelector selector ) {
+		return menu.getItem( selector );
+	}
+
+	public Menu getItemWithName( String name ) {
 		return menu.getItemWithName( name );
 	}
 
-	public Menu getMenuItemWithPath( String path ) {
+	public Menu getItemWithPath( String path ) {
 		return menu.getItemWithPath( path );
 	}
 
-	public Menu addMenuItem( String path, String title ) {
+	public Menu addItem( String path, String title ) {
 		return menu.addItem( path, title );
 	}
 
-	public Menu addMenuItem( Menu item ) {
+	public Menu addItem( Menu item ) {
 		return menu.addItem( item );
 	}
 }

@@ -13,7 +13,7 @@ public class CustomDebugController
 {
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addMenuItem( "/custom", "Custom debug page" );
+		event.addItem( "/custom", "Custom debug page" );
 	}
 
 	@RequestMapping("/custom")

@@ -9,13 +9,12 @@ import com.foreach.across.modules.web.table.Table;
 import net.engio.mbassy.listener.Handler;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@AcrossEventHandler
 @DebugWebController
 public class PropertiesController
 {
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addMenuItem( "/properties/environment", "System environment variables" );
+		event.addItem( "/properties/environment", "System environment variables" );
 	}
 
 	@RequestMapping("/properties/environment")

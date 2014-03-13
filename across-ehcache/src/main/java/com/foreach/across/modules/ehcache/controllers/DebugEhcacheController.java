@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
 import java.util.LinkedList;
 
-@AcrossEventHandler
 @DebugWebController
 @AcrossDepends(required = "DebugWebModule")
 public class DebugEhcacheController
@@ -34,7 +33,7 @@ public class DebugEhcacheController
 
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addMenuItem( "/ehcache", "Cache overview" );
+		event.addItem( "/ehcache", "Cache overview" );
 	}
 
 	@ModelAttribute
