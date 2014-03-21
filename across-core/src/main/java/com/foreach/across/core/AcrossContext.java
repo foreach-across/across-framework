@@ -12,6 +12,7 @@ import com.foreach.across.core.events.AcrossEventPublisher;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.PropertyResourceConfigurer;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -195,8 +196,13 @@ public class AcrossContext extends AcrossApplicationContextHolder
 			Collections.reverse( reverseList );
 
 			for ( AcrossModule module : reverseList ) {
-				AcrossContextUtils.getApplicationContext( module ).stop();
-				module.shutdown();
+				AbstractApplicationContext applicationContext = AcrossContextUtils.getApplicationContext( module );
+
+				if ( applicationContext != null ) {
+					applicationContext.stop();
+					module.shutdown();
+				}
+
 			}
 
 			isBootstrapped = false;

@@ -1,6 +1,7 @@
 package com.foreach.across.modules.web.menu;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
 
 import java.util.*;
 
@@ -16,17 +17,19 @@ import java.util.*;
  * <p/>
  * <strong>Note that sorting needs to be done explicitly, see {@link #sort()} method.</strong>
  */
-public class Menu
+public class Menu implements Ordered
 {
 	public static final int ROOT_LEVEL = 0;
 
-	public static final Comparator<Menu> SORT_BY_TITLE = new Comparator<Menu>()
+	public static final Comparator<Menu> SORT_BY_ORDER_AND_TITLE = new OrderComparatorWrapper( new Comparator<Menu>()
 	{
 		public int compare( Menu o1, Menu o2 ) {
 			String mine = StringUtils.defaultString( o1.getTitle() );
 			return mine.compareTo( StringUtils.defaultString( o2.getTitle() ) );
 		}
-	};
+	} );
+
+	private int order = Ordered.LOWEST_PRECEDENCE - 1000;
 
 	private boolean ordered = false;
 	private boolean selected = false;
@@ -211,6 +214,23 @@ public class Menu
 	}
 
 	/**
+	 * @return The explicit order assigned to the menu item.
+	 */
+	public int getOrder() {
+		return order;
+	}
+
+	/**
+	 * Assign an explicit order to the menu item.  Depending on the comparator this property will be used.
+	 * By default the menu is sorted first on order value and second on name.
+	 *
+	 * @param order Explicit order to assign.
+	 */
+	public void setOrder( int order ) {
+		this.order = order;
+	}
+
+	/**
 	 * Set the selected status of the menu item (and its parents).  Selecting a child will automatically
 	 * select its parents.  Deselecting it will not deselect its parents, but deselecting a parent will
 	 * deselect the children.
@@ -392,7 +412,7 @@ public class Menu
 			}
 
 			if ( comparatorToUse == null ) {
-				comparatorToUse = SORT_BY_TITLE;
+				comparatorToUse = SORT_BY_ORDER_AND_TITLE;
 				inheritable = false;
 			}
 

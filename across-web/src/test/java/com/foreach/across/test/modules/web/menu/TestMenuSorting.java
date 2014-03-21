@@ -2,6 +2,7 @@ package com.foreach.across.test.modules.web.menu;
 
 import com.foreach.across.modules.web.menu.Menu;
 import org.junit.Test;
+import org.springframework.core.Ordered;
 
 import java.util.Comparator;
 import java.util.List;
@@ -55,6 +56,34 @@ public class TestMenuSorting
 		assertMenu( menu.getItems().get( 1 ), "111", "222", "333" );
 		assertTrue( menu.getItems().get( 2 ).hasItems() );
 		assertMenu( menu.getItems().get( 2 ), "111", "222", "333" );
+	}
+
+	@Test
+	public void multiLevelSortingWithOrderValues() {
+		Menu menu = new Menu( "any" );
+
+		Menu subMenu = new Menu( "/aaa", "ccc" );
+		subMenu.addItem( "111", "333" ).setOrder( Ordered.HIGHEST_PRECEDENCE );
+		subMenu.addItem( "222", "222" );
+		subMenu.addItem( "333", "111" ).setOrder( Ordered.LOWEST_PRECEDENCE );
+		menu.addItem( subMenu );
+
+		menu.addItem( "/bbb", "aaa" );
+
+		Menu otherSubMenu = new Menu( "/ccc", "bbb" );
+		otherSubMenu.addItem( "111", "111" );
+		otherSubMenu.addItem( "222", "333" );
+		otherSubMenu.addItem( "333", "222" ).setOrder( 1 );
+		menu.addItem( otherSubMenu );
+
+		menu.sort();
+
+		assertMenu( menu, "aaa", "bbb", "ccc" );
+		assertFalse( menu.getItems().get( 0 ).hasItems() );
+		assertTrue( menu.getItems().get( 1 ).hasItems() );
+		assertMenu( menu.getItems().get( 1 ), "222", "111", "333" );
+		assertTrue( menu.getItems().get( 2 ).hasItems() );
+		assertMenu( menu.getItems().get( 2 ), "333", "222", "111" );
 	}
 
 	@Test
@@ -129,7 +158,7 @@ public class TestMenuSorting
 		menu.setComparator( REVERSE_SORT, true );
 
 		Menu subMenu = new Menu( "/aaa", "ccc" );
-		subMenu.setComparator( Menu.SORT_BY_TITLE, false );
+		subMenu.setComparator( Menu.SORT_BY_ORDER_AND_TITLE, false );
 		subMenu.addItem( "111", "333" );
 		subMenu.addItem( "222", "222" );
 		menu.addItem( subMenu );
@@ -156,7 +185,7 @@ public class TestMenuSorting
 		menu.setComparator( REVERSE_SORT, true );
 
 		Menu subMenu = new Menu( "/aaa", "ccc" );
-		subMenu.setComparator( Menu.SORT_BY_TITLE, true );
+		subMenu.setComparator( Menu.SORT_BY_ORDER_AND_TITLE, true );
 		subMenu.addItem( "111", "333" );
 		subMenu.addItem( "222", "222" );
 		menu.addItem( subMenu );
@@ -183,7 +212,7 @@ public class TestMenuSorting
 		menu.setComparator( REVERSE_SORT, true );
 
 		Menu subMenu = new Menu( "/aaa", "ccc" );
-		subMenu.setComparator( Menu.SORT_BY_TITLE, true );
+		subMenu.setComparator( Menu.SORT_BY_ORDER_AND_TITLE, true );
 		subMenu.setOrdered( true );
 		subMenu.addItem( "111", "333" );
 		subMenu.addItem( "222", "222" );

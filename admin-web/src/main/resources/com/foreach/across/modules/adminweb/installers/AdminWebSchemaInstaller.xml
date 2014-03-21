@@ -5,8 +5,10 @@
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-	<property name="long.type" value="NUMBER(19,0)" />
+	<property name="long.type" value="bigint" />
 	<property name="varchar.suffix" value="" />
+
+	<property name="long.type" value="NUMBER(19,0)" dbms="oracle" />
 	<property name="varchar.suffix" value=" char" dbms="oracle" />
 
 	<changeSet id="201403011519" author="arne">
