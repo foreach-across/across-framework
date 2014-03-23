@@ -1,6 +1,8 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
+import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.test.modules.TestContextEventListener;
 import com.foreach.across.test.modules.TestEvent;
 import com.foreach.across.test.modules.module1.ConstructedBeanModule1;
@@ -176,18 +178,22 @@ public class TestAcrossContextBoot
 	@Configuration
 	public static class Config
 	{
-		@Bean
-		public TestContextEventListener testListener() {
-			return new TestContextEventListener();
+		@Configuration
+		public static class CustomPropertyConfig
+		{
+			@Bean
+			public static PropertySourcesPlaceholderConfigurer properties() {
+				PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+				configurer.setLocation(
+						new ClassPathResource( "com/foreach/across/test/TestAcrossContextBoot.properties" ) );
+
+				return configurer;
+			}
 		}
 
 		@Bean
-		public PropertySourcesPlaceholderConfigurer properties() {
-			PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-			configurer.setLocation(
-					new ClassPathResource( "com/foreach/across/test/TestAcrossContextBoot.properties" ) );
-
-			return configurer;
+		public TestContextEventListener testListener() {
+			return new TestContextEventListener();
 		}
 
 		@Bean
@@ -210,7 +216,8 @@ public class TestAcrossContextBoot
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
 			context.setAllowInstallers( true );
-			context.addPropertySources( properties() );
+			context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( CustomPropertyConfig.class ),
+			                                         ConfigurerScope.CONTEXT_AND_MODULES );
 
 			context.addModule( testModule1() );
 			context.addModule( testModule2() );

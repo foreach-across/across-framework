@@ -1,5 +1,6 @@
-package com.foreach.across.core;
+package com.foreach.across.core.config;
 
+import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.AcrossCoreSchemaInstaller;
 import com.foreach.across.core.installers.AcrossInstallerRepository;
 import org.springframework.beans.factory.annotation.Autowired;

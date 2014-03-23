@@ -6,13 +6,14 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.bootstrap.BootstrapAcrossModuleOrder;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
-import com.foreach.across.core.context.configurer.PostProcessorConfigurer;
+import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.config.PropertyResourceConfigurer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -36,7 +37,7 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	private String[] skipInstallerGroups = new String[0];
 
 	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
-			new HashMap<ApplicationContextConfigurer, ConfigurerScope>();
+			new LinkedHashMap<ApplicationContextConfigurer, ConfigurerScope>();
 
 	private LinkedList<AcrossModule> modules = new LinkedList<AcrossModule>();
 
@@ -145,7 +146,7 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	}
 
 	/**
-	 * <p>Add an ApplicationContextConfigurer to the AcrossContext.  Depending on the boolean the configurer
+	 * <p>Add an ApplicationContextConfigurer to the AcrossContext.  Depending on the scope the configurer
 	 * will be applied to the root ApplicationContext only or to every ApplicationContext of every module registered.</p>
 	 * <p>The latter is required for configurers providing BeanFactoryPostProcessor beans like property sources.</p>
 	 *
@@ -158,13 +159,27 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	}
 
 	/**
-	 * Shortcut to add one more PropertyResourceConfigurer post processors to all modules.
+	 * Add PropertySources to the context.
 	 *
-	 * @param propertySources One or more PropertyResourceConfigurer instances.
+	 * @param propertySources A PropertySources instance.
 	 */
-	public void addPropertySources( PropertyResourceConfigurer... propertySources ) {
-		addApplicationContextConfigurer( new PostProcessorConfigurer( propertySources ),
-		                                 ConfigurerScope.CONTEXT_AND_MODULES );
+	@Override
+	public void addPropertySources( PropertySources propertySources ) {
+		// Only added to the context as they are merged in the environment of the module anyway
+		addApplicationContextConfigurer( new PropertySourcesConfigurer( propertySources ),
+		                                 ConfigurerScope.CONTEXT_ONLY );
+	}
+
+	/**
+	 * Shortcut to add PropertySources to the context.
+	 *
+	 * @param propertySources One or more PropertySource instances.
+	 */
+	@Override
+	public void addPropertySources( PropertySource<?>... propertySources ) {
+		// Only added to the context as they are merged in the environment of the module anyway
+		addApplicationContextConfigurer( new PropertySourcesConfigurer( propertySources ),
+		                                 ConfigurerScope.CONTEXT_ONLY );
 	}
 
 	/**

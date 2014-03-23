@@ -12,6 +12,8 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 
 import java.util.Collection;
 
@@ -34,7 +36,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 			applicationContext.setParent( parentApplicationContext );
 
 			if ( parentApplicationContext.getEnvironment() instanceof ConfigurableEnvironment ) {
-				applicationContext.setEnvironment(
+				applicationContext.getEnvironment().merge(
 						(ConfigurableEnvironment) parentApplicationContext.getEnvironment() );
 			}
 		}
@@ -55,7 +57,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	                                                            AcrossApplicationContext parentContext ) {
 		AcrossSpringApplicationContext child = new AcrossSpringApplicationContext();
 		child.setParent( parentContext.getApplicationContext() );
-		child.setEnvironment( parentContext.getApplicationContext().getEnvironment() );
+		child.getEnvironment().merge( parentContext.getApplicationContext().getEnvironment() );
 
 		return child;
 	}
@@ -88,9 +90,20 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 		loadApplicationContext( child, moduleBootstrapConfig.getApplicationContextConfigurers() );
 	}
 
-	private void loadApplicationContext( AcrossConfigurableApplicationContext context,
-	                                     Collection<ApplicationContextConfigurer> configurers ) {
+	protected void loadApplicationContext( AcrossConfigurableApplicationContext context,
+	                                       Collection<ApplicationContextConfigurer> configurers ) {
+		ConfigurableEnvironment environment = context.getEnvironment();
+
 		for ( ApplicationContextConfigurer configurer : configurers ) {
+			PropertySources propertySources = configurer.propertySources();
+
+			if ( propertySources != null ) {
+				for ( PropertySource<?> propertySource : propertySources ) {
+					// Lower configurers means precedence in property sources
+					environment.getPropertySources().addFirst( propertySource );
+				}
+			}
+
 			ProvidedBeansMap providedBeans = configurer.providedBeans();
 
 			if ( providedBeans != null ) {

@@ -1,15 +1,16 @@
 package com.foreach.across.core.context;
 
-import com.foreach.across.core.AcrossConfig;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossInstallerConfig;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
+import com.foreach.across.core.config.AcrossConfig;
+import com.foreach.across.core.config.AcrossInstallerConfig;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
+import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
@@ -226,6 +228,14 @@ public final class AcrossContextUtils
 			}
 		}
 
+		// If properties are set on the context, add them last
+		Properties contextProperties = context.getProperties();
+
+		if ( !contextProperties.isEmpty() ) {
+			configurers.add( new PropertySourcesConfigurer(
+					new PropertiesPropertySource( AcrossContext.BEAN, contextProperties ) ) );
+		}
+
 		return configurers;
 	}
 
@@ -240,12 +250,23 @@ public final class AcrossContextUtils
 	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context,
 	                                                                              AcrossModule module ) {
 		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
-		configurers.addAll( module.getApplicationContextConfigurers() );
 
+		// First add configurers defined on the context
 		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context.getApplicationContextConfigurers().entrySet() ) {
 			if ( configurerEntry.getValue() != ConfigurerScope.CONTEXT_ONLY ) {
 				configurers.add( configurerEntry.getKey() );
 			}
+		}
+
+		// Add module defined configurers
+		configurers.addAll( module.getApplicationContextConfigurers() );
+
+		// Finally add properties set on the module
+		Properties moduleProperties = module.getProperties();
+
+		if ( !moduleProperties.isEmpty() ) {
+			configurers.add( new PropertySourcesConfigurer(
+					new PropertiesPropertySource( module.getName(), moduleProperties ) ) );
 		}
 
 		return configurers;

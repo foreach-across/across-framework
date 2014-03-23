@@ -3,6 +3,7 @@ package com.foreach.across.core.context.configurer;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.core.env.PropertySources;
 
 import java.util.Arrays;
 
@@ -52,6 +53,15 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 		return new BeanFactoryPostProcessor[0];
 	}
 
+	/**
+	 * Returns a PropertySources instance with configured property sources to make available.
+	 *
+	 * @return PropertySources instance or null.
+	 */
+	public PropertySources propertySources() {
+		return null;
+	}
+
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {
@@ -75,6 +85,9 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 		if ( !ObjectUtils.equals( providedBeans(), that.providedBeans() ) ) {
 			return false;
 		}
+		if ( !ObjectUtils.equals( propertySources(), that.propertySources() ) ) {
+			return false;
+		}
 
 		return true;
 	}
@@ -85,11 +98,13 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 		String[] componentScanPackages = componentScanPackages();
 		Class<?>[] annotatedClasses = annotatedClasses();
 		BeanFactoryPostProcessor[] postProcessors = postProcessors();
+		PropertySources propertySources = propertySources();
 
 		int result = annotatedClasses != null ? Arrays.hashCode( annotatedClasses ) : 0;
 		result = 31 * result + ( componentScanPackages != null ? Arrays.hashCode( componentScanPackages ) : 0 );
 		result = 31 * result + ( postProcessors != null ? Arrays.hashCode( postProcessors ) : 0 );
 		result = 31 * result + ( providedBeans != null ? providedBeans.hashCode() : 0 );
+		result = 31 * result + ( propertySources != null ? propertySources.hashCode() : 0 );
 		return result;
 	}
 }

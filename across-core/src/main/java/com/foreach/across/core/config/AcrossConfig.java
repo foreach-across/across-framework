@@ -1,4 +1,4 @@
-package com.foreach.across.core;
+package com.foreach.across.core.config;
 
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.MBassadorEventPublisher;

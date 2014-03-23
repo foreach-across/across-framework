@@ -5,10 +5,13 @@ import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
+import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.transformers.BeanDefinitionTransformer;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
@@ -115,8 +118,32 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 		return applicationContextConfigurers;
 	}
 
+	/**
+	 * <p>Add an ApplicationContextConfigurer to be loaded when the module bootstraps.</p>
+	 *
+	 * @param configurer Configurer instance.
+	 */
 	public void addApplicationContextConfigurer( ApplicationContextConfigurer configurer ) {
 		applicationContextConfigurers.add( configurer );
+	}
+
+	/**
+	 * Add PropertySources to the context.
+	 *
+	 * @param propertySources A PropertySources instance.
+	 */
+	@Override
+	public void addPropertySources( PropertySources propertySources ) {
+		addApplicationContextConfigurer( new PropertySourcesConfigurer( propertySources ) );
+	}
+
+	/**
+	 * Shortcut to add PropertySources to the context.
+	 *
+	 * @param propertySources One or more PropertySource instances.
+	 */
+	public void addPropertySources( PropertySource<?>... propertySources ) {
+		addApplicationContextConfigurer( new PropertySourcesConfigurer( propertySources ) );
 	}
 
 	/**

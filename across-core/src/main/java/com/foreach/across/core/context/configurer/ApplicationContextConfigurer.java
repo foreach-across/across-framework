@@ -2,6 +2,7 @@ package com.foreach.across.core.context.configurer;
 
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.core.env.PropertySources;
 
 public interface ApplicationContextConfigurer
 {
@@ -36,4 +37,11 @@ public interface ApplicationContextConfigurer
 	 * @return Array of post processor instances.
 	 */
 	BeanFactoryPostProcessor[] postProcessors();
+
+	/**
+	 * Returns a PropertySources instance with configured property sources to make available.
+	 *
+	 * @return PropertySources instance or null.
+	 */
+	PropertySources propertySources();
 }

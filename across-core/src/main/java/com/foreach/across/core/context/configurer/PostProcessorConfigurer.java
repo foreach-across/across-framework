@@ -4,6 +4,9 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 
 /**
  * Simple implementation for adding BeanFactoryPostProcessors to an ApplicationContext.
+ * Note that post processor instances passed this way will be attached to the application context
+ * and bean factory that created them, and not the one of the AcrossContext or AcrossModule that
+ * is being bootstrapped.
  */
 public class PostProcessorConfigurer extends ApplicationContextConfigurerAdapter
 {
