@@ -69,7 +69,8 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 * @param context Contains the root Spring ApplicationContext.
 	 */
 	public void loadApplicationContext( AcrossContext across, AcrossApplicationContext context ) {
-		AcrossSpringApplicationContext root = (AcrossSpringApplicationContext) context.getApplicationContext();
+		AcrossConfigurableApplicationContext root =
+				(AcrossConfigurableApplicationContext) context.getApplicationContext();
 		Collection<ApplicationContextConfigurer> configurers = AcrossContextUtils.getConfigurersToApply( across );
 
 		loadApplicationContext( root, configurers );
@@ -85,7 +86,8 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	public void loadApplicationContext( AcrossContext across,
 	                                    ModuleBootstrapConfig moduleBootstrapConfig,
 	                                    AcrossApplicationContext context ) {
-		AcrossSpringApplicationContext child = (AcrossSpringApplicationContext) context.getApplicationContext();
+		AcrossConfigurableApplicationContext child =
+				(AcrossConfigurableApplicationContext) context.getApplicationContext();
 
 		loadApplicationContext( child, moduleBootstrapConfig.getApplicationContextConfigurers() );
 	}
