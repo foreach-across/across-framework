@@ -10,7 +10,8 @@ import java.lang.annotation.Target;
 
 /**
  * <p>Conditional annotation that can be put on a module, @Configuration class, @Bean method or any component.
- * The actual behaviour depends on the owning element.</p>
+ * The actual behaviour depends on the owning element.  Using this conditional it is possible to define
+ * Across module requirements or to deactivate a module if a SpEL evaluates to false.</p>
  * <p>When putting @AcrossDepends on an AcrossModule instance:
  * <ul>
  * <li>the dependencies specified will determine the bootstrap order of the module (after its dependencies)</li>
@@ -48,4 +49,12 @@ public @interface AcrossDepends
 	 * Set of module identifiers that are optional.
 	 */
 	String[] optional() default { };
+
+	/**
+	 * An optional SpEL expression to evaluate. Expression should return {@code true} if the
+	 * condition passes or {@code false} if it fails.
+	 *
+	 * <strong>Note:</strong> Only usable on beans & configurations, not on AcrossModule classes.
+	 */
+	String expression() default "";
 }

@@ -20,7 +20,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.expression.StandardBeanExpressionResolver;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.util.*;
 

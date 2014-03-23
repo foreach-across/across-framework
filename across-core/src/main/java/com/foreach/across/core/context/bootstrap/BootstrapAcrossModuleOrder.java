@@ -121,7 +121,7 @@ public class BootstrapAcrossModuleOrder
 			for ( AcrossModule dependency : requiredDependencies.get( module ) ) {
 				if ( !handled.contains( dependency ) ) {
 					throw new RuntimeException(
-							"Unable to determine legal module boostrap order, possible cyclic dependency on module " + dependency.getName() );
+							"Unable to determine legal module bootstrap order, possible cyclic dependency on module " + dependency.getName() );
 				}
 			}
 

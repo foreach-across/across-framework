@@ -18,8 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Test property setting and spring expression language conditionals.
@@ -37,6 +36,9 @@ public class TestPropertiesAndElConditional
 
 	@Autowired
 	private PropertiesModule directOnModule;
+
+	@Autowired
+	private PropertiesModule moduleFour;
 
 	@Test
 	public void checkPropertiesSet() {
@@ -81,6 +83,12 @@ public class TestPropertiesAndElConditional
 		assertEquals( new Integer( 777 ), config.getProperty( "contextDirectValue", Integer.class ) );
 	}
 
+	@Test
+	public void configIsNotCreatedIfExpressionFailed() {
+		assertTrue(
+				AcrossContextUtils.getBeanFactory( moduleFour ).getBeansOfType( SetPropertyConfig.class ).isEmpty() );
+	}
+
 	@Configuration
 	public static class Config
 	{
@@ -92,6 +100,7 @@ public class TestPropertiesAndElConditional
 			acrossContext.addModule( directOnModule() );
 			acrossContext.addModule( sourceOnModule() );
 			acrossContext.addModule( onlyFromContext() );
+			acrossContext.addModule( moduleFour() );
 
 			acrossContext.addApplicationContextConfigurer(
 					new AnnotatedClassConfigurer( PropertyPlaceholderSupportConfiguration.class ),
@@ -111,7 +120,7 @@ public class TestPropertiesAndElConditional
 		}
 
 		@Bean
-		public PropertiesModule sourceOnModule() throws Exception {
+		public PropertiesModule sourceOnModule() {
 			PropertiesModule module = new PropertiesModule( "moduleTwo" );
 			module.addPropertySources(
 					new ClassPathResource( "com/foreach/across/test/TestPropertiesModule.properties" ) );
@@ -119,7 +128,7 @@ public class TestPropertiesAndElConditional
 		}
 
 		@Bean
-		public PropertiesModule directOnModule() throws Exception {
+		public PropertiesModule directOnModule() {
 			PropertiesModule module = new PropertiesModule( "moduleThree" );
 			module.addPropertySources(
 					new ClassPathResource( "com/foreach/across/test/TestPropertiesModule.properties" ),
@@ -127,6 +136,11 @@ public class TestPropertiesAndElConditional
 			module.setProperty( "moduleDirectValue", "directValue" );
 			module.setProperty( "unresolvable", 100 );
 			return module;
+		}
+
+		@Bean
+		public PropertiesModule moduleFour() {
+			return new PropertiesModule( "moduleFour" );
 		}
 	}
 }
