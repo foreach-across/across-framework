@@ -1,7 +1,8 @@
-package com.foreach.across.modules.hibernate;
+package com.foreach.across.modules.hibernate.config;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.HibernatePackage;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableTransactionManagement
 public class HibernateConfiguration
 {
 	@Autowired
@@ -34,12 +34,6 @@ public class HibernateConfiguration
 		sessionFactory.setHibernateProperties( module.getHibernateProperties() );
 
 		return sessionFactory;
-	}
-
-	@Bean
-	@Exposed
-	public HibernateTransactionManager transactionManager( SessionFactory sessionFactory ) {
-		return new HibernateTransactionManager( sessionFactory );
 	}
 
 	@Bean

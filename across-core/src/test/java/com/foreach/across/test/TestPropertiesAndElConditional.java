@@ -1,10 +1,9 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.config.PropertyPlaceholderSupportConfiguration;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
+import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
 import com.foreach.across.test.modules.properties.PropertiesModule;
 import com.foreach.across.test.modules.properties.SetPropertyConfig;
 import org.junit.Test;
@@ -102,9 +101,8 @@ public class TestPropertiesAndElConditional
 			acrossContext.addModule( onlyFromContext() );
 			acrossContext.addModule( moduleFour() );
 
-			acrossContext.addApplicationContextConfigurer(
-					new AnnotatedClassConfigurer( PropertyPlaceholderSupportConfiguration.class ),
-					ConfigurerScope.CONTEXT_AND_MODULES );
+			acrossContext.addApplicationContextConfigurer( new PropertyPlaceholderSupportConfigurer(),
+			                                               ConfigurerScope.CONTEXT_AND_MODULES );
 
 			acrossContext.addPropertySources(
 					new ClassPathResource( "com/foreach/across/test/TestPropertiesContext.properties" ) );

@@ -1,4 +1,4 @@
-package com.foreach.across.core.config;
+package com.foreach.across.core.context.configurer;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,11 +10,18 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  *
  * @see org.springframework.context.support.PropertySourcesPlaceholderConfigurer
  */
-@Configuration
-public class PropertyPlaceholderSupportConfiguration
+public class PropertyPlaceholderSupportConfigurer extends AnnotatedClassConfigurer
 {
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
+	public PropertyPlaceholderSupportConfigurer() {
+		super( Config.class );
+	}
+
+	@Configuration
+	public static class Config
+	{
+		@Bean
+		public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+			return new PropertySourcesPlaceholderConfigurer();
+		}
 	}
 }

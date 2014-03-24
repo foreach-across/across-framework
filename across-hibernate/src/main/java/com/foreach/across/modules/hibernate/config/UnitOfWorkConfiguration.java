@@ -1,4 +1,4 @@
-package com.foreach.across.modules.hibernate;
+package com.foreach.across.modules.hibernate.config;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.unitofwork.UnitOfWorkFactory;

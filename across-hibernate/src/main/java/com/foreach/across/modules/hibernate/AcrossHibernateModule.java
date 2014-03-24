@@ -6,6 +6,9 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
 import com.foreach.across.core.context.configurer.TransactionManagementConfigurer;
+import com.foreach.across.modules.hibernate.config.HibernateConfiguration;
+import com.foreach.across.modules.hibernate.config.TransactionManagerConfiguration;
+import com.foreach.across.modules.hibernate.config.UnitOfWorkConfiguration;
 import com.foreach.across.modules.hibernate.provider.HasHibernatePackageProvider;
 import com.foreach.across.modules.hibernate.provider.HibernatePackage;
 import com.foreach.across.modules.hibernate.provider.HibernatePackageProvider;
@@ -22,6 +25,7 @@ public class AcrossHibernateModule extends AcrossModule
 	private Properties hibernateProperties = new Properties();
 
 	private boolean autoEnableModules = true;
+	private boolean configureTransactionManagement = true;
 	private boolean configureUnitOfWorkFactory = false;
 	private Set<HibernatePackageProvider> hibernatePackageProviders = new HashSet<HibernatePackageProvider>();
 	private DataSource dataSource;
@@ -75,6 +79,23 @@ public class AcrossHibernateModule extends AcrossModule
 
 	public void setConfigureUnitOfWorkFactory( boolean configureUnitOfWorkFactory ) {
 		this.configureUnitOfWorkFactory = configureUnitOfWorkFactory;
+	}
+
+	/**
+	 * If true a TransactionManager will be created for the sessionFactory defined in this module.
+	 * Additionally transaction management will be enabled in all other modules if autoEnableModules is true.
+	 *
+	 * If transaction management is disabled, the user will have to take care of managing the sessions outside the module.
+	 *
+	 * @return True if a TransactionManager will be created and transaction management will be enabled in all other modules.
+	 * @see #isAutoEnableModules()
+	 */
+	public boolean isConfigureTransactionManagement() {
+		return configureTransactionManagement;
+	}
+
+	public void setConfigureTransactionManagement( boolean configureTransactionManagement ) {
+		this.configureTransactionManagement = configureTransactionManagement;
 	}
 
 	/**
@@ -155,6 +176,11 @@ public class AcrossHibernateModule extends AcrossModule
 			hibernatePackage.add( provider );
 		}
 
+		if ( isConfigureTransactionManagement() ) {
+			currentModule.addApplicationContextConfigurer(
+					new AnnotatedClassConfigurer( TransactionManagerConfiguration.class ) );
+		}
+
 		if ( autoEnableModules ) {
 			for ( ModuleBootstrapConfig config : modulesInOrder.values() ) {
 				AcrossModule module = config.getModule();
@@ -169,7 +195,9 @@ public class AcrossHibernateModule extends AcrossModule
 				}
 
 				// Activate transaction management
-				config.addApplicationContextConfigurer( new TransactionManagementConfigurer() );
+				if ( isConfigureTransactionManagement() ) {
+					config.addApplicationContextConfigurer( new TransactionManagementConfigurer() );
+				}
 			}
 		}
 
