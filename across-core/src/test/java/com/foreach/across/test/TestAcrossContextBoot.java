@@ -5,10 +5,7 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.test.modules.TestContextEventListener;
 import com.foreach.across.test.modules.TestEvent;
-import com.foreach.across.test.modules.module1.ConstructedBeanModule1;
-import com.foreach.across.test.modules.module1.ScannedBeanModule1;
-import com.foreach.across.test.modules.module1.ScannedPrototypeBeanModule1;
-import com.foreach.across.test.modules.module1.TestModule1;
+import com.foreach.across.test.modules.module1.*;
 import com.foreach.across.test.modules.module2.ConstructedBeanModule2;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;
@@ -68,6 +65,9 @@ public class TestAcrossContextBoot
 	private ScannedPrototypeBeanModule1 prototype2;
 
 	@Autowired
+	private BeanWithOnlyPostRefresh beanWithOnlyPostRefresh;
+
+	@Autowired
 	@Qualifier("testListener")
 	private TestContextEventListener testListener;
 
@@ -104,7 +104,8 @@ public class TestAcrossContextBoot
 		assertNull( scannedBeanModule1.getReferenceToBeanFromModule2() );
 
 		assertNotNull( constructedBeanModule1 );
-		assertEquals( "helloFromModule1", constructedBeanModule1.getText() );
+		// Only post refresh has been called on the non-refreshable bean
+		assertEquals( "i have been refreshed", constructedBeanModule1.getText() );
 		assertSame( scannedBeanModule1, constructedBeanModule1.getScannedBeanModule1() );
 		assertEquals( 1, constructedBeanModule1.getSomeInterfaces().size() );
 		assertNull( constructedBeanModule1.getScannedBeanModule2() );
@@ -173,6 +174,11 @@ public class TestAcrossContextBoot
 	public void currentModuleCantBeUsedDirectlyInExposedScopedBeans() {
 		assertNull( prototype1.getCurrentModule() );
 		assertNull( prototype2.getCurrentModule() );
+	}
+
+	@Test
+	public void postRefreshShouldBeCalledOnBeansWithoutRefreshable() {
+		assertTrue( beanWithOnlyPostRefresh.isRefreshed() );
 	}
 
 	@Configuration

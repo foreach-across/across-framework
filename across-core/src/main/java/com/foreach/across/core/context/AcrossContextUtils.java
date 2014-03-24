@@ -12,6 +12,7 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.core.filters.AnnotatedMethodFilter;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
@@ -63,8 +64,8 @@ public final class AcrossContextUtils
 	}
 
 	/**
-	 * Will refresh all @Refreshable annotated components in the AcrossContext.
-	 * This performes the annotated autowiring again and calls the optional @PostRefresh method.
+	 * Will refresh all @Refreshable annotated components in the AcrossContext and perform annotated
+	 * autowiring again.  Additionally will scan for all @PostRefresh methods and execute those.
 	 */
 	public static void refreshBeans( AcrossContext context ) {
 		for ( AcrossModule module : context.getModules() ) {
@@ -80,12 +81,19 @@ public final class AcrossContextUtils
 				for ( Object singleton : refreshableBeans ) {
 					Object bean = AcrossContextUtils.getProxyTarget( singleton );
 					beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+				}
+
+				Map<String, Object> postRefreshBeans = ApplicationContextScanner.findSingletonsMatching( moduleContext,
+				                                                                                         new AnnotatedMethodFilter(
+						                                                                                         PostRefresh.class ) );
+
+				for ( Object singleton : postRefreshBeans.values() ) {
+					Object bean = AcrossContextUtils.getProxyTarget( singleton );
 
 					Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
 
 					for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
 						if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
-
 							if ( method.getParameterTypes().length != 0 ) {
 								LOG.error( "@PostRefresh method {} should be parameter-less", method );
 							}
