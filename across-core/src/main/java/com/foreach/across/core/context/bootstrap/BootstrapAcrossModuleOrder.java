@@ -4,6 +4,9 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
@@ -16,6 +19,8 @@ import java.util.*;
  */
 public class BootstrapAcrossModuleOrder
 {
+	private static final Logger LOG = LoggerFactory.getLogger( BootstrapAcrossModuleOrder.class );
+
 	private final boolean removeDisabledModules;
 	private final Collection<AcrossModule> source;
 
@@ -146,28 +151,43 @@ public class BootstrapAcrossModuleOrder
 		Set<AcrossModule> requiredByModule = new LinkedHashSet<AcrossModule>();
 		Set<AcrossModule> optionalForModule = new LinkedHashSet<AcrossModule>();
 
+		Set<String> definedRequired = new LinkedHashSet<String>();
+		Set<String> definedOptional = new LinkedHashSet<String>();
+
 		if ( depends != null ) {
 			Map<String, Object> attributes = AnnotationUtils.getAnnotationAttributes( depends );
 			String[] required = (String[]) attributes.get( "required" );
 			String[] optional = (String[]) attributes.get( "optional" );
 
-			for ( String requiredModule : required ) {
-				if ( !modulesById.containsKey( requiredModule ) ) {
-					throw new RuntimeException(
-							"Unable to bootstrap AcrossContext as module " + module.getName() + " requires module " + requiredModule + ".  Module " + requiredModule + " is not present in the context." );
-				}
-				else if ( !modulesById.get( requiredModule ).isEnabled() ) {
-					throw new RuntimeException(
-							"Unable to bootstrap AcrossContext as module " + module.getName() + " requires module " + requiredModule + ".  Module " + requiredModule + " is present but is not enabled." );
-				}
+			String expression = (String) attributes.get( "expression" );
 
-				requiredByModule.add( modulesById.get( requiredModule ) );
+			if ( !StringUtils.isBlank( expression ) ) {
+				LOG.warn(
+						"@AcrossDepends expression attribute configured on AcrossModule, but will be ignored as this is not supported." );
 			}
 
-			for ( String optionalModule : optional ) {
-				if ( modulesById.containsKey( optionalModule ) ) {
-					optionalForModule.add( modulesById.get( optionalModule ) );
-				}
+			definedRequired.addAll( Arrays.asList( required ) );
+			definedOptional.addAll( Arrays.asList( optional ) );
+		}
+
+		definedRequired.addAll( module.getRuntimeDependencies() );
+
+		for ( String requiredModule : definedRequired ) {
+			if ( !modulesById.containsKey( requiredModule ) ) {
+				throw new RuntimeException(
+						"Unable to bootstrap AcrossContext as module " + module.getName() + " requires module " + requiredModule + ".  Module " + requiredModule + " is not present in the context." );
+			}
+			else if ( !modulesById.get( requiredModule ).isEnabled() ) {
+				throw new RuntimeException(
+						"Unable to bootstrap AcrossContext as module " + module.getName() + " requires module " + requiredModule + ".  Module " + requiredModule + " is present but is not enabled." );
+			}
+
+			requiredByModule.add( modulesById.get( requiredModule ) );
+		}
+
+		for ( String optionalModule : definedOptional ) {
+			if ( modulesById.containsKey( optionalModule ) ) {
+				optionalForModule.add( modulesById.get( optionalModule ) );
 			}
 		}
 

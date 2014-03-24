@@ -15,9 +15,7 @@ import org.springframework.core.env.PropertySources;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AcrossModule extends AcrossApplicationContextHolder
 {
@@ -30,6 +28,8 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	private BeanDefinitionTransformer exposeTransformer = null;
 	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
 			new HashSet<ApplicationContextConfigurer>();
+
+	private final Set<String> runtimeDependencies = new HashSet<String>();
 
 	private boolean enabled = true;
 
@@ -103,6 +103,22 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	 */
 	public Object[] getInstallers() {
 		return new Object[0];
+	}
+
+	/**
+	 * @return Collection of dependencies added explicitly - outside of the module definition.
+	 */
+	public Collection<String> getRuntimeDependencies() {
+		return Collections.unmodifiableCollection( runtimeDependencies );
+	}
+
+	/**
+	 * Add an explicit required dependency for this module.
+	 *
+	 * @param moduleName Name of the other module this module should depend on.
+	 */
+	public void addRuntimeDependency( String moduleName ) {
+		runtimeDependencies.add( moduleName );
 	}
 
 	/**

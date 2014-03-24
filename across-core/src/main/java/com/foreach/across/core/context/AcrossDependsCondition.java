@@ -12,6 +12,7 @@ import org.springframework.beans.factory.config.*;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.expression.StandardBeanExpressionResolver;
+import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 import java.util.Map;
@@ -43,7 +44,8 @@ public class AcrossDependsCondition implements Condition
 
 		String expression = (String) attributes.get( "expression" );
 
-		if ( !StringUtils.isBlank( expression ) && !evaluate( expression, context ) ) {
+		if ( !StringUtils.isBlank( expression ) && !evaluate( expression, context.getBeanFactory(),
+		                                                      context.getEnvironment() ) ) {
 			return false;
 		}
 
@@ -92,15 +94,16 @@ public class AcrossDependsCondition implements Condition
 	 * Based on implementation of OnExpressionCondition in spring-boot package.
 	 * https://github.com/spring-projects/spring-boot/blob/master/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/condition/OnExpressionCondition.java
 	 */
-	private boolean evaluate( String expression, ConditionContext context ) {
+	public static boolean evaluate( String expression,
+	                                ConfigurableListableBeanFactory beanFactory,
+	                                Environment environment ) {
 		if ( !expression.startsWith( "#{" ) ) {
 			// For convenience allow user to provide bare expression with no #{} wrapper
 			expression = "#{" + expression + "}";
 		}
 
 		// Explicitly allow environment placeholders inside the expression
-		expression = context.getEnvironment().resolvePlaceholders( expression );
-		ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+		expression = environment.resolvePlaceholders( expression );
 		BeanExpressionResolver resolver = beanFactory.getBeanExpressionResolver();
 		BeanExpressionContext expressionContext =
 				( beanFactory != null ) ? new CurrentModuleBeanExpressionContext( beanFactory, null ) : null;

@@ -1,6 +1,7 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
@@ -35,6 +36,21 @@ public class TestAcrossModuleLoadingOrder
 		Collection<AcrossModule> ordered = BootstrapAcrossModuleOrder.create( added );
 
 		assertEquals( added, ordered );
+	}
+
+	@Test
+	public void runtimeDependencyInfluencesOrder() {
+		ModuleTwo runtime = new ModuleTwo();
+
+		Collection<AcrossModule> added = list( one, runtime, three );
+		Collection<AcrossModule> ordered = BootstrapAcrossModuleOrder.create( added );
+
+		assertEquals( added, ordered );
+
+		runtime.addRuntimeDependency( three.getName() );
+
+		ordered = BootstrapAcrossModuleOrder.create( added );
+		assertEquals( list( one, three, runtime ), ordered );
 	}
 
 	@Test
@@ -115,6 +131,25 @@ public class TestAcrossModuleLoadingOrder
 		Collection<AcrossModule> added =
 				list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three, cyclicOne, cyclicTwo );
 		BootstrapAcrossModuleOrder.create( added );
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void missingRuntimeDependencyWillBreak() {
+		ModuleTwo twoWithRuntimeDependency = new ModuleTwo();
+		twoWithRuntimeDependency.addRuntimeDependency( three.getName() );
+
+		Collection<AcrossModule> added = list( one, twoWithRuntimeDependency );
+		BootstrapAcrossModuleOrder.create( added );
+	}
+
+	@Test
+	public void emptyAcrossModuleForDependencySatisfying() {
+		EmptyAcrossModule fakeTwo = new EmptyAcrossModule( two.getName() );
+
+		Collection<AcrossModule> added = list( one, requiresTwo, fakeTwo );
+		Collection<AcrossModule> ordered = BootstrapAcrossModuleOrder.create( added );
+
+		assertEquals( list( one, fakeTwo, requiresTwo ), ordered );
 	}
 
 	private Collection<AcrossModule> list( AcrossModule... modules ) {
