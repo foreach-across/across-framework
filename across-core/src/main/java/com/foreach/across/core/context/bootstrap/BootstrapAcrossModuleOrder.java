@@ -22,7 +22,7 @@ public class BootstrapAcrossModuleOrder
 	private static final Logger LOG = LoggerFactory.getLogger( BootstrapAcrossModuleOrder.class );
 
 	private final boolean removeDisabledModules;
-	private final Collection<AcrossModule> source;
+	private final List<AcrossModule> source;
 
 	private LinkedList<AcrossModule> orderedModules;
 
@@ -34,7 +34,7 @@ public class BootstrapAcrossModuleOrder
 	private Map<AcrossModule, AcrossModuleRole> moduleRoles = new HashMap<AcrossModule, AcrossModuleRole>();
 
 	public BootstrapAcrossModuleOrder( Collection<AcrossModule> source, boolean removeDisabledModules ) {
-		this.source = source;
+		this.source = new ArrayList<AcrossModule>( source );
 		this.removeDisabledModules = removeDisabledModules;
 
 		orderModules();
@@ -62,8 +62,6 @@ public class BootstrapAcrossModuleOrder
 		for ( AcrossModule module : source ) {
 			modulesById.put( module.getName(), module );
 			modulesById.put( module.getClass().getName(), module );
-
-			orderedModules.add( module );
 		}
 
 		for ( AcrossModule module : source ) {
@@ -73,24 +71,90 @@ public class BootstrapAcrossModuleOrder
 
 		applyEnabledInfrastructureModules();
 
+		Map<AcrossModule, Boolean> requiredStack = new HashMap<AcrossModule, Boolean>();
+
+		// Place in required order
 		for ( AcrossModule module : source ) {
-			int currentPosition = orderedModules.indexOf( module );
-
-			if ( currentPosition == -1 ) {
-				currentPosition = orderedModules.isEmpty() ? 0 : orderedModules.size() - 1;
-				orderedModules.add( currentPosition, module );
-			}
-
-			// Dependencies push actual module to the back
-			if ( moduleRoles.get( module ) != AcrossModuleRole.INFRASTRUCTURE ) {
-				// optional dependencies do not influence the order of infrastructure modules
-				orderedModules.addAll( currentPosition, getOptionalDependencies( module ) );
-			}
-
-			orderedModules.addAll( currentPosition, getRequiredDependencies( module ) );
+			place( requiredStack, orderedModules, module );
 		}
 
+		// Shuffle optionals if possible
+		boolean shuffled;
+
+		do {
+			shuffled = false;
+
+			for ( AcrossModule module : source ) {
+				if ( getModuleRole( module ) != AcrossModuleRole.INFRASTRUCTURE ) {
+					Collection<AcrossModule> optionalModules = getOptionalDependencies( module );
+
+					for ( AcrossModule optional : optionalModules ) {
+						if ( moveToIndexIfPossible( orderedModules, optional, orderedModules.indexOf( module ) ) ) {
+							shuffled = true;
+						}
+					}
+				}
+			}
+		}
+		while ( shuffled );
+
 		verifyModuleList( orderedModules );
+	}
+
+	private boolean moveToIndexIfPossible( LinkedList<AcrossModule> orderedModules,
+	                                       AcrossModule moduleToMove,
+	                                       int index ) {
+
+		// Only move if the module is after the index
+		if ( orderedModules.indexOf(moduleToMove) > index ) {
+			// Only move if all required dependencies are already before that index
+			boolean requirementsMet = true;
+
+			for ( AcrossModule requirement : getRequiredDependencies( moduleToMove ) ) {
+				if ( orderedModules.indexOf( requirement ) >= index ) {
+					requirementsMet = false;
+				}
+			}
+
+			if ( requirementsMet ) {
+				orderedModules.add( index, moduleToMove );
+				orderedModules.removeLastOccurrence( moduleToMove );
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void place( Map<AcrossModule, Boolean> requiredStack,
+	                    LinkedList<AcrossModule> orderedModules,
+	                    AcrossModule module ) {
+		requiredStack.put( module, true );
+
+		for ( AcrossModule requirement : getRequiredDependencies( module ) ) {
+			if ( !orderedModules.contains( requirement ) ) {
+				if ( requiredStack.containsKey( requirement ) ) {
+					throw new RuntimeException(
+							"Unable to determine legal module bootstrap order, possible cyclic dependency on module " + requirement.getName() );
+				}
+				else {
+					place( requiredStack, orderedModules, requirement );
+				}
+			}
+		}
+/*
+		for ( AcrossModule optional : getOptionalDependencies( module ) ) {
+			if ( !orderedModules.contains( optional ) && !requiredStack.containsKey( optional ) ) {
+				place( requiredStack, orderedModules, optional );
+			}
+		}
+*/
+		if ( !orderedModules.contains( module ) ) {
+			orderedModules.addLast( module );
+		}
+
+		requiredStack.remove( module );
 	}
 
 	private void applyEnabledInfrastructureModules() {
@@ -122,20 +186,22 @@ public class BootstrapAcrossModuleOrder
 		while ( iterator.hasNext() ) {
 			AcrossModule module = iterator.next();
 
-			// Required dependencies should have already been handled
-			for ( AcrossModule dependency : requiredDependencies.get( module ) ) {
-				if ( !handled.contains( dependency ) ) {
-					throw new RuntimeException(
-							"Unable to determine legal module bootstrap order, possible cyclic dependency on module " + dependency.getName() );
-				}
-			}
-
 			// Remove module if already handled
 			if ( handled.contains( module ) ) {
 				iterator.remove();
 			}
 			else {
 				handled.add( module );
+
+				LOG.trace( "Verifying module: {}", module.getName() );
+
+				// Required dependencies should have already been handled
+				for ( AcrossModule dependency : requiredDependencies.get( module ) ) {
+					if ( !handled.contains( dependency ) ) {
+						throw new RuntimeException(
+								"Unable to determine legal module bootstrap order, possible cyclic dependency on module " + dependency.getName() );
+					}
+				}
 
 				// Remove module if disabled and disabled should be removed
 				if ( removeDisabledModules && !module.isEnabled() ) {
@@ -148,8 +214,8 @@ public class BootstrapAcrossModuleOrder
 	private void buildDependencies( AcrossModule module ) {
 		Annotation depends = AnnotationUtils.getAnnotation( module.getClass(), AcrossDepends.class );
 
-		Set<AcrossModule> requiredByModule = new LinkedHashSet<AcrossModule>();
-		Set<AcrossModule> optionalForModule = new LinkedHashSet<AcrossModule>();
+		List<AcrossModule> requiredByModule = new LinkedList<AcrossModule>();
+		List<AcrossModule> optionalForModule = new LinkedList<AcrossModule>();
 
 		Set<String> definedRequired = new LinkedHashSet<String>();
 		Set<String> definedOptional = new LinkedHashSet<String>();
@@ -183,13 +249,31 @@ public class BootstrapAcrossModuleOrder
 			}
 
 			requiredByModule.add( modulesById.get( requiredModule ) );
+
+			LOG.trace( "Module {} requires module {}", module.getName(), requiredModule );
 		}
 
 		for ( String optionalModule : definedOptional ) {
 			if ( modulesById.containsKey( optionalModule ) ) {
 				optionalForModule.add( modulesById.get( optionalModule ) );
+
+				LOG.trace( "Module {} optionally depends on module {}", module.getName(), optionalModule );
 			}
 		}
+
+		Collections.sort( requiredByModule, new Comparator<AcrossModule>()
+		{
+			public int compare( AcrossModule left, AcrossModule right ) {
+				return Integer.valueOf( source.indexOf( left ) ).compareTo( source.indexOf( right ) );
+			}
+		} );
+
+		Collections.sort( optionalForModule, new Comparator<AcrossModule>()
+		{
+			public int compare( AcrossModule left, AcrossModule right ) {
+				return Integer.valueOf( source.indexOf( left ) ).compareTo( source.indexOf( right ) );
+			}
+		} );
 
 		requiredDependencies.put( module, requiredByModule );
 		optionalDependencies.put( module, optionalForModule );

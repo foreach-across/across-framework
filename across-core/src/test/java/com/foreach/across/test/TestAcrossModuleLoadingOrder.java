@@ -24,6 +24,8 @@ public class TestAcrossModuleLoadingOrder
 	private ModuleSix cyclicOne = new ModuleSix();
 	private ModuleSeven cyclicTwo = new ModuleSeven();
 	private ModuleEight infrastructureRequiringTwo = new ModuleEight();
+	private ModuleNine requiresTwoAndOptionalThreeTen = new ModuleNine();
+	private ModuleTen requiresOneAndOptionalTwoNine = new ModuleTen();
 
 	@Test
 	public void resetEnabled() {
@@ -133,6 +135,15 @@ public class TestAcrossModuleLoadingOrder
 		BootstrapAcrossModuleOrder.create( added );
 	}
 
+	@Test
+	public void cyclicOptionalDependencyShouldWork() {
+		Collection<AcrossModule> added =
+				list( requiresTwoAndOptionalThreeTen, requiresOneAndOptionalTwoNine, one, two, three );
+		Collection<AcrossModule> ordered = BootstrapAcrossModuleOrder.create( added );
+
+		assertEquals( list( two, three, requiresTwoAndOptionalThreeTen, one, requiresOneAndOptionalTwoNine ), ordered );
+	}
+
 	@Test(expected = RuntimeException.class)
 	public void missingRuntimeDependencyWillBreak() {
 		ModuleTwo twoWithRuntimeDependency = new ModuleTwo();
@@ -150,6 +161,33 @@ public class TestAcrossModuleLoadingOrder
 		Collection<AcrossModule> ordered = BootstrapAcrossModuleOrder.create( added );
 
 		assertEquals( list( one, fakeTwo, requiresTwo ), ordered );
+	}
+
+	@Test
+	public void complexRuntimeDependencies() {
+		EmptyAcrossModule one = new EmptyAcrossModule( "one" );
+
+		EmptyAcrossModule two = new EmptyAcrossModule( "two" );
+		two.addRuntimeDependency( "five" );
+
+		EmptyAcrossModule three = new EmptyAcrossModule( "three" );
+		three.addRuntimeDependency( "one" );
+		three.addRuntimeDependency( "six" );
+
+		EmptyAcrossModule four = new EmptyAcrossModule( "four" );
+		four.addRuntimeDependency( "three" );
+
+		EmptyAcrossModule five = new EmptyAcrossModule( "five" );
+		five.addRuntimeDependency( "three" );
+		five.addRuntimeDependency( "four" );
+
+		EmptyAcrossModule six = new EmptyAcrossModule( "six" );
+		six.addRuntimeDependency( "one" );
+
+		Collection<AcrossModule> added = list( one, two, three, four, five, six );
+		Collection<AcrossModule> ordered = BootstrapAcrossModuleOrder.create( added );
+
+		assertEquals( list( one, six, three, four, five, two ), ordered );
 	}
 
 	private Collection<AcrossModule> list( AcrossModule... modules ) {
@@ -230,4 +268,23 @@ public class TestAcrossModuleLoadingOrder
 			return "ModuleEight";
 		}
 	}
+
+	@AcrossDepends(required = "ModuleTwo", optional = { "ModuleThree", "ModuleTen" })
+	public static class ModuleNine extends ModuleOne
+	{
+		@Override
+		public String getName() {
+			return "ModuleNine";
+		}
+	}
+
+	@AcrossDepends(required = "ModuleOne", optional = { "ModuleTwo", "ModuleNine" })
+	public static class ModuleTen extends ModuleOne
+	{
+		@Override
+		public String getName() {
+			return "ModuleTen";
+		}
+	}
 }
+
