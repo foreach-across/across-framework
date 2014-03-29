@@ -30,7 +30,7 @@ public class RefreshableRegistry<T> implements Collection<T>
 	private Class<T> memberType;
 	private boolean scanModules;
 
-	@Autowired
+	@Autowired(required = false)
 	private AcrossContext across;
 
 	private List<T> members = new ArrayList<T>();
@@ -53,17 +53,20 @@ public class RefreshableRegistry<T> implements Collection<T>
 	@PostConstruct
 	@PostRefresh
 	public void refresh() {
-		List<T> refreshed = new ArrayList<T>( AcrossContextUtils.getBeansOfType( across, memberType, scanModules ) );
+		if ( across != null ) {
+			List<T> refreshed =
+					new ArrayList<T>( AcrossContextUtils.getBeansOfType( across, memberType, scanModules ) );
 
-		for ( T fixed : fixedMembers ) {
-			if ( !refreshed.contains( fixed ) ) {
-				refreshed.add( fixed );
+			for ( T fixed : fixedMembers ) {
+				if ( !refreshed.contains( fixed ) ) {
+					refreshed.add( fixed );
+				}
 			}
+
+			OrderComparator.sort( refreshed );
+
+			members = refreshed;
 		}
-
-		OrderComparator.sort( refreshed );
-
-		members = refreshed;
 	}
 
 	/**
