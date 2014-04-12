@@ -16,9 +16,7 @@ public class AbstractMenuFilter implements IMessageFilter
 	}
 
 	public boolean accepts( Object message, MessageHandlerMetadata metadata ) {
-		if ( message instanceof BuildMenuEvent ) {
-			return StringUtils.equals( ( (BuildMenuEvent) message ).getMenuName(), menuName );
-		}
-		return false;
+		return message instanceof BuildMenuEvent && StringUtils.equals( ( (BuildMenuEvent) message ).getMenuName(),
+		                                                                menuName );
 	}
 }

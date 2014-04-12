@@ -33,7 +33,7 @@ public class DebugHandlerMapping extends RequestMappingHandlerMapping
 	/**
 	 * Scan a particular ApplicationContext for DebugWebController instances.
 	 *
-	 * @param context
+	 * @param context    The context to scan
 	 */
 	public void scanContext( ApplicationContext context ) {
 		if ( context != null ) {

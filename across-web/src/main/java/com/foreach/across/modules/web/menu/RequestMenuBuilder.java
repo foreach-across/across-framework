@@ -13,31 +13,28 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Service
 @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
-public class RequestMenuBuilder implements MenuBuilder
+public class RequestMenuBuilder<T extends Menu, E extends BuildMenuEvent<T>> implements MenuBuilder<T, E>
 {
 	@Autowired
 	private HttpServletRequest request;
 
-	@SuppressWarnings("unchecked")
-	public <T extends Menu> T build( Class<T> menuType ) {
-		if ( !menuType.isAssignableFrom( Menu.class ) ) {
-			throw new RuntimeException( "Cannot build a menu of " + menuType );
-		}
 
+	@SuppressWarnings("unchecked")
+	public T build() {
 		Menu menu = new Menu();
 
 		setContext( menu );
 		return (T) menu;
 	}
 
-	public <T extends Menu> BuildMenuEvent<T> buildEvent( T menu ) {
-		BuildMenuEvent<T> e = createEvent( menu );
-		e.setSelector( new RequestMenuSelector( request ) );
-		return e;
+	protected E createEvent( T menu ) {
+		return (E)new BuildMenuEvent<T>( menu );
 	}
 
-	protected <T extends Menu> BuildMenuEvent<T> createEvent( T menu ) {
-		return new BuildMenuEvent<T>( menu );
+	public E buildEvent( T menu ) {
+		E e = createEvent( menu );
+		e.setSelector( new RequestMenuSelector( request ) );
+		return e;
 	}
 
 	protected void setContext( Menu menu ) {

@@ -1,7 +1,5 @@
 package com.foreach.across.modules.debugweb.mvc;
 
-import com.foreach.across.modules.web.resource.WebResourceRegistry;
-import com.foreach.across.modules.web.resource.WebResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -22,7 +20,6 @@ public class DebugPageViewArgumentResolver implements HandlerMethodArgumentResol
 	                               ModelAndViewContainer mavContainer,
 	                               NativeWebRequest webRequest,
 	                               WebDataBinderFactory binderFactory ) throws Exception {
-
 
 		return debugPageViewFactory.buildView();
 	}

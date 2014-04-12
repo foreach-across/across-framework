@@ -98,10 +98,10 @@ public class MenuFactory
 	 * @param <T>  Actual Menu implementation.
 	 * @return Menu instance after build has completed.
 	 */
-	public <T extends Menu> T buildMenu( T menu ) {
-		MenuBuilder builder = getMenuBuilder( menu.getClass() );
+	public <T extends Menu, E extends BuildMenuEvent<T>, B extends MenuBuilder<T, E>> T buildMenu( T menu ) {
+		B builder = (B)getMenuBuilder( menu.getClass() );
 
-		BuildMenuEvent<T> buildMenuEvent = builder.buildEvent( menu );
+		E buildMenuEvent = builder.buildEvent( menu );
 		publisher.publish( buildMenuEvent );
 
 		menu.sort();
@@ -110,7 +110,7 @@ public class MenuFactory
 		return menu;
 	}
 
-	private MenuBuilder getMenuBuilder( Class<? extends Menu> menuType ) {
+	private <T extends Menu> MenuBuilder getMenuBuilder( Class<T> menuType ) {
 		if ( menuBuilderMap.containsKey( menuType ) ) {
 			return menuBuilderMap.get( menuType );
 		}
@@ -126,13 +126,13 @@ public class MenuFactory
 		return defaultMenuStore;
 	}
 
-	private <T extends Menu> T build( String name, Class<T> menuType ) {
-		MenuBuilder builder = getMenuBuilder( menuType );
+	private <T extends Menu, E extends BuildMenuEvent<T>, B extends MenuBuilder<T, E>> T build( String name, Class<T> menuType ) {
+		B builder = (B)getMenuBuilder( menuType );
 
-		T menu = builder.build( menuType );
+		T menu = builder.build();
 		menu.setName( name );
 
-		BuildMenuEvent<T> buildMenuEvent = builder.buildEvent( menu );
+		E buildMenuEvent = builder.buildEvent( menu );
 		publisher.publish( buildMenuEvent );
 
 		// Always sort a menu after the initial build

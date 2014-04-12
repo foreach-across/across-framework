@@ -5,9 +5,11 @@ import com.foreach.across.modules.web.events.BuildMenuEvent;
 /**
  * Takes care of menu assembly.
  */
-public interface MenuBuilder
+public interface MenuBuilder<T extends Menu, E extends BuildMenuEvent<T>>
 {
-	<T extends Menu> T build( Class<T> menuType );
 
-	<T extends Menu> BuildMenuEvent<T> buildEvent( T menu );
+	T build();
+
+	E buildEvent( T menu );
+
 }
