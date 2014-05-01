@@ -75,7 +75,7 @@ public class AcrossInfoController
 					info.setExposed( exposed.contains( name ) );
 
 					Class beanType = Object.class;
-					Class actual = Object.class;
+					Class actual;
 
 					if ( ArrayUtils.contains( definitions, name ) ) {
 						BeanDefinition definition = beanFactory.getBeanDefinition( name );
@@ -177,6 +177,7 @@ public class AcrossInfoController
 		}
 	}
 
+	@SuppressWarnings( "EQ_COMPARETO_USE_OBJECT_EQUALS" )
 	public static class BeanInfo implements Comparable<BeanInfo>
 	{
 		private boolean exposed, inherited, singleton, proxiedOrEnhanced;

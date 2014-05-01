@@ -7,6 +7,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.MethodMetadata;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -22,12 +23,15 @@ public class AnnotationBeanFilter implements BeanFilter
 	private Class<? extends Annotation>[] annotations;
 
 	public AnnotationBeanFilter( Class<? extends Annotation>... annotations ) {
-		this.annotations = annotations;
+		Assert.notNull( annotations );
+		this.annotations = annotations.clone();
 	}
 
 	public AnnotationBeanFilter( boolean matchIfBeanFactoryApplies, Class<? extends Annotation>... annotations ) {
+		Assert.notNull( annotations );
+
 		this.matchIfBeanFactoryApplies = matchIfBeanFactoryApplies;
-		this.annotations = annotations;
+		this.annotations = annotations.clone();
 	}
 
 	public Class<? extends Annotation>[] getAnnotations() {
@@ -35,7 +39,8 @@ public class AnnotationBeanFilter implements BeanFilter
 	}
 
 	public void setAnnotations( Class<? extends Annotation>[] annotations ) {
-		this.annotations = annotations;
+		Assert.notNull( annotations );
+		this.annotations = annotations.clone();
 	}
 
 	public boolean isMatchIfBeanFactoryApplies() {

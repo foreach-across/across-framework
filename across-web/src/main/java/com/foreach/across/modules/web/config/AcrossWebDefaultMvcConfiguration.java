@@ -116,7 +116,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	}
 
 	/**
-	 * Apply all WebMvcConfigurers in the context and reload the
+	 * Reload the configuration by applying all WebMvcConfigurers in the context.
 	 */
 	@Handler
 	private void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
@@ -299,7 +299,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		ReloadableRequestMappingHandlerAdapter adapter = new ReloadableRequestMappingHandlerAdapter();
 		adapter.setWebBindingInitializer( getConfigurableWebBindingInitializer() );
 
-		AsyncSupportConfigurer configurer = new AsyncSupportConfigurer();
+		//AsyncSupportConfigurer configurer = new AsyncSupportConfigurer();
 		//configureAsyncSupport(configurer);
 
 		/*
