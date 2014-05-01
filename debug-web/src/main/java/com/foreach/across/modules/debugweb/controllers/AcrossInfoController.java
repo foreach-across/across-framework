@@ -2,7 +2,6 @@ package com.foreach.across.modules.debugweb.controllers;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ApplicationContextScanner;
 import com.foreach.across.core.context.bootstrap.BootstrapAcrossModuleOrder;
@@ -177,7 +176,6 @@ public class AcrossInfoController
 		}
 	}
 
-	@SuppressWarnings( "EQ_COMPARETO_USE_OBJECT_EQUALS" )
 	public static class BeanInfo implements Comparable<BeanInfo>
 	{
 		private boolean exposed, inherited, singleton, proxiedOrEnhanced;
@@ -239,6 +237,7 @@ public class AcrossInfoController
 			this.proxiedOrEnhanced = proxiedOrEnhanced;
 		}
 
+		@SuppressWarnings("EQ_COMPARETO_USE_OBJECT_EQUALS")
 		public int compareTo( BeanInfo o ) {
 			return getName().compareTo( o.getName() );
 		}
