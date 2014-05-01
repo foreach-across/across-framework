@@ -18,7 +18,6 @@ public class RequestMenuBuilder<T extends Menu, E extends BuildMenuEvent<T>> imp
 	@Autowired
 	private HttpServletRequest request;
 
-
 	@SuppressWarnings("unchecked")
 	public T build() {
 		Menu menu = new Menu();
