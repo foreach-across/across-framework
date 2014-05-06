@@ -60,8 +60,8 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<scm>
-		<connection>scm:git:http://stash.foreach.be/scm/fe/across.git</connection>
-		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/across.git</developerConnection>
+		<connection>scm:git:https://bitbucket.org/beforeach/across.git</connection>
+		<developerConnection>scm:git:https://bitbucket.org/beforeach/across.git</developerConnection>
 	</scm>
 
 	<dependencies>
