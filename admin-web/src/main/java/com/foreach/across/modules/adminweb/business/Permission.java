@@ -9,7 +9,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "permission")
-public class Permission
+public class Permission implements Comparable<Permission>
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_permission_id")
@@ -28,7 +28,12 @@ public class Permission
 	}
 
 	public Permission( String name ) {
-		this.name = name;
+		setName( name );
+	}
+
+	public Permission( String name, String description ) {
+		setName( name );
+		this.description = description;
 	}
 
 	public long getId() {
@@ -44,7 +49,7 @@ public class Permission
 	}
 
 	public void setName( String name ) {
-		this.name = name;
+		this.name = StringUtils.lowerCase( name );
 	}
 
 	public String getDescription() {
@@ -71,6 +76,11 @@ public class Permission
 		}
 
 		return true;
+	}
+
+	@Override
+	public int compareTo( Permission o ) {
+		return getName().compareTo( o.getName() );
 	}
 
 	@Override

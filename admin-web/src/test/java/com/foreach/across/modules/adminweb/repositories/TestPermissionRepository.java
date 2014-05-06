@@ -31,7 +31,7 @@ public class TestPermissionRepository
 
 	@Autowired
 	private SessionFactory sessionFactory;
-
+/*
 	@Before
 	public void openSession() {
 		Session session = sessionFactory.openSession();
@@ -44,7 +44,7 @@ public class TestPermissionRepository
 		SessionFactoryUtils.closeSession( sessionFactory.getCurrentSession() );
 		TransactionSynchronizationManager.unbindResource( sessionFactory );
 	}
-
+*/
 	@Test
 	public void notExistingPermission() {
 		Permission existing = permissionRepository.getPermission( "djsklfjdskds" );

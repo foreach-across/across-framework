@@ -18,7 +18,7 @@ public class TestPermission
 	}
 
 	@Test
-	public void caseIsIngored() {
+	public void caseIsIgnored() {
 		Permission left = new Permission( "some permission" );
 		left.setDescription( "description left" );
 

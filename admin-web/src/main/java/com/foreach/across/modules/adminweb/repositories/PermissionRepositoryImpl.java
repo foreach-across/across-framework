@@ -18,11 +18,13 @@ public class PermissionRepositoryImpl implements PermissionRepository
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
+	@Override
 	public Collection<Permission> getPermissions() {
 		return (Collection<Permission>) sessionFactory.getCurrentSession().createCriteria( Permission.class ).list();
 	}
 
 	@Transactional(readOnly = true)
+	@Override
 	public Permission getPermission( String name ) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria( Permission.class );
 		criteria.add( Restrictions.eq( "name", name ) );
@@ -31,11 +33,13 @@ public class PermissionRepositoryImpl implements PermissionRepository
 	}
 
 	@Transactional
+	@Override
 	public void delete( Permission permission ) {
 		sessionFactory.getCurrentSession().delete( permission );
 	}
 
 	@Transactional
+	@Override
 	public void save( Permission permission ) {
 		sessionFactory.getCurrentSession().saveOrUpdate( permission );
 	}

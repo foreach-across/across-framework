@@ -5,11 +5,11 @@
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-	<property name="long.type" value="bigint" />
-	<property name="varchar.suffix" value="" />
+	<property name="long.type" value="bigint"/>
+	<property name="varchar.suffix" value=""/>
 
-	<property name="long.type" value="NUMBER(19,0)" dbms="oracle" />
-	<property name="varchar.suffix" value=" char" dbms="oracle" />
+	<property name="long.type" value="NUMBER(19,0)" dbms="oracle"/>
+	<property name="varchar.suffix" value=" char" dbms="oracle"/>
 
 	<changeSet id="201403011519" author="arne">
 		<preConditions onFail="MARK_RAN">
@@ -55,15 +55,6 @@
 		</insert>
 	</changeSet>
 
-	<changeSet id="201403011524" author="arne" dbms="oracle">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<sequenceExists sequenceName="seq_permission_id"/>
-			</not>
-		</preConditions>
-		<createSequence sequenceName="seq_permission_id"/>
-	</changeSet>
-
 	<changeSet id="201403011521" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -95,7 +86,7 @@
 			<column name="permission_id" type="${long.type}"/>
 		</createTable>
 
-		<addPrimaryKey tableName="role_permission" columnNames="role_id, permission_id"/>
+		<addPrimaryKey constraintName="pk_role_permission" tableName="role_permission" columnNames="role_id, permission_id"/>
 
 		<addForeignKeyConstraint baseTableName="role_permission" baseColumnNames="role_id"
 		                         constraintName="fk_role_permission_role_id"
@@ -104,6 +95,52 @@
 		<addForeignKeyConstraint baseTableName="role_permission" baseColumnNames="permission_id"
 		                         constraintName="fk_role_permission_permission_id"
 		                         referencedTableName="permission"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="201405021433" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="user"/>
+			</not>
+		</preConditions>
+
+		<comment>Create user and user_role table</comment>
+
+		<createTable tableName="user">
+			<column name="id" type="${long.type}"/>
+			<column name="username" type="varchar2(320 ${varchar.suffix})"/>
+			<column name="email" type="varchar2(320 ${varchar.suffix})"/>
+			<column name="password" type="varchar2(250 ${varchar.suffix})"/>
+		</createTable>
+
+		<addPrimaryKey tableName="user" columnNames="id"/>
+
+		<addNotNullConstraint tableName="user" columnName="username"/>
+
+		<createIndex tableName="user" indexName="ix_user_username" unique="true">
+			<column name="username"/>
+		</createIndex>
+
+		<insert tableName="sequences">
+			<column name="seq_name">seq_user_id</column>
+			<column name="seq_number">1000</column>
+		</insert>
+
+		<createTable tableName="user_role">
+			<column name="user_id" type="${long.type}"/>
+			<column name="role_id" type="${long.type}"/>
+		</createTable>
+
+		<addPrimaryKey tableName="user_role" columnNames="user_id, role_id"/>
+
+		<addForeignKeyConstraint baseTableName="user_role" baseColumnNames="user_id"
+		                         constraintName="fk_user_role_user_id"
+		                         referencedTableName="user"
+		                         referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="user_role" baseColumnNames="role_id"
+		                         constraintName="fk_user_role_role_id"
+		                         referencedTableName="role"
 		                         referencedColumnNames="id"/>
 	</changeSet>
 
