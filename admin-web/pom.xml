@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>across</artifactId>
 		<groupId>across</groupId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -13,12 +13,12 @@
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>across-web</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>across-hibernate</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
