@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>across</groupId>
 		<artifactId>across</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>test-web</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<properties>
@@ -30,27 +30,27 @@
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>across-core</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>across-web</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>across-debug-web</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>admin-web</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>across-ehcache</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
