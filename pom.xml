@@ -43,6 +43,7 @@
 		<module>across-hibernate</module>
 		<module>across-ehcache</module>
 		<module>debug-web</module>
+		<module>test-web</module>
 		<module>admin-web</module>
 		<module>demo-web</module>
 	</modules>

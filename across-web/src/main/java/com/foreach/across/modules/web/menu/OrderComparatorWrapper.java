@@ -11,8 +11,6 @@ import java.util.Comparator;
  */
 public class OrderComparatorWrapper implements Comparator<Menu>
 {
-	private static final OrderComparator ORDER_COMPARATOR = new OrderComparator();
-
 	private final Comparator<Menu> comparator;
 
 	public OrderComparatorWrapper( Comparator<Menu> comparator ) {
@@ -21,7 +19,7 @@ public class OrderComparatorWrapper implements Comparator<Menu>
 	}
 
 	public int compare( Menu left, Menu right ) {
-		int value = ORDER_COMPARATOR.compare( left, right );
+		int value = OrderComparator.INSTANCE.compare( left, right );
 
 		if ( value == 0 ) {
 			value = comparator.compare( left, right );
