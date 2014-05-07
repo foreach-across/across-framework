@@ -247,7 +247,12 @@ public class TestMenuSorting
 		menu.addItem( subMenu );
 
 		menu.addItem( "/bbb", "bbb" );
-		menu.addItem( "/ccc", "ccc" );
+
+		Menu other = new Menu( "/ccc", "ccc" );
+		other.addItem( "ddd", "fff" );
+		other.addItem( "eee", "eee" );
+		other.addItem( "fff", "ddd" );
+		menu.addItem( other );
 
 		menu.setComparator(
 				new FixedMenuOrderComparator( MenuMatchers.pathEquals( "/bbb" ), MenuMatchers.pathMatches( "^/c" ),
@@ -260,6 +265,7 @@ public class TestMenuSorting
 
 		assertMenu( menu, "bbb", "ccc", "aaa" );
 		assertMenu( menu.getItem( Menu.byPath( "/aaa" ) ), "333", "222", "111" );
+		assertMenu( menu.getItem( Menu.byPath( "/ccc" ) ), "ddd", "eee", "fff" );
 	}
 
 	public void assertMenu( Menu menu, String... expected ) {

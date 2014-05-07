@@ -13,6 +13,7 @@ public class FixedMenuOrderComparator implements Comparator<Menu>
 {
 	private Integer defaultOrder = Ordered.LOWEST_PRECEDENCE;
 
+	private Comparator<Menu> fallbackComparator = Menu.SORT_BY_TITLE;
 	private Map<MenuMatcher, Integer> orders = new HashMap<>();
 
 	public FixedMenuOrderComparator() {
@@ -42,8 +43,26 @@ public class FixedMenuOrderComparator implements Comparator<Menu>
 		this.defaultOrder = defaultOrder;
 	}
 
+	public Comparator<Menu> getFallbackComparator() {
+		return fallbackComparator;
+	}
+
+	/**
+	 * Set the comparator that will be used in case the fixed order is the same.
+	 * @param fallbackComparator Comparator instance.
+	 */
+	public void setFallbackComparator( Comparator<Menu> fallbackComparator ) {
+		this.fallbackComparator = fallbackComparator;
+	}
+
 	public int compare( Menu left, Menu right ) {
-		return determineOrder( left ).compareTo( determineOrder( right ) );
+		int value = determineOrder( left ).compareTo( determineOrder( right ) );
+
+		if ( value == 0 && fallbackComparator != null ) {
+			value = fallbackComparator.compare( left, right );
+		}
+
+		return value;
 	}
 
 	private Integer determineOrder( Menu menu ) {

@@ -41,6 +41,10 @@ public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent
 		this.selector = selector;
 	}
 
+	public boolean forMenu( Class<? extends Menu> menuClass ) {
+		return menuClass.isAssignableFrom( menu.getClass() );
+	}
+
 	public boolean forMenu( String menuName ) {
 		return StringUtils.equals( menuName, getMenuName() );
 	}

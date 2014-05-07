@@ -21,13 +21,15 @@ public class Menu implements Ordered
 {
 	public static final int ROOT_LEVEL = 0;
 
-	public static final Comparator<Menu> SORT_BY_ORDER_AND_TITLE = new OrderComparatorWrapper( new Comparator<Menu>()
+	public static final Comparator<Menu> SORT_BY_TITLE = new Comparator<Menu>()
 	{
 		public int compare( Menu o1, Menu o2 ) {
 			String mine = StringUtils.defaultString( o1.getTitle() );
 			return mine.compareTo( StringUtils.defaultString( o2.getTitle() ) );
 		}
-	} );
+	};
+
+	public static final Comparator<Menu> SORT_BY_ORDER_AND_TITLE = new OrderComparatorWrapper( SORT_BY_TITLE );
 
 	private int order = Ordered.LOWEST_PRECEDENCE - 1000;
 
