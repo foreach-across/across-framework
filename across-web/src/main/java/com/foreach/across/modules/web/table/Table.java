@@ -6,7 +6,7 @@ public class Table
 {
 	private String title;
 	private TableHeader header;
-	private Collection<TableRow> rows = new LinkedList<TableRow>();
+	private Collection<TableRow> rows = new LinkedList<>();
 
 	public Table() {
 	}
