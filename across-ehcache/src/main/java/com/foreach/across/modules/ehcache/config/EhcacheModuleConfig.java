@@ -30,9 +30,9 @@ public class EhcacheModuleConfig
 	}
 
 	@Bean
-	public CacheManager cacheManager() {
+	public CacheManager cacheManager( net.sf.ehcache.CacheManager ehCacheCacheManager ) {
 		EhCacheCacheManager cacheManager = new EhCacheCacheManager();
-		cacheManager.setCacheManager( ehCacheManagerFactoryBean().getObject() );
+		cacheManager.setCacheManager( ehCacheCacheManager );
 		return cacheManager;
 	}
 }

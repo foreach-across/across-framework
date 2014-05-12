@@ -138,7 +138,7 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	}
 
 	public void setSkipInstallerGroups( String[] skipInstallerGroups ) {
-		this.skipInstallerGroups = skipInstallerGroups;
+		this.skipInstallerGroups = skipInstallerGroups.clone();
 	}
 
 	public Map<ApplicationContextConfigurer, ConfigurerScope> getApplicationContextConfigurers() {

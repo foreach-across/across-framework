@@ -9,7 +9,7 @@ import java.util.TreeSet;
 
 @Entity
 @Table(name = "role")
-public class Role
+public class Role implements Comparable<Role>
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_role_id")
@@ -24,7 +24,7 @@ public class Role
 	@Column
 	private String description;
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@BatchSize(size = 50)
 	@JoinTable(
 			name = "role_permission",
@@ -36,7 +36,12 @@ public class Role
 	}
 
 	public Role( String name ) {
-		this.name = name;
+		setName( name );
+	}
+
+	public Role( String name, String description ) {
+		setName( name );
+		this.description = description;
 	}
 
 	public long getId() {
@@ -52,7 +57,7 @@ public class Role
 	}
 
 	public void setName( String name ) {
-		this.name = name;
+		this.name = StringUtils.lowerCase( name );
 	}
 
 	public String getDescription() {
@@ -71,6 +76,14 @@ public class Role
 		this.permissions = permissions;
 	}
 
+	public boolean hasPermission( String name ) {
+		return hasPermission( new Permission( name ) );
+	}
+
+	public boolean hasPermission( Permission permission ) {
+		return getPermissions().contains( permission );
+	}
+
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {
@@ -87,6 +100,11 @@ public class Role
 		}
 
 		return true;
+	}
+
+	@Override
+	public int compareTo( Role o ) {
+		return getName().compareTo( o.getName() );
 	}
 
 	@Override

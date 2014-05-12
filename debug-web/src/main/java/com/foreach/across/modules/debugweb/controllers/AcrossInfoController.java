@@ -2,7 +2,6 @@ package com.foreach.across.modules.debugweb.controllers;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ApplicationContextScanner;
 import com.foreach.across.core.context.bootstrap.BootstrapAcrossModuleOrder;
@@ -75,7 +74,7 @@ public class AcrossInfoController
 					info.setExposed( exposed.contains( name ) );
 
 					Class beanType = Object.class;
-					Class actual = Object.class;
+					Class actual;
 
 					if ( ArrayUtils.contains( definitions, name ) ) {
 						BeanDefinition definition = beanFactory.getBeanDefinition( name );
@@ -238,6 +237,7 @@ public class AcrossInfoController
 			this.proxiedOrEnhanced = proxiedOrEnhanced;
 		}
 
+		@SuppressWarnings("EQ_COMPARETO_USE_OBJECT_EQUALS")
 		public int compareTo( BeanInfo o ) {
 			return getName().compareTo( o.getName() );
 		}

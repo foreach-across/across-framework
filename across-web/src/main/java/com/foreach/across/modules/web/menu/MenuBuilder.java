@@ -7,9 +7,7 @@ import com.foreach.across.modules.web.events.BuildMenuEvent;
  */
 public interface MenuBuilder<T extends Menu, E extends BuildMenuEvent<T>>
 {
-
 	T build();
 
 	E buildEvent( T menu );
-
 }

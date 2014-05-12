@@ -1,11 +1,14 @@
 package com.foreach.across.test.modules.web.menu;
 
+import com.foreach.across.modules.web.menu.FixedMenuOrderComparator;
 import com.foreach.across.modules.web.menu.Menu;
+import com.foreach.across.modules.web.menu.MenuMatchers;
 import org.junit.Test;
 import org.springframework.core.Ordered;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -232,6 +235,37 @@ public class TestMenuSorting
 		assertMenu( menu, "ccc", "bbb", "aaa" );
 		assertMenu( menu.getItem( Menu.byPath( "/aaa" ) ), "333", "222", "111" );
 		assertMenu( menu.getItem( Menu.byPath( "/aaa" ) ).getItem( Menu.byPath( "333" ) ), "111", "222", "333" );
+	}
+
+	@Test
+	public void fixedOrderComparator() {
+		Menu menu = new Menu( "any" );
+		Menu subMenu = new Menu( "/aaa", "aaa" );
+		subMenu.addItem( "111", "111" );
+		subMenu.addItem( "222", "222" );
+		subMenu.addItem( "333", "333" );
+		menu.addItem( subMenu );
+
+		menu.addItem( "/bbb", "bbb" );
+
+		Menu other = new Menu( "/ccc", "ccc" );
+		other.addItem( "ddd", "fff" );
+		other.addItem( "eee", "eee" );
+		other.addItem( "fff", "ddd" );
+		menu.addItem( other );
+
+		menu.setComparator(
+				new FixedMenuOrderComparator( MenuMatchers.pathEquals( "/bbb" ), MenuMatchers.pathMatches( "^/c" ),
+				                              MenuMatchers.pathMatches( ".*a.*" ), MenuMatchers.pathEquals( "333" ),
+				                              MenuMatchers.pathMatches( "2" ),
+				                              MenuMatchers.pathMatches( Pattern.compile( "111" ) ) ), true
+		);
+
+		menu.sort();
+
+		assertMenu( menu, "bbb", "ccc", "aaa" );
+		assertMenu( menu.getItem( Menu.byPath( "/aaa" ) ), "333", "222", "111" );
+		assertMenu( menu.getItem( Menu.byPath( "/ccc" ) ), "ddd", "eee", "fff" );
 	}
 
 	public void assertMenu( Menu menu, String... expected ) {

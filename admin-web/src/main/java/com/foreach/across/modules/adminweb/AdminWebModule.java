@@ -6,6 +6,7 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.modules.adminweb.config.AdminServicesConfig;
 import com.foreach.across.modules.adminweb.config.AdminWebConfig;
+import com.foreach.across.modules.adminweb.installers.AdminWebRolesInstaller;
 import com.foreach.across.modules.adminweb.installers.AdminWebSchemaInstaller;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.HasHibernatePackageProvider;
@@ -55,7 +56,7 @@ public class AdminWebModule extends AcrossModule implements HasHibernatePackageP
 
 	@Override
 	public Object[] getInstallers() {
-		return new Object[] { new AdminWebSchemaInstaller() };
+		return new Object[] { new AdminWebSchemaInstaller(), new AdminWebRolesInstaller() };
 	}
 
 	/**

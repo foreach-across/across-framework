@@ -105,8 +105,8 @@ public class AcrossDependsCondition implements Condition
 		// Explicitly allow environment placeholders inside the expression
 		expression = environment.resolvePlaceholders( expression );
 		BeanExpressionResolver resolver = beanFactory.getBeanExpressionResolver();
-		BeanExpressionContext expressionContext =
-				( beanFactory != null ) ? new CurrentModuleBeanExpressionContext( beanFactory, null ) : null;
+		BeanExpressionContext expressionContext = new CurrentModuleBeanExpressionContext( beanFactory, null );
+
 		if ( resolver == null ) {
 			resolver = new StandardBeanExpressionResolver();
 		}
@@ -135,12 +135,13 @@ public class AcrossDependsCondition implements Condition
 		return false;
 	}
 
-	private static class CurrentModuleBeanExpressionContext extends BeanExpressionContext
+	private static final class CurrentModuleBeanExpressionContext extends BeanExpressionContext
 	{
 		private CurrentModuleBeanExpressionContext( ConfigurableBeanFactory beanFactory, Scope scope ) {
 			super( beanFactory, scope );
 		}
 
+		// Provided for SPEL property
 		public AcrossModule getCurrentModule() {
 			Map<String, AcrossModule> modules =
 					BeanFactoryUtils.beansOfTypeIncludingAncestors( (ListableBeanFactory) getBeanFactory(),

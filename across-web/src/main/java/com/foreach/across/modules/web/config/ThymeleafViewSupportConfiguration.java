@@ -72,6 +72,7 @@ public class ThymeleafViewSupportConfiguration
 
 				TemplateResolver resolver = new SpringResourceTemplateResolver();
 				resolver.setOrder( 19 );
+				resolver.setCharacterEncoding( "UTF-8" );
 				resolver.setTemplateMode( "HTML5" );
 				resolver.setCacheable( false );
 				resolver.setPrefix( prefix );
@@ -91,6 +92,7 @@ public class ThymeleafViewSupportConfiguration
 	@Exposed
 	public TemplateResolver templateResolver() {
 		TemplateResolver resolver = new SpringResourceTemplateResolver();
+		resolver.setCharacterEncoding( "UTF-8" );
 		resolver.setTemplateMode( "HTML5" );
 		resolver.setCacheable( !acrossWebModule.isDevelopmentMode() );
 		resolver.setPrefix( "classpath:/views/" );

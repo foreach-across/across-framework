@@ -37,7 +37,6 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.ConversionServiceExposingInterceptor;
@@ -116,7 +115,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	}
 
 	/**
-	 * Apply all WebMvcConfigurers in the context and reload the
+	 * Reload the configuration by applying all WebMvcConfigurers in the context.
 	 */
 	@Handler
 	private void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
@@ -184,7 +183,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		// Handler exception resolver
 		if ( exceptionResolvers.isEmpty() ) {
-			addDefaultHandlerExceptionResolvers( exceptionResolvers, contentNegotiationManager );
+			addDefaultHandlerExceptionResolvers( exceptionResolvers, contentNegotiationManager, messageConverters );
 		}
 
 		HandlerExceptionResolverComposite handlerExceptionResolver = handlerExceptionResolver();
@@ -299,7 +298,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		ReloadableRequestMappingHandlerAdapter adapter = new ReloadableRequestMappingHandlerAdapter();
 		adapter.setWebBindingInitializer( getConfigurableWebBindingInitializer() );
 
-		AsyncSupportConfigurer configurer = new AsyncSupportConfigurer();
+		//AsyncSupportConfigurer configurer = new AsyncSupportConfigurer();
 		//configureAsyncSupport(configurer);
 
 		/*
@@ -331,11 +330,12 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	}
 
 	private void addDefaultHandlerExceptionResolvers( List<HandlerExceptionResolver> exceptionResolvers,
-	                                                  ContentNegotiationManager contentNegotiationManager ) {
+	                                                  ContentNegotiationManager contentNegotiationManager,
+	                                                  List<HttpMessageConverter<?>> messageConverters ) {
 		ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
 		exceptionHandlerExceptionResolver.setApplicationContext( this.applicationContext );
 		exceptionHandlerExceptionResolver.setContentNegotiationManager( contentNegotiationManager );
-		//exceptionHandlerExceptionResolver.setMessageConverters( getMessageConverters() );
+		exceptionHandlerExceptionResolver.setMessageConverters( messageConverters );
 		exceptionHandlerExceptionResolver.afterPropertiesSet();
 
 		exceptionResolvers.add( exceptionHandlerExceptionResolver );

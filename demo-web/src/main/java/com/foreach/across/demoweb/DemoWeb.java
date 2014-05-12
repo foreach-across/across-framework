@@ -20,7 +20,6 @@ import javax.sql.DataSource;
 public class DemoWeb
 {
 	@Bean
-	@Autowired
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 		AcrossContext context = new AcrossContext( applicationContext );
 		context.setDataSource( acrossDataSource() );
@@ -90,7 +89,7 @@ public class DemoWeb
 	public DataSource acrossDataSource() throws Exception {
 		BasicDataSource dataSource = new BasicDataSource();
 		dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-		dataSource.setUrl( "jdbc:hsqldb:/hsql/acrossDemoWeb" );
+		dataSource.setUrl( "jdbc:hsqldb:mem:/hsql/acrossDemoWeb" );
 		dataSource.setUsername( "sa" );
 		dataSource.setPassword( "" );
 

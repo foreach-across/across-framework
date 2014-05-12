@@ -29,6 +29,10 @@
 				<td th:text="*{size}">0</td>
 			</tr>
 			<tr>
+				<th>Size</th>
+				<td th:text="*{statistics.calculateMemorySize()}"></td>
+			</tr>
+			<tr>
 				<th>Hits</th>
 				<td th:text="*{statistics.cacheHits}">0</td>
 			</tr>

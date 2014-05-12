@@ -101,6 +101,9 @@ public class TestWebConfig
 		dataSource.setUsername( "sa" );
 		dataSource.setPassword( "" );
 
+
+		//menuRegistry.put( new SortedMenu( "debugMenu", ));
+
 		return dataSource;
 	}
 }
