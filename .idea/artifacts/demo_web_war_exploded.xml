@@ -60,7 +60,7 @@
           <element id="archive" name="across-ehcache-1.0.2-SNAPSHOT.jar">
             <element id="module-output" name="across-ehcache" />
           </element>
-          <element id="library" level="project" name="Maven: net.sf.ehcache:ehcache-core:2.6.6" />
+          <element id="library" level="project" name="Maven: net.sf.ehcache:ehcache:2.8.2" />
           <element id="library" level="project" name="Maven: org.springframework:spring-context-support:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: cglib:cglib:2.2.2" />
           <element id="library" level="project" name="Maven: asm:asm:3.3.1" />

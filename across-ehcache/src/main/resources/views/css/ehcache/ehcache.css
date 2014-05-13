@@ -1,3 +1,7 @@
+div.cache {
+  display: block;
+  float: left; }
+
 table.cache-details {
   border: solid 1px silver;
   margin: 10px; }

@@ -335,7 +335,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
 		exceptionHandlerExceptionResolver.setApplicationContext( this.applicationContext );
 		exceptionHandlerExceptionResolver.setContentNegotiationManager( contentNegotiationManager );
-		exceptionHandlerExceptionResolver.setMessageConverters( messageConverters );
+		if ( !messageConverters.isEmpty() ) {
+			exceptionHandlerExceptionResolver.setMessageConverters( messageConverters );
+		}
 		exceptionHandlerExceptionResolver.afterPropertiesSet();
 
 		exceptionResolvers.add( exceptionHandlerExceptionResolver );
