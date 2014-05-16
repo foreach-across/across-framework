@@ -15,5 +15,5 @@ public enum InstallerPhase
 	BeforeContextBootstrap,
 	BeforeModuleBootstrap,
 	AfterModuleBootstrap,
-	AfterContextBoostrap
+	AfterContextBootstrap
 }

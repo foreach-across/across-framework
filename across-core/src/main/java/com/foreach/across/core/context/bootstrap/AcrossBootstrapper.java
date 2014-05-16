@@ -112,9 +112,6 @@ public class AcrossBootstrapper
 			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
 		}
 
-		// Bootstrapping done, run installers that require context bootstrap finished
-		installerRegistry.runInstallers( InstallerPhase.AfterContextBoostrap );
-
 		LOG.debug( "Bootstrapping {} modules - finished", modulesInOrder.size() );
 
 		if ( rootContext.getParent() != null && rootContext.getParent() instanceof ConfigurableApplicationContext ) {
@@ -123,6 +120,9 @@ public class AcrossBootstrapper
 
 		// Refresh beans
 		AcrossContextUtils.refreshBeans( context );
+
+		// Bootstrapping done, run installers that require context bootstrap finished
+		installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
 
 		// Bootstrap finished - publish the event
 		context.publishEvent( new AcrossContextBootstrappedEvent( context, modulesInOrder ) );
