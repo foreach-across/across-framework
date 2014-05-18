@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>List application properties</title>
+</head>
+<body th:fragment="content">
+    <div th:replace="th/across :: table (${applicationProperties})"></div>
+</body>
+</html>
