@@ -17,11 +17,10 @@ import java.util.*;
  * This class creates the optimal bootstrap order for all modules and can throw an exception if two
  * modules have a cyclic dependency and are impossible to bootstrap (very bad - impossible to fix).
  */
-public class BootstrapAcrossModuleOrder
+public class ModuleBootstrapOrderBuilder
 {
-	private static final Logger LOG = LoggerFactory.getLogger( BootstrapAcrossModuleOrder.class );
+	private static final Logger LOG = LoggerFactory.getLogger( ModuleBootstrapOrderBuilder.class );
 
-	private final boolean removeDisabledModules;
 	private final List<AcrossModule> source;
 
 	private LinkedList<AcrossModule> orderedModules;
@@ -33,9 +32,8 @@ public class BootstrapAcrossModuleOrder
 			new HashMap<AcrossModule, Collection<AcrossModule>>();
 	private Map<AcrossModule, AcrossModuleRole> moduleRoles = new HashMap<AcrossModule, AcrossModuleRole>();
 
-	public BootstrapAcrossModuleOrder( Collection<AcrossModule> source, boolean removeDisabledModules ) {
+	public ModuleBootstrapOrderBuilder( Collection<AcrossModule> source ) {
 		this.source = new ArrayList<AcrossModule>( source );
-		this.removeDisabledModules = removeDisabledModules;
 
 		orderModules();
 	}
@@ -202,11 +200,6 @@ public class BootstrapAcrossModuleOrder
 								"Unable to determine legal module bootstrap order, possible cyclic dependency on module " + dependency.getName() );
 					}
 				}
-
-				// Remove module if disabled and disabled should be removed
-				if ( removeDisabledModules && !module.isEnabled() ) {
-					iterator.remove();
-				}
 			}
 		}
 	}
@@ -289,13 +282,5 @@ public class BootstrapAcrossModuleOrder
 		else {
 			moduleRoles.put( module, AcrossModuleRole.CUSTOM );
 		}
-	}
-
-	public static Collection<AcrossModule> create( Collection<AcrossModule> modules ) {
-		return create( modules, false );
-	}
-
-	public static Collection<AcrossModule> create( Collection<AcrossModule> modules, boolean removeDisabledModules ) {
-		return new BootstrapAcrossModuleOrder( modules, removeDisabledModules ).getOrderedModules();
 	}
 }

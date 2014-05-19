@@ -2,22 +2,22 @@ package com.foreach.across.core.events;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 
 public class AcrossModuleBootstrappedEvent implements AcrossEvent
 {
-	private final AcrossContext context;
-	private final AcrossModule module;
+	private final AcrossModuleInfo module;
 
-	public AcrossModuleBootstrappedEvent( AcrossContext context, AcrossModule module ) {
-		this.context = context;
+	public AcrossModuleBootstrappedEvent( AcrossModuleInfo module ) {
 		this.module = module;
 	}
 
-	public AcrossContext getContext() {
-		return context;
+	public AcrossContextInfo getContext() {
+		return module.getContext();
 	}
 
-	public AcrossModule getModule() {
+	public AcrossModuleInfo getModule() {
 		return module;
 	}
 }

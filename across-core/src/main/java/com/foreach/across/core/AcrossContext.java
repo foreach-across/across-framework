@@ -3,10 +3,11 @@ package com.foreach.across.core;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
-import com.foreach.across.core.context.bootstrap.BootstrapAcrossModuleOrder;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,8 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	private boolean isBootstrapped = false;
 
 	private ApplicationContext parentApplicationContext;
+
+	private AcrossContextInfo runningContextInfo;
 
 	/**
 	 * Constructs a new AcrossContext in its own ApplicationContext.
@@ -192,6 +195,17 @@ public class AcrossContext extends AcrossApplicationContextHolder
 		AcrossContextUtils.getBeanOfType( this, AcrossEventPublisher.class ).publish( event );
 	}
 
+	/**
+	 * @return Info object attached to this context.  If null it means the context bootstrap has not started.
+	 */
+	public AcrossContextInfo getRunningContextInfo() {
+		return runningContextInfo;
+	}
+
+	void setRunningContextInfo( AcrossContextInfo runningContextInfo ) {
+		this.runningContextInfo = runningContextInfo;
+	}
+
 	@PostConstruct
 	public void bootstrap() {
 		if ( !isBootstrapped ) {
@@ -206,18 +220,20 @@ public class AcrossContext extends AcrossApplicationContextHolder
 		if ( isBootstrapped ) {
 			// Shutdown all modules in reverse order - note that it is quite possible to beans might have been destroyed
 			// already by Spring in the meantime
-			List<AcrossModule> reverseList =
-					new LinkedList<AcrossModule>( BootstrapAcrossModuleOrder.create( modules ) );
+			List<AcrossModuleInfo> reverseList = new ArrayList<>(
+					AcrossContextUtils.getBeanOfType( this, AcrossContextInfo.class ).getModules() );
 			Collections.reverse( reverseList );
 
-			for ( AcrossModule module : reverseList ) {
-				AbstractApplicationContext applicationContext = AcrossContextUtils.getApplicationContext( module );
+			for ( AcrossModuleInfo moduleInfo : reverseList ) {
+				if ( moduleInfo.isBootstrapped() ) {
+					AcrossModule module = moduleInfo.getModule();
+					AbstractApplicationContext applicationContext = AcrossContextUtils.getApplicationContext( module );
 
-				if ( applicationContext != null ) {
-					applicationContext.stop();
-					module.shutdown();
+					if ( applicationContext != null ) {
+						applicationContext.stop();
+						module.shutdown();
+					}
 				}
-
 			}
 
 			isBootstrapped = false;

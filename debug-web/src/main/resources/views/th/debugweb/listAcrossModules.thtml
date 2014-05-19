@@ -9,7 +9,7 @@
 <div class="debug-across-info">
 	<div class="form-filters">
 		<label><input type="checkbox" id="hide-spring-standard" checked="checked" />hide default Spring beans</label>
-		<label><input type="checkbox" id="hide-non-exposed" />show only exposed beans</label>
+		<label><input type="checkbox" id="hide-non-exposed" checked="checked" />show only exposed beans</label>
 	</div>
 	<div th:each="moduleInfo,status : ${moduleInfoList}">
 		<!-- Module info -->

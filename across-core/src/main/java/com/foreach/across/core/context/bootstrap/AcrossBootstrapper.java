@@ -8,6 +8,7 @@ import com.foreach.across.core.context.beans.PrimarySingletonBean;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
+import com.foreach.across.core.context.info.*;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
@@ -54,19 +55,18 @@ public class AcrossBootstrapper
 	public void bootstrap() {
 		checkBootstrapIsPossible();
 
-		checkUniqueModuleNames( context.getModules() );
-
-		Collection<AcrossModule> modulesInOrder = createOrderedModulesList( context );
+		ConfigurableAcrossContextInfo contextInfo = buildContextAndModuleInfo();
+		Collection<AcrossModuleInfo> modulesInOrder = contextInfo.getModules();
 
 		LOG.debug( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
 		int order = 1;
-		for ( AcrossModule module : modulesInOrder ) {
-			LOG.debug( "{} - {}: {}", order++, module.getName(), module.getClass() );
+		for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
+			LOG.debug( "{} - {}: {}", order++, moduleInfo.getName(), moduleInfo.getModule().getClass() );
 		}
 
 		runModuleBootstrapCustomizations( modulesInOrder );
 
-		AcrossApplicationContext root = createRootContext( modulesInOrder );
+		AcrossApplicationContext root = createRootContext( contextInfo );
 		AbstractApplicationContext rootContext = root.getApplicationContext();
 
 		Map<AcrossModule, ModuleBootstrapConfig> moduleBootstrapConfigs = createModuleBootstrapConfig( modulesInOrder );
@@ -80,10 +80,14 @@ public class AcrossBootstrapper
 
 		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
 
-		for ( ModuleBootstrapConfig config : moduleBootstrapConfigs.values() ) {
+		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
+			ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
+			ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
 			LOG.debug( "Bootstrapping {} module", config.getModuleName() );
 
-			context.publishEvent( new AcrossModuleBeforeBootstrapEvent( context, config ) );
+			configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
+
+			context.publishEvent( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
 
 			// Run installers before bootstrapping this particular module
 			installerRegistry.runInstallersForModule( config, InstallerPhase.BeforeModuleBootstrap );
@@ -100,8 +104,10 @@ public class AcrossBootstrapper
 			// Bootstrap the module
 			config.getModule().bootstrap();
 
+			configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Bootstrapped );
+
 			// Send event that this module has bootstrapped
-			context.publishEvent( new AcrossModuleBootstrappedEvent( context, config.getModule() ) );
+			context.publishEvent( new AcrossModuleBootstrappedEvent( moduleInfo ) );
 
 			// Run installers after module itself has bootstrapped
 			installerRegistry.runInstallersForModule( config, InstallerPhase.AfterModuleBootstrap );
@@ -125,11 +131,48 @@ public class AcrossBootstrapper
 		installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
 
 		// Bootstrap finished - publish the event
-		context.publishEvent( new AcrossContextBootstrappedEvent( context, modulesInOrder ) );
+		context.publishEvent( new AcrossContextBootstrappedEvent( contextInfo ) );
+	}
+
+	private ConfigurableAcrossContextInfo buildContextAndModuleInfo() {
+		ConfigurableAcrossContextInfo contextInfo = new ConfigurableAcrossContextInfo( context );
+		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder =
+				new ModuleBootstrapOrderBuilder( context.getModules() );
+
+		Collection<AcrossModuleInfo> configured = new LinkedList<>();
+
+		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
+			configured.add( new ConfigurableAcrossModuleInfo( contextInfo, module ) );
+		}
+
+		contextInfo.setConfiguredModules( configured );
+
+		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
+			ConfigurableAcrossModuleInfo moduleInfo = contextInfo.getConfigurableModuleInfo( module.getName() );
+
+			moduleInfo.setRequiredDependencies(
+					convertToModuleInfo( moduleBootstrapOrderBuilder.getRequiredDependencies( module ), contextInfo ) );
+			moduleInfo.setOptionalDependencies(
+					convertToModuleInfo( moduleBootstrapOrderBuilder.getOptionalDependencies( module ), contextInfo ) );
+			moduleInfo.setModuleRole( moduleBootstrapOrderBuilder.getModuleRole( module ) );
+		}
+
+		return contextInfo;
+	}
+
+	private Collection<AcrossModuleInfo> convertToModuleInfo( Collection<AcrossModule> list,
+	                                                          ConfigurableAcrossContextInfo contextInfo ) {
+		Collection<AcrossModuleInfo> infoList = new ArrayList<>( list.size() );
+
+		for ( AcrossModule module : list ) {
+			infoList.add( contextInfo.getModuleInfo( module.getName() ) );
+		}
+
+		return infoList;
 	}
 
 	private void prepareForBootstrap( Map<AcrossModule, ModuleBootstrapConfig> configs ) {
-		for ( AcrossModule module : new LinkedList<AcrossModule>( configs.keySet() ) ) {
+		for ( AcrossModule module : new LinkedList<>( configs.keySet() ) ) {
 			module.prepareForBootstrap( configs.get( module ), configs );
 		}
 	}
@@ -137,10 +180,11 @@ public class AcrossBootstrapper
 	/**
 	 * Create map of all modules and their corresponding config in order.
 	 */
-	private Map<AcrossModule, ModuleBootstrapConfig> createModuleBootstrapConfig( Collection<AcrossModule> modulesInOrder ) {
+	private Map<AcrossModule, ModuleBootstrapConfig> createModuleBootstrapConfig( Collection<AcrossModuleInfo> modulesInOrder ) {
 		Map<AcrossModule, ModuleBootstrapConfig> configs = new LinkedHashMap<AcrossModule, ModuleBootstrapConfig>();
 
-		for ( AcrossModule module : modulesInOrder ) {
+		for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
+			AcrossModule module = moduleInfo.getModule();
 			ModuleBootstrapConfig config = new ModuleBootstrapConfig( module );
 			config.setExposeFilter( module.getExposeFilter() );
 			config.setExposeTransformer( module.getExposeTransformer() );
@@ -154,6 +198,8 @@ public class AcrossBootstrapper
 			config.addApplicationContextConfigurers( AcrossContextUtils.getConfigurersToApply( context, module ) );
 
 			configs.put( module, config );
+
+			( (ConfigurableAcrossModuleInfo) moduleInfo ).setBootstrapConfiguration( config );
 		}
 
 		return configs;
@@ -164,6 +210,8 @@ public class AcrossBootstrapper
 			throw new RuntimeException(
 					"A datasource must be configured if installers are allowed when bootstrapping the AcrossContext" );
 		}
+
+		checkUniqueModuleNames( context.getModules() );
 	}
 
 	private void checkUniqueModuleNames( Collection<AcrossModule> modules ) {
@@ -179,30 +227,27 @@ public class AcrossBootstrapper
 		}
 	}
 
-	private Collection<AcrossModule> createOrderedModulesList( AcrossContext context ) {
-		return BootstrapAcrossModuleOrder.create( context.getModules(), true );
-	}
-
-	private void runModuleBootstrapCustomizations( Collection<AcrossModule> modules ) {
-		for ( AcrossModule module : modules ) {
-			if ( module instanceof BootstrapAdapter ) {
-				( (BootstrapAdapter) module ).customizeBootstrapper( this );
+	private void runModuleBootstrapCustomizations( Collection<AcrossModuleInfo> modules ) {
+		for ( AcrossModuleInfo moduleInfo : modules ) {
+			if ( moduleInfo.getModule() instanceof BootstrapAdapter ) {
+				( (BootstrapAdapter) moduleInfo.getModule() ).customizeBootstrapper( this );
 			}
 		}
 	}
 
-	private AcrossApplicationContext createRootContext( Collection<AcrossModule> modules ) {
+	private AcrossApplicationContext createRootContext( AcrossContextInfo contextInfo ) {
 		AbstractApplicationContext rootApplicationContext =
 				applicationContextFactory.createApplicationContext( context, context.getParentApplicationContext() );
 
 		ProvidedBeansMap providedBeans = new ProvidedBeansMap();
 
-		// Put the context as a fixed singleton
+		// Put the context and its info as fixed singletons
 		providedBeans.put( AcrossContext.BEAN, new PrimarySingletonBean( context ) );
+		providedBeans.put( AcrossContextInfo.BEAN, new PrimarySingletonBean( contextInfo ) );
 
-		// Put the modules as singletons in the context
-		for ( AcrossModule module : modules ) {
-			providedBeans.put( module.getName(), new PrimarySingletonBean( module ) );
+		// Put the (configured) modules as singletons in the context
+		for ( AcrossModuleInfo moduleInfo : contextInfo.getConfiguredModules() ) {
+			providedBeans.put( moduleInfo.getName(), new PrimarySingletonBean( moduleInfo.getModule() ) );
 		}
 
 		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),
