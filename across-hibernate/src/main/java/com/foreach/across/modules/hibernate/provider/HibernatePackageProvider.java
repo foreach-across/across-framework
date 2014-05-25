@@ -1,5 +1,7 @@
 package com.foreach.across.modules.hibernate.provider;
 
+import java.util.Map;
+
 public interface HibernatePackageProvider
 {
 	String[] getPackagesToScan();
@@ -7,4 +9,6 @@ public interface HibernatePackageProvider
 	Class<?>[] getAnnotatedClasses();
 
 	String[] getMappingResources();
+
+	Map<String, String> getTableAliases();
 }

@@ -12,6 +12,7 @@ public class WebResource
 	 */
 	public static final String CSS = "css";
 	public static final String JAVASCRIPT = "javascript";
+	public static final String JAVASCRIPT_PAGE_END = "javascript-page-end";
 
 	/**
 	 * Used for data that should be serialized and passed to the client (usually as json).
@@ -42,11 +43,11 @@ public class WebResource
 	private String key, type, location;
 	private Object data;
 
-	public WebResource( String key, String type, String location, Object data ) {
-		this.key = key;
+	public WebResource( String type, String key, Object data, String location ) {
 		this.type = type;
-		this.location = location;
+		this.key = key;
 		this.data = data;
+		this.location = location;
 	}
 
 	/**

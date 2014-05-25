@@ -5,6 +5,14 @@
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
+	<!-- Default table names -->
+	<property name="table.sequences" value="um_sequences" />
+	<property name="table.permission" value="um_permission" />
+	<property name="table.role" value="um_role" />
+	<property name="table.role_permission" value="um_role_permission" />
+	<property name="table.user" value="um_user" />
+	<property name="table.user_role" value="um_user_role" />
+
 	<property name="long.type" value="bigint"/>
 	<property name="varchar.suffix" value=""/>
 
@@ -14,42 +22,42 @@
 	<changeSet id="201403011519" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="sequences"/>
+				<tableExists tableName="${table.sequences}"/>
 			</not>
 		</preConditions>
 
 		<comment>Creates sequences table</comment>
 
-		<createTable tableName="sequences">
+		<createTable tableName="${table.sequences}">
 			<column name="seq_name" type="varchar2(25 ${varchar.suffix})"/>
 			<column name="seq_number" type="${long.type}"/>
 		</createTable>
 
-		<addPrimaryKey tableName="sequences" columnNames="seq_name"/>
+		<addPrimaryKey tableName="${table.sequences}" columnNames="seq_name"/>
 	</changeSet>
 
 	<changeSet id="201403011520" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="permission"/>
+				<tableExists tableName="${table.permission}"/>
 			</not>
 		</preConditions>
 
 		<comment>Creates permission table</comment>
 
-		<createTable tableName="permission">
+		<createTable tableName="${table.permission}">
 			<column name="id" type="${long.type}"/>
 			<column name="name" type="varchar2(250 ${varchar.suffix})"/>
 			<column name="description" type="varchar2(2000 ${varchar.suffix})"/>
 		</createTable>
 
-		<addPrimaryKey tableName="permission" columnNames="id"/>
+		<addPrimaryKey tableName="${table.permission}" columnNames="id"/>
 
-		<createIndex tableName="permission" indexName="ix_permission_name" unique="true">
+		<createIndex tableName="${table.permission}" indexName="ix_um_permission_name" unique="true">
 			<column name="name"/>
 		</createIndex>
 
-		<insert tableName="sequences">
+		<insert tableName="${table.sequences}">
 			<column name="seq_name">seq_permission_id</column>
 			<column name="seq_number">1000</column>
 		</insert>
@@ -58,89 +66,89 @@
 	<changeSet id="201403011521" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="role"/>
+				<tableExists tableName="${table.role}"/>
 			</not>
 		</preConditions>
 
 		<comment>Creates role and role_permission table</comment>
 
-		<createTable tableName="role">
+		<createTable tableName="${table.role}">
 			<column name="id" type="${long.type}"/>
 			<column name="name" type="varchar2(250 ${varchar.suffix})"/>
 			<column name="description" type="varchar2(2000 ${varchar.suffix})"/>
 		</createTable>
 
-		<addPrimaryKey tableName="role" columnNames="id"/>
+		<addPrimaryKey tableName="${table.role}" columnNames="id"/>
 
-		<createIndex tableName="role" indexName="ix_role_name" unique="true">
+		<createIndex tableName="${table.role}" indexName="ix_um_role_name" unique="true">
 			<column name="name"/>
 		</createIndex>
 
-		<insert tableName="sequences">
+		<insert tableName="${table.sequences}">
 			<column name="seq_name">seq_role_id</column>
 			<column name="seq_number">1000</column>
 		</insert>
 
-		<createTable tableName="role_permission">
+		<createTable tableName="${table.role_permission}">
 			<column name="role_id" type="${long.type}"/>
 			<column name="permission_id" type="${long.type}"/>
 		</createTable>
 
-		<addPrimaryKey constraintName="pk_role_permission" tableName="role_permission" columnNames="role_id, permission_id"/>
+		<addPrimaryKey constraintName="pk_um_role_permission" tableName="${table.role_permission}" columnNames="role_id, permission_id"/>
 
-		<addForeignKeyConstraint baseTableName="role_permission" baseColumnNames="role_id"
-		                         constraintName="fk_role_permission_role_id"
-		                         referencedTableName="role"
+		<addForeignKeyConstraint baseTableName="${table.role_permission}" baseColumnNames="role_id"
+		                         constraintName="fk_um_rp_role_id"
+		                         referencedTableName="${table.role}"
 		                         referencedColumnNames="id"/>
-		<addForeignKeyConstraint baseTableName="role_permission" baseColumnNames="permission_id"
-		                         constraintName="fk_role_permission_permission_id"
-		                         referencedTableName="permission"
+		<addForeignKeyConstraint baseTableName="${table.role_permission}" baseColumnNames="permission_id"
+		                         constraintName="fk_um_rp_permission_id"
+		                         referencedTableName="${table.permission}"
 		                         referencedColumnNames="id"/>
 	</changeSet>
 
 	<changeSet id="201405021433" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="user"/>
+				<tableExists tableName="${table.user}"/>
 			</not>
 		</preConditions>
 
 		<comment>Create user and user_role table</comment>
 
-		<createTable tableName="user">
+		<createTable tableName="${table.user}">
 			<column name="id" type="${long.type}"/>
 			<column name="username" type="varchar2(320 ${varchar.suffix})"/>
 			<column name="email" type="varchar2(320 ${varchar.suffix})"/>
 			<column name="password" type="varchar2(250 ${varchar.suffix})"/>
 		</createTable>
 
-		<addPrimaryKey tableName="user" columnNames="id"/>
+		<addPrimaryKey tableName="${table.user}" columnNames="id"/>
 
-		<addNotNullConstraint tableName="user" columnName="username"/>
+		<addNotNullConstraint tableName="${table.user}" columnName="username"/>
 
-		<createIndex tableName="user" indexName="ix_user_username" unique="true">
+		<createIndex tableName="${table.user}" indexName="ix_um_user_username" unique="true">
 			<column name="username"/>
 		</createIndex>
 
-		<insert tableName="sequences">
+		<insert tableName="${table.sequences}">
 			<column name="seq_name">seq_user_id</column>
 			<column name="seq_number">1000</column>
 		</insert>
 
-		<createTable tableName="user_role">
+		<createTable tableName="${table.user_role}">
 			<column name="user_id" type="${long.type}"/>
 			<column name="role_id" type="${long.type}"/>
 		</createTable>
 
-		<addPrimaryKey tableName="user_role" columnNames="user_id, role_id"/>
+		<addPrimaryKey tableName="${table.user_role}" columnNames="user_id, role_id"/>
 
-		<addForeignKeyConstraint baseTableName="user_role" baseColumnNames="user_id"
-		                         constraintName="fk_user_role_user_id"
-		                         referencedTableName="user"
+		<addForeignKeyConstraint baseTableName="${table.user_role}" baseColumnNames="user_id"
+		                         constraintName="fk_um_ur_user_id"
+		                         referencedTableName="${table.user}"
 		                         referencedColumnNames="id"/>
-		<addForeignKeyConstraint baseTableName="user_role" baseColumnNames="role_id"
-		                         constraintName="fk_user_role_role_id"
-		                         referencedTableName="role"
+		<addForeignKeyConstraint baseTableName="${table.user_role}" baseColumnNames="role_id"
+		                         constraintName="fk_um_ur_role_id"
+		                         referencedTableName="${table.role}"
 		                         referencedColumnNames="id"/>
 	</changeSet>
 

@@ -1,5 +1,6 @@
 package com.foreach.across.modules.adminweb.business;
 
+import com.foreach.across.modules.adminweb.config.UserSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 
@@ -8,12 +9,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Entity
-@Table(name = "role")
+@Table(name = UserSchemaConfiguration.TABLE_ROLE)
 public class Role implements Comparable<Role>
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_role_id")
-	@TableGenerator(name = "seq_role_id", table = "sequences",
+	@TableGenerator(name = "seq_role_id", table = UserSchemaConfiguration.TABLE_SEQUENCES,
 	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_role_id",
 	                allocationSize = 5)
 	private long id;
@@ -27,7 +28,7 @@ public class Role implements Comparable<Role>
 	@ManyToMany(fetch = FetchType.EAGER)
 	@BatchSize(size = 50)
 	@JoinTable(
-			name = "role_permission",
+			name = UserSchemaConfiguration.TABLE_ROLE_PERMISSION,
 			joinColumns = @JoinColumn(name = "role_id"),
 			inverseJoinColumns = @JoinColumn(name = "permission_id"))
 	private Set<Permission> permissions = new TreeSet<Permission>();

@@ -1,6 +1,7 @@
 package com.foreach.across.demoweb;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.demoweb.module.DemoWebModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.ehcache.EhcacheModule;
@@ -9,7 +10,6 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebViewSupport;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.cfg.AvailableSettings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +30,7 @@ public class DemoWeb
 		context.addModule( acrossWebModule() );
 		context.addModule( adminWebModule() );
 		context.addModule( acrossHibernateModule() );
+		context.addModule( new DemoWebModule() );
 
 		return context;
 	}
@@ -51,13 +52,17 @@ public class DemoWeb
 		return hibernateModule;
 	}
 
+	/**
+	 * Configure the AdminWebModule to prefix all AdminWebControllers with /secure instead of the default /admin.
+	 * Rename some of the default user table names.
+	 */
 	@Bean
 	public AdminWebModule adminWebModule() {
-		/**
-		 * Configure the AdminWebModule to prefix all AdminWebControllers with /secure instead of the default /admin.
-		 */
 		AdminWebModule adminWebModule = new AdminWebModule();
 		adminWebModule.setRootPath( "/secure" );
+
+		adminWebModule.getSchemaConfiguration().renameTable( "um_permission", "permissies" );
+		adminWebModule.getSchemaConfiguration().renameTable( "um_user", "gebruikers" );
 
 		return adminWebModule;
 	}
@@ -68,6 +73,7 @@ public class DemoWeb
 		webModule.setViewsResourcePath( "/static" );
 		webModule.setSupportViews( AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF );
 
+		// Todo: configure legacyhtml5 just for the heck of it
 		webModule.setDevelopmentMode( true );
 		webModule.addDevelopmentViews( "", "c:/code/across/across-web/src/main/resources/views/" );
 		webModule.addDevelopmentViews( "debugweb", "c:/code/across/debug-web/src/main/resources/views/" );

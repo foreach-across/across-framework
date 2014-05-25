@@ -46,6 +46,11 @@ public interface AcrossContextInfo
 	AcrossModuleInfo getModuleInfo( String moduleName );
 
 	/**
+	 * @return AcrossModuleInfo instance of null if bootstrap finished.
+	 */
+	AcrossModuleInfo getModuleBeingBootstrapped();
+
+	/**
 	 * @return True if the AcrossContext is bootstrapped, false if bootstrap in progress.
 	 */
 	public boolean isBootstrapped();

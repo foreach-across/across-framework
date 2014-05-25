@@ -4,22 +4,27 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.database.HasSchemaConfiguration;
+import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.modules.adminweb.config.AdminServicesConfig;
 import com.foreach.across.modules.adminweb.config.AdminWebConfig;
+import com.foreach.across.modules.adminweb.config.UserSchemaConfiguration;
 import com.foreach.across.modules.adminweb.installers.AdminWebRolesInstaller;
 import com.foreach.across.modules.adminweb.installers.AdminWebSchemaInstaller;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
-import com.foreach.across.modules.hibernate.provider.HasHibernatePackageProvider;
-import com.foreach.across.modules.hibernate.provider.HibernatePackageProvider;
-import com.foreach.across.modules.hibernate.provider.PackagesToScanProvider;
+import com.foreach.across.modules.hibernate.provider.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
 
 @AcrossDepends(required = "AcrossHibernateModule", optional = "AcrossWebModule")
-public class AdminWebModule extends AcrossModule implements HasHibernatePackageProvider
+public class AdminWebModule extends AcrossModule implements HasHibernatePackageProvider, HasSchemaConfiguration
 {
+	public static final String NAME = "AdminWebModule";
+
 	private String rootPath = "/admin";
+
+	private final SchemaConfiguration schemaConfiguration = new UserSchemaConfiguration();
 
 	/**
 	 * @return The root path for all AdminWebControllers.
@@ -41,7 +46,7 @@ public class AdminWebModule extends AcrossModule implements HasHibernatePackageP
 
 	@Override
 	public String getName() {
-		return "AdminWebModule";
+		return NAME;
 	}
 
 	@Override
@@ -56,7 +61,7 @@ public class AdminWebModule extends AcrossModule implements HasHibernatePackageP
 
 	@Override
 	public Object[] getInstallers() {
-		return new Object[] { new AdminWebSchemaInstaller(), new AdminWebRolesInstaller() };
+		return new Object[] { new AdminWebSchemaInstaller( schemaConfiguration ), new AdminWebRolesInstaller() };
 	}
 
 	/**
@@ -67,9 +72,16 @@ public class AdminWebModule extends AcrossModule implements HasHibernatePackageP
 	 */
 	public HibernatePackageProvider getHibernatePackageProvider( AcrossHibernateModule hibernateModule ) {
 		if ( StringUtils.equals( "AcrossHibernateModule", hibernateModule.getName() ) ) {
-			return new PackagesToScanProvider( "com.foreach.across.modules.adminweb.business" );
+			return new HibernatePackageProviderComposite(
+					new PackagesToScanProvider( "com.foreach.across.modules.adminweb.business" ),
+					new TableAliasProvider( schemaConfiguration.getTables() ) );
 		}
 
 		return null;
+	}
+
+	@Override
+	public SchemaConfiguration getSchemaConfiguration() {
+		return schemaConfiguration;
 	}
 }

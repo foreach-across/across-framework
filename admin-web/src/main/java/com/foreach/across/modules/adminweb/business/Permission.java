@@ -1,5 +1,6 @@
 package com.foreach.across.modules.adminweb.business;
 
+import com.foreach.across.modules.adminweb.config.UserSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
@@ -8,12 +9,12 @@ import javax.persistence.*;
  * A single permission that can be checked against.
  */
 @Entity
-@Table(name = "permission")
+@Table(name = UserSchemaConfiguration.TABLE_PERMISSION)
 public class Permission implements Comparable<Permission>
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_permission_id")
-	@TableGenerator(name = "seq_permission_id", table = "sequences",
+	@TableGenerator(name = "seq_permission_id", table = UserSchemaConfiguration.TABLE_SEQUENCES,
 	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_permission_id",
 	                allocationSize = 5)
 	private long id;

@@ -4,10 +4,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.debugweb.handlers.DebugWebEventHandler;
 import com.foreach.across.modules.debugweb.mvc.*;
 import com.foreach.across.modules.web.menu.MenuFactory;
-import com.foreach.across.modules.web.resource.WebResource;
-import com.foreach.across.modules.web.resource.WebResourceRegistry;
-import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
-import com.foreach.across.modules.web.resource.WebResourceTranslator;
+import com.foreach.across.modules.web.resource.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,10 +66,17 @@ public class DebugWebConfig extends WebMvcConfigurerAdapter
 
 	@Bean
 	@Exposed
-	public WebResourceRegistryInterceptor debugWebResourceRegistryInterceptor() {
-		WebResourceRegistryInterceptor interceptor = new WebResourceRegistryInterceptor();
+	public WebResourcePackageManager debugWebResourcePackageManager() {
+		return new WebResourcePackageManager();
+	}
 
-		WebResourceRegistry registry = new WebResourceRegistry();
+	@Bean
+	@Exposed
+	public WebResourceRegistryInterceptor debugWebResourceRegistryInterceptor() {
+		WebResourceRegistryInterceptor interceptor =
+				new WebResourceRegistryInterceptor( debugWebResourcePackageManager() );
+
+		WebResourceRegistry registry = new WebResourceRegistry( debugWebResourcePackageManager() );
 		registry.addWithKey( WebResource.CSS, DebugWeb.MODULE, DebugWeb.CSS_MAIN, WebResource.VIEWS );
 		interceptor.setDefaultRegistry( registry );
 

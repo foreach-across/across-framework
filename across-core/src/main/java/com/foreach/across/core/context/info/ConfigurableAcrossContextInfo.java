@@ -17,6 +17,8 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	private Collection<AcrossModuleInfo> configuredModules =
 			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
 
+	private AcrossModuleInfo moduleBeingBootstrapped;
+
 	public ConfigurableAcrossContextInfo( AcrossContext context ) {
 		this.context = context;
 	}
@@ -66,6 +68,17 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 
 	public ConfigurableAcrossModuleInfo getConfigurableModuleInfo( String moduleName ) {
 		return (ConfigurableAcrossModuleInfo) getModuleInfo( moduleName );
+	}
+
+	@Override
+	public AcrossModuleInfo getModuleBeingBootstrapped() {
+		for ( AcrossModuleInfo moduleInfo : getModules() ) {
+			if ( moduleInfo.getBootstrapStatus() == ModuleBootstrapStatus.BootstrapBusy ) {
+				return moduleInfo;
+			}
+		}
+
+		return null;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.foreach.across.modules.adminweb.business;
 
+import com.foreach.across.modules.adminweb.config.UserSchemaConfiguration;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
@@ -8,12 +9,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Entity
-@Table(name = "user")
+@Table(name = UserSchemaConfiguration.TABLE_USER)
 public class User implements Principal
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_user_id")
-	@TableGenerator(name = "seq_user_id", table = "sequences",
+	@TableGenerator(name = "seq_user_id", table = UserSchemaConfiguration.TABLE_SEQUENCES,
 	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_user_id",
 	                allocationSize = 5)
 	private long id;
@@ -30,7 +31,7 @@ public class User implements Principal
 	@ManyToMany(fetch = FetchType.EAGER)
 	@BatchSize(size = 50)
 	@JoinTable(
-			name = "user_role",
+			name = UserSchemaConfiguration.TABLE_USER_ROLE,
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new TreeSet<>();
