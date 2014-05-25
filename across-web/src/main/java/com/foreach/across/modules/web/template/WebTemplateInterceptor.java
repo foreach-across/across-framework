@@ -1,5 +1,7 @@
 package com.foreach.across.modules.web.template;
 
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -23,13 +25,18 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	public boolean preHandle( HttpServletRequest request,
 	                          HttpServletResponse response,
 	                          Object handler ) throws Exception {
-
 		String templateName = determineTemplateName( handler );
-		WebTemplateProcessor processor = webTemplateRegistry.get( templateName );
 
-		if ( processor != null ) {
-			request.setAttribute( PROCESSOR_ATTRIBUTE, processor );
-			processor.prepareForTemplate( request, response, handler );
+		if ( templateName != null ) {
+			WebTemplateProcessor processor = webTemplateRegistry.get( templateName );
+
+			if ( processor != null ) {
+				request.setAttribute( PROCESSOR_ATTRIBUTE, processor );
+				processor.prepareForTemplate( request, response, handler );
+			}
+			else {
+				throw new RuntimeException( "No WebTemplateProcessor registered with name: " + templateName );
+			}
 		}
 
 		return true;
@@ -48,6 +55,23 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	}
 
 	private String determineTemplateName( Object handler ) {
-		return webTemplateRegistry.getDefaultTemplateName();
+		if ( handler instanceof HandlerMethod ) {
+			HandlerMethod handlerMethod = (HandlerMethod) handler;
+
+			if ( handlerMethod.getMethodAnnotation( ClearTemplate.class ) != null || handlerMethod.getMethodAnnotation(
+					ResponseBody.class ) != null ) {
+				return null;
+			}
+
+			Template templateAnnotation = handlerMethod.getMethodAnnotation( Template.class );
+
+			if ( templateAnnotation != null ) {
+				return templateAnnotation.value();
+			}
+
+			return webTemplateRegistry.getDefaultTemplateName();
+		}
+
+		return null;
 	}
 }

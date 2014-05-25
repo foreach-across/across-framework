@@ -4,6 +4,7 @@ import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
 import com.foreach.across.modules.adminweb.services.PermissionService;
 import com.foreach.across.modules.adminweb.services.RoleService;
 import com.foreach.across.modules.web.menu.Menu;
+import com.foreach.across.modules.web.template.Template;
 import net.engio.mbassy.listener.Handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;

@@ -6,8 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Administration</title>
 
-	<script th:each="javascript : ${webResourceRegistry.getResources('javascript')}" th:src="${javascript.data}"
-	        th:if="${javascript.location == 'external'}"></script>
+	<script th:each="javascript : ${webResourceRegistry.getResources('javascript')}" th:src="@{${javascript.data}}"
+	        th:if="${javascript.location != 'inline'}"></script>
 
 	<link rel="stylesheet" type="text/css" th:each="css : ${webResourceRegistry.getResources('css')}"
 	      th:href="@{${css.data}}"/>
