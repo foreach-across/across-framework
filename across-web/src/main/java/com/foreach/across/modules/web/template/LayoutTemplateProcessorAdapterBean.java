@@ -3,8 +3,10 @@ package com.foreach.across.modules.web.template;
 import com.foreach.across.modules.web.menu.MenuFactory;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +50,15 @@ public class LayoutTemplateProcessorAdapterBean implements WebTemplateProcessor
 	                           HttpServletResponse response,
 	                           Object handler,
 	                           ModelAndView modelAndView ) {
-		modelAndView.addObject( "childPage", modelAndView.getViewName() );
-		modelAndView.setViewName( layout );
+		if ( modelAndView.hasView() && modelAndView.isReference() ) {
+			String viewName = modelAndView.getViewName();
+
+			// Redirect views should not be modified
+			if ( !StringUtils.startsWithAny( viewName, UrlBasedViewResolver.REDIRECT_URL_PREFIX,
+			                                 UrlBasedViewResolver.FORWARD_URL_PREFIX ) ) {
+				modelAndView.addObject( "childPage", modelAndView.getViewName() );
+				modelAndView.setViewName( layout );
+			}
+		}
 	}
 }

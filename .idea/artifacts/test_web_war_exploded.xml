@@ -10,8 +10,6 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: org.thymeleaf:thymeleaf:2.1.2.RELEASE" />
           <element id="library" level="project" name="Maven: ognl:ognl:3.0.6" />
-          <element id="library" level="project" name="Maven: org.javassist:javassist:3.16.1-GA" />
-          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.6.1" />
           <element id="library" level="project" name="Maven: org.thymeleaf:thymeleaf-spring4:2.1.2.RELEASE" />
           <element id="archive" name="across-core-1.0.2-SNAPSHOT.jar">
             <element id="module-output" name="across-core" />
@@ -21,6 +19,7 @@
           <element id="library" level="project" name="Maven: commons-pool:commons-pool:1.5.4" />
           <element id="library" level="project" name="Maven: ch.qos.logback:logback-classic:1.0.13" />
           <element id="library" level="project" name="Maven: ch.qos.logback:logback-core:1.0.13" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.5" />
           <element id="library" level="project" name="Maven: org.apache.commons:commons-lang3:3.1" />
           <element id="library" level="project" name="Maven: org.liquibase:liquibase-core:3.0.8" />
           <element id="library" level="project" name="Maven: org.yaml:snakeyaml:1.13" />
@@ -39,7 +38,6 @@
           <element id="archive" name="across-debug-web-1.0.2-SNAPSHOT.jar">
             <element id="module-output" name="debug-web" />
           </element>
-          <element id="library" level="project" name="Maven: javax.servlet:servlet-api:2.4" />
           <element id="archive" name="admin-web-1.0.2-SNAPSHOT.jar">
             <element id="module-output" name="admin-web" />
           </element>
@@ -51,12 +49,16 @@
           <element id="library" level="project" name="Maven: org.hibernate:hibernate-core:4.2.8.Final" />
           <element id="library" level="project" name="Maven: antlr:antlr:2.7.7" />
           <element id="library" level="project" name="Maven: dom4j:dom4j:1.6.1" />
+          <element id="library" level="project" name="Maven: org.javassist:javassist:3.18.1-GA" />
           <element id="library" level="project" name="Maven: org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final" />
           <element id="library" level="project" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final" />
           <element id="library" level="project" name="Maven: org.hibernate.common:hibernate-commons-annotations:4.0.2.Final" />
-          <element id="library" level="project" name="Maven: org.springframework:spring-orm:4.0.0.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework:spring-jdbc:4.0.0.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework:spring-tx:4.0.0.RELEASE" />
+          <element id="archive" name="spring-security-1.0.2-SNAPSHOT.jar">
+            <element id="module-output" name="spring-security" />
+          </element>
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-web:3.2.4.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-core:3.2.4.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-config:3.2.4.RELEASE" />
           <element id="archive" name="across-ehcache-1.0.2-SNAPSHOT.jar">
             <element id="module-output" name="across-ehcache" />
           </element>
@@ -64,6 +66,8 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-context-support:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: cglib:cglib:2.2.2" />
           <element id="library" level="project" name="Maven: asm:asm:3.3.1" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-jdbc:4.0.0.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-tx:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.1" />
           <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
         </element>

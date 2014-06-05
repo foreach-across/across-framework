@@ -10,7 +10,6 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.expression.StandardBeanExpressionResolver;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySource;
@@ -57,6 +56,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	                                                            ModuleBootstrapConfig moduleBootstrapConfig,
 	                                                            AcrossApplicationContext parentContext ) {
 		AcrossSpringApplicationContext child = new AcrossSpringApplicationContext();
+		child.setDisplayName( moduleBootstrapConfig.getModuleName() );
 		child.setParent( parentContext.getApplicationContext() );
 		child.getEnvironment().merge( parentContext.getApplicationContext().getEnvironment() );
 

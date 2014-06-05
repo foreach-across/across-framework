@@ -26,6 +26,8 @@ public class TestAcrossModuleLoadingOrder
 	private ModuleEight infrastructureRequiringTwo = new ModuleEight();
 	private ModuleNine requiresTwoAndOptionalThreeTen = new ModuleNine();
 	private ModuleTen requiresOneAndOptionalTwoNine = new ModuleTen();
+	private ModuleEleven postProcessorRequiringOther = new ModuleEleven();
+	private ModuleTwelve postProcessor = new ModuleTwelve();
 
 	@Test
 	public void resetEnabled() {
@@ -119,8 +121,18 @@ public class TestAcrossModuleLoadingOrder
 		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo, infrastructureRequiringTwo ),
 		              ordered );
 
-		Collection<AcrossModule> dependencies = moduleBootstrapOrderBuilder.getRequiredDependencies( one );
+		Collection<AcrossModule> dependencies = moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( one );
 		assertFalse( dependencies.contains( infrastructureRequiringTwo ) );
+	}
+
+	@Test
+	public void postProcessorModulesGetPushedToLastPossibleSpot() {
+		Collection<AcrossModule> added = list( postProcessorRequiringOther, postProcessor, one, requiresTwo, two, three,
+		                                       infrastructureRequiringTwo );
+		Collection<AcrossModule> ordered = order( added );
+
+		assertEquals( list( two, infrastructureRequiringTwo, one, requiresTwo, three, postProcessor,
+		                    postProcessorRequiringOther ), ordered );
 	}
 
 	@Test(expected = RuntimeException.class)
@@ -289,6 +301,25 @@ public class TestAcrossModuleLoadingOrder
 		@Override
 		public String getName() {
 			return "ModuleTen";
+		}
+	}
+
+	@AcrossDepends(required = "ModuleTwelve")
+	@AcrossRole(AcrossModuleRole.POSTPROCESSOR)
+	public static class ModuleEleven extends ModuleOne
+	{
+		@Override
+		public String getName() {
+			return "ModuleEleven";
+		}
+	}
+
+	@AcrossRole(AcrossModuleRole.POSTPROCESSOR)
+	public static class ModuleTwelve extends ModuleOne
+	{
+		@Override
+		public String getName() {
+			return "ModuleTwelve";
 		}
 	}
 }

@@ -45,6 +45,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentContext.getApplicationContext();
 			AcrossSpringWebApplicationContext child = new AcrossSpringWebApplicationContext();
 
+			child.setDisplayName( moduleBootstrapConfig.getModuleName() );
 			child.setServletContext( parentWebContext.getServletContext() );
 			child.setParent( parentContext.getApplicationContext() );
 			child.getEnvironment().merge( parentContext.getApplicationContext().getEnvironment() );

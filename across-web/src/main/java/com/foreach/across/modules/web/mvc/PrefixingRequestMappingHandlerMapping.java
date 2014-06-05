@@ -1,6 +1,5 @@
 package com.foreach.across.modules.web.mvc;
 
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
@@ -70,7 +69,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	}
 
 	/**
-	 * Scan a particular ApplicationContext for DebugWebController instances.
+	 * Scan a particular ApplicationContext for instances.
 	 *
 	 * @param context
 	 */
@@ -131,7 +130,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 	@Override
 	protected boolean isHandler( Class<?> beanType ) {
-		return handlerMatcher.matches( beanType );
+		return handlerMatcher.matches( ClassUtils.getUserClass( beanType ) );
 	}
 
 	@Override

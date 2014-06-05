@@ -151,9 +151,9 @@ public class AcrossBootstrapper
 			ConfigurableAcrossModuleInfo moduleInfo = contextInfo.getConfigurableModuleInfo( module.getName() );
 
 			moduleInfo.setRequiredDependencies(
-					convertToModuleInfo( moduleBootstrapOrderBuilder.getRequiredDependencies( module ), contextInfo ) );
+					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( module ), contextInfo ) );
 			moduleInfo.setOptionalDependencies(
-					convertToModuleInfo( moduleBootstrapOrderBuilder.getOptionalDependencies( module ), contextInfo ) );
+					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredOptionalDependencies( module ), contextInfo ) );
 			moduleInfo.setModuleRole( moduleBootstrapOrderBuilder.getModuleRole( module ) );
 		}
 

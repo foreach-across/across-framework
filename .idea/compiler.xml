@@ -32,7 +32,9 @@
         <module name="core" />
         <module name="debug-web" />
         <module name="demo-web" />
+        <module name="spring-security" />
         <module name="test-web" />
+        <module name="user-module" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -44,7 +46,9 @@
       <module name="admin-web" target="1.7" />
       <module name="debug-web" target="1.7" />
       <module name="demo-web" target="1.7" />
+      <module name="spring-security" target="1.7" />
       <module name="test-web" target="1.7" />
+      <module name="user-module" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

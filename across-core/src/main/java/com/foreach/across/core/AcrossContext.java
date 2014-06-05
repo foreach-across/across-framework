@@ -11,6 +11,7 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.PropertySource;
@@ -26,7 +27,7 @@ import java.util.*;
  * This class takes care of managing the global Spring ApplicationContext related to all modules,
  * and will make sure that different modules are handled in the order in which they are registered.
  */
-public class AcrossContext extends AcrossApplicationContextHolder
+public class AcrossContext extends AcrossApplicationContextHolder implements DisposableBean
 {
 	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
@@ -40,13 +41,11 @@ public class AcrossContext extends AcrossApplicationContextHolder
 	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
 			new LinkedHashMap<ApplicationContextConfigurer, ConfigurerScope>();
 
-	private LinkedList<AcrossModule> modules = new LinkedList<AcrossModule>();
+	private LinkedList<AcrossModule> modules = new LinkedList<>();
 
 	private boolean isBootstrapped = false;
 
 	private ApplicationContext parentApplicationContext;
-
-	private AcrossContextInfo runningContextInfo;
 
 	/**
 	 * Constructs a new AcrossContext in its own ApplicationContext.
@@ -195,17 +194,6 @@ public class AcrossContext extends AcrossApplicationContextHolder
 		AcrossContextUtils.getBeanOfType( this, AcrossEventPublisher.class ).publish( event );
 	}
 
-	/**
-	 * @return Info object attached to this context.  If null it means the context bootstrap has not started.
-	 */
-	public AcrossContextInfo getRunningContextInfo() {
-		return runningContextInfo;
-	}
-
-	void setRunningContextInfo( AcrossContextInfo runningContextInfo ) {
-		this.runningContextInfo = runningContextInfo;
-	}
-
 	@PostConstruct
 	public void bootstrap() {
 		if ( !isBootstrapped ) {
@@ -215,13 +203,12 @@ public class AcrossContext extends AcrossApplicationContextHolder
 		}
 	}
 
-	@PreDestroy
 	public void shutdown() {
 		if ( isBootstrapped ) {
 			// Shutdown all modules in reverse order - note that it is quite possible to beans might have been destroyed
 			// already by Spring in the meantime
-			List<AcrossModuleInfo> reverseList = new ArrayList<>(
-					AcrossContextUtils.getBeanOfType( this, AcrossContextInfo.class ).getModules() );
+			List<AcrossModuleInfo> reverseList =
+					new ArrayList<>( AcrossContextUtils.getBeanOfType( this, AcrossContextInfo.class ).getModules() );
 			Collections.reverse( reverseList );
 
 			for ( AcrossModuleInfo moduleInfo : reverseList ) {
@@ -230,13 +217,20 @@ public class AcrossContext extends AcrossApplicationContextHolder
 					AbstractApplicationContext applicationContext = AcrossContextUtils.getApplicationContext( module );
 
 					if ( applicationContext != null ) {
-						applicationContext.stop();
 						module.shutdown();
+						applicationContext.destroy();
 					}
 				}
 			}
 
+			// Destroy the root ApplicationContext
+			AcrossContextUtils.getApplicationContext( this ).destroy();
+
 			isBootstrapped = false;
 		}
+	}
+
+	public void destroy() {
+		shutdown();
 	}
 }

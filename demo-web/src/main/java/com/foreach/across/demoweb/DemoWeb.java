@@ -6,6 +6,8 @@ import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.ehcache.EhcacheModule;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
+import com.foreach.across.modules.spring.security.SpringSecurityModule;
+import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebViewSupport;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -28,9 +30,11 @@ public class DemoWeb
 		context.addModule( ehCacheModule() );
 		context.addModule( debugWebModule() );
 		context.addModule( acrossWebModule() );
+		context.addModule( userModule() );
 		context.addModule( adminWebModule() );
 		context.addModule( acrossHibernateModule() );
 		context.addModule( new DemoWebModule() );
+		context.addModule( new SpringSecurityModule() );
 
 		return context;
 	}
@@ -52,6 +56,15 @@ public class DemoWeb
 		return hibernateModule;
 	}
 
+	@Bean
+	public UserModule userModule() {
+		UserModule userModule = new UserModule();
+		userModule.getSchemaConfiguration().renameTable( "um_permission", "permissies" );
+		userModule.getSchemaConfiguration().renameTable( "um_user", "gebruikers" );
+
+		return userModule;
+	}
+
 	/**
 	 * Configure the AdminWebModule to prefix all AdminWebControllers with /secure instead of the default /admin.
 	 * Rename some of the default user table names.
@@ -60,9 +73,6 @@ public class DemoWeb
 	public AdminWebModule adminWebModule() {
 		AdminWebModule adminWebModule = new AdminWebModule();
 		adminWebModule.setRootPath( "/secure" );
-
-		adminWebModule.getSchemaConfiguration().renameTable( "um_permission", "permissies" );
-		adminWebModule.getSchemaConfiguration().renameTable( "um_user", "gebruikers" );
 
 		return adminWebModule;
 	}

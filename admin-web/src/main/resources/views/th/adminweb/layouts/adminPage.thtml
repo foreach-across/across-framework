@@ -31,6 +31,8 @@
 					</li>
 				</ul>
 			</div>
+
+			<a th:href="@{${@adminWeb.path('/logout')}}">Logout</a>
 		</nav>
 	</div>
 	<!-- Content body -->

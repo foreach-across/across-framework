@@ -6,5 +6,6 @@ package com.foreach.across.core.context;
 public enum AcrossModuleRole
 {
 	CUSTOM,
-	INFRASTRUCTURE
+	INFRASTRUCTURE,
+	POSTPROCESSOR
 }

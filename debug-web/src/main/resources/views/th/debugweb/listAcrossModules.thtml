@@ -25,13 +25,13 @@
 				</li>
 				<li>
 					<strong>Required dependencies:</strong>
-					<span th:if="${moduleRegistry.getRequiredDependencies(module).isEmpty()}">none</span>
-					<span th:each="dependency : ${moduleRegistry.getRequiredDependencies(module)}" th:text="${dependency.name}">modulename</span>
+					<span th:if="${moduleRegistry.getConfiguredRequiredDependencies(module).isEmpty()}">none</span>
+					<span th:each="dependency : ${moduleRegistry.getConfiguredRequiredDependencies(module)}" th:text="${dependency.name}">modulename</span>
 				</li>
 				<li>
 					<strong>Optional dependencies:</strong>
-					<span th:if="${moduleRegistry.getOptionalDependencies(module).isEmpty()}">none</span>
-					<span th:each="dependency : ${moduleRegistry.getOptionalDependencies(module)}" th:text="${dependency.name}">modulename</span>
+					<span th:if="${moduleRegistry.getConfiguredOptionalDependencies(module).isEmpty()}">none</span>
+					<span th:each="dependency : ${moduleRegistry.getConfiguredOptionalDependencies(module)}" th:text="${dependency.name}">modulename</span>
 				</li>
 			</ul>
 		</div>
