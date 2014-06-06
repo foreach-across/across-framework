@@ -58,7 +58,7 @@ public class AdminWebMvcConfiguration extends WebMvcConfigurerAdapter
 	@Bean
 	@Exposed
 	public AdminWeb adminWeb() {
-		return new AdminWeb( adminWebModule.getRootPath() );
+		return new AdminWeb( adminWebModule.getRootPath(), "Administrative web interface" );
 	}
 
 	@Bean

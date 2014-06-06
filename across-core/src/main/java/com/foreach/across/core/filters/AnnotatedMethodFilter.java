@@ -27,11 +27,11 @@ public class AnnotatedMethodFilter implements BeanFilter
 	 * Checks if a bean or its corresponding BeanDefinition match the filter.
 	 *
 	 * @param beanFactory BeanFactory that owns the bean and definition.
-	 * @param bean        Bean instance to check (can be null).
-	 * @param definition  BeanDefinition corresponding to this bean (can be null).
-	 * @return True if the bean and bean definition match.
+	 * @param beanName
+	 *@param bean        Bean instance to check (can be null).
+	 * @param definition  BeanDefinition corresponding to this bean (can be null).   @return True if the bean and bean definition match.
 	 */
-	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {
+	public boolean apply( ConfigurableListableBeanFactory beanFactory, String beanName, Object bean, BeanDefinition definition ) {
 		if ( bean != null ) {
 			Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( bean ) );
 
@@ -63,7 +63,7 @@ public class AnnotatedMethodFilter implements BeanFilter
 
 				if ( targetHolder != null ) {
 					Object targetBean = beanFactory.getSingleton( targetHolder.getBeanName() );
-					return apply( beanFactory, targetBean, targetHolder.getBeanDefinition() );
+					return apply( beanFactory, targetHolder.getBeanName(), targetBean, targetHolder.getBeanDefinition() );
 				}
 			}
 		}

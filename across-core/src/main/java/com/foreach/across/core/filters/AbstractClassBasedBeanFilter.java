@@ -9,11 +9,11 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 
-public abstract class AbstractNameBeanFilter<T> implements BeanFilter
+public abstract class AbstractClassBasedBeanFilter<T> implements BeanFilter
 {
 	private T[] allowedItems;
 
-	protected AbstractNameBeanFilter( T... allowedItems ) {
+	protected AbstractClassBasedBeanFilter( T... allowedItems ) {
 		this.allowedItems = allowedItems;
 	}
 
@@ -25,7 +25,7 @@ public abstract class AbstractNameBeanFilter<T> implements BeanFilter
 		this.allowedItems = allowedItems;
 	}
 
-	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {
+	public boolean apply( ConfigurableListableBeanFactory beanFactory, String beanName, Object bean, BeanDefinition definition ) {
 		if ( bean != null ) {
 			Class targetClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( bean ) );
 

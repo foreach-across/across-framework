@@ -9,7 +9,15 @@ public final class AdminWeb extends PrefixingPathContext
 	public static final String LAYOUT_TEMPLATE_CSS = "/css/adminweb/adminweb.css";
 	public static final String LAYOUT_TEMPLATE = "th/adminweb/layouts/adminPage";
 
-	public AdminWeb( String prefix ) {
+	private final String title;
+
+	public AdminWeb( String prefix, String title ) {
 		super( prefix );
+
+		this.title = title;
+	}
+
+	public String getTitle() {
+		return title;
 	}
 }

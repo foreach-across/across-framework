@@ -20,7 +20,6 @@ public class AdminWebSecurityConfiguration implements WebSecurityModuleConfigure
 
 	@Override
 	public void configure( HttpSecurity http ) throws Exception {
-		//http.csrf().disable();
 		http.antMatcher(
 				adminWebModule.getRootPath() + "/**" ).authorizeRequests().anyRequest().authenticated().and().formLogin().loginPage(
 				adminWebModule.getRootPath() + "/login" ).permitAll().and().logout().permitAll();

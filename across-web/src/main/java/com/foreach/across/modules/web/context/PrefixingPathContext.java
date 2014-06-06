@@ -15,6 +15,10 @@ public class PrefixingPathContext
 		this.prefix = prefix;
 	}
 
+	public String getPathPrefix() {
+		return prefix;
+	}
+
 	public String path( String path ) {
 		return StringUtils.replaceEach( prefix + path, new String[] { "//", "///" }, new String[] { "/", "/" } );
 	}

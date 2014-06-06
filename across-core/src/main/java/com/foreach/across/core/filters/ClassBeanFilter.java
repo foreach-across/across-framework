@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Filters on any number of specific classes.
  */
-public class ClassBeanFilter extends AbstractNameBeanFilter<Class>
+public class ClassBeanFilter extends AbstractClassBasedBeanFilter<Class>
 {
 	public ClassBeanFilter( Class... allowedClasses ) {
 		super( allowedClasses );

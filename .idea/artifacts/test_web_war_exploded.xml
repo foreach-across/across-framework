@@ -59,6 +59,7 @@
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-web:3.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-core:3.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-config:3.2.4.RELEASE" />
+          <element id="library" level="project" name="Maven: org.thymeleaf.extras:thymeleaf-extras-springsecurity3:2.1.1.RELEASE" />
           <element id="archive" name="across-ehcache-1.0.2-SNAPSHOT.jar">
             <element id="module-output" name="across-ehcache" />
           </element>

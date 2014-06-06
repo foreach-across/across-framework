@@ -14,18 +14,9 @@ public class BeanFilterComposite implements BeanFilter
 		this.filters = filters;
 	}
 
-	/**
-	 * Will delegate to all filters until one matches.  Will only return false if none
-	 * of the filters have returned true.
-	 *
-	 * @param beanFactory BeanFactory that owns the bean and definition.
-	 * @param bean        Bean instance to check (can be null).
-	 * @param definition  BeanDefinition corresponding to this bean (can be null).
-	 * @return True if any of the filters match.
-	 */
-	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {
+	public boolean apply( ConfigurableListableBeanFactory beanFactory, String beanName, Object bean, BeanDefinition definition ) {
 		for ( BeanFilter filter : filters ) {
-			if ( filter.apply( beanFactory, bean, definition ) ) {
+			if ( filter.apply( beanFactory, beanName, bean, definition ) ) {
 				return true;
 			}
 		}
