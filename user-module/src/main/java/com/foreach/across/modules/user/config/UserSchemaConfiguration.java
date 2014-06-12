@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 public class UserSchemaConfiguration extends SchemaConfiguration
 {
-	public static final String TABLE_SEQUENCES = "um_sequences";
 	public static final String TABLE_PERMISSION = "um_permission";
 	public static final String TABLE_ROLE = "um_role";
 	public static final String TABLE_ROLE_PERMISSION = "um_role_permission";

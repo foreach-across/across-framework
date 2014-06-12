@@ -1,5 +1,6 @@
 package com.foreach.across.modules.user.business;
 
+import com.foreach.across.core.database.AcrossSchemaConfiguration;
 import com.foreach.across.modules.user.config.UserSchemaConfiguration;
 import org.hibernate.annotations.BatchSize;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,16 +9,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.security.Principal;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Entity
 @Table(name = UserSchemaConfiguration.TABLE_USER)
 public class User implements Principal, UserDetails
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_user_id")
-	@TableGenerator(name = "seq_user_id", table = UserSchemaConfiguration.TABLE_SEQUENCES,
-	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_user_id",
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_user_id")
+	@TableGenerator(name = "seq_um_user_id", table = AcrossSchemaConfiguration.TABLE_SEQUENCES,
+	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_um_user_id",
 	                allocationSize = 5)
 	private long id;
 

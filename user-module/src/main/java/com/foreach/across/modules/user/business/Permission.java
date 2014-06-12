@@ -1,5 +1,6 @@
 package com.foreach.across.modules.user.business;
 
+import com.foreach.across.core.database.AcrossSchemaConfiguration;
 import com.foreach.across.modules.user.config.UserSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,9 +14,9 @@ import javax.persistence.*;
 public class Permission implements Comparable<Permission>
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_permission_id")
-	@TableGenerator(name = "seq_permission_id", table = UserSchemaConfiguration.TABLE_SEQUENCES,
-	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_permission_id",
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_permission_id")
+	@TableGenerator(name = "seq_um_permission_id", table = AcrossSchemaConfiguration.TABLE_SEQUENCES,
+	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_um_permission_id",
 	                allocationSize = 5)
 	private long id;
 

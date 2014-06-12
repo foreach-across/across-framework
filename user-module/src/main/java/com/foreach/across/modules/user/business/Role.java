@@ -1,5 +1,6 @@
 package com.foreach.across.modules.user.business;
 
+import com.foreach.across.core.database.AcrossSchemaConfiguration;
 import com.foreach.across.modules.user.config.UserSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
@@ -13,9 +14,9 @@ import java.util.TreeSet;
 public class Role implements Comparable<Role>
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_role_id")
-	@TableGenerator(name = "seq_role_id", table = UserSchemaConfiguration.TABLE_SEQUENCES,
-	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_role_id",
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_role_id")
+	@TableGenerator(name = "seq_um_role_id", table = AcrossSchemaConfiguration.TABLE_SEQUENCES,
+	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_um_role_id",
 	                allocationSize = 5)
 	private long id;
 

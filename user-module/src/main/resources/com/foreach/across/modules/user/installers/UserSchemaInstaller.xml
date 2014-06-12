@@ -6,7 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<!-- Default table names -->
-	<property name="table.sequences" value="um_sequences" />
 	<property name="table.permission" value="um_permission" />
 	<property name="table.role" value="um_role" />
 	<property name="table.role_permission" value="um_role_permission" />
@@ -18,23 +17,6 @@
 
 	<property name="long.type" value="NUMBER(19,0)" dbms="oracle"/>
 	<property name="varchar.suffix" value=" char" dbms="oracle"/>
-
-	<changeSet id="201403011519" author="arne">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="${table.sequences}"/>
-			</not>
-		</preConditions>
-
-		<comment>Creates sequences table</comment>
-
-		<createTable tableName="${table.sequences}">
-			<column name="seq_name" type="varchar2(25 ${varchar.suffix})"/>
-			<column name="seq_number" type="${long.type}"/>
-		</createTable>
-
-		<addPrimaryKey tableName="${table.sequences}" columnNames="seq_name"/>
-	</changeSet>
 
 	<changeSet id="201403011520" author="arne">
 		<preConditions onFail="MARK_RAN">
@@ -57,8 +39,8 @@
 			<column name="name"/>
 		</createIndex>
 
-		<insert tableName="${table.sequences}">
-			<column name="seq_name">seq_permission_id</column>
+		<insert tableName="ACROSS_SEQUENCES">
+			<column name="seq_name">seq_um_permission_id</column>
 			<column name="seq_number">1000</column>
 		</insert>
 	</changeSet>
@@ -84,8 +66,8 @@
 			<column name="name"/>
 		</createIndex>
 
-		<insert tableName="${table.sequences}">
-			<column name="seq_name">seq_role_id</column>
+		<insert tableName="ACROSS_SEQUENCES">
+			<column name="seq_name">seq_um_role_id</column>
 			<column name="seq_number">1000</column>
 		</insert>
 
@@ -130,8 +112,8 @@
 			<column name="username"/>
 		</createIndex>
 
-		<insert tableName="${table.sequences}">
-			<column name="seq_name">seq_user_id</column>
+		<insert tableName="ACROSS_SEQUENCES">
+			<column name="seq_name">seq_um_user_id</column>
 			<column name="seq_number">1000</column>
 		</insert>
 
