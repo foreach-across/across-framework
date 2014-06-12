@@ -32,11 +32,32 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="201406121936" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="ACROSSMODULES" columnName="installer_id"/>
+			</not>
+		</preConditions>
+
+		<comment>Separate installer_id column to support long installer classes</comment>
+
+		<renameColumn tableName="ACROSSMODULES" oldColumnName="installer" newColumnName="installer_id"
+		              columnDataType="varchar2(255 ${varchar.suffix})"/>
+
+		<addColumn tableName="ACROSSMODULES">
+			<column name="installer" type="varchar2(255 ${varchar.suffix})"/>
+		</addColumn>
+
+		<sql>
+			UPDATE ACROSSMODULES SET installer = installer_id
+		</sql>
+	</changeSet>
+
 	<changeSet id="201406121321" author="arne">
-		<comment>Switch to char specification for Oracle dbms</comment>
+		<comment>Switch to char specification (for Oracle)</comment>
 		<modifyDataType tableName="ACROSSMODULES" columnName="module" newDataType="varchar2(255 ${varchar.suffix})"/>
-		<modifyDataType tableName="ACROSSMODULES" columnName="installer" newDataType="varchar2(500 ${varchar.suffix})"/>
-		<modifyDataType tableName="ACROSSMODULES" columnName="description" newDataType="varchar2(500 ${varchar.suffix})"/>
+		<modifyDataType tableName="ACROSSMODULES" columnName="description"
+		                newDataType="varchar2(500 ${varchar.suffix})"/>
 	</changeSet>
 
 	<changeSet id="201406121322" author="arne">

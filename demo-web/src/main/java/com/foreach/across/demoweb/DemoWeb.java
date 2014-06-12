@@ -112,10 +112,17 @@ public class DemoWeb
 	@Bean
 	public DataSource acrossDataSource() throws Exception {
 		BasicDataSource dataSource = new BasicDataSource();
+		/*
 		dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
 		dataSource.setUrl( "jdbc:hsqldb:mem:/hsql/acrossDemoWeb" );
 		dataSource.setUsername( "sa" );
 		dataSource.setPassword( "" );
+		*/
+
+		dataSource.setDriverClassName( "com.mysql.jdbc.Driver" );
+		dataSource.setUrl( "jdbc:mysql://localhost:3306/across_demoweb" );
+		dataSource.setUsername( "demoweb" );
+		dataSource.setPassword( "demoweb" );
 
 		return dataSource;
 	}

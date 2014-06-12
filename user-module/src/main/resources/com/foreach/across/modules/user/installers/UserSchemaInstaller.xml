@@ -129,18 +129,19 @@
 			</not>
 		</preConditions>
 
-		<comment>Create user and user_role table</comment>
+		<comment>Create user table</comment>
 
 		<createTable tableName="${table.user}">
 			<column name="id" type="${long.type}"/>
-			<column name="username" type="varchar2(320 ${varchar.suffix})"/>
+			<column name="username" type="varchar2(255 ${varchar.suffix})"/>
 			<column name="email" type="varchar2(320 ${varchar.suffix})"/>
 			<column name="password" type="varchar2(250 ${varchar.suffix})"/>
 		</createTable>
 
 		<addPrimaryKey tableName="${table.user}" columnNames="id"/>
 
-		<addNotNullConstraint tableName="${table.user}" columnName="username"/>
+		<addNotNullConstraint tableName="${table.user}" columnName="username"
+		                      columnDataType="varchar2(320 ${varchar.suffix})"/>
 
 		<createIndex tableName="${table.user}" indexName="ix_um_user_username" unique="true">
 			<column name="username"/>
@@ -150,6 +151,17 @@
 			<column name="seq_name">seq_um_user_id</column>
 			<column name="seq_number">1000</column>
 		</insert>
+
+	</changeSet>
+
+	<changeSet id="201406122032" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.user_role}"/>
+			</not>
+		</preConditions>
+
+		<comment>Create user role table</comment>
 
 		<createTable tableName="${table.user_role}">
 			<column name="user_id" type="${long.type}"/>
@@ -167,5 +179,4 @@
 		                         referencedTableName="${table.role}"
 		                         referencedColumnNames="id"/>
 	</changeSet>
-
 </databaseChangeLog>

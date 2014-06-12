@@ -6,6 +6,7 @@ import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.user.business.PermissionGroup;
 import com.foreach.across.modules.user.business.Role;
+import com.foreach.across.modules.user.business.User;
 import com.foreach.across.modules.user.dto.UserDto;
 import com.foreach.across.modules.user.services.PermissionService;
 import com.foreach.across.modules.user.services.RoleService;
@@ -62,16 +63,20 @@ public class DefaultUserInstaller
 	}
 
 	private void createUser() {
-		UserDto user = new UserDto();
-		user.setUsername( "admin" );
-		user.setPassword( "admin" );
-		user.setEmail( "-" );
+		User existing = userService.getUserByUsername( "admin" );
 
-		HashSet<Role> roles = new HashSet<>();
-		roles.add( roleService.getRole( "ROLE_ADMIN" ) );
+		if ( existing == null ) {
+			UserDto user = new UserDto();
+			user.setUsername( "admin" );
+			user.setPassword( "admin" );
+			user.setEmail( "-" );
 
-		user.setRoles( roles );
+			HashSet<Role> roles = new HashSet<>();
+			roles.add( roleService.getRole( "ROLE_ADMIN" ) );
 
-		userService.save( user );
+			user.setRoles( roles );
+
+			userService.save( user );
+		}
 	}
 }
