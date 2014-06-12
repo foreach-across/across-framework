@@ -2,7 +2,7 @@ package com.foreach.across.modules.user.controllers;
 
 import com.foreach.across.modules.adminweb.AdminWeb;
 import com.foreach.across.modules.adminweb.annotations.AdminWebController;
-import com.foreach.across.modules.user.business.User;
+import com.foreach.across.modules.user.dto.UserDto;
 import com.foreach.across.modules.user.services.RoleService;
 import com.foreach.across.modules.user.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class UserController
 	@RequestMapping("/create")
 	public String createUser( Model model ) {
 		model.addAttribute( "existing", false );
-		model.addAttribute( "user", new User() );
+		model.addAttribute( "user", new UserDto() );
 		model.addAttribute( "roles", roleService.getRoles() );
 
 		return "th/user/users/edit";
@@ -46,7 +46,7 @@ public class UserController
 
 	@RequestMapping("/{id}")
 	public String editUser( @PathVariable("id") long id, Model model ) {
-		User user = userService.getUserById( id );
+		UserDto user = userService.createUserDto( userService.getUserById( id ) );
 
 		model.addAttribute( "existing", true );
 		model.addAttribute( "user", user );
@@ -56,7 +56,7 @@ public class UserController
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String saveUser( @ModelAttribute("user") User user, RedirectAttributes re ) {
+	public String saveUser( @ModelAttribute("user") UserDto user, RedirectAttributes re ) {
 		userService.save( user );
 
 		re.addAttribute( "userId", user.getId() );

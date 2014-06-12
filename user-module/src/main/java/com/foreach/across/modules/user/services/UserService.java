@@ -1,6 +1,7 @@
 package com.foreach.across.modules.user.services;
 
 import com.foreach.across.modules.user.business.User;
+import com.foreach.across.modules.user.dto.UserDto;
 
 import java.util.Collection;
 
@@ -12,7 +13,7 @@ public interface UserService
 
 	User getUserByUsername( String username );
 
-	void save( User user );
+	UserDto createUserDto( User user );
 
-	void delete( User user );
+	void save( UserDto user );
 }

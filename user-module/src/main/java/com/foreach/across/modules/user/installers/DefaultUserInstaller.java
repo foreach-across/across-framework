@@ -4,10 +4,10 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.modules.user.business.Role;
-import com.foreach.across.modules.user.business.User;
-import com.foreach.across.modules.user.repositories.UserRepository;
+import com.foreach.across.modules.user.dto.UserDto;
 import com.foreach.across.modules.user.services.PermissionService;
 import com.foreach.across.modules.user.services.RoleService;
+import com.foreach.across.modules.user.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -24,7 +24,7 @@ public class DefaultUserInstaller
 	private RoleService roleService;
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 
 	@InstallerMethod
 	public void install() {
@@ -36,22 +36,21 @@ public class DefaultUserInstaller
 		permissionService.definePermission( "manage users", "Manage user accounts" );
 		permissionService.definePermission( "manage user roles", "Manage user roles" );
 
-		roleService.defineRole( "ROLE_ADMIN", "Administrator",
-		                        Arrays.asList( "manage users", "manage user roles" ) );
+		roleService.defineRole( "ROLE_ADMIN", "Administrator", Arrays.asList( "manage users", "manage user roles" ) );
 		roleService.defineRole( "ROLE_MANAGER", "Manager", Arrays.asList( "manage users" ) );
 	}
 
 	private void createUser() {
-		User user = new User();
+		UserDto user = new UserDto();
 		user.setUsername( "admin" );
 		user.setPassword( "admin" );
 		user.setEmail( "-" );
 
 		HashSet<Role> roles = new HashSet<>();
-		roles.add( roleService.getRole( "ROLE_ADMIN") );
+		roles.add( roleService.getRole( "ROLE_ADMIN" ) );
 
 		user.setRoles( roles );
 
-		userRepository.save( user );
+		userService.save( user );
 	}
 }

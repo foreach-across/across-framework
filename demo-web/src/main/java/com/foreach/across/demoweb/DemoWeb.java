@@ -9,6 +9,7 @@ import com.foreach.across.modules.ehcache.EhcacheModule;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.spring.security.SpringSecurityModule;
 import com.foreach.across.modules.user.UserModule;
+import com.foreach.across.modules.user.UserModuleSettings;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebViewSupport;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -16,6 +17,7 @@ import org.hibernate.cfg.AvailableSettings;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import javax.sql.DataSource;
 
@@ -60,6 +62,9 @@ public class DemoWeb
 	@Bean
 	public UserModule userModule() {
 		UserModule userModule = new UserModule();
+
+		//userModule.setProperty( UserModuleSettings.PASSWORD_ENCODER, NoOpPasswordEncoder.getInstance() );
+
 		userModule.getSchemaConfiguration().renameTable( "um_permission", "permissies" );
 		userModule.getSchemaConfiguration().renameTable( "um_user", "gebruikers" );
 
@@ -75,7 +80,7 @@ public class DemoWeb
 		AdminWebModule adminWebModule = new AdminWebModule();
 		adminWebModule.setRootPath( "/secure" );
 		adminWebModule.setProperty( AdminWebModuleSettings.REMEMBER_ME_KEY, "sdqfjsdklmjsdfmojiondsijqiosdjodj" );
-		
+
 		return adminWebModule;
 	}
 
