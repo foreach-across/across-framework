@@ -41,8 +41,9 @@ public class AdminWebSecurityConfiguration implements WebSecurityModuleConfigure
 
 		publisher.publish( new AdminWebUrlRegistry( adminWeb, urlRegistry ) );
 
-		urlRegistry.anyRequest().authenticated().and().formLogin().defaultSuccessUrl( adminWeb.path( "/" ) ).loginPage(
-				adminWeb.path( "/login" ) ).permitAll().and().logout().permitAll();
+		// Only users with the "access administration " permission can login
+		urlRegistry.anyRequest().hasAuthority( "access administration" ).and().formLogin().defaultSuccessUrl(
+				adminWeb.path( "/" ) ).loginPage( adminWeb.path( "/login" ) ).permitAll().and().logout().permitAll();
 
 		configureRememberMe( http );
 	}

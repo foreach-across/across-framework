@@ -33,11 +33,15 @@ public class DefaultUserInstaller
 	}
 
 	private void createPermissionsAndRoles() {
+		permissionService.definePermission( "access administration",
+		                                    "User can perform one or more administrative actions.  Usually this means the user can access the administration interface." );
+
 		permissionService.definePermission( "manage users", "Manage user accounts" );
 		permissionService.definePermission( "manage user roles", "Manage user roles" );
 
-		roleService.defineRole( "ROLE_ADMIN", "Administrator", Arrays.asList( "manage users", "manage user roles" ) );
-		roleService.defineRole( "ROLE_MANAGER", "Manager", Arrays.asList( "manage users" ) );
+		roleService.defineRole( "ROLE_ADMIN", "Administrator",
+		                        Arrays.asList( "access administration", "manage users", "manage user roles" ) );
+		roleService.defineRole( "ROLE_MANAGER", "Manager", Arrays.asList( "access administration", "manage users" ) );
 	}
 
 	private void createUser() {
