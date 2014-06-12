@@ -11,7 +11,7 @@
 	<input type="hidden" th:field="*{id}"/>
 	<input type="hidden" th:field="*{name}" th:if="${existing}"/>
 
-	<div th:if-not="${existing}">
+	<div th:unless="${existing}">
 		<label>Id</label>
 		<input type="text" th:field="*{name}" />
 	</div>

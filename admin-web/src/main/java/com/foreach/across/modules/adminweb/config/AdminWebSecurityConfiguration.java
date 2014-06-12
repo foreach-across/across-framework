@@ -34,10 +34,7 @@ public class AdminWebSecurityConfiguration implements WebSecurityModuleConfigure
 
 	@Override
 	public void configure( HttpSecurity root ) throws Exception {
-		root.csrf().disable();
-
 		HttpSecurity http = root.antMatcher( adminWeb.path( "/**" ) );
-		//http.csrf().configure(  );
 
 		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry =
 				http.authorizeRequests();
@@ -47,6 +44,10 @@ public class AdminWebSecurityConfiguration implements WebSecurityModuleConfigure
 		urlRegistry.anyRequest().authenticated().and().formLogin().defaultSuccessUrl( adminWeb.path( "/" ) ).loginPage(
 				adminWeb.path( "/login" ) ).permitAll().and().logout().permitAll();
 
+		configureRememberMe( http );
+	}
+
+	private void configureRememberMe( HttpSecurity http ) throws Exception {
 		if ( adminWeb.getSettings().isRememberMeEnabled() ) {
 			String rememberMeKey = environment.getProperty( AdminWebModuleSettings.REMEMBER_ME_KEY, "" );
 			int rememberMeValiditySeconds =
