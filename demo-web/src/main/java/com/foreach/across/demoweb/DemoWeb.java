@@ -3,6 +3,7 @@ package com.foreach.across.demoweb;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.demoweb.module.DemoWebModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
+import com.foreach.across.modules.adminweb.AdminWebModuleSettings;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.ehcache.EhcacheModule;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
@@ -73,7 +74,8 @@ public class DemoWeb
 	public AdminWebModule adminWebModule() {
 		AdminWebModule adminWebModule = new AdminWebModule();
 		adminWebModule.setRootPath( "/secure" );
-
+		adminWebModule.setProperty( AdminWebModuleSettings.REMEMBER_ME_KEY, "sdqfjsdklmjsdfmojiondsijqiosdjodj" );
+		
 		return adminWebModule;
 	}
 

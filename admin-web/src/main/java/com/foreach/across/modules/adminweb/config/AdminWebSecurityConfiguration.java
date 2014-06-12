@@ -2,12 +2,14 @@ package com.foreach.across.modules.adminweb.config;
 
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.adminweb.AdminWeb;
+import com.foreach.across.modules.adminweb.AdminWebModuleSettings;
 import com.foreach.across.modules.adminweb.events.AdminWebUrlRegistry;
 import com.foreach.across.modules.spring.security.config.WebSecurityModuleConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -22,20 +24,36 @@ public class AdminWebSecurityConfiguration implements WebSecurityModuleConfigure
 	@Autowired
 	private AdminWeb adminWeb;
 
+	@Autowired
+	private Environment environment;
+
 	@Override
 	public void configure( AuthenticationManagerBuilder auth ) throws Exception {
 
 	}
 
 	@Override
-	public void configure( HttpSecurity http ) throws Exception {
-		http.csrf().disable();
+	public void configure( HttpSecurity root ) throws Exception {
+		root.csrf().disable();
+
+		HttpSecurity http = root.antMatcher( adminWeb.path( "/**" ) );
+		//http.csrf().configure(  );
+
 		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry =
-				http.antMatcher( adminWeb.path( "/**" ) ).authorizeRequests();
+				http.authorizeRequests();
 
 		publisher.publish( new AdminWebUrlRegistry( adminWeb, urlRegistry ) );
 
 		urlRegistry.anyRequest().authenticated().and().formLogin().defaultSuccessUrl( adminWeb.path( "/" ) ).loginPage(
 				adminWeb.path( "/login" ) ).permitAll().and().logout().permitAll();
+
+		if ( adminWeb.getSettings().isRememberMeEnabled() ) {
+			String rememberMeKey = environment.getProperty( AdminWebModuleSettings.REMEMBER_ME_KEY, "" );
+			int rememberMeValiditySeconds =
+					environment.getProperty( AdminWebModuleSettings.REMEMBER_ME_TOKEN_VALIDITY_SECONDS, Integer.class,
+					                         259200 );
+
+			http.rememberMe().key( rememberMeKey ).tokenValiditySeconds( rememberMeValiditySeconds );
+		}
 	}
 }

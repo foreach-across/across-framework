@@ -29,7 +29,6 @@ public class AdminWebEventsHandler
 	@Handler
 	public void registerMenu( AdminMenuEvent adminMenuEvent ) {
 		Menu menu = new Menu( "User management" );
-		adminMenuEvent.addItem( menu );
 
 		if ( currentUser.hasPermission( "manage user roles" ) ) {
 			menu.addItem( adminWeb.path( RoleController.PATH ), "Roles" );
@@ -37,6 +36,10 @@ public class AdminWebEventsHandler
 
 		if ( currentUser.hasPermission( "manage users" ) ) {
 			menu.addItem( adminWeb.path( UserController.PATH ), "Users" );
+		}
+
+		if ( menu.hasItems() ) {
+			adminMenuEvent.addItem( menu );
 		}
 	}
 }
