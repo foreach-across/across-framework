@@ -38,7 +38,7 @@ public class RequestMenuSelector implements MenuSelector
 		itemFound = null;
 
 		fullUrl = request.getRequestURL().toString();
-		servletPath = urlPathHelper.getServletPath( request );
+		servletPath = urlPathHelper.getPathWithinApplication( request );
 		servletPathWithQueryString = servletPath;
 
 		String qs = request.getQueryString();
