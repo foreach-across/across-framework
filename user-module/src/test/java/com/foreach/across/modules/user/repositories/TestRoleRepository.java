@@ -14,6 +14,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -65,6 +67,33 @@ public class TestRoleRepository
 
 		existing = roleRepository.getRole( "admin" );
 		assertNull( existing );
+	}
+
+	@Test
+	public void updateRole() {
+		Permission permissionOne = new Permission( "some permission" );
+		permissionRepository.save( permissionOne );
+
+		Role role = new Role( "user" );
+		roleRepository.save( role );
+
+		assertTrue( role.getId() > 0 );
+
+		Role existing = roleRepository.getRole( "user" );
+		assertEquals( role, existing );
+		assertTrue( role.getPermissions().isEmpty() );
+
+		Set<Permission> permissions = new HashSet<>();
+		permissions.add( permissionOne );
+
+		existing.setPermissions( permissions );
+		roleRepository.save( existing );
+
+		existing = roleRepository.getRole( "user" );
+
+		assertEquals( role, existing );
+		assertEquals( 1, existing.getPermissions().size() );
+		assertTrue( existing.getPermissions().contains( permissionOne ) );
 	}
 
 	@Configuration

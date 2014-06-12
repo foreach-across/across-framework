@@ -12,6 +12,7 @@ import com.foreach.across.core.filters.NamedBeanFilter;
 import com.foreach.across.modules.spring.security.config.GlobalWebSecurityConfiguration;
 import com.foreach.across.modules.spring.security.config.ModuleGlobalMethodSecurityConfiguration;
 import com.foreach.across.modules.spring.security.config.SpringSecurityThymeleafConfiguration;
+import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
 
@@ -43,7 +44,8 @@ public class SpringSecurityModule extends AcrossModule
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
 	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
 		currentModule.setExposeFilter( new BeanFilterComposite(
-				new ClassBeanFilter( FilterChainProxy.class, WebInvocationPrivilegeEvaluator.class ),
+				new ClassBeanFilter( FilterChainProxy.class, WebInvocationPrivilegeEvaluator.class,
+				                     SecurityExpressionHandler.class ),
 				new NamedBeanFilter( "requestDataValueProcessor" ) ) );
 
 		for ( ModuleBootstrapConfig moduleBootstrapConfig : modulesInOrder.values() ) {

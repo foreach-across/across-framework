@@ -15,7 +15,7 @@
 <body>
 <div class="container">
 	<!-- Main menu navigation -->
-	<div class="row" sec:authorize-url="${adminWeb.path('')}">
+	<div class="row" sec:authorize="isAuthenticated()">
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
@@ -43,6 +43,11 @@
 		</div>
 	</div>
 </div>
+
+<div sec:authorize-url="/secure/roles">go for roles</div>
+<div sec:authorize-url="/secure/roles/create">go for roles create</div>
+<div sec:authorize-url="/secure/users">go for users</div>
+<div sec:authorize-url="/secure/users/create">go for users create</div>
 
 <script th:each="javascript : ${webResourceRegistry.getResources('javascript-page-end')}" th:src="@{${javascript.data}}"
         th:if="${javascript.location == 'external'}"></script>

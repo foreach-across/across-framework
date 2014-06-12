@@ -2,6 +2,7 @@ package com.foreach.across.modules.user.repositories;
 
 import com.foreach.across.modules.user.business.Role;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -89,6 +89,7 @@ public class DemoWeb
 		webModule.addDevelopmentViews( "debugweb", "c:/code/across/debug-web/src/main/resources/views/" );
 		webModule.addDevelopmentViews( "ehcache", "c:/code/across/across-ehcache/src/main/resources/views/" );
 		webModule.addDevelopmentViews( "adminweb", "c:/code/across/admin-web/src/main/resources/views/" );
+		webModule.addDevelopmentViews( "user", "c:/code/across/user-module/src/main/resources/views/" );
 
 		return webModule;
 	}

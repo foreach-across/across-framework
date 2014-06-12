@@ -1,18 +1,16 @@
-package com.foreach.across.modules.user.repositories;
+package com.foreach.across.modules.user.services;
 
 import com.foreach.across.modules.user.business.User;
 
 import java.util.Collection;
 
-public interface UserRepository
+public interface UserService
 {
 	Collection<User> getUsers();
 
-	User getUserByUsername( String userName );
-
-	//User getUserByEmail( String email );
-
 	User getUserById( long id );
+
+	User getUserByUsername( String username );
 
 	void save( User user );
 

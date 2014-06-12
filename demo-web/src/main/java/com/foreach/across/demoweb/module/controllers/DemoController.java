@@ -27,6 +27,20 @@ public class DemoController
 		return "you can see the secured page";
 	}
 
+	@RequestMapping("/secure/role")
+	@ResponseBody
+	@PreAuthorize("hasRole('admin')")
+	public String role() {
+		return "secured on administrator role";
+	}
+
+	@RequestMapping("/secure/perm")
+	@ResponseBody
+	@PreAuthorize("hasAuthority('manage users')")
+	public String perm() {
+		return "secured on permission";
+	}
+
 	@RequestMapping("/secure/fail")
 	@ResponseBody
 	@PreAuthorize("1 == 0")

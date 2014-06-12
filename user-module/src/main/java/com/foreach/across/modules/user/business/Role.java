@@ -58,7 +58,7 @@ public class Role implements Comparable<Role>
 	}
 
 	public void setName( String name ) {
-		this.name = StringUtils.lowerCase( name );
+		this.name = name;
 	}
 
 	public String getDescription() {

@@ -55,7 +55,7 @@ public class TestUserRepository
 	@Test
 	public void userWithoutPermissions() {
 		User user = new User();
-		user.setUserName( "fred" );
+		user.setUsername( "fred" );
 		user.setEmail( "fred@gmail.com" );
 		user.setPassword( "temp1234" );
 
@@ -66,7 +66,7 @@ public class TestUserRepository
 		User existing = userRepository.getUserById( user.getId() );
 
 		assertEquals( user.getId(), existing.getId() );
-		assertEquals( user.getUserName(), existing.getUserName() );
+		assertEquals( user.getUsername(), existing.getUsername() );
 		assertEquals( user.getEmail(), existing.getEmail() );
 		assertEquals( user.getPassword(), existing.getPassword() );
 	}
@@ -74,7 +74,7 @@ public class TestUserRepository
 	@Test
 	public void userWithRoles() {
 		User user = new User();
-		user.setUserName( "paul" );
+		user.setUsername( "paul" );
 		user.getRoles().add( roleService.getRole( "role one" ) );
 		user.getRoles().add( roleService.getRole( "role two" ) );
 

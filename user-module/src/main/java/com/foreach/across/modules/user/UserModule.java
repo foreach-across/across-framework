@@ -8,16 +8,14 @@ import com.foreach.across.core.database.HasSchemaConfiguration;
 import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.*;
-import com.foreach.across.modules.user.config.UserAdminWebConfiguration;
-import com.foreach.across.modules.user.config.UserSchemaConfiguration;
-import com.foreach.across.modules.user.config.UserServicesConfiguration;
+import com.foreach.across.modules.user.config.*;
 import com.foreach.across.modules.user.installers.DefaultUserInstaller;
 import com.foreach.across.modules.user.installers.UserSchemaInstaller;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
 
-@AcrossDepends(required = AcrossHibernateModule.NAME)
+@AcrossDepends(required = AcrossHibernateModule.NAME, optional = "AdminWebModule")
 public class UserModule extends AcrossModule implements HasHibernatePackageProvider, HasSchemaConfiguration
 {
 	public static final String NAME = "UserModule";
@@ -37,7 +35,9 @@ public class UserModule extends AcrossModule implements HasHibernatePackageProvi
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 		contextConfigurers.add(
-				new AnnotatedClassConfigurer( UserServicesConfiguration.class, UserAdminWebConfiguration.class ) );
+				new AnnotatedClassConfigurer( UserRepositoriesConfiguration.class, UserServicesConfiguration.class,
+				                              UserAdminWebConfiguration.class,
+				                              UserSpringSecurityConfiguration.class ) );
 	}
 
 	@Override
