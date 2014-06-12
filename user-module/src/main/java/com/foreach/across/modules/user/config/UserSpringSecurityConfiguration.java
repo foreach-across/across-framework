@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -31,7 +30,7 @@ public class UserSpringSecurityConfiguration extends WebSecurityModuleConfigurer
 	}
 
 	@Bean
-	public CurrentUserProxy currentPrincipal() {
+	public CurrentUserProxy currentUserProxy() {
 		return new CurrentUserProxyImpl();
 	}
 
