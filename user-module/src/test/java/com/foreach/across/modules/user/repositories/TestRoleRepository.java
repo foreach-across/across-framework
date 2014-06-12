@@ -2,6 +2,7 @@ package com.foreach.across.modules.user.repositories;
 
 import com.foreach.across.modules.user.TestDatabaseConfig;
 import com.foreach.across.modules.user.business.Permission;
+import com.foreach.across.modules.user.business.PermissionGroup;
 import com.foreach.across.modules.user.business.Role;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,10 +40,16 @@ public class TestRoleRepository
 
 	@Test
 	public void saveAndGetRole() {
+		PermissionGroup groupOne = new PermissionGroup();
+		groupOne.setName( "group-one" );
+		permissionRepository.save( groupOne );
+
 		Permission permissionOne = new Permission( "admin permission" );
+		permissionOne.setGroup( groupOne );
 		permissionRepository.save( permissionOne );
 
 		Permission permissionTwo = new Permission( "other permission" );
+		permissionTwo.setGroup( groupOne );
 		permissionRepository.save( permissionTwo );
 
 		Role admin = new Role( "admin", "Administrator role" );
@@ -71,7 +78,12 @@ public class TestRoleRepository
 
 	@Test
 	public void updateRole() {
+		PermissionGroup groupTwo = new PermissionGroup();
+		groupTwo.setName( "group-two" );
+		permissionRepository.save( groupTwo );
+
 		Permission permissionOne = new Permission( "some permission" );
+		permissionOne.setGroup( groupTwo );
 		permissionRepository.save( permissionOne );
 
 		Role role = new Role( "user" );

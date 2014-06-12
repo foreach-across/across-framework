@@ -37,11 +37,11 @@ public class TestUserRepository
 
 	@Before
 	public void createRolesAndPermissions() {
-		permissionService.definePermission( "perm one", "" );
-		permissionService.definePermission( "perm two", "" );
-		permissionService.definePermission( "perm three", "" );
+		permissionService.definePermission( "perm one", "", "test-perms" );
+		permissionService.definePermission( "perm two", "", "test-perms" );
+		permissionService.definePermission( "perm three", "", "test-perms" );
 
-		roleService.defineRole( "role one", "", Arrays.asList( "perm one", "perm two") );
+		roleService.defineRole( "role one", "", Arrays.asList( "perm one", "perm two" ) );
 		roleService.defineRole( "role two", "", Arrays.asList( "perm two", "perm three" ) );
 	}
 

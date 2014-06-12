@@ -3,6 +3,7 @@ package com.foreach.across.modules.user.business;
 import com.foreach.across.core.database.AcrossSchemaConfiguration;
 import com.foreach.across.modules.user.config.UserSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 
@@ -25,6 +26,10 @@ public class Permission implements Comparable<Permission>
 
 	@Column
 	private String description;
+
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(name="permission_group_id")
+	private PermissionGroup group;
 
 	public Permission() {
 	}
@@ -60,6 +65,14 @@ public class Permission implements Comparable<Permission>
 
 	public void setDescription( String description ) {
 		this.description = description;
+	}
+
+	public PermissionGroup getGroup() {
+		return group;
+	}
+
+	public void setGroup( PermissionGroup group ) {
+		this.group = group;
 	}
 
 	@Override

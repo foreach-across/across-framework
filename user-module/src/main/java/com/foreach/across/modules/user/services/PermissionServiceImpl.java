@@ -1,6 +1,7 @@
 package com.foreach.across.modules.user.services;
 
 import com.foreach.across.modules.user.business.Permission;
+import com.foreach.across.modules.user.business.PermissionGroup;
 import com.foreach.across.modules.user.repositories.PermissionRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,25 @@ public class PermissionServiceImpl implements PermissionService
 	private PermissionRepository permissionRepository;
 
 	@Override
-	public void definePermission( String name, String description ) {
-		definePermission( new Permission( name, description ) );
+	public void definePermission( String name, String description, String groupName ) {
+		PermissionGroup group = permissionRepository.getPermissionGroup( groupName );
+
+		if ( group == null ) {
+			group = new PermissionGroup();
+			group.setName( groupName );
+
+			permissionRepository.save( group );
+		}
+
+		definePermission( name, description, group );
+	}
+
+	@Override
+	public void definePermission( String name, String description, PermissionGroup group ) {
+		Permission permission = new Permission( name, description );
+		permission.setGroup( group );
+
+		definePermission( permission );
 	}
 
 	@Transactional
@@ -28,6 +46,7 @@ public class PermissionServiceImpl implements PermissionService
 		if ( existing != null ) {
 			existing.setName( permission.getName() );
 			existing.setDescription( permission.getDescription() );
+			existing.setGroup( permission.getGroup() );
 
 			permissionRepository.save( existing );
 
@@ -36,6 +55,26 @@ public class PermissionServiceImpl implements PermissionService
 		else {
 			permissionRepository.save( permission );
 		}
+	}
+
+	@Override
+	public Collection<PermissionGroup> getPermissionGroups() {
+		return permissionRepository.getPermissionGroups();
+	}
+
+	@Override
+	public PermissionGroup getPermissionGroup( String name ) {
+		return permissionRepository.getPermissionGroup( name );
+	}
+
+	@Override
+	public void save( PermissionGroup group ) {
+		permissionRepository.save( group );
+	}
+
+	@Override
+	public void delete( PermissionGroup group ) {
+		permissionRepository.delete( group );
 	}
 
 	@Override

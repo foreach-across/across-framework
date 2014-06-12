@@ -6,17 +6,46 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<!-- Default table names -->
-	<property name="table.permission" value="um_permission" />
-	<property name="table.role" value="um_role" />
-	<property name="table.role_permission" value="um_role_permission" />
-	<property name="table.user" value="um_user" />
-	<property name="table.user_role" value="um_user_role" />
+	<property name="table.permission" value="um_permission"/>
+	<property name="table.permission_group" value="um_permission_group"/>
+	<property name="table.role" value="um_role"/>
+	<property name="table.role_permission" value="um_role_permission"/>
+	<property name="table.user" value="um_user"/>
+	<property name="table.user_role" value="um_user_role"/>
 
 	<property name="long.type" value="bigint"/>
 	<property name="varchar.suffix" value=""/>
 
 	<property name="long.type" value="NUMBER(19,0)" dbms="oracle"/>
 	<property name="varchar.suffix" value=" char" dbms="oracle"/>
+
+	<changeSet id="201406121522" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.permission_group}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates permission group table</comment>
+
+		<createTable tableName="${table.permission_group}">
+			<column name="id" type="${long.type}"/>
+			<column name="name" type="varchar2(250 ${varchar.suffix})"/>
+			<column name="title" type="varchar2(250 ${varchar.suffix})"/>
+			<column name="description" type="varchar2(2000 ${varchar.suffix})"/>
+		</createTable>
+
+		<addPrimaryKey tableName="${table.permission_group}" columnNames="id"/>
+
+		<createIndex tableName="${table.permission_group}" indexName="ix_um_perm_grp_name" unique="true">
+			<column name="name"/>
+		</createIndex>
+
+		<insert tableName="ACROSS_SEQUENCES">
+			<column name="seq_name">seq_um_permission_group_id</column>
+			<column name="seq_number">100</column>
+		</insert>
+	</changeSet>
 
 	<changeSet id="201403011520" author="arne">
 		<preConditions onFail="MARK_RAN">
@@ -31,6 +60,10 @@
 			<column name="id" type="${long.type}"/>
 			<column name="name" type="varchar2(250 ${varchar.suffix})"/>
 			<column name="description" type="varchar2(2000 ${varchar.suffix})"/>
+			<column name="permission_group_id" type="${long.type}">
+				<constraints nullable="false" referencedTableName="${table.permission_group}" referencedColumnNames="id"
+				             foreignKeyName="fk_um_p_pg"/>
+			</column>
 		</createTable>
 
 		<addPrimaryKey tableName="${table.permission}" columnNames="id"/>
@@ -76,7 +109,8 @@
 			<column name="permission_id" type="${long.type}"/>
 		</createTable>
 
-		<addPrimaryKey constraintName="pk_um_role_permission" tableName="${table.role_permission}" columnNames="role_id, permission_id"/>
+		<addPrimaryKey constraintName="pk_um_role_permission" tableName="${table.role_permission}"
+		               columnNames="role_id, permission_id"/>
 
 		<addForeignKeyConstraint baseTableName="${table.role_permission}" baseColumnNames="role_id"
 		                         constraintName="fk_um_rp_role_id"

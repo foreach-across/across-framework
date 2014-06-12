@@ -21,14 +21,18 @@
 		<input type="text" th:field="*{description}"/>
 	</div>
 
-	<ul>
-		<li th:each="permission:${permissions}">
-			<input type="checkbox"
-			       th:field="*{permissions}"
-			       th:value="${permission.name}"/>
-			<label th:text="${permission.name}"></label>
-		</li>
-	</ul>
+	<div th:each="permissionGroup:${permissionGroups}">
+		<p th:text="${permissionGroup.title}">Permission group</p>
+		<ul>
+			<li th:each="permission:${permissionGroup.permissions}">
+				<input type="checkbox"
+				       th:field="*{permissions}"
+				       th:value="${permission.name}"/>
+				<label th:text="${permission.name}"></label>
+			</li>
+		</ul>
+	</div>
+
 
 	<input type="submit" value="Save"/>
 

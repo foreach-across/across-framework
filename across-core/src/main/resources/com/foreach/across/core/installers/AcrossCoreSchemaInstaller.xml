@@ -49,7 +49,7 @@
 		<comment>Creates Across sequences table</comment>
 
 		<createTable tableName="ACROSS_SEQUENCES">
-			<column name="seq_name" type="varchar2(25 ${varchar.suffix})"/>
+			<column name="seq_name" type="varchar2(50 ${varchar.suffix})"/>
 			<column name="seq_number" type="${long.type}"/>
 		</createTable>
 

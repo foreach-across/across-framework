@@ -32,7 +32,7 @@ public class RoleController
 	public String createRole( Model model ) {
 		model.addAttribute( "existing", false );
 		model.addAttribute( "role", new Role() );
-		model.addAttribute( "permissions", permissionService.getPermissions() );
+		model.addAttribute( "permissionGroups", permissionService.getPermissionGroups() );
 
 		return "th/user/roles/edit";
 	}
@@ -50,7 +50,7 @@ public class RoleController
 
 		model.addAttribute( "existing", true );
 		model.addAttribute( "role", role );
-		model.addAttribute( "permissions", permissionService.getPermissions() );
+		model.addAttribute( "permissionGroups", permissionService.getPermissionGroups() );
 
 		return "th/user/roles/edit";
 	}

@@ -2,7 +2,7 @@ package com.foreach.across.modules.user.repositories;
 
 import com.foreach.across.modules.user.TestDatabaseConfig;
 import com.foreach.across.modules.user.business.Permission;
-import org.hibernate.SessionFactory;
+import com.foreach.across.modules.user.business.PermissionGroup;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,22 +23,6 @@ public class TestPermissionRepository
 	@Autowired
 	private PermissionRepository permissionRepository;
 
-	@Autowired
-	private SessionFactory sessionFactory;
-/*
-	@Before
-	public void openSession() {
-		Session session = sessionFactory.openSession();
-		TransactionSynchronizationManager.bindResource( sessionFactory, new SessionHolder( session ) );
-	}
-
-	@After
-	public void closeSession() {
-		sessionFactory.getCurrentSession().flush();
-		SessionFactoryUtils.closeSession( sessionFactory.getCurrentSession() );
-		TransactionSynchronizationManager.unbindResource( sessionFactory );
-	}
-*/
 	@Test
 	public void notExistingPermission() {
 		Permission existing = permissionRepository.getPermission( "djsklfjdskds" );
@@ -47,8 +31,45 @@ public class TestPermissionRepository
 	}
 
 	@Test
+	public void notExistingPermissionGroup() {
+		PermissionGroup existing = permissionRepository.getPermissionGroup( "djsklfjdskds" );
+
+		assertNull( existing );
+	}
+
+	@Test
+	public void saveAndGetPermissionGroup() {
+		PermissionGroup group = new PermissionGroup();
+		group.setName( "test-group" );
+		group.setTitle( "Test permission group" );
+		group.setDescription( "Contains some permissions" );
+
+		permissionRepository.save( group );
+
+		assertTrue( group.getId() > 0 );
+
+		PermissionGroup existing = permissionRepository.getPermissionGroup( "test-group" );
+		assertEquals( group, existing );
+		assertEquals( group.getId(), existing.getId() );
+		assertEquals( "Test permission group", existing.getTitle() );
+		assertEquals( "Contains some permissions", existing.getDescription() );
+
+		permissionRepository.delete( existing );
+
+		existing = permissionRepository.getPermissionGroup( "test-group" );
+		assertNull( existing );
+	}
+
+	@Test
 	public void saveAndGetPermission() {
+		PermissionGroup userGroup = new PermissionGroup();
+		userGroup.setName( "test-users" );
+		userGroup.setTitle( "Test users" );
+
+		permissionRepository.save( userGroup );
+
 		Permission manageUsers = new Permission( "manage users" );
+		manageUsers.setGroup( userGroup );
 		permissionRepository.save( manageUsers );
 
 		assertTrue( manageUsers.getId() > 0 );
