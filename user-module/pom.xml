@@ -19,6 +19,12 @@
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>
+			<artifactId>across-test</artifactId>
+			<version>1.0.2-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>across</groupId>
 			<artifactId>across-hibernate</artifactId>
 			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
