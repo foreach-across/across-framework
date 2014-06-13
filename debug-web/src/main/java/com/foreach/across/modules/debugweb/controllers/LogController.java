@@ -6,7 +6,6 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
 import com.foreach.across.modules.debugweb.mvc.DebugPageView;
@@ -37,8 +36,8 @@ public class LogController
 		List<Logger> loggers = loggerContext.getLoggerList();
 		List<Level> levels = Arrays.asList( Level.OFF, Level.TRACE, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG );
 
-		Map<String, Level> loggerMap = new TreeMap<String, Level>();
-		Map<String, String> appenderMap = new TreeMap<String, String>();
+		Map<String, Level> loggerMap = new TreeMap<>();
+		Map<String, String> appenderMap = new TreeMap<>();
 
 		for ( Logger logger : loggers ) {
 			loggerMap.put( logger.getName(), logger.getEffectiveLevel() );

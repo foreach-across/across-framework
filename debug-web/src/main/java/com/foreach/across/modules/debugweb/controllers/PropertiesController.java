@@ -86,7 +86,7 @@ public class PropertiesController
 	private Properties getPropertiesForEnvironment( Environment environment ) {
 		Properties allProperties = new Properties();
 
-		// Only configurabel environments and enumerable property sources are taken into account
+		// Only configurable environments and enumerable property sources are taken into account
 		if ( environment instanceof ConfigurableEnvironment ) {
 			MutablePropertySources propertySources = ( (ConfigurableEnvironment) environment ).getPropertySources();
 			for ( PropertySource<?> propertySource : propertySources ) {
@@ -99,8 +99,7 @@ public class PropertiesController
 					for ( String propertyName : enumerablePropertySource.getPropertyNames() ) {
 						allProperties.put( propertyName, enumerablePropertySource.getProperty( propertyName ) );
 					}
-				}
-				else {
+				} else {
 					// not sure we can output this, so let's skip it
 					// maybe provide feedback if we cannot list certain property sources
 				}
