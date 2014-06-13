@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Applies to all classes that are in one of the given packages.
  */
-public class PackageBeanFilter extends AbstractNameBeanFilter<String>
+public class PackageBeanFilter extends AbstractClassBasedBeanFilter<String>
 {
 	public PackageBeanFilter( String... allowedPackages ) {
 		super( allowedPackages );

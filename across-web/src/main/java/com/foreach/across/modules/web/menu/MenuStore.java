@@ -1,7 +1,7 @@
 package com.foreach.across.modules.web.menu;
 
 /**
- * Stores all create menus.
+ * Stores all created menus.
  */
 public interface MenuStore
 {

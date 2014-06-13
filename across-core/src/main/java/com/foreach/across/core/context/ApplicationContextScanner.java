@@ -44,7 +44,7 @@ public final class ApplicationContextScanner
 					definitions.contains( singletonName ) ? beanFactory.getBeanDefinition( singletonName ) : null;
 			Object bean = ctx.getBeanFactory().getSingleton( singletonName );
 
-			if ( filter.apply( beanFactory, bean, definition ) ) {
+			if ( filter.apply( beanFactory, singletonName, bean, definition ) ) {
 				beanMap.put( singletonName, bean );
 			}
 		}
@@ -63,7 +63,7 @@ public final class ApplicationContextScanner
 			BeanDefinition def = ctx.getBeanFactory().getBeanDefinition( defName );
 			Object bean = beanFactory.getSingleton( defName );
 
-			if ( filter.apply( beanFactory, bean, def ) ) {
+			if ( filter.apply( beanFactory, defName, bean, def ) ) {
 				definitionMap.put( defName, def );
 			}
 

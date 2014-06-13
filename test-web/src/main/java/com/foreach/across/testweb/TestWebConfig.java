@@ -43,6 +43,7 @@ public class TestWebConfig
 	public EhcacheModule ehCacheModule() {
 		EhcacheModule ehcacheModule = new EhcacheModule();
 		ehcacheModule.setEnabled( true );
+		ehcacheModule.setProperty( "property-in-ehcache", "ehcache-value" );
 
 		return ehcacheModule;
 	}
@@ -79,7 +80,7 @@ public class TestWebConfig
 
 		webModule.setDevelopmentMode( true );
 		webModule.addDevelopmentViews( "", "c:/code/across/across-web/src/main/resources/views/" );
-		webModule.addDevelopmentViews( "debugweb", "c:/code/across/debug-web/src/main/resources/views/");
+		webModule.addDevelopmentViews( "debugweb", "c:/code/across/debug-web/src/main/resources/views/" );
 		webModule.addDevelopmentViews( "ehcache", "c:/code/across/across-ehcache/src/main/resources/views/" );
 
 		return webModule;
@@ -89,6 +90,7 @@ public class TestWebConfig
 	public DebugWebModule debugWebModule() {
 		DebugWebModule debugWebModule = new DebugWebModule();
 		debugWebModule.setRootPath( "/debug" );
+		debugWebModule.setProperty( "property-in-debugweb", "debugweb-value" );
 
 		return debugWebModule;
 	}
@@ -100,7 +102,6 @@ public class TestWebConfig
 		dataSource.setUrl( "jdbc:hsqldb:/hsql/acrossTestWeb" );
 		dataSource.setUsername( "sa" );
 		dataSource.setPassword( "" );
-
 
 		//menuRegistry.put( new SortedMenu( "debugMenu", ));
 

@@ -17,12 +17,18 @@ import java.util.LinkedList;
  */
 public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 {
+	private final WebResourcePackageManager webResourcePackageManager;
+
 	@Autowired
 	private AcrossEventPublisher eventBus;
 
 	private WebResourceRegistry defaultRegistry;
 
 	private Collection<WebResourceTranslator> webResourceTranslators = new LinkedList<WebResourceTranslator>();
+
+	public WebResourceRegistryInterceptor( WebResourcePackageManager webResourcePackageManager ) {
+		this.webResourcePackageManager = webResourcePackageManager;
+	}
 
 	public WebResourceRegistry getDefaultRegistry() {
 		return defaultRegistry;
@@ -55,10 +61,10 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 	public boolean preHandle( HttpServletRequest request,
 	                          HttpServletResponse response,
 	                          Object handler ) throws Exception {
-		WebResourceRegistry registry = new WebResourceRegistry();
+		WebResourceRegistry registry = new WebResourceRegistry( webResourcePackageManager );
 		registry.merge( defaultRegistry );
 
-		eventBus.publish( new BuildRegistryEvent<WebResourceRegistry>( registry ) );
+		eventBus.publish( new BuildRegistryEvent<>( registry ) );
 
 		WebResourceUtils.storeRegistry( registry, request );
 

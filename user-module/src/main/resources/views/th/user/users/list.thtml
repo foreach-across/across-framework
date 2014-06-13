@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:fragment="title">User overview</title>
+</head>
+<body th:fragment="content">
+<a th:href="@{${@adminWeb.path('/users/create')}}">create a new user</a>
+<table class="table table-striped table-hover">
+	<thead>
+	<tr>
+		<th>#</th>
+		<th>Username</th>
+		<th>Email</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr th:each="user,userStats:${users}">
+		<td th:text="${userStats.count}"></td>
+		<td th:text="${user.username}"></td>
+		<td th:text="${user.email}"></td>
+		<td><a th:href="@{${@adminWeb.path('/users/') + user.id}}">edit</a></td>
+	</tr>
+	</tbody>
+</table>
+</body>
+</html>

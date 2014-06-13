@@ -17,7 +17,6 @@
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf-spring4</artifactId>
 			<version>2.1.2.RELEASE</version>
-			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

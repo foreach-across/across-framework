@@ -29,30 +29,26 @@
 				<td th:text="*{size}">0</td>
 			</tr>
 			<tr>
-				<th>Size</th>
-				<td th:text="*{statistics.calculateMemorySize()}"></td>
-			</tr>
-			<tr>
 				<th>Hits</th>
-				<td th:text="*{statistics.cacheHits}">0</td>
+				<td th:text="*{statistics.cacheHitCount()}">0</td>
 			</tr>
 			<tr>
 				<th>Misses</th>
-				<td th:text="*{statistics.cacheMisses}">${stats.cacheMisses}</td>
+				<td th:text="*{statistics.cacheMissCount()}">${stats.cacheMisses}</td>
 			</tr>
 			<tr>
 				<th>Ratio</th>
-				<td th:text="*{#numbers.formatDecimal(((statistics.cacheHits * 1.0) / (statistics.cacheHits + statistics.cacheMisses)) * 100, 1, 2)} + ' %'">
+				<td th:text="*{#numbers.formatDecimal(((statistics.cacheHitCount() * 1.0) / (statistics.cacheHitCount() + statistics.cacheMissCount())) * 100, 1, 2)} + ' %'">
 					100 %
 				</td>
 			</tr>
 			<tr>
 				<th>Evictions</th>
-				<td th:text="*{statistics.evictionCount}">0</td>
+				<td th:text="*{statistics.cacheEvictedCount()}">0</td>
 			</tr>
 			<tr>
-				<th>Avg get time</th>
-				<td th:text="*{#numbers.formatDecimal(statistics.averageGetTime,1,2)} + ' ms'">0 ms</td>
+				<th>Heap size</th>
+				<td th:text="*{#numbers.formatDecimal(statistics.getExtended().localHeapSizeInBytes().value() / 1024.0,1,2)} + ' KB'">0 KB</td>
 			</tr>
 		</table>
 	</div>

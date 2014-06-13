@@ -37,8 +37,11 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.servlet.handler.ConversionServiceExposingInterceptor;
 import org.springframework.web.servlet.handler.HandlerExceptionResolverComposite;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -273,7 +276,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	@Bean
 	protected RefreshableRegistry<WebMvcConfigurer> webMvcConfigurers() {
-		return new RefreshableRegistry<WebMvcConfigurer>( WebMvcConfigurer.class, true );
+		return new RefreshableRegistry<>( WebMvcConfigurer.class, true );
 	}
 
 	@Bean
@@ -335,7 +338,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
 		exceptionHandlerExceptionResolver.setApplicationContext( this.applicationContext );
 		exceptionHandlerExceptionResolver.setContentNegotiationManager( contentNegotiationManager );
-		exceptionHandlerExceptionResolver.setMessageConverters( messageConverters );
+		if ( !messageConverters.isEmpty() ) {
+			exceptionHandlerExceptionResolver.setMessageConverters( messageConverters );
+		}
 		exceptionHandlerExceptionResolver.afterPropertiesSet();
 
 		exceptionResolvers.add( exceptionHandlerExceptionResolver );

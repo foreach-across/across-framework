@@ -1,8 +1,8 @@
 package com.foreach.across.modules.web.mvc;
 
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import net.engio.mbassy.listener.Handler;
 import org.springframework.aop.ClassFilter;
@@ -59,8 +59,8 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 	@Handler
 	private void rescan( AcrossContextBootstrappedEvent event ) {
-		for ( AcrossModule module : event.getModules() ) {
-			scan( AcrossContextUtils.getApplicationContext( module ) );
+		for ( AcrossModuleInfo moduleInfo : event.getModules() ) {
+			scan( AcrossContextUtils.getApplicationContext( moduleInfo.getModule() ) );
 		}
 	}
 
@@ -69,7 +69,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	}
 
 	/**
-	 * Scan a particular ApplicationContext for DebugWebController instances.
+	 * Scan a particular ApplicationContext for instances.
 	 *
 	 * @param context
 	 */
@@ -130,7 +130,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 	@Override
 	protected boolean isHandler( Class<?> beanType ) {
-		return handlerMatcher.matches( beanType );
+		return handlerMatcher.matches( ClassUtils.getUserClass( beanType ) );
 	}
 
 	@Override

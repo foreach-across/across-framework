@@ -1,2 +1,0 @@
-list roles
-<span th:each="role:${roles}" th:text="${role.name}"></span>

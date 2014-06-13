@@ -1,28 +1,26 @@
 package com.foreach.across.core.events;
 
-import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 
 import java.util.Collection;
 
 public class AcrossContextBootstrappedEvent implements AcrossEvent
 {
-	private final AcrossContext context;
-	private final Collection<AcrossModule> modules;
+	private final AcrossContextInfo contextInfo;
 
-	public AcrossContextBootstrappedEvent( AcrossContext context, Collection<AcrossModule> modules ) {
-		this.context = context;
-		this.modules = modules;
+	public AcrossContextBootstrappedEvent( AcrossContextInfo contextInfo ) {
+		this.contextInfo = contextInfo;
 	}
 
-	public AcrossContext getContext() {
-		return context;
+	public AcrossContextInfo getContext() {
+		return contextInfo;
 	}
 
 	/**
 	 * @return The actual collection of all modules that have bootstrapped.
 	 */
-	public Collection<AcrossModule> getModules() {
-		return modules;
+	public Collection<AcrossModuleInfo> getModules() {
+		return contextInfo.getModules();
 	}
 }

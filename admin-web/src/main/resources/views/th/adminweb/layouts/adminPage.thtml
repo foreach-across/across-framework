@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title th:text="${@adminWeb.title}">Administration</title>
+
+	<script th:each="javascript : ${webResourceRegistry.getResources('javascript')}" th:src="@{${javascript.data}}"
+	        th:if="${javascript.location != 'inline'}"></script>
+
+	<link rel="stylesheet" type="text/css" th:each="css : ${webResourceRegistry.getResources('css')}"
+	      th:href="@{${css.data}}"/>
+</head>
+<body>
+<div class="container">
+	<!-- Main menu navigation -->
+	<div class="row" sec:authorize="isAuthenticated()">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li th:each="menu : ${adminMenu.items}" th:class="${menu.hasItems()}? 'dropdown'" th:classappend="${menu.selected}? 'active'">
+						<a th:unless="${menu.hasItems()}" th:href="@{${menu.url}}" th:text="${menu.title}">main item</a>
+						<a th:if="${menu.hasItems()}" href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="${menu.title}"></span>
+							<b class="caret"></b></a>
+						<ul th:if="${menu.hasItems()}" class="dropdown-menu">
+							<li th:each="subItem : ${menu.items}" th:classappend="${subItem.selected}? 'active'">
+								<a th:href="@{${subItem.url}}" th:text="${subItem.title}">sub item</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+
+				<ul class="nav navbar-nav navbar-right">
+					<li><a th:href="@{${@adminWeb.path('/logout')}}">Logout</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+	<!-- Content body -->
+	<div th:if="${childPage}" class="row">
+		<div th:replace="${childPage} :: content">
+		</div>
+	</div>
+</div>
+
+<script th:each="javascript : ${webResourceRegistry.getResources('javascript-page-end')}" th:src="@{${javascript.data}}"
+        th:if="${javascript.location == 'external'}"></script>
+</body>
+</html>
+

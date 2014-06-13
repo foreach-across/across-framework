@@ -4,7 +4,8 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ApplicationContextScanner;
-import com.foreach.across.core.context.bootstrap.BootstrapAcrossModuleOrder;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapOrderBuilder;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
 import com.foreach.across.modules.debugweb.mvc.DebugPageView;
@@ -29,7 +30,7 @@ import java.util.*;
 public class AcrossInfoController
 {
 	@Autowired
-	private AcrossContext acrossContext;
+	private AcrossContextInfo acrossContext;
 
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
@@ -47,7 +48,7 @@ public class AcrossInfoController
 	public DebugPageView showBeans( DebugPageView view ) {
 		view.setPage( DebugWeb.VIEW_MODULES );
 
-		BootstrapAcrossModuleOrder modules = new BootstrapAcrossModuleOrder( acrossContext.getModules(), false );
+		ModuleBootstrapOrderBuilder modules = new ModuleBootstrapOrderBuilder( acrossContext.getConfiguration().getModules() );
 
 		view.addObject( "moduleRegistry", modules );
 		view.addObject( "modules", modules.getOrderedModules() );

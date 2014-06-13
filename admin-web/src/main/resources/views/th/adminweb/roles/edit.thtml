@@ -1,2 +1,0 @@
-EDIT ROLE
-<span th:each="permission:${permissions}" th:text="${permission.name}"></span>

@@ -1,8 +1,6 @@
 package com.foreach.across.modules.hibernate.provider;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 public class HibernatePackageProviderComposite implements HibernatePackageProvider
 {
@@ -12,6 +10,7 @@ public class HibernatePackageProviderComposite implements HibernatePackageProvid
 		this.providers = providers;
 	}
 
+	@Override
 	public String[] getPackagesToScan() {
 		Collection<String> packagesToScan = new HashSet<String>();
 		for ( HibernatePackageProvider provider : providers ) {
@@ -21,6 +20,7 @@ public class HibernatePackageProviderComposite implements HibernatePackageProvid
 		return packagesToScan.toArray( new String[packagesToScan.size()] );
 	}
 
+	@Override
 	public Class<?>[] getAnnotatedClasses() {
 		Collection<Class<?>> annotatedClasses = new HashSet<Class<?>>();
 		for ( HibernatePackageProvider provider : providers ) {
@@ -30,6 +30,7 @@ public class HibernatePackageProviderComposite implements HibernatePackageProvid
 		return annotatedClasses.toArray( new Class<?>[annotatedClasses.size()] );
 	}
 
+	@Override
 	public String[] getMappingResources() {
 		Collection<String> mappingResources = new HashSet<String>();
 		for ( HibernatePackageProvider provider : providers ) {
@@ -37,5 +38,15 @@ public class HibernatePackageProviderComposite implements HibernatePackageProvid
 		}
 
 		return mappingResources.toArray( new String[mappingResources.size()] );
+	}
+
+	@Override
+	public Map<String, String> getTableAliases() {
+		Map<String, String> tableAliases = new HashMap<>();
+		for ( HibernatePackageProvider provider : providers ) {
+			tableAliases.putAll( provider.getTableAliases() );
+		}
+
+		return tableAliases;
 	}
 }

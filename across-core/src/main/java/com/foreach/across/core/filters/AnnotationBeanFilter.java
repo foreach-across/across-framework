@@ -54,7 +54,10 @@ public class AnnotationBeanFilter implements BeanFilter
 		this.matchIfBeanFactoryApplies = matchIfBeanFactoryApplies;
 	}
 
-	public boolean apply( ConfigurableListableBeanFactory beanFactory, Object bean, BeanDefinition definition ) {
+	public boolean apply( ConfigurableListableBeanFactory beanFactory,
+	                      String beanName,
+	                      Object bean,
+	                      BeanDefinition definition ) {
 		if ( bean != null ) {
 			Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( bean ) );
 			for ( Class<? extends Annotation> annotation : annotations ) {
@@ -127,7 +130,8 @@ public class AnnotationBeanFilter implements BeanFilter
 
 				if ( targetHolder != null ) {
 					Object targetBean = beanFactory.getSingleton( targetHolder.getBeanName() );
-					return apply( beanFactory, targetBean, targetHolder.getBeanDefinition() );
+					return apply( beanFactory, targetHolder.getBeanName(), targetBean,
+					              targetHolder.getBeanDefinition() );
 				}
 			}
 		}

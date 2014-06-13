@@ -22,6 +22,8 @@ import java.util.*;
  */
 public class AcrossHibernateModule extends AcrossModule
 {
+	public static final String NAME = "AcrossHibernateModule";
+
 	private Properties hibernateProperties = new Properties();
 
 	private boolean autoEnableModules = true;
@@ -42,7 +44,7 @@ public class AcrossHibernateModule extends AcrossModule
 	 */
 	@Override
 	public String getName() {
-		return "AcrossHibernateModule";
+		return NAME;
 	}
 
 	/**
@@ -84,7 +86,7 @@ public class AcrossHibernateModule extends AcrossModule
 	/**
 	 * If true a TransactionManager will be created for the sessionFactory defined in this module.
 	 * Additionally transaction management will be enabled in all other modules if autoEnableModules is true.
-	 *
+	 * <p/>
 	 * If transaction management is disabled, the user will have to take care of managing the sessions outside the module.
 	 *
 	 * @return True if a TransactionManager will be created and transaction management will be enabled in all other modules.

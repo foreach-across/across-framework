@@ -5,6 +5,12 @@
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
+	<property name="long.type" value="bigint"/>
+	<property name="varchar.suffix" value=""/>
+
+	<property name="long.type" value="NUMBER(19,0)" dbms="oracle"/>
+	<property name="varchar.suffix" value=" char" dbms="oracle"/>
+
 	<changeSet id="201401081724" author="arne">
 		<comment>Creates modules table</comment>
 		<createTable tableName="ACROSSMODULES">
@@ -24,6 +30,51 @@
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
+	</changeSet>
+
+	<changeSet id="201406121936" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="ACROSSMODULES" columnName="installer_id"/>
+			</not>
+		</preConditions>
+
+		<comment>Separate installer_id column to support long installer classes</comment>
+
+		<renameColumn tableName="ACROSSMODULES" oldColumnName="installer" newColumnName="installer_id"
+		              columnDataType="varchar2(255 ${varchar.suffix})"/>
+
+		<addColumn tableName="ACROSSMODULES">
+			<column name="installer" type="varchar2(255 ${varchar.suffix})"/>
+		</addColumn>
+
+		<sql>
+			UPDATE ACROSSMODULES SET installer = installer_id
+		</sql>
+	</changeSet>
+
+	<changeSet id="201406121321" author="arne">
+		<comment>Switch to char specification (for Oracle)</comment>
+		<modifyDataType tableName="ACROSSMODULES" columnName="module" newDataType="varchar2(255 ${varchar.suffix})"/>
+		<modifyDataType tableName="ACROSSMODULES" columnName="description"
+		                newDataType="varchar2(500 ${varchar.suffix})"/>
+	</changeSet>
+
+	<changeSet id="201406121322" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="ACROSS_SEQUENCES"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates Across sequences table</comment>
+
+		<createTable tableName="ACROSS_SEQUENCES">
+			<column name="seq_name" type="varchar2(50 ${varchar.suffix})"/>
+			<column name="seq_number" type="${long.type}"/>
+		</createTable>
+
+		<addPrimaryKey tableName="ACROSS_SEQUENCES" columnNames="seq_name"/>
 	</changeSet>
 
 </databaseChangeLog>

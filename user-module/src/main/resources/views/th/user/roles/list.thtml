@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:fragment="title">Role overview</title>
+</head>
+<body th:fragment="content">
+<a th:href="@{${@adminWeb.path('/roles/create')}}">create a new role</a>
+<table class="table table-striped table-hover">
+	<thead>
+	<tr>
+		<th>#</th>
+		<th>Id</th>
+		<th>Name</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr th:each="role,roleStats:${roles}">
+		<td th:text="${roleStats.count}"></td>
+		<td th:text="${role.name}"></td>
+		<td th:text="${role.description}"></td>
+		<td><a th:href="@{${@adminWeb.path('/roles/') + role.name}}">edit</a></td>
+	</tr>
+	</tbody>
+</table>
+</body>
+</html>

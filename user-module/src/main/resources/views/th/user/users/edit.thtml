@@ -1,0 +1,42 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:fragment="title">Modify user</title>
+</head>
+<body th:fragment="content">
+
+<form method="post" th:action="@{${@adminWeb.path('/users/save')}}" th:object="${user}">
+	<input type="hidden" th:field="*{id}"/>
+
+	<span th:text="*{id}">1</span>
+
+	<div>
+		<label>Username</label>
+		<input type="text" th:field="*{username}"/>
+	</div>
+
+	<div>
+		<label>Password</label>
+		<input type="text" th:field="*{password}"/>
+	</div>
+
+	<div>
+		<label>Email</label>
+		<input type="text" th:field="*{email}"/>
+	</div>
+
+	<ul>
+		<li th:each="role:${roles}">
+			<input type="checkbox"
+			       th:field="*{roles}"
+			       th:value="${role.name}"/>
+			<label th:text="${role.description}"></label>
+		</li>
+	</ul>
+
+	<input type="submit" value="Save"/>
+
+	<a th:href="@{${@adminWeb.path('/users')}}">Cancel</a>
+</form>
+
+</body>
+</html>

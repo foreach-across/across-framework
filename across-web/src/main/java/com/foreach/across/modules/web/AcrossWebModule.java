@@ -20,6 +20,8 @@ import java.util.Set;
 
 public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 {
+	public static final String NAME = "AcrossWebModule";
+
 	private boolean developmentMode = false;
 	private String viewsResourcePath;
 	private AcrossWebViewSupport[] supportedViews =
@@ -78,7 +80,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 
 	@Override
 	public String getName() {
-		return "AcrossWebModule";
+		return NAME;
 	}
 
 	@Override

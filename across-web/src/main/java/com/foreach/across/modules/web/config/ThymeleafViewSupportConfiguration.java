@@ -36,6 +36,7 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
+	@Qualifier("springTemplateEngine")
 	public SpringTemplateEngine springTemplateEngine() {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.addTemplateResolver( templateResolver() );
@@ -79,7 +80,7 @@ public class ThymeleafViewSupportConfiguration
 				resolver.setSuffix( suffix );
 
 				applicationContext.getAutowireCapableBeanFactory().initializeBean( resolver,
-				                                                                  "developmentResolver." + views.getKey() );
+				                                                                   "developmentResolver." + views.getKey() );
 
 				resolvers.add( resolver );
 			}

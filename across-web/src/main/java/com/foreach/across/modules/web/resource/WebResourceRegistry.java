@@ -2,6 +2,7 @@ package com.foreach.across.modules.web.resource;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -18,7 +19,12 @@ public class WebResourceRegistry
 {
 	private String defaultLocation = WebResource.RELATIVE;
 
-	private final List<WebResource> resources = new LinkedList<WebResource>();
+	private final WebResourcePackageManager packageManager;
+	private final List<WebResource> resources = new LinkedList<>();
+
+	public WebResourceRegistry( WebResourcePackageManager packageManager ) {
+		this.packageManager = packageManager;
+	}
 
 	/**
 	 * @return The default location resources will be registered with.
@@ -34,6 +40,16 @@ public class WebResourceRegistry
 	 */
 	public void setDefaultLocation( String defaultLocation ) {
 		this.defaultLocation = defaultLocation;
+	}
+
+	/**
+	 * Register a specific resource.
+	 *
+	 * @param webResource WebResource instance to add.
+	 */
+	public void add( WebResource webResource ) {
+		Assert.notNull( webResource );
+		addWithKey( webResource.getType(), webResource.getKey(), webResource.getData(), webResource.getLocation() );
 	}
 
 	/**
@@ -83,7 +99,7 @@ public class WebResourceRegistry
 		WebResource existing = findResource( type, key, data );
 
 		if ( existing == null ) {
-			resources.add( new WebResource( key, type, location, data ) );
+			resources.add( new WebResource( type, key, data, location ) );
 		}
 		else {
 			existing.setKey( key );
@@ -175,6 +191,40 @@ public class WebResourceRegistry
 			WebResource resource = iterator.next();
 			if ( StringUtils.equals( type, resource.getType() ) && StringUtils.equals( key, resource.getKey() ) ) {
 				iterator.remove();
+			}
+		}
+	}
+
+	/**
+	 * Installs all resources attached to the packages with the names specified.
+	 * This requires the packages to be registered in the attached WebResourcePackageManager.
+	 *
+	 * @param packageNames Names of the packages to install.
+	 */
+	public void addPackage( String... packageNames ) {
+		for ( String packageName : packageNames ) {
+			WebResourcePackage webResourcePackage = packageManager.getPackage( packageName );
+
+			if ( webResourcePackage == null ) {
+				throw new RuntimeException( "No WebResourcePackage found with name " + packageName );
+			}
+
+			webResourcePackage.install( this );
+		}
+	}
+
+	/**
+	 * Will remove all resources of the packages with the specified names.
+	 *
+	 * @param packageNames Names of the packages.
+	 */
+	public void removePackage( String... packageNames ) {
+		for ( String packageName : packageNames ) {
+			WebResourcePackage webResourcePackage = packageManager.getPackage( packageName );
+
+			// Package not found is ignored
+			if ( webResourcePackage != null ) {
+				webResourcePackage.uninstall( this );
 			}
 		}
 	}

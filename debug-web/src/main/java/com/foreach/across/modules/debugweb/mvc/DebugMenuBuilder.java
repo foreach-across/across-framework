@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 public class DebugMenuBuilder extends RequestMenuBuilder<DebugMenu, DebugMenuEvent>
 {
+	// TODO: use DebugWeb bean here
 	@Autowired
 	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private DebugWebModule debugWebModule;
