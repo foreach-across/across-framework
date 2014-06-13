@@ -60,21 +60,4 @@
 		                newDataType="varchar2(500 ${varchar.suffix})"/>
 	</changeSet>
 
-	<changeSet id="201406121322" author="arne">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="ACROSS_SEQUENCES"/>
-			</not>
-		</preConditions>
-
-		<comment>Creates Across sequences table</comment>
-
-		<createTable tableName="ACROSS_SEQUENCES">
-			<column name="seq_name" type="varchar2(50 ${varchar.suffix})"/>
-			<column name="seq_number" type="${long.type}"/>
-		</createTable>
-
-		<addPrimaryKey tableName="ACROSS_SEQUENCES" columnNames="seq_name"/>
-	</changeSet>
-
 </databaseChangeLog>
