@@ -6,6 +6,7 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.database.HasSchemaConfiguration;
 import com.foreach.across.core.database.SchemaConfiguration;
+import com.foreach.across.core.installers.AcrossSequencesInstaller;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.*;
 import com.foreach.across.modules.user.config.*;
@@ -42,7 +43,8 @@ public class UserModule extends AcrossModule implements HasHibernatePackageProvi
 
 	@Override
 	public Object[] getInstallers() {
-		return new Object[] { new UserSchemaInstaller( schemaConfiguration ), new DefaultUserInstaller() };
+		return new Object[] { new AcrossSequencesInstaller(), new UserSchemaInstaller( schemaConfiguration ),
+		                      new DefaultUserInstaller() };
 	}
 
 	/**
