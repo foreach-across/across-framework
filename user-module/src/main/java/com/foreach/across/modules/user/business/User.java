@@ -21,8 +21,9 @@ public class User implements Principal, UserDetails
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_user_id")
 	@TableGenerator(name = "seq_um_user_id", table = AcrossSchemaConfiguration.TABLE_SEQUENCES,
-	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_um_user_id",
-	                allocationSize = 5)
+	                pkColumnName = AcrossSchemaConfiguration.SEQUENCE_NAME,
+	                valueColumnName = AcrossSchemaConfiguration.SEQUENCE_VALUE, pkColumnValue = "seq_um_user_id",
+	                allocationSize = 10)
 	private long id;
 
 	@Column(nullable = false, name = "username")

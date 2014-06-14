@@ -16,7 +16,8 @@ public class PermissionGroup
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_permission_group_id")
 	@TableGenerator(name = "seq_um_permission_group_id", table = AcrossSchemaConfiguration.TABLE_SEQUENCES,
-	                pkColumnName = "seq_name", valueColumnName = "seq_number",
+	                pkColumnName = AcrossSchemaConfiguration.SEQUENCE_NAME,
+	                valueColumnName = AcrossSchemaConfiguration.SEQUENCE_VALUE,
 	                pkColumnValue = "seq_um_permission_group_id",
 	                allocationSize = 5)
 	private long id;

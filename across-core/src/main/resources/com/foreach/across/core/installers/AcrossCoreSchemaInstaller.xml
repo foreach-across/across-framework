@@ -5,59 +5,108 @@
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-	<property name="long.type" value="bigint"/>
-	<property name="varchar.suffix" value=""/>
+	<changeSet id="201406141702" author="arne" runAlways="true" dbms="oracle">
+		<sql>
+			ALTER session SET nls_length_semantics=CHAR;
+		</sql>
+	</changeSet>
 
-	<property name="long.type" value="NUMBER(19,0)" dbms="oracle"/>
-	<property name="varchar.suffix" value=" char" dbms="oracle"/>
-
-	<changeSet id="201401081724" author="arne">
+	<changeSet id="201406141430B" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="ACROSSMODULES"/>
+			</not>
+		</preConditions>
 		<comment>Creates modules table</comment>
 		<createTable tableName="ACROSSMODULES">
-			<column name="module" type="varchar2(255)">
-				<constraints nullable="false" primaryKey="true"/>
+			<column name="module_id" type="java.sql.Types.VARCHAR(120)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_ACROSS_MODULES"/>
 			</column>
-			<column name="installer" type="varchar2(255)">
-				<constraints nullable="false" primaryKey="true"/>
+			<column name="installer_id" type="java.sql.Types.VARCHAR(120)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_ACROSS_MODULES"/>
 			</column>
-			<column name="version" type="int">
+			<column name="module" type="java.sql.Types.VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="description" type="varchar2(500)">
+			<column name="installer" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="version" type="java.sql.Types.INTEGER">
+				<constraints nullable="false"/>
+			</column>
+			<column name="description" type="java.sql.Types.NVARCHAR(500)">
 				<constraints nullable="true"/>
 			</column>
-			<column name="created" type="datetime">
+			<column name="created" type="java.sql.Types.TIMESTAMP">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
 	</changeSet>
 
-	<changeSet id="201406121936" author="arne">
+	<changeSet id="201406141451B" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="ACROSSMODULES" columnName="installer_id"/>
 			</not>
 		</preConditions>
 
-		<comment>Separate installer_id column to support long installer classes</comment>
-
-		<renameColumn tableName="ACROSSMODULES" oldColumnName="installer" newColumnName="installer_id"
-		              columnDataType="varchar2(255 ${varchar.suffix})"/>
+		<comment>Migrate old table: add new installer_id column</comment>
 
 		<addColumn tableName="ACROSSMODULES">
-			<column name="installer" type="varchar2(255 ${varchar.suffix})"/>
+			<column name="installer_id" type="java.sql.Types.VARCHAR(120)">
+				<constraints nullable="false"/>
+			</column>
 		</addColumn>
 
 		<sql>
-			UPDATE ACROSSMODULES SET installer = installer_id
+			UPDATE ACROSSMODULES SET installer_id = installer
 		</sql>
 	</changeSet>
 
-	<changeSet id="201406121321" author="arne">
+	<changeSet id="201406141452B" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="ACROSSMODULES" columnName="module_id"/>
+			</not>
+		</preConditions>
+
+		<comment>Migrate old table: add new module_id column</comment>
+
+		<addColumn tableName="ACROSSMODULES">
+			<column name="module_id" type="java.sql.Types.VARCHAR(120)">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+
+		<sql>
+			UPDATE ACROSSMODULES SET module_id = module
+		</sql>
+	</changeSet>
+
+	<changeSet id="201406141453B" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<primaryKeyExists tableName="ACROSSMODULES" primaryKeyName="PK_ACROSS_MODULES"/>
+			</not>
+		</preConditions>
+
+		<comment>Migrate old table: create primary key on id columns</comment>
+
+		<dropPrimaryKey tableName="ACROSSMODULES"/>
+
+		<addPrimaryKey tableName="ACROSSMODULES" columnNames="module_id, installer_id"
+		               constraintName="PK_ACROSS_MODULES"/>
+	</changeSet>
+
+	<changeSet id="201406141457B" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<dbms type="oracle"/>
+		</preConditions>
 		<comment>Switch to char specification (for Oracle)</comment>
-		<modifyDataType tableName="ACROSSMODULES" columnName="module" newDataType="varchar2(255 ${varchar.suffix})"/>
+		<modifyDataType tableName="ACROSSMODULES" columnName="module" newDataType="java.sql.Types.VARCHAR(255)"/>
+		<modifyDataType tableName="ACROSSMODULES" columnName="installer" newDataType="java.sql.Types.VARCHAR(255)"/>
 		<modifyDataType tableName="ACROSSMODULES" columnName="description"
-		                newDataType="varchar2(500 ${varchar.suffix})"/>
+		                newDataType="java.sql.Types.NVARCHAR(500)"/>
 	</changeSet>
 
 </databaseChangeLog>

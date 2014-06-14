@@ -6,7 +6,6 @@ import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.user.services.UserService;
 import com.foreach.across.test.AcrossTestContextConfiguration;
 import com.foreach.across.test.AcrossTestContextConfigurer;
-import org.hibernate.cfg.AvailableSettings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +42,7 @@ public class ITUserModule
 		}
 
 		private AcrossHibernateModule acrossHibernateModule() {
-			AcrossHibernateModule hibernateModule = new AcrossHibernateModule();
-			hibernateModule.setHibernateProperty( AvailableSettings.HBM2DDL_AUTO, "validate" );
-
-			return hibernateModule;
+			return new AcrossHibernateModule();
 		}
 
 		private UserModule userModule() {
