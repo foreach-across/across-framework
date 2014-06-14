@@ -19,7 +19,7 @@
 			<url>http://java.libs.foreach.com/nexus/content/repositories/foreach-custom-externals/</url>
 		</repository>
 	</repositories>
-	
+
 	<build>
 		<plugins>
 			<plugin>

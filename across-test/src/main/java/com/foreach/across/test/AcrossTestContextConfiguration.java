@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 @Configuration
-@PropertySource("file:${user.home}/dev-configs/across-test.properties")
+@PropertySource(value = "file:${user.home}/dev-configs/across-test.properties", ignoreResourceNotFound = true)
 public class AcrossTestContextConfiguration
 {
 	@Autowired
