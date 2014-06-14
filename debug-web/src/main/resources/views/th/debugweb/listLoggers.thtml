@@ -11,7 +11,7 @@
 
 	<h3>Loggers</h3>
 
-	<form method="post">
+	<form method="post" onsubmit="disableNonDirty(this)">
 		<div class="form-actions">
 			<input type="reset" value="Reset"/>
 			<input type="submit" value="Save"/>
@@ -20,7 +20,7 @@
 			<tr th:each="entry : ${loggers}">
 				<td th:text="${entry.key}">logger name</td>
 				<td>
-					<select th:name="${entry.key}">
+					<select onchange="markDirty(event)" th:name="${entry.key}">
 						<option th:each="level : ${levels}" th:value="${level}" th:text="${level}"
 						        th:selected="${level eq entry.value}">log level
 						</option>
@@ -33,6 +33,39 @@
 			<input type="submit" value="Save"/>
 		</div>
 	</form>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        function markDirty( event ) {
+            var target = event.srcElement,
+                isOriginalValue = function( target ) {
+                    for ( var i = 0; i<target.options.length; i++ ) {
+                        var option = target.options[i];
+                        if ( option.attributes['selected'] ) {
+                            return option.value === target.value;
+                        }
+                    }
+                };
+            if ( !isOriginalValue(target) && target.className.indexOf('dirty') === -1 ) {
+                if ( target.className.length > 0 ) {
+                    target.className += ' ';
+                }
+                target.className += 'dirty';
+            }
+            if ( isOriginalValue(target) && target.className.indexOf('dirty') > -1 ) {
+                target.className = target.className.replace(/ ?dirty/, '');
+            }
+        }
+        function disableNonDirty( form ) {
+            var selectNodes = document.getElementsByTagName('select');
+            for ( var i = 0; i< selectNodes.length; i++ ) {
+                var node = selectNodes[i];
+                if ( node.className.indexOf('dirty') === -1 ) {
+                    node.disabled = true;
+                }
+            }
+        }
+        /*]]>*/
+    </script>
 </div>
 <div th:replace="th/across :: table (${appenders})"></div>
 </body>
