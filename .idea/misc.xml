@@ -29,9 +29,6 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/core/pom.xml" />
-        <option value="$PROJECT_DIR$/debug-web/pom.xml" />
-        <option value="$PROJECT_DIR$/test-web/pom.xml" />
-        <option value="$PROJECT_DIR$/across-web/pom.xml" />
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
