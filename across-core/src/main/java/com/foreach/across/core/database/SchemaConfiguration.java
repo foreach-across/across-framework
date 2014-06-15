@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class encapsulating general database properties to used when creating/updating the schema.
+ * Class encapsulating general database properties to be used when creating/updating the schema.
  * With specific functionality for table names and renaming tables.
  */
 public class SchemaConfiguration

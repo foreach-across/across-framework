@@ -70,6 +70,20 @@ public class RoleServiceImpl implements RoleService
 
 	@Override
 	public void save( Role role ) {
+		Set<Permission> actualPermissions = new TreeSet<>();
+
+		for ( Permission permission : role.getPermissions() ) {
+			Permission existing = permissionRepository.getPermission( permission.getName() );
+
+			if ( existing == null ) {
+				throw new RuntimeException( "No permission defined with name: " + permission.getName() );
+			}
+
+			actualPermissions.add( existing );
+		}
+
+		role.setPermissions( actualPermissions );
+
 		roleRepository.save( role );
 	}
 

@@ -2,8 +2,8 @@ package com.foreach.across.modules.user.config;
 
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.spring.security.config.WebSecurityModuleConfigurerAdapter;
-import com.foreach.across.modules.user.business.CurrentUserProxy;
-import com.foreach.across.modules.user.business.CurrentUserProxyImpl;
+import com.foreach.across.modules.user.security.CurrentUserProxy;
+import com.foreach.across.modules.user.security.CurrentUserProxyImpl;
 import com.foreach.across.modules.user.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

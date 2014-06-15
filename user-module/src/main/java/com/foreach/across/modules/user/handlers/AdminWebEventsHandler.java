@@ -4,7 +4,7 @@ import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.modules.adminweb.AdminWeb;
 import com.foreach.across.modules.adminweb.events.AdminWebUrlRegistry;
 import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
-import com.foreach.across.modules.user.business.CurrentUserProxy;
+import com.foreach.across.modules.user.security.CurrentUserProxy;
 import com.foreach.across.modules.user.controllers.RoleController;
 import com.foreach.across.modules.user.controllers.UserController;
 import com.foreach.across.modules.web.menu.Menu;

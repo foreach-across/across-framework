@@ -1,6 +1,7 @@
 package com.foreach.across.demoweb;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.demoweb.module.DemoWebModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.adminweb.AdminWebModuleSettings;
@@ -10,6 +11,7 @@ import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.spring.security.SpringSecurityModule;
 import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.user.UserModuleSettings;
+import com.foreach.across.modules.user.config.UserSchemaConfiguration;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebViewSupport;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -64,8 +66,9 @@ public class DemoWeb
 
 		//userModule.setProperty( UserModuleSettings.PASSWORD_ENCODER, NoOpPasswordEncoder.getInstance() );
 
-		userModule.getSchemaConfiguration().renameTable( "um_permission", "permissies" );
-		userModule.getSchemaConfiguration().renameTable( "um_user", "gebruikers" );
+		SchemaConfiguration schema = userModule.getSchemaConfiguration();
+		schema.renameTable( UserSchemaConfiguration.TABLE_PERMISSION, "permissies" );
+		schema.renameTable( UserSchemaConfiguration.TABLE_USER, "gebruikers" );
 
 		return userModule;
 	}

@@ -75,6 +75,22 @@ public class Role implements Comparable<Role>
 		return permissions;
 	}
 
+	public void addPermission( String... names ) {
+		Permission[] permissions = new Permission[names.length];
+
+		for ( int i = 0; i < names.length; i++ ) {
+			permissions[i] = new Permission( names[i] );
+		}
+
+		addPermission( permissions );
+	}
+
+	public void addPermission( Permission... permissions ) {
+		for ( Permission permission : permissions ) {
+			getPermissions().add( permission );
+		}
+	}
+
 	public void setPermissions( Set<Permission> permissions ) {
 		this.permissions = permissions;
 	}
