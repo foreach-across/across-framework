@@ -4,12 +4,10 @@ import com.foreach.across.modules.user.business.Permission;
 import com.foreach.across.modules.user.business.Role;
 import com.foreach.across.modules.user.business.User;
 
-import java.security.Principal;
-
 /**
  * Provides access to the user attached to the request or current thread.
  */
-public interface CurrentUserProxy extends Principal
+public interface CurrentUserProxy
 {
 	long getId();
 

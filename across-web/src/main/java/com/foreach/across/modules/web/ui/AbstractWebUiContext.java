@@ -6,16 +6,15 @@ import org.springframework.context.MessageSource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 import java.util.Locale;
 
 /**
  * Abstract implementation of a standard WebUiContext.  Wrapping around a request/response pair
  * with a link to the requesting user principal.
  *
- * @param <T> Principal implementation for the user making the request.
+ * @param <T> Implementation for the user making the request.
  */
-public abstract class AbstractWebUiContext<T extends Principal> implements WebUiContext<T>
+public abstract class AbstractWebUiContext<T> implements WebUiContext<T>
 {
 	protected HttpServletRequest request;
 	protected HttpServletResponse response;
@@ -30,8 +29,10 @@ public abstract class AbstractWebUiContext<T extends Principal> implements WebUi
 		this( request, response, user, null );
 	}
 
-	protected AbstractWebUiContext(
-			HttpServletRequest request, HttpServletResponse response, T user, MessageSource messageSource ) {
+	protected AbstractWebUiContext( HttpServletRequest request,
+	                                HttpServletResponse response,
+	                                T user,
+	                                MessageSource messageSource ) {
 		this.request = request;
 		this.response = response;
 		this.messageSource = messageSource;

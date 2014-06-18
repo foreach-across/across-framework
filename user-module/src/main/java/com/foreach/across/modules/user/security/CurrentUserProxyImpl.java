@@ -26,11 +26,6 @@ public class CurrentUserProxyImpl implements CurrentUserProxy
 	}
 
 	@Override
-	public String getName() {
-		return getUsername();
-	}
-
-	@Override
 	public boolean hasRole( String name ) {
 		return isAuthenticated() && getUser().hasRole( name );
 	}
@@ -63,6 +58,6 @@ public class CurrentUserProxyImpl implements CurrentUserProxy
 	@Override
 	public boolean isAuthenticated() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return authentication.isAuthenticated() && authentication.getPrincipal() instanceof User;
+		return authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof User;
 	}
 }

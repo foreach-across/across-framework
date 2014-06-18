@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +15,7 @@ import java.util.TreeSet;
 
 @Entity
 @Table(name = UserSchemaConfiguration.TABLE_USER)
-public class User implements Principal, UserDetails
+public class User implements UserDetails
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_user_id")
@@ -81,10 +80,6 @@ public class User implements Principal, UserDetails
 
 	public void setRoles( Set<Role> roles ) {
 		this.roles = roles;
-	}
-
-	public String getName() {
-		return getUsername();
 	}
 
 	public boolean hasRole( String name ) {

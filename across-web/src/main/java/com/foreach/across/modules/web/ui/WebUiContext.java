@@ -5,9 +5,8 @@ import org.springframework.context.MessageSource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 
-public interface WebUiContext<T extends Principal>
+public interface WebUiContext<T>
 {
 	T getUser();
 

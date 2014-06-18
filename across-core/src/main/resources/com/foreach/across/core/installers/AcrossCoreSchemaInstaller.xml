@@ -43,7 +43,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="201406141451B" author="arne">
+	<changeSet id="201406141451C" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="ACROSSMODULES" columnName="installer_id"/>
@@ -54,16 +54,18 @@
 
 		<addColumn tableName="ACROSSMODULES">
 			<column name="installer_id" type="java.sql.Types.VARCHAR(120)">
-				<constraints nullable="false"/>
+				<constraints nullable="true"/>
 			</column>
 		</addColumn>
 
 		<sql>
 			UPDATE ACROSSMODULES SET installer_id = installer
 		</sql>
+
+		<addNotNullConstraint tableName="ACROSSMODULES" columnName="installer_id" columnDataType="java.sql.Types.VARCHAR(120)" />
 	</changeSet>
 
-	<changeSet id="201406141452B" author="arne">
+	<changeSet id="201406141452C" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="ACROSSMODULES" columnName="module_id"/>
@@ -74,13 +76,15 @@
 
 		<addColumn tableName="ACROSSMODULES">
 			<column name="module_id" type="java.sql.Types.VARCHAR(120)">
-				<constraints nullable="false"/>
+				<constraints nullable="true"/>
 			</column>
 		</addColumn>
 
 		<sql>
 			UPDATE ACROSSMODULES SET module_id = module
 		</sql>
+
+		<addNotNullConstraint tableName="ACROSSMODULES" columnName="module_id" columnDataType="java.sql.Types.VARCHAR(120)" />
 	</changeSet>
 
 	<changeSet id="201406141453B" author="arne">

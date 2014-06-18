@@ -1,35 +1,43 @@
 package com.foreach.across.modules.adminweb.config;
 
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.adminweb.AdminWeb;
+import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.adminweb.AdminWebModuleSettings;
 import com.foreach.across.modules.adminweb.events.AdminWebUrlRegistry;
-import com.foreach.across.modules.spring.security.config.WebSecurityModuleConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 
+import javax.annotation.PostConstruct;
+
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE)
-public class AdminWebSecurityConfiguration implements WebSecurityModuleConfigurer
+public class AdminWebSecurityConfiguration extends WebSecurityConfigurerAdapter implements Ordered
 {
+	@Autowired
+	private AcrossContextInfo contextInfo;
+
 	@Autowired
 	private AcrossEventPublisher publisher;
 
 	@Autowired
 	private AdminWeb adminWeb;
 
-	@Autowired
-	private Environment environment;
+	private Environment adminWebEnvironment;
+
+	@PostConstruct
+	public void prepare() {
+		adminWebEnvironment = contextInfo.getModuleInfo( AdminWebModule.NAME ).getApplicationContext().getEnvironment();
+	}
 
 	@Override
-	public void configure( AuthenticationManagerBuilder auth ) throws Exception {
-
+	public int getOrder() {
+		return 1;
 	}
 
 	@Override
@@ -50,9 +58,9 @@ public class AdminWebSecurityConfiguration implements WebSecurityModuleConfigure
 
 	private void configureRememberMe( HttpSecurity http ) throws Exception {
 		if ( adminWeb.getSettings().isRememberMeEnabled() ) {
-			String rememberMeKey = environment.getProperty( AdminWebModuleSettings.REMEMBER_ME_KEY, "" );
+			String rememberMeKey = adminWebEnvironment.getProperty( AdminWebModuleSettings.REMEMBER_ME_KEY, "" );
 			int rememberMeValiditySeconds =
-					environment.getProperty( AdminWebModuleSettings.REMEMBER_ME_TOKEN_VALIDITY_SECONDS, Integer.class,
+					adminWebEnvironment.getProperty( AdminWebModuleSettings.REMEMBER_ME_TOKEN_VALIDITY_SECONDS, Integer.class,
 					                         259200 );
 
 			http.rememberMe().key( rememberMeKey ).tokenValiditySeconds( rememberMeValiditySeconds );
