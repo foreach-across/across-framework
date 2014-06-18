@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>across</artifactId>
 		<groupId>across</groupId>
-		<version>1.0.2</version>
+		<version>1.0.3-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -13,23 +13,23 @@
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>across-core</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>across-test</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>across-hibernate</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>spring-security</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3-SNAPSHOT</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>across</groupId>
 			<artifactId>admin-web</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3-SNAPSHOT</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
