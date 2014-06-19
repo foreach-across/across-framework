@@ -1,6 +1,5 @@
 package com.foreach.across.modules.debugweb.controllers;
 
-import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ApplicationContextScanner;
@@ -8,7 +7,6 @@ import com.foreach.across.core.context.bootstrap.ModuleBootstrapOrderBuilder;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
-import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
@@ -19,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.ui.Model;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -45,13 +44,12 @@ public class AcrossInfoController
 	}
 
 	@RequestMapping("/across/modules")
-	public DebugPageView showBeans( DebugPageView view ) {
-		view.setPage( DebugWeb.VIEW_MODULES );
+	public String showBeans( Model model ) {
+		ModuleBootstrapOrderBuilder modules =
+				new ModuleBootstrapOrderBuilder( acrossContext.getConfiguration().getModules() );
 
-		ModuleBootstrapOrderBuilder modules = new ModuleBootstrapOrderBuilder( acrossContext.getConfiguration().getModules() );
-
-		view.addObject( "moduleRegistry", modules );
-		view.addObject( "modules", modules.getOrderedModules() );
+		model.addAttribute( "moduleRegistry", modules );
+		model.addAttribute( "modules", modules.getOrderedModules() );
 
 		Collection<ModuleInfo> moduleInfoList = new LinkedList<ModuleInfo>();
 
@@ -131,9 +129,9 @@ public class AcrossInfoController
 			moduleInfoList.add( moduleInfo );
 		}
 
-		view.addObject( "moduleInfoList", moduleInfoList );
+		model.addAttribute( "moduleInfoList", moduleInfoList );
 
-		return view;
+		return DebugWeb.VIEW_MODULES;
 	}
 
 	private Set<String> getExposedBeanNames( AcrossModule module ) {

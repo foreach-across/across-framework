@@ -28,7 +28,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import javax.annotation.PostConstruct;
 
 @Configuration
-@AcrossDepends(required = "AcrossWebModule")
 public class AdminWebMvcConfiguration extends WebMvcConfigurerAdapter
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AdminWebModule.class );

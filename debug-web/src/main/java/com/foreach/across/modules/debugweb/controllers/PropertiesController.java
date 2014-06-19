@@ -3,7 +3,6 @@ package com.foreach.across.modules.debugweb.controllers;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
-import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
 import com.foreach.across.modules.debugweb.util.ContextDebugInfo;
 import com.foreach.across.modules.web.resource.WebResource;
@@ -13,6 +12,7 @@ import net.engio.mbassy.listener.Handler;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.*;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
 import java.util.Properties;
 
-@DebugWebController(path = "/properties/")
+@DebugWebController
+@RequestMapping("/properties")
 public class PropertiesController
 {
 	@Autowired
@@ -40,31 +41,28 @@ public class PropertiesController
 	}
 
 	@RequestMapping("environment")
-	public DebugPageView listEnvironmentProperties( DebugPageView view ) {
-		view.setPage( DebugWeb.VIEW_PROPERTIES );
+	public String listEnvironmentProperties( Model model ) {
+		model.addAttribute( "systemProperties", Table.fromMap( "System properties", System.getProperties() ) );
+		model.addAttribute( "environmentVariables", Table.fromMap( "Environment variables", System.getenv() ) );
 
-		view.addObject( "systemProperties", Table.fromMap( "System properties", System.getProperties() ) );
-		view.addObject( "environmentVariables", Table.fromMap( "Environment variables", System.getenv() ) );
-
-		return view;
+		return DebugWeb.VIEW_PROPERTIES;
 	}
 
 	@RequestMapping("application")
-	public DebugPageView listApplicationProperties( DebugPageView view, @RequestParam(value = "contextName",
-	                                                                                  required = false) String contextName ) {
-		view.setPage( DebugWeb.VIEW_APPLICATION_PROPERTIES );
-
+	public String listApplicationProperties( Model model, @RequestParam(value = "contextName",
+	                                                                    required = false) String contextName ) {
 		Collection<ContextDebugInfo> debugInfo = ContextDebugInfo.create( acrossContextInfo );
 
-		view.addObject( "contextList", debugInfo );
+		model.addAttribute( "contextList", debugInfo );
 
 		ContextDebugInfo current = select( debugInfo, contextName );
-		view.addObject( "currentContext", current );
+		model.addAttribute( "currentContext", current );
 
-		view.addObject( "applicationProperties", Table.fromMap( "Application properties", getPropertiesForEnvironment(
-				current.getEnvironment() ) ) );
+		model.addAttribute( "applicationProperties", Table.fromMap( "Application properties",
+		                                                            getPropertiesForEnvironment(
+				                                                            current.getEnvironment() ) ) );
 
-		return view;
+		return DebugWeb.VIEW_APPLICATION_PROPERTIES;
 	}
 
 	private ContextDebugInfo select( Collection<ContextDebugInfo> list, String contextName ) {
@@ -99,7 +97,8 @@ public class PropertiesController
 					for ( String propertyName : enumerablePropertySource.getPropertyNames() ) {
 						allProperties.put( propertyName, enumerablePropertySource.getProperty( propertyName ) );
 					}
-				} else {
+				}
+				else {
 					// not sure we can output this, so let's skip it
 					// maybe provide feedback if we cannot list certain property sources
 				}
