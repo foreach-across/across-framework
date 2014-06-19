@@ -283,7 +283,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Exposed
 	public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping handlerMapping =
-				new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class ) );
+				new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class, true ) );
 		handlerMapping.setOrder( 0 );
 
 		return handlerMapping;

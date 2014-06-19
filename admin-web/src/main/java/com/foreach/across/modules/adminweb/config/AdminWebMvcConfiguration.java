@@ -129,7 +129,7 @@ public class AdminWebMvcConfiguration extends WebMvcConfigurerAdapter
 	public PrefixingRequestMappingHandlerMapping adminRequestMappingHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping mappingHandlerMapping =
 				new PrefixingRequestMappingHandlerMapping( adminWebModule.getRootPath(),
-				                                           new AnnotationClassFilter( AdminWebController.class ) );
+				                                           new AnnotationClassFilter( AdminWebController.class, true ) );
 		mappingHandlerMapping.setInterceptors(
 				new Object[] { adminWebResourceRegistryInterceptor(), adminWebTemplateInterceptor() } );
 		return mappingHandlerMapping;
