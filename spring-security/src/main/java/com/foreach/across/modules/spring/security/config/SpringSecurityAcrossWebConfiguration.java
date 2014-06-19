@@ -18,7 +18,7 @@ import java.util.List;
 
 @Configuration
 @AcrossDepends(required = "AcrossWebModule")
-public class SpringSecurityAcrossWebConfiguration extends WebMvcConfigurerAdapter
+public class SpringSecurityAcrossWebConfiguration
 {
 	private static final Logger LOG = LoggerFactory.getLogger( SpringSecurityAcrossWebConfiguration.class );
 
