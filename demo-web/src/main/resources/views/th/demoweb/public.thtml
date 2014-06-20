@@ -1,0 +1,3 @@
+Welcome senor!
+
+		<span th:if="${user}" th:text="${user.username}"></span>

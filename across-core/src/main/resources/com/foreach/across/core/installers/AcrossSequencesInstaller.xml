@@ -5,14 +5,13 @@
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-	<property name="long.type" value="bigint"/>
-	<property name="varchar.suffix" value=""/>
+	<changeSet id="201406141716" author="arne" runAlways="true" dbms="oracle">
+		<sql>
+			ALTER session SET nls_length_semantics=CHAR;
+		</sql>
+	</changeSet>
 
-	<property name="long.type" value="NUMBER(19,0)" dbms="oracle"/>
-	<property name="varchar.suffix" value=" char" dbms="oracle"/>
-
-
-	<changeSet id="201406121322" author="arne">
+	<changeSet id="201406141510B" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="ACROSS_SEQUENCES"/>
@@ -22,11 +21,11 @@
 		<comment>Creates Across sequences table</comment>
 
 		<createTable tableName="ACROSS_SEQUENCES">
-			<column name="seq_name" type="varchar2(50 ${varchar.suffix})"/>
-			<column name="seq_number" type="${long.type}"/>
+			<column name="seq_name" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_ACROSS_SEQUENCES"/>
+			</column>
+			<column name="seq_number" type="java.sql.Types.BIGINT"/>
 		</createTable>
-
-		<addPrimaryKey tableName="ACROSS_SEQUENCES" columnNames="seq_name"/>
 	</changeSet>
 
 </databaseChangeLog>

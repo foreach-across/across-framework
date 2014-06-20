@@ -4,6 +4,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.modules.debugweb.config.DebugWebMvcConfiguration;
 
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class DebugWebModule extends AcrossModule
 	 */
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-		contextConfigurers.add( new AnnotatedClassConfigurer( DebugWebConfig.class ) );
+		contextConfigurers.add( new AnnotatedClassConfigurer( DebugWebMvcConfiguration.class ) );
 	}
 }
 

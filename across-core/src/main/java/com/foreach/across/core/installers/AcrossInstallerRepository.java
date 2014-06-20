@@ -19,10 +19,10 @@ public class AcrossInstallerRepository
 	}
 
 	public int getInstalledVersion( AcrossModule module, Object installer ) {
-		String SQL = "select version from ACROSSMODULES where module = ? and installer_id = ?";
+		String SQL = "select version from ACROSSMODULES where module_id = ? and installer_id = ?";
 
 		try {
-			return jdbcTemplate.queryForObject( SQL, Integer.class, module.getName(),
+			return jdbcTemplate.queryForObject( SQL, Integer.class, determineId( module.getName() ),
 			                                    determineInstallerId( installer ) );
 		}
 		catch ( EmptyResultDataAccessException erdae ) {
@@ -33,39 +33,45 @@ public class AcrossInstallerRepository
 	public void setInstalled( AcrossModule module, Installer config, Object installer ) {
 		if ( getInstalledVersion( module, installer ) != -1 ) {
 			String SQL =
-					"update ACROSSMODULES set version = ?, description = ?, created = ? where module = ? and installer_id = ?";
+					"update ACROSSMODULES set version = ?, description = ?, created = ? where module_id = ? and installer_id = ?";
 
 			jdbcTemplate.update( SQL, config.version(), StringUtils.abbreviate( config.description(), 500 ), new Date(),
-			                     module.getName(), determineInstallerId( installer ) );
+			                     determineId( module.getName() ), determineInstallerId( installer ) );
 		}
 		else {
 			String SQL =
-					"insert into ACROSSMODULES (module, installer, installer_id, version, created, description) VALUES (?, ?, ?, ?, ?, ?)";
+					"insert into ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-			jdbcTemplate.update( SQL, module.getName(), determineInstallerName( installer ),
-			                     determineInstallerId( installer ), config.version(), new Date(),
-			                     StringUtils.abbreviate( config.description(), 500 ) );
+			jdbcTemplate.update( SQL, determineModuleName( module.getName() ), determineId( module.getName() ),
+			                     determineInstallerName( installer ), determineInstallerId( installer ),
+			                     config.version(), new Date(), StringUtils.abbreviate( config.description(), 500 ) );
 		}
+	}
+
+	private String determineModuleName( String name ) {
+		return StringUtils.substring( name, 0, 250 );
 	}
 
 	private String determineInstallerName( Object installer ) {
 		String className = installer.getClass().getName();
 
-		if ( StringUtils.length( className ) > 200 ) {
-			return installer.getClass().getSimpleName();
+		if ( StringUtils.length( className ) > 250 ) {
+			return StringUtils.substring( installer.getClass().getSimpleName(), 0, 250 );
 		}
 
 		return className;
 	}
 
 	private String determineInstallerId( Object installer ) {
-		String className = installer.getClass().getName();
+		return determineId( installer.getClass().getName() );
+	}
 
-		if ( StringUtils.length( className ) > 200 ) {
-			return DigestUtils.md5DigestAsHex( className.getBytes() );
+	private String determineId( String name ) {
+		if ( StringUtils.length( name ) > 120 ) {
+			return DigestUtils.md5DigestAsHex( name.getBytes() );
 		}
 
-		return className;
+		return name;
 	}
 
 }

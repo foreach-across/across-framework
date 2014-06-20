@@ -6,15 +6,14 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
-import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
 import com.foreach.across.modules.web.table.Table;
 import net.engio.mbassy.listener.Handler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -30,15 +29,13 @@ public class LogController
 	}
 
 	@RequestMapping(value = "/loggers", method = RequestMethod.GET)
-	public DebugPageView showLoggers( DebugPageView view ) {
-		view.setPage( DebugWeb.VIEW_LOGGERS );
-
+	public String showLoggers( Model model ) {
 		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 		List<Logger> loggers = loggerContext.getLoggerList();
 		List<Level> levels = Arrays.asList( Level.OFF, Level.TRACE, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG );
 
-		Map<String, Level> loggerMap = new TreeMap<String, Level>();
-		Map<String, String> appenderMap = new TreeMap<String, String>();
+		Map<String, Level> loggerMap = new TreeMap<>();
+		Map<String, String> appenderMap = new TreeMap<>();
 
 		for ( Logger logger : loggers ) {
 			loggerMap.put( logger.getName(), logger.getEffectiveLevel() );
@@ -58,15 +55,15 @@ public class LogController
 			}
 		}
 
-		view.addObject( "levels", levels );
-		view.addObject( "loggers", loggerMap );
-		view.addObject( "appenders", Table.fromMap( "Appenders", appenderMap ) );
+		model.addAttribute( "levels", levels );
+		model.addAttribute( "loggers", loggerMap );
+		model.addAttribute( "appenders", Table.fromMap( "Appenders", appenderMap ) );
 
-		return view;
+		return DebugWeb.VIEW_LOGGERS;
 	}
 
 	@RequestMapping(value = "/loggers", method = RequestMethod.POST)
-	public DebugPageView updateLoggers( DebugPageView view, HttpServletRequest request ) {
+	public String updateLoggers( Model model, HttpServletRequest request ) {
 		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 		List<Logger> loggers = loggerContext.getLoggerList();
 
@@ -87,12 +84,12 @@ public class LogController
 		}
 
 		if ( updated > 0 ) {
-			view.addObject( "feedback", updated + " loggers have been updated." );
+			model.addAttribute( "feedback", updated + " loggers have been updated." );
 		}
 		else {
-			view.addObject( "feedback", "No loggers have been updated." );
+			model.addAttribute( "feedback", "No loggers have been updated." );
 		}
 
-		return showLoggers( view );
+		return showLoggers( model );
 	}
 }

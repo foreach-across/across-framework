@@ -31,7 +31,7 @@ public class TestDefaultExposeFilter
 	@Autowired
 	private ExposingModule module;
 
-	@Autowired
+	@Autowired(required=false)
 	private MyController myController;
 
 	@Autowired
@@ -49,8 +49,8 @@ public class TestDefaultExposeFilter
 	}
 
 	@Test
-	public void controllerIsExposedByDefault() {
-		assertNotNull( myController );
+	public void controllerIsNotExposedByDefault() {
+		assertNull( myController );
 	}
 
 	@Test

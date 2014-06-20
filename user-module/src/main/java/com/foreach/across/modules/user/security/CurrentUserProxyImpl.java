@@ -1,5 +1,8 @@
-package com.foreach.across.modules.user.business;
+package com.foreach.across.modules.user.security;
 
+import com.foreach.across.modules.user.business.Permission;
+import com.foreach.across.modules.user.business.Role;
+import com.foreach.across.modules.user.business.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,11 +23,6 @@ public class CurrentUserProxyImpl implements CurrentUserProxy
 	@Override
 	public String getUsername() {
 		return isAuthenticated() ? getUser().getUsername() : null;
-	}
-
-	@Override
-	public String getName() {
-		return getUsername();
 	}
 
 	@Override
@@ -60,6 +58,6 @@ public class CurrentUserProxyImpl implements CurrentUserProxy
 	@Override
 	public boolean isAuthenticated() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return authentication.isAuthenticated() && authentication.getPrincipal() instanceof User;
+		return authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof User;
 	}
 }

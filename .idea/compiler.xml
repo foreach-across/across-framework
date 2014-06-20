@@ -27,6 +27,7 @@
         <module name="across-core" />
         <module name="across-ehcache" />
         <module name="across-hibernate" />
+        <module name="across-test" />
         <module name="across-web" />
         <module name="admin-web" />
         <module name="core" />
@@ -42,6 +43,7 @@
       <module name="across-core" target="1.7" />
       <module name="across-ehcache" target="1.7" />
       <module name="across-hibernate" target="1.7" />
+      <module name="across-test" target="1.7" />
       <module name="across-web" target="1.7" />
       <module name="admin-web" target="1.7" />
       <module name="debug-web" target="1.7" />

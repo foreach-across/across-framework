@@ -5,7 +5,6 @@ import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
-import org.springframework.context.annotation.Role;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 

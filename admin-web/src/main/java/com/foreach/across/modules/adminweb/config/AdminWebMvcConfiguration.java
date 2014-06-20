@@ -28,7 +28,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import javax.annotation.PostConstruct;
 
 @Configuration
-@AcrossDepends(required = "AcrossWebModule")
 public class AdminWebMvcConfiguration extends WebMvcConfigurerAdapter
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AdminWebModule.class );
@@ -129,7 +128,7 @@ public class AdminWebMvcConfiguration extends WebMvcConfigurerAdapter
 	public PrefixingRequestMappingHandlerMapping adminRequestMappingHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping mappingHandlerMapping =
 				new PrefixingRequestMappingHandlerMapping( adminWebModule.getRootPath(),
-				                                           new AnnotationClassFilter( AdminWebController.class ) );
+				                                           new AnnotationClassFilter( AdminWebController.class, true ) );
 		mappingHandlerMapping.setInterceptors(
 				new Object[] { adminWebResourceRegistryInterceptor(), adminWebTemplateInterceptor() } );
 		return mappingHandlerMapping;

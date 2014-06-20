@@ -14,5 +14,4 @@ import java.lang.annotation.*;
 @AcrossEventHandler
 public @interface DebugWebController
 {
-	String path() default "";
 }

@@ -11,7 +11,7 @@ import com.foreach.across.core.filters.ClassBeanFilter;
 import com.foreach.across.core.filters.NamedBeanFilter;
 import com.foreach.across.modules.spring.security.config.GlobalWebSecurityConfiguration;
 import com.foreach.across.modules.spring.security.config.ModuleGlobalMethodSecurityConfiguration;
-import com.foreach.across.modules.spring.security.config.SpringSecurityThymeleafConfiguration;
+import com.foreach.across.modules.spring.security.config.SpringSecurityAcrossWebConfiguration;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
@@ -29,6 +29,13 @@ public class SpringSecurityModule extends AcrossModule
 		return NAME;
 	}
 
+	public SpringSecurityModule() {
+		setExposeFilter( new BeanFilterComposite(
+				new ClassBeanFilter( FilterChainProxy.class, WebInvocationPrivilegeEvaluator.class,
+				                     SecurityExpressionHandler.class ),
+				new NamedBeanFilter( "requestDataValueProcessor" ) ) );
+	}
+
 	@Override
 	public String getDescription() {
 		return "Hooks up Spring Security and allows WebSecurityConfigurers to be defined in separate modules.";
@@ -37,17 +44,12 @@ public class SpringSecurityModule extends AcrossModule
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 		contextConfigurers.add( new AnnotatedClassConfigurer( GlobalWebSecurityConfiguration.class,
-		                                                      SpringSecurityThymeleafConfiguration.class ) );
+		                                                      SpringSecurityAcrossWebConfiguration.class ) );
 	}
 
 	@Override
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
 	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
-		currentModule.setExposeFilter( new BeanFilterComposite(
-				new ClassBeanFilter( FilterChainProxy.class, WebInvocationPrivilegeEvaluator.class,
-				                     SecurityExpressionHandler.class ),
-				new NamedBeanFilter( "requestDataValueProcessor" ) ) );
-
 		for ( ModuleBootstrapConfig moduleBootstrapConfig : modulesInOrder.values() ) {
 			if ( moduleBootstrapConfig != currentModule ) {
 				moduleBootstrapConfig.addApplicationContextConfigurer(

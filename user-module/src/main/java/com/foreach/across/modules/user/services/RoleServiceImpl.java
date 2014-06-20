@@ -7,6 +7,7 @@ import com.foreach.across.modules.user.repositories.RoleRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -68,8 +69,23 @@ public class RoleServiceImpl implements RoleService
 		return roleRepository.getRole( name );
 	}
 
+	@Transactional
 	@Override
 	public void save( Role role ) {
+		Set<Permission> actualPermissions = new TreeSet<>();
+
+		for ( Permission permission : role.getPermissions() ) {
+			Permission existing = permissionRepository.getPermission( permission.getName() );
+
+			if ( existing == null ) {
+				throw new RuntimeException( "No permission defined with name: " + permission.getName() );
+			}
+
+			actualPermissions.add( existing );
+		}
+
+		role.setPermissions( actualPermissions );
+
 		roleRepository.save( role );
 	}
 

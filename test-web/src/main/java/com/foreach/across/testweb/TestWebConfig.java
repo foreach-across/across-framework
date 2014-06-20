@@ -62,7 +62,6 @@ public class TestWebConfig
 	public AcrossHibernateModule acrossHibernateModule() {
 		AcrossHibernateModule hibernateModule = new AcrossHibernateModule();
 		hibernateModule.setHibernateProperty( AvailableSettings.AUTOCOMMIT, "false" );
-		hibernateModule.setHibernateProperty( AvailableSettings.HBM2DDL_AUTO, "validate" );
 
 		return hibernateModule;
 	}

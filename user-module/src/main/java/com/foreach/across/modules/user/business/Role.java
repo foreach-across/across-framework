@@ -16,7 +16,8 @@ public class Role implements Comparable<Role>
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_role_id")
 	@TableGenerator(name = "seq_um_role_id", table = AcrossSchemaConfiguration.TABLE_SEQUENCES,
-	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_um_role_id",
+	                pkColumnName = AcrossSchemaConfiguration.SEQUENCE_NAME,
+	                valueColumnName = AcrossSchemaConfiguration.SEQUENCE_VALUE, pkColumnValue = "seq_um_role_id",
 	                allocationSize = 5)
 	private long id;
 
@@ -72,6 +73,22 @@ public class Role implements Comparable<Role>
 
 	public Set<Permission> getPermissions() {
 		return permissions;
+	}
+
+	public void addPermission( String... names ) {
+		Permission[] permissions = new Permission[names.length];
+
+		for ( int i = 0; i < names.length; i++ ) {
+			permissions[i] = new Permission( names[i] );
+		}
+
+		addPermission( permissions );
+	}
+
+	public void addPermission( Permission... permissions ) {
+		for ( Permission permission : permissions ) {
+			getPermissions().add( permission );
+		}
 	}
 
 	public void setPermissions( Set<Permission> permissions ) {

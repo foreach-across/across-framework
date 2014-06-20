@@ -25,11 +25,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.feed.AtomFeedHttpMessageConverter;
+import org.springframework.http.converter.feed.RssChannelHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.validation.Errors;
+import org.springframework.validation.MessageCodesResolver;
 import org.springframework.validation.Validator;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
@@ -37,11 +47,9 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.servlet.handler.ConversionServiceExposingInterceptor;
 import org.springframework.web.servlet.handler.HandlerExceptionResolverComposite;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -52,6 +60,7 @@ import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolv
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.xml.transform.Source;
 import java.util.*;
 
 /**
@@ -93,6 +102,10 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	private ServletContext servletContext;
 
 	private FormattingConversionService existingConversionService;
+
+	private ConfigurableWebBindingInitializer initializer;
+
+	private ValidatorDelegate validatorDelegate = new ValidatorDelegate();
 
 	public void setServletContext( ServletContext servletContext ) {
 		this.servletContext = servletContext;
@@ -150,6 +163,10 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			configurer.configureHandlerExceptionResolvers( exceptionResolvers );
 		}
 
+		if ( messageConverters.isEmpty() ) {
+			addDefaultHttpMessageConverters( messageConverters );
+		}
+
 		interceptorRegistry.addInterceptor( new ConversionServiceExposingInterceptor( conversionService ) );
 
 		ContentNegotiationManager contentNegotiationManager;
@@ -195,6 +212,52 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		// Uri components contributor
 		CompositeUriComponentsContributor mvcUriComponentsContributor = mvcUriComponentsContributor();
 		mvcUriComponentsContributor.setContributors( adapter.getArgumentResolvers() );
+
+		// Set the validator
+		Validator validator = getValidator( webMvcConfigurers );
+		setValidator( validator );
+
+		// Set the message codes resolver
+		MessageCodesResolver resolver = getMessageCodesResolver( webMvcConfigurers );
+
+		if ( resolver != null ) {
+			getConfigurableWebBindingInitializer().setMessageCodesResolver( resolver );
+		}
+	}
+
+	public Validator getValidator( Collection<WebMvcConfigurer> delegates ) {
+		List<Validator> candidates = new ArrayList<Validator>();
+		for ( WebMvcConfigurer configurer : delegates ) {
+			Validator validator = configurer.getValidator();
+			if ( validator != null ) {
+				candidates.add( validator );
+			}
+		}
+		return selectSingleInstance( candidates, Validator.class );
+	}
+
+	private MessageCodesResolver getMessageCodesResolver( Collection<WebMvcConfigurer> delegates ) {
+		List<MessageCodesResolver> candidates = new ArrayList<MessageCodesResolver>();
+		for ( WebMvcConfigurer configurer : delegates ) {
+			MessageCodesResolver messageCodesResolver = configurer.getMessageCodesResolver();
+			if ( messageCodesResolver != null ) {
+				candidates.add( messageCodesResolver );
+			}
+		}
+		return selectSingleInstance( candidates, MessageCodesResolver.class );
+	}
+
+	private <T> T selectSingleInstance( List<T> instances, Class<T> instanceType ) {
+		if ( instances.size() > 1 ) {
+			throw new IllegalStateException(
+					"Only one [" + instanceType + "] was expected but multiple instances were provided: " + instances );
+		}
+		else if ( instances.size() == 1 ) {
+			return instances.get( 0 );
+		}
+		else {
+			return null;
+		}
 	}
 
 	protected Map<String, MediaType> getDefaultMediaTypes() {
@@ -232,18 +295,54 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	 * Return the {@link org.springframework.web.bind.support.ConfigurableWebBindingInitializer} to use for
 	 * initializing all {@link org.springframework.web.bind.WebDataBinder} instances.
 	 */
-	protected ConfigurableWebBindingInitializer getConfigurableWebBindingInitializer() {
-		ConfigurableWebBindingInitializer initializer = new ConfigurableWebBindingInitializer();
-		initializer.setConversionService( mvcConversionService() );
-		initializer.setValidator( mvcValidator() );
-		//initializer.setMessageCodesResolver( getMessageCodesResolver() );
+	private ConfigurableWebBindingInitializer getConfigurableWebBindingInitializer() {
+		if ( initializer == null ) {
+			initializer = new ConfigurableWebBindingInitializer();
+			initializer.setConversionService( mvcConversionService() );
+			initializer.setValidator( mvcValidator() );
+		}
+
 		return initializer;
+	}
+
+	/**
+	 * Adds a set of default HttpMessageConverter instances to the given list.
+	 *
+	 * @param messageConverters the list to add the default message converters to
+	 */
+	@SuppressWarnings("deprecation")
+	protected final void addDefaultHttpMessageConverters( List<HttpMessageConverter<?>> messageConverters ) {
+		StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
+		stringConverter.setWriteAcceptCharset( false );
+
+		messageConverters.add( new ByteArrayHttpMessageConverter() );
+		messageConverters.add( stringConverter );
+		messageConverters.add( new ResourceHttpMessageConverter() );
+		messageConverters.add( new SourceHttpMessageConverter<Source>() );
+		messageConverters.add( new AllEncompassingFormHttpMessageConverter() );
+		if ( romePresent ) {
+			messageConverters.add( new AtomFeedHttpMessageConverter() );
+			messageConverters.add( new RssChannelHttpMessageConverter() );
+		}
+		if ( jaxb2Present ) {
+			messageConverters.add( new Jaxb2RootElementHttpMessageConverter() );
+		}
+		if ( jackson2Present ) {
+			messageConverters.add( new MappingJackson2HttpMessageConverter() );
+		}
+		else if ( jacksonPresent ) {
+			messageConverters.add( new org.springframework.http.converter.json.MappingJacksonHttpMessageConverter() );
+		}
 	}
 
 	@Bean
 	@Exposed
 	public Validator mvcValidator() {
-		Validator validator = null;
+		return validatorDelegate;
+	}
+
+	private void setValidator( Validator implementation ) {
+		Validator validator = implementation;
 		if ( validator == null ) {
 			if ( ClassUtils.isPresent( "javax.validation.Validator", getClass().getClassLoader() ) ) {
 				Class<?> clazz;
@@ -271,7 +370,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 				};
 			}
 		}
-		return validator;
+
+		validatorDelegate.setImplementation( validator );
 	}
 
 	@Bean
@@ -283,7 +383,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Exposed
 	public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping handlerMapping =
-				new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class ) );
+				new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class, true ) );
 		handlerMapping.setOrder( 0 );
 
 		return handlerMapping;
@@ -301,19 +401,17 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		ReloadableRequestMappingHandlerAdapter adapter = new ReloadableRequestMappingHandlerAdapter();
 		adapter.setWebBindingInitializer( getConfigurableWebBindingInitializer() );
 
-		//AsyncSupportConfigurer configurer = new AsyncSupportConfigurer();
-		//configureAsyncSupport(configurer);
-
-		/*
-		if (configurer.getTaskExecutor() != null) {
-			adapter.setTaskExecutor(configurer.getTaskExecutor());
-		}
-		if (configurer.getTimeout() != null) {
-			adapter.setAsyncRequestTimeout(configurer.getTimeout());
-		}
-		adapter.setCallableInterceptors(configurer.getCallableInterceptors());
-		adapter.setDeferredResultInterceptors(configurer.getDeferredResultInterceptors());
-		*/
+//		AsyncSupportConfigurer configurer = new AsyncSupportConfigurer();
+//		configureAsyncSupport(configurer);
+//
+//		if (configurer.getTaskExecutor() != null) {
+//			adapter.setTaskExecutor(configurer.getTaskExecutor());
+//		}
+//		if (configurer.getTimeout() != null) {
+//			adapter.setAsyncRequestTimeout(configurer.getTimeout());
+//		}
+//		adapter.setCallableInterceptors(configurer.getCallableInterceptors());
+//		adapter.setDeferredResultInterceptors(configurer.getDeferredResultInterceptors());
 
 		return adapter;
 	}

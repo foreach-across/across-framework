@@ -6,17 +6,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.web.bind.support.AuthenticationPrincipalArgumentResolver;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Configuration
 @AcrossDepends(required = "AcrossWebModule")
-public class SpringSecurityThymeleafConfiguration
+public class SpringSecurityAcrossWebConfiguration
 {
-	private static final Logger LOG = LoggerFactory.getLogger( SpringSecurityThymeleafConfiguration.class );
+	private static final Logger LOG = LoggerFactory.getLogger( SpringSecurityAcrossWebConfiguration.class );
 
 	private static final String CLASS_THYMELEAF_TEMPLATE_ENGINE = "org.thymeleaf.spring4.SpringTemplateEngine";
 	private static final String CLASS_SPRING_SECURITY_DIALECT =
@@ -26,7 +30,7 @@ public class SpringSecurityThymeleafConfiguration
 	private ApplicationContext applicationContext;
 
 	@PostConstruct
-	public void registerDialect() {
+	public void registerThymeleafDialect() {
 		if ( shouldRegisterThymeleafDialect() ) {
 			LOG.debug( "Registering Thymeleaf Spring security dialect" );
 

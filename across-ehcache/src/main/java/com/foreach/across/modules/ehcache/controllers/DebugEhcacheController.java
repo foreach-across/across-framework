@@ -1,9 +1,9 @@
 package com.foreach.across.modules.ehcache.controllers;
 
 import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.core.annotations.AcrossEventHandler;
+import com.foreach.across.core.annotations.Refreshable;
+import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
-import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
@@ -16,6 +16,7 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,11 +26,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 @DebugWebController
+@Refreshable
 @AcrossDepends(required = "DebugWebModule")
 public class DebugEhcacheController
 {
 	@Autowired
 	private CacheManager cacheManager;
+
+	@Autowired(required=false)
+	private DebugWeb debugWeb;
 
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
@@ -42,23 +47,20 @@ public class DebugEhcacheController
 	}
 
 	@RequestMapping(value = "/ehcache", method = RequestMethod.GET)
-	public DebugPageView listCaches( DebugPageView view ) {
-		view.setPage( "th/ehcache/cacheList" );
-
+	public String listCaches( Model model ) {
 		Collection<Ehcache> caches = new LinkedList<Ehcache>();
 
 		for ( String cacheName : cacheManager.getCacheNames() ) {
 			caches.add( cacheManager.getCache( cacheName ) );
 		}
 
-		view.addObject( "cacheList", caches );
+		model.addAttribute( "cacheList", caches );
 
-		return view;
+		return "th/ehcache/cacheList";
 	}
 
 	@RequestMapping(value = "/ehcache/flush", method = RequestMethod.GET)
-	public String flushCache( DebugPageView view,
-	                          @RequestParam(value = "cache", required = false) String cacheName,
+	public String flushCache( @RequestParam(value = "cache", required = false) String cacheName,
 	                          @RequestParam(value = "from", required = false) String from ) {
 		String[] cachesToFlush = cacheName == null ? cacheManager.getCacheNames() : new String[] { cacheName };
 
@@ -66,13 +68,11 @@ public class DebugEhcacheController
 			cacheManager.getCache( cache ).flush();
 		}
 
-		return view.redirect( "/ehcache?flushed=" + cachesToFlush.length );
+		return debugWeb.redirect( "/ehcache?flushed=" + cachesToFlush.length );
 	}
 
 	@RequestMapping(value = "/ehcache/view", method = RequestMethod.GET)
-	public DebugPageView showCache( DebugPageView view, @RequestParam("cache") String cacheName ) {
-		view.setPage( "th/ehcache/cacheDetail" );
-
+	public String showCache( @RequestParam("cache") String cacheName, Model model ) {
 		Cache cache = cacheManager.getCache( cacheName );
 
 		Table table = new Table();
@@ -90,9 +90,9 @@ public class DebugEhcacheController
 			}
 		}
 
-		view.addObject( "cache", cache );
-		view.addObject( "cacheEntries", table );
+		model.addAttribute( "cache", cache );
+		model.addAttribute( "cacheEntries", table );
 
-		return view;
+		return "th/ehcache/cacheDetail";
 	}
 }

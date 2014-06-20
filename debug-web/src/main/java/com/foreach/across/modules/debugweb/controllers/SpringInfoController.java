@@ -1,9 +1,7 @@
 package com.foreach.across.modules.debugweb.controllers;
 
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
-import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
 import com.foreach.across.modules.web.table.Table;
 import net.engio.mbassy.listener.Handler;
@@ -12,6 +10,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.ui.Model;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
@@ -38,9 +37,7 @@ public class SpringInfoController
 	}
 
 	@RequestMapping("/spring/beans")
-	public DebugPageView showBeans( DebugPageView view ) {
-		view.setPage( DebugWeb.VIEW_SPRING_BEANS );
-
+	public String showBeans( Model model ) {
 		String[] beanDefinitionNames = BeanFactoryUtils.beanNamesIncludingAncestors(
 				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory() );
 		Table table = new Table();
@@ -58,16 +55,14 @@ public class SpringInfoController
 
 		table.setTitle( "Registered beans: " + table.size() );
 
-		view.addObject( "beans", table );
+		model.addAttribute( "beans", table );
 
-		return view;
+		return DebugWeb.VIEW_SPRING_BEANS;
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/spring/interceptors")
-	public DebugPageView showInterceptors( DebugPageView view ) {
-		view.setPage( DebugWeb.VIEW_SPRING_INTERCEPTORS );
-
+	public String showInterceptors( Model model ) {
 		try {
 			Map<String, AbstractHandlerMapping> handlers = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 					(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory(),
@@ -92,18 +87,16 @@ public class SpringInfoController
 				tables.add( table );
 			}
 
-			view.addObject( "handlerTables", tables );
+			model.addAttribute( "handlerTables", tables );
 		}
 		catch ( Exception e ) {
 		}
 
-		return view;
+		return DebugWeb.VIEW_SPRING_INTERCEPTORS;
 	}
 
 	@RequestMapping("/spring/handlers")
-	public DebugPageView showHandlers( DebugPageView view ) {
-		view.setPage( DebugWeb.VIEW_SPRING_INTERCEPTORS );
-
+	public String showHandlers( Model model ) {
 		Map<String, AbstractHandlerMethodMapping> handlers = BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory(),
 				AbstractHandlerMethodMapping.class );
@@ -138,8 +131,8 @@ public class SpringInfoController
 			tables.add( table );
 		}
 
-		view.addObject( "handlerTables", tables );
+		model.addAttribute( "handlerTables", tables );
 
-		return view;
+		return DebugWeb.VIEW_SPRING_INTERCEPTORS;
 	}
 }

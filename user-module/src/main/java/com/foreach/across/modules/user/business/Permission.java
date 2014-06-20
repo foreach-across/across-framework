@@ -3,7 +3,6 @@ package com.foreach.across.modules.user.business;
 import com.foreach.across.core.database.AcrossSchemaConfiguration;
 import com.foreach.across.modules.user.config.UserSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 
@@ -17,7 +16,8 @@ public class Permission implements Comparable<Permission>
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_permission_id")
 	@TableGenerator(name = "seq_um_permission_id", table = AcrossSchemaConfiguration.TABLE_SEQUENCES,
-	                pkColumnName = "seq_name", valueColumnName = "seq_number", pkColumnValue = "seq_um_permission_id",
+	                pkColumnName = AcrossSchemaConfiguration.SEQUENCE_NAME,
+	                valueColumnName = AcrossSchemaConfiguration.SEQUENCE_VALUE, pkColumnValue = "seq_um_permission_id",
 	                allocationSize = 5)
 	private long id;
 
@@ -28,7 +28,7 @@ public class Permission implements Comparable<Permission>
 	private String description;
 
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
-	@JoinColumn(name="permission_group_id")
+	@JoinColumn(name = "permission_group_id")
 	private PermissionGroup group;
 
 	public Permission() {

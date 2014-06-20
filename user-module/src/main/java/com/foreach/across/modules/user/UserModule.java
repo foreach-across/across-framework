@@ -2,6 +2,7 @@ package com.foreach.across.modules.user;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.database.HasSchemaConfiguration;
@@ -9,11 +10,13 @@ import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.core.installers.AcrossSequencesInstaller;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.*;
+import com.foreach.across.modules.spring.security.SpringSecurityModule;
 import com.foreach.across.modules.user.config.*;
 import com.foreach.across.modules.user.installers.DefaultUserInstaller;
 import com.foreach.across.modules.user.installers.UserSchemaInstaller;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Map;
 import java.util.Set;
 
 @AcrossDepends(required = AcrossHibernateModule.NAME, optional = "AdminWebModule")
@@ -66,5 +69,16 @@ public class UserModule extends AcrossModule implements HasHibernatePackageProvi
 	@Override
 	public SchemaConfiguration getSchemaConfiguration() {
 		return schemaConfiguration;
+	}
+
+	@Override
+	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
+	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
+
+		for ( ModuleBootstrapConfig config : modulesInOrder.values() ) {
+			if ( config.getModuleName().equalsIgnoreCase( "SpringSecurityModule" ) ) {
+				config.addApplicationContextConfigurer( new AnnotatedClassConfigurer( UserSpringSecurityConfiguration.SecConfig.class ));
+			}
+		}
 	}
 }

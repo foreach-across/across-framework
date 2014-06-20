@@ -10,8 +10,8 @@
 
 <ul th:replace="th/across :: menu (${debugMenu},'debug-menu')" th:if="${debugMenu}"></ul>
 
-<div th:if="${subPage}">
-	<div th:replace="${subPage} :: content">
+<div th:if="${childPage != '' and childPage != null}">
+	<div th:replace="${childPage} :: content">
 	</div>
 </div>
 </body>

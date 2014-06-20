@@ -1,11 +1,10 @@
 package com.foreach.across.modules.debugweb.controllers;
 
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
-import com.foreach.across.modules.debugweb.mvc.DebugPageView;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
 import net.engio.mbassy.listener.Handler;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
@@ -19,9 +18,7 @@ public class ThreadsController
 	}
 
 	@RequestMapping("/threadStack")
-	public DebugPageView showThreads( DebugPageView view ) {
-		view.setPage( DebugWeb.VIEW_THREADS );
-
+	public String showThreads( Model model ) {
 		ArrayList<ThreadGroup> threadGroups = loadThreadData();
 
 		StringBuilder output = new StringBuilder();
@@ -55,9 +52,9 @@ public class ThreadsController
 			}
 		}
 
-		view.addObject( "threadOutput", output );
+		model.addAttribute( "threadOutput", output );
 
-		return view;
+		return DebugWeb.VIEW_THREADS;
 	}
 
 	private ArrayList<ThreadGroup> loadThreadData() {

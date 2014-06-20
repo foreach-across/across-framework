@@ -12,7 +12,6 @@ import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.transformers.BeanDefinitionTransformer;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -206,7 +205,7 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	 */
 	@SuppressWarnings("unchecked")
 	public static BeanFilter defaultExposeFilter() {
-		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class, Controller.class ),
+		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class ),
 		                                new AnnotationBeanFilter( true, Exposed.class ) );
 	}
 }
