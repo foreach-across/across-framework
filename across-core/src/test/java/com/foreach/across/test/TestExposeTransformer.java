@@ -40,12 +40,6 @@ public class TestExposeTransformer
 	private ExposingModule primaryModule;
 
 	@Autowired
-	private ExposingModule prefixedModule;
-
-	@Autowired
-	private MyController someController;
-
-	@Autowired
 	@Qualifier("someService")
 	private MyService someService;
 
@@ -59,12 +53,6 @@ public class TestExposeTransformer
 	public void serviceIsFromPrimaryModule() {
 		assertNotNull( someService );
 		assertSame( someService, AcrossContextUtils.getBeanOfType( primaryModule, MyService.class ) );
-	}
-
-	@Test
-	public void controllerIsfromPrimaryModule() {
-		assertNotNull( someController );
-		assertSame( someController, AcrossContextUtils.getBeanOfType( primaryModule, MyController.class ) );
 	}
 
 	@Test
