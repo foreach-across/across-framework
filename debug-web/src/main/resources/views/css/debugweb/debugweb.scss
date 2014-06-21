@@ -1,3 +1,4 @@
+/* deprecated */
 ul.debug-menu {
   li.selected {
     font-weight: bold;
@@ -8,6 +9,7 @@ ul.debug-menu {
   }
 }
 
+/* deprecated */
 div {
   &.feedback {
     background-color: whitesmoke;
@@ -20,6 +22,26 @@ div {
 
 .hidden {
   display: none;
+}
+
+.navbar-left {
+  .debug-warning {
+    margin-top: 11px;
+    margin-right: 10px;
+    padding: 4px;
+    background-color: #d9534f;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+  }
+}
+
+.debug-web-handlers {
+  table {
+    td {
+      font-size: 11px;
+    }
+  }
 }
 
 .debug-across-browser {
@@ -62,6 +84,7 @@ div {
   }
 }
 
+/* deprecated */
 .debug-across-info {
   h2 {
     background-color: whitesmoke;

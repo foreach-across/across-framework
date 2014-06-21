@@ -4,8 +4,7 @@
 	<title>List registered Spring interceptors</title>
 </head>
 <body th:fragment="content">
-<div th:each="handler : ${handlerTables}">
-
+<div class="row debug-web-handlers" th:each="handler : ${handlerTables}">
 	<div th:replace="th/across :: table (${handler})"></div>
 </div>
 </body>

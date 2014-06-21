@@ -3,16 +3,47 @@
 <head>
 	<title>Debug controller</title>
 	<link rel="stylesheet" type="text/css" th:each="css : ${webResourceRegistry.getResources('css')}" th:href="@{${css.data}}"/>
-	<script th:each="javascript : ${webResourceRegistry.getResources('javascript')}" th:src="${javascript.data}" th:if="${javascript.location == 'external'}"></script>
+	<script th:each="javascript : ${webResourceRegistry.getResources('javascript')}" th:src="${javascript.data}" th:if="${javascript.location != 'inline'}"></script>
 </head>
 <body>
-<h1>Debug controller</h1>
+<div class="container">
+	<div class="row">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="collapse navbar-collapse">
+				<div class="nav navbar-left">
+					<div class="debug-warning">debug</div>
+				</div>
+				<ul class="nav navbar-nav">
+					<li th:each="menu : ${debugMenu.items}" th:class="${menu.hasItems()}? 'dropdown'" th:classappend="${menu.selected}? 'active'">
+						<a th:unless="${menu.hasItems()}" th:href="@{${menu.url}}" th:text="${menu.title}">main item</a>
+						<a th:if="${menu.hasItems()}" href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="${menu.title}"></span>
+							<b class="caret"></b></a>
+						<ul th:if="${menu.hasItems()}" class="dropdown-menu">
+							<li th:each="subItem : ${menu.items}" th:classappend="${subItem.selected}? 'active'">
+								<a th:href="@{${subItem.url}}" th:text="${subItem.title}">sub item</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
 
-<ul th:replace="th/across :: menu (${debugMenu},'debug-menu')" th:if="${debugMenu}"></ul>
 
-<div th:if="${childPage != '' and childPage != null}">
-	<div th:replace="${childPage} :: content">
+			</div>
+		</nav>
+	</div>
+
+	<!--
+	<ul th:replace="th/across :: menu (${debugMenu},'debug-menu')" th:if="${debugMenu}"></ul>
+	-->
+
+	<div th:if="${childPage != '' and childPage != null}">
+		<div th:replace="${childPage} :: content">
+		</div>
 	</div>
 </div>
+
+<p>&nbsp;</p>
+
+<script th:each="javascript : ${webResourceRegistry.getResources('javascript-page-end')}" th:src="@{${javascript.data}}"
+        th:if="${javascript.location == 'external'}"></script>
 </body>
 </html>

@@ -5,7 +5,6 @@
 </head>
 <body th:fragment="content">
 <h3>Thread list</h3>
-
-<div th:utext="${threadOutput}"></div>
+<div class="row" th:utext="${threadOutput}"></div>
 </body>
 </html>

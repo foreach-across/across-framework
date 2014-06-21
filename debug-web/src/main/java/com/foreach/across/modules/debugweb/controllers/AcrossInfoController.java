@@ -4,7 +4,6 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ApplicationContextScanner;
-import com.foreach.across.core.context.bootstrap.ModuleBootstrapOrderBuilder;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
@@ -15,8 +14,6 @@ import com.foreach.across.modules.debugweb.util.ContextDebugInfo;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
-import com.foreach.across.modules.web.table.Table;
-import com.foreach.across.modules.web.table.TableHeader;
 import gigadot.rebound.Rebound;
 import net.engio.mbassy.listener.Handler;
 import org.apache.commons.lang3.ArrayUtils;
@@ -55,24 +52,12 @@ public class AcrossInfoController
 		menu.setPath( menu.getUrl() );
 		menu.setUrl( menu.getUrl() + "/info/0" );
 
-		menu.addItem( "/across/browser/search", "Context search" );
-
-		event.addItem( "/across/modules", "Across modules" );
+		//menu.addItem( "/across/browser/search", "Context search" );
 	}
 
 	@ModelAttribute("contexts")
 	public List<ContextDebugInfo> contextDebugInfoList() {
 		return ContextDebugInfo.create( acrossContext );
-	}
-
-	@ModelAttribute
-	public void registerJQueryAndBootstrap( WebResourceRegistry resourceRegistry ) {
-		resourceRegistry.addWithKey( WebResource.JAVASCRIPT, "jquery",
-		                             "//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js",
-		                             WebResource.EXTERNAL );
-		resourceRegistry.addWithKey( WebResource.CSS, "bootstrap",
-		                             "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css",
-		                             WebResource.EXTERNAL );
 	}
 
 	@RequestMapping("/across/browser/info/{index}")
@@ -295,7 +280,6 @@ public class AcrossInfoController
 
 		String modulePackage = null;
 
-
 		if ( selected.isModule() ) {
 			modulePackage = selected.getModuleInfo().getModule().getClass().getPackage().getName();
 		}
@@ -441,97 +425,6 @@ public class AcrossInfoController
 				beanInfo.setHandlerMethods( handlerMethods );
 			}
 		}
-	}
-
-	@RequestMapping("/across/modules")
-	public String showBeans( Model model ) {
-		ModuleBootstrapOrderBuilder modules =
-				new ModuleBootstrapOrderBuilder( acrossContext.getConfiguration().getModules() );
-
-		model.addAttribute( "moduleRegistry", modules );
-		model.addAttribute( "modules", modules.getOrderedModules() );
-
-		Collection<ModuleInfo> moduleInfoList = new LinkedList<ModuleInfo>();
-
-		for ( AcrossModule module : modules.getOrderedModules() ) {
-			ModuleInfo moduleInfo = new ModuleInfo();
-			moduleInfo.setModule( module );
-
-			if ( module.isEnabled() ) {
-				Set<String> exposed = getExposedBeanNames( module );
-
-				ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( module );
-
-				String[] definitions = beanFactory.getBeanDefinitionNames();
-				Set<String> names = new HashSet<String>();
-				names.addAll( Arrays.asList( definitions ) );
-				names.addAll( Arrays.asList( beanFactory.getSingletonNames() ) );
-
-				for ( String name : names ) {
-					BeanInfo info = new BeanInfo();
-					info.setName( name );
-					info.setExposed( exposed.contains( name ) );
-
-					Class beanType = Object.class;
-					Class actual;
-
-					if ( ArrayUtils.contains( definitions, name ) ) {
-						BeanDefinition definition = beanFactory.getBeanDefinition( name );
-						info.setSingleton( definition.isSingleton() );
-						info.setScope( definition.getScope() );
-
-						try {
-							if ( beanFactory.isSingleton( name ) ) {
-								Object value = beanFactory.getSingleton( name );
-								actual = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( value ) );
-
-								if ( value != null ) {
-									beanType = value.getClass();
-								}
-							}
-							else {
-								beanType = Class.forName( definition.getBeanClassName() );
-								actual = ClassUtils.getUserClass( beanType );
-							}
-						}
-						catch ( Exception e ) {
-							beanType = null;
-							actual = null;
-						}
-					}
-					else {
-						info.setSingleton( true );
-						info.setScope( BeanDefinition.SCOPE_SINGLETON );
-
-						Object value = beanFactory.getSingleton( name );
-						try {
-							actual = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( value ) );
-						}
-						catch ( Exception e ) {
-							beanType = null;
-							actual = null;
-						}
-					}
-
-					if ( actual != null ) {
-						info.setBeanType( actual.getName() );
-					}
-					if ( beanType != actual ) {
-						info.setProxiedOrEnhanced( true );
-					}
-
-					moduleInfo.addBean( info );
-				}
-
-				Collections.sort( moduleInfo.getBeans() );
-
-			}
-			moduleInfoList.add( moduleInfo );
-		}
-
-		model.addAttribute( "moduleInfoList", moduleInfoList );
-
-		return DebugWeb.VIEW_MODULES;
 	}
 
 	private Set<String> getExposedBeanNames( AcrossModule module ) {

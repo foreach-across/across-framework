@@ -76,6 +76,15 @@ public class DebugWebMvcConfiguration extends WebMvcConfigurerAdapter
 			@Override
 			protected void registerWebResources( WebResourceRegistry registry ) {
 				registry.addWithKey( WebResource.CSS, DebugWeb.MODULE, DebugWeb.CSS_MAIN, WebResource.VIEWS );
+				registry.addWithKey( WebResource.JAVASCRIPT, "jquery",
+				                     "//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js",
+				                     WebResource.EXTERNAL );
+				registry.addWithKey( WebResource.CSS, "bootstrap",
+				                     "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css",
+				                     WebResource.EXTERNAL );
+				registry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "bootstrap-js",
+				                     "//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js",
+				                     WebResource.EXTERNAL );
 			}
 
 			@Override

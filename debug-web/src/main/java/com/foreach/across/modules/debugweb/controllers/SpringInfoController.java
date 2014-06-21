@@ -31,33 +31,8 @@ public class SpringInfoController
 
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addItem( "/spring/beans", "Spring beans" );
 		event.addItem( "/spring/interceptors", "Spring interceptors" );
 		event.addItem( "/spring/handlers", "Spring handlers" );
-	}
-
-	@RequestMapping("/spring/beans")
-	public String showBeans( Model model ) {
-		String[] beanDefinitionNames = BeanFactoryUtils.beanNamesIncludingAncestors(
-				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory() );
-		Table table = new Table();
-
-		List<String> sortedNames = Arrays.asList( beanDefinitionNames );
-		Collections.sort( sortedNames );
-
-		for ( String beanDefinitionName : sortedNames ) {
-			if ( applicationContext.isSingleton( beanDefinitionName ) ) {
-				Object bean = applicationContext.getBean( beanDefinitionName );
-				table.addRow( beanDefinitionName, bean != null ? ClassUtils.getUserClass(
-						AopProxyUtils.ultimateTargetClass( bean ) ).getName() : "" );
-			}
-		}
-
-		table.setTitle( "Registered beans: " + table.size() );
-
-		model.addAttribute( "beans", table );
-
-		return DebugWeb.VIEW_SPRING_BEANS;
 	}
 
 	@SuppressWarnings("unchecked")

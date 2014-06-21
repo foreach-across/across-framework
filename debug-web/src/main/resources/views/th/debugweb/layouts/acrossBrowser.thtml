@@ -5,7 +5,7 @@
 </head>
 <body th:fragment="content">
 
-<div class="container debug-across-browser">
+<div class="debug-across-browser">
 	<div class="row">
 		<form class="form-horizontal" role="form">
 			<div class="form-group">

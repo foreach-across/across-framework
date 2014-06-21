@@ -4,7 +4,7 @@
 	<title>List detailed cache</title>
 </head>
 <body th:fragment="content">
-<div class="debug-ehcache">
+<div class="debug-ehcache row">
 	<a href="#" th:href="@{${@debugWeb.path('/ehcache')}}">back to cache list</a>
 
 	<h3 th:text="${cache.name}">View cache: cache name</h3>

@@ -4,7 +4,7 @@
 	<title>List ehcache caches</title>
 </head>
 <body th:fragment="content">
-<div class="debug-ehcache">
+<div class="debug-ehcache row">
 	<h3>Cache list</h3>
 
 	<div class="feedback" th:if="${param.flushed}">

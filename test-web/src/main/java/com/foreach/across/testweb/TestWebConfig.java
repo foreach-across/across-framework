@@ -46,7 +46,7 @@ public class TestWebConfig
 	@Bean
 	public EhcacheModule ehCacheModule() {
 		EhcacheModule ehcacheModule = new EhcacheModule();
-		ehcacheModule.setEnabled( false );
+		ehcacheModule.setEnabled( true );
 		ehcacheModule.setProperty( "property-in-ehcache", "ehcache-value" );
 
 		return ehcacheModule;
