@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Context info</title>
+</head>
+<body th:fragment="content">
+
+<div class="row" th:unless="${selectedContext.isModule() or selectedContext.isAcrossContext()}">
+	<p>
+		<div class="alert alert-info">
+			This is a regular ApplicationContext.
+		</div>
+	</p>
+
+	<table class="table">
+		<tr>
+			<th class="col-sm-2">Name</th>
+			<td th:text="${selectedContext.name}"></td>
+		</tr>
+		<tr>
+			<th class="col-sm-2">Description</th>
+			<td th:text="${selectedContext.applicationContext}"></td>
+		</tr>
+		<tr>
+			<th>ApplicationContext</th>
+			<td th:text="${selectedContext.applicationContext.class.canonicalName}"></td>
+		</tr>
+		<tr>
+			<th>Has parent</th>
+			<td th:text="${selectedContext.applicationContext.parent != null ? 'yes' : 'no'}"></td>
+		</tr>
+	</table>
+</div>
+
+<div class="row" th:if="${selectedContext.isAcrossContext()}">
+	<p>
+		<div class="alert alert-info">
+			This is a bootstrapped AcrossContext with
+			<strong th:text="${selectedContext.contextInfo.modules.size()}"></strong> enabled modules.
+		</div>
+	</p>
+
+	<table class="table">
+		<tr>
+			<th class="col-sm-2">Name</th>
+			<td th:text="${selectedContext.name}"></td>
+		</tr>
+		<tr>
+			<th class="col-sm-2">Description</th>
+			<td th:text="${selectedContext.applicationContext}"></td>
+		</tr>
+		<tr>
+			<th>ApplicationContext</th>
+			<td th:text="${selectedContext.applicationContext.class.canonicalName}"></td>
+		</tr>
+		<tr>
+			<th>Has parent</th>
+			<td th:text="${selectedContext.applicationContext.parent != null ? 'yes' : 'no'}"></td>
+		</tr>
+		<tr>
+			<th>Installers enabled</th>
+			<td th:text="${selectedContext.contextInfo.configuration.allowInstallers ? 'yes' : 'no'}"></td>
+		</tr>
+	</table>
+
+	<h5><strong>&nbsp; Modules</strong></h5>
+
+	<div class="col-sm-8">
+		<table class="moduleList table table-condensed table-bordered table-hover">
+			<tr th:each="moduleInfo : ${selectedContext.contextInfo.configuredModules}">
+				<td>
+					<strong class="moduleIndex" th:text="${moduleInfoStat.count}"></strong>
+					<span th:text="${moduleInfo.name}"></span></td>
+				<td class="col-sm-3 text-center" th:text="${moduleInfo.moduleRole}"></td>
+				<td class="col-sm-2 text-center"><span th:unless="${moduleInfo.enabled}" class="label label-danger">disabled</span></td>
+			</tr>
+		</table>
+	</div>
+
+</div>
+
+<div class="row moduleInfo" th:if="${selectedContext.isModule()}" th:with="moduleInfo = ${selectedContext.moduleInfo}">
+	<p>
+		<div class="alert alert-info">
+			This is a
+			<strong th:if="${moduleInfo.enabled}">bootstrapped</strong>
+			<strong th:unless="${moduleInfo.enabled}">disabled</strong>
+			AcrossModule.
+
+		</div>
+	</p>
+
+	<table class="table">
+		<tr>
+			<th class="col-sm-2">Module</th>
+			<td>
+				<span th:text="${moduleInfo.name}"></span><br />
+				<small th:text="${moduleInfo.module.class.canonicalName}"></small>
+			</td>
+		</tr>
+		<tr>
+			<th class="col-sm-2">Description</th>
+			<td th:text="${moduleInfo.description}"></td>
+		</tr>
+		<tr>
+			<th class="col-sm-2">Role</th>
+			<td th:text="${moduleInfo.getModuleRole()}"></td>
+		</tr>
+		<tr>
+			<th class="col-sm-2">Required dependencies</th>
+			<td>
+				<span th:if="${moduleInfo.getRequiredDependencies().isEmpty()}">none</span>
+				<span th:each="dependency : ${moduleInfo.getRequiredDependencies()}" th:text="${dependency.name}">modulename</span>
+			</td>
+		</tr>
+		<tr>
+			<th class="col-sm-2">Optional dependencies</th>
+			<td>
+				<span th:if="${moduleInfo.getOptionalDependencies().isEmpty()}">none</span>
+				<span th:each="dependency : ${moduleInfo.getOptionalDependencies()}" th:text="${dependency.name}">modulename</span>
+			</td>
+		</tr>
+		<tr>
+			<th>ApplicationContext</th>
+			<td th:text="${selectedContext.applicationContext != null ? selectedContext.applicationContext.class.canonicalName : 'none'}"></td>
+		</tr>
+		<tr>
+			<th>Status</th>
+			<td>
+				<span th:if="${moduleInfo.enabled}" class="label label-success">bootstrapped</span>
+				<span th:unless="${moduleInfo.enabled}" class="label label-danger">disabled</span>
+			</td>
+		</tr>
+	</table>
+
+</div>
+</body>
+</html>

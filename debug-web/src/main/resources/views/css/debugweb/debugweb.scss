@@ -22,6 +22,46 @@ div {
   display: none;
 }
 
+.debug-across-browser {
+  select {
+    option {
+      &.disabled {
+        color: #d9534f;
+      }
+    }
+  }
+
+  strong.moduleIndex {
+    display: block;
+    width: 40px;
+    float: left;
+    text-align: center;
+  }
+
+  table {
+    table-layout: fixed;
+    word-wrap: break-word;
+
+    &.contextBeans {
+      tr {
+        &.exposed {
+          td {
+            color: black;
+            font-weight: bold;
+          }
+        }
+      }
+      td.bean-scope, th.bean-scope {
+        text-align: center;
+      }
+
+      td {
+        font-size: 11px;
+      }
+    }
+  }
+}
+
 .debug-across-info {
   h2 {
     background-color: whitesmoke;
@@ -41,7 +81,7 @@ div {
         background-color: gainsboro;
       }
       &.exposed {
-       color: black;
+        color: black;
       }
       &.inherited {
         color: gray;

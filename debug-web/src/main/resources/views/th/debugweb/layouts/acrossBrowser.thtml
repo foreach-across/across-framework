@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Across browser</title>
+</head>
+<body th:fragment="content">
+
+<div class="container debug-across-browser">
+	<div class="row">
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="context-selector" class="col-sm-1 control-label">Context:</label>
+
+				<div class="col-sm-6">
+					<select id="context-selector" name="contextName" class="form-control">
+						<option th:each="context,contextStat : ${contexts}"
+						        th:value="@{${@debugWeb.path('/across/browser/' + section + '/' + contextStat.index)}}"
+						        th:text="${context.isModule() ? '&raquo; ' + context.name : context.name}"
+						        th:selected="${context eq selectedContext}"
+								th:classappend="${!context.isEnabled()} ? 'disabled'">
+							selected context
+						</option>
+					</select>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="row">
+		<h4 class="pull-right">
+			<div class="label" th:classappend="${selectedContext.enabled ? 'label-success' : 'label-danger'}">
+				<span th:if="${!selectedContext.isModule() and !selectedContext.isAcrossContext()}">ApplicationContext</span>
+				<span th:if="${selectedContext.isAcrossContext()}">AcrossContext</span>
+				<span th:if="${selectedContext.isModule()}">AcrossModule</span>
+			</div>
+		</h4>
+
+		<ul class="nav nav-tabs">
+			<li th:classappend="${section == 'info'} ? 'active'">
+				<a th:href="@{${@debugWeb.path('/across/browser/info/' + selectedContextIndex)}}">Info</a></li>
+			<li th:classappend="${section == 'beans'} ? 'active'">
+				<a th:href="@{${@debugWeb.path('/across/browser/beans/' + selectedContextIndex)}}">Beans</a></li>
+			<li th:classappend="${section == 'properties'} ? 'active'">
+				<a th:href="@{${@debugWeb.path('/across/browser/properties/' + selectedContextIndex)}}">Properties</a>
+			</li>
+			<li th:classappend="${section == 'events'} ? 'active'">
+				<a th:href="@{${@debugWeb.path('/across/browser/events/' + selectedContextIndex)}}">Events</a></li>
+			<li th:classappend="${section == 'handlers'} ? 'active'">
+				<a th:href="@{${@debugWeb.path('/across/browser/handlers/' + selectedContextIndex)}}">Event handlers</a>
+			</li>
+		</ul>
+	</div>
+
+	<div th:if="${sectionTemplate}">
+		<div class="row" th:replace="${sectionTemplate} :: content">
+		</div>
+	</div>
+
+	<p>&nbsp;</p>
+</div>
+
+<script type="text/javascript">
+	/*<![CDATA[*/
+	$( function ()
+	   {
+		   $( '#context-selector' ).on( 'change', function ()
+		   {
+			   window.location = $( '#context-selector' ).val();
+		   } );
+	   } );
+	/*]]>*/
+</script>
+</body>
+</html>

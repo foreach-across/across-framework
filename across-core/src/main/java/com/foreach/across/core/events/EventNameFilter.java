@@ -2,7 +2,7 @@ package com.foreach.across.core.events;
 
 import com.foreach.across.core.annotations.EventName;
 import net.engio.mbassy.listener.IMessageFilter;
-import net.engio.mbassy.listener.MessageHandlerMetadata;
+import net.engio.mbassy.listener.MessageHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class EventNameFilter implements IMessageFilter
 
 	private static final Logger LOG = LoggerFactory.getLogger( EventNameFilter.class );
 
-	public boolean accepts( Object message, MessageHandlerMetadata metadata ) {
+	public boolean accepts( Object message, MessageHandler metadata ) {
 		if ( message instanceof NamedAcrossEvent ) {
 			String eventName = ( (NamedAcrossEvent) message ).getEventName();
 

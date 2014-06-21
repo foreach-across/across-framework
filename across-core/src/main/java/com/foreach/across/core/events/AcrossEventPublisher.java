@@ -29,4 +29,6 @@ public interface AcrossEventPublisher
 	public SyncAsyncPostCommand<AcrossEvent> post( AcrossEvent message );
 
 	public void shutdown();
+
+	boolean isListener( Object listener );
 }

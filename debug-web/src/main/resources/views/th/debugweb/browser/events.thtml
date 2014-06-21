@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Events</title>
+</head>
+<body th:fragment="content">
+
+<div class="row" th:unless="${selectedContext.isModule() or selectedContext.isAcrossContext()}">
+	<p>
+		<div class="alert alert-warning">
+			Unable to scan for events in a regular ApplicationContext.
+		</div>
+	</p>
+</div>
+
+<div class="row" th:if="${eventTypes}">
+	<p>
+		<div class="alert alert-info">
+			Detected <strong th:text="${eventTypes.size()}"></strong> implementations of AcrossEvent in package
+			<strong th:text="${modulePackage}"></strong>.
+		</div>
+	</p>
+
+	<table class="table table-bordered">
+		<tr th:each="eventType : ${eventTypes}">
+			<td th:text="${eventType.canonicalName}"></td>
+		</tr>
+	</table>
+
+</div>
+
+</body>
+</html>

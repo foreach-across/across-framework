@@ -15,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import javax.sql.DataSource;
 
 @Configuration
+@PropertySource( "classpath:/test-web.properties" )
 public class TestWebConfig
 {
 	@Bean
@@ -36,13 +38,15 @@ public class TestWebConfig
 		//context.addModule( adminWebModule() );
 		//context.addModule( acrossHibernateModule() );
 
+		context.setProperty( "overwrite", "across-original" );
+
 		return context;
 	}
 
 	@Bean
 	public EhcacheModule ehCacheModule() {
 		EhcacheModule ehcacheModule = new EhcacheModule();
-		ehcacheModule.setEnabled( true );
+		ehcacheModule.setEnabled( false );
 		ehcacheModule.setProperty( "property-in-ehcache", "ehcache-value" );
 
 		return ehcacheModule;
@@ -82,6 +86,8 @@ public class TestWebConfig
 		webModule.addDevelopmentViews( "debugweb", "c:/code/across/debug-web/src/main/resources/views/" );
 		webModule.addDevelopmentViews( "ehcache", "c:/code/across/across-ehcache/src/main/resources/views/" );
 
+		webModule.setProperty( "overwrite", "acrossweb-specific" );
+
 		return webModule;
 	}
 
@@ -89,6 +95,7 @@ public class TestWebConfig
 	public DebugWebModule debugWebModule() {
 		DebugWebModule debugWebModule = new DebugWebModule();
 		debugWebModule.setRootPath( "/debug" );
+		debugWebModule.setProperty( "overwrite", "debugweb-specific" );
 		debugWebModule.setProperty( "property-in-debugweb", "debugweb-value" );
 
 		return debugWebModule;

@@ -46,6 +46,11 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	}
 
 	@Override
+	public String getDescription() {
+		return getModule().getDescription();
+	}
+
+	@Override
 	public AcrossModule getModule() {
 		return module;
 	}

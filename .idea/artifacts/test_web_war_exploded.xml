@@ -14,7 +14,7 @@
           <element id="archive" name="across-core-1.0.3-SNAPSHOT.jar">
             <element id="module-output" name="across-core" />
           </element>
-          <element id="library" level="project" name="Maven: net.engio:mbassador:1.1.9" />
+          <element id="library" level="project" name="Maven: net.engio:mbassador:1.1.10" />
           <element id="library" level="project" name="Maven: commons-dbcp:commons-dbcp:1.4" />
           <element id="library" level="project" name="Maven: commons-pool:commons-pool:1.5.4" />
           <element id="library" level="project" name="Maven: ch.qos.logback:logback-classic:1.0.13" />
@@ -38,6 +38,8 @@
           <element id="archive" name="across-debug-web-1.0.3-SNAPSHOT.jar">
             <element id="module-output" name="debug-web" />
           </element>
+          <element id="library" level="project" name="Maven: gigadot.rebound:rebound:0.2" />
+          <element id="library" level="project" name="Maven: org.slf4j:log4j-over-slf4j:1.7.5" />
           <element id="archive" name="admin-web-1.0.3-SNAPSHOT.jar">
             <element id="module-output" name="admin-web" />
           </element>

@@ -13,6 +13,24 @@ div.feedback {
 .hidden {
   display: none; }
 
+.debug-across-browser select option.disabled {
+  color: #d9534f; }
+.debug-across-browser strong.moduleIndex {
+  display: block;
+  width: 40px;
+  float: left;
+  text-align: center; }
+.debug-across-browser table {
+  table-layout: fixed;
+  word-wrap: break-word; }
+  .debug-across-browser table.contextBeans tr.exposed td {
+    color: black;
+    font-weight: bold; }
+  .debug-across-browser table.contextBeans td.bean-scope, .debug-across-browser table.contextBeans th.bean-scope {
+    text-align: center; }
+  .debug-across-browser table.contextBeans td {
+    font-size: 11px; }
+
 .debug-across-info h2 {
   background-color: whitesmoke;
   padding: 5px;

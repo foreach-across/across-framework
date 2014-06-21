@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Event handlers</title>
+</head>
+<body th:fragment="content">
+<div class="row" th:unless="${selectedContext.enabled}">
+	<p>
+		<div class="alert alert-warning">
+			Module has not been bootstrapped, no ApplicationContext is available.
+		</div>
+	</p>
+</div>
+
+<div class="row" th:if="${selectedContext.enabled}">
+	<p>
+		<div class="alert alert-info">
+			<strong th:text="${eventHandlers.size()}"></strong> event handler beans found in this ApplicationContext.
+		</div>
+	</p>
+
+	<div th:each="eventHandler : ${eventHandlers}">
+		<h4>
+			<span th:text="${eventHandler.name}">Event handler name</span>
+			<small th:text="${eventHandler.beanType}">type</small>
+		</h4>
+
+		<table class="table table-condensed table-bordered table-hover">
+			<tr th:each="method : ${eventHandler.handlerMethods}">
+				<td class="col-sm-4" th:text="|${method.name}()|"></td>
+				<td class="col-sm-8" th:text="${method.parameterTypes[0].canonicalName}"></td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+</body>
+</html>

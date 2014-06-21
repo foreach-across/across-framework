@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>List registered Spring beans</title>
+</head>
+<body th:fragment="content">
+<div class="row" th:unless="${selectedContext.enabled}">
+	<p>
+		<div class="alert alert-warning">
+			Module has not been bootstrapped, no ApplicationContext is available.
+		</div>
+	</p>
+</div>
+
+<div class="row" th:if="${selectedContext.enabled}">
+	<p>
+		<div class="alert alert-info" th:unless="${selectedContext.isModule()}">
+			<strong th:text="${totalBeanCount}"></strong> beans registered in this ApplicationContext.
+		</div>
+
+		<div class="alert alert-info" th:if="${selectedContext.isModule()}">
+			<strong th:text="${totalBeanCount}"></strong> beans in total,
+			<strong th:text="${exposedBeanCount}"></strong>
+			exposed to the parent context.
+		</div>
+	</p>
+
+	<p>
+		<div class="form-inline">
+			<div class="checkbox">
+				<label><input type="checkbox" id="hide-spring-standard" checked="checked"/> hide default Spring
+					beans &nbsp;</label>
+			</div>
+			<div class="checkbox" th:if="${selectedContext.isModule()}">
+				<label><input type="checkbox" id="hide-non-exposed" checked="checked"/> show only exposed beans</label>
+			</div>
+		</div>
+	</p>
+
+	<table class="table table-bordered table-hover contextBeans" th:if="${contextBeans}">
+		<thead>
+		<tr>
+			<th class="col-sm-5">Bean name</th>
+			<th class="col-sm-1 bean-scope">Scope</th>
+			<th class="col-sm-6">Bean type</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="beanInfo : ${contextBeans}" th:class="${beanInfo.exposed ? 'exposed success' : ''}"
+		    th:attr="data-spring-standard=${beanInfo.standardSpring}">
+			<td class="bean-name" th:text="${beanInfo.name}">bean name</td>
+			<td class="bean-scope" th:text="${beanInfo.singleton ? '' : beanInfo.scope}">scope</td>
+			<td class="bean-type">
+				<span th:text="${beanInfo.beanType}">bean type</span>
+				<span class="enhanced" th:if="${beanInfo.proxiedOrEnhanced}" title="The actual bean is either a proxy or cglib enhanced.">*</span>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$( function ()
+		   {
+			   function toggleBeans()
+			   {
+				   var hideStandard = $( '#hide-spring-standard' ).prop( 'checked' );
+				   var hideNonExposed = $( '#hide-non-exposed' ).prop( 'checked' );
+
+				   $( '.bean-name' ).each( function ()
+				                           {
+					                           var row = $( this ).parent();
+					                           var visible = true;
+
+					                           if ( hideStandard && row.attr( 'data-spring-standard' ) == 'true' ) {
+						                           visible = false;
+					                           }
+					                           if ( hideNonExposed && !row.hasClass( 'exposed' ) ) {
+						                           visible = false;
+					                           }
+
+					                           $( row ).toggleClass( 'hidden', !visible );
+				                           } );
+			   }
+
+			   toggleBeans();
+
+			   $( '#hide-spring-standard' ).on( 'click', toggleBeans );
+			   $( '#hide-non-exposed' ).on( 'click', toggleBeans );
+		   } );
+		/*]]>*/
+	</script>
+</div>
+</body>
+</html>

@@ -20,6 +20,11 @@ public interface AcrossModuleInfo
 	public String getName();
 
 	/**
+	 * @return Description of the AcrossModule.
+	 */
+	public String getDescription();
+
+	/**
 	 * @return AcrossModule instance.
 	 */
 	public AcrossModule getModule();

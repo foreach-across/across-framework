@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Property list</title>
+</head>
+<body th:fragment="content">
+
+<div class="row" th:unless="${selectedContext.enabled}">
+	<p>
+		<div class="alert alert-warning">
+			Module has not been bootstrapped, no Environment is available.
+		</div>
+	</p>
+</div>
+
+<div class="row" th:if="${selectedContext.enabled}">
+	<p>
+		<div class="alert alert-info">
+			<strong th:text="${propertySources.size()}"></strong> active property sources - lowest priority first.
+		</div>
+	</p>
+
+	<p>
+		<div class="form-inline">
+			<div class="checkbox">
+				<label><input type="checkbox" id="hide-system" checked="checked"/> hide system environment properties
+					&nbsp;</label>
+			</div>
+			<div class="checkbox">
+				<label><input type="checkbox" id="hide-empty" checked="checked"/> hide empty property sources</label>
+			</div>
+		</div>
+	</p>
+
+	<div th:each="sourceInfo : ${propertySources}" th:attr="data-source-name=${sourceInfo.name},data-source-empty=${sourceInfo.empty}">
+		<h4>
+			<span th:text="${sourceInfo.name}">Property source name</span>
+			<small th:text="${sourceInfo.propertySourceType}">type</small>
+		</h4>
+
+		<div class="alert alert-warning" th:unless="${sourceInfo.enumerable}">
+			Unable to list the properties available in this PropertySource type.
+		</div>
+
+		<p th:if="${sourceInfo.empty and sourceInfo.enumerable}">No properties defined.</p>
+
+
+		<table class="table table-bordered">
+			<tr th:each="propInfo : ${sourceInfo.properties}" th:classappend="${!propInfo.actualValue} ? 'danger'">
+				<td th:text="${propInfo.name}" class="col-sm-4"></td>
+				<td class="col-sm-8">
+					<span th:text="${propInfo.value}"></span>
+
+					<div th:unless="${propInfo.actualValue}"><strong>
+						<small th:text="${propInfo.environmentValue}"
+						       title="This is the actual value defined by a property source with higher priority."></small>
+					</strong></div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<script type="text/javascript">
+	/*<![CDATA[*/
+	$( function ()
+	   {
+		   function toggleSources()
+		   {
+			   var hideSystem = $( '#hide-system' ).prop( 'checked' );
+			   var hideEmpty = $( '#hide-empty' ).prop( 'checked' );
+
+			   $( 'div[data-source-name]' ).each( function ()
+			                                      {
+				                                      var source = $( this );
+				                                      var visible = true;
+
+				                                      if ( hideEmpty && source.attr( 'data-source-empty' ) == 'true' ) {
+					                                      visible = false;
+				                                      }
+				                                      if ( hideSystem && (source.attr( 'data-source-name' ) == 'systemProperties' || source.attr( 'data-source-name' ) == 'systemEnvironment') ) {
+					                                      visible = false;
+				                                      }
+
+				                                      $( source ).toggleClass( 'hidden', !visible );
+			                                      } );
+		   }
+
+		   toggleSources();
+
+		   $( '#hide-system' ).on( 'click', toggleSources );
+		   $( '#hide-empty' ).on( 'click', toggleSources );
+	   } );
+	/*]]>*/
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 package com.foreach.across.modules.web.events;
 
 import net.engio.mbassy.listener.IMessageFilter;
-import net.engio.mbassy.listener.MessageHandlerMetadata;
+import net.engio.mbassy.listener.MessageHandler;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -15,7 +15,7 @@ public class AbstractMenuFilter implements IMessageFilter
 		this.menuName = menuName;
 	}
 
-	public boolean accepts( Object message, MessageHandlerMetadata metadata ) {
+	public boolean accepts( Object message, MessageHandler metadata ) {
 		return message instanceof BuildMenuEvent && StringUtils.equals( ( (BuildMenuEvent) message ).getMenuName(),
 		                                                                menuName );
 	}
