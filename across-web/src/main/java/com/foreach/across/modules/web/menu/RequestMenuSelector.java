@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,7 +21,7 @@ public class RequestMenuSelector implements MenuSelector
 {
 	/**
 	 * Attribute on a menu to provide extra matching apart from url and standard path.
-	 * Value should be string or array of strings.
+	 * Value should be a collection of strings.
 	 */
 	public static final String ATTRIBUTE_MATCHERS = RequestMenuSelector.class.getCanonicalName() + ".MATCHERS";
 
@@ -78,19 +77,10 @@ public class RequestMenuSelector implements MenuSelector
 		stringsToMatch.add( menu.getUrl() );
 		stringsToMatch.add( menu.getPath() );
 
-		Object additionalStringsToMatch = menu.getAttribute( ATTRIBUTE_MATCHERS );
+		Collection<String> additionalStringsToMatch = menu.getAttribute( ATTRIBUTE_MATCHERS );
 
 		if ( additionalStringsToMatch != null ) {
-			if ( additionalStringsToMatch instanceof String ) {
-				stringsToMatch.add( (String) additionalStringsToMatch );
-			}
-			else if ( additionalStringsToMatch instanceof String[] ) {
-				stringsToMatch.addAll( Arrays.asList( (String[]) additionalStringsToMatch ) );
-			}
-			else {
-				throw new RuntimeException(
-						"Menu attribute " + ATTRIBUTE_MATCHERS + " only supports String or String[] values" );
-			}
+			stringsToMatch.addAll( additionalStringsToMatch );
 		}
 
 		for ( String stringToMatch : stringsToMatch ) {

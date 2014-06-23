@@ -3,6 +3,7 @@ package com.foreach.across.modules.web.menu;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -10,7 +11,7 @@ import java.util.TreeMap;
 /**
  * A PathBasedMenuBuilder can be used to define menu items in a non-hierarchical way.
  * When building the actual Menu, the path will be used to determine parent and sub-menus.
- * Any new prefix will be used the root of a sub menu.
+ * Any new prefix will be used as root of a sub menu.
  */
 public class PathBasedMenuBuilder
 {
@@ -324,7 +325,7 @@ public class PathBasedMenuBuilder
 		 * @see com.foreach.across.modules.web.menu.RequestMenuSelector
 		 */
 		public void matchRequests( String... matchers ) {
-			attributes.put( RequestMenuSelector.ATTRIBUTE_MATCHERS, matchers );
+			attributes.put( RequestMenuSelector.ATTRIBUTE_MATCHERS, Arrays.asList( matchers ) );
 		}
 
 		public PathBasedMenuBuilder and() {

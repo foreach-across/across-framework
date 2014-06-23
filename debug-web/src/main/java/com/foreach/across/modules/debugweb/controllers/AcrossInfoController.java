@@ -48,7 +48,7 @@ public class AcrossInfoController
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
 		Menu menu = event.addItem( "/across/browser", "Across browser" );
-		menu.setAttribute( RequestMenuSelector.ATTRIBUTE_MATCHERS, new String[] { menu.getUrl() } );
+		menu.setAttribute( RequestMenuSelector.ATTRIBUTE_MATCHERS, Arrays.asList( menu.getUrl() ) );
 //		menu.setPath( menu.getUrl() );
 		menu.setUrl( menu.getUrl() + "/info/0" );
 
