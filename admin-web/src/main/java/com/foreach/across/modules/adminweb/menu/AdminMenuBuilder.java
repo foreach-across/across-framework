@@ -1,27 +1,28 @@
 package com.foreach.across.modules.adminweb.menu;
 
-import com.foreach.across.core.AcrossModule;
-import com.foreach.across.modules.adminweb.AdminWebModule;
+import com.foreach.across.modules.adminweb.AdminWeb;
+import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
+import com.foreach.across.modules.web.menu.PrefixContextMenuItemBuilderProcessor;
 import com.foreach.across.modules.web.menu.RequestMenuBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 public class AdminMenuBuilder extends RequestMenuBuilder<AdminMenu, AdminMenuEvent>
 {
 	@Autowired
-	@Qualifier(AcrossModule.CURRENT_MODULE)
-	private AdminWebModule adminWebModule;
+	private AdminWeb adminWeb;
 
 	@Override
 	public AdminMenu build() {
-		AdminMenu adminMenu = new AdminMenu( adminWebModule.getRootPath() );
-		//setContext( adminMenu );
-
-		return adminMenu;
+		return new AdminMenu();
 	}
 
 	@Override
 	public AdminMenuEvent createEvent( AdminMenu menu ) {
-		return new AdminMenuEvent( menu );
+		PathBasedMenuBuilder menuBuilder = new PathBasedMenuBuilder( new PrefixContextMenuItemBuilderProcessor(
+				adminWeb ) );
+
+		menuBuilder.root( "/" ).title( "Administration" );
+
+		return new AdminMenuEvent( menu, menuBuilder );
 	}
 }

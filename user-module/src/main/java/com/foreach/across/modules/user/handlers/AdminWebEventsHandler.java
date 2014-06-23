@@ -1,22 +1,18 @@
 package com.foreach.across.modules.user.handlers;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
-import com.foreach.across.modules.adminweb.AdminWeb;
 import com.foreach.across.modules.adminweb.events.AdminWebUrlRegistry;
 import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
-import com.foreach.across.modules.user.security.CurrentUserProxy;
 import com.foreach.across.modules.user.controllers.RoleController;
 import com.foreach.across.modules.user.controllers.UserController;
-import com.foreach.across.modules.web.menu.Menu;
+import com.foreach.across.modules.user.security.CurrentUserProxy;
+import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import net.engio.mbassy.listener.Handler;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @AcrossEventHandler
 public class AdminWebEventsHandler
 {
-	@Autowired
-	private AdminWeb adminWeb;
-
 	@Autowired
 	private CurrentUserProxy currentUser;
 
@@ -28,18 +24,15 @@ public class AdminWebEventsHandler
 
 	@Handler
 	public void registerMenu( AdminMenuEvent adminMenuEvent ) {
-		Menu menu = new Menu( "User management" );
-
-		if ( currentUser.hasPermission( "manage user roles" ) ) {
-			menu.addItem( adminWeb.path( RoleController.PATH ), "Roles" );
-		}
+		PathBasedMenuBuilder builder = adminMenuEvent.builder();
+		builder.group( "/users", "User management" );
 
 		if ( currentUser.hasPermission( "manage users" ) ) {
-			menu.addItem( adminWeb.path( UserController.PATH ), "Users" );
+			builder.item( "/users/users", "Users", UserController.PATH ).order( 1 );
 		}
 
-		if ( menu.hasItems() ) {
-			adminMenuEvent.addItem( menu );
+		if ( currentUser.hasPermission( "manage user roles" ) ) {
+			builder.item( "/users/roles", "Roles", RoleController.PATH ).order( 2 );
 		}
 	}
 }
