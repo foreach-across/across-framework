@@ -68,9 +68,4 @@ public interface AcrossModuleInfo
 	 * @return The specific role of the module in the context.
 	 */
 	public AcrossModuleRole getModuleRole();
-
-	/**
-	 * getAcrossEventHandlers();
-	 * getExposedBeans();
-	 */
 }

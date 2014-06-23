@@ -21,27 +21,7 @@
 
 	<div class="row" th:if="${debugMenu != null and debugMenu.selected}">
 		<ol th:replace="th/bootstrap/menu :: breadcrumb (${debugMenu})"></ol>
-
-		<!--/*
-		<ol class="breadcrumb">
-			<li th:each="item : ${debugMenu.selectedItemPath}" th:classappend="${itemStat.last} ? 'active'" th:if="${item.hasTitle()}">
-				<span th:if="${itemStat.last}" th:text="${item.title}">title selected item</span>
-				<div th:unless="${itemStat.last}" th:remove="tag">
-					<span th:if="${!item.hasUrl() and !item.isGroup()}" th:text="${item.title}">title if no url</span>
-					<a th:if="${item.hasUrl() and !itemStat.last}" th:href="${item.url}" th:text="${item.title}">title
-						with
-						url</a>
-					<a th:if="${!item.hasUrl() and item.isGroup() and item.hasItems()}" th:href="${item.firstItem.url}" th:text="${item.title}">title
-						with first item url</a>
-				</div>
-			</li>
-		</ol>
-		*/-->
 	</div>
-
-	<!--
-	<ul th:replace="th/bootstrap/menu :: dropdown (${debugMenu},'debug-menu')" th:if="${debugMenu}"></ul>
-	-->
 
 	<div th:if="${childPage != '' and childPage != null}">
 		<div th:replace="${childPage} :: content">
