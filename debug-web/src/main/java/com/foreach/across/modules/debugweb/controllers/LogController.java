@@ -25,7 +25,7 @@ public class LogController
 {
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addItem( "/loggers", "Logger overview" );
+		event.builder().item( "/loggers", "Logger overview" );
 	}
 
 	@RequestMapping(value = "/loggers", method = RequestMethod.GET)

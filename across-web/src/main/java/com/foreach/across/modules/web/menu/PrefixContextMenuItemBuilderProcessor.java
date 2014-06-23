@@ -20,7 +20,9 @@ public class PrefixContextMenuItemBuilderProcessor implements MenuItemBuilderPro
 
 	@Override
 	public Menu process( Menu menu ) {
-		menu.setUrl( context.path( menu.getUrl() ) );
+		if ( menu.hasUrl() || !menu.isGroup() ) {
+			menu.setUrl( context.path( menu.getUrl() ) );
+		}
 
 		Set<String> totalMatchers = new HashSet<>();
 		Collection<String> matchers = menu.getAttribute( RequestMenuSelector.ATTRIBUTE_MATCHERS );

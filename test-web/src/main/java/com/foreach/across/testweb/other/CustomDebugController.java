@@ -13,13 +13,11 @@ public class CustomDebugController
 {
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addItem( "/custom", "Custom debug page" );
+		event.builder().item( "/custom", "Custom debug page" );
 	}
 
 	@RequestMapping("/custom")
-	public String hoi( Model model ) {
-		System.out.println( "oi" );
-
+	public String helloFromCustom( Model model ) {
 		return "";
 	}
 

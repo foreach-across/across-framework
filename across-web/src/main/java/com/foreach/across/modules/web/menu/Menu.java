@@ -54,7 +54,6 @@ public class Menu implements Ordered
 		this.name = name;
 
 		setPath( name );
-		setTitle( name );
 	}
 
 	public Menu( String path, String title ) {
@@ -300,6 +299,29 @@ public class Menu implements Ordered
 		}
 
 		return null;
+	}
+
+	/**
+	 * Returns all selected items (including the menu itself) in top-down order.
+	 *
+	 * @return Menu items or empty collection if none selected.
+	 */
+	public List<Menu> getSelectedItemPath() {
+		LinkedList<Menu> selectedItems = new LinkedList<>();
+
+		Menu item = getLowestSelectedItem();
+
+		// Move up but not past ourselves
+		while ( item != null && item != this ) {
+			selectedItems.addFirst( item );
+			item = item.getParent();
+		}
+
+		if ( isSelected() ) {
+			selectedItems.addFirst( this );
+		}
+
+		return selectedItems;
 	}
 
 	/**

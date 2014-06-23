@@ -4,6 +4,7 @@ import com.foreach.across.modules.web.menu.Menu;
 import org.junit.Test;
 
 import java.util.Comparator;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -231,6 +232,49 @@ public class TestMenu
 		assertSame( item, menu.getSelectedItem() );
 		assertSame( subItem, menu.getLowestSelectedItem() );
 		assertNull( subItem.getSelectedItem() );
+	}
+
+	@Test
+	public void selectedItemPathIfNoneSelected() {
+		Menu menu = new Menu();
+		menu.addItem( "one" );
+
+		assertNull( menu.getSelectedItem() );
+		assertTrue( menu.getSelectedItemPath().isEmpty() );
+	}
+
+	@Test
+	public void selectedItemPathIfRootSelected() {
+		Menu menu = new Menu();
+		menu.addItem( "one" );
+
+		menu.setSelected( true );
+
+		assertNull( menu.getSelectedItem() );
+		List<Menu> items = menu.getSelectedItemPath();
+		assertEquals( 1, items.size() );
+		assertSame( menu, items.get( 0 ) );
+	}
+
+	@Test
+	public void selectedItemPathIfLowerSelected() {
+		Menu menu = new Menu();
+		Menu item = menu.addItem( "one" );
+		item.addItem( "sub-one" );
+		Menu subTwo = item.addItem( "sub-two" );
+
+		subTwo.setSelected( true );
+
+		List<Menu> items = menu.getSelectedItemPath();
+		assertEquals( 3, items.size() );
+		assertSame( menu, items.get( 0 ) );
+		assertSame( item, items.get( 1 ) );
+		assertSame( subTwo, items.get( 2 ) );
+
+		items = item.getSelectedItemPath();
+		assertEquals( 2, items.size() );
+		assertSame( item, items.get( 0 ) );
+		assertSame( subTwo, items.get( 1 ) );
 	}
 
 	@Test

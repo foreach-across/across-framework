@@ -26,11 +26,35 @@ public class TestPrefixContextMenuItemBuilderProcessor
 	public void processMenuWithoutUrl() {
 		Menu menu = new Menu( "path" );
 
+		assertFalse( menu.hasUrl() );
+
 		Menu processed = processor.process( menu );
 
 		assertSame( menu, processed );
 		assertEquals( "path", menu.getPath() );
+		assertTrue( menu.hasUrl() );
 		assertEquals( "/test/path", menu.getUrl() );
+
+		Collection<String> matchers = menu.getAttribute(
+				RequestMenuSelector.ATTRIBUTE_MATCHERS );
+
+		assertNotNull( matchers );
+		assertEquals( 1, matchers.size() );
+		assertTrue( matchers.contains( "/test/path" ) );
+	}
+
+	@Test
+	public void processGroupShouldNotTouchUrl() {
+		Menu menu = new Menu( "path" );
+		menu.setGroup( true );
+
+		assertFalse( menu.hasUrl() );
+
+		Menu processed = processor.process( menu );
+
+		assertSame( menu, processed );
+		assertEquals( "path", menu.getPath() );
+		assertFalse( menu.hasUrl() );
 
 		Collection<String> matchers = menu.getAttribute(
 				RequestMenuSelector.ATTRIBUTE_MATCHERS );

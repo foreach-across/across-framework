@@ -33,12 +33,12 @@ public class DebugEhcacheController
 	@Autowired
 	private CacheManager cacheManager;
 
-	@Autowired(required=false)
+	@Autowired(required = false)
 	private DebugWeb debugWeb;
 
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addItem( "/ehcache", "Cache overview" );
+		event.builder().item( "/ehcache", "Cache overview" );
 	}
 
 	@ModelAttribute

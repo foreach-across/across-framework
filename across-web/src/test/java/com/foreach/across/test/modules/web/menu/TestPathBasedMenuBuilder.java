@@ -7,6 +7,8 @@ import com.foreach.across.modules.web.menu.RequestMenuSelector;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collection;
+
 import static org.junit.Assert.*;
 
 public class TestPathBasedMenuBuilder
@@ -37,8 +39,11 @@ public class TestPathBasedMenuBuilder
 		builder.item( "item" ).matchRequests( "/test/", "/other" );
 
 		Menu menu = builder.build();
-		assertArrayEquals( new String[] { "/test/", "/other" }, (String[]) menu.getFirstItem().getAttribute(
-				RequestMenuSelector.ATTRIBUTE_MATCHERS ) );
+
+		Collection<String> matchers = menu.getFirstItem().getAttribute( RequestMenuSelector.ATTRIBUTE_MATCHERS );
+		assertEquals( 2, matchers.size() );
+		assertTrue( matchers.contains( "/test/" ) );
+		assertTrue( matchers.contains( "/other" ) );
 	}
 
 	@Test

@@ -5,13 +5,11 @@ import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
 import com.foreach.across.modules.web.table.Table;
 import net.engio.mbassy.listener.Handler;
-import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ui.Model;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
@@ -21,7 +19,9 @@ import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondit
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @DebugWebController
 public class SpringInfoController
@@ -31,8 +31,10 @@ public class SpringInfoController
 
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addItem( "/spring/interceptors", "Spring interceptors" );
-		event.addItem( "/spring/handlers", "Spring handlers" );
+		event.builder()
+		     .group( "/across/web", "AcrossWebModule" ).and()
+		     .item( "/across/web/interceptors", "Interceptors", "/spring/interceptors" ).and()
+		     .item( "/across/web/handlers", "Handlers", "/spring/handlers" );
 	}
 
 	@SuppressWarnings("unchecked")

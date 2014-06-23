@@ -11,8 +11,6 @@ import com.foreach.across.modules.debugweb.DebugWeb;
 import com.foreach.across.modules.debugweb.mvc.DebugMenuEvent;
 import com.foreach.across.modules.debugweb.mvc.DebugWebController;
 import com.foreach.across.modules.debugweb.util.ContextDebugInfo;
-import com.foreach.across.modules.web.menu.Menu;
-import com.foreach.across.modules.web.menu.RequestMenuSelector;
 import gigadot.rebound.Rebound;
 import net.engio.mbassy.listener.Handler;
 import org.apache.commons.lang3.ArrayUtils;
@@ -23,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.*;
 import org.springframework.ui.Model;
@@ -47,12 +46,10 @@ public class AcrossInfoController
 
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		Menu menu = event.addItem( "/across/browser", "Across browser" );
-		menu.setAttribute( RequestMenuSelector.ATTRIBUTE_MATCHERS, Arrays.asList( menu.getUrl() ) );
-//		menu.setPath( menu.getUrl() );
-		menu.setUrl( menu.getUrl() + "/info/0" );
-
-		//menu.addItem( "/across/browser/search", "Context search" );
+		event.builder()
+		     .group( "/across", "Across" ).and()
+		     .item( "/across/browser", "Context browser", "/across/browser/info/0" ).order(
+				Ordered.HIGHEST_PRECEDENCE );
 	}
 
 	@ModelAttribute("contexts")

@@ -1,21 +1,19 @@
 package com.foreach.across.modules.debugweb.mvc;
 
-import com.foreach.across.core.AcrossModule;
-import com.foreach.across.modules.debugweb.DebugWebModule;
+import com.foreach.across.modules.debugweb.DebugWeb;
+import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
+import com.foreach.across.modules.web.menu.PrefixContextMenuItemBuilderProcessor;
 import com.foreach.across.modules.web.menu.RequestMenuBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 public class DebugMenuBuilder extends RequestMenuBuilder<DebugMenu, DebugMenuEvent>
 {
-	// TODO: use DebugWeb bean here
 	@Autowired
-	@Qualifier(AcrossModule.CURRENT_MODULE)
-	private DebugWebModule debugWebModule;
+	private DebugWeb debugWeb;
 
 	@Override
 	public DebugMenu build() {
-		DebugMenu debugMenu = new DebugMenu( debugWebModule.getRootPath() );
+		DebugMenu debugMenu = new DebugMenu();
 		setContext( debugMenu );
 
 		return debugMenu;
@@ -23,6 +21,11 @@ public class DebugMenuBuilder extends RequestMenuBuilder<DebugMenu, DebugMenuEve
 
 	@Override
 	protected DebugMenuEvent createEvent( DebugMenu menu ) {
-		return new DebugMenuEvent( menu );
+		PathBasedMenuBuilder menuBuilder = new PathBasedMenuBuilder( new PrefixContextMenuItemBuilderProcessor(
+				debugWeb ) );
+
+		menuBuilder.root( "/" ).title( "DebugWebModule" );
+
+		return new DebugMenuEvent( menu, menuBuilder );
 	}
 }

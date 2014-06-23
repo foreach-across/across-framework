@@ -14,7 +14,7 @@ public class ThreadsController
 {
 	@Handler
 	public void buildMenu( DebugMenuEvent event ) {
-		event.addItem( "/threadStack", "Threads and stack" );
+		event.builder().item( "/threadStack", "Threads and stack" );
 	}
 
 	@RequestMapping("/threadStack")
