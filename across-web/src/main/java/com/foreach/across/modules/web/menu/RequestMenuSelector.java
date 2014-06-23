@@ -4,6 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,6 +20,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RequestMenuSelector implements MenuSelector
 {
+	/**
+	 * Attribute on a menu to provide extra matching apart from url and standard path.
+	 * Value should be string or array of strings.
+	 */
+	public static final String ATTRIBUTE_MATCHERS = RequestMenuSelector.class.getCanonicalName() + ".MATCHERS";
+
 	private final HttpServletRequest request;
 	private final UrlPathHelper urlPathHelper;
 
@@ -65,12 +74,30 @@ public class RequestMenuSelector implements MenuSelector
 
 		AtomicInteger score = new AtomicInteger( calculated );
 
-		match( fullUrl, menu.getUrl(), 9, 7, score );
-		match( fullUrl, menu.getPath(), 9, 7, score );
-		match( servletPathWithQueryString, menu.getUrl(), 9, 7, score );
-		match( servletPathWithQueryString, menu.getPath(), 9, 7, score );
-		match( servletPath, menu.getUrl(), 8, 6, score );
-		match( servletPath, menu.getPath(), 8, 6, score );
+		Collection<String> stringsToMatch = new LinkedList<>();
+		stringsToMatch.add( menu.getUrl() );
+		stringsToMatch.add( menu.getPath() );
+
+		Object additionalStringsToMatch = menu.getAttribute( ATTRIBUTE_MATCHERS );
+
+		if ( additionalStringsToMatch != null ) {
+			if ( additionalStringsToMatch instanceof String ) {
+				stringsToMatch.add( (String) additionalStringsToMatch );
+			}
+			else if ( additionalStringsToMatch instanceof String[] ) {
+				stringsToMatch.addAll( Arrays.asList( (String[]) additionalStringsToMatch ) );
+			}
+			else {
+				throw new RuntimeException(
+						"Menu attribute " + ATTRIBUTE_MATCHERS + " only supports String or String[] values" );
+			}
+		}
+
+		for ( String stringToMatch : stringsToMatch ) {
+			match( fullUrl, stringToMatch, 9, 7, score );
+			match( servletPathWithQueryString, stringToMatch, 9, 7, score );
+			match( servletPath, stringToMatch, 8, 6, score );
+		}
 
 		calculated = score.intValue();
 

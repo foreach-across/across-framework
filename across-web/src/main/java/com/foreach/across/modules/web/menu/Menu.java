@@ -33,10 +33,9 @@ public class Menu implements Ordered
 
 	private int order = Ordered.LOWEST_PRECEDENCE - 1000;
 
-	private boolean ordered = false;
-	private boolean selected = false;
+	private boolean ordered, selected, group, disabled;
 	private String name, path, title, url;
-	private LinkedList<Menu> items = new LinkedList<Menu>();
+	private LinkedList<Menu> items = new LinkedList<>();
 	private List<Menu> readonlyItems = Collections.unmodifiableList( items );
 
 	private Comparator<Menu> comparator = null;
@@ -44,7 +43,7 @@ public class Menu implements Ordered
 
 	private Menu parent;
 
-	private Map<String, Object> attributes = new HashMap<String, Object>();
+	private Map<String, Object> attributes = new HashMap<>();
 
 	public Menu() {
 		this.path = "";
@@ -61,6 +60,15 @@ public class Menu implements Ordered
 	public Menu( String path, String title ) {
 		this( path );
 		setTitle( title );
+	}
+
+	/**
+	 * Copy constructor.
+	 *
+	 * @param original
+	 */
+	public Menu( Menu original ) {
+		merge( original, false );
 	}
 
 	void setParent( Menu parent ) {
@@ -108,6 +116,28 @@ public class Menu implements Ordered
 		}
 
 		return level;
+	}
+
+	/**
+	 * @return True if this Menu is in fact a group or items, but should not be treated as a single item in itself.
+	 */
+	public boolean isGroup() {
+		return group;
+	}
+
+	public void setGroup( boolean group ) {
+		this.group = group;
+	}
+
+	/**
+	 * @return True if this Menu should be treated as disabled.
+	 */
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled( boolean disabled ) {
+		this.disabled = disabled;
 	}
 
 	public String getName() {
@@ -185,6 +215,10 @@ public class Menu implements Ordered
 
 	public void setTitle( String title ) {
 		this.title = title;
+	}
+
+	public boolean hasTitle() {
+		return !StringUtils.isBlank( title );
 	}
 
 	public Map<String, Object> getAttributes() {
@@ -341,6 +375,14 @@ public class Menu implements Ordered
 		return readonlyItems;
 	}
 
+	public Menu getFirstItem() {
+		if ( hasItems() ) {
+			return items.getFirst();
+		}
+
+		return null;
+	}
+
 	public boolean hasItems() {
 		return !items.isEmpty();
 	}
@@ -363,6 +405,10 @@ public class Menu implements Ordered
 
 		items.add( item );
 		item.setParent( this );
+
+		if ( item.isSelected() ) {
+			item.setSelected( true );
+		}
 
 		return item;
 	}
@@ -426,6 +472,86 @@ public class Menu implements Ordered
 				item.sort( inheritable ? comparatorToInherit : null );
 			}
 		}
+	}
+
+	public int size() {
+		return items.size();
+	}
+
+	public void clear() {
+		for ( Menu item : items ) {
+			item.setParent( null );
+		}
+		items.clear();
+	}
+
+	/**
+	 * <p>
+	 * Merges the other menu into this one.
+	 * <ul>
+	 * <li>Any item with the same path will be modified</li>
+	 * <li>Any unknown item present in other will be added</li>
+	 * <li>Any item not present in other will be kept</li>
+	 * </ul>
+	 * In case an item is modified:
+	 * <ul>
+	 * <li>Properties are overwritten with the values from other</li>
+	 * <li>Attributes from other are added or overwritten (merge of attribute map)</li>
+	 * <li>All sub items undergo a merge</li>
+	 * </ul>
+	 * A merge only looks downstream, the parent structure does not get modified.  The selected item
+	 * however can be modified by the merge.
+	 * </p>
+	 *
+	 * @param other      Other menu to merge into the current instance.
+	 * @param ignoreRoot True if the root of the other Menu should be ignored, only children should be merged.
+	 */
+	public void merge( Menu other, boolean ignoreRoot ) {
+		if ( other != null ) {
+			if ( !ignoreRoot ) {
+				order = other.order;
+				ordered = other.ordered;
+				group = other.group;
+				disabled = other.disabled;
+				name = other.name;
+				path = other.path;
+				title = other.title;
+				url = other.url;
+				comparator = other.comparator;
+				comparatorInheritable = other.comparatorInheritable;
+
+				setSelected( other.selected );
+
+				for ( Map.Entry<String, Object> otherAttribute : other.getAttributes().entrySet() ) {
+					setAttribute( otherAttribute.getKey(), otherAttribute.getValue() );
+				}
+			}
+
+			// Merge items by path
+			for ( Menu otherItem : other.getItems() ) {
+				Menu existingItem = findDirectChildWithPath( otherItem.getPath() );
+
+				if ( existingItem != null ) {
+					existingItem.merge( otherItem, false );
+				}
+				else {
+					Menu duplicate = new Menu( otherItem );
+					duplicate.setParent( null );
+
+					addItem( duplicate );
+				}
+			}
+		}
+	}
+
+	private Menu findDirectChildWithPath( String path ) {
+		for ( Menu currentItem : items ) {
+			if ( StringUtils.equals( currentItem.path, path ) ) {
+				return currentItem;
+			}
+		}
+
+		return null;
 	}
 
 	@Override

@@ -13,6 +13,7 @@
 				<div class="nav navbar-left">
 					<div class="debug-warning">debug</div>
 				</div>
+
 				<ul class="nav navbar-nav">
 					<li th:each="menu : ${debugMenu.items}" th:class="${menu.hasItems()}? 'dropdown'" th:classappend="${menu.selected}? 'active'">
 						<a th:unless="${menu.hasItems()}" th:href="@{${menu.url}}" th:text="${menu.title}">main item</a>
@@ -25,7 +26,6 @@
 						</ul>
 					</li>
 				</ul>
-
 
 			</div>
 		</nav>

@@ -133,7 +133,6 @@
           </indentOptions>
         </codeStyleSettings>
         <codeStyleSettings language="JAVA">
-          <option name="KEEP_LINE_BREAKS" value="false" />
           <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
           <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
           <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="1" />
@@ -142,6 +141,7 @@
           <option name="WHILE_ON_NEW_LINE" value="true" />
           <option name="CATCH_ON_NEW_LINE" value="true" />
           <option name="FINALLY_ON_NEW_LINE" value="true" />
+          <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
           <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
           <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
           <option name="SPACE_WITHIN_PARENTHESES" value="true" />
@@ -156,7 +156,9 @@
           <option name="SPACE_WITHIN_ARRAY_INITIALIZER_BRACES" value="true" />
           <option name="SPACE_BEFORE_ARRAY_INITIALIZER_LBRACE" value="true" />
           <option name="CALL_PARAMETERS_WRAP" value="1" />
+          <option name="PREFER_PARAMETERS_WRAP" value="true" />
           <option name="METHOD_PARAMETERS_WRAP" value="5" />
+          <option name="METHOD_CALL_CHAIN_WRAP" value="1" />
           <option name="ARRAY_INITIALIZER_WRAP" value="1" />
           <option name="ASSIGNMENT_WRAP" value="1" />
           <option name="IF_BRACE_FORCE" value="3" />
@@ -286,7 +288,6 @@
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
-    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Clean" />
   </component>
 </project>
 

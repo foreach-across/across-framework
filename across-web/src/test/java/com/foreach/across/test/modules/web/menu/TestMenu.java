@@ -3,9 +3,12 @@ package com.foreach.across.test.modules.web.menu;
 import com.foreach.across.modules.web.menu.Menu;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Comparator;
 
-public class TestMenuHierarchy
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+
+public class TestMenu
 {
 	@Test
 	public void parentAndRootValidation() {
@@ -130,7 +133,7 @@ public class TestMenuHierarchy
 		subItem.addItem( "subsub1" ).setSelected( true );
 		subItem.addItem( "subsub2" );
 
-		assertFalse( menu.getItem( Menu.byPath( "path1" )).isSelected() );
+		assertFalse( menu.getItem( Menu.byPath( "path1" ) ).isSelected() );
 		assertTrue( menu.getItemWithPath( "path2" ).isSelected() );
 		assertFalse( menu.getItemWithPath( "sub1" ).isSelected() );
 		assertTrue( menu.getItemWithPath( "sub2" ).isSelected() );
@@ -228,5 +231,56 @@ public class TestMenuHierarchy
 		assertSame( item, menu.getSelectedItem() );
 		assertSame( subItem, menu.getLowestSelectedItem() );
 		assertNull( subItem.getSelectedItem() );
+	}
+
+	@Test
+	public void mergeMenu() {
+		@SuppressWarnings("unchecked")
+		Comparator<Menu> mockComparator = mock( Comparator.class );
+
+		Menu menu = new Menu();
+		menu.addItem( "path1" );
+
+		Menu item = menu.addItem( "path2" );
+		item.setAttribute( "myattribute", "myvalue" );
+		item.setAttribute( "myattribute2", "myvalue" );
+
+		Menu other = new Menu();
+		other.setPath( "other" );
+		other.setTitle( "title other" );
+		other.setDisabled( true );
+		other.setGroup( true );
+		other.setAttribute( "myattribute", "myothervalue" );
+		other.setAttribute( "myotherattribute", "myothervalue" );
+
+		Menu otherItem = other.addItem( "otherItem" );
+		otherItem.setSelected( true );
+		otherItem.setUrl( "other item url" );
+		otherItem.setComparator( mockComparator, true );
+
+		// Merge into sub-tree
+		item.merge( other, false );
+
+		assertEquals( 2, menu.size() );
+		assertEquals( "path1", menu.getFirstItem().getPath() );
+
+		Menu modified = menu.getItems().get( 1 );
+		assertEquals( "other", modified.getPath() );
+		assertEquals( "title other", modified.getTitle() );
+		assertTrue( modified.isDisabled() );
+		assertTrue( modified.isGroup() );
+		assertEquals( 3, modified.getAttributes().size() );
+		assertEquals( "myothervalue", modified.getAttribute( "myattribute" ) );
+		assertEquals( "myvalue", modified.getAttribute( "myattribute2" ) );
+		assertEquals( "myothervalue", modified.getAttribute( "myotherattribute" ) );
+		assertTrue( modified.isSelected() );
+
+		assertEquals( 1, modified.size() );
+		modified = modified.getFirstItem();
+		assertEquals( "otherItem", modified.getPath() );
+		assertEquals( "other item url", modified.getUrl() );
+		assertTrue( modified.isSelected() );
+		assertSame( mockComparator, modified.getComparator() );
+		assertTrue( modified.isComparatorInheritable() );
 	}
 }
