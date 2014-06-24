@@ -12,85 +12,77 @@ import java.util.Map;
  */
 public class InstallerSettings
 {
-	public static enum Action
-	{
-		/**
-		 * Execute if the regular conditions apply (this is the default when executing installers).
-		 */
-		EXECUTE,
+	private InstallerAction defaultAction = InstallerAction.DISABLED;
 
-		/**
-		 * Execute no matter what the installer conditions are.
-		 */
-		FORCE,
+	private InstallerActionResolver priorityActionResolver;
 
-		/**
-		 * Register the installer as if it has run.
-		 */
-		REGISTER,
+	private Map<String, InstallerAction> groupActions = new HashMap<>();
+	private Map<String, InstallerAction> installerActions = new HashMap<>();
 
-		/**
-		 * Skip the installer.
-		 */
-		SKIP,
-
-		/**
-		 * Disabled.  Basically the same as skip, but if disabled is the default action,
-		 * all more specific settings will be forcibly overruled.  No installers in this
-		 * set will execute.
-		 */
-		DISABLED
-	}
-
-	private Action defaultAction = Action.DISABLED;
-
-	private Map<String, Action> groupActions = new HashMap<>();
-	private Map<String, Action> installerActions = new HashMap<>();
-
-	public void setDefaultAction( Action defaultAction ) {
+	public void setDefaultAction( InstallerAction defaultAction ) {
 		this.defaultAction = defaultAction;
 	}
 
-	public Action getDefaultAction() {
+	public InstallerAction getDefaultAction() {
 		return defaultAction;
 	}
 
-	public void setGroupActions( Map<String, Action> groupActions ) {
+	public void setGroupActions( Map<String, InstallerAction> groupActions ) {
 		this.groupActions = groupActions;
 	}
 
-	public void setInstallerActions( Map<String, Action> installerActions ) {
+	public void setInstallerActions( Map<String, InstallerAction> installerActions ) {
 		this.installerActions = installerActions;
 	}
 
-	public Map<String, Action> getGroupActions() {
+	public Map<String, InstallerAction> getGroupActions() {
 		return groupActions;
 	}
 
-	public Map<String, Action> getInstallerActions() {
+	public Map<String, InstallerAction> getInstallerActions() {
 		return installerActions;
 	}
 
-	public void setActionForInstallerGroups( Action action, String... groups ) {
+	/**
+	 * @return The priority action resolver attached to the settings (default is null).
+	 */
+	public InstallerActionResolver getPriorityActionResolver() {
+		return priorityActionResolver;
+	}
+
+	/**
+	 * Sets a priority installer action resolver.  If one is set, that result will be used for the installer, unless:
+	 * <ul>
+	 * <li>the result from the resolver is null - in which case the normal flow will execute</li>
+	 * <li>the default action is DISABLED - in which case the resolver will not be called</li>
+	 * </ul>
+	 *
+	 * @param priorityActionResolver InstallerActionResolver instance.
+	 */
+	public void setPriorityActionResolver( InstallerActionResolver priorityActionResolver ) {
+		this.priorityActionResolver = priorityActionResolver;
+	}
+
+	public void setActionForInstallerGroups( InstallerAction action, String... groups ) {
 		setActionForInstallerGroups( action, Arrays.asList( groups ) );
 	}
 
-	public void setActionForInstallerGroups( Action action, Collection<String> groups ) {
+	public void setActionForInstallerGroups( InstallerAction action, Collection<String> groups ) {
 		for ( String group : groups ) {
 			Assert.notNull( group, "Cant put an action on a null group." );
 			groupActions.put( group, action );
 		}
 	}
 
-	public void setActionForInstallers( Action action, String... installers ) {
+	public void setActionForInstallers( InstallerAction action, String... installers ) {
 		setActionForInstallers( action, Arrays.asList( installers ) );
 	}
 
-	public void setActionForInstallers( Action action, Class... installerClasses ) {
+	public void setActionForInstallers( InstallerAction action, Class... installerClasses ) {
 		setActionForInstallers( action, Arrays.asList( installerClasses ) );
 	}
 
-	public void setActionForInstallers( Action action, Object... installers ) {
+	public void setActionForInstallers( InstallerAction action, Object... installers ) {
 		setActionForInstallers( action, Arrays.asList( installers ) );
 	}
 
@@ -100,7 +92,7 @@ public class InstallerSettings
 	 * @param action     Action to apply to these installers.
 	 * @param installers Installer name (String), type (Class) or instance.
 	 */
-	public void setActionForInstallers( Action action, Collection installers ) {
+	public void setActionForInstallers( InstallerAction action, Collection installers ) {
 		for ( Object installer : installers ) {
 			Assert.notNull( installer, "Installer should not be null." );
 
@@ -123,19 +115,35 @@ public class InstallerSettings
 	 * @param installer      Installer instance.
 	 * @return Action that should be performed according to the settings.
 	 */
-	public Action shouldRun( String installerGroup, Object installer ) {
+	public InstallerAction shouldRun( String installerGroup, Object installer ) {
 		if ( installer == null ) {
-			return Action.SKIP;
+			return InstallerAction.SKIP;
 		}
 
-		String installerId = installer.getClass().getCanonicalName();
-
-		Action action = installerActions.get( installerId );
-
-		if ( action != null ) {
-			return action;
+		if ( defaultAction == InstallerAction.DISABLED ) {
+			return InstallerAction.DISABLED;
 		}
 
-		return defaultAction;
+		InstallerAction action = null;
+
+		if ( priorityActionResolver != null ) {
+			action = priorityActionResolver.resolve( installerGroup, installer );
+		}
+
+		if ( action == null ) {
+			String installerId = installer.getClass().getCanonicalName();
+
+			action = installerActions.get( installerId );
+
+			if ( action == null ) {
+				action = groupActions.get( installerGroup );
+			}
+
+			if ( action == null ) {
+				action = defaultAction;
+			}
+		}
+
+		return action;
 	}
 }
