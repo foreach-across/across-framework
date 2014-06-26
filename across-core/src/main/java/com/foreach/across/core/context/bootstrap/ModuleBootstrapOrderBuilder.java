@@ -143,8 +143,7 @@ public class ModuleBootstrapOrderBuilder
 		for ( AcrossModule requirement : getAppliedRequiredDependencies( module ) ) {
 			if ( !orderedModules.contains( requirement ) ) {
 				if ( requiredStack.containsKey( requirement ) ) {
-					throw new RuntimeException(
-							"Unable to determine legal module bootstrap order, possible cyclic dependency on module " + requirement.getName() );
+					throw new CyclicModuleDependencyException( requirement.getName() );
 				}
 				else {
 					place( requiredStack, orderedModules, requirement );
@@ -170,7 +169,8 @@ public class ModuleBootstrapOrderBuilder
 					for ( Map.Entry<AcrossModule, AcrossModuleRole> targetModuleRole : moduleRoles.entrySet() ) {
 						AcrossModule target = targetModuleRole.getKey();
 
-						if ( targetModuleRole.getValue() != AcrossModuleRole.INFRASTRUCTURE && !appliedRequiredDependencies.get(
+						if ( targetModuleRole
+								.getValue() != AcrossModuleRole.INFRASTRUCTURE && !appliedRequiredDependencies.get(
 								infrastructure ).contains( target ) ) {
 							appliedRequiredDependencies.get( targetModuleRole.getKey() ).add( moduleRole.getKey() );
 						}
@@ -233,8 +233,7 @@ public class ModuleBootstrapOrderBuilder
 				// Required dependencies should have already been handled
 				for ( AcrossModule dependency : appliedRequiredDependencies.get( module ) ) {
 					if ( !handled.contains( dependency ) ) {
-						throw new RuntimeException(
-								"Unable to determine legal module bootstrap order, possible cyclic dependency on module " + dependency.getName() );
+						throw new CyclicModuleDependencyException( dependency.getName() );
 					}
 				}
 			}
@@ -280,12 +279,10 @@ public class ModuleBootstrapOrderBuilder
 
 		for ( String requiredModule : definedRequired ) {
 			if ( !modulesById.containsKey( requiredModule ) ) {
-				throw new RuntimeException(
-						"Unable to bootstrap AcrossContext as module " + module.getName() + " requires module " + requiredModule + ".  Module " + requiredModule + " is not present in the context." );
+				throw new ModuleDependencyMissingException( module.getName(), requiredModule );
 			}
 			else if ( !modulesById.get( requiredModule ).isEnabled() ) {
-				throw new RuntimeException(
-						"Unable to bootstrap AcrossContext as module " + module.getName() + " requires module " + requiredModule + ".  Module " + requiredModule + " is present but is not enabled." );
+				throw new ModuleDependencyDisabledException( module.getName(), requiredModule );
 			}
 
 			requiredByModule.add( modulesById.get( requiredModule ) );

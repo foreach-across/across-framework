@@ -69,6 +69,10 @@ public class AcrossContext extends AcrossApplicationContextHolder implements Dis
 		parentApplicationContext = parentContext;
 	}
 
+	public void setParentApplicationContext( ApplicationContext parentApplicationContext ) {
+		this.parentApplicationContext = parentApplicationContext;
+	}
+
 	public ApplicationContext getParentApplicationContext() {
 		return parentApplicationContext;
 	}

@@ -29,20 +29,6 @@ public class DemoPermissionsInstaller
 		assignPermissionsToExistingRole();
 	}
 
-	private void assignPermissionsToExistingRole() {
-		// Extend the admin role with the new permissions
-		Role role = roleService.getRole( "ROLE_ADMIN" );
-
-		if ( role != null ) {
-			role.addPermission( "read something", "write something" );
-			roleService.save( role );
-		}
-		else {
-			LOG.warn(
-					"ROLE_ADMIN does not appear to exist - the demo permissions have not been assigned to any role." );
-		}
-	}
-
 	private void createPermissionGroupAndPermissions() {
 		// Register the permissions - a default group with these permissions will be created if not found
 		permissionService.definePermission( "read something", "The user can read something.", "demo-permissions" );
@@ -55,5 +41,19 @@ public class DemoPermissionsInstaller
 				"Custom permissions defined by the DemoWebModule to illustrate integration with the UserModule." );
 
 		permissionService.save( permissionGroup );
+	}
+
+	private void assignPermissionsToExistingRole() {
+		// Extend the admin role with the new permissions
+		Role role = roleService.getRole( "ROLE_ADMIN" );
+
+		if ( role != null ) {
+			role.addPermission( "read something", "write something" );
+			roleService.save( role );
+		}
+		else {
+			LOG.warn(
+					"ROLE_ADMIN does not appear to exist - the demo permissions have not been assigned to any role." );
+		}
 	}
 }
