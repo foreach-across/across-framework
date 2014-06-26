@@ -11,7 +11,9 @@ import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.core.installers.AcrossSequencesInstaller;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.*;
-import com.foreach.across.modules.user.config.*;
+import com.foreach.across.modules.user.config.UserRepositoriesConfiguration;
+import com.foreach.across.modules.user.config.UserSchemaConfiguration;
+import com.foreach.across.modules.user.config.UserServicesConfiguration;
 import com.foreach.across.modules.user.config.modules.UserAdminWebConfiguration;
 import com.foreach.across.modules.user.config.modules.UserSpringSecurityConfiguration;
 import com.foreach.across.modules.user.installers.DefaultUserInstaller;
@@ -40,15 +42,22 @@ public class UserModule extends AcrossModule implements HasHibernatePackageProvi
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 		contextConfigurers.add(
-				new AnnotatedClassConfigurer( UserRepositoriesConfiguration.class, UserServicesConfiguration.class,
-				                              UserAdminWebConfiguration.class,
-				                              UserSpringSecurityConfiguration.class ) );
+				new AnnotatedClassConfigurer(
+						UserRepositoriesConfiguration.class,
+						UserServicesConfiguration.class,
+						UserAdminWebConfiguration.class,
+						UserSpringSecurityConfiguration.class
+				)
+		);
 	}
 
 	@Override
 	public Object[] getInstallers() {
-		return new Object[] { new AcrossSequencesInstaller(), new UserSchemaInstaller( schemaConfiguration ),
-		                      new DefaultUserInstaller() };
+		return new Object[] {
+				new AcrossSequencesInstaller(),
+				new UserSchemaInstaller( schemaConfiguration ),
+				new DefaultUserInstaller()
+		};
 	}
 
 	/**
@@ -74,6 +83,7 @@ public class UserModule extends AcrossModule implements HasHibernatePackageProvi
 
 	@Override
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
-		contextConfig.extendModule( "SpringSecurityModule", UserSpringSecurityConfiguration.UserDetailsServiceConfiguration.class );
+		contextConfig.extendModule( "SpringSecurityModule",
+		                            UserSpringSecurityConfiguration.UserDetailsServiceConfiguration.class );
 	}
 }

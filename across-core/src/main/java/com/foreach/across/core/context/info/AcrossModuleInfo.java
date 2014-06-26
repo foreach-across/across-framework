@@ -10,6 +10,8 @@ import java.util.Collection;
 
 public interface AcrossModuleInfo extends AcrossEntity
 {
+	static final String CURRENT_MODULE = "across.currentModuleInfo";
+
 	/**
 	 * @return The info object of the AcrossContext this module belongs to.
 	 */

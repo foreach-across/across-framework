@@ -195,6 +195,7 @@ public class AcrossBootstrapper
 
 			// Provide the current module bean
 			Map<String, Object> providedSingletons = new HashMap<String, Object>();
+			providedSingletons.put( AcrossModuleInfo.CURRENT_MODULE, new PrimarySingletonBean( moduleInfo ) );
 			providedSingletons.put( AcrossModule.CURRENT_MODULE, new PrimarySingletonBean( module ) );
 
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
