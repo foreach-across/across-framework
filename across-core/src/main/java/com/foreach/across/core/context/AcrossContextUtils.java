@@ -11,6 +11,8 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.filters.AnnotatedMethodFilter;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
@@ -119,8 +121,9 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return ApplicationContext defined in the holder or null if none.
 	 */
-	public static AbstractApplicationContext getApplicationContext( AcrossApplicationContextHolder contextOrModule ) {
-		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext().getApplicationContext() : null;
+	public static AbstractApplicationContext getApplicationContext( AbstractAcrossEntity contextOrModule ) {
+		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext()
+		                                                                .getApplicationContext() : null;
 	}
 
 	/**
@@ -139,8 +142,9 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return BeanFactory linked to the ApplicationContext in the holder or null if not yet available.
 	 */
-	public static ConfigurableListableBeanFactory getBeanFactory( AcrossApplicationContextHolder contextOrModule ) {
-		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext().getBeanFactory() : null;
+	public static ConfigurableListableBeanFactory getBeanFactory( AbstractAcrossEntity contextOrModule ) {
+		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext()
+		                                                                .getBeanFactory() : null;
 	}
 
 	/**
@@ -149,17 +153,17 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return AcrossApplicationContext wrapping the Spring ApplicationContext.
 	 */
-	public static AcrossApplicationContext getAcrossApplicationContext( AcrossApplicationContextHolder contextOrModule ) {
+	public static AcrossApplicationContext getAcrossApplicationContext( AbstractAcrossEntity contextOrModule ) {
 		return contextOrModule.getAcrossApplicationContext();
 	}
 
 	/**
 	 * Sets the ApplicationContext wrapper on an AcrossContext or AcrossModule.
 	 *
-	 * @param contextOrModule    AcrossApplicationHolder instance.
+	 * @param contextOrModule    AbstractAcrossEntity instance.
 	 * @param applicationContext AcrossApplicationContext instance.
 	 */
-	public static void setAcrossApplicationContext( AcrossApplicationContextHolder contextOrModule,
+	public static void setAcrossApplicationContext( AbstractAcrossEntity contextOrModule,
 	                                                AcrossApplicationContext applicationContext ) {
 		contextOrModule.setAcrossApplicationContext( applicationContext );
 	}
@@ -172,8 +176,8 @@ public final class AcrossContextUtils
 	 * @param <T>             Type of the matching bean.
 	 * @return Bean found.  Exception is thrown if none is found.
 	 */
-	public static <T> T getBeanOfType( AcrossApplicationContextHolder contextOrModule, Class<T> requiredType ) {
-		return contextOrModule.getAcrossApplicationContext().getBeanFactory().getBean( requiredType );
+	public static <T> T getBeanOfType( AcrossEntity contextOrModule, Class<T> requiredType ) {
+		return getAcrossApplicationContext( contextOrModule ).getBeanFactory().getBean( requiredType );
 	}
 
 	/**
@@ -185,6 +189,26 @@ public final class AcrossContextUtils
 	 */
 	public static <T> Collection<T> getBeansOfType( AcrossContext context, Class<T> requiredType ) {
 		return getBeansOfType( context, requiredType, false );
+	}
+
+	/**
+	 * Returns the AcrossApplicationContext attached to the module or context entity.
+	 *
+	 * @param contextOrModule AcrossApplicationHolder instance.
+	 * @return Across application context information.
+	 */
+	public static AcrossApplicationContext getAcrossApplicationContext( AcrossEntity contextOrModule ) {
+		if ( contextOrModule instanceof AbstractAcrossEntity ) {
+			return ( (AbstractAcrossEntity) contextOrModule ).getAcrossApplicationContext();
+		}
+		else if ( contextOrModule instanceof AcrossModuleInfo ) {
+			return ( (AcrossModuleInfo) contextOrModule ).getModule().getAcrossApplicationContext();
+		}
+		else if ( contextOrModule instanceof AcrossContextInfo ) {
+			return ( (AcrossContextInfo) contextOrModule ).getContext().getAcrossApplicationContext();
+		}
+
+		return null;
 	}
 
 	/**
@@ -230,7 +254,8 @@ public final class AcrossContextUtils
 			configurers.add( new AnnotatedClassConfigurer( AcrossInstallerConfig.class ) );
 		}
 
-		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context.getApplicationContextConfigurers().entrySet() ) {
+		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context
+				.getApplicationContextConfigurers().entrySet() ) {
 			if ( configurerEntry.getValue() != ConfigurerScope.MODULES_ONLY ) {
 				configurers.add( configurerEntry.getKey() );
 			}
@@ -260,7 +285,8 @@ public final class AcrossContextUtils
 		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
 
 		// First add configurers defined on the context
-		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context.getApplicationContextConfigurers().entrySet() ) {
+		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context
+				.getApplicationContextConfigurers().entrySet() ) {
 			if ( configurerEntry.getValue() != ConfigurerScope.CONTEXT_ONLY ) {
 				configurers.add( configurerEntry.getKey() );
 			}

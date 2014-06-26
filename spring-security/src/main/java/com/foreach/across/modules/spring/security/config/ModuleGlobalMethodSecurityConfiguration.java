@@ -2,6 +2,7 @@ package com.foreach.across.modules.spring.security.config;
 
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.modules.spring.security.SpringSecurityModule;
@@ -60,8 +61,8 @@ public class ModuleGlobalMethodSecurityConfiguration extends GlobalMethodSecurit
 			AcrossModuleInfo springSecurityModule = context.getModuleInfo( SpringSecurityModule.NAME );
 			Assert.notNull( springSecurityModule );
 
-			delegate = springSecurityModule.getApplicationContext().getBeansOfType(
-					AuthenticationManagerBuilder.class ).values().iterator().next().getOrBuild();
+			delegate = AcrossContextUtils.getBeanOfType( springSecurityModule, AuthenticationManagerBuilder.class )
+			                             .getOrBuild();
 		}
 	}
 

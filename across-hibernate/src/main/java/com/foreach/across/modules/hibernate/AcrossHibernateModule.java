@@ -15,7 +15,10 @@ import com.foreach.across.modules.hibernate.provider.HibernatePackage;
 import com.foreach.across.modules.hibernate.provider.HibernatePackageProvider;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Activates hibernate support on all modules implementing HasHibernatePackageProvider
@@ -171,7 +174,8 @@ public class AcrossHibernateModule extends AcrossModule
 
 		if ( isConfigureTransactionManagement() ) {
 			currentModule.addApplicationContextConfigurer(
-					new AnnotatedClassConfigurer( TransactionManagerConfiguration.class ) );
+					new AnnotatedClassConfigurer( TransactionManagerConfiguration.class )
+			);
 		}
 
 		if ( autoEnableModules ) {
@@ -195,11 +199,13 @@ public class AcrossHibernateModule extends AcrossModule
 		}
 
 		currentModule.addApplicationContextConfigurer(
-				new SingletonBeanConfigurer( "hibernatePackage", hibernatePackage, true ) );
+				new SingletonBeanConfigurer( "hibernatePackage", hibernatePackage, true )
+		);
 
 		if ( configureUnitOfWorkFactory ) {
 			currentModule.addApplicationContextConfigurer(
-					new AnnotatedClassConfigurer( UnitOfWorkConfiguration.class ) );
+					new AnnotatedClassConfigurer( UnitOfWorkConfiguration.class )
+			);
 		}
 	}
 }

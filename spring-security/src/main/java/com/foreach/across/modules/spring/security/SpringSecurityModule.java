@@ -10,10 +10,11 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.filters.ClassBeanFilter;
 import com.foreach.across.core.filters.NamedBeanFilter;
-import com.foreach.across.modules.spring.security.config.GlobalWebSecurityConfiguration;
 import com.foreach.across.modules.spring.security.config.ModuleGlobalMethodSecurityConfiguration;
 import com.foreach.across.modules.spring.security.config.SpringSecurityAcrossWebConfiguration;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
 
@@ -43,8 +44,7 @@ public class SpringSecurityModule extends AcrossModule
 
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-		contextConfigurers.add( new AnnotatedClassConfigurer( GlobalWebSecurityConfiguration.class,
-		                                                      SpringSecurityAcrossWebConfiguration.class ) );
+		contextConfigurers.add( new AnnotatedClassConfigurer( SpringSecurityAcrossWebConfiguration.class ) );
 	}
 
 	@Override
@@ -52,8 +52,19 @@ public class SpringSecurityModule extends AcrossModule
 		for ( ModuleBootstrapConfig moduleBootstrapConfig : contextConfig.getModules() ) {
 			if ( moduleBootstrapConfig != currentModule ) {
 				moduleBootstrapConfig.addApplicationContextConfigurer(
-						new AnnotatedClassConfigurer( ModuleGlobalMethodSecurityConfiguration.class ) );
+						new AnnotatedClassConfigurer( ModuleGlobalMethodSecurityConfiguration.class )
+				);
 			}
+		}
+
+		// Fallback to regular authentication configuration in case there is no web context
+		if ( !contextConfig.hasModule( "AcrossWebModule" ) ) {
+			currentModule.addApplicationContextConfigurer(
+					new AnnotatedClassConfigurer(
+							AuthenticationConfiguration.class,
+							ObjectPostProcessorConfiguration.class
+					)
+			);
 		}
 	}
 }

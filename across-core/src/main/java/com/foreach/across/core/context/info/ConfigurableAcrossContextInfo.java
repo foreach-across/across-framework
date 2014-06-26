@@ -1,10 +1,13 @@
 package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.Ordered;
+import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -103,5 +106,27 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 
 	public void setBootstrapConfiguration( AcrossBootstrapConfig bootstrapConfiguration ) {
 		this.bootstrapConfiguration = bootstrapConfiguration;
+	}
+
+	@Override
+	public int getModuleIndex( String moduleName ) {
+		for ( AcrossModuleInfo moduleInfo : configuredModules ) {
+			if ( StringUtils.equals( moduleName, moduleInfo.getName() ) ) {
+				return moduleInfo.getIndex();
+			}
+		}
+		return Ordered.LOWEST_PRECEDENCE;
+	}
+
+	@Override
+	public int getModuleIndex( AcrossModule module ) {
+		Assert.notNull( module );
+		return getModuleIndex( module.getName() );
+	}
+
+	@Override
+	public int getModuleIndex( AcrossModuleInfo moduleInfo ) {
+		Assert.notNull( moduleInfo );
+		return getModuleIndex( moduleInfo.getName() );
 	}
 }

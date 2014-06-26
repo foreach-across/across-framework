@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.web.bind.support.AuthenticationPrincipalArgumentResolver;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -17,6 +18,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Configuration
+@EnableWebMvcSecurity
 @AcrossDepends(required = "AcrossWebModule")
 public class SpringSecurityAcrossWebConfiguration
 {

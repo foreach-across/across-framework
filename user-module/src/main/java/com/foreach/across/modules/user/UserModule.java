@@ -12,6 +12,8 @@ import com.foreach.across.core.installers.AcrossSequencesInstaller;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.*;
 import com.foreach.across.modules.user.config.*;
+import com.foreach.across.modules.user.config.modules.UserAdminWebConfiguration;
+import com.foreach.across.modules.user.config.modules.UserSpringSecurityConfiguration;
 import com.foreach.across.modules.user.installers.DefaultUserInstaller;
 import com.foreach.across.modules.user.installers.UserSchemaInstaller;
 import org.apache.commons.lang3.StringUtils;
@@ -72,6 +74,6 @@ public class UserModule extends AcrossModule implements HasHibernatePackageProvi
 
 	@Override
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
-		contextConfig.extendModule( "SpringSecurityModule", UserSpringSecurityConfiguration.SecConfig.class );
+		contextConfig.extendModule( "SpringSecurityModule", UserSpringSecurityConfiguration.UserDetailsServiceConfiguration.class );
 	}
 }

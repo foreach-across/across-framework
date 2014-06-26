@@ -1,6 +1,6 @@
 package com.foreach.across.core;
 
-import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AbstractAcrossEntity;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
@@ -28,7 +28,7 @@ import java.util.*;
  * This class takes care of managing the global Spring ApplicationContext related to all modules,
  * and will make sure that different modules are handled in the order in which they are registered.
  */
-public class AcrossContext extends AcrossApplicationContextHolder implements DisposableBean
+public class AcrossContext extends AbstractAcrossEntity implements DisposableBean
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContext.class );
 

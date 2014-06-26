@@ -1,9 +1,10 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AbstractAcrossEntity;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
@@ -20,7 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AcrossModule extends AcrossApplicationContextHolder
+public abstract class AcrossModule extends AbstractAcrossEntity
 {
 	// The current module (owning the ApplicationContext) can always be referenced under this qualifier
 	public static final String CURRENT_MODULE = "across.currentModule";
@@ -135,6 +136,15 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 
 	public Set<ApplicationContextConfigurer> getApplicationContextConfigurers() {
 		return applicationContextConfigurers;
+	}
+
+	/**
+	 * <p>Add one or more annotated classes to the module ApplicationContext.</p>
+	 *
+	 * @param annotatedClasses Configuration classes.
+	 */
+	public void addApplicationContextConfigurer( Class... annotatedClasses ) {
+		addApplicationContextConfigurer( new AnnotatedClassConfigurer( annotatedClasses ) );
 	}
 
 	/**

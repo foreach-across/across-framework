@@ -9,21 +9,21 @@ import org.springframework.core.io.support.ResourcePropertySource;
 import java.io.IOException;
 import java.util.Properties;
 
-public abstract class AcrossApplicationContextHolder
+public abstract class AbstractAcrossEntity implements AcrossEntity
 {
 	private AcrossApplicationContext acrossApplicationContext;
 
 	private Properties properties = new Properties();
 
-	AcrossApplicationContext getAcrossApplicationContext() {
+	public AcrossApplicationContext getAcrossApplicationContext() {
 		return acrossApplicationContext;
 	}
 
-	void setAcrossApplicationContext( AcrossApplicationContext acrossApplicationContext ) {
+	public void setAcrossApplicationContext( AcrossApplicationContext acrossApplicationContext ) {
 		this.acrossApplicationContext = acrossApplicationContext;
 	}
 
-	boolean hasApplicationContext() {
+	public boolean hasApplicationContext() {
 		return acrossApplicationContext != null;
 	}
 

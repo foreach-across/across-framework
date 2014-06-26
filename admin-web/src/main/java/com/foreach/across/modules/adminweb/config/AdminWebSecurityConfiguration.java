@@ -1,12 +1,14 @@
 package com.foreach.across.modules.adminweb.config;
 
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.adminweb.AdminWeb;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.adminweb.AdminWebModuleSettings;
 import com.foreach.across.modules.adminweb.events.AdminWebUrlRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
@@ -20,7 +22,8 @@ import javax.annotation.PostConstruct;
 public class AdminWebSecurityConfiguration extends WebSecurityConfigurerAdapter implements Ordered
 {
 	@Autowired
-	private AcrossContextInfo contextInfo;
+	@Qualifier(AdminWebModule.NAME)
+	private AcrossModuleInfo adminWebModule;
 
 	@Autowired
 	private AcrossEventPublisher publisher;
@@ -32,12 +35,12 @@ public class AdminWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 
 	@PostConstruct
 	public void prepare() {
-		adminWebEnvironment = contextInfo.getModuleInfo( AdminWebModule.NAME ).getApplicationContext().getEnvironment();
+		adminWebEnvironment = adminWebModule.getApplicationContext().getEnvironment();
 	}
 
 	@Override
 	public int getOrder() {
-		return 1;
+		return adminWebModule.getIndex();
 	}
 
 	@Override
@@ -60,8 +63,9 @@ public class AdminWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 		if ( adminWeb.getSettings().isRememberMeEnabled() ) {
 			String rememberMeKey = adminWebEnvironment.getProperty( AdminWebModuleSettings.REMEMBER_ME_KEY, "" );
 			int rememberMeValiditySeconds =
-					adminWebEnvironment.getProperty( AdminWebModuleSettings.REMEMBER_ME_TOKEN_VALIDITY_SECONDS, Integer.class,
-					                         259200 );
+					adminWebEnvironment.getProperty( AdminWebModuleSettings.REMEMBER_ME_TOKEN_VALIDITY_SECONDS,
+					                                 Integer.class,
+					                                 259200 );
 
 			http.rememberMe().key( rememberMeKey ).tokenValiditySeconds( rememberMeValiditySeconds );
 		}

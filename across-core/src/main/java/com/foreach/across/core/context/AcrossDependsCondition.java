@@ -1,13 +1,12 @@
 package com.foreach.across.core.context;
 
-import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.*;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -52,12 +51,19 @@ public class AcrossDependsCondition implements Condition
 		boolean shouldLoad = true;
 
 		if ( required.length > 0 || optional.length > 0 ) {
-			AcrossContext acrossContext =
-					context.getBeanFactory().getParentBeanFactory().getBean( AcrossContext.class );
+			AcrossContextInfo acrossContext =
+					context.getBeanFactory().getParentBeanFactory().getBean( AcrossContextInfo.class );
 
 			for ( String requiredModuleId : required ) {
-				if ( !hasModule( acrossContext, requiredModuleId ) ) {
+				AcrossModuleInfo moduleInfo = acrossContext.getModuleInfo( requiredModuleId );
+
+				if ( moduleInfo == null ) {
 					LOG.trace( "AcrossDependsCondition does not match because required module {} is not present",
+					           requiredModuleId );
+					return false;
+				}
+				else if ( !moduleInfo.isEnabled() ) {
+					LOG.trace( "AcrossDependsCondition does not match because required module {} is disabled",
 					           requiredModuleId );
 					return false;
 				}
@@ -67,7 +73,9 @@ public class AcrossDependsCondition implements Condition
 			shouldLoad = optional.length == 0;
 
 			for ( String optionalModuleId : optional ) {
-				if ( hasModule( acrossContext, optionalModuleId ) ) {
+				AcrossModuleInfo moduleInfo = acrossContext.getModuleInfo( optionalModuleId );
+
+				if ( moduleInfo != null && moduleInfo.isEnabled() ) {
 					LOG.trace( "AcrossDependsCondition matches because optional module {} is present",
 					           optionalModuleId );
 					shouldLoad = true;
@@ -120,21 +128,6 @@ public class AcrossDependsCondition implements Condition
 		return result;
 	}
 
-	private boolean hasModule( AcrossContext context, String moduleId ) {
-		for ( AcrossModule module : context.getModules() ) {
-			if ( module.isEnabled() ) {
-				if ( StringUtils.equals( moduleId, module.getName() ) ) {
-					return true;
-				}
-				if ( StringUtils.equals( module.getClass().getName(), moduleId ) ) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
 	private static final class CurrentModuleBeanExpressionContext extends BeanExpressionContext
 	{
 		private CurrentModuleBeanExpressionContext( ConfigurableBeanFactory beanFactory, Scope scope ) {
@@ -143,17 +136,11 @@ public class AcrossDependsCondition implements Condition
 
 		// Provided for SPEL property
 		public AcrossModule getCurrentModule() {
-			Map<String, AcrossModule> modules =
-					BeanFactoryUtils.beansOfTypeIncludingAncestors( (ListableBeanFactory) getBeanFactory(),
-					                                                AcrossModule.class, false, false );
+			AcrossModuleInfo moduleInfo = getBeanFactory().getBean( AcrossContextInfo.class )
+			                                              .getModuleBeingBootstrapped();
 
-			for ( AcrossModule module : modules.values() ) {
-				if ( AcrossContextUtils.getBeanFactory( module ) == getBeanFactory() ) {
-					return module;
-				}
-			}
+			return moduleInfo != null ? moduleInfo.getModule() : null;
 
-			return null;
 		}
 	}
 }

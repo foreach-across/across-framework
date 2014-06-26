@@ -1,4 +1,4 @@
-package com.foreach.across.modules.user.config;
+package com.foreach.across.modules.user.config.modules;
 
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.user.controllers.RoleController;

@@ -59,9 +59,8 @@ public class AcrossBootstrapper
 		Collection<AcrossModuleInfo> modulesInOrder = contextInfo.getModules();
 
 		LOG.debug( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
-		int order = 1;
 		for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
-			LOG.debug( "{} - {}: {}", order++, moduleInfo.getName(), moduleInfo.getModule().getClass() );
+			LOG.debug( "{} - {}: {}", moduleInfo.getIndex(), moduleInfo.getName(), moduleInfo.getModule().getClass() );
 		}
 
 		runModuleBootstrapperCustomizations( modulesInOrder );
@@ -79,6 +78,7 @@ public class AcrossBootstrapper
 		installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
 
 		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
+		beanHelper.addSingleton( "acrossContextInfo", contextInfo );
 
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 			ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
@@ -141,8 +141,9 @@ public class AcrossBootstrapper
 
 		Collection<AcrossModuleInfo> configured = new LinkedList<>();
 
+		int row = 1;
 		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
-			configured.add( new ConfigurableAcrossModuleInfo( contextInfo, module ) );
+			configured.add( new ConfigurableAcrossModuleInfo( contextInfo, module, row++ ) );
 		}
 
 		contextInfo.setConfiguredModules( configured );
@@ -173,7 +174,7 @@ public class AcrossBootstrapper
 		return infoList;
 	}
 
-	private void prepareForBootstrap(AcrossContextInfo contextInfo ) {
+	private void prepareForBootstrap( AcrossContextInfo contextInfo ) {
 		for ( ModuleBootstrapConfig moduleConfig : contextInfo.getBootstrapConfiguration().getModules() ) {
 			moduleConfig.getModule().prepareForBootstrap( moduleConfig, contextInfo.getBootstrapConfiguration() );
 		}
@@ -248,9 +249,9 @@ public class AcrossBootstrapper
 		providedBeans.put( AcrossContext.BEAN, new PrimarySingletonBean( context ) );
 		providedBeans.put( AcrossContextInfo.BEAN, new PrimarySingletonBean( contextInfo ) );
 
-		// Put the (configured) modules as singletons in the context
+		// Put the module info as singletons in the context
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getConfiguredModules() ) {
-			providedBeans.put( moduleInfo.getName(), new PrimarySingletonBean( moduleInfo.getModule() ) );
+			providedBeans.put( moduleInfo.getName(), new PrimarySingletonBean( moduleInfo ) );
 		}
 
 		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),
