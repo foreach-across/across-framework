@@ -5,7 +5,6 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,7 +79,7 @@ public class ContextDebugInfo
 
 		list.addFirst( createForContext( context ) );
 
-		ApplicationContext parent = context.getConfiguration().getParentApplicationContext();
+		ApplicationContext parent = context.getContext().getParentApplicationContext();
 
 		while ( parent != null ) {
 			list.addFirst( createForApplicationContext( parent ) );

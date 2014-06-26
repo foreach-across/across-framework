@@ -59,7 +59,7 @@ public abstract class AcrossLiquibaseInstaller
 
 	@InstallerMethod
 	public void install() {
-		AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext.getConfiguration() );
+		AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext.getContext() );
 
 		SpringLiquibase liquibase = new SpringLiquibase();
 		liquibase.setChangeLog( changelog );

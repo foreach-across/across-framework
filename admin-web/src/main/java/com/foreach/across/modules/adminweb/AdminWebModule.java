@@ -2,6 +2,7 @@ package com.foreach.across.modules.adminweb;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
@@ -10,7 +11,6 @@ import com.foreach.across.modules.adminweb.config.AdminWebSecurityConfiguration;
 import com.foreach.across.modules.spring.security.SpringSecurityModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 
-import java.util.Map;
 import java.util.Set;
 
 @AcrossDepends(required = { AcrossWebModule.NAME, SpringSecurityModule.NAME })
@@ -55,13 +55,7 @@ public class AdminWebModule extends AcrossModule
 
 	@Override
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
-	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
-
-		for ( ModuleBootstrapConfig config : modulesInOrder.values() ) {
-			if ( config.getModuleName().equalsIgnoreCase( "SpringSecurityModule" ) ) {
-				config.addApplicationContextConfigurer(
-						new AnnotatedClassConfigurer( AdminWebSecurityConfiguration.class ) );
-			}
-		}
+	                                 AcrossBootstrapConfig contextConfig ) {
+		contextConfig.extendModule( "SpringSecurityModule", AdminWebSecurityConfiguration.class );
 	}
 }

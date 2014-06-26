@@ -2,6 +2,7 @@ package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
@@ -14,7 +15,10 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class AcrossModule extends AcrossApplicationContextHolder
 {
@@ -175,14 +179,14 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	 * <p>Called when a context is preparing to bootstrap, but before the actual bootstrap happens.
 	 * This is the last chance for a module to modify itself or its siblings before the actual
 	 * bootstrapping will occur.</p>
-	 * <p>Only modules that will actually bootstrap will be passed as parameters to this method.
+	 * <p>Only modules that will actually bootstrap will be available in the context configuration.
 	 * Any disabled modules will not be present.</p>
 	 *
-	 * @param currentModule  Bootstrap configuration of the current module.
-	 * @param modulesInOrder Map of all modules that are being bootstrapped, in the bootstrap order and with their corresponding config.
+	 * @param currentModule Bootstrap configuration of the current module.
+	 * @param contextConfig Bootstrap configuration of the entire context.
 	 */
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
-	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
+	                                 AcrossBootstrapConfig contextConfig ) {
 	}
 
 	/**

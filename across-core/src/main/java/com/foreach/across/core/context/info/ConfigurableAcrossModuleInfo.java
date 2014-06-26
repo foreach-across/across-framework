@@ -36,7 +36,7 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	}
 
 	@Override
-	public AcrossContextInfo getContext() {
+	public AcrossContextInfo getContextInfo() {
 		return context;
 	}
 

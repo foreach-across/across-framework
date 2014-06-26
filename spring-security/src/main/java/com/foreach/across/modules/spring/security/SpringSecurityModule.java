@@ -3,6 +3,7 @@ package com.foreach.across.modules.spring.security;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
@@ -16,7 +17,6 @@ import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.access.WebInvocationPrivilegeEvaluator;
 
-import java.util.Map;
 import java.util.Set;
 
 @AcrossRole(AcrossModuleRole.POSTPROCESSOR)
@@ -48,9 +48,8 @@ public class SpringSecurityModule extends AcrossModule
 	}
 
 	@Override
-	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
-	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
-		for ( ModuleBootstrapConfig moduleBootstrapConfig : modulesInOrder.values() ) {
+	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
+		for ( ModuleBootstrapConfig moduleBootstrapConfig : contextConfig.getModules() ) {
 			if ( moduleBootstrapConfig != currentModule ) {
 				moduleBootstrapConfig.addApplicationContextConfigurer(
 						new AnnotatedClassConfigurer( ModuleGlobalMethodSecurityConfiguration.class ) );

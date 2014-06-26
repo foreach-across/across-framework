@@ -1,6 +1,7 @@
 package com.foreach.across.modules.hibernate;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
@@ -159,19 +160,9 @@ public class AcrossHibernateModule extends AcrossModule
 		contextConfigurers.add( new AnnotatedClassConfigurer( HibernateConfiguration.class ) );
 	}
 
-	/**
-	 * <p>Called when a context is preparing to bootstrap, but before the actual bootstrap happens.
-	 * This is the last chance for a module to modify itself or its siblings before the actual
-	 * bootstrapping will occur.</p>
-	 * <p>Only modules that will actually bootstrap will be passed as parameters to this method.
-	 * Any disabled modules will not be present.</p>
-	 *
-	 * @param currentModule  Bootstrap configuration of the current module.
-	 * @param modulesInOrder Map of all modules that are being bootstrapped, in the bootstrap order and with their corresponding config.
-	 */
 	@Override
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
-	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
+	                                 AcrossBootstrapConfig contextConfig ) {
 		HibernatePackage hibernatePackage = new HibernatePackage();
 
 		for ( HibernatePackageProvider provider : getHibernatePackageProviders() ) {
@@ -184,7 +175,7 @@ public class AcrossHibernateModule extends AcrossModule
 		}
 
 		if ( autoEnableModules ) {
-			for ( ModuleBootstrapConfig config : modulesInOrder.values() ) {
+			for ( ModuleBootstrapConfig config : contextConfig.getModules() ) {
 				AcrossModule module = config.getModule();
 
 				if ( module instanceof HasHibernatePackageProvider ) {

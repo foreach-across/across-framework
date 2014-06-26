@@ -2,6 +2,7 @@ package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
@@ -17,14 +18,14 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	private Collection<AcrossModuleInfo> configuredModules =
 			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
 
-	private AcrossModuleInfo moduleBeingBootstrapped;
+	private AcrossBootstrapConfig bootstrapConfiguration;
 
 	public ConfigurableAcrossContextInfo( AcrossContext context ) {
 		this.context = context;
 	}
 
 	@Override
-	public AcrossContext getConfiguration() {
+	public AcrossContext getContext() {
 		return context;
 	}
 
@@ -93,5 +94,14 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	@Override
 	public ApplicationContext getApplicationContext() {
 		return AcrossContextUtils.getApplicationContext( context );
+	}
+
+	@Override
+	public AcrossBootstrapConfig getBootstrapConfiguration() {
+		return bootstrapConfiguration;
+	}
+
+	public void setBootstrapConfiguration( AcrossBootstrapConfig bootstrapConfiguration ) {
+		this.bootstrapConfiguration = bootstrapConfiguration;
 	}
 }

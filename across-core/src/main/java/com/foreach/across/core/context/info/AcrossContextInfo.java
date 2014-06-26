@@ -1,6 +1,7 @@
 package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
@@ -15,7 +16,7 @@ public interface AcrossContextInfo
 	/**
 	 * @return The original AcrossContext.
 	 */
-	AcrossContext getConfiguration();
+	AcrossContext getContext();
 
 	/**
 	 * Gets the collection of all modules that were configured in the context,
@@ -60,4 +61,8 @@ public interface AcrossContextInfo
 	 */
 	public ApplicationContext getApplicationContext();
 
+	/**
+	 * @return Configuration object used for bootstrapping the AcrossContext.
+	 */
+	public AcrossBootstrapConfig getBootstrapConfiguration();
 }

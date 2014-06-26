@@ -64,16 +64,16 @@ public class AcrossBootstrapper
 			LOG.debug( "{} - {}: {}", order++, moduleInfo.getName(), moduleInfo.getModule().getClass() );
 		}
 
-		runModuleBootstrapCustomizations( modulesInOrder );
+		runModuleBootstrapperCustomizations( modulesInOrder );
 
 		AcrossApplicationContext root = createRootContext( contextInfo );
 		AbstractApplicationContext rootContext = root.getApplicationContext();
 
-		Map<AcrossModule, ModuleBootstrapConfig> moduleBootstrapConfigs = createModuleBootstrapConfig( modulesInOrder );
-		prepareForBootstrap( moduleBootstrapConfigs );
+		createBootstrapConfiguration( contextInfo );
+		prepareForBootstrap( contextInfo );
 
 		AcrossInstallerRegistry installerRegistry =
-				new AcrossInstallerRegistry( context, moduleBootstrapConfigs.values() );
+				new AcrossInstallerRegistry( context, contextInfo.getBootstrapConfiguration().getModules() );
 
 		// Run installers that don't need anything bootstrapped
 		installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
@@ -151,9 +151,11 @@ public class AcrossBootstrapper
 			ConfigurableAcrossModuleInfo moduleInfo = contextInfo.getConfigurableModuleInfo( module.getName() );
 
 			moduleInfo.setRequiredDependencies(
-					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( module ), contextInfo ) );
+					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( module ),
+					                     contextInfo ) );
 			moduleInfo.setOptionalDependencies(
-					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredOptionalDependencies( module ), contextInfo ) );
+					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredOptionalDependencies( module ),
+					                     contextInfo ) );
 			moduleInfo.setModuleRole( moduleBootstrapOrderBuilder.getModuleRole( module ) );
 		}
 
@@ -171,19 +173,19 @@ public class AcrossBootstrapper
 		return infoList;
 	}
 
-	private void prepareForBootstrap( Map<AcrossModule, ModuleBootstrapConfig> configs ) {
-		for ( AcrossModule module : new LinkedList<>( configs.keySet() ) ) {
-			module.prepareForBootstrap( configs.get( module ), configs );
+	private void prepareForBootstrap(AcrossContextInfo contextInfo ) {
+		for ( ModuleBootstrapConfig moduleConfig : contextInfo.getBootstrapConfiguration().getModules() ) {
+			moduleConfig.getModule().prepareForBootstrap( moduleConfig, contextInfo.getBootstrapConfiguration() );
 		}
 	}
 
 	/**
-	 * Create map of all modules and their corresponding config in order.
+	 * Builds the bootstrap configuration entities.
 	 */
-	private Map<AcrossModule, ModuleBootstrapConfig> createModuleBootstrapConfig( Collection<AcrossModuleInfo> modulesInOrder ) {
-		Map<AcrossModule, ModuleBootstrapConfig> configs = new LinkedHashMap<AcrossModule, ModuleBootstrapConfig>();
+	private void createBootstrapConfiguration( ConfigurableAcrossContextInfo contextInfo ) {
+		List<ModuleBootstrapConfig> configs = new LinkedList<>();
 
-		for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
+		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 			AcrossModule module = moduleInfo.getModule();
 			ModuleBootstrapConfig config = new ModuleBootstrapConfig( module );
 			config.setExposeFilter( module.getExposeFilter() );
@@ -197,12 +199,13 @@ public class AcrossBootstrapper
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
 			config.addApplicationContextConfigurers( AcrossContextUtils.getConfigurersToApply( context, module ) );
 
-			configs.put( module, config );
+			configs.add( config );
 
 			( (ConfigurableAcrossModuleInfo) moduleInfo ).setBootstrapConfiguration( config );
 		}
 
-		return configs;
+		AcrossBootstrapConfig contextConfig = new AcrossBootstrapConfig( contextInfo.getContext(), configs );
+		contextInfo.setBootstrapConfiguration( contextConfig );
 	}
 
 	private void checkBootstrapIsPossible() {
@@ -227,7 +230,7 @@ public class AcrossBootstrapper
 		}
 	}
 
-	private void runModuleBootstrapCustomizations( Collection<AcrossModuleInfo> modules ) {
+	private void runModuleBootstrapperCustomizations( Collection<AcrossModuleInfo> modules ) {
 		for ( AcrossModuleInfo moduleInfo : modules ) {
 			if ( moduleInfo.getModule() instanceof BootstrapAdapter ) {
 				( (BootstrapAdapter) moduleInfo.getModule() ).customizeBootstrapper( this );

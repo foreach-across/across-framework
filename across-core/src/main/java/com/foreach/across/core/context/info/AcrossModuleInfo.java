@@ -12,7 +12,7 @@ public interface AcrossModuleInfo
 	/**
 	 * @return The info object of the AcrossContext this module belongs to.
 	 */
-	public AcrossContextInfo getContext();
+	public AcrossContextInfo getContextInfo();
 
 	/**
 	 * @return Name of the AcrossModule.
