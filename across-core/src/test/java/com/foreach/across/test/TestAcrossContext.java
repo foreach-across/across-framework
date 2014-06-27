@@ -1,6 +1,7 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.exposing.ExposingModule;
 import com.foreach.across.test.modules.module1.TestModule1;
 import com.foreach.across.test.modules.module2.TestModule2;
@@ -28,7 +29,7 @@ public class TestAcrossContext
 	@Test
 	public void moduleWithTheSameNameIsNotAllowedWhenBootstrapping() {
 		AcrossContext context = new AcrossContext();
-		context.setAllowInstallers( false );
+		context.setInstallerAction( InstallerAction.DISABLED );
 
 		TestModule1 module = new TestModule1();
 		context.addModule( module );
@@ -50,7 +51,7 @@ public class TestAcrossContext
 	@Test
 	public void dataSourceIsRequiredWhenInstallersCanRun() {
 		AcrossContext context = new AcrossContext();
-		context.setAllowInstallers( true );
+		context.setInstallerAction( InstallerAction.EXECUTE );
 
 		boolean failed = false;
 
@@ -67,17 +68,20 @@ public class TestAcrossContext
 	@Test
 	public void dataSourceIsNotRequiredIfNoInstallers() {
 		AcrossContext context = new AcrossContext();
-		context.setAllowInstallers( false );
 		context.addModule( new TestModule1() );
 
 		context.bootstrap();
 	}
 
 	@Test
+	public void dataSourceIsNotRequiredIfInstallersDontWantToRun() {
+
+	}
+
+	@Test
 	public void unableToAddModuleAfterBootstrap() {
 		AcrossContext context = new AcrossContext();
 		context.bootstrap();
-
 	}
 
 	@Test

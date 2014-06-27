@@ -250,9 +250,7 @@ public final class AcrossContextUtils
 		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
 		configurers.add( new AnnotatedClassConfigurer( AcrossConfig.class ) );
 
-		if ( context.isAllowInstallers() ) {
-			configurers.add( new AnnotatedClassConfigurer( AcrossInstallerConfig.class ) );
-		}
+		configurers.add( new AnnotatedClassConfigurer( AcrossInstallerConfig.class ) );
 
 		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context
 				.getApplicationContextConfigurers().entrySet() ) {

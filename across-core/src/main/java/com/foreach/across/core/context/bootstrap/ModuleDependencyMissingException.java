@@ -1,6 +1,8 @@
 package com.foreach.across.core.context.bootstrap;
 
-public class ModuleDependencyMissingException extends RuntimeException
+import com.foreach.across.core.AcrossException;
+
+public class ModuleDependencyMissingException extends AcrossException
 {
 	private final String moduleName, dependencyName;
 

@@ -1,6 +1,7 @@
 package com.foreach.across.testweb;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.ehcache.EhcacheModule;
@@ -28,7 +29,7 @@ public class TestWebConfig
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 		AcrossContext context = new AcrossContext( applicationContext );
 		context.setDataSource( acrossDataSource() );
-		context.setAllowInstallers( false );
+		context.setInstallerAction( InstallerAction.EXECUTE );
 
 		context.addModule( otherModule() );
 		context.addModule( testWebModule() );

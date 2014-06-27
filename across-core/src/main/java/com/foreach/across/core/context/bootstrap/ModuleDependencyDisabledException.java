@@ -1,6 +1,8 @@
 package com.foreach.across.core.context.bootstrap;
 
-public class ModuleDependencyDisabledException extends RuntimeException
+import com.foreach.across.core.AcrossException;
+
+public class ModuleDependencyDisabledException extends AcrossException
 {
 	private final String moduleName, dependencyName;
 

@@ -1,6 +1,7 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.installers.InstallerAction;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +71,7 @@ public class AcrossTestContextConfiguration
 				applicationContext.getBeansOfType( AcrossTestContextConfigurer.class );
 
 		AcrossContext context = new AcrossContext( applicationContext );
-		context.setAllowInstallers( true );
+		context.setInstallerAction( InstallerAction.EXECUTE );
 		context.setDataSource( dataSource() );
 
 		for ( AcrossTestContextConfigurer configurer : configurerMap.values() ) {

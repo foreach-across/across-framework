@@ -1,6 +1,7 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
@@ -14,6 +15,7 @@ import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.core.installers.AcrossInstallerRegistry;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.installers.InstallerPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +74,7 @@ public class AcrossBootstrapper
 		prepareForBootstrap( contextInfo );
 
 		AcrossInstallerRegistry installerRegistry =
-				new AcrossInstallerRegistry( context, contextInfo.getBootstrapConfiguration().getModules() );
+				new AcrossInstallerRegistry( contextInfo.getBootstrapConfiguration() );
 
 		// Run installers that don't need anything bootstrapped
 		installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
@@ -90,7 +92,7 @@ public class AcrossBootstrapper
 			context.publishEvent( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
 
 			// Run installers before bootstrapping this particular module
-			installerRegistry.runInstallersForModule( config, InstallerPhase.BeforeModuleBootstrap );
+			installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.BeforeModuleBootstrap );
 
 			// Create the module context
 			AbstractApplicationContext child =
@@ -110,7 +112,7 @@ public class AcrossBootstrapper
 			context.publishEvent( new AcrossModuleBootstrappedEvent( moduleInfo ) );
 
 			// Run installers after module itself has bootstrapped
-			installerRegistry.runInstallersForModule( config, InstallerPhase.AfterModuleBootstrap );
+			installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.AfterModuleBootstrap );
 
 			// Copy the beans to the parent context
 			beanHelper.copy( child, rootContext, config.getExposeFilter(), config.getExposeTransformer() );
@@ -191,10 +193,11 @@ public class AcrossBootstrapper
 			ModuleBootstrapConfig config = new ModuleBootstrapConfig( module );
 			config.setExposeFilter( module.getExposeFilter() );
 			config.setExposeTransformer( module.getExposeTransformer() );
+			config.setInstallerSettings( module.getInstallerSettings() );
 			config.getInstallers().addAll( Arrays.asList( module.getInstallers() ) );
 
 			// Provide the current module bean
-			Map<String, Object> providedSingletons = new HashMap<String, Object>();
+			Map<String, Object> providedSingletons = new HashMap<>();
 			providedSingletons.put( AcrossModuleInfo.CURRENT_MODULE, new PrimarySingletonBean( moduleInfo ) );
 			providedSingletons.put( AcrossModule.CURRENT_MODULE, new PrimarySingletonBean( module ) );
 
@@ -211,8 +214,8 @@ public class AcrossBootstrapper
 	}
 
 	private void checkBootstrapIsPossible() {
-		if ( context.isAllowInstallers() && context.getDataSource() == null ) {
-			throw new RuntimeException(
+		if ( context.getInstallerAction() != InstallerAction.DISABLED && context.getDataSource() == null ) {
+			throw new AcrossException(
 					"A datasource must be configured if installers are allowed when bootstrapping the AcrossContext" );
 		}
 
@@ -220,11 +223,11 @@ public class AcrossBootstrapper
 	}
 
 	private void checkUniqueModuleNames( Collection<AcrossModule> modules ) {
-		Set<String> moduleNames = new HashSet<String>();
+		Set<String> moduleNames = new HashSet<>();
 
 		for ( AcrossModule module : modules ) {
 			if ( moduleNames.contains( module.getName() ) ) {
-				throw new RuntimeException(
+				throw new AcrossException(
 						"Each module must have a unique name, duplicate found for " + module.getName() );
 			}
 

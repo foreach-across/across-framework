@@ -10,6 +10,8 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.core.installers.InstallerAction;
+import com.foreach.across.core.installers.InstallerSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -40,6 +43,9 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private boolean allowInstallers;
 	private boolean onlyRegisterInstallers;
 	private String[] skipInstallerGroups = new String[0];
+
+	// By default no installers are allowed
+	private InstallerSettings installerSettings = new InstallerSettings( InstallerAction.DISABLED );
 
 	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
 			new LinkedHashMap<ApplicationContextConfigurer, ConfigurerScope>();
@@ -89,6 +95,13 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		return modules;
 	}
 
+	public void setModules( Collection<AcrossModule> modules ) {
+		modules.clear();
+		for ( AcrossModule module : modules ) {
+			addModule( module );
+		}
+	}
+
 	public void addModule( AcrossModule module ) {
 		if ( modules.contains( module ) ) {
 			throw new RuntimeException(
@@ -126,28 +139,42 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		return null;
 	}
 
-	public boolean isAllowInstallers() {
-		return allowInstallers;
+	/**
+	 * Gets the InstallerSettings attached to this context.  A context should always have specific
+	 * InstallerSettings, so this method can never return null.
+	 *
+	 * @return InstallerSettings instance.
+	 */
+	public InstallerSettings getInstallerSettings() {
+		return installerSettings;
 	}
 
-	public void setAllowInstallers( boolean allowInstallers ) {
-		this.allowInstallers = allowInstallers;
+	/**
+	 * Sets the InstallerSettings for this context.
+	 *
+	 * @param installerSettings InstallerSettings instance.
+	 */
+	public void setInstallerSettings( InstallerSettings installerSettings ) {
+		Assert.notNull( installerSettings, "InstallerSettings on AcrossContext may not be null." );
+		this.installerSettings = installerSettings;
 	}
 
-	public boolean isOnlyRegisterInstallers() {
-		return onlyRegisterInstallers;
+	/**
+	 * Shortcut method to set the default action on the InstallerSettings attached to the context.
+	 *
+	 * @param defaultAction InstallerAction to set as default.
+	 */
+	public void setInstallerAction( InstallerAction defaultAction ) {
+		installerSettings.setDefaultAction( defaultAction );
 	}
 
-	public void setOnlyRegisterInstallers( boolean onlyRegisterInstallers ) {
-		this.onlyRegisterInstallers = onlyRegisterInstallers;
-	}
-
-	public String[] getSkipInstallerGroups() {
-		return skipInstallerGroups;
-	}
-
-	public void setSkipInstallerGroups( String[] skipInstallerGroups ) {
-		this.skipInstallerGroups = skipInstallerGroups.clone();
+	/**
+	 * Shortcut method that returns the default action on the InstallerSettings attached to the context.
+	 *
+	 * @return InstallerAction that is the default for the entire context.
+	 */
+	public InstallerAction getInstallerAction() {
+		return installerSettings.getDefaultAction();
 	}
 
 	public Map<ApplicationContextConfigurer, ConfigurerScope> getApplicationContextConfigurers() {

@@ -3,7 +3,9 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.installers.InstallerSettings;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,8 +18,13 @@ public class AcrossBootstrapConfig
 	private final AcrossContext context;
 	private final Collection<ModuleBootstrapConfig> modules;
 
+	private InstallerSettings installerSettings;
+
 	public AcrossBootstrapConfig( AcrossContext context, Collection<ModuleBootstrapConfig> modules ) {
 		this.context = context;
+		setInstallerSettings( context.getInstallerSettings() );
+
+		// Modifying the module collection itself is no longer allowed in bootstrap phase
 		this.modules = Collections.unmodifiableCollection( modules );
 	}
 
@@ -33,6 +40,15 @@ public class AcrossBootstrapConfig
 	 */
 	public Collection<ModuleBootstrapConfig> getModules() {
 		return modules;
+	}
+
+	public InstallerSettings getInstallerSettings() {
+		return installerSettings;
+	}
+
+	public void setInstallerSettings( InstallerSettings installerSettings ) {
+		Assert.notNull( installerSettings, "InstallerSettings for the AcrossContext can never be null." );
+		this.installerSettings = installerSettings;
 	}
 
 	/**

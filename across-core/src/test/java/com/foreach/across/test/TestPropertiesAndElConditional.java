@@ -4,6 +4,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.properties.PropertiesModule;
 import com.foreach.across.test.modules.properties.SetPropertyConfig;
 import org.junit.Test;
@@ -94,7 +95,7 @@ public class TestPropertiesAndElConditional
 		@Bean
 		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 			AcrossContext acrossContext = new AcrossContext( applicationContext );
-			acrossContext.setAllowInstallers( false );
+			acrossContext.setInstallerAction( InstallerAction.DISABLED );
 
 			acrossContext.addModule( directOnModule() );
 			acrossContext.addModule( sourceOnModule() );

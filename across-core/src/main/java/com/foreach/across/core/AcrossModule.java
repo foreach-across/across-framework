@@ -11,6 +11,7 @@ import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
+import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.BeanDefinitionTransformer;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
@@ -31,11 +32,13 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	private BeanFilter exposeFilter = defaultExposeFilter();
 	private BeanDefinitionTransformer exposeTransformer = null;
 	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
-			new HashSet<ApplicationContextConfigurer>();
+			new HashSet<>();
 
 	private final Set<String> runtimeDependencies = new HashSet<String>();
 
 	private boolean enabled = true;
+
+	private InstallerSettings installerSettings;
 
 	public AcrossModule() {
 		registerDefaultApplicationContextConfigurers( applicationContextConfigurers );
@@ -100,6 +103,27 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	 */
 	public void setExposeTransformer( BeanDefinitionTransformer exposeTransformer ) {
 		this.exposeTransformer = exposeTransformer;
+	}
+
+	/**
+	 * Gets the InstallerSettings attached to this module.  If none are attached (default),
+	 * this method will return null.  No InstallerSettings mean the settings from the context
+	 * will be used.
+	 *
+	 * @return InstallerSettings instance or null if none.
+	 */
+	public InstallerSettings getInstallerSettings() {
+		return installerSettings;
+	}
+
+	/**
+	 * Sets the InstallerSettings for this module.  Can be null (default) to ensure that the InstallerSettings
+	 * from the context will be used.
+	 *
+	 * @param installerSettings InstallerSettings instance.
+	 */
+	public void setInstallerSettings( InstallerSettings installerSettings ) {
+		this.installerSettings = installerSettings;
 	}
 
 	/**

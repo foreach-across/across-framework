@@ -3,7 +3,7 @@ package com.foreach.across.core.installers;
 public enum InstallerAction
 {
 	/**
-	 * Execute if the regular conditions apply (this is the default when executing installers).
+	 * Execute if the regular conditions apply (this is the normal flow for running installers).
 	 */
 	EXECUTE,
 

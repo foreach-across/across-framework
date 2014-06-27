@@ -3,6 +3,7 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
+import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.BeanDefinitionTransformer;
 
 import java.util.*;
@@ -21,6 +22,7 @@ public class ModuleBootstrapConfig
 	private Set<ApplicationContextConfigurer> applicationContextConfigurers =
 			new LinkedHashSet<ApplicationContextConfigurer>();
 	private Collection<Object> installers = new LinkedList<Object>();
+	private InstallerSettings installerSettings;
 
 	public ModuleBootstrapConfig( AcrossModule module ) {
 		this.module = module;
@@ -64,6 +66,14 @@ public class ModuleBootstrapConfig
 
 	public void addApplicationContextConfigurers( Collection<ApplicationContextConfigurer> configurers ) {
 		applicationContextConfigurers.addAll( configurers );
+	}
+
+	public InstallerSettings getInstallerSettings() {
+		return installerSettings;
+	}
+
+	public void setInstallerSettings( InstallerSettings installerSettings ) {
+		this.installerSettings = installerSettings;
 	}
 
 	public Collection<Object> getInstallers() {

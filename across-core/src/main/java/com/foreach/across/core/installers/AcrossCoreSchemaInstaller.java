@@ -24,20 +24,15 @@ public class AcrossCoreSchemaInstaller
 
 	@PostConstruct
 	protected void installCoreSchema() {
-		if ( acrossContext.isAllowInstallers() ) {
-			LOG.info( "Installing the core schema for Across" );
+		LOG.info( "Installing the core schema for Across" );
 
-			AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext );
+		AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext );
 
-			SpringLiquibase liquibase = new SpringLiquibase();
-			liquibase.setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );
-			liquibase.setDataSource( acrossContext.getDataSource() );
+		SpringLiquibase liquibase = new SpringLiquibase();
+		liquibase.setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );
+		liquibase.setDataSource( acrossContext.getDataSource() );
 
-			beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
-			beanFactory.initializeBean( liquibase, "" );
-		}
-		else {
-			LOG.info( "Skipping the core schema installer because installers are not allowed." );
-		}
+		beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+		beanFactory.initializeBean( liquibase, "" );
 	}
 }

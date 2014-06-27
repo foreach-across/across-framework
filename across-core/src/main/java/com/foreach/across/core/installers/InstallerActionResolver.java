@@ -10,7 +10,7 @@ public interface InstallerActionResolver
 	 * the InstallerSettings to allow ad hoc user decision if installer should be run or not.
 	 *
 	 * @param group     Group the installer belongs to.
-	 * @param installer Installer instance.
+	 * @param installer Installer instance - not yet autowired.
 	 * @return Action or null if it delegates the decision back to the InstallerSettings.
 	 * @see com.foreach.across.core.installers.InstallerSettings
 	 */

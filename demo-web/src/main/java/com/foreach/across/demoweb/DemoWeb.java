@@ -2,6 +2,7 @@ package com.foreach.across.demoweb;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.database.SchemaConfiguration;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.demoweb.module.DemoWebModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.adminweb.AdminWebModuleSettings;
@@ -30,7 +31,7 @@ public class DemoWeb
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 		AcrossContext context = new AcrossContext( applicationContext );
 		context.setDataSource( acrossDataSource() );
-		context.setAllowInstallers( true );
+		context.setInstallerAction( InstallerAction.EXECUTE );
 
 		context.addModule( ehCacheModule() );
 		context.addModule( debugWebModule() );

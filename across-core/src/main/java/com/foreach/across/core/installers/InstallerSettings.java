@@ -19,7 +19,15 @@ public class InstallerSettings
 	private Map<String, InstallerAction> groupActions = new HashMap<>();
 	private Map<String, InstallerAction> installerActions = new HashMap<>();
 
+	public InstallerSettings() {
+	}
+
+	public InstallerSettings( InstallerAction defaultAction ) {
+		this.defaultAction = defaultAction;
+	}
+
 	public void setDefaultAction( InstallerAction defaultAction ) {
+		Assert.notNull( defaultAction, "Action should not be null." );
 		this.defaultAction = defaultAction;
 	}
 

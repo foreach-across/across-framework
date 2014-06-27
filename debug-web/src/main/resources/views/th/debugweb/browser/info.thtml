@@ -57,10 +57,12 @@
 			<th>Has parent</th>
 			<td th:text="${selectedContext.applicationContext.parent != null ? 'yes' : 'no'}"></td>
 		</tr>
+		<!--/*
 		<tr>
 			<th>Installers enabled</th>
 			<td th:text="${selectedContext.contextInfo.configuration.allowInstallers ? 'yes' : 'no'}"></td>
 		</tr>
+		*/-->
 	</table>
 
 	<h5><strong>&nbsp; Modules</strong></h5>

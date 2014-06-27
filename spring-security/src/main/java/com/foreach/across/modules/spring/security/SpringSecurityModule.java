@@ -31,15 +31,21 @@ public class SpringSecurityModule extends AcrossModule
 	}
 
 	public SpringSecurityModule() {
-		setExposeFilter( new BeanFilterComposite(
-				new ClassBeanFilter( FilterChainProxy.class, WebInvocationPrivilegeEvaluator.class,
-				                     SecurityExpressionHandler.class ),
-				new NamedBeanFilter( "requestDataValueProcessor" ) ) );
+		setExposeFilter(
+				new BeanFilterComposite(
+						new ClassBeanFilter(
+								FilterChainProxy.class,
+								WebInvocationPrivilegeEvaluator.class,
+								SecurityExpressionHandler.class
+						),
+						new NamedBeanFilter( "requestDataValueProcessor" )
+				)
+		);
 	}
 
 	@Override
 	public String getDescription() {
-		return "Hooks up Spring Security and allows WebSecurityConfigurers to be defined in separate modules.";
+		return "Hooks up Spring Security.  Requires at least one custom WebSecurityConfigurer class to be added at runtime.";
 	}
 
 	@Override
