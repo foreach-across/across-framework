@@ -18,7 +18,7 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	private final String moduleName;
 	private final boolean enabled;
 
-	private AcrossModuleRole moduleRole = AcrossModuleRole.CUSTOM;
+	private AcrossModuleRole moduleRole = AcrossModuleRole.APPLICATION;
 	private ModuleBootstrapStatus bootstrapStatus;
 	private ModuleBootstrapConfig bootstrapConfiguration;
 

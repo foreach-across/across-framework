@@ -313,7 +313,7 @@ public class ModuleBootstrapOrderBuilder
 			                 (AcrossModuleRole) AnnotationUtils.getAnnotationAttributes( role ).get( "value" ) );
 		}
 		else {
-			moduleRoles.put( module, AcrossModuleRole.CUSTOM );
+			moduleRoles.put( module, AcrossModuleRole.APPLICATION );
 		}
 	}
 }
