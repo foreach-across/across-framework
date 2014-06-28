@@ -2,6 +2,7 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -48,54 +49,10 @@ public class AcrossDependsCondition implements Condition
 			return false;
 		}
 
-		boolean shouldLoad = true;
+		AcrossContextInfo acrossContext =
+				context.getBeanFactory().getParentBeanFactory().getBean( AcrossContextInfo.class );
 
-		if ( required.length > 0 || optional.length > 0 ) {
-			AcrossContextInfo acrossContext =
-					context.getBeanFactory().getParentBeanFactory().getBean( AcrossContextInfo.class );
-
-			for ( String requiredModuleId : required ) {
-				AcrossModuleInfo moduleInfo = acrossContext.getModuleInfo( requiredModuleId );
-
-				if ( moduleInfo == null ) {
-					LOG.trace( "AcrossDependsCondition does not match because required module {} is not present",
-					           requiredModuleId );
-					return false;
-				}
-				else if ( !moduleInfo.isEnabled() ) {
-					LOG.trace( "AcrossDependsCondition does not match because required module {} is disabled",
-					           requiredModuleId );
-					return false;
-				}
-			}
-
-			// If all required modules are present, the condition is matched if there is no optional preference
-			shouldLoad = optional.length == 0;
-
-			for ( String optionalModuleId : optional ) {
-				AcrossModuleInfo moduleInfo = acrossContext.getModuleInfo( optionalModuleId );
-
-				if ( moduleInfo != null && moduleInfo.isEnabled() ) {
-					LOG.trace( "AcrossDependsCondition matches because optional module {} is present",
-					           optionalModuleId );
-					shouldLoad = true;
-				}
-			}
-
-			if ( LOG.isTraceEnabled() ) {
-				if ( !shouldLoad ) {
-					LOG.trace(
-							"AcrossDependsCondition does not match because none of the optional modules {} were present",
-							optional );
-				}
-				else if ( required.length > 0 ) {
-					LOG.trace( "AcrossDependsCondition matches because all required modules {} were present",
-					           required );
-				}
-			}
-		}
-
-		return shouldLoad;
+		return applies( acrossContext.getBootstrapConfiguration(), required, optional );
 	}
 
 	/**
@@ -126,6 +83,71 @@ public class AcrossDependsCondition implements Condition
 		}
 
 		return result;
+	}
+
+	/**
+	 * Checks if the class has an AcrossDepends annotation, and if so if the dependencies are met.
+	 *
+	 * @param config       Bootstrap configuration to check against.
+	 * @param classToCheck Class to check for AcrossDepends annotation.
+	 * @return True if dependencies are met or no annotation was found.
+	 * @see com.foreach.across.core.annotations.AcrossDepends
+	 */
+	public static boolean applies( AcrossBootstrapConfig config, Class<?> classToCheck ) {
+		AcrossDepends dependsAnnotation = classToCheck.getAnnotation( AcrossDepends.class );
+
+		return dependsAnnotation == null
+				|| applies( config, dependsAnnotation.required(), dependsAnnotation.optional() );
+	}
+
+	/**
+	 * Checks if the required and optional dependencies apply against a given bootstrap configuration.
+	 *
+	 * @param config   Bootstrap configuration to check against.
+	 * @param required Required modules.
+	 * @param optional Optional modules.
+	 * @return True if all required modules are present and at least one of the optionals (if any defined).
+	 * @see com.foreach.across.core.annotations.AcrossDepends
+	 */
+	public static boolean applies( AcrossBootstrapConfig config, String[] required, String[] optional ) {
+		boolean shouldLoad = true;
+
+		if ( required.length > 0 || optional.length > 0 ) {
+			for ( String requiredModuleId : required ) {
+				if ( !config.hasModule( requiredModuleId ) ) {
+					LOG.trace(
+							"AcrossDependsCondition does not match because required module {} is not in the boostrap configuration",
+							requiredModuleId );
+					return false;
+				}
+			}
+
+			// If all required modules are present, the condition is matched if there is no optional preference
+			shouldLoad = optional.length == 0;
+
+			for ( String optionalModuleId : optional ) {
+				if ( config.hasModule( optionalModuleId ) ) {
+					LOG.trace( "AcrossDependsCondition matches because optional module {} is present",
+					           optionalModuleId );
+					shouldLoad = true;
+					break;
+				}
+			}
+
+			if ( LOG.isTraceEnabled() ) {
+				if ( !shouldLoad ) {
+					LOG.trace(
+							"AcrossDependsCondition does not match because none of the optional modules {} were present",
+							optional );
+				}
+				else if ( required.length > 0 ) {
+					LOG.trace( "AcrossDependsCondition matches because all required modules {} were present",
+					           required );
+				}
+			}
+		}
+
+		return shouldLoad;
 	}
 
 	private static final class CurrentModuleBeanExpressionContext extends BeanExpressionContext

@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class TestInstaller
 {
-	public static List<Class> EXECUTED = new LinkedList<>();
+	public static List<Class<?>> EXECUTED = new LinkedList<>();
 
 	@InstallerMethod
 	public void run() {

@@ -7,18 +7,18 @@ import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.installers.*;
-import com.foreach.across.test.modules.installer.installers.AlwaysRunAfterModuleBootstrapInstaller;
-import com.foreach.across.test.modules.installer.installers.AlwaysRunBeforeContextBootstrapInstaller;
-import com.foreach.across.test.modules.installer.installers.TestInstaller;
-import com.foreach.across.test.modules.installer.installers.VersionBasedInstaller;
+import com.foreach.across.test.modules.installer.installers.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -335,6 +335,72 @@ public class TestAcrossInstallerRegistry
 		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
 
 		verify( contextSettings ).shouldRun( eq( VersionBasedInstaller.GROUP ), any( VersionBasedInstaller.class ) );
+	}
+
+	@Test
+	public void multipleInstallerMethodsShouldExecute() {
+		installers( MultipleMethodInstaller.class );
+
+		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
+
+		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+
+		// The order does not matter
+		Set<Class<?>> expected = new HashSet<>( Arrays.asList( MultipleMethodInstaller.class, String.class,
+		                                                       Object.class ) );
+		Set<Class<?>> actual = new HashSet<>( TestInstaller.EXECUTED );
+
+		assertEquals( expected, actual );
+	}
+
+	@Test
+	public void installerShouldNotExecuteIfDependencyNotMet() {
+		installers( AlwaysRunWithDependencyInstaller.class );
+		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
+
+		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+
+		verify( contextSettings, never() ).shouldRun( anyString(), anyObject() );
+		verify( installerRepository, never() ).getInstalledVersion( module,
+		                                                            AlwaysRunWithDependencyInstaller.class );
+		verify( installerRepository, never() )
+				.setInstalled(
+						module,
+						AlwaysRunWithDependencyInstaller.class.getAnnotation( Installer.class ),
+						AlwaysRunWithDependencyInstaller.class
+				);
+
+		assertExecuted();
+	}
+
+	@Test
+	public void installerShouldExecuteIfDependencyIsMet() {
+		installers( AlwaysRunWithDependencyInstaller.class );
+
+		when( contextConfig.hasModule( "requiredModule" ) ).thenReturn( true );
+		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
+
+		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+
+		assertExecuted( AlwaysRunWithDependencyInstaller.class );
+	}
+
+	@Test
+	public void multipleInstallersAreExecutedInOrder() {
+		installers(
+				AlwaysRunWithDependencyInstaller.class,
+				AlwaysRunBeforeContextBootstrapInstaller.class
+		);
+
+		when( contextConfig.hasModule( "requiredModule" ) ).thenReturn( true );
+		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
+
+		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+
+		assertExecuted(
+				AlwaysRunWithDependencyInstaller.class,
+				AlwaysRunBeforeContextBootstrapInstaller.class
+		);
 	}
 
 	@SuppressWarnings("unchecked")

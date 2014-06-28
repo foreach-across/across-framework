@@ -7,6 +7,7 @@ import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.AcrossDependsCondition;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.slf4j.Logger;
@@ -235,7 +236,7 @@ public class AcrossInstallerRegistry
 	}
 
 	private boolean areDependenciesMet( Class<?> installerClass ) {
-		return true;
+		return AcrossDependsCondition.applies( contextConfig, installerClass );
 	}
 
 	private ConfigurableListableBeanFactory getBeanFactoryForInstallerWiring( AcrossModule module ) {
