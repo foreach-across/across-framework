@@ -214,11 +214,6 @@ public class AcrossBootstrapper
 	}
 
 	private void checkBootstrapIsPossible() {
-		if ( context.getInstallerAction() != InstallerAction.DISABLED && context.getDataSource() == null ) {
-			throw new AcrossException(
-					"A datasource must be configured if installers are allowed when bootstrapping the AcrossContext" );
-		}
-
 		checkUniqueModuleNames( context.getModules() );
 	}
 

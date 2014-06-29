@@ -1,8 +1,10 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.exposing.ExposingModule;
+import com.foreach.across.test.modules.installer.InstallerModule;
 import com.foreach.across.test.modules.module1.TestModule1;
 import com.foreach.across.test.modules.module2.TestModule2;
 import org.junit.Test;
@@ -49,9 +51,28 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void dataSourceIsRequiredWhenInstallersCanRun() {
+	public void dataSourceIsNotRequiredIfNoInstallers() {
 		AcrossContext context = new AcrossContext();
 		context.setInstallerAction( InstallerAction.EXECUTE );
+		context.addModule( new TestModule1() );
+
+		context.bootstrap();
+	}
+
+	@Test
+	public void dataSourceIsNotRequiredIfInstallersWontRun() {
+		AcrossContext context = new AcrossContext();
+		// Default installer action is disabled
+		context.addModule( new InstallerModule() );
+
+		context.bootstrap();
+	}
+
+	@Test
+	public void dataSourceIsRequiredIfInstallersWantToRun() {
+		AcrossContext context = new AcrossContext();
+		context.setInstallerAction( InstallerAction.EXECUTE );
+		context.addModule( new InstallerModule() );
 
 		boolean failed = false;
 
@@ -62,20 +83,7 @@ public class TestAcrossContext
 			failed = true;
 		}
 
-		assertTrue( "Bootstrapping with installers without datasource should not be possible", failed );
-	}
-
-	@Test
-	public void dataSourceIsNotRequiredIfNoInstallers() {
-		AcrossContext context = new AcrossContext();
-		context.addModule( new TestModule1() );
-
-		context.bootstrap();
-	}
-
-	@Test
-	public void dataSourceIsNotRequiredIfInstallersDontWantToRun() {
-
+		assertTrue( "A datasource should be required if installers want to run.", failed );
 	}
 
 	@Test

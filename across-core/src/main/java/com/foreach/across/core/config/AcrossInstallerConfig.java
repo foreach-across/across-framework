@@ -2,6 +2,7 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.installers.AcrossCoreSchemaInstaller;
 import com.foreach.across.core.installers.AcrossInstallerRepository;
 import org.slf4j.Logger;
@@ -51,8 +52,18 @@ public class AcrossInstallerConfig
 
 	@Bean
 	@Lazy
+	@DependsOn(AcrossContext.DATASOURCE)
 	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
-		return new AcrossCoreSchemaInstaller( acrossContext );
+		DataSource dataSource = acrossDataSource();
+
+		if ( dataSource == null ) {
+			throw new AcrossException(
+					"Unable to create the AcrossCoreSchemaInstaller because there is no DataSource configured.  " +
+							"A DataSource is required if there is at least one non-disabled installer."
+			);
+		}
+
+		return new AcrossCoreSchemaInstaller( dataSource, AcrossContextUtils.getBeanFactory( acrossContext ) );
 	}
 
 	@Bean(name = AcrossContext.DATASOURCE)
