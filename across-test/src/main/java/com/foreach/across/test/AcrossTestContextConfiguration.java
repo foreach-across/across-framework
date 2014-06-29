@@ -23,7 +23,8 @@ public class AcrossTestContextConfiguration
 	private Environment environment;
 
 	@Bean
-	public DataSource dataSource() throws Exception {
+	@SuppressWarnings( "all" )
+	public DataSource dataSource() {
 		BasicDataSource dataSource = new BasicDataSource();
 
 		String dsName = System.getProperty( "acrossTest.datasource", null );
@@ -54,7 +55,7 @@ public class AcrossTestContextConfiguration
 	}
 
 	@Bean
-	public SpringLiquibase databaseReset() throws Exception {
+	public SpringLiquibase databaseReset() {
 		SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource( dataSource() );
 		springLiquibase.setChangeLog( "classpath:com/foreach/across/test/resetDatabase.xml" );
@@ -64,7 +65,7 @@ public class AcrossTestContextConfiguration
 	}
 
 	@Bean
-	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 		databaseReset();
 
 		Map<String, AcrossTestContextConfigurer> configurerMap =

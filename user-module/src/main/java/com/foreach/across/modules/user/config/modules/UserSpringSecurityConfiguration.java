@@ -43,6 +43,7 @@ public class UserSpringSecurityConfiguration
 		private AcrossModuleInfo moduleInfo;
 
 		@Autowired
+		@SuppressWarnings( "SignatureDeclareThrowsException" )
 		public void configureGlobal( AuthenticationManagerBuilder auth ) throws Exception {
 			PasswordEncoder userPasswordEncoder = AcrossContextUtils.getBeanOfType(
 					moduleInfo,

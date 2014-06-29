@@ -200,6 +200,29 @@ public class AcrossInfoController
 		public int compareTo( PropertyInfo o ) {
 			return getName().compareTo( o.getName() );
 		}
+
+		@Override
+		public boolean equals( Object o ) {
+			if ( this == o ) {
+				return true;
+			}
+			if ( o == null || getClass() != o.getClass() ) {
+				return false;
+			}
+
+			PropertyInfo that = (PropertyInfo) o;
+
+			if ( name != null ? !name.equals( that.name ) : that.name != null ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			return name != null ? name.hashCode() : 0;
+		}
 	}
 
 	private Collection<PropertySourceInfo> getPropertySources( Environment environment ) {
@@ -221,52 +244,12 @@ public class AcrossInfoController
 					Collections.sort( properties );
 					sourceInfo.setProperties( properties );
 				}
-				else {
-					// not sure we can output this, so let's skip it
-					// maybe provide feedback if we cannot list certain property sources
-				}
 
 				sources.addFirst( sourceInfo );
 			}
 		}
 
 		return sources;
-	}
-
-	/**
-	 * Retrieves all properties from the environment, excluding any that reference the system.
-	 * The system properties are listed within the other view and are retrieved through some System calls.
-	 *
-	 * @return The properties registered to the environment (excluding system properties)
-	 */
-	private Map<String, Object> getPropertiesForEnvironment( Environment environment ) {
-		Map<String, Object> allProperties = new TreeMap<>();
-
-		// Only configurable environments and enumerable property sources are taken into account
-		if ( environment instanceof ConfigurableEnvironment ) {
-			MutablePropertySources propertySources = ( (ConfigurableEnvironment) environment ).getPropertySources();
-			for ( PropertySource<?> propertySource : propertySources ) {
-				if ( propertySource instanceof EnumerablePropertySource &&
-						// We exclude system properties and system environment variables, as they have their own page
-						!org.apache.commons.lang3.StringUtils.equalsIgnoreCase( "systemproperties",
-						                                                        propertySource.getName() ) &&
-						!org.apache.commons.lang3.StringUtils.equalsIgnoreCase( "systemenvironment",
-						                                                        propertySource.getName() ) ) {
-					EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
-
-					for ( String propertyName : enumerablePropertySource.getPropertyNames() ) {
-						// Always get from the environment so we are sure we get the correct value for the context
-						allProperties.put( propertyName, environment.getProperty( propertyName ) );
-					}
-				}
-				else {
-					// not sure we can output this, so let's skip it
-					// maybe provide feedback if we cannot list certain property sources
-				}
-			}
-		}
-
-		return allProperties;
 	}
 
 	@RequestMapping("/across/browser/events/{index}")
@@ -481,6 +464,7 @@ public class AcrossInfoController
 		return methods;
 	}
 
+	@SuppressWarnings("EQ_COMPARETO_USE_OBJECT_EQUALS")
 	public static class BeanInfo implements Comparable<BeanInfo>
 	{
 		private Object instance;
@@ -568,7 +552,6 @@ public class AcrossInfoController
 			this.proxiedOrEnhanced = proxiedOrEnhanced;
 		}
 
-		@SuppressWarnings("EQ_COMPARETO_USE_OBJECT_EQUALS")
 		public int compareTo( BeanInfo o ) {
 			return getName().compareTo( o.getName() );
 		}

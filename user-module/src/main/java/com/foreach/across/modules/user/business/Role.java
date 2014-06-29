@@ -6,12 +6,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
 
 @Entity
 @Table(name = UserSchemaConfiguration.TABLE_ROLE)
-public class Role implements Comparable<Role>
+public class Role implements Comparable<Role>, Serializable
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_role_id")

@@ -25,7 +25,7 @@ public class AcrossWebArgumentResolver implements HandlerMethodArgumentResolver
 	public Object resolveArgument( MethodParameter parameter,
 	                               ModelAndViewContainer mavContainer,
 	                               NativeWebRequest webRequest,
-	                               WebDataBinderFactory binderFactory ) throws Exception {
+	                               WebDataBinderFactory binderFactory ) {
 
 		if ( Menu.class.isAssignableFrom( parameter.getParameterType() ) ) {
 			return menuFactory.buildMenu( parameter.getParameterName(), (Class<? extends Menu>) parameter.getParameterType() );

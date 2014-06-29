@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @DebugWebController
 public class ThreadsController
@@ -19,7 +20,7 @@ public class ThreadsController
 
 	@RequestMapping("/threadStack")
 	public String showThreads( Model model ) {
-		ArrayList<ThreadGroup> threadGroups = loadThreadData();
+		List<ThreadGroup> threadGroups = loadThreadData();
 
 		StringBuilder output = new StringBuilder();
 		output.append( "<div id='threads'>" );
@@ -58,22 +59,22 @@ public class ThreadsController
 	}
 
 	private ArrayList<ThreadGroup> loadThreadData() {
-		ArrayList<ThreadGroup> _threads = new ArrayList<ThreadGroup>();
+		ArrayList<ThreadGroup> threadList = new ArrayList<ThreadGroup>();
 
 		ThreadGroup tg = Thread.currentThread().getThreadGroup();
 		if ( tg != null ) {
-			_threads.add( tg );
+			threadList.add( tg );
 			while ( tg != null && tg.getParent() != null ) {
 				tg = tg.getParent();
 				if ( tg != null ) {
-					_threads.add( tg );
+					threadList.add( tg );
 				}
 			}
 		}
-		return _threads;
+		return threadList;
 	}
 
-	private String printThreads( ArrayList<ThreadGroup> threads ) {
+	private String printThreads( List<ThreadGroup> threads ) {
 		StringBuilder sb = new StringBuilder( "[SystemThreadList:\n<br />" );
 
 		int threadCount = getThreadCount( threads );
@@ -96,15 +97,15 @@ public class ThreadsController
 		return sb.toString();
 	}
 
-	private Thread[] getAllThreads( ArrayList<ThreadGroup> _threads ) {
-		int estimatedCount = getTotalActiveCount( _threads );
+	private Thread[] getAllThreads( List<ThreadGroup> threadList ) {
+		int estimatedCount = getTotalActiveCount( threadList );
 
 		// Start with array twice size of estimated,
 		// to be safe. Trim later.
 		Thread[] estimatedThreads = new Thread[estimatedCount * 2];
 
 		// Locate root group
-		ThreadGroup rootGroup = getRootThreadGroup( _threads );
+		ThreadGroup rootGroup = getRootThreadGroup( threadList );
 		if ( rootGroup == null ) {
 			return null;
 		}
@@ -123,14 +124,14 @@ public class ThreadsController
 		return actualThreads;
 	}
 
-	private ThreadGroup getRootThreadGroup( ArrayList<ThreadGroup> _threads ) {
-		if ( getThreadCount( _threads ) < 1 ) {
+	private ThreadGroup getRootThreadGroup( List<ThreadGroup> threadList ) {
+		if ( getThreadCount( threadList ) < 1 ) {
 			return null;
 		}
 		else {
 			ThreadGroup tg;
-			for ( int i = 0; i < getThreadCount( _threads ); i++ ) {
-				tg = getThreadGroup( i, _threads );
+			for ( int i = 0; i < getThreadCount( threadList ); i++ ) {
+				tg = getThreadGroup( i, threadList );
 				if ( tg.getParent() == null ) {
 					return tg;
 				}
@@ -141,36 +142,36 @@ public class ThreadsController
 		}
 	}
 
-	private ThreadGroup getThreadGroup( int index, ArrayList<ThreadGroup> _threads ) {
-		if ( getThreadCount( _threads ) < 1 ) {
+	private ThreadGroup getThreadGroup( int index, List<ThreadGroup> threadList ) {
+		if ( getThreadCount( threadList ) < 1 ) {
 			return null;
 		}
-		else if ( ( index < 0 ) || ( index > ( getThreadCount( _threads ) - 1 ) ) ) {
+		else if ( ( index < 0 ) || ( index > ( getThreadCount( threadList ) - 1 ) ) ) {
 			return null;
 		}
 		else {
-			return _threads.get( index );
+			return threadList.get( index );
 		}
 	}
 
-	private int getThreadCount( ArrayList<ThreadGroup> _threads ) {
-		if ( _threads == null ) {
+	private int getThreadCount( List<ThreadGroup> threadList ) {
+		if ( threadList == null ) {
 			return -1;
 		}
 		else {
-			return _threads.size();
+			return threadList.size();
 		}
 	}
 
-	private int getTotalActiveCount( ArrayList<ThreadGroup> _threads ) {
-		if ( getThreadCount( _threads ) < 1 ) {
+	private int getTotalActiveCount( List<ThreadGroup> threadList ) {
+		if ( getThreadCount( threadList ) < 1 ) {
 			return 0;
 		}
 		else {
 			int totalActiveCount = 0;
 			ThreadGroup tg;
-			for ( int i = 0; i < getThreadCount( _threads ); i++ ) {
-				tg = getThreadGroup( i, _threads );
+			for ( int i = 0; i < getThreadCount( threadList ); i++ ) {
+				tg = getThreadGroup( i, threadList );
 				totalActiveCount += tg.activeCount();
 			}
 

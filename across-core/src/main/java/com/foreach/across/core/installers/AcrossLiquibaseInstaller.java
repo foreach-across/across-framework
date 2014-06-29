@@ -28,10 +28,6 @@ public abstract class AcrossLiquibaseInstaller
 	@Autowired
 	private AcrossContextInfo acrossContext;
 
-	@Autowired(required = false)
-	@Qualifier(AcrossModule.CURRENT_MODULE)
-	private AcrossModule acrossModule;
-
 	@Autowired
 	@Qualifier(AcrossContext.DATASOURCE)
 	private DataSource dataSource;

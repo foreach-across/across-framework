@@ -26,7 +26,7 @@ public class TestWebConfig
 {
 	@Bean
 	@Autowired
-	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 		AcrossContext context = new AcrossContext( applicationContext );
 		context.setDataSource( acrossDataSource() );
 		context.setInstallerAction( InstallerAction.EXECUTE );
@@ -103,7 +103,7 @@ public class TestWebConfig
 	}
 
 	@Bean
-	public DataSource acrossDataSource() throws Exception {
+	public DataSource acrossDataSource() {
 		BasicDataSource dataSource = new BasicDataSource();
 		dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
 		dataSource.setUrl( "jdbc:hsqldb:/hsql/acrossTestWeb" );

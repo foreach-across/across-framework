@@ -12,6 +12,7 @@ public class CallableUnitOfWork<V> implements Callable<V>
 		this.callable = callable;
 	}
 
+	@SuppressWarnings( "SignatureDeclareThrowsException" )
 	public V call() throws Exception {
 		try {
 			unitOfWorkFactory.start();

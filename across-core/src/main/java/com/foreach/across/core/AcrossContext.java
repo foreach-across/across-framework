@@ -33,24 +33,20 @@ import java.util.*;
  */
 public class AcrossContext extends AbstractAcrossEntity implements DisposableBean
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossContext.class );
-
 	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
 
-	private DataSource dataSource;
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossContext.class );
 
-	private boolean allowInstallers;
-	private boolean onlyRegisterInstallers;
-	private String[] skipInstallerGroups = new String[0];
+	private DataSource dataSource;
 
 	// By default no installers are allowed
 	private InstallerSettings installerSettings = new InstallerSettings( InstallerAction.DISABLED );
 
 	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
-			new LinkedHashMap<ApplicationContextConfigurer, ConfigurerScope>();
+			new LinkedHashMap<>();
 
-	private LinkedList<AcrossModule> modules = new LinkedList<>();
+	private List<AcrossModule> modules = new LinkedList<>();
 
 	private boolean isBootstrapped = false;
 
@@ -104,16 +100,16 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	public void addModule( AcrossModule module ) {
 		if ( modules.contains( module ) ) {
-			throw new RuntimeException(
+			throw new AcrossException(
 					"Not allowed to add the same module instance to a single AcrossContext: " + module );
 		}
 
 		if ( module.getContext() != null ) {
-			throw new RuntimeException( "Module is already attached to another AcrossContext: " + module );
+			throw new AcrossException( "Module is already attached to another AcrossContext: " + module );
 		}
 
 		if ( isBootstrapped ) {
-			throw new RuntimeException(
+			throw new AcrossException(
 					"Adding a module to an already bootstrapped AcrossContext is currently not supported." );
 		}
 

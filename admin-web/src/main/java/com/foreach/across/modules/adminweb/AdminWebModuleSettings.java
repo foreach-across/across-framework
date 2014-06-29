@@ -2,9 +2,6 @@ package com.foreach.across.modules.adminweb;
 
 public class AdminWebModuleSettings
 {
-	protected AdminWebModuleSettings() {
-	}
-
 	/**
 	 * URL or relative path (without admin prefix) for the page to which a user will be sent
 	 * after successful login without previously accessing a protected url.
@@ -34,4 +31,7 @@ public class AdminWebModuleSettings
 	 */
 	public static final String REMEMBER_ME_TOKEN_VALIDITY_SECONDS =
 			"adminWebModule.login.rememberMe.tokenValiditySeconds";
+
+	protected AdminWebModuleSettings() {
+	}
 }

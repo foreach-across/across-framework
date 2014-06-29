@@ -1,5 +1,6 @@
 package com.foreach.across.core.database;
 
+import com.foreach.across.core.AcrossException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
@@ -34,7 +35,7 @@ public class SchemaConfiguration
 		}
 
 		if ( !found ) {
-			throw new RuntimeException( "Could not find any defined table with name " + original );
+			throw new AcrossException( "Could not find any defined table with name " + original );
 		}
 	}
 

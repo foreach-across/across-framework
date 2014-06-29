@@ -1,5 +1,6 @@
 package com.foreach.across.core.context;
 
+import com.foreach.across.core.AcrossException;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
@@ -87,7 +88,7 @@ public abstract class AbstractAcrossEntity implements AcrossEntity
 					propertySources.addLast( new ResourcePropertySource( resource ) );
 				}
 				catch ( IOException ioe ) {
-					throw new RuntimeException( "Failed to load property resource " + resource );
+					throw new AcrossException( "Failed to load property resource " + resource, ioe );
 				}
 			}
 		}

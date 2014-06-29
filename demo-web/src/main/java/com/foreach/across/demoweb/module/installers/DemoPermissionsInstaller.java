@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
            phase = InstallerPhase.AfterModuleBootstrap)
 public class DemoPermissionsInstaller
 {
-	private static Logger LOG = LoggerFactory.getLogger( DemoPermissionsInstaller.class );
+	private static final Logger LOG = LoggerFactory.getLogger( DemoPermissionsInstaller.class );
 
 	@Autowired
 	private RoleService roleService;

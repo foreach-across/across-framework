@@ -17,9 +17,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class RegisterClientModuleConfigHandler
 {
-	@Autowired
-	private DefaultListableBeanFactory beanFactory;
-
 	@Handler
 	public void registerEhCacheClientModule( AcrossModuleBeforeBootstrapEvent event ) {
 		event.addApplicationContextConfigurers( new AnnotatedClassConfigurer( EhcacheClientModuleConfig.class ) );

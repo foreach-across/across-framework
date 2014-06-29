@@ -34,11 +34,11 @@ public class ModuleGlobalMethodSecurityConfiguration extends GlobalMethodSecurit
 	}
 
 	@Override
-	protected AuthenticationManager authenticationManager() throws Exception {
+	protected AuthenticationManager authenticationManager() {
 		return delegatingClientAuthenticationManager();
 	}
 
-	private static class DelegatingClientAuthenticationManager implements AuthenticationManager
+	private static final class DelegatingClientAuthenticationManager implements AuthenticationManager
 	{
 		private final AcrossContextInfo context;
 		private AuthenticationManager delegate;

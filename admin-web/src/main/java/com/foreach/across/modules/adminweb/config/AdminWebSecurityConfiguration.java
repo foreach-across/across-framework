@@ -1,6 +1,5 @@
 package com.foreach.across.modules.adminweb.config;
 
-import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.adminweb.AdminWeb;
@@ -44,6 +43,7 @@ public class AdminWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 	}
 
 	@Override
+	@SuppressWarnings("SignatureDeclareThrowsException")
 	public void configure( HttpSecurity root ) throws Exception {
 		HttpSecurity http = root.antMatcher( adminWeb.path( "/**" ) );
 
@@ -59,6 +59,7 @@ public class AdminWebSecurityConfiguration extends WebSecurityConfigurerAdapter 
 		configureRememberMe( http );
 	}
 
+	@SuppressWarnings("SignatureDeclareThrowsException")
 	private void configureRememberMe( HttpSecurity http ) throws Exception {
 		if ( adminWeb.getSettings().isRememberMeEnabled() ) {
 			String rememberMeKey = adminWebEnvironment.getProperty( AdminWebModuleSettings.REMEMBER_ME_KEY, "" );

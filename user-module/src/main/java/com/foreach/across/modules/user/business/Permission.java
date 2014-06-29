@@ -5,13 +5,17 @@ import com.foreach.across.modules.user.config.UserSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * A single permission that can be checked against.
  */
 @Entity
 @Table(name = UserSchemaConfiguration.TABLE_PERMISSION)
-public class Permission implements Comparable<Permission>
+public class Permission implements Comparable<Permission>, Serializable
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seq_um_permission_id")
@@ -108,5 +112,13 @@ public class Permission implements Comparable<Permission>
 		return "Permission{" +
 				"name='" + getName() + '\'' +
 				'}';
+	}
+
+	private void writeObject( ObjectOutputStream oos ) throws IOException {
+		oos.writeObject( name );
+	}
+
+	private void readObject( ObjectInputStream ois ) throws IOException, ClassNotFoundException {
+		name = (String) ois.readObject();
 	}
 }

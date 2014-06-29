@@ -1,5 +1,6 @@
 package com.foreach.across.modules.web.resource;
 
+import com.foreach.across.core.AcrossException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -206,7 +207,7 @@ public class WebResourceRegistry
 			WebResourcePackage webResourcePackage = packageManager.getPackage( packageName );
 
 			if ( webResourcePackage == null ) {
-				throw new RuntimeException( "No WebResourcePackage found with name " + packageName );
+				throw new AcrossException( "No WebResourcePackage found with name " + packageName );
 			}
 
 			webResourcePackage.install( this );

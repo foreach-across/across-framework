@@ -1,6 +1,7 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.PostRefresh;
@@ -317,7 +318,7 @@ public final class AcrossContextUtils
 			}
 		}
 		catch ( Exception e ) {
-			throw new RuntimeException( e );
+			throw new AcrossException( e );
 		}
 
 		return instance;

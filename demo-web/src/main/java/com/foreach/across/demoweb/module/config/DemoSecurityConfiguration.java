@@ -25,6 +25,7 @@ public class DemoSecurityConfiguration
 	static class Config extends WebSecurityConfigurerAdapter
 	{
 		@Override
+		@SuppressWarnings( "SignatureDeclareThrowsException" )
 		public void configure( HttpSecurity http ) throws Exception {
 			http.antMatcher( "/**" ).authorizeRequests().antMatchers( "/private/**" ).hasAuthority(
 					"read something" ).anyRequest().permitAll()/*.rememberMe().key( "sdqfjsdklmjsdfmojiondsijqiosdjodj" )*/;

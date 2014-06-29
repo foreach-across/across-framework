@@ -12,9 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Refreshable
 public class TestOtherController
 {
-	@Autowired(required = false)
-	private WebUiContext context;
-
 	@Autowired
 	private MenuFactory menuFactory;
 
@@ -27,8 +24,6 @@ public class TestOtherController
 
 	@RequestMapping("/other")
 	public ModelAndView hello() {
-		//System.out.println( context.getName() );
-		System.out.println( helper.getHelloFromHelper() );
 		return new ModelAndView( "other/test" ).addObject( "menu", menuFactory.buildMenu( "mainMenu" ) );
 	}
 }

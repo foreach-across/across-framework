@@ -26,7 +26,7 @@ public class HibernateConfiguration
 
 	@Bean
 	@Exposed
-	public LocalSessionFactoryBean sessionFactory( HibernatePackage hibernatePackage ) throws Exception {
+	public LocalSessionFactoryBean sessionFactory( HibernatePackage hibernatePackage ) {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource( module.getDataSource() );
 

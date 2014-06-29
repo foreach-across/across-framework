@@ -25,11 +25,6 @@ public class SpringSecurityModule extends AcrossModule
 {
 	public static final String NAME = "SpringSecurityModule";
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
-
 	public SpringSecurityModule() {
 		setExposeFilter(
 				new BeanFilterComposite(
@@ -41,6 +36,11 @@ public class SpringSecurityModule extends AcrossModule
 						new NamedBeanFilter( "requestDataValueProcessor" )
 				)
 		);
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
 	}
 
 	@Override
