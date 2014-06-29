@@ -264,13 +264,6 @@ public class ModuleBootstrapOrderBuilder
 			String[] required = (String[]) attributes.get( "required" );
 			String[] optional = (String[]) attributes.get( "optional" );
 
-			String expression = (String) attributes.get( "expression" );
-
-			if ( !StringUtils.isBlank( expression ) ) {
-				LOG.warn(
-						"@AcrossDepends expression attribute configured on AcrossModule, but will be ignored as this is not supported." );
-			}
-
 			definedRequired.addAll( Arrays.asList( required ) );
 			definedOptional.addAll( Arrays.asList( optional ) );
 		}

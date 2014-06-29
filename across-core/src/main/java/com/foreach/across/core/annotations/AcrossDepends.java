@@ -1,6 +1,6 @@
 package com.foreach.across.core.annotations;
 
-import com.foreach.across.core.context.AcrossDependsCondition;
+import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
 import org.springframework.context.annotation.Conditional;
 
 import java.lang.annotation.ElementType;
@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * <p>Conditional annotation that can be put on a module, @Configuration class, @Bean method or any component.
  * The actual behaviour depends on the owning element.  Using this conditional it is possible to define
- * Across module requirements or to deactivate a module if a SpEL evaluates to false.</p>
+ * Across module requirements.</p>
  * <p>When putting @AcrossDepends on an AcrossModule instance:
  * <ul>
  * <li>the dependencies specified will determine the bootstrap order of the module (after its dependencies)</li>
@@ -28,9 +28,14 @@ import java.lang.annotation.Target;
  * </ul>
  * The latter is the implementation of the standard Spring @Conditional behavior.
  * </p>
+ * <p>When putting @AcrossDepends on an installer class:
+ * <ul>
+ * <li>if any of the <u>required</u> dependencies is <u>missing</u> the installer will not run</li>
+ * <li>if any of the <u>optional</u> dependencies is <u>present</u> the installer will execute</li>
+ * </ul>
+ * </p>
  * <p>
- * A module is always specified either by the name it exposes (eg. AcrossWebModule) or its full class name
- * (eg. com.foreach.across.modules.web.AcrossWebModule).
+ * A module is always specified either by the name it exposes (eg. AcrossWebModule).
  * </p>
  *
  * @see org.springframework.context.annotation.Conditional
@@ -49,12 +54,4 @@ public @interface AcrossDepends
 	 * Set of module identifiers that are optional.
 	 */
 	String[] optional() default { };
-
-	/**
-	 * An optional SpEL expression to evaluate. Expression should return {@code true} if the
-	 * condition passes or {@code false} if it fails.
-	 *
-	 * <strong>Note:</strong> Only usable on beans & configurations, not on AcrossModule classes.
-	 */
-	String expression() default "";
 }

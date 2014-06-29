@@ -1,7 +1,7 @@
 package com.foreach.across.test.context;
 
 import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.core.context.AcrossDependsCondition;
+import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import org.junit.Before;
 import org.junit.Test;

@@ -24,9 +24,9 @@ import static org.junit.Assert.*;
  * Test property setting and spring expression language conditionals.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestPropertiesAndElConditional.Config.class)
+@ContextConfiguration(classes = TestPropertyPlaceholders.Config.class)
 @DirtiesContext
-public class TestPropertiesAndElConditional
+public class TestPropertyPlaceholders
 {
 	@Autowired
 	private PropertiesModule onlyFromContext;
@@ -36,9 +36,6 @@ public class TestPropertiesAndElConditional
 
 	@Autowired
 	private PropertiesModule directOnModule;
-
-	@Autowired
-	private PropertiesModule moduleFour;
 
 	@Test
 	public void checkPropertiesSet() {
@@ -81,12 +78,6 @@ public class TestPropertiesAndElConditional
 		assertEquals( "acrossModule", config.getProperty( "moduleSourceValue" ) );
 		assertEquals( "directValue", config.getProperty( "moduleDirectValue" ) );
 		assertEquals( new Integer( 777 ), config.getProperty( "contextDirectValue", Integer.class ) );
-	}
-
-	@Test
-	public void configIsNotCreatedIfExpressionFailed() {
-		assertTrue(
-				AcrossContextUtils.getBeanFactory( moduleFour ).getBeansOfType( SetPropertyConfig.class ).isEmpty() );
 	}
 
 	@Configuration
