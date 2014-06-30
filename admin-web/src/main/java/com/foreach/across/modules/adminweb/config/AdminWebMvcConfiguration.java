@@ -1,7 +1,9 @@
 package com.foreach.across.modules.adminweb.config;
 
-import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.annotations.Module;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.modules.adminweb.AdminWeb;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.adminweb.annotations.AdminWebController;
@@ -21,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -36,9 +39,11 @@ public class AdminWebMvcConfiguration extends WebMvcConfigurerAdapter
 	private WebResourceTranslator viewsWebResourceTranslator;
 
 	@Autowired
+	@Module(AcrossModule.CURRENT_MODULE)
 	private AdminWebModule adminWebModule;
 
 	@Autowired
+	@Module(AcrossWebModule.NAME)
 	private AcrossWebModule acrossWebModule;
 
 	@Autowired
@@ -100,9 +105,11 @@ public class AdminWebMvcConfiguration extends WebMvcConfigurerAdapter
 	public WebResourcePackageManager adminWebResourcePackageManager() {
 		WebResourcePackageManager webResourcePackageManager = new WebResourcePackageManager();
 		webResourcePackageManager.register( JQueryWebResourcePackage.NAME,
-		                                    new JQueryWebResourcePackage( !acrossWebModule.isDevelopmentMode() ) );
+		                                    new JQueryWebResourcePackage(
+				                                    !acrossWebModule.isDevelopmentMode() ) );
 		webResourcePackageManager.register( BootstrapWebResourcePackage.NAME,
-		                                    new BootstrapWebResourcePackage( !acrossWebModule.isDevelopmentMode() ) );
+		                                    new BootstrapWebResourcePackage(
+				                                    !acrossWebModule.isDevelopmentMode() ) );
 
 		return webResourcePackageManager;
 	}
@@ -128,7 +135,8 @@ public class AdminWebMvcConfiguration extends WebMvcConfigurerAdapter
 	public PrefixingRequestMappingHandlerMapping adminRequestMappingHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping mappingHandlerMapping =
 				new PrefixingRequestMappingHandlerMapping( adminWebModule.getRootPath(),
-				                                           new AnnotationClassFilter( AdminWebController.class, true ) );
+				                                           new AnnotationClassFilter( AdminWebController.class,
+				                                                                      true ) );
 		mappingHandlerMapping.setInterceptors(
 				new Object[] { adminWebResourceRegistryInterceptor(), adminWebTemplateInterceptor() } );
 		return mappingHandlerMapping;

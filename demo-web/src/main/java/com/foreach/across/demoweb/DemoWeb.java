@@ -11,7 +11,6 @@ import com.foreach.across.modules.ehcache.EhcacheModule;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.spring.security.SpringSecurityModule;
 import com.foreach.across.modules.user.UserModule;
-import com.foreach.across.modules.user.UserModuleSettings;
 import com.foreach.across.modules.user.config.UserSchemaConfiguration;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebViewSupport;
@@ -20,7 +19,6 @@ import org.hibernate.cfg.AvailableSettings;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import javax.sql.DataSource;
 
@@ -45,16 +43,14 @@ public class DemoWeb
 		return context;
 	}
 
-	@Bean
-	public EhcacheModule ehCacheModule() {
+	private EhcacheModule ehCacheModule() {
 		EhcacheModule ehcacheModule = new EhcacheModule();
 		ehcacheModule.setEnabled( false );
 
 		return ehcacheModule;
 	}
 
-	@Bean
-	public AcrossHibernateModule acrossHibernateModule() {
+	private AcrossHibernateModule acrossHibernateModule() {
 		AcrossHibernateModule hibernateModule = new AcrossHibernateModule();
 		hibernateModule.setHibernateProperty( AvailableSettings.AUTOCOMMIT, "false" );
 
@@ -78,8 +74,7 @@ public class DemoWeb
 	 * Configure the AdminWebModule to prefix all AdminWebControllers with /secure instead of the default /admin.
 	 * Rename some of the default user table names.
 	 */
-	@Bean
-	public AdminWebModule adminWebModule() {
+	private AdminWebModule adminWebModule() {
 		AdminWebModule adminWebModule = new AdminWebModule();
 		adminWebModule.setRootPath( "/secure" );
 		adminWebModule.setProperty( AdminWebModuleSettings.REMEMBER_ME_KEY, "sdqfjsdklmjsdfmojiondsijqiosdjodj" );
@@ -87,8 +82,7 @@ public class DemoWeb
 		return adminWebModule;
 	}
 
-	@Bean
-	public AcrossWebModule acrossWebModule() {
+	private AcrossWebModule acrossWebModule() {
 		AcrossWebModule webModule = new AcrossWebModule();
 		webModule.setViewsResourcePath( "/static" );
 		webModule.setSupportViews( AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF );
@@ -105,8 +99,7 @@ public class DemoWeb
 		return webModule;
 	}
 
-	@Bean
-	public DebugWebModule debugWebModule() {
+	private DebugWebModule debugWebModule() {
 		DebugWebModule debugWebModule = new DebugWebModule();
 		debugWebModule.setRootPath( "/debug" );
 
