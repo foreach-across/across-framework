@@ -24,25 +24,17 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="across" />
         <module name="across-core" />
         <module name="across-test" />
         <module name="across-web" />
-        <module name="core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="across" target="1.7" />
       <module name="across-core" target="1.7" />
-      <module name="across-ehcache" target="1.7" />
-      <module name="across-hibernate" target="1.7" />
       <module name="across-test" target="1.7" />
       <module name="across-web" target="1.7" />
-      <module name="admin-web" target="1.7" />
-      <module name="debug-web" target="1.7" />
-      <module name="demo-web" target="1.7" />
-      <module name="spring-security" target="1.7" />
-      <module name="test-web" target="1.7" />
-      <module name="user-module" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
