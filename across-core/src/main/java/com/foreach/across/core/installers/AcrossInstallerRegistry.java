@@ -5,9 +5,9 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
+import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.slf4j.Logger;
@@ -18,6 +18,8 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -227,9 +229,18 @@ public class AcrossInstallerRegistry
 
 	private Object determineInstallerInstance( Object installerOrClass ) {
 		try {
-			return installerOrClass instanceof Class ? ( (Class) installerOrClass ).newInstance() : installerOrClass;
+			if ( installerOrClass instanceof Class ) {
+				Class<?> installerClass = (Class<?>) installerOrClass;
+
+				Constructor<?> c = installerClass.getDeclaredConstructor();
+				ReflectionUtils.makeAccessible( c );
+
+				return c.newInstance();
+			}
+
+			return installerOrClass;
 		}
-		catch ( InstantiationException | IllegalAccessException ie ) {
+		catch ( InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException ie ) {
 			throw new AcrossException( "Could not create installer instance: " + installerOrClass, ie );
 		}
 	}
