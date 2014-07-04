@@ -25,17 +25,9 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="across-core" />
-        <module name="across-ehcache" />
-        <module name="across-hibernate" />
         <module name="across-test" />
         <module name="across-web" />
-        <module name="admin-web" />
         <module name="core" />
-        <module name="debug-web" />
-        <module name="demo-web" />
-        <module name="spring-security" />
-        <module name="test-web" />
-        <module name="user-module" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

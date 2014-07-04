@@ -1,2 +1,0 @@
-test uit other
-<span th:text="${menu}">een menu naam</span>

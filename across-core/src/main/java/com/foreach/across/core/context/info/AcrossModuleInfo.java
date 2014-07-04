@@ -56,7 +56,7 @@ public interface AcrossModuleInfo extends AcrossEntity
 	public boolean isBootstrapped();
 
 	/**
-	 	 * @return Actual status of the module boostrap.
+	 * @return Actual status of the module boostrap.
 	 */
 	public ModuleBootstrapStatus getBootstrapStatus();
 
