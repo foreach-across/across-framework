@@ -52,15 +52,11 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 
 	/**
 	 * Adds a new default WebResourceRegistry to the request.
-	 *
-	 * @param request
-	 * @param response
-	 * @param handler
 	 */
 	@Override
 	public boolean preHandle( HttpServletRequest request,
 	                          HttpServletResponse response,
-	                          Object handler ) throws Exception {
+	                          Object handler ) {
 		WebResourceRegistry registry = new WebResourceRegistry( webResourcePackageManager );
 		registry.merge( defaultRegistry );
 
@@ -73,17 +69,12 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 
 	/**
 	 * Prepares the WebResourceRegistry for rendering by translating locations.
-	 *
-	 * @param request
-	 * @param response
-	 * @param handler
-	 * @param modelAndView
 	 */
 	@Override
 	public void postHandle( HttpServletRequest request,
 	                        HttpServletResponse response,
 	                        Object handler,
-	                        ModelAndView modelAndView ) throws Exception {
+	                        ModelAndView modelAndView ) {
 		WebResourceRegistry registry = WebResourceUtils.getRegistry( request );
 
 		if ( registry != null && !webResourceTranslators.isEmpty() ) {

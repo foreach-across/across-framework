@@ -6,6 +6,7 @@ import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.installers.InstallerAction;
 import org.junit.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -71,7 +72,7 @@ public class TestSpringApplicationContextLifecycle
 	@Test
 	public void destroyAcrossContextDirectly() {
 		AcrossContext across = new AcrossContext();
-		across.setAllowInstallers( false );
+		across.setInstallerAction( InstallerAction.DISABLED );
 		across.setDataSource( mock( DataSource.class ) );
 
 		AcrossModule moduleOne = new EmptyAcrossModule( "moduleOne" );
@@ -109,7 +110,7 @@ public class TestSpringApplicationContextLifecycle
 		AnnotationConfigApplicationContext parent = new AnnotationConfigApplicationContext( Config.class );
 
 		AcrossContext across = new AcrossContext( parent );
-		across.setAllowInstallers( false );
+		across.setInstallerAction( InstallerAction.DISABLED );
 		across.setDataSource( mock( DataSource.class ) );
 
 		AcrossModule moduleOne = new EmptyAcrossModule( "moduleOne" );
@@ -150,7 +151,7 @@ public class TestSpringApplicationContextLifecycle
 		AnnotationConfigApplicationContext parent = new AnnotationConfigApplicationContext( Config.class );
 
 		AcrossContext across = new AcrossContext( parent );
-		across.setAllowInstallers( false );
+		across.setInstallerAction( InstallerAction.DISABLED );
 		across.setDataSource( mock( DataSource.class ) );
 
 		// AcrossContext configuration is bean in the parent and should be destroyed

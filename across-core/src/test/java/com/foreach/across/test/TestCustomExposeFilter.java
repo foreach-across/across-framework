@@ -4,6 +4,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.ClassBeanFilter;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.exposing.*;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
@@ -100,7 +101,7 @@ public class TestCustomExposeFilter
 		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
-			context.setAllowInstallers( false );
+			context.setInstallerAction( InstallerAction.EXECUTE );
 
 			context.addModule( serviceModule() );
 			context.addModule( controllerModule() );

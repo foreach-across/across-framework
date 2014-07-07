@@ -2,6 +2,7 @@ package com.foreach.across.test.modules.naming;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,7 @@ public class NamingConfig
 	private AcrossContext autoAcrossContext;
 
 	@Autowired
-	@Qualifier( AcrossContext.BEAN)
+	@Qualifier(AcrossContext.BEAN)
 	private AcrossContext specificAcrossContext;
 
 	@Autowired
@@ -25,11 +26,11 @@ public class NamingConfig
 
 	@Autowired
 	@Qualifier("FirstModule")
-	private NamingModule moduleNamedFirst;
+	private AcrossModuleInfo moduleNamedFirst;
 
 	@Autowired
 	@Qualifier("LastModule")
-	private NamingModule moduleNamedLast;
+	private AcrossModuleInfo moduleNamedLast;
 
 	public AcrossContext getAutoAcrossContext() {
 		return autoAcrossContext;
@@ -48,10 +49,10 @@ public class NamingConfig
 	}
 
 	public NamingModule getModuleNamedFirst() {
-		return moduleNamedFirst;
+		return (NamingModule) moduleNamedFirst.getModule();
 	}
 
 	public NamingModule getModuleNamedLast() {
-		return moduleNamedLast;
+		return (NamingModule) moduleNamedLast.getModule();
 	}
 }

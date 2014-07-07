@@ -24,7 +24,7 @@ public abstract class AbstractWebUiContextRegistry<T extends WebUiContext> imple
 		this.webUiContext = webUiContext;
 	}
 
-	public T getObject() throws Exception {
+	public T getObject() {
 		return webUiContext;
 	}
 

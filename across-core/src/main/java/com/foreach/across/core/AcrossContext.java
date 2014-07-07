@@ -1,6 +1,6 @@
 package com.foreach.across.core;
 
-import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AbstractAcrossEntity;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
@@ -10,6 +10,8 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.core.installers.InstallerAction;
+import com.foreach.across.core.installers.InstallerSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -28,23 +31,22 @@ import java.util.*;
  * This class takes care of managing the global Spring ApplicationContext related to all modules,
  * and will make sure that different modules are handled in the order in which they are registered.
  */
-public class AcrossContext extends AcrossApplicationContextHolder implements DisposableBean
+public class AcrossContext extends AbstractAcrossEntity implements DisposableBean
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossContext.class );
-
 	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
 
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossContext.class );
+
 	private DataSource dataSource;
 
-	private boolean allowInstallers;
-	private boolean onlyRegisterInstallers;
-	private String[] skipInstallerGroups = new String[0];
+	// By default no installers are allowed
+	private InstallerSettings installerSettings = new InstallerSettings( InstallerAction.DISABLED );
 
 	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
-			new LinkedHashMap<ApplicationContextConfigurer, ConfigurerScope>();
+			new LinkedHashMap<>();
 
-	private LinkedList<AcrossModule> modules = new LinkedList<>();
+	private List<AcrossModule> modules = new LinkedList<>();
 
 	private boolean isBootstrapped = false;
 
@@ -69,6 +71,10 @@ public class AcrossContext extends AcrossApplicationContextHolder implements Dis
 		parentApplicationContext = parentContext;
 	}
 
+	public void setParentApplicationContext( ApplicationContext parentApplicationContext ) {
+		this.parentApplicationContext = parentApplicationContext;
+	}
+
 	public ApplicationContext getParentApplicationContext() {
 		return parentApplicationContext;
 	}
@@ -85,18 +91,25 @@ public class AcrossContext extends AcrossApplicationContextHolder implements Dis
 		return modules;
 	}
 
+	public void setModules( Collection<AcrossModule> modules ) {
+		modules.clear();
+		for ( AcrossModule module : modules ) {
+			addModule( module );
+		}
+	}
+
 	public void addModule( AcrossModule module ) {
 		if ( modules.contains( module ) ) {
-			throw new RuntimeException(
+			throw new AcrossException(
 					"Not allowed to add the same module instance to a single AcrossContext: " + module );
 		}
 
 		if ( module.getContext() != null ) {
-			throw new RuntimeException( "Module is already attached to another AcrossContext: " + module );
+			throw new AcrossException( "Module is already attached to another AcrossContext: " + module );
 		}
 
 		if ( isBootstrapped ) {
-			throw new RuntimeException(
+			throw new AcrossException(
 					"Adding a module to an already bootstrapped AcrossContext is currently not supported." );
 		}
 
@@ -122,28 +135,42 @@ public class AcrossContext extends AcrossApplicationContextHolder implements Dis
 		return null;
 	}
 
-	public boolean isAllowInstallers() {
-		return allowInstallers;
+	/**
+	 * Gets the InstallerSettings attached to this context.  A context should always have specific
+	 * InstallerSettings, so this method can never return null.
+	 *
+	 * @return InstallerSettings instance.
+	 */
+	public InstallerSettings getInstallerSettings() {
+		return installerSettings;
 	}
 
-	public void setAllowInstallers( boolean allowInstallers ) {
-		this.allowInstallers = allowInstallers;
+	/**
+	 * Sets the InstallerSettings for this context.
+	 *
+	 * @param installerSettings InstallerSettings instance.
+	 */
+	public void setInstallerSettings( InstallerSettings installerSettings ) {
+		Assert.notNull( installerSettings, "InstallerSettings on AcrossContext may not be null." );
+		this.installerSettings = installerSettings;
 	}
 
-	public boolean isOnlyRegisterInstallers() {
-		return onlyRegisterInstallers;
+	/**
+	 * Shortcut method to set the default action on the InstallerSettings attached to the context.
+	 *
+	 * @param defaultAction InstallerAction to set as default.
+	 */
+	public void setInstallerAction( InstallerAction defaultAction ) {
+		installerSettings.setDefaultAction( defaultAction );
 	}
 
-	public void setOnlyRegisterInstallers( boolean onlyRegisterInstallers ) {
-		this.onlyRegisterInstallers = onlyRegisterInstallers;
-	}
-
-	public String[] getSkipInstallerGroups() {
-		return skipInstallerGroups;
-	}
-
-	public void setSkipInstallerGroups( String[] skipInstallerGroups ) {
-		this.skipInstallerGroups = skipInstallerGroups.clone();
+	/**
+	 * Shortcut method that returns the default action on the InstallerSettings attached to the context.
+	 *
+	 * @return InstallerAction that is the default for the entire context.
+	 */
+	public InstallerAction getInstallerAction() {
+		return installerSettings.getDefaultAction();
 	}
 
 	public Map<ApplicationContextConfigurer, ConfigurerScope> getApplicationContextConfigurers() {

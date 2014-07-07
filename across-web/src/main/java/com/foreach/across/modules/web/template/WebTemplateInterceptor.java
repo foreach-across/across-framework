@@ -1,5 +1,6 @@
 package com.foreach.across.modules.web.template;
 
+import com.foreach.across.core.AcrossException;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,7 +25,7 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	@Override
 	public boolean preHandle( HttpServletRequest request,
 	                          HttpServletResponse response,
-	                          Object handler ) throws Exception {
+	                          Object handler ) {
 		String templateName = determineTemplateName( handler );
 
 		if ( templateName != null ) {
@@ -35,7 +36,7 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 				processor.prepareForTemplate( request, response, handler );
 			}
 			else {
-				throw new RuntimeException( "No WebTemplateProcessor registered with name: " + templateName );
+				throw new AcrossException( "No WebTemplateProcessor registered with name: " + templateName );
 			}
 		}
 
@@ -46,7 +47,7 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	public void postHandle( HttpServletRequest request,
 	                        HttpServletResponse response,
 	                        Object handler,
-	                        ModelAndView modelAndView ) throws Exception {
+	                        ModelAndView modelAndView ) {
 		WebTemplateProcessor processor = (WebTemplateProcessor) request.getAttribute( PROCESSOR_ATTRIBUTE );
 
 		if ( processor != null ) {

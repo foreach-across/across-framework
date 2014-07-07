@@ -3,6 +3,7 @@ package com.foreach.across.test;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.TestContextEventListener;
 import com.foreach.across.test.modules.TestEvent;
 import com.foreach.across.test.modules.module1.*;
@@ -221,7 +222,7 @@ public class TestAcrossContextBoot
 
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
-			context.setAllowInstallers( true );
+			context.setInstallerAction( InstallerAction.EXECUTE );
 			context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( CustomPropertyConfig.class ),
 			                                         ConfigurerScope.CONTEXT_AND_MODULES );
 

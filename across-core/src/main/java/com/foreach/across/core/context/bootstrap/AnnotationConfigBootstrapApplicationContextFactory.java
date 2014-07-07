@@ -31,6 +31,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            ApplicationContext parentApplicationContext ) {
 		AcrossSpringApplicationContext applicationContext = new AcrossSpringApplicationContext();
+		applicationContext.setDisplayName( "[Across]" );
 
 		if ( parentApplicationContext != null ) {
 			applicationContext.setParent( parentApplicationContext );
@@ -98,6 +99,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 		ConfigurableEnvironment environment = context.getEnvironment();
 
 		for ( ApplicationContextConfigurer configurer : configurers ) {
+			// First register property sources
 			PropertySources propertySources = configurer.propertySources();
 
 			if ( propertySources != null ) {
@@ -106,7 +108,9 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 					environment.getPropertySources().addFirst( propertySource );
 				}
 			}
+		}
 
+		for ( ApplicationContextConfigurer configurer : configurers ) {
 			ProvidedBeansMap providedBeans = configurer.providedBeans();
 
 			if ( providedBeans != null ) {

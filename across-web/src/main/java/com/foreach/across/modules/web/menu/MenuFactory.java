@@ -105,6 +105,9 @@ public class MenuFactory
 		E buildMenuEvent = builder.buildEvent( menu );
 		publisher.publish( buildMenuEvent );
 
+		// Merge the menu from the builder in the current
+		buildMenuEvent.builder().merge( menu );
+
 		menu.sort();
 		menu.select( buildMenuEvent.getSelector() );
 
@@ -136,6 +139,9 @@ public class MenuFactory
 
 		E buildMenuEvent = builder.buildEvent( menu );
 		publisher.publish( buildMenuEvent );
+
+		// Merge the menu from the builder in the current
+		buildMenuEvent.builder().merge( menu );
 
 		// Always sort a menu after the initial build
 		menu.sort();

@@ -1,6 +1,9 @@
 package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.AcrossEntity;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
@@ -8,14 +11,14 @@ import java.util.Collection;
 /**
  * Holds the intermediate and final state of a running AcrossContext.
  */
-public interface AcrossContextInfo
+public interface AcrossContextInfo extends AcrossEntity
 {
 	String BEAN = "across.contextInfo";
 
 	/**
 	 * @return The original AcrossContext.
 	 */
-	AcrossContext getConfiguration();
+	AcrossContext getContext();
 
 	/**
 	 * Gets the collection of all modules that were configured in the context,
@@ -53,11 +56,33 @@ public interface AcrossContextInfo
 	/**
 	 * @return True if the AcrossContext is bootstrapped, false if bootstrap in progress.
 	 */
-	public boolean isBootstrapped();
+	boolean isBootstrapped();
 
 	/**
 	 * @return The Spring application context for this Across context.
 	 */
-	public ApplicationContext getApplicationContext();
+	ApplicationContext getApplicationContext();
 
+	/**
+	 * @return Configuration object used for bootstrapping the AcrossContext.
+	 */
+	AcrossBootstrapConfig getBootstrapConfiguration();
+
+	/**
+	 * @param moduleName Unique name of the module.
+	 * @return Index of the module in the context bootstrap, max integer if not found.
+	 */
+	int getModuleIndex( String moduleName );
+
+	/**
+	 * @param module AcrossModule instance to lookup the index for.
+	 * @return Index of the module in the context bootstrap, max integer if not found.
+	 */
+	int getModuleIndex( AcrossModule module );
+
+	/**
+	 * @param moduleInfo AcrossModuleInfo instance to lookup the index for.
+	 * @return Index of the module in the context bootstrap, max integer if not found.
+	 */
+	int getModuleIndex( AcrossModuleInfo moduleInfo );
 }

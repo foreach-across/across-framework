@@ -4,16 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/across.iml" filepath="$PROJECT_DIR$/across.iml" />
       <module fileurl="file://$PROJECT_DIR$/across-core/across-core.iml" filepath="$PROJECT_DIR$/across-core/across-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/across-ehcache/across-ehcache.iml" filepath="$PROJECT_DIR$/across-ehcache/across-ehcache.iml" />
-      <module fileurl="file://$PROJECT_DIR$/across-hibernate/across-hibernate.iml" filepath="$PROJECT_DIR$/across-hibernate/across-hibernate.iml" />
       <module fileurl="file://$PROJECT_DIR$/across-test/across-test.iml" filepath="$PROJECT_DIR$/across-test/across-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/across-web/across-web.iml" filepath="$PROJECT_DIR$/across-web/across-web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/admin-web/admin-web.iml" filepath="$PROJECT_DIR$/admin-web/admin-web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/debug-web/debug-web.iml" filepath="$PROJECT_DIR$/debug-web/debug-web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/demo-web/demo-web.iml" filepath="$PROJECT_DIR$/demo-web/demo-web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/spring-security/spring-security.iml" filepath="$PROJECT_DIR$/spring-security/spring-security.iml" />
-      <module fileurl="file://$PROJECT_DIR$/test-web/test-web.iml" filepath="$PROJECT_DIR$/test-web/test-web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/user-module/user-module.iml" filepath="$PROJECT_DIR$/user-module/user-module.iml" />
     </modules>
   </component>
 </project>

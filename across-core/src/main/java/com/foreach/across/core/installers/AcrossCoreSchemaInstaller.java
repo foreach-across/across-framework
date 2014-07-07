@@ -1,13 +1,12 @@
 package com.foreach.across.core.installers;
 
-import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossContextUtils;
 import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 
 /**
  * Special bean that takes care of installing the very minimum schema for module installation versioning.
@@ -16,28 +15,23 @@ public class AcrossCoreSchemaInstaller
 {
 	private final static Logger LOG = LoggerFactory.getLogger( AcrossCoreSchemaInstaller.class );
 
-	private AcrossContext acrossContext;
+	private final DataSource dataSource;
+	private final AutowireCapableBeanFactory beanFactory;
 
-	public AcrossCoreSchemaInstaller( AcrossContext acrossContext ) {
-		this.acrossContext = acrossContext;
+	public AcrossCoreSchemaInstaller( DataSource dataSource, AutowireCapableBeanFactory beanFactory ) {
+		this.dataSource = dataSource;
+		this.beanFactory = beanFactory;
 	}
 
 	@PostConstruct
 	protected void installCoreSchema() {
-		if ( acrossContext.isAllowInstallers() ) {
-			LOG.info( "Installing the core schema for Across" );
+		LOG.info( "Installing the core schema for Across" );
 
-			AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext );
+		SpringLiquibase liquibase = new SpringLiquibase();
+		liquibase.setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );
+		liquibase.setDataSource( dataSource );
 
-			SpringLiquibase liquibase = new SpringLiquibase();
-			liquibase.setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );
-			liquibase.setDataSource( acrossContext.getDataSource() );
-
-			beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
-			beanFactory.initializeBean( liquibase, "" );
-		}
-		else {
-			LOG.info( "Skipping the core schema installer because installers are not allowed." );
-		}
+		beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+		beanFactory.initializeBean( liquibase, "" );
 	}
 }

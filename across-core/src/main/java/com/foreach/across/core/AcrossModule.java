@@ -1,22 +1,28 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AbstractAcrossEntity;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
+import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.BeanDefinitionTransformer;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-public abstract class AcrossModule extends AcrossApplicationContextHolder
+public abstract class AcrossModule extends AbstractAcrossEntity
 {
 	// The current module (owning the ApplicationContext) can always be referenced under this qualifier
 	public static final String CURRENT_MODULE = "across.currentModule";
@@ -26,11 +32,13 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	private BeanFilter exposeFilter = defaultExposeFilter();
 	private BeanDefinitionTransformer exposeTransformer = null;
 	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
-			new HashSet<ApplicationContextConfigurer>();
+			new HashSet<>();
 
 	private final Set<String> runtimeDependencies = new HashSet<String>();
 
 	private boolean enabled = true;
+
+	private InstallerSettings installerSettings;
 
 	public AcrossModule() {
 		registerDefaultApplicationContextConfigurers( applicationContextConfigurers );
@@ -98,6 +106,27 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	}
 
 	/**
+	 * Gets the InstallerSettings attached to this module.  If none are attached (default),
+	 * this method will return null.  No InstallerSettings mean the settings from the context
+	 * will be used.
+	 *
+	 * @return InstallerSettings instance or null if none.
+	 */
+	public InstallerSettings getInstallerSettings() {
+		return installerSettings;
+	}
+
+	/**
+	 * Sets the InstallerSettings for this module.  Can be null (default) to ensure that the InstallerSettings
+	 * from the context will be used.
+	 *
+	 * @param installerSettings InstallerSettings instance.
+	 */
+	public void setInstallerSettings( InstallerSettings installerSettings ) {
+		this.installerSettings = installerSettings;
+	}
+
+	/**
 	 * @return Array containing the installer classes in the order of which they should be run.
 	 */
 	public Object[] getInstallers() {
@@ -131,6 +160,15 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 
 	public Set<ApplicationContextConfigurer> getApplicationContextConfigurers() {
 		return applicationContextConfigurers;
+	}
+
+	/**
+	 * <p>Add one or more annotated classes to the module ApplicationContext.</p>
+	 *
+	 * @param annotatedClasses Configuration classes.
+	 */
+	public void addApplicationContextConfigurer( Class... annotatedClasses ) {
+		addApplicationContextConfigurer( new AnnotatedClassConfigurer( annotatedClasses ) );
 	}
 
 	/**
@@ -175,14 +213,14 @@ public abstract class AcrossModule extends AcrossApplicationContextHolder
 	 * <p>Called when a context is preparing to bootstrap, but before the actual bootstrap happens.
 	 * This is the last chance for a module to modify itself or its siblings before the actual
 	 * bootstrapping will occur.</p>
-	 * <p>Only modules that will actually bootstrap will be passed as parameters to this method.
+	 * <p>Only modules that will actually bootstrap will be available in the context configuration.
 	 * Any disabled modules will not be present.</p>
 	 *
-	 * @param currentModule  Bootstrap configuration of the current module.
-	 * @param modulesInOrder Map of all modules that are being bootstrapped, in the bootstrap order and with their corresponding config.
+	 * @param currentModule Bootstrap configuration of the current module.
+	 * @param contextConfig Bootstrap configuration of the entire context.
 	 */
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
-	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
+	                                 AcrossBootstrapConfig contextConfig ) {
 	}
 
 	/**

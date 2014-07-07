@@ -1,6 +1,7 @@
 package com.foreach.across.modules.web;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.bootstrap.BootstrapAdapter;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
@@ -112,7 +113,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 
 	@Override
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
-	                                 Map<AcrossModule, ModuleBootstrapConfig> modulesInOrder ) {
+	                                 AcrossBootstrapConfig contextConfig ) {
 		if ( ArrayUtils.contains( supportedViews, AcrossWebViewSupport.JSP ) ) {
 			currentModule.addApplicationContextConfigurer(
 					new AnnotatedClassConfigurer( JstlViewSupportConfiguration.class ) );

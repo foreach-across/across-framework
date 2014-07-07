@@ -1,23 +1,34 @@
 package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.AcrossEntity;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 
-public interface AcrossModuleInfo
+public interface AcrossModuleInfo extends AcrossEntity
 {
 	/**
 	 * @return The info object of the AcrossContext this module belongs to.
 	 */
-	public AcrossContextInfo getContext();
+	public AcrossContextInfo getContextInfo();
+
+	/**
+	 * @return The index of the module in the context bootstrap.
+	 */
+	int getIndex();
 
 	/**
 	 * @return Name of the AcrossModule.
 	 */
 	public String getName();
+
+	/**
+	 * @return Description of the AcrossModule.
+	 */
+	public String getDescription();
 
 	/**
 	 * @return AcrossModule instance.
@@ -45,7 +56,7 @@ public interface AcrossModuleInfo
 	public boolean isBootstrapped();
 
 	/**
-	 	 * @return Actual status of the module boostrap.
+	 * @return Actual status of the module boostrap.
 	 */
 	public ModuleBootstrapStatus getBootstrapStatus();
 
@@ -63,9 +74,4 @@ public interface AcrossModuleInfo
 	 * @return The specific role of the module in the context.
 	 */
 	public AcrossModuleRole getModuleRole();
-
-	/**
-	 * getAcrossEventHandlers();
-	 * getExposedBeans();
-	 */
 }

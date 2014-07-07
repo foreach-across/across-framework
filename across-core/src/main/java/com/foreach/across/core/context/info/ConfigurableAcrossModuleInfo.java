@@ -11,13 +11,14 @@ import java.util.Collections;
 
 public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 {
+	private final int index;
 	private final AcrossContextInfo context;
 	private final AcrossModule module;
 
 	private final String moduleName;
 	private final boolean enabled;
 
-	private AcrossModuleRole moduleRole = AcrossModuleRole.CUSTOM;
+	private AcrossModuleRole moduleRole = AcrossModuleRole.APPLICATION;
 	private ModuleBootstrapStatus bootstrapStatus;
 	private ModuleBootstrapConfig bootstrapConfiguration;
 
@@ -26,9 +27,10 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	private Collection<AcrossModuleInfo> optionalDependencies =
 			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
 
-	public ConfigurableAcrossModuleInfo( AcrossContextInfo context, AcrossModule module ) {
+	public ConfigurableAcrossModuleInfo( AcrossContextInfo context, AcrossModule module, int index ) {
 		this.context = context;
 		this.module = module;
+		this.index = index;
 
 		moduleName = module.getName();
 		enabled = module.isEnabled();
@@ -36,13 +38,23 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	}
 
 	@Override
-	public AcrossContextInfo getContext() {
+	public int getIndex() {
+		return index;
+	}
+
+	@Override
+	public AcrossContextInfo getContextInfo() {
 		return context;
 	}
 
 	@Override
 	public String getName() {
 		return moduleName;
+	}
+
+	@Override
+	public String getDescription() {
+		return getModule().getDescription();
 	}
 
 	@Override

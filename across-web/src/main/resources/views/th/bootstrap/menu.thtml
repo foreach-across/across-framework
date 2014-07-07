@@ -1,0 +1,40 @@
+<!--/* Navbar menu */-->
+<ul th:fragment="navbar (mainMenu)" class="nav navbar-nav">
+	<li th:each="menu : ${mainMenu.items}" th:if="${menu.hasItems() or menu.hasUrl()}"
+	    th:class="${menu.hasItems()}? 'dropdown'" th:classappend="${menu.selected}? 'active'">
+		<a th:unless="${menu.hasItems()}" th:href="@{${menu.url}}" th:text="${menu.title}">main item</a>
+		<a th:if="${menu.hasItems()}" href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="${menu.title}"></span>
+			<b class="caret"></b></a>
+		<ul th:if="${menu.hasItems()}" class="dropdown-menu">
+			<div th:each="subItem : ${menu.items}" th:remove="tag">
+				<li th:unless="${subItem.isGroup()}" th:classappend="${subItem.selected}? 'active'">
+					<a th:href="@{${subItem.url}}" th:text="${subItem.title}">sub item</a>
+				</li>
+				<div th:if="${subItem.isGroup() and subItem.hasItems()}" th:remove="tag">
+					<li th:unless="${subItemStat.first}" class="divider"></li>
+					<li class="dropdown-header" th:if="${subItem.hasTitle()}" th:text="${subItem.title}"></li>
+					<li th:each="subSubItem : ${subItem.items}" th:classappend="${subSubItem.selected}? 'active'">
+						<a th:href="@{${subSubItem.url}}" th:text="${subSubItem.title}">sub item</a>
+					</li>
+					<li th:unless="${subItemStat.last}" class="divider"></li>
+				</div>
+			</div>
+		</ul>
+	</li>
+</ul>
+
+<!--/* Breadcrumb generation */-->
+<ol th:fragment="breadcrumb (menu)" class="breadcrumb">
+<li th:each="item : ${menu.selectedItemPath}" th:classappend="${itemStat.last} ? 'active'" th:if="${item.hasTitle()}">
+	<span th:if="${itemStat.last}" th:text="${item.title}">title selected item</span>
+
+	<div th:unless="${itemStat.last}" th:remove="tag">
+		<span th:if="${!item.hasUrl() and (!item.isGroup() or !item.firstItem.hasUrl())}" th:text="${item.title}">title if no url</span>
+		<a th:if="${item.hasUrl() and !itemStat.last}" th:href="@{${item.url}}" th:text="${item.title}">title
+			with
+			url</a>
+		<a th:if="${!item.hasUrl() and item.isGroup() and item.firstItem.hasUrl()}" th:href="@{${item.firstItem.url}}" th:text="${item.title}">title
+			with first item url</a>
+	</div>
+</li>
+</ol>

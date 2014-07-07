@@ -11,6 +11,7 @@ public class ContentNegotiationConfigurer extends org.springframework.web.servle
 	}
 
 	@Override
+	@SuppressWarnings( "SignatureDeclareThrowsException" )
 	public ContentNegotiationManager getContentNegotiationManager() throws Exception {
 		return super.getContentNegotiationManager();
 	}

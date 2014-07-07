@@ -3,6 +3,7 @@ package com.foreach.across.modules.web.events;
 import com.foreach.across.core.events.NamedAcrossEvent;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.MenuSelector;
+import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -17,9 +18,20 @@ public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent
 {
 	private T menu;
 	private MenuSelector selector;
+	private PathBasedMenuBuilder menuBuilder;
 
 	public BuildMenuEvent( T menu ) {
 		this.menu = menu;
+		this.menuBuilder = new PathBasedMenuBuilder();
+	}
+
+	public BuildMenuEvent( T menu, PathBasedMenuBuilder menuBuilder ) {
+		this.menu = menu;
+		this.menuBuilder = menuBuilder;
+	}
+
+	public PathBasedMenuBuilder builder() {
+		return menuBuilder;
 	}
 
 	public String getEventName() {

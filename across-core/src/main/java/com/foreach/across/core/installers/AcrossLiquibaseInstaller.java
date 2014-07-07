@@ -28,10 +28,6 @@ public abstract class AcrossLiquibaseInstaller
 	@Autowired
 	private AcrossContextInfo acrossContext;
 
-	@Autowired(required = false)
-	@Qualifier(AcrossModule.CURRENT_MODULE)
-	private AcrossModule acrossModule;
-
 	@Autowired
 	@Qualifier(AcrossContext.DATASOURCE)
 	private DataSource dataSource;
@@ -59,7 +55,7 @@ public abstract class AcrossLiquibaseInstaller
 
 	@InstallerMethod
 	public void install() {
-		AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext.getConfiguration() );
+		AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext.getContext() );
 
 		SpringLiquibase liquibase = new SpringLiquibase();
 		liquibase.setChangeLog( changelog );

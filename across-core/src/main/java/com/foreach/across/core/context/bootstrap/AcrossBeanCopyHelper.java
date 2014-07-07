@@ -30,6 +30,16 @@ public class AcrossBeanCopyHelper
 	}
 
 	/**
+	 * Manually add a singleton as copied.
+	 *
+	 * @param name  Name of the singleton bean.
+	 * @param value Singleton instance.
+	 */
+	public void addSingleton( String name, Object value ) {
+		singletonsCopied.put( name, value );
+	}
+
+	/**
 	 * Copies all beans and definitions that match the filter, from the child to the parent context.
 	 *
 	 * @param child       Child context to copy from.

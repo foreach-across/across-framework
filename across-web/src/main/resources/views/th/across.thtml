@@ -12,9 +12,9 @@
 
 <h2>Render generic Table instance</h2>
 
-<div th:fragment="table (data)" th:if="${not data.isEmpty()}">
+<div th:fragment="table (data)" th:if="${not data.isEmpty()}" th:remove="tag">
 	<h3 th:if="${data.title}" th:text="${data.title}">Table title</h3>
-	<table>
+	<table class="table">
 		<tr th:if="${data.header}">
 			<th th:each="field : ${data.header.fields}" th:text="${field}">table heading</th>
 		</tr>

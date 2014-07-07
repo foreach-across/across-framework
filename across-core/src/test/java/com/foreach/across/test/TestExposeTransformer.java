@@ -2,6 +2,7 @@ package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.transformers.BeanDefinitionTransformerComposite;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
 import com.foreach.across.core.transformers.BeanRenameTransformer;
@@ -94,7 +95,7 @@ public class TestExposeTransformer
 		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
-			context.setAllowInstallers( false );
+			context.setInstallerAction( InstallerAction.DISABLED );
 
 			context.addModule( primaryModule() );
 			context.addModule( prefixedModule() );

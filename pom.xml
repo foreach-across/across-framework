@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>across</groupId>
@@ -71,14 +72,6 @@
 	<modules>
 		<module>across-core</module>
 		<module>across-web</module>
-		<module>across-hibernate</module>
-		<module>across-ehcache</module>
-		<module>debug-web</module>
-		<module>test-web</module>
-		<module>admin-web</module>
-		<module>demo-web</module>
-		<module>spring-security</module>
-		<module>user-module</module>
 		<module>across-test</module>
 	</modules>
 

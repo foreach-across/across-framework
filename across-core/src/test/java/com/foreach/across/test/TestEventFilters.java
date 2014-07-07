@@ -1,6 +1,7 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.module1.TestModule1;
 import com.foreach.across.test.modules.module2.CustomEventHandlers;
 import com.foreach.across.test.modules.module2.NamedEvent;
@@ -101,7 +102,7 @@ public class TestEventFilters
 		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
-			context.setAllowInstallers( false );
+			context.setInstallerAction( InstallerAction.DISABLED );
 
 			context.addModule( testModule1() );
 			context.addModule( testModule2() );

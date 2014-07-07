@@ -30,12 +30,12 @@ public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 	}
 
 	@PostConstruct
-	private void hookupEventHandler() {
+	void hookupEventHandler() {
 		eventBus.subscribe( this );
 	}
 
 	@Handler
-	private void moduleBootstrapped( AcrossModuleBootstrappedEvent moduleBootstrapped ) {
+	void moduleBootstrapped( AcrossModuleBootstrappedEvent moduleBootstrapped ) {
 		refresh();
 	}
 
