@@ -3,6 +3,7 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -100,6 +101,22 @@ public class AcrossBootstrapConfig
 	public boolean extendModule( String moduleName, ApplicationContextConfigurer... configurers ) {
 		if ( hasModule( moduleName ) ) {
 			getModule( moduleName ).addApplicationContextConfigurer( configurers );
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Method to add one or more expose filter to a module bootstrap configuration.
+	 *
+	 * @param moduleName    Unique name of the module in the context.
+	 * @param exposeFilters BeanFilter instances to add as additional expose filters.
+	 * @return True if the module was present.
+	 */
+	public boolean extendModule( String moduleName, BeanFilter... exposeFilters ) {
+		if ( hasModule( moduleName ) ) {
+			getModule( moduleName ).addExposeFilter( exposeFilters );
 			return true;
 		}
 

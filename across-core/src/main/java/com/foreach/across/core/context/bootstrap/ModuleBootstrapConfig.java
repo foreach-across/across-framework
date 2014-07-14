@@ -3,6 +3,7 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
+import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.BeanDefinitionTransformer;
 
@@ -42,6 +43,26 @@ public class ModuleBootstrapConfig
 
 	public void setExposeFilter( BeanFilter exposeFilter ) {
 		this.exposeFilter = exposeFilter;
+	}
+
+	/**
+	 * Adds filters that will be used after module bootstrap to copy beans to the parent context.
+	 * This adds the filters to the already configured expose filter.
+	 *
+	 * @param exposeFilters One or more filters that beans should match to be exposed to other modules.
+	 */
+	public void addExposeFilter( BeanFilter... exposeFilters ) {
+		BeanFilter[] members = exposeFilters;
+		BeanFilter current = getExposeFilter();
+
+		if ( current != null ) {
+			members = new BeanFilter[members.length + 1];
+			members[0] = current;
+			System.arraycopy( exposeFilters, 0, members, 1, exposeFilters.length );
+		}
+
+		BeanFilterComposite composite = new BeanFilterComposite( members );
+		setExposeFilter( composite );
 	}
 
 	public BeanDefinitionTransformer getExposeTransformer() {

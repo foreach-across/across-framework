@@ -82,7 +82,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	 * Sets the filter that will be used after module bootstrap to copy beans to the parent context and make
 	 * them available to other modules in the AcrossContext.
 	 *
-	 * @param exposeFilter The filter that beans should match to exposed to other modules in the AcrossContext.
+	 * @param exposeFilter The filter that beans should match to be exposed to other modules in the AcrossContext.
 	 */
 	public void setExposeFilter( BeanFilter exposeFilter ) {
 		this.exposeFilter = exposeFilter;
