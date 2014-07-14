@@ -16,7 +16,7 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://java.libs.foreach.com/nexus/content/repositories/foreach-custom-externals/</url>
+			<url>http://java.libs.foreach.com/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 
