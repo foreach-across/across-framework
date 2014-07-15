@@ -19,7 +19,7 @@ import java.util.Collection;
 @Configuration
 public class AcrossContextConfiguration
 {
-	@Autowired
+	@Autowired(required = false)
 	@Qualifier("acrossDataSource")
 	private DataSource dataSource;
 

@@ -1,5 +1,9 @@
 package com.foreach.across.modules.web.template;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,16 +12,32 @@ import java.util.Map;
  */
 public class WebTemplateRegistry
 {
+	private static final Logger LOG = LoggerFactory.getLogger( WebTemplateRegistry.class );
+
 	private String defaultTemplateName;
 	private Map<String, WebTemplateProcessor> templateProcessors = new HashMap<>();
 
 	/**
-	 * Register a WebTemplate instance under a unique name.
+	 * Register a WebTemplateProcessor instance.
+	 *
+	 * @param webTemplateProcessor Named WebTemplateProcessor instance.
+	 */
+	public void register( NamedWebTemplateProcessor webTemplateProcessor ) {
+		register( webTemplateProcessor.getName(), webTemplateProcessor );
+	}
+
+	public void unregister( NamedWebTemplateProcessor webTemplateProcessor ) {
+		unregister( webTemplateProcessor.getName() );
+	}
+
+	/**
+	 * Register a WebTemplateProcessor instance under a unique name.
 	 *
 	 * @param name                 Unique name of the instance.
-	 * @param webTemplateProcessor WebTemplate instance.
+	 * @param webTemplateProcessor WebTemplateProcessor instance.
 	 */
 	public void register( String name, WebTemplateProcessor webTemplateProcessor ) {
+		LOG.debug( "Registering WebTemplateProcessor with name {}: {}", name, webTemplateProcessor );
 		templateProcessors.put( name, webTemplateProcessor );
 	}
 
@@ -30,6 +50,10 @@ public class WebTemplateRegistry
 	 */
 	public String getDefaultTemplateName() {
 		return defaultTemplateName;
+	}
+
+	public boolean hasDefaultTemplate() {
+		return defaultTemplateName != null;
 	}
 
 	public void setDefaultTemplateName( String defaultTemplateName ) {
@@ -45,6 +69,6 @@ public class WebTemplateRegistry
 	}
 
 	public Map<String, WebTemplateProcessor> getTemplateProcessors() {
-		return new HashMap<>( templateProcessors );
+		return Collections.unmodifiableMap( templateProcessors );
 	}
 }

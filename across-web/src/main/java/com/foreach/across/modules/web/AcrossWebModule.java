@@ -8,10 +8,7 @@ import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
-import com.foreach.across.modules.web.config.AcrossWebConfig;
-import com.foreach.across.modules.web.config.AcrossWebDefaultMvcConfiguration;
-import com.foreach.across.modules.web.config.JstlViewSupportConfiguration;
-import com.foreach.across.modules.web.config.ThymeleafViewSupportConfiguration;
+import com.foreach.across.modules.web.config.*;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -96,7 +93,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	 */
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-		contextConfigurers.add( new AnnotatedClassConfigurer( AcrossWebConfig.class ) );
+		contextConfigurers.add( new AnnotatedClassConfigurer( AcrossWebConfig.class, AcrossWebTemplateConfig.class ) );
 		contextConfigurers.add( new AnnotatedClassConfigurer( AcrossWebDefaultMvcConfiguration.class ) );
 		contextConfigurers.add( new ComponentScanConfigurer( "com.foreach.across.modules.web.menu",
 		                                                     "com.foreach.across.modules.web.ui" ) );
