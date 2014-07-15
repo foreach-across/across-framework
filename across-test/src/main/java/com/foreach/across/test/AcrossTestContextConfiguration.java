@@ -3,7 +3,7 @@ package com.foreach.across.test;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
 import liquibase.integration.spring.SpringLiquibase;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;

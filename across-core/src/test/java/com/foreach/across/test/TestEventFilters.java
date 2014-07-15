@@ -7,7 +7,7 @@ import com.foreach.across.test.modules.module2.CustomEventHandlers;
 import com.foreach.across.test.modules.module2.NamedEvent;
 import com.foreach.across.test.modules.module2.SimpleEvent;
 import com.foreach.across.test.modules.module2.TestModule2;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

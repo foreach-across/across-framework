@@ -10,7 +10,7 @@ import com.foreach.across.test.modules.module1.*;
 import com.foreach.across.test.modules.module2.ConstructedBeanModule2;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

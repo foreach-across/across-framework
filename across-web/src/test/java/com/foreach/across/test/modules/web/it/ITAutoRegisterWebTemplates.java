@@ -80,7 +80,6 @@ public class ITAutoRegisterWebTemplates
 		@Override
 		public void configure( AcrossContext context ) {
 			AcrossWebModule webModule = new AcrossWebModule();
-			//webModule.setProperty( AcrossWebSettings.TEMPLATES_ENABLED, false );
 
 			context.addModule( webModule );
 		}
