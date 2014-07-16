@@ -4,7 +4,7 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.AcrossWebSettings;
+import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.template.WebTemplateRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +38,7 @@ public class ITDisabledWebTemplates
 		@Override
 		public void configure( AcrossContext context ) {
 			AcrossWebModule webModule = new AcrossWebModule();
-			webModule.setProperty( AcrossWebSettings.TEMPLATES_ENABLED, false );
+			webModule.setProperty( AcrossWebModuleSettings.TEMPLATES_ENABLED, false );
 
 			context.addModule( webModule );
 		}

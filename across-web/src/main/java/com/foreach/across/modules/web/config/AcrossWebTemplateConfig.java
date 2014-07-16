@@ -5,7 +5,7 @@ import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.modules.web.AcrossWebSettings;
+import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.template.NamedWebTemplateProcessor;
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.modules.web.template.WebTemplateRegistry;
@@ -24,7 +24,7 @@ import java.util.Collection;
  * Configures web template support with automatic registration of named web templates.
  */
 @Configuration
-@AcrossCondition("${" + AcrossWebSettings.TEMPLATES_ENABLED + ":true}")
+@AcrossCondition("${" + AcrossWebModuleSettings.TEMPLATES_ENABLED + ":true}")
 public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebTemplateConfig.class );
@@ -53,7 +53,7 @@ public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 
 	@PostRefresh
 	public void registerNamedWebTemplateProcessors() {
-		boolean autoRegister = environment.getProperty( AcrossWebSettings.TEMPLATES_AUTO_REGISTER, Boolean.class,
+		boolean autoRegister = environment.getProperty( AcrossWebModuleSettings.TEMPLATES_AUTO_REGISTER, Boolean.class,
 		                                                true );
 
 		if ( autoRegister ) {

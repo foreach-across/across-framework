@@ -1,6 +1,6 @@
 package com.foreach.across.modules.web;
 
-public interface AcrossWebSettings
+public interface AcrossWebModuleSettings
 {
 	/**
 	 * Prefix for JSP view resolver path.
