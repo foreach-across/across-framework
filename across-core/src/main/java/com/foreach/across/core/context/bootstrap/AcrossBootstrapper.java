@@ -61,9 +61,9 @@ public class AcrossBootstrapper
 		ConfigurableAcrossContextInfo contextInfo = buildContextAndModuleInfo();
 		Collection<AcrossModuleInfo> modulesInOrder = contextInfo.getModules();
 
-		LOG.debug( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
+		LOG.info( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
 		for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
-			LOG.debug( "{} - {}: {}", moduleInfo.getIndex(), moduleInfo.getName(), moduleInfo.getModule().getClass() );
+			LOG.info( "{} - {}: {}", moduleInfo.getIndex(), moduleInfo.getName(), moduleInfo.getModule().getClass() );
 		}
 
 		runModuleBootstrapperCustomizations( modulesInOrder );
@@ -121,7 +121,7 @@ public class AcrossBootstrapper
 			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
 		}
 
-		LOG.debug( "Bootstrapping {} modules - finished", modulesInOrder.size() );
+		LOG.info( "Bootstrapping {} modules - finished", modulesInOrder.size() );
 
 		if ( rootContext.getParent() != null && rootContext.getParent() instanceof ConfigurableApplicationContext ) {
 			pushDefinitionsToParent( beanHelper, (ConfigurableApplicationContext) rootContext.getParent() );

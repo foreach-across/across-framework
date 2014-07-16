@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<logger name="org.apache" level="WARN"/>
+	<logger name="org.hibernate" level="WARN"/>
+	<logger name="org.hibernate.cfg.AnnotationBinder" level="WARN"/>
+	<logger name="org.hibernate.cfg.annotations" level="WARN"/>
+	<logger name="org.quartz" level="WARN"/>
+	<logger name="org.jboss" level="WARN" />
+	<logger name="org.springframework" level="WARN"/>
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{25}: %message%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="debug">
+		<appender-ref ref="console"/>
+	</root>
+
+</configuration>

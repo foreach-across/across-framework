@@ -237,7 +237,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		if ( isBootstrapped ) {
 			LOG.info( "Shutdown signal received - destroying ApplicationContext instances" );
 
-			// Shutdown all modules in reverse order - note that it is quite possible to beans might have been destroyed
+			// Shutdown all modules in reverse order - note that it is quite possible that beans might have been destroyed
 			// already by Spring in the meantime
 			List<AcrossModuleInfo> reverseList =
 					new ArrayList<>( AcrossContextUtils.getBeanOfType( this, AcrossContextInfo.class ).getModules() );
@@ -258,9 +258,12 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 			}
 
 			// Destroy the root ApplicationContext
-			AcrossContextUtils.getApplicationContext( this ).destroy();
+			// todo: fixme, see #38
+			//AcrossContextUtils.getApplicationContext( this ).destroy();
 
-			LOG.debug( "Destroyed root ApplicationContext" );
+			//LOG.debug( "Destroyed root ApplicationContext" );
+			LOG.warn(
+					"Module ApplicationContexts have been destroyed, AcrossContext itself cannot be destroyed [see BitBucket issue #38]" );
 
 			isBootstrapped = false;
 		}

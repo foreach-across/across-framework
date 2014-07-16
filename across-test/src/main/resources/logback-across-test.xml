@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Include file to enable some commong log level defaults for testing modules.
+Simply put a logback-test.xml on the classpath and include this file as a resource.
+-->
+<included>
+	<logger name="liquibase" level="WARN" />
+	<logger name="org.apache" level="WARN"/>
+	<logger name="org.hibernate" level="WARN"/>
+	<logger name="org.hibernate.cfg.AnnotationBinder" level="WARN"/>
+	<logger name="org.hibernate.cfg.annotations" level="WARN"/>
+	<logger name="org.quartz" level="WARN"/>
+	<logger name="org.jboss" level="WARN" />
+	<logger name="org.springframework" level="WARN"/>
+	<logger name="com.foreach.across" level="WARN" />
+	<logger name="com.foreach.across.config" level="WARN"/>
+	<logger name="com.foreach.across.core" level="DEBUG"/>
+	<logger name="com.foreach.across.modules.web" level="DEBUG"/>
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{25}: %message%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="debug">
+		<appender-ref ref="console"/>
+	</root>
+</included>
