@@ -57,6 +57,7 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 
 	private String determineTemplateName( Object handler ) {
 		if ( handler instanceof HandlerMethod ) {
+			// TODO: allow annotations on the controller, ignore ResponseEntity as well for templates
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
 
 			if ( handlerMethod.getMethodAnnotation( ClearTemplate.class ) != null || handlerMethod.getMethodAnnotation(

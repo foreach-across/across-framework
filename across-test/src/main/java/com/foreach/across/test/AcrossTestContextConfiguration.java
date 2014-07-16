@@ -1,9 +1,10 @@
 package com.foreach.across.test;
 
+import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
 import liquibase.integration.spring.SpringLiquibase;
-import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -23,7 +24,7 @@ public class AcrossTestContextConfiguration
 	private Environment environment;
 
 	@Bean
-	@SuppressWarnings( "all" )
+	@SuppressWarnings("all")
 	public DataSource dataSource() {
 		BasicDataSource dataSource = new BasicDataSource();
 
@@ -68,14 +69,14 @@ public class AcrossTestContextConfiguration
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 		databaseReset();
 
-		Map<String, AcrossTestContextConfigurer> configurerMap =
-				applicationContext.getBeansOfType( AcrossTestContextConfigurer.class );
+		Map<String, AcrossContextConfigurer> configurerMap =
+				applicationContext.getBeansOfType( AcrossContextConfigurer.class );
 
 		AcrossContext context = new AcrossContext( applicationContext );
 		context.setInstallerAction( InstallerAction.EXECUTE );
 		context.setDataSource( dataSource() );
 
-		for ( AcrossTestContextConfigurer configurer : configurerMap.values() ) {
+		for ( AcrossContextConfigurer configurer : configurerMap.values() ) {
 			configurer.configure( context );
 		}
 

@@ -1,5 +1,6 @@
 package com.foreach.across.it;
 
+import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
@@ -8,7 +9,6 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.test.AcrossTestContextConfigurer;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +48,7 @@ public class ITSimpleContextBootstrap
 
 	@Configuration
 	@AcrossTestWebConfiguration
-	static class Config implements AcrossTestContextConfigurer
+	static class Config implements AcrossContextConfigurer
 	{
 		@Override
 		public void configure( AcrossContext context ) {

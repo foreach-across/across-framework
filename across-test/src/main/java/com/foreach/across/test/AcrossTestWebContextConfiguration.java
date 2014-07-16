@@ -1,5 +1,6 @@
 package com.foreach.across.test;
 
+import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebViewSupport;
@@ -14,11 +15,12 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.annotation.PostConstruct;
 
 /**
- * Creates an AcrossContext with
+ * Creates an AcrossContext with a parent WebApplicationContext.
+ * Requires the use of @WebAppConfiguration on the containing JUnit class.
  */
 @Configuration
 @Import(AcrossTestContextConfiguration.class)
-public class AcrossTestWebContextConfiguration implements AcrossTestContextConfigurer
+public class AcrossTestWebContextConfiguration implements AcrossContextConfigurer
 {
 	@Autowired
 	private ApplicationContext applicationContext;
