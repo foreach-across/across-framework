@@ -149,6 +149,18 @@ public final class AcrossContextUtils
 	}
 
 	/**
+	 * Returns the running AcrossContextInfo for a defined AcrossContext.
+	 *
+	 * @param context AcrossContext instance.
+	 * @return AcrossContextInfo of the running context (null if none).
+	 */
+	public static AcrossContextInfo getAcrossContextInfo( AcrossContext context ) {
+		ApplicationContext applicationContext = getApplicationContext( context );
+
+		return applicationContext != null ? applicationContext.getBean( AcrossContextInfo.class ) : null;
+	}
+
+	/**
 	 * Returns the Spring ApplicationContext associated with the given AcrossContext or AcrossModule.
 	 *
 	 * @param contextOrModule AcrossApplicationHolder instance.
@@ -224,13 +236,15 @@ public final class AcrossContextUtils
 	public static <T> Collection<T> getBeansOfType( AcrossContext context,
 	                                                Class<T> requiredType,
 	                                                boolean scanModules ) {
-		Set<T> beans = new HashSet<T>();
+		AcrossContextInfo contextInfo = getAcrossContextInfo( context );
+
+		Set<T> beans = new LinkedHashSet<>();
 		beans.addAll(
 				BeanFactoryUtils.beansOfTypeIncludingAncestors( getBeanFactory( context ), requiredType ).values() );
 
 		if ( scanModules ) {
-			for ( AcrossModule module : context.getModules() ) {
-				ListableBeanFactory beanFactory = getBeanFactory( module );
+			for ( AcrossModuleInfo module : contextInfo.getModules() ) {
+				ListableBeanFactory beanFactory = getBeanFactory( module.getModule() );
 
 				if ( beanFactory != null ) {
 					beans.addAll( beanFactory.getBeansOfType( requiredType ).values() );
@@ -238,7 +252,7 @@ public final class AcrossContextUtils
 			}
 		}
 
-		return beans;
+		return new ArrayList<>( beans );
 	}
 
 	/**
@@ -248,7 +262,7 @@ public final class AcrossContextUtils
 	 * @return Merges set of ApplicationContextConfigurers.
 	 */
 	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context ) {
-		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
+		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<>();
 		configurers.add( new AnnotatedClassConfigurer( AcrossConfig.class ) );
 
 		configurers.add( new AnnotatedClassConfigurer( AcrossInstallerConfig.class ) );
