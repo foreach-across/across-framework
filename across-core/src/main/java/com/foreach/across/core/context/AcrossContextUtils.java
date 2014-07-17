@@ -30,6 +30,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.stereotype.Controller;
@@ -227,11 +228,16 @@ public final class AcrossContextUtils
 	/**
 	 * Searches the AcrossContext for beans of the given type.  Depending on the scanModules boolean, this
 	 * will scan the base context and its parent, or all modules separately (including non-exposed beans).
+	 * <p/>
+	 * All beans will be sorted according to the Order, module index and OrderInModule values.
 	 *
 	 * @param context      AcrossContext instance.
 	 * @param requiredType Type the bean should match.
 	 * @param scanModules  True if the individual AcrossModules should be scanned.
 	 * @param <T>          Type of the matching beans.
+	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see com.foreach.across.core.OrderedInModule
+	 * @see org.springframework.core.Ordered
 	 */
 	public static <T> Collection<T> getBeansOfType( AcrossContext context,
 	                                                Class<T> requiredType,
@@ -239,20 +245,31 @@ public final class AcrossContextUtils
 		AcrossContextInfo contextInfo = getAcrossContextInfo( context );
 
 		Set<T> beans = new LinkedHashSet<>();
-		beans.addAll(
-				BeanFactoryUtils.beansOfTypeIncludingAncestors( getBeanFactory( context ), requiredType ).values() );
+		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
+
+		for ( T bean : BeanFactoryUtils.beansOfTypeIncludingAncestors( getBeanFactory( context ), requiredType )
+		                               .values() ) {
+			comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
+			beans.add( bean );
+		}
 
 		if ( scanModules ) {
 			for ( AcrossModuleInfo module : contextInfo.getModules() ) {
 				ListableBeanFactory beanFactory = getBeanFactory( module.getModule() );
 
 				if ( beanFactory != null ) {
-					beans.addAll( beanFactory.getBeansOfType( requiredType ).values() );
+					for ( T bean : beanFactory.getBeansOfType( requiredType ).values() ) {
+						comparator.register( bean, module.getIndex() );
+						beans.add( bean );
+					}
 				}
 			}
 		}
 
-		return new ArrayList<>( beans );
+		List<T> beanList = new ArrayList<>( beans );
+		comparator.sort( beanList );
+
+		return beanList;
 	}
 
 	/**

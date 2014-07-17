@@ -5,7 +5,6 @@ import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.context.AcrossContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.OrderComparator;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -15,8 +14,14 @@ import java.util.*;
  * autowiring a list of instances directly.  Depending on the scanModules only members visible in the containing module
  * will be selected (false, default) or all members from all modules (true).  The RefreshableRegistry updates its
  * member list after the AcrossContext has bootstrapped.</p>
- * <p>If members implement the {@link org.springframework.core.Ordered} or {@link org.springframework.core.PriorityOrdered}
- * interface they will be sorted accordingly.</p>
+ * <p>Members will be returned in the following order:
+ * <ul>
+ * <li>implementing {@link org.springframework.core.Ordered} or {@link org.springframework.core.annotation.Order}</li>
+ * <li>based on bootstrap index of the module that provides the member</li>
+ * <li>implementing {@link com.foreach.across.core.OrderedInModule} or {@link com.foreach.across.core.annotations.OrderInModule}</li>
+ * <li>any manually added members that were not picked up by the context scan</li>
+ * </ul>
+ * </p>
  * <p>Note that a RefreshableRegistry behaves as a set: duplicate members will be ignored.</p>
  *
  * @see com.foreach.across.core.registry.IncrementalRefreshableRegistry
@@ -57,13 +62,12 @@ public class RefreshableRegistry<T> implements Collection<T>
 			List<T> refreshed =
 					new ArrayList<T>( AcrossContextUtils.getBeansOfType( across, memberType, scanModules ) );
 
+			// Add fixed members at the end
 			for ( T fixed : fixedMembers ) {
 				if ( !refreshed.contains( fixed ) ) {
 					refreshed.add( fixed );
 				}
 			}
-
-			OrderComparator.sort( refreshed );
 
 			members = refreshed;
 		}
@@ -84,8 +88,6 @@ public class RefreshableRegistry<T> implements Collection<T>
 			added = members.add( member );
 		}
 
-		OrderComparator.sort( members );
-
 		return added;
 	}
 
@@ -99,8 +101,6 @@ public class RefreshableRegistry<T> implements Collection<T>
 				added &= members.add( member );
 			}
 		}
-
-		OrderComparator.sort( members );
 
 		return added;
 	}
