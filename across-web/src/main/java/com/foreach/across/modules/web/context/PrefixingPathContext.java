@@ -28,6 +28,13 @@ public class PrefixingPathContext
 		}
 	}
 
+	/**
+	 * @return Root of the prefixed context (no sub path).
+	 */
+	public String getRoot() {
+		return path( "" );
+	}
+
 	public String getPathPrefix() {
 		return prefix;
 	}

@@ -16,6 +16,12 @@ public class TestPrefixingPathContext
 	}
 
 	@Test
+	public void rootProperty() {
+		assertEquals( "/boe/", new PrefixingPathContext( "/boe" ).getRoot() );
+		assertEquals( "/sub/section/page/", new PrefixingPathContext( "/sub/section/page" ).getRoot() );
+	}
+
+	@Test
 	public void pathMethod() {
 		PrefixingPathContext ctx = new PrefixingPathContext( "/boe" );
 
