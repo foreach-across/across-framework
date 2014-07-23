@@ -8,6 +8,7 @@
           <file>file://$MODULE_DIR$/src/main/java/com/foreach/across/core/config/AcrossConfig.java</file>
           <file>file://$MODULE_DIR$/src/main/java/com/foreach/across/core/context/configurer/PropertyPlaceholderSupportConfigurer.java</file>
           <file>file://$MODULE_DIR$/src/main/java/com/foreach/across/core/context/configurer/TransactionManagementConfigurer.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/foreach/across/config/AcrossContextConfiguration.java</file>
         </fileset>
       </configuration>
     </facet>

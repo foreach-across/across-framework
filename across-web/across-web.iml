@@ -8,6 +8,7 @@
           <file>file://$MODULE_DIR$/src/main/java/com/foreach/across/modules/web/config/AcrossWebDefaultMvcConfiguration.java</file>
           <file>file://$MODULE_DIR$/src/main/java/com/foreach/across/modules/web/config/JstlViewSupportConfiguration.java</file>
           <file>file://$MODULE_DIR$/src/main/java/com/foreach/across/modules/web/config/ThymeleafViewSupportConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/foreach/across/modules/web/config/AcrossWebTemplateConfig.java</file>
         </fileset>
       </configuration>
     </facet>
