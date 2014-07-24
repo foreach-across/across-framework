@@ -18,6 +18,7 @@ public interface BeanDefinitionTransformer
 	 * @param singletons Original map of singletons.
 	 * @return Modified map of singletons.
 	 */
+	@Deprecated
 	Map<String, Object> transformSingletons( Map<String, Object> singletons );
 
 	/**

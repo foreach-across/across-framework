@@ -6,6 +6,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.ExposedBeanRegistry;
 import com.foreach.across.core.context.beans.PrimarySingletonBean;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
@@ -15,8 +16,10 @@ import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
+import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.AcrossInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
+import com.foreach.across.core.transformers.BeanDefinitionTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -116,6 +119,9 @@ public class AcrossBootstrapper
 			installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.AfterModuleBootstrap );
 
 			// Copy the beans to the parent context
+			exposeBeans( configurableAcrossModuleInfo, config.getExposeFilter(), config.getExposeTransformer(),
+			             rootContext );
+
 			beanHelper.copy( child, rootContext, config.getExposeFilter(), config.getExposeTransformer() );
 
 			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
@@ -135,6 +141,29 @@ public class AcrossBootstrapper
 
 		// Bootstrap finished - publish the event
 		context.publishEvent( new AcrossContextBootstrappedEvent( contextInfo ) );
+	}
+
+	private void exposeBeans( ConfigurableAcrossModuleInfo acrossModuleInfo,
+	                          BeanFilter exposeFilter,
+	                          BeanDefinitionTransformer exposeTransformer, AbstractApplicationContext parentContext ) {
+		ExposedBeanRegistry exposedBeanRegistry = new ExposedBeanRegistry(
+				acrossModuleInfo,
+				(AbstractApplicationContext) acrossModuleInfo.getApplicationContext(),
+				exposeFilter,
+				exposeTransformer
+		);
+
+		//exposedBeanRegistry.copyTo( (BeanDefinitionRegistry) parentContext.getBeanFactory() );
+
+		ConfigurableListableBeanFactory parentFactory = parentContext.getBeanFactory();
+				BeanDefinitionRegistry registry = null;
+
+				if ( parentFactory instanceof BeanDefinitionRegistry ) {
+					registry = (BeanDefinitionRegistry) parentFactory;
+
+					//Map<String, BeanDefinition> definitions =
+				}
+		//acrossModuleInfo.setExposedBeanDefinitions( exposedBeanRegistry.getExposedDefinitions() );
 	}
 
 	private ConfigurableAcrossContextInfo buildContextAndModuleInfo() {

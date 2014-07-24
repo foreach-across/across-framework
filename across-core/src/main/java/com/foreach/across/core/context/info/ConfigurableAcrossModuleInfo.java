@@ -121,4 +121,10 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	public ApplicationContext getApplicationContext() {
 		return AcrossContextUtils.getApplicationContext( module );
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getBean( String beanName ) {
+		return (T) getApplicationContext().getBean( beanName );
+	}
 }

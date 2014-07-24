@@ -85,4 +85,19 @@ public interface AcrossContextInfo extends AcrossEntity
 	 * @return Index of the module in the context bootstrap, max integer if not found.
 	 */
 	int getModuleIndex( AcrossModuleInfo moduleInfo );
+
+	/**
+	 * Searches the AcrossContext for beans of the given type.  Depending on the scanModules boolean, this
+	 * will scan the base context and its parent, or all modules separately (including non-exposed beans).
+	 * <p/>
+	 * All beans will be sorted according to the Order, module index and OrderInModule values.
+	 *
+	 * @param requiredType Type the bean should match.
+	 * @param scanModules  True if the individual AcrossModules should be scanned.
+	 * @param <T>          Type of the matching beans.
+	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see com.foreach.across.core.OrderedInModule
+	 * @see org.springframework.core.Ordered
+	 */
+	<T> Collection<T> getBeansOfType( Class<T> requiredType, boolean scanModules );
 }

@@ -14,6 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class AcrossBeanCopyHelper
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossBeanCopyHelper.class );

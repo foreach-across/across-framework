@@ -129,4 +129,9 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 		Assert.notNull( moduleInfo );
 		return getModuleIndex( moduleInfo.getName() );
 	}
+
+	@Override
+	public <T> Collection<T> getBeansOfType( Class<T> requiredType, boolean scanModules ) {
+		return AcrossContextUtils.getBeansOfType( getContext(), requiredType, scanModules );
+	}
 }

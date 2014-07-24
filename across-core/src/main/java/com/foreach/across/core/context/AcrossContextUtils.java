@@ -238,6 +238,7 @@ public final class AcrossContextUtils
 	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
+	 * @deprecated Use {@link com.foreach.across.core.context.info.AcrossContextInfo#getBeansOfType(Class, boolean)} instead
 	 */
 	public static <T> Collection<T> getBeansOfType( AcrossContext context,
 	                                                Class<T> requiredType,

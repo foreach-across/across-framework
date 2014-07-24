@@ -74,4 +74,13 @@ public interface AcrossModuleInfo extends AcrossEntity
 	 * @return The specific role of the module in the context.
 	 */
 	public AcrossModuleRole getModuleRole();
+
+	/**
+	 * Gets an instance of a bean.
+	 *
+	 * @param beanName Bean name.
+	 * @param <T> Bean type.
+	 * @return Instance of the requested bean.
+	 */
+	public <T> T getBean( String beanName );
 }
