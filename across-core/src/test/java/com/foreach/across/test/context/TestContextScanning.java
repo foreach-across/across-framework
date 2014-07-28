@@ -6,6 +6,7 @@ import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class TestContextScanning
 {
@@ -109,7 +111,12 @@ public class TestContextScanning
 		@Module(AcrossModule.CURRENT_MODULE)
 		private AcrossModule module;
 
+		@Autowired
+		@Module(AcrossModule.CURRENT_MODULE)
+		private AcrossModuleInfo moduleInfo;
+
 		public String getModule() {
+			assertSame( module, moduleInfo.getModule() );
 			return module.getName();
 		}
 	}

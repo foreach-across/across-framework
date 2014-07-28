@@ -199,7 +199,7 @@ public class AcrossBootstrapper
 
 			// Provide the current module bean
 			Map<String, Object> providedSingletons = new HashMap<>();
-			providedSingletons.put( AcrossModule.CURRENT_MODULE,
+			providedSingletons.put( AcrossModule.CURRENT_MODULE + "Info",
 			                        new PrimarySingletonBean(
 					                        moduleInfo,
 					                        new AutowireCandidateQualifier( Module.class.getName(),
