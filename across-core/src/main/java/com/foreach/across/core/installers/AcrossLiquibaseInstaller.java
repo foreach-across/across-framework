@@ -53,6 +53,14 @@ public abstract class AcrossLiquibaseInstaller
 		this.schemaConfiguration = schemaConfiguration;
 	}
 
+	protected SchemaConfiguration getSchemaConfiguration() {
+		return schemaConfiguration;
+	}
+
+	protected void setSchemaConfiguration( SchemaConfiguration schemaConfiguration ) {
+		this.schemaConfiguration = schemaConfiguration;
+	}
+
 	@InstallerMethod
 	public void install() {
 		AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext.getContext() );
