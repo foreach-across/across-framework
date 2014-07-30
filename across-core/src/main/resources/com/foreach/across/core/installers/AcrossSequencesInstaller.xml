@@ -11,16 +11,16 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="201406141510B" author="arne">
+	<changeSet id="201406141510C" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="ACROSS_SEQUENCES"/>
+				<tableExists tableName="across_sequences"/>
 			</not>
 		</preConditions>
 
 		<comment>Creates Across sequences table</comment>
 
-		<createTable tableName="ACROSS_SEQUENCES">
+		<createTable tableName="across_sequences">
 			<column name="seq_name" type="java.sql.Types.VARCHAR(50)">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_ACROSS_SEQUENCES"/>
 			</column>
