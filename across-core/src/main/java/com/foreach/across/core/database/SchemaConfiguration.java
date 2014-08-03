@@ -39,6 +39,17 @@ public class SchemaConfiguration
 		}
 	}
 
+	public String getCurrentTableName( String original ) {
+		boolean found = false;
+		for ( SchemaObject databaseObject : tables ) {
+			if ( StringUtils.equals( original, databaseObject.getOriginalName() ) ) {
+				return databaseObject.getCurrentName();
+			}
+		}
+
+		throw new AcrossException( "Could not find any defined table with name " + original );
+	}
+
 	public Map<String, String> getProperties() {
 		return properties;
 	}
