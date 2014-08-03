@@ -31,7 +31,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            ApplicationContext parentApplicationContext ) {
 		AcrossSpringApplicationContext applicationContext = new AcrossSpringApplicationContext();
-		applicationContext.setDisplayName( "[Across]" );
+		applicationContext.setDisplayName( "[" + across.getId() + "]" );
 
 		if ( parentApplicationContext != null ) {
 			applicationContext.setParent( parentApplicationContext );

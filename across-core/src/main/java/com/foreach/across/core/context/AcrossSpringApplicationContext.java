@@ -1,10 +1,13 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -16,6 +19,10 @@ import java.util.Map;
 public class AcrossSpringApplicationContext extends AnnotationConfigApplicationContext implements AcrossConfigurableApplicationContext
 {
 	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
+
+	public AcrossSpringApplicationContext() {
+		super( new AcrossListableBeanFactory() );
+	}
 
 	/**
 	 * Adds a collection of provided beans to application context.

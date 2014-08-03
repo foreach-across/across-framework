@@ -14,6 +14,7 @@ import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.filters.AnnotatedMethodFilter;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
@@ -155,10 +156,22 @@ public final class AcrossContextUtils
 	 * @param context AcrossContext instance.
 	 * @return AcrossContextInfo of the running context (null if none).
 	 */
-	public static AcrossContextInfo getAcrossContextInfo( AcrossContext context ) {
+	public static AcrossContextInfo getContextInfo( AcrossContext context ) {
 		ApplicationContext applicationContext = getApplicationContext( context );
 
 		return applicationContext != null ? applicationContext.getBean( AcrossContextInfo.class ) : null;
+	}
+
+	/**
+	 * Returns the created/exposed BeanRegistry for a defined AcrossContext.
+	 *
+	 * @param context AcrossContext instance
+	 * @return AcrossContextBeanRegistry of the running context (null if none).
+	 */
+	public static AcrossContextBeanRegistry getBeanRegistry( AcrossContext context ) {
+		ApplicationContext applicationContext = getApplicationContext( context );
+
+		return applicationContext != null ? applicationContext.getBean( AcrossContextBeanRegistry.class ) : null;
 	}
 
 	/**
@@ -243,7 +256,7 @@ public final class AcrossContextUtils
 	public static <T> Collection<T> getBeansOfType( AcrossContext context,
 	                                                Class<T> requiredType,
 	                                                boolean scanModules ) {
-		AcrossContextInfo contextInfo = getAcrossContextInfo( context );
+		AcrossContextInfo contextInfo = getContextInfo( context );
 
 		Set<T> beans = new LinkedHashSet<>();
 		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();

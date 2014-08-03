@@ -20,7 +20,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 		if ( parentApplicationContext == null || parentApplicationContext instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentApplicationContext;
 			AcrossSpringWebApplicationContext applicationContext = new AcrossSpringWebApplicationContext();
-			applicationContext.setDisplayName( "[Across]" );
+			applicationContext.setDisplayName( "[" + across.getId() + "]" );
 
 			if ( parentApplicationContext != null ) {
 				applicationContext.setParent( parentApplicationContext );

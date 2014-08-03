@@ -25,6 +25,7 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Main class representing a set of Across modules.
@@ -33,6 +34,8 @@ import java.util.*;
  */
 public class AcrossContext extends AbstractAcrossEntity implements DisposableBean
 {
+	private static final AtomicInteger ID_GENERATOR = new AtomicInteger(1);
+
 	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
 
@@ -49,7 +52,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private List<AcrossModule> modules = new LinkedList<>();
 
 	private boolean isBootstrapped = false;
-
+	private final String id;
 	private ApplicationContext parentApplicationContext;
 
 	/**
@@ -68,7 +71,17 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 * @param parentContext Parent ApplicationContext.
 	 */
 	public AcrossContext( ApplicationContext parentContext ) {
+		id = "AcrossContext-" + ID_GENERATOR.getAndIncrement();
 		parentApplicationContext = parentContext;
+	}
+
+	/**
+	 * The unique id of this AcrossContext.  Used in generating BeanDefinition names.
+	 *
+	 * @return The unique id of this AcrossContext.
+	 */
+	public String getId() {
+		return id;
 	}
 
 	public void setParentApplicationContext( ApplicationContext parentApplicationContext ) {

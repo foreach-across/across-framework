@@ -84,20 +84,20 @@ public class AcrossBeanCopyHelper
 					simplified.setRole( original.getRole() );
 					simplified.setBeanClassName( original.getBeanClassName() );
 
-					registry.registerBeanDefinition( definition.getKey(), simplified );
+					//registry.registerBeanDefinition( definition.getKey(), simplified );
 					definitionsCopied.put( definition.getKey(), simplified );
 				}
 				else {
-					registry.registerBeanDefinition( definition.getKey(), original );
+					//registry.registerBeanDefinition( definition.getKey(), original );
 					definitionsCopied.put( definition.getKey(), original );
 				}
 			}
 		}
 
 		for ( Map.Entry<String, Object> singleton : beans.entrySet() ) {
-			LOG.debug( "Exposing bean to parent context: {}", singleton );
+			//LOG.debug( "Exposing bean to parent context: {}", singleton );
 
-			parentFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
+			//parentFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			singletonsCopied.put( singleton.getKey(), singleton.getValue() );
 		}
 	}

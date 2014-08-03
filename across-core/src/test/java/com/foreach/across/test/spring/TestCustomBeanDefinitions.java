@@ -5,13 +5,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.*;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -38,11 +36,13 @@ public class TestCustomBeanDefinitions
 		LazyExposedBean.reset();
 
 		parent = new GenericApplicationContext();
+		parent.setDisplayName( "parent" );
 		parentProcessor = new CustomPostProcessor();
 		parent.getBeanFactory().addBeanPostProcessor( parentProcessor );
 		parent.refresh();
 
 		childOne = new AnnotationConfigApplicationContext();
+		childOne.setDisplayName( "childOne" );
 		childOne.register( Config.class );
 		childOneProcessor = new CustomPostProcessor();
 		childOne.getBeanFactory().addBeanPostProcessor( childOneProcessor );
@@ -53,11 +53,15 @@ public class TestCustomBeanDefinitions
 		parent.getBeanFactory().registerSingleton( "factory", factory );
 
 		childTwo = new AnnotationConfigApplicationContext();
+		childTwo.setDisplayName( "childTwo" );
 		childTwo.register( OtherConfig.class );
 		childTwoProcessor = new CustomPostProcessor();
 		childTwo.getBeanFactory().addBeanPostProcessor( childTwoProcessor );
 		childTwo.setParent( parent );
 		childTwo.refresh();
+
+		Factory factoryTwo = new Factory( childTwo );
+		parent.getBeanFactory().registerSingleton( "factoryTwo", factoryTwo );
 	}
 
 	@After
@@ -78,7 +82,7 @@ public class TestCustomBeanDefinitions
 
 	@Test
 	public void simpleBeanRegisteredInParent() {
-		registerBeanInParent( "myBean" );
+		registerBeanInParent( "factory", "myBean", LazyExposedBean.class );
 
 		assertEquals( "myBean", getBean( parent, "myBean" ) );
 		assertEquals( "myBean", getBean( childTwo, "myBean" ) );
@@ -89,7 +93,7 @@ public class TestCustomBeanDefinitions
 
 	@Test
 	public void postProcessorShouldNotRunInParentContext() {
-		registerBeanInParent( "myBean" );
+		registerBeanInParent( "factory", "myBean", LazyExposedBean.class );
 
 		assertEquals( "myBean", getBean( parent, "myBean" ) );
 
@@ -100,7 +104,7 @@ public class TestCustomBeanDefinitions
 
 	@Test
 	public void prototypeAlwaysGetsCreated() {
-		registerBeanInParent( "prototypeBean" );
+		registerBeanInParent( "factory", "prototypeBean", LazyExposedBean.class );
 
 		Object prototypeOneFromOne = childOne.getBean( "prototypeBean" );
 		Object prototypeTwoFromOne = childOne.getBean( "prototypeBean" );
@@ -121,12 +125,11 @@ public class TestCustomBeanDefinitions
 		assertNotNull( prototypeTwoFromParent );
 		assertNotSame( prototypeOneFromParent, prototypeTwoFromParent );
 		assertNotSame( prototypeOneFromOne, prototypeOneFromParent );
-
 	}
 
 	@Test
 	public void lazyBeanFromChildOnlyGetsCreatedWhenRequestedFirstTime() {
-		registerBeanInParent( "lazyBean" );
+		registerBeanInParent( "factory", "lazyBean", LazyExposedBean.class );
 
 		assertEquals( 0, LazyExposedBean.getCreationCount() );
 
@@ -141,12 +144,37 @@ public class TestCustomBeanDefinitions
 		assertEquals( 1, LazyExposedBean.getCreationCount() );
 	}
 
-	private void registerBeanInParent( String beanName ) {
-		RootBeanDefinition beanDefinition = new RootBeanDefinition( LazyExposedBean.class );
-		beanDefinition.setTargetType( LazyExposedBean.class );
-		beanDefinition.setBeanClass( LazyExposedBean.class );
-		beanDefinition.setBeanClassName( LazyExposedBean.class.getName() );
-		beanDefinition.setFactoryBeanName( "factory" );
+	@Test
+	public void beansAreWiredInTheirCreatingContext() {
+		registerBeanInParent( "factory", "firstDependencyForSingleton", DependencyForSingleton.class );
+		registerBeanInParent( "factoryTwo", "otherDependencyForSingleton", DependencyForSingleton.class );
+
+		SingletonWithDependency singletonOne = childOne.getBean( SingletonWithDependency.class );
+		SingletonWithDependency singletonTwo = childTwo.getBean( SingletonWithDependency.class );
+
+		assertEquals( "first", singletonOne.getName() );
+		assertEquals( "first", singletonOne.getDependencyName() );
+		assertEquals( "other", singletonTwo.getName() );
+		assertEquals( "other", singletonTwo.getDependencyName() );
+
+		registerBeanInParent( "factory", "singletonWithDependencyOne", SingletonWithDependency.class );
+		registerBeanInParent( "factoryTwo", "singletonWithDependencyTwo", SingletonWithDependency.class );
+
+		SingletonWithDependency singletonOneFromTwo = (SingletonWithDependency) childTwo.getBean(
+				"singletonWithDependencyOne" );
+		SingletonWithDependency singletonTwoFromOne = (SingletonWithDependency) childOne.getBean(
+				"singletonWithDependencyTwo" );
+
+		assertEquals( "first", singletonOneFromTwo.getDependencyName() );
+		assertEquals( "other", singletonTwoFromOne.getDependencyName() );
+	}
+
+	private void registerBeanInParent( String factory, String beanName, Class type ) {
+		RootBeanDefinition beanDefinition = new RootBeanDefinition( type );
+		beanDefinition.setTargetType( type );
+		beanDefinition.setBeanClass( type );
+		beanDefinition.setBeanClassName( type.getName() );
+		beanDefinition.setFactoryBeanName( factory );
 		beanDefinition.setFactoryMethodName( "getBean" );
 		beanDefinition.setScope( "prototype" );
 		beanDefinition.setSynthetic( true );
@@ -224,6 +252,20 @@ public class TestCustomBeanDefinitions
 		public PrototypeBean prototypeBean() {
 			return new PrototypeBean();
 		}
+
+		@Bean
+		@Scope("prototype")
+		public SingletonWithDependency singletonWithDependencyOne() {
+			return new SingletonWithDependency( "first" );
+		}
+
+		// Must be defined as primary within the module context
+		@Bean
+		@Scope("prototype")
+		@Primary
+		public DependencyForSingleton firstDependencyForSingleton() {
+			return new DependencyForSingleton( "first" );
+		}
 	}
 
 	protected static class OtherConfig
@@ -231,6 +273,52 @@ public class TestCustomBeanDefinitions
 		@Bean
 		public String otherBean() {
 			return "otherBean";
+		}
+
+		@Bean
+		@Scope("prototype")
+		public SingletonWithDependency singletonWithDependencyTwo() {
+			return new SingletonWithDependency( "other" );
+		}
+
+		@Bean
+		@Scope("prototype")
+		@Primary
+		public DependencyForSingleton otherDependencyForSingleton() {
+			return new DependencyForSingleton( "other" );
+		}
+	}
+
+	protected static class SingletonWithDependency
+	{
+		private final String name;
+
+		@Autowired
+		private DependencyForSingleton dependencyForSingleton;
+
+		public SingletonWithDependency( String name ) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getDependencyName() {
+			return dependencyForSingleton.getName();
+		}
+	}
+
+	protected static class DependencyForSingleton
+	{
+		private final String name;
+
+		public DependencyForSingleton( String name ) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
 		}
 	}
 }

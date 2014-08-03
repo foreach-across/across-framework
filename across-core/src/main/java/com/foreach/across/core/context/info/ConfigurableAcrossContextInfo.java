@@ -15,6 +15,7 @@ import java.util.LinkedList;
 
 public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 {
+	private final String id;
 	private final AcrossContext context;
 
 	private boolean bootstrapped;
@@ -24,7 +25,13 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	private AcrossBootstrapConfig bootstrapConfiguration;
 
 	public ConfigurableAcrossContextInfo( AcrossContext context ) {
+		this.id = context.getId();
 		this.context = context;
+	}
+
+	@Override
+	public String getId() {
+		return id;
 	}
 
 	@Override

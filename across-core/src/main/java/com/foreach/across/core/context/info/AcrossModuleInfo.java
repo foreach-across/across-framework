@@ -4,9 +4,11 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossEntity;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
+import java.util.Map;
 
 public interface AcrossModuleInfo extends AcrossEntity
 {
@@ -74,6 +76,11 @@ public interface AcrossModuleInfo extends AcrossEntity
 	 * @return The specific role of the module in the context.
 	 */
 	public AcrossModuleRole getModuleRole();
+
+	/**
+	 * @return The collection of exposed BeanDefinitions.
+	 */
+	public Map<String, BeanDefinition> getExposedBeanDefinitions();
 
 	/**
 	 * Gets an instance of a bean.

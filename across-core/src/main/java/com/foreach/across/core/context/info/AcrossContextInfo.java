@@ -16,6 +16,11 @@ public interface AcrossContextInfo extends AcrossEntity
 	String BEAN = "across.contextInfo";
 
 	/**
+	 * @return The unique id of the AcrossContext.
+	 */
+	String getId();
+
+	/**
 	 * @return The original AcrossContext.
 	 */
 	AcrossContext getContext();

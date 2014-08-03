@@ -60,7 +60,7 @@ public final class ApplicationContextScanner
 		ConfigurableListableBeanFactory beanFactory = ctx.getBeanFactory();
 
 		for ( String defName : ctx.getBeanDefinitionNames() ) {
-			BeanDefinition def = ctx.getBeanFactory().getBeanDefinition( defName );
+			BeanDefinition def = ctx.getBeanFactory().getMergedBeanDefinition( defName );
 			Object bean = beanFactory.getSingleton( defName );
 
 			if ( filter.apply( beanFactory, defName, bean, def ) ) {
