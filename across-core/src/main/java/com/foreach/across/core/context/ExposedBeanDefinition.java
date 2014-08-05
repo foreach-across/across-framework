@@ -1,7 +1,6 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.annotations.Module;
-import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -25,13 +24,14 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 	private final String contextId;
 	private final String moduleName;
 
+	private final String fullyQualifierBeanName;
+	private final String preferredBeanName;
+
 	private Set<String> aliases = new HashSet<>();
 
 	public ExposedBeanDefinition( String contextId, String moduleName, String originalBeanName, Class beanClass ) {
 		this.contextId = contextId;
 		this.moduleName = moduleName;
-
-
 
 		setSynthetic( true );
 
@@ -59,7 +59,11 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		addQualifier( new AutowireCandidateQualifier( Qualifier.class.getName(), originalBeanName ) );
 		addQualifier( new AutowireCandidateQualifier( Module.class.getName(), moduleName ) );
 
-		aliases.add( originalBeanName );
+		//aliases.add( originalBeanName );
+
+		preferredBeanName = originalBeanName;
+		fullyQualifierBeanName = contextId + "." + moduleName + "@" + originalBeanName;
+
 		//addQualifier( new AutowireCandidateQualifier( Context.class.getName(), contextId ) );
 	}
 
@@ -80,6 +84,14 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 				addQualifier( qualifier );
 			}
 		}
+	}
+
+	public String getFullyQualifierBeanName() {
+		return fullyQualifierBeanName;
+	}
+
+	public String getPreferredBeanName() {
+		return preferredBeanName;
 	}
 
 	public String getContextId() {

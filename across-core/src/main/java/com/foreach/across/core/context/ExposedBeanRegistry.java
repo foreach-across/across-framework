@@ -128,12 +128,24 @@ public class ExposedBeanRegistry
 					                                          }
 				                                          });
 				                                          */
-				registry.registerBeanDefinition( definition.getKey(), definition.getValue() );
+				ExposedBeanDefinition beanDefinition = (ExposedBeanDefinition) definition.getValue();
 
-				for ( String alias : ((ExposedBeanDefinition) definition.getValue()).getAliases() ) {
-					if ( !registry.containsBeanDefinition( alias ) ) {
+				String beanName = beanDefinition.getPreferredBeanName();
+				boolean registerAlias = false;
+
+				if ( context.containsBean( beanName ) ) {
+					registerAlias = true;
+					beanName = beanDefinition.getFullyQualifierBeanName();
+				}
+
+				registry.registerBeanDefinition( beanName, beanDefinition );
+
+				if ( registerAlias ) {
+					registry.registerAlias( beanName, beanDefinition.getPreferredBeanName() );
+				}
+
+				for ( String alias : beanDefinition.getAliases() ) {
 						registry.registerAlias( definition.getKey(), alias );
-					}
 				}
 			}
 		}
