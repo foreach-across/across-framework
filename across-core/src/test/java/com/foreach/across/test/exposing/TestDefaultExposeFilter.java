@@ -7,6 +7,7 @@ import com.foreach.across.test.modules.exposing.*;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -32,7 +33,7 @@ public class TestDefaultExposeFilter
 	@Autowired
 	private ExposingModule module;
 
-	@Autowired(required=false)
+	@Autowired(required = false)
 	private MyController myController;
 
 	@Autowired
@@ -62,7 +63,8 @@ public class TestDefaultExposeFilter
 
 	@Test
 	public void onlyBeansWithExposedAnnotationAreExposed() {
-		Map<String, MyBean> exposedBeans = applicationContext.getBeansOfType( MyBean.class );
+		Map<String, MyBean> exposedBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors( applicationContext,
+		                                                                                   MyBean.class );
 		Map<String, MyBean> moduleBeans =
 				AcrossContextUtils.getApplicationContext( module ).getBeansOfType( MyBean.class );
 

@@ -19,6 +19,11 @@ import java.util.Collection;
 
 public class AnnotationConfigBootstrapApplicationContextFactory implements BootstrapApplicationContextFactory
 {
+	@Override
+	public AbstractApplicationContext createApplicationContext() {
+		return new AcrossSpringApplicationContext();
+	}
+
 	/**
 	 * Create the Spring ApplicationContext for the root of the AcrossContext.
 	 * Optionally a parent ApplicationContext can be specified and a map of singletons that are guaranteed
@@ -28,9 +33,10 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 * @param parentApplicationContext Parent ApplicationContext, can be null.
 	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
 	 */
+	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            ApplicationContext parentApplicationContext ) {
-		AcrossSpringApplicationContext applicationContext = new AcrossSpringApplicationContext();
+		AbstractApplicationContext applicationContext = createApplicationContext();
 		applicationContext.setDisplayName( "[" + across.getId() + "]" );
 
 		if ( parentApplicationContext != null ) {
@@ -53,10 +59,11 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 * @param parentContext         Contains the parent context.
 	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
 	 */
+	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            ModuleBootstrapConfig moduleBootstrapConfig,
 	                                                            AcrossApplicationContext parentContext ) {
-		AcrossSpringApplicationContext child = new AcrossSpringApplicationContext();
+		AbstractApplicationContext child = createApplicationContext();
 		child.setDisplayName( moduleBootstrapConfig.getModuleName() );
 		child.setParent( parentContext.getApplicationContext() );
 		child.getEnvironment().merge( parentContext.getApplicationContext().getEnvironment() );
@@ -70,6 +77,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 * @param across  AcrossContext being loaded.
 	 * @param context Contains the root Spring ApplicationContext.
 	 */
+	@Override
 	public void loadApplicationContext( AcrossContext across, AcrossApplicationContext context ) {
 		AcrossConfigurableApplicationContext root =
 				(AcrossConfigurableApplicationContext) context.getApplicationContext();
@@ -85,6 +93,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 * @param moduleBootstrapConfig Bootstrap configuration of the AcrossModule being created.
 	 * @param context               Contains the Spring ApplicationContext for the module.
 	 */
+	@Override
 	public void loadApplicationContext( AcrossContext across,
 	                                    ModuleBootstrapConfig moduleBootstrapConfig,
 	                                    AcrossApplicationContext context ) {

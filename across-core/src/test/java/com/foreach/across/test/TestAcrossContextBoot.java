@@ -172,9 +172,10 @@ public class TestAcrossContextBoot
 	}
 
 	@Test
-	public void currentModuleCantBeUsedDirectlyInExposedScopedBeans() {
-		assertNull( prototype1.getCurrentModule() );
-		assertNull( prototype2.getCurrentModule() );
+	public void currentModuleCanAlsoBeUsedDirectlyInExposedScopedBeans() {
+		assertNotSame( prototype1, prototype2 );
+		assertSame( module1, prototype1.getCurrentModule() );
+		assertSame( module1, prototype2.getCurrentModule() );
 	}
 
 	@Test

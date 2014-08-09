@@ -11,6 +11,7 @@ import com.foreach.across.test.modules.exposing.*;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -66,7 +67,8 @@ public class TestExposeTransformer
 
 	@Test
 	public void beansAreFromMyBeansModule() {
-		Map<String, MyBean> exposedBeans = applicationContext.getBeansOfType( MyBean.class );
+		Map<String, MyBean> exposedBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors( applicationContext,
+		                                                                                   MyBean.class );
 
 		assertEquals( 6, exposedBeans.size() );
 		assertTrue( exposedBeans.containsKey( "exposedBean" ) );

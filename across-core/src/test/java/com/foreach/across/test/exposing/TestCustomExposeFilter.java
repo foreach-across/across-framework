@@ -9,6 +9,7 @@ import com.foreach.across.test.modules.exposing.*;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -74,7 +75,8 @@ public class TestCustomExposeFilter
 
 	@Test
 	public void beansAreFromMyBeansModule() {
-		Map<String, MyBean> exposedBeans = applicationContext.getBeansOfType( MyBean.class );
+		Map<String, MyBean> exposedBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors( applicationContext,
+		                                                                                   MyBean.class );
 		Map<String, MyBean> moduleBeans =
 				AcrossContextUtils.getApplicationContext( mybeanModule ).getBeansOfType( MyBean.class );
 

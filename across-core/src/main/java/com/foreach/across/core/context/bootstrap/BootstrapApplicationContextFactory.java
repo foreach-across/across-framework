@@ -11,6 +11,13 @@ import org.springframework.context.support.AbstractApplicationContext;
 public interface BootstrapApplicationContextFactory
 {
 	/**
+	 * Create a new ApplicationContext instance that support Across context behavior.
+	 *
+	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
+	 */
+	AbstractApplicationContext createApplicationContext();
+
+	/**
 	 * Create the Spring ApplicationContext for the root of the AcrossContext.
 	 * Optionally a parent ApplicationContext can be specified and a map of singletons that are guaranteed
 	 * to be available when the ApplicationContext has been created.

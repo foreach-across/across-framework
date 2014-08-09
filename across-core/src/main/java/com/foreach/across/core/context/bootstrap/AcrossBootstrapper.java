@@ -165,18 +165,37 @@ public class AcrossBootstrapper
 
 	private void pushExposedBeansToParent( ExposedContextBeanRegistry exposedContextBeanRegistry,
 	                                       ApplicationContext applicationContext ) {
-		ConfigurableApplicationContext configurableApplicationContext =
+		ConfigurableApplicationContext currentApplicationContext =
 				(ConfigurableApplicationContext) applicationContext;
-		ConfigurableListableBeanFactory beanFactory = configurableApplicationContext.getBeanFactory();
+		ConfigurableListableBeanFactory currentBeanFactory = currentApplicationContext.getBeanFactory();
 
-		// Make sure the parent can handle exposed beans
+		ConfigurableListableBeanFactory beanFactory = currentBeanFactory;
+
+		// If the direct parent does not handle exposed beans, check if another context already introduced
+		// a supporting context higher up
+		if ( !( beanFactory instanceof AcrossListableBeanFactory ) && currentApplicationContext.getParent() != null ) {
+			ApplicationContext parent = currentApplicationContext.getParent();
+
+			if ( parent instanceof ConfigurableApplicationContext ) {
+				beanFactory = ( (ConfigurableApplicationContext) parent ).getBeanFactory();
+			}
+		}
+
+		// Make sure the parent can handle exposed beans - if not, introduce a supporting BeanFactory in the hierarchy
 		if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
-			AcrossListableBeanFactory acrossListableBeanFactory = new AcrossListableBeanFactory();
-			acrossListableBeanFactory.setParentBeanFactory( beanFactory.getParentBeanFactory() );
+			AbstractApplicationContext parentApplicationContext = applicationContextFactory.createApplicationContext();
+			parentApplicationContext.refresh();
+			parentApplicationContext.start();
 
-			beanFactory.setParentBeanFactory( acrossListableBeanFactory );
+			ConfigurableListableBeanFactory parentBeanFactory = parentApplicationContext.getBeanFactory();
 
-			beanFactory = acrossListableBeanFactory;
+			parentBeanFactory.setParentBeanFactory( currentBeanFactory.getParentBeanFactory() );
+			parentApplicationContext.setParent( currentApplicationContext.getParent() );
+
+			currentApplicationContext.setParent( parentApplicationContext );
+			currentBeanFactory.setParentBeanFactory( parentBeanFactory );
+
+			beanFactory = parentApplicationContext.getBeanFactory();
 		}
 
 		exposedContextBeanRegistry.copyTo( beanFactory );

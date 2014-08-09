@@ -15,6 +15,11 @@ import org.springframework.web.context.WebApplicationContext;
 public class WebBootstrapApplicationContextFactory extends AnnotationConfigBootstrapApplicationContextFactory
 {
 	@Override
+	public AbstractApplicationContext createApplicationContext() {
+		return new AcrossSpringWebApplicationContext();
+	}
+
+	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            ApplicationContext parentApplicationContext ) {
 		if ( parentApplicationContext == null || parentApplicationContext instanceof WebApplicationContext ) {
