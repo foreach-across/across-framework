@@ -5,7 +5,7 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.installers.InstallerSettings;
-import com.foreach.across.core.transformers.BeanDefinitionTransformer;
+import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class ModuleBootstrapConfig
 	private final AcrossModule module;
 
 	private BeanFilter exposeFilter;
-	private BeanDefinitionTransformer exposeTransformer;
+	private ExposedBeanDefinitionTransformer exposeTransformer;
 	private Set<ApplicationContextConfigurer> applicationContextConfigurers =
 			new LinkedHashSet<ApplicationContextConfigurer>();
 	private Collection<Object> installers = new LinkedList<Object>();
@@ -65,11 +65,11 @@ public class ModuleBootstrapConfig
 		setExposeFilter( composite );
 	}
 
-	public BeanDefinitionTransformer getExposeTransformer() {
+	public ExposedBeanDefinitionTransformer getExposeTransformer() {
 		return exposeTransformer;
 	}
 
-	public void setExposeTransformer( BeanDefinitionTransformer exposeTransformer ) {
+	public void setExposeTransformer( ExposedBeanDefinitionTransformer exposeTransformer ) {
 		this.exposeTransformer = exposeTransformer;
 	}
 

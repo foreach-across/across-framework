@@ -1,7 +1,9 @@
-package com.foreach.across.test;
+package com.foreach.across.test.exposing;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.filters.AnnotationBeanFilter;
+import com.foreach.across.core.filters.ClassBeanFilter;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.exposing.*;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -12,6 +14,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,56 +26,61 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestDefaultExposeFilter.Config.class)
+@ContextConfiguration(classes = TestCustomExposeFilter.Config.class)
 @DirtiesContext
-public class TestDefaultExposeFilter
+public class TestCustomExposeFilter
 {
 	@Autowired
 	private ApplicationContext applicationContext;
 
 	@Autowired
-	private ExposingModule module;
+	private ExposingModule serviceModule;
 
-	@Autowired(required=false)
+	@Autowired
+	private ExposingModule controllerModule;
+
+	@Autowired
+	private ExposingModule mybeanModule;
+
+	@Autowired
 	private MyController myController;
 
 	@Autowired
 	private MyService myService;
 
-	@Autowired
+	@Autowired(required = false)
 	private ExposingConfiguration exposingConfiguration;
 
 	@Autowired(required = false)
 	private SimpleConfiguration simpleConfiguration;
 
 	@Test
-	public void serviceIsExposedByDefault() {
+	public void serviceIsFromServiceModule() {
 		assertNotNull( myService );
+		assertSame( myService, AcrossContextUtils.getBeanOfType( serviceModule, MyService.class ) );
 	}
 
 	@Test
-	public void controllerIsNotExposedByDefault() {
-		assertNull( myController );
+	public void controllerIsFromControllerModule() {
+		assertNotNull( myController );
+		assertSame( myController, AcrossContextUtils.getBeanOfType( controllerModule, MyController.class ) );
 	}
 
 	@Test
-	public void configurationCanBeExposed() {
-		assertNotNull( exposingConfiguration );
+	public void noConfigurationIsExposed() {
+		assertNull( exposingConfiguration );
 		assertNull( simpleConfiguration );
 	}
 
 	@Test
-	public void onlyBeansWithExposedAnnotationAreExposed() {
+	public void beansAreFromMyBeansModule() {
 		Map<String, MyBean> exposedBeans = applicationContext.getBeansOfType( MyBean.class );
 		Map<String, MyBean> moduleBeans =
-				AcrossContextUtils.getApplicationContext( module ).getBeansOfType( MyBean.class );
+				AcrossContextUtils.getApplicationContext( mybeanModule ).getBeansOfType( MyBean.class );
 
-		assertEquals( 3, exposedBeans.size() );
+		assertEquals( 5, exposedBeans.size() );
 		assertEquals( 5, moduleBeans.size() );
-
-		assertTrue( exposedBeans.containsKey( "exposedBean" ) );
-		assertTrue( exposedBeans.containsKey( "myBeanWithExposed" ) );
-		assertTrue( exposedBeans.containsKey( "beanFromExposingConfiguration" ) );
+		assertEquals( moduleBeans, exposedBeans );
 	}
 
 	@Configuration
@@ -92,16 +101,37 @@ public class TestDefaultExposeFilter
 		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
-			context.setInstallerAction( InstallerAction.DISABLED );
+			context.setInstallerAction( InstallerAction.EXECUTE );
 
-			context.addModule( testModule1() );
+			context.addModule( serviceModule() );
+			context.addModule( controllerModule() );
+			context.addModule( mybeanModule() );
 
 			return context;
 		}
 
 		@Bean
-		public ExposingModule testModule1() {
-			return new ExposingModule( "default" );
+		public ExposingModule serviceModule() {
+			ExposingModule module = new ExposingModule( "service" );
+			module.setExposeFilter( new AnnotationBeanFilter( Service.class ) );
+
+			return module;
+		}
+
+		@Bean
+		public ExposingModule controllerModule() {
+			ExposingModule module = new ExposingModule( "controller" );
+			module.setExposeFilter( new AnnotationBeanFilter( Controller.class ) );
+
+			return module;
+		}
+
+		@Bean
+		public ExposingModule mybeanModule() {
+			ExposingModule module = new ExposingModule( "mybean" );
+			module.setExposeFilter( new ClassBeanFilter( MyBean.class ) );
+
+			return module;
 		}
 	}
 }

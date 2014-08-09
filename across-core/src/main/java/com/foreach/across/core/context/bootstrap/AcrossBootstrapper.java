@@ -19,14 +19,13 @@ import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.AcrossInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
-import com.foreach.across.core.transformers.BeanDefinitionTransformer;
+import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
@@ -84,9 +83,15 @@ public class AcrossBootstrapper
 		// Run installers that don't need anything bootstrapped
 		installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
 
-		AcrossBeanCopyHelper beanHelper = new AcrossBeanCopyHelper();
-		beanHelper.addSingleton( "acrossContextInfo", contextInfo );
+		boolean pushExposedToParentContext = shouldPushExposedBeansToParent( contextInfo );
+		ExposedContextBeanRegistry exposedBeanRegistry = new ExposedContextBeanRegistry(
+				AcrossContextUtils.getBeanRegistry( contextInfo ),
+				null
+		);
 
+		/*
+		beanHelper.addSingleton( "acrossContextInfo", contextInfo );
+*/
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 			ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
 			ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
@@ -123,16 +128,17 @@ public class AcrossBootstrapper
 			exposeBeans( configurableAcrossModuleInfo, config.getExposeFilter(), config.getExposeTransformer(),
 			             rootContext );
 
-			//beanHelper.copy( child, rootContext, config.getExposeFilter(), config.getExposeTransformer() );
+			if ( pushExposedToParentContext ) {
+				exposedBeanRegistry.addAll( configurableAcrossModuleInfo.getExposedBeanDefinitions() );
+			}
 
 			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
 		}
 
 		LOG.info( "Bootstrapping {} modules - finished", modulesInOrder.size() );
 
-		if ( rootContext.getParent() != null && rootContext.getParent() instanceof ConfigurableApplicationContext ) {
-			pushDefinitionsToParent( beanHelper, rootContext,
-			                         (ConfigurableApplicationContext) rootContext.getParent() );
+		if ( pushExposedToParentContext ) {
+			pushExposedBeansToParent( exposedBeanRegistry, rootContext.getParent() );
 		}
 
 		// Refresh beans
@@ -145,20 +151,53 @@ public class AcrossBootstrapper
 		context.publishEvent( new AcrossContextBootstrappedEvent( contextInfo ) );
 	}
 
+	private boolean shouldPushExposedBeansToParent( AcrossContextInfo contextInfo ) {
+		ApplicationContext applicationContext = contextInfo.getApplicationContext();
+
+		if ( applicationContext.getParent() != null && !( applicationContext
+				.getParent() instanceof ConfigurableApplicationContext ) ) {
+			LOG.warn(
+					"Unable to push the exposed beans to the parent ApplicationContext - requires a ConfigurableApplicationContext" );
+		}
+
+		return applicationContext.getParent() != null;
+	}
+
+	private void pushExposedBeansToParent( ExposedContextBeanRegistry exposedContextBeanRegistry,
+	                                       ApplicationContext applicationContext ) {
+		ConfigurableApplicationContext configurableApplicationContext =
+				(ConfigurableApplicationContext) applicationContext;
+		ConfigurableListableBeanFactory beanFactory = configurableApplicationContext.getBeanFactory();
+
+		// Make sure the parent can handle exposed beans
+		if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
+			AcrossListableBeanFactory acrossListableBeanFactory = new AcrossListableBeanFactory();
+			acrossListableBeanFactory.setParentBeanFactory( beanFactory.getParentBeanFactory() );
+
+			beanFactory.setParentBeanFactory( acrossListableBeanFactory );
+
+			beanFactory = acrossListableBeanFactory;
+		}
+
+		exposedContextBeanRegistry.copyTo( beanFactory );
+	}
+
 	private void exposeBeans( ConfigurableAcrossModuleInfo acrossModuleInfo,
 	                          BeanFilter exposeFilter,
-	                          BeanDefinitionTransformer exposeTransformer,
+	                          ExposedBeanDefinitionTransformer exposeTransformer,
 	                          AbstractApplicationContext parentContext ) {
-		ExposedBeanRegistry exposedBeanRegistry = new ExposedBeanRegistry(
+
+		ExposedModuleBeanRegistry exposedBeanRegistry = new ExposedModuleBeanRegistry(
+				AcrossContextUtils.getBeanRegistry( acrossModuleInfo.getContextInfo() ),
 				acrossModuleInfo,
 				(AbstractApplicationContext) acrossModuleInfo.getApplicationContext(),
 				exposeFilter,
 				exposeTransformer
 		);
 
-		exposedBeanRegistry.copyTo( parentContext );
+		exposedBeanRegistry.copyTo( parentContext.getBeanFactory() );
 
-		acrossModuleInfo.setExposedBeanDefinitions( exposedBeanRegistry.getExposedDefinitions() );
+		acrossModuleInfo.setExposedBeanRegistry( exposedBeanRegistry );
 	}
 
 	private ConfigurableAcrossContextInfo buildContextAndModuleInfo() {
@@ -282,7 +321,8 @@ public class AcrossBootstrapper
 		ProvidedBeansMap providedBeans = new ProvidedBeansMap();
 
 		// Create the AcrossContextBeanRegistry
-		providedBeans.put( contextInfo.getId() + "@" + AcrossContextBeanRegistry.BEAN,
+		AcrossContextBeanRegistry contextBeanRegistry = new DefaultAcrossContextBeanRegistry( contextInfo );
+		providedBeans.put( contextBeanRegistry.getFactoryName(),
 		                   new PrimarySingletonBean(
 				                   new DefaultAcrossContextBeanRegistry( contextInfo ),
 				                   new AutowireCandidateQualifier( Qualifier.class.getName(),
@@ -320,67 +360,67 @@ public class AcrossBootstrapper
 		return root;
 	}
 
-	private void pushDefinitionsToParent( AcrossBeanCopyHelper beanCopyHelper,
-	                                      AbstractApplicationContext parentContext,
-	                                      ConfigurableApplicationContext applicationContext ) {
-		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-
-		if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
-			AcrossListableBeanFactory acrossListableBeanFactory = new AcrossListableBeanFactory();
-			acrossListableBeanFactory.setParentBeanFactory( beanFactory.getParentBeanFactory() );
-
-			beanFactory.setParentBeanFactory( acrossListableBeanFactory );
-
-			beanFactory = acrossListableBeanFactory;
-		}
-
-		BeanDefinitionRegistry registry = null;
-/*
-		if ( beanFactory instanceof BeanDefinitionRegistry ) {
-			registry = (BeanDefinitionRegistry) beanFactory;
-		}*/
-
-		String[] beanDefs = parentContext.getBeanDefinitionNames();
-
-		boolean registryExposed = false;
-
-		for ( String beanDef : beanDefs ) {
-			// todo: isAlias
-			BeanDefinition beanDefinition = parentContext.getBeanFactory().getBeanDefinition( beanDef );
-
-			if ( beanDefinition instanceof ExposedBeanDefinition ) {
-				ExposedBeanDefinition exposedBeanDefinition = (ExposedBeanDefinition) beanDefinition;
-
-				if ( !registryExposed ) {
-					registryExposed = true;
-
-					beanFactory.registerSingleton( beanDefinition.getFactoryBeanName(), parentContext.getBean(
-							AcrossContextBeanRegistry.class ) );
-				}
-
-				LOG.debug( "Pushing bean definition to parent context {}", beanDef );
-				( (AcrossListableBeanFactory) beanFactory ).registerBeanDefinition( beanDef, beanDefinition );
-
-				for ( String alias : exposedBeanDefinition.getAliases() ) {
-					if ( !beanFactory.containsBean( alias ) ) {
-						beanFactory.registerAlias( beanDef, alias );
-					}
-				}
-			}
-		}
-
-		/*
-		beanFactory.registerSingleton(  );
-
-		if ( registry != null ) {
-			for ( Map.Entry<String, BeanDefinition> beanDef : beanCopyHelper.getDefinitionsCopied().entrySet() ) {
-				registry.registerBeanDefinition( beanDef.getKey(), beanDef.getValue() );
-			}
-		}
-
-		for ( Map.Entry<String, Object> singleton : beanCopyHelper.getSingletonsCopied().entrySet() ) {
-			beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
-		}
-		*/
-	}
+//	private void pushDefinitionsToParent( AcrossBeanCopyHelper beanCopyHelper,
+//	                                      AbstractApplicationContext parentContext,
+//	                                      ConfigurableApplicationContext applicationContext ) {
+//		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
+//
+//		if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
+//			AcrossListableBeanFactory acrossListableBeanFactory = new AcrossListableBeanFactory();
+//			acrossListableBeanFactory.setParentBeanFactory( beanFactory.getParentBeanFactory() );
+//
+//			beanFactory.setParentBeanFactory( acrossListableBeanFactory );
+//
+//			beanFactory = acrossListableBeanFactory;
+//		}
+//
+//		BeanDefinitionRegistry registry = null;
+///*
+//		if ( beanFactory instanceof BeanDefinitionRegistry ) {
+//			registry = (BeanDefinitionRegistry) beanFactory;
+//		}*/
+//
+//		String[] beanDefs = parentContext.getBeanDefinitionNames();
+//
+//		boolean registryExposed = false;
+//
+//		for ( String beanDef : beanDefs ) {
+//			// todo: isAlias
+//			BeanDefinition beanDefinition = parentContext.getBeanFactory().getBeanDefinition( beanDef );
+//
+//			if ( beanDefinition instanceof ExposedBeanDefinition ) {
+//				ExposedBeanDefinition exposedBeanDefinition = (ExposedBeanDefinition) beanDefinition;
+//
+//				if ( !registryExposed ) {
+//					registryExposed = true;
+//
+//					beanFactory.registerSingleton( beanDefinition.getFactoryBeanName(), parentContext.getBean(
+//							AcrossContextBeanRegistry.class ) );
+//				}
+//
+//				LOG.debug( "Pushing bean definition to parent context {}", beanDef );
+//				( (AcrossListableBeanFactory) beanFactory ).registerBeanDefinition( beanDef, beanDefinition );
+//
+//				for ( String alias : exposedBeanDefinition.getAliases() ) {
+//					if ( !beanFactory.containsBean( alias ) ) {
+//						beanFactory.registerAlias( beanDef, alias );
+//					}
+//				}
+//			}
+//		}
+//
+//		/*
+//		beanFactory.registerSingleton(  );
+//
+//		if ( registry != null ) {
+//			for ( Map.Entry<String, BeanDefinition> beanDef : beanCopyHelper.getDefinitionsCopied().entrySet() ) {
+//				registry.registerBeanDefinition( beanDef.getKey(), beanDef.getValue() );
+//			}
+//		}
+//
+//		for ( Map.Entry<String, Object> singleton : beanCopyHelper.getSingletonsCopied().entrySet() ) {
+//			beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
+//		}
+//		*/
+//	}
 }

@@ -1,57 +1,56 @@
 package com.foreach.across.test.transformers;
 
-import com.foreach.across.core.transformers.BeanDefinitionTransformer;
+import com.foreach.across.core.context.ExposedBeanDefinition;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
+import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.junit.Test;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class TestBeanPrefixingTransformer
 {
-	private final Map<String, Object> singletons = new HashMap<String, Object>();
-	private final Map<String, BeanDefinition> definitions = new HashMap<String, BeanDefinition>();
+	private final Map<String, ExposedBeanDefinition> definitions = new HashMap<>();
 
 	public TestBeanPrefixingTransformer() {
-		singletons.put( "sessionFactory", "" );
-		singletons.put( "org.springframework.somebean", "" );
-
-		definitions.put( "sessionFactory", new GenericBeanDefinition() );
-		definitions.put( "transactionManager", new GenericBeanDefinition() );
+		definitions.put( "sessionFactory", new ExposedBeanDefinition(
+				                 mock( AcrossContextBeanRegistry.class ),
+				                 "module",
+				                 "sessionFactory",
+				                 Object.class
+		                 )
+		);
+		definitions.put( "transactionManager",
+		                 new ExposedBeanDefinition(
+				                 mock( AcrossContextBeanRegistry.class ),
+				                 "module",
+				                 "transactionManager",
+				                 Object.class
+		                 )
+		);
 	}
 
 	@Test
 	public void testCamelCasing() {
-		BeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "test" );
+		ExposedBeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "test" );
+		transformer.transformBeanDefinitions( definitions );
 
-		Map<String, Object> modifiedSingletons = transformer.transformSingletons( singletons );
-		assertEquals( 2, modifiedSingletons.size() );
-		assertTrue( modifiedSingletons.containsKey( "testSessionFactory" ) );
-		assertTrue( modifiedSingletons.containsKey( "testOrg.springframework.somebean" ) );
-
-		Map<String, BeanDefinition> modifiedDefinitions = transformer.transformBeanDefinitions( definitions );
-		assertEquals( 2, modifiedDefinitions.size() );
-		assertTrue( modifiedDefinitions.containsKey( "testSessionFactory" ) );
-		assertTrue( modifiedDefinitions.containsKey( "testTransactionManager" ) );
+		assertEquals( 2, definitions.size() );
+		assertEquals( "testSessionFactory", definitions.get( "sessionFactory" ).getPreferredBeanName() );
+		assertEquals( "testTransactionManager", definitions.get( "transactionManager" ).getPreferredBeanName() );
 	}
 
 	@Test
 	public void testNoCamelCasing() {
-		BeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "some.", false );
+		ExposedBeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "some.", false );
+		transformer.transformBeanDefinitions( definitions );
 
-		Map<String, Object> modifiedSingletons = transformer.transformSingletons( singletons );
-		assertEquals( 2, modifiedSingletons.size() );
-		assertTrue( modifiedSingletons.containsKey( "some.sessionFactory" ) );
-		assertTrue( modifiedSingletons.containsKey( "some.org.springframework.somebean" ) );
-
-		Map<String, BeanDefinition> modifiedDefinitions = transformer.transformBeanDefinitions( definitions );
-		assertEquals( 2, modifiedDefinitions.size() );
-		assertTrue( modifiedDefinitions.containsKey( "some.sessionFactory" ) );
-		assertTrue( modifiedDefinitions.containsKey( "some.transactionManager" ) );
+		assertEquals( 2, definitions.size() );
+		assertEquals( "some.sessionFactory", definitions.get( "sessionFactory" ).getPreferredBeanName() );
+		assertEquals( "some.transactionManager", definitions.get( "transactionManager" ).getPreferredBeanName() );
 	}
 }

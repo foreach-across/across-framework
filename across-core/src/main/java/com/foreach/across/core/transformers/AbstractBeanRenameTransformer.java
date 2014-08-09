@@ -1,51 +1,42 @@
 package com.foreach.across.core.transformers;
 
-import org.springframework.beans.factory.config.BeanDefinition;
+import com.foreach.across.core.context.ExposedBeanDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractBeanRenameTransformer implements BeanDefinitionTransformer
+public abstract class AbstractBeanRenameTransformer implements ExposedBeanDefinitionTransformer
 {
+	private final Logger LOG = LoggerFactory.getLogger( getClass() );
+
 	/**
-	 * Modify the collection of singletons.
+	 * Modify the collection of ExposedBeanDefinitions.
 	 *
-	 * @param singletons Original map of singletons.
-	 * @return Modified map of singletons.
+	 * @param beanDefinitions Map of exposed bean definitions.
 	 */
-	public Map<String, Object> transformSingletons( Map<String, Object> singletons ) {
-		Map<String, Object> modified = new HashMap<String, Object>();
+	public void transformBeanDefinitions( Map<String, ExposedBeanDefinition> beanDefinitions ) {
+		List<String> removals = new LinkedList<>();
 
-		for ( Map.Entry<String, Object> singleton : singletons.entrySet() ) {
-			String name = rename( singleton.getKey(), singleton.getValue() );
+		for ( Map.Entry<String, ExposedBeanDefinition> definition : beanDefinitions.entrySet() ) {
+			ExposedBeanDefinition exposed = definition.getValue();
+			String name = rename( exposed.getPreferredBeanName(), exposed );
 
-			if ( name != null ) {
-				modified.put( name, singleton.getValue() );
+			if ( name == null ) {
+				LOG.debug( "Removing exposed bean {} because preferredBeanName was null", definition.getKey() );
+				removals.add( definition.getKey() );
+			}
+			else {
+				exposed.setPreferredBeanName( name );
 			}
 		}
 
-		return modified;
-	}
-
-	/**
-	 * Modify the collection of BeanDefinitions.
-	 *
-	 * @param beanDefinitions Original map of bean definitions.
-	 * @return Modified map of bean definitions.
-	 */
-	public Map<String, BeanDefinition> transformBeanDefinitions( Map<String, BeanDefinition> beanDefinitions ) {
-		Map<String, BeanDefinition> modified = new HashMap<String, BeanDefinition>();
-
-		for ( Map.Entry<String, BeanDefinition> definition : beanDefinitions.entrySet() ) {
-			String name = rename( definition.getKey(), definition.getValue() );
-
-			if ( name != null ) {
-				modified.put( name, definition.getValue() );
-			}
+		for ( String removal : removals ) {
+			beanDefinitions.remove( removal );
 		}
-
-		return modified;
 	}
 
-	protected abstract String rename( String beanName, Object valueOrDefinition );
+	protected abstract String rename( String beanName, ExposedBeanDefinition definition );
 }

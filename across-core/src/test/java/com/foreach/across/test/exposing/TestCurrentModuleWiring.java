@@ -1,4 +1,4 @@
-package com.foreach.across.test;
+package com.foreach.across.test.exposing;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
@@ -9,6 +9,7 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
+import com.foreach.across.test.AbstractInlineModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,11 @@ public class TestCurrentModuleWiring
 	@Autowired
 	private AcrossContext acrossContext;
 
-	@Autowired
+	@Autowired(required = false)
 	@Module("ModuleOne")
 	private ModuleConfig.BeanWithCurrentModules beanFromOne;
 
-	@Autowired
+	@Autowired(required = false)
 	@Module("ModuleTwo")
 	private ModuleConfig.BeanWithCurrentModules beanFromTwo;
 
@@ -58,9 +59,18 @@ public class TestCurrentModuleWiring
 
 		ModuleConfig.BeanWithCurrentModules parent = beanWithCurrentModules.getParent();
 		parent.assertCurrentModule( moduleOne.getModule() );
+	}
 
-		assertSame( beanWithCurrentModules, beanFromTwo );
-		assertSame( parent, beanFromOne );
+	@Test
+	public void verifyBeansExposedToParentContext() {
+		AcrossContextInfo contextInfo = AcrossContextUtils.getContextInfo( acrossContext );
+		assertNotNull( contextInfo );
+
+		AcrossModuleInfo moduleOne = contextInfo.getModuleInfo( "ModuleOne" );
+		assertSame( beanFromOne, moduleOne.getBean( "beanWithCurrentModules" ) );
+
+		AcrossModuleInfo moduleTwo = contextInfo.getModuleInfo( "ModuleTwo" );
+		assertSame( beanFromTwo, moduleTwo.getBean( "beanWithCurrentModules" ) );
 	}
 
 	@Configuration

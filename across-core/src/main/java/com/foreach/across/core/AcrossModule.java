@@ -12,7 +12,7 @@ import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.installers.InstallerSettings;
-import com.foreach.across.core.transformers.BeanDefinitionTransformer;
+import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	private AcrossContext context;
 
 	private BeanFilter exposeFilter = defaultExposeFilter();
-	private BeanDefinitionTransformer exposeTransformer = null;
+	private ExposedBeanDefinitionTransformer exposeTransformer = null;
 	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
 			new HashSet<>();
 
@@ -91,7 +91,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	/**
 	 * @return The transformer that will be applied to all exposed beans before copying them to the parent context.
 	 */
-	public BeanDefinitionTransformer getExposeTransformer() {
+	public ExposedBeanDefinitionTransformer getExposeTransformer() {
 		return exposeTransformer;
 	}
 
@@ -101,7 +101,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	 *
 	 * @param exposeTransformer The transformer that should be applies to all exposed beans.
 	 */
-	public void setExposeTransformer( BeanDefinitionTransformer exposeTransformer ) {
+	public void setExposeTransformer( ExposedBeanDefinitionTransformer exposeTransformer ) {
 		this.exposeTransformer = exposeTransformer;
 	}
 

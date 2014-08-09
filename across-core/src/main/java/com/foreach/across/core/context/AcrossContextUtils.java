@@ -124,9 +124,17 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return ApplicationContext defined in the holder or null if none.
 	 */
-	public static AbstractApplicationContext getApplicationContext( AbstractAcrossEntity contextOrModule ) {
-		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext()
-		                                                                .getApplicationContext() : null;
+	public static AbstractApplicationContext getApplicationContext( AcrossEntity contextOrModule ) {
+		if ( contextOrModule instanceof AcrossModuleInfo ) {
+			return getApplicationContext( ( (AcrossModuleInfo) contextOrModule ).getModule() );
+		}
+		if ( contextOrModule instanceof AcrossContextInfo ) {
+			return getApplicationContext( ( (AcrossContextInfo) contextOrModule ).getContext() );
+		}
+
+		AbstractAcrossEntity aEntity = (AbstractAcrossEntity) contextOrModule;
+		return aEntity.hasApplicationContext() ?
+				aEntity.getAcrossApplicationContext().getApplicationContext() : null;
 	}
 
 	/**
@@ -163,13 +171,13 @@ public final class AcrossContextUtils
 	}
 
 	/**
-	 * Returns the created/exposed BeanRegistry for a defined AcrossContext.
+	 * Returns the created BeanRegistry for a configured Across entity.
 	 *
-	 * @param context AcrossContext instance
+	 * @param acrossEntity AcrossContext/AcrossModule or AcrossContextInfo/AcrossModuleInfo instance
 	 * @return AcrossContextBeanRegistry of the running context (null if none).
 	 */
-	public static AcrossContextBeanRegistry getBeanRegistry( AcrossContext context ) {
-		ApplicationContext applicationContext = getApplicationContext( context );
+	public static AcrossContextBeanRegistry getBeanRegistry( AcrossEntity acrossEntity ) {
+		ApplicationContext applicationContext = getApplicationContext( acrossEntity );
 
 		return applicationContext != null ? applicationContext.getBean( AcrossContextBeanRegistry.class ) : null;
 	}

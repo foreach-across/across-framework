@@ -1,5 +1,6 @@
 package com.foreach.across.core.transformers;
 
+import com.foreach.across.core.context.ExposedBeanDefinition;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -21,7 +22,7 @@ public class BeanPrefixingTransformer extends AbstractBeanRenameTransformer
 	}
 
 	@Override
-	protected String rename( String beanName, Object valueOrDefinition ) {
+	protected String rename( String beanName, ExposedBeanDefinition definition ) {
 		return prefix + ( camelCase ? StringUtils.capitalize( beanName ) : beanName );
 	}
 }

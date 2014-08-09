@@ -11,6 +11,16 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	}
 
 	@Override
+	public String getContextId() {
+		return contextInfo.getId();
+	}
+
+	@Override
+	public String getFactoryName() {
+		return contextInfo.getId() + "@" + AcrossContextBeanRegistry.BEAN;
+	}
+
+	@Override
 	public Object getBeanFromModule( String moduleName, String beanName ) {
 		return contextInfo.getConfigurableModuleInfo( moduleName ).getApplicationContext().getBean( beanName );
 	}

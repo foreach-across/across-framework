@@ -3,6 +3,7 @@ package com.foreach.across.core.context.info;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossEntity;
 import com.foreach.across.core.context.AcrossModuleRole;
+import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -80,7 +81,7 @@ public interface AcrossModuleInfo extends AcrossEntity
 	/**
 	 * @return The collection of exposed BeanDefinitions.
 	 */
-	public Map<String, BeanDefinition> getExposedBeanDefinitions();
+	public Map<String, ExposedBeanDefinition> getExposedBeanDefinitions();
 
 	/**
 	 * Gets an instance of a bean.

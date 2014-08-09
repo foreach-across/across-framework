@@ -3,13 +3,13 @@ package com.foreach.across.core.context.info;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.AcrossModuleRole;
+import com.foreach.across.core.context.ExposedBeanDefinition;
+import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
@@ -30,7 +30,7 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	private Collection<AcrossModuleInfo> optionalDependencies =
 			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
 
-	private Map<String, BeanDefinition> exposedBeanDefinitions = new HashMap<>();
+	private ExposedModuleBeanRegistry exposedBeanRegistry;
 
 	public ConfigurableAcrossModuleInfo( AcrossContextInfo context, AcrossModule module, int index ) {
 		this.context = context;
@@ -118,13 +118,19 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 		return bootstrapConfiguration;
 	}
 
-	@Override
-	public Map<String, BeanDefinition> getExposedBeanDefinitions() {
-		return exposedBeanDefinitions;
+	public ExposedModuleBeanRegistry getExposedBeanRegistry() {
+		return exposedBeanRegistry;
 	}
 
-	public void setExposedBeanDefinitions( Map<String, BeanDefinition> exposedBeanDefinitions ) {
-		this.exposedBeanDefinitions = exposedBeanDefinitions;
+	public void setExposedBeanRegistry( ExposedModuleBeanRegistry exposedBeanRegistry ) {
+		this.exposedBeanRegistry = exposedBeanRegistry;
+	}
+
+	@Override
+	public Map<String, ExposedBeanDefinition> getExposedBeanDefinitions() {
+		return exposedBeanRegistry != null
+				? exposedBeanRegistry.getExposedDefinitions()
+				: Collections.<String, ExposedBeanDefinition>emptyMap();
 	}
 
 	public void setBootstrapConfiguration( ModuleBootstrapConfig bootstrapConfiguration ) {

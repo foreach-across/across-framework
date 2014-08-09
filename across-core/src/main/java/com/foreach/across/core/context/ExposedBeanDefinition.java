@@ -24,18 +24,31 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 	private final String contextId;
 	private final String moduleName;
 
-	private final String fullyQualifierBeanName;
-	private final String preferredBeanName;
+	private final String fullyQualifiedBeanName;
+	private String preferredBeanName;
 
 	private Set<String> aliases = new HashSet<>();
 
-	public ExposedBeanDefinition( String contextId, String moduleName, String originalBeanName, Class beanClass ) {
-		this.contextId = contextId;
+	public ExposedBeanDefinition( ExposedBeanDefinition original ) {
+		super( original );
+
+		contextId = original.contextId;
+		moduleName = original.moduleName;
+		fullyQualifiedBeanName = original.fullyQualifiedBeanName;
+		preferredBeanName = original.fullyQualifiedBeanName;
+		aliases.addAll( original.aliases );
+	}
+
+	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
+	                              String moduleName,
+	                              String originalBeanName,
+	                              Class beanClass ) {
+		this.contextId = contextBeanRegistry.getContextId();
 		this.moduleName = moduleName;
 
 		setSynthetic( true );
 
-		setFactoryBeanName( contextId + "@" + AcrossContextBeanRegistry.BEAN );
+		setFactoryBeanName( contextBeanRegistry.getFactoryName() );
 		setFactoryMethodName( "getBeanFromModule" );
 		setScope( "prototype" );
 
@@ -55,20 +68,19 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		setConstructorArgumentValues( constructorArgumentValues );
 
-
-		addQualifier( new AutowireCandidateQualifier( Qualifier.class.getName(), originalBeanName ) );
 		addQualifier( new AutowireCandidateQualifier( Module.class.getName(), moduleName ) );
-
-		//aliases.add( originalBeanName );
-
-		preferredBeanName = originalBeanName;
-		fullyQualifierBeanName = contextId + "." + moduleName + "@" + originalBeanName;
-
 		//addQualifier( new AutowireCandidateQualifier( Context.class.getName(), contextId ) );
+
+		fullyQualifiedBeanName = contextId + "." + moduleName + "@" + originalBeanName;
+		setPreferredBeanName( originalBeanName );
 	}
 
-	public ExposedBeanDefinition( String contextId, String moduleName, String originalBeanName, BeanDefinition original, Class<?> beanClass ) {
-		this( contextId, moduleName, originalBeanName, beanClass );
+	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
+	                              String moduleName,
+	                              String originalBeanName,
+	                              BeanDefinition original,
+	                              Class<?> beanClass ) {
+		this( contextBeanRegistry, moduleName, originalBeanName, beanClass );
 
 		// todo: required?
 		setPrimary( original.isPrimary() );
@@ -86,12 +98,17 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		}
 	}
 
-	public String getFullyQualifierBeanName() {
-		return fullyQualifierBeanName;
+	public String getFullyQualifiedBeanName() {
+		return fullyQualifiedBeanName;
 	}
 
 	public String getPreferredBeanName() {
 		return preferredBeanName;
+	}
+
+	public void setPreferredBeanName( String preferredBeanName ) {
+		this.preferredBeanName = preferredBeanName;
+		addQualifier( new AutowireCandidateQualifier( Qualifier.class.getName(), preferredBeanName ) );
 	}
 
 	public String getContextId() {
@@ -106,7 +123,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		return Collections.unmodifiableSet( aliases );
 	}
 
-	public void addAlias( String alias ){
+	public void addAlias( String alias ) {
 		aliases.add( alias );
 	}
 
