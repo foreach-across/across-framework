@@ -6,7 +6,7 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
-import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
@@ -250,7 +250,7 @@ public class AcrossInstallerRegistry
 	}
 
 	private ConfigurableListableBeanFactory getBeanFactoryForInstallerWiring( AcrossModule module ) {
-		AcrossApplicationContext moduleContext =
+		AcrossApplicationContextHolder moduleContext =
 				AcrossContextUtils.getAcrossApplicationContext( module );
 
 		if ( moduleContext == null ) {

@@ -2,9 +2,9 @@ package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.context.AcrossSpringApplicationContext;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import org.apache.commons.lang3.ArrayUtils;
@@ -21,7 +21,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 {
 	@Override
 	public AbstractApplicationContext createApplicationContext() {
-		return new AcrossSpringApplicationContext();
+		return new AcrossApplicationContext();
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            ModuleBootstrapConfig moduleBootstrapConfig,
-	                                                            AcrossApplicationContext parentContext ) {
+	                                                            AcrossApplicationContextHolder parentContext ) {
 		AbstractApplicationContext child = createApplicationContext();
 		child.setDisplayName( moduleBootstrapConfig.getModuleName() );
 		child.setParent( parentContext.getApplicationContext() );
@@ -78,7 +78,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 * @param context Contains the root Spring ApplicationContext.
 	 */
 	@Override
-	public void loadApplicationContext( AcrossContext across, AcrossApplicationContext context ) {
+	public void loadApplicationContext( AcrossContext across, AcrossApplicationContextHolder context ) {
 		AcrossConfigurableApplicationContext root =
 				(AcrossConfigurableApplicationContext) context.getApplicationContext();
 		Collection<ApplicationContextConfigurer> configurers = AcrossContextUtils.getConfigurersToApply( across );
@@ -96,7 +96,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	@Override
 	public void loadApplicationContext( AcrossContext across,
 	                                    ModuleBootstrapConfig moduleBootstrapConfig,
-	                                    AcrossApplicationContext context ) {
+	                                    AcrossApplicationContextHolder context ) {
 		AcrossConfigurableApplicationContext child =
 				(AcrossConfigurableApplicationContext) context.getApplicationContext();
 

@@ -12,20 +12,20 @@ import java.util.Properties;
 
 public abstract class AbstractAcrossEntity implements AcrossEntity
 {
-	private AcrossApplicationContext acrossApplicationContext;
+	private AcrossApplicationContextHolder acrossApplicationContextHolder;
 
 	private Properties properties = new Properties();
 
-	public AcrossApplicationContext getAcrossApplicationContext() {
-		return acrossApplicationContext;
+	public AcrossApplicationContextHolder getAcrossApplicationContextHolder() {
+		return acrossApplicationContextHolder;
 	}
 
-	public void setAcrossApplicationContext( AcrossApplicationContext acrossApplicationContext ) {
-		this.acrossApplicationContext = acrossApplicationContext;
+	public void setAcrossApplicationContextHolder( AcrossApplicationContextHolder acrossApplicationContextHolder ) {
+		this.acrossApplicationContextHolder = acrossApplicationContextHolder;
 	}
 
 	public boolean hasApplicationContext() {
-		return acrossApplicationContext != null;
+		return acrossApplicationContextHolder != null;
 	}
 
 	/**

@@ -3,7 +3,7 @@ package com.foreach.across.test.installers;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.installers.*;
@@ -41,12 +41,12 @@ public class TestAcrossInstallerRegistry
 		beanFactory = mock( ConfigurableListableBeanFactory.class );
 		when( beanFactory.getBean( AcrossInstallerRepository.class ) ).thenReturn( installerRepository );
 
-		AcrossApplicationContext acrossApplicationContext = mock( AcrossApplicationContext.class );
-		when( acrossApplicationContext.getBeanFactory() ).thenReturn( beanFactory );
+		AcrossApplicationContextHolder acrossApplicationContextHolder = mock( AcrossApplicationContextHolder.class );
+		when( acrossApplicationContextHolder.getBeanFactory() ).thenReturn( beanFactory );
 
 		AcrossContext acrossContext = mock( AcrossContext.class );
 		when( acrossContext.hasApplicationContext() ).thenReturn( true );
-		when( acrossContext.getAcrossApplicationContext() ).thenReturn( acrossApplicationContext );
+		when( acrossContext.getAcrossApplicationContextHolder() ).thenReturn( acrossApplicationContextHolder );
 
 		module = mock( AcrossModule.class );
 		contextConfig = mock( AcrossBootstrapConfig.class );
@@ -142,11 +142,11 @@ public class TestAcrossInstallerRegistry
 
 		ConfigurableListableBeanFactory moduleBeanFactory = mock( ConfigurableListableBeanFactory.class );
 
-		AcrossApplicationContext moduleAcrossApplicationContext = mock( AcrossApplicationContext.class );
-		when( moduleAcrossApplicationContext.getBeanFactory() ).thenReturn( moduleBeanFactory );
+		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock( AcrossApplicationContextHolder.class );
+		when( moduleAcrossApplicationContextHolder.getBeanFactory() ).thenReturn( moduleBeanFactory );
 
 		when( module.hasApplicationContext() ).thenReturn( true );
-		when( module.getAcrossApplicationContext() ).thenReturn( moduleAcrossApplicationContext );
+		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
 
 		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
 

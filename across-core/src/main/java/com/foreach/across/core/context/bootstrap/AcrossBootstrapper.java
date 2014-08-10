@@ -71,7 +71,7 @@ public class AcrossBootstrapper
 
 		runModuleBootstrapperCustomizations( modulesInOrder );
 
-		AcrossApplicationContext root = createRootContext( contextInfo );
+		AcrossApplicationContextHolder root = createRootContext( contextInfo );
 		AbstractApplicationContext rootContext = root.getApplicationContext();
 
 		createBootstrapConfiguration( contextInfo );
@@ -108,7 +108,7 @@ public class AcrossBootstrapper
 			AbstractApplicationContext child =
 					applicationContextFactory.createApplicationContext( context, config, root );
 
-			AcrossApplicationContext moduleApplicationContext = new AcrossApplicationContext( child, root );
+			AcrossApplicationContextHolder moduleApplicationContext = new AcrossApplicationContextHolder( child, root );
 			AcrossContextUtils.setAcrossApplicationContext( config.getModule(), moduleApplicationContext );
 
 			applicationContextFactory.loadApplicationContext( context, config, moduleApplicationContext );
@@ -333,7 +333,7 @@ public class AcrossBootstrapper
 		}
 	}
 
-	private AcrossApplicationContext createRootContext( ConfigurableAcrossContextInfo contextInfo ) {
+	private AcrossApplicationContextHolder createRootContext( ConfigurableAcrossContextInfo contextInfo ) {
 		AbstractApplicationContext rootApplicationContext =
 				applicationContextFactory.createApplicationContext( context, context.getParentApplicationContext() );
 
@@ -371,7 +371,7 @@ public class AcrossBootstrapper
 		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),
 		                                         ConfigurerScope.CONTEXT_ONLY );
 
-		AcrossApplicationContext root = new AcrossApplicationContext( rootApplicationContext );
+		AcrossApplicationContextHolder root = new AcrossApplicationContextHolder( rootApplicationContext );
 		AcrossContextUtils.setAcrossApplicationContext( context, root );
 
 		applicationContextFactory.loadApplicationContext( context, root );

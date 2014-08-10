@@ -134,7 +134,7 @@ public final class AcrossContextUtils
 
 		AbstractAcrossEntity aEntity = (AbstractAcrossEntity) contextOrModule;
 		return aEntity.hasApplicationContext() ?
-				aEntity.getAcrossApplicationContext().getApplicationContext() : null;
+				aEntity.getAcrossApplicationContextHolder().getApplicationContext() : null;
 	}
 
 	/**
@@ -154,7 +154,7 @@ public final class AcrossContextUtils
 	 * @return BeanFactory linked to the ApplicationContext in the holder or null if not yet available.
 	 */
 	public static ConfigurableListableBeanFactory getBeanFactory( AbstractAcrossEntity contextOrModule ) {
-		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext()
+		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContextHolder()
 		                                                                .getBeanFactory() : null;
 	}
 
@@ -188,8 +188,8 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return AcrossApplicationContext wrapping the Spring ApplicationContext.
 	 */
-	public static AcrossApplicationContext getAcrossApplicationContext( AbstractAcrossEntity contextOrModule ) {
-		return contextOrModule.getAcrossApplicationContext();
+	public static AcrossApplicationContextHolder getAcrossApplicationContext( AbstractAcrossEntity contextOrModule ) {
+		return contextOrModule.getAcrossApplicationContextHolder();
 	}
 
 	/**
@@ -199,8 +199,8 @@ public final class AcrossContextUtils
 	 * @param applicationContext AcrossApplicationContext instance.
 	 */
 	public static void setAcrossApplicationContext( AbstractAcrossEntity contextOrModule,
-	                                                AcrossApplicationContext applicationContext ) {
-		contextOrModule.setAcrossApplicationContext( applicationContext );
+	                                                AcrossApplicationContextHolder applicationContext ) {
+		contextOrModule.setAcrossApplicationContextHolder( applicationContext );
 	}
 
 	/**
@@ -232,15 +232,15 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return Across application context information.
 	 */
-	public static AcrossApplicationContext getAcrossApplicationContext( AcrossEntity contextOrModule ) {
+	public static AcrossApplicationContextHolder getAcrossApplicationContext( AcrossEntity contextOrModule ) {
 		if ( contextOrModule instanceof AbstractAcrossEntity ) {
-			return ( (AbstractAcrossEntity) contextOrModule ).getAcrossApplicationContext();
+			return ( (AbstractAcrossEntity) contextOrModule ).getAcrossApplicationContextHolder();
 		}
 		else if ( contextOrModule instanceof AcrossModuleInfo ) {
-			return ( (AcrossModuleInfo) contextOrModule ).getModule().getAcrossApplicationContext();
+			return ( (AcrossModuleInfo) contextOrModule ).getModule().getAcrossApplicationContextHolder();
 		}
 		else if ( contextOrModule instanceof AcrossContextInfo ) {
-			return ( (AcrossContextInfo) contextOrModule ).getContext().getAcrossApplicationContext();
+			return ( (AcrossContextInfo) contextOrModule ).getContext().getAcrossApplicationContextHolder();
 		}
 
 		return null;

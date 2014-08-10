@@ -1,7 +1,7 @@
 package com.foreach.across.modules.web.context;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.bootstrap.AnnotationConfigBootstrapApplicationContextFactory;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.springframework.context.ApplicationContext;
@@ -16,7 +16,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 {
 	@Override
 	public AbstractApplicationContext createApplicationContext() {
-		return new AcrossSpringWebApplicationContext();
+		return new AcrossWebApplicationContext();
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 	                                                            ApplicationContext parentApplicationContext ) {
 		if ( parentApplicationContext == null || parentApplicationContext instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentApplicationContext;
-			AcrossSpringWebApplicationContext applicationContext = new AcrossSpringWebApplicationContext();
+			AcrossWebApplicationContext applicationContext = new AcrossWebApplicationContext();
 			applicationContext.setDisplayName( "[" + across.getId() + "]" );
 
 			if ( parentApplicationContext != null ) {
@@ -46,10 +46,10 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 	@Override
 	public AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                            ModuleBootstrapConfig moduleBootstrapConfig,
-	                                                            AcrossApplicationContext parentContext ) {
+	                                                            AcrossApplicationContextHolder parentContext ) {
 		if ( parentContext.getApplicationContext() instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentContext.getApplicationContext();
-			AcrossSpringWebApplicationContext child = new AcrossSpringWebApplicationContext();
+			AcrossWebApplicationContext child = new AcrossWebApplicationContext();
 
 			child.setDisplayName( moduleBootstrapConfig.getModuleName() );
 			child.setServletContext( parentWebContext.getServletContext() );

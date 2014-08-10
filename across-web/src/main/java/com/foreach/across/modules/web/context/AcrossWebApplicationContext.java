@@ -1,27 +1,27 @@
-package com.foreach.across.core.context;
+package com.foreach.across.modules.web.context;
 
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
+import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
-import com.foreach.across.core.context.info.AcrossModuleInfo;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
- * ApplicationContext that allows a set of preregistered singletons to be passed in.
+ * WebApplicationContext that allows a set of preregistered singletons to be passed in.
  */
-public class AcrossSpringApplicationContext extends AnnotationConfigApplicationContext implements AcrossConfigurableApplicationContext
+public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationContext implements AcrossConfigurableApplicationContext
 {
 	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
 
-	public AcrossSpringApplicationContext() {
-		super( new AcrossListableBeanFactory() );
+	@Override
+	protected DefaultListableBeanFactory createBeanFactory() {
+		return new AcrossListableBeanFactory(getInternalParentBeanFactory());
 	}
 
 	/**
@@ -47,12 +47,14 @@ public class AcrossSpringApplicationContext extends AnnotationConfigApplicationC
 	protected void prepareBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
 		super.prepareBeanFactory( beanFactory );
 
+		DefaultListableBeanFactory listableBeanFactory = (DefaultListableBeanFactory) beanFactory;
+
 		for ( ProvidedBeansMap providedBeans : providedBeansMaps ) {
 			for ( Map.Entry<String, BeanDefinition> definition : providedBeans.getBeanDefinitions().entrySet() ) {
-				registerBeanDefinition( definition.getKey(), definition.getValue() );
+				listableBeanFactory.registerBeanDefinition( definition.getKey(), definition.getValue() );
 			}
 			for ( Map.Entry<String, Object> singleton : providedBeans.getSingletons().entrySet() ) {
-				beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
+				listableBeanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}
 	}
