@@ -2,8 +2,10 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +16,14 @@ import java.util.Map;
  */
 public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 {
-	private final AcrossContextBeanRegistry contextBeanRegistry;
-	private final ExposedBeanDefinitionTransformer transformer;
+	private final ConfigurableListableBeanFactory beanFactory;
 
 	public ExposedContextBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry,
+	                                   ConfigurableListableBeanFactory beanFactory,
 	                                   ExposedBeanDefinitionTransformer transformer ) {
-		this.contextBeanRegistry = contextBeanRegistry;
-		this.transformer = transformer;
+		super( contextBeanRegistry, null, transformer );
+
+		this.beanFactory = beanFactory;
 	}
 
 	public void addAll( Map<String, ExposedBeanDefinition> exposedBeanDefinitions ) {
@@ -43,8 +46,25 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 		exposedDefinitions.putAll( copies );
 	}
 
+	public void add( String... beans ) {
+		Map<String, Object> singletons = new HashMap<>();
+		Map<String, BeanDefinition> definitions = new HashMap<>();
+
+		for ( String beanName : beans ) {
+			if ( beanFactory.containsSingleton( beanName ) ) {
+				singletons.put( beanName, beanFactory.getSingleton( beanName ) );
+			}
+			if ( beanFactory.containsBeanDefinition( beanName ) ) {
+				definitions.put( beanName, beanFactory.getBeanDefinition( beanName ) );
+			}
+		}
+
+		addBeans( definitions, singletons );
+	}
+
 	@Override
-	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry beanDefinitionRegistry ) {
+	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory,
+	                                    BeanDefinitionRegistry beanDefinitionRegistry ) {
 		if ( !exposedDefinitions.isEmpty() ) {
 			// Make sure the registry is present in the parent context
 			beanFactory.registerSingleton( contextBeanRegistry.getFactoryName(), contextBeanRegistry );

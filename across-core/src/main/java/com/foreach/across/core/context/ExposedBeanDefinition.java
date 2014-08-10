@@ -50,6 +50,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		setFactoryBeanName( contextBeanRegistry.getFactoryName() );
 		setFactoryMethodName( "getBeanFromModule" );
+
 		setScope( "prototype" );
 
 		if ( beanClass != null ) {

@@ -20,6 +20,22 @@ public interface AcrossContextBeanRegistry
 	String getFactoryName();
 
 	/**
+	 * Get a bean registered under the given name in the AcrossContext.
+	 *
+	 * @param beanName Name of the bean definition.
+	 * @return Instance.
+	 */
+	Object getBean( String beanName );
+
+	/**
+	 * Determine the type for the bean registered under the given name in the AcrossContexT.
+	 *
+	 * @param beanName Name of the bean definition.
+	 * @return Type if it could be resolved.
+	 */
+	Class<?> getBeanType( String beanName );
+
+	/**
 	 * Get a bean registered under the given name from the ApplicationContext of the given module.
 	 *
 	 * @param moduleName Unique name of the module.
