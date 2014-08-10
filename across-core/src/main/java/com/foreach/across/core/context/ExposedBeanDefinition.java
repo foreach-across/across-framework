@@ -25,6 +25,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 	private final String moduleName;
 
 	private final String fullyQualifiedBeanName;
+	private final String originalBeanName;
 	private String preferredBeanName;
 
 	private Set<String> aliases = new HashSet<>();
@@ -34,6 +35,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		contextId = original.contextId;
 		moduleName = original.moduleName;
+		originalBeanName = original.originalBeanName;
 		fullyQualifiedBeanName = original.fullyQualifiedBeanName;
 		preferredBeanName = original.fullyQualifiedBeanName;
 		aliases.addAll( original.aliases );
@@ -72,7 +74,9 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		addQualifier( new AutowireCandidateQualifier( Module.class.getName(), moduleName ) );
 		//addQualifier( new AutowireCandidateQualifier( Context.class.getName(), contextId ) );
 
+		this.originalBeanName = originalBeanName;
 		fullyQualifiedBeanName = contextId + "." + moduleName + "@" + originalBeanName;
+
 		setPreferredBeanName( originalBeanName );
 	}
 
@@ -85,7 +89,6 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		// todo: required?
 		setPrimary( original.isPrimary() );
-		//setLazyInit( original.isLazyInit() );
 		setDescription( original.getDescription() );
 		setRole( original.getRole() );
 
@@ -97,6 +100,10 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 				addQualifier( qualifier );
 			}
 		}
+	}
+
+	public String getOriginalBeanName() {
+		return originalBeanName;
 	}
 
 	public String getFullyQualifiedBeanName() {

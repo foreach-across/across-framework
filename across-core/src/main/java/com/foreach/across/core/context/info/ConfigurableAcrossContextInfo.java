@@ -3,6 +3,8 @@ package com.foreach.across.core.context.info;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.ExposedBeanDefinition;
+import com.foreach.across.core.context.ExposedContextBeanRegistry;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
@@ -12,6 +14,7 @@ import org.springframework.util.Assert;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 {
@@ -23,6 +26,8 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
 
 	private AcrossBootstrapConfig bootstrapConfiguration;
+
+	private ExposedContextBeanRegistry exposedBeanRegistry;
 
 	public ConfigurableAcrossContextInfo( AcrossContext context ) {
 		this.id = context.getId();
@@ -135,6 +140,21 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	public int getModuleIndex( AcrossModuleInfo moduleInfo ) {
 		Assert.notNull( moduleInfo );
 		return getModuleIndex( moduleInfo.getName() );
+	}
+
+	public ExposedContextBeanRegistry getExposedBeanRegistry() {
+		return exposedBeanRegistry;
+	}
+
+	public void setExposedBeanRegistry( ExposedContextBeanRegistry exposedBeanRegistry ) {
+		this.exposedBeanRegistry = exposedBeanRegistry;
+	}
+
+	@Override
+	public Map<String, ExposedBeanDefinition> getExposedBeanDefinitions() {
+		return exposedBeanRegistry != null
+				? exposedBeanRegistry.getExposedDefinitions()
+				: Collections.<String, ExposedBeanDefinition>emptyMap();
 	}
 
 	@Override

@@ -3,10 +3,12 @@ package com.foreach.across.core.context.info;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossEntity;
+import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Holds the intermediate and final state of a running AcrossContext.
@@ -90,6 +92,13 @@ public interface AcrossContextInfo extends AcrossEntity
 	 * @return Index of the module in the context bootstrap, max integer if not found.
 	 */
 	int getModuleIndex( AcrossModuleInfo moduleInfo );
+
+	/**
+	 * Exposed beans on an AcrossContext are beans pushed to the parent context.
+	 *
+	 * @return The collection of exposed BeanDefinitions.
+	 */
+	public Map<String, ExposedBeanDefinition> getExposedBeanDefinitions();
 
 	/**
 	 * Searches the AcrossContext for beans of the given type.  Depending on the scanModules boolean, this
