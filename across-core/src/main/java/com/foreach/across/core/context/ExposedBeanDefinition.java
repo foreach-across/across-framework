@@ -84,7 +84,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		// todo: required?
 		setPrimary( original.isPrimary() );
-		setLazyInit( original.isLazyInit() );
+		//setLazyInit( original.isLazyInit() );
 		setDescription( original.getDescription() );
 		setRole( original.getRole() );
 

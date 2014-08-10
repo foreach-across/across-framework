@@ -4,15 +4,11 @@ import com.foreach.across.core.context.info.ConfigurableAcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,20 +36,24 @@ public class ExposedModuleBeanRegistry extends AbstractExposedBeanRegistry
 		Map<String, ExposedBeanDefinition> candidates = new HashMap<>();
 
 		for ( Map.Entry<String, BeanDefinition> definition : definitions.entrySet() ) {
-			BeanDefinition original = definition.getValue();
-			ExposedBeanDefinition exposed = new ExposedBeanDefinition(
-					contextBeanRegistry,
-					moduleInfo.getName(),
-					definition.getKey(),
-					original,
-					determineBeanClass( original, beans.get( definition.getKey() ) )
-			);
+			if ( !isFactoryBean( definition.getValue() ) ) {
+				BeanDefinition original = definition.getValue();
+				ExposedBeanDefinition exposed = new ExposedBeanDefinition(
+						contextBeanRegistry,
+						moduleInfo.getName(),
+						definition.getKey(),
+						original,
+						determineBeanClass( original, beans.get( definition.getKey() ) )
+				);
 
-			candidates.put( definition.getKey(), exposed );
+				candidates.put( definition.getKey(), exposed );
+			}
 		}
 
 		for ( Map.Entry<String, Object> singleton : beans.entrySet() ) {
-			if ( !candidates.containsKey( singleton.getKey() ) && singleton.getValue() != null ) {
+			if ( !candidates.containsKey( singleton.getKey() )
+					&& singleton.getValue() != null
+					&& !isFactoryBean( singleton.getValue() ) ) {
 				ExposedBeanDefinition exposed = new ExposedBeanDefinition(
 						contextBeanRegistry,
 						moduleInfo.getName(),
@@ -70,6 +70,15 @@ public class ExposedModuleBeanRegistry extends AbstractExposedBeanRegistry
 		}
 
 		exposedDefinitions.putAll( candidates );
+	}
+
+	private boolean isFactoryBean( BeanDefinition beanDefinition ) {
+		// FactoryBeans are not exposed if they have a target bean definition
+		return false;
+	}
+
+	private boolean isFactoryBean( Object singleton ) {
+		return false;// singleton instanceof FactoryBean;
 	}
 
 	private Class<?> determineBeanClass( BeanDefinition beanDefinition, Object singleton ) {

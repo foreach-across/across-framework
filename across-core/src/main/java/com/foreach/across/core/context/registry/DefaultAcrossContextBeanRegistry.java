@@ -24,4 +24,9 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	public Object getBeanFromModule( String moduleName, String beanName ) {
 		return contextInfo.getConfigurableModuleInfo( moduleName ).getApplicationContext().getBean( beanName );
 	}
+
+	@Override
+	public Class<?> getBeanTypeFromModule( String moduleName, String beanName ) {
+		return contextInfo.getConfigurableModuleInfo( moduleName ).getApplicationContext().getType( beanName );
+	}
 }
