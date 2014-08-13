@@ -12,6 +12,7 @@ Simply put a logback-test.xml on the classpath and include this file as a resour
 	<logger name="org.quartz" level="WARN"/>
 	<logger name="org.jboss" level="WARN"/>
 	<logger name="org.springframework" level="WARN"/>
+	<logger name="org.thymeleaf" level="WARN" />
 	<logger name="com.foreach.across" level="WARN"/>
 	<logger name="com.foreach.across.config" level="WARN"/>
 	<logger name="com.foreach.across.core" level="INFO"/>
