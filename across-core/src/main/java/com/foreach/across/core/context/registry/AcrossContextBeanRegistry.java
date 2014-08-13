@@ -44,7 +44,7 @@ public interface AcrossContextBeanRegistry
 	 * @param beanName   Name of the bean definition.
 	 * @return Instance.
 	 */
-	Object getBeanFromModule( String moduleName, String beanName );
+	<T> T getBeanFromModule( String moduleName, String beanName );
 
 	/**
 	 * Determine the type for the bean registered under the given name in the module ApplicationContext.

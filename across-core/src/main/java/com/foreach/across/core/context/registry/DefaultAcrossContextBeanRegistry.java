@@ -41,13 +41,14 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		return contextInfo.getApplicationContext().getType( beanName );
 	}
 
+	@SuppressWarnings( "unchecked" )
 	@Override
-	public Object getBeanFromModule( String moduleName, String beanName ) {
+	public <T> T getBeanFromModule( String moduleName, String beanName ) {
 		if ( StringUtils.isEmpty( moduleName ) ) {
-			return getBean( beanName );
+			return (T) getBean( beanName );
 		}
 
-		return contextInfo.getConfigurableModuleInfo( moduleName ).getApplicationContext().getBean( beanName );
+		return (T) contextInfo.getConfigurableModuleInfo( moduleName ).getApplicationContext().getBean( beanName );
 	}
 
 	@Override

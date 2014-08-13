@@ -81,14 +81,4 @@ public interface AcrossModuleInfo extends AcrossEntity
 	 * @return The collection of exposed BeanDefinitions.
 	 */
 	Map<String, ExposedBeanDefinition> getExposedBeanDefinitions();
-
-	/**
-	 * Gets an instance of a bean.
-	 *
-	 * @param beanName Bean name.
-	 * @param <T>      Bean type.
-	 * @return Instance of the requested bean.
-	 */
-	@Deprecated
-	<T> T getBean( String beanName );
 }

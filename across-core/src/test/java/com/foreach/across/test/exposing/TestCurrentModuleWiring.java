@@ -7,6 +7,7 @@ import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
 import com.foreach.across.test.AbstractInlineModule;
@@ -31,6 +32,9 @@ public class TestCurrentModuleWiring
 	@Autowired
 	private AcrossContext acrossContext;
 
+	@Autowired
+	private AcrossContextBeanRegistry beanRegistry;
+
 	@Autowired(required = false)
 	@Module("ModuleOne")
 	private ModuleConfig.BeanWithCurrentModules beanFromOne;
@@ -46,13 +50,14 @@ public class TestCurrentModuleWiring
 
 		AcrossModuleInfo moduleOne = contextInfo.getModuleInfo( "ModuleOne" );
 		assertNotNull( moduleOne );
-		ModuleConfig.BeanWithCurrentModules beanWithCurrentModules = moduleOne.getBean( "beanWithCurrentModules" );
+		ModuleConfig.BeanWithCurrentModules beanWithCurrentModules = beanRegistry.getBeanFromModule( "ModuleOne",
+		                                                                                             "beanWithCurrentModules" );
 		assertNull( beanWithCurrentModules.getParent() );
 		beanWithCurrentModules.assertCurrentModule( moduleOne.getModule() );
 
 		AcrossModuleInfo moduleTwo = contextInfo.getModuleInfo( "ModuleTwo" );
 		assertNotNull( moduleTwo );
-		beanWithCurrentModules = moduleTwo.getBean( "beanWithCurrentModules" );
+		beanWithCurrentModules = beanRegistry.getBeanFromModule( "ModuleTwo", "beanWithCurrentModules" );
 		beanWithCurrentModules.assertCurrentModule( moduleTwo.getModule() );
 
 		assertNotNull( beanWithCurrentModules.getParent() );
@@ -63,14 +68,8 @@ public class TestCurrentModuleWiring
 
 	@Test
 	public void verifyBeansExposedToParentContext() {
-		AcrossContextInfo contextInfo = AcrossContextUtils.getContextInfo( acrossContext );
-		assertNotNull( contextInfo );
-
-		AcrossModuleInfo moduleOne = contextInfo.getModuleInfo( "ModuleOne" );
-		assertSame( beanFromOne, moduleOne.getBean( "beanWithCurrentModules" ) );
-
-		AcrossModuleInfo moduleTwo = contextInfo.getModuleInfo( "ModuleTwo" );
-		assertSame( beanFromTwo, moduleTwo.getBean( "beanWithCurrentModules" ) );
+		assertSame( beanFromOne, beanRegistry.getBeanFromModule( "ModuleOne", "beanWithCurrentModules" ) );
+		assertSame( beanFromTwo, beanRegistry.getBeanFromModule( "ModuleTwo", "beanWithCurrentModules" ) );
 	}
 
 	@Configuration
