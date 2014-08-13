@@ -32,5 +32,4 @@ public @interface OrderInModule
 	 * @see com.foreach.across.core.OrderedInModule#getOrderInModule()
 	 */
 	int value() default Ordered.LOWEST_PRECEDENCE;
-
 }

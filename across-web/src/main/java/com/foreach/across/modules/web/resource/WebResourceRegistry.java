@@ -114,11 +114,9 @@ public class WebResourceRegistry
 
 		for ( WebResource resource : resources ) {
 			if ( StringUtils.equals( type, resource.getType() ) ) {
-				if ( key != null ) {
-					// We are interested in resources with the same key
-					if ( StringUtils.equals( key, resource.getKey() ) ) {
-						matchOnKey = resource;
-					}
+				// We are interested in resources with the same key
+				if ( key != null && StringUtils.equals( key, resource.getKey() ) ) {
+					matchOnKey = resource;
 				}
 
 				// A resource without key but the same data will always match

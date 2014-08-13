@@ -34,10 +34,8 @@ public class PrimaryBeanTransformer implements ExposedBeanDefinitionTransformer
 	}
 
 	private void makePrimary( String beanName, ExposedBeanDefinition definition ) {
-		if ( !definition.isPrimary() ) {
-			if ( beanNames == null || beanNames.contains( beanName ) ) {
-				definition.setPrimary( true );
-			}
+		if ( !definition.isPrimary() && ( beanNames == null || beanNames.contains( beanName ) ) ) {
+			definition.setPrimary( true );
 		}
 	}
 }

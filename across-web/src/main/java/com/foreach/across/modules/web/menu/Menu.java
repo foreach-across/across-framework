@@ -36,7 +36,10 @@ public class Menu implements Ordered
 
 	private boolean ordered, selected, group, disabled;
 	private String name, path, title, url;
+
+	@SuppressWarnings("all")
 	private LinkedList<Menu> items = new LinkedList<>();
+
 	private List<Menu> readonlyItems = Collections.unmodifiableList( items );
 
 	private Comparator<Menu> comparator = null;
@@ -307,6 +310,7 @@ public class Menu implements Ordered
 	 *
 	 * @return Menu items or empty collection if none selected.
 	 */
+	@SuppressWarnings("all")
 	public List<Menu> getSelectedItemPath() {
 		LinkedList<Menu> selectedItems = new LinkedList<>();
 

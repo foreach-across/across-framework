@@ -102,15 +102,11 @@ public class RequestMenuSelector implements MenuSelector
 	}
 
 	private void match( String url, String pathToTest, int equalsScore, int startsWithScore, AtomicInteger total ) {
-		if ( StringUtils.equals( url, pathToTest ) ) {
-			if ( total.intValue() < equalsScore ) {
-				total.set( equalsScore );
-			}
+		if ( StringUtils.equals( url, pathToTest ) && total.intValue() < equalsScore ) {
+			total.set( equalsScore );
 		}
-		else if ( StringUtils.startsWith( url, pathToTest ) ) {
-			if ( total.intValue() < startsWithScore ) {
-				total.set( startsWithScore );
-			}
+		else if ( StringUtils.startsWith( url, pathToTest ) && total.intValue() < startsWithScore ) {
+			total.set( startsWithScore );
 		}
 	}
 }
