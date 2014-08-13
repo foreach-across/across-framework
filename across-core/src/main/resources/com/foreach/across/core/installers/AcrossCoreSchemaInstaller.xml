@@ -115,4 +115,27 @@
 		                newDataType="java.sql.Types.NVARCHAR(500)"/>
 	</changeSet>
 
+	<changeSet id="201408131608" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="across_locks"/>
+			</not>
+		</preConditions>
+		<comment>Creates across_locks table</comment>
+		<createTable tableName="across_locks">
+			<column name="lock_id" type="java.sql.Types.VARCHAR(120)">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="owner_id" type="java.sql.Types.VARCHAR(120)">
+				<constraints nullable="true"/>
+			</column>
+			<column name="created" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="updated" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
