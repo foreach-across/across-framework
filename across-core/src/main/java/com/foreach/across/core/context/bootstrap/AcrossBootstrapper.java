@@ -109,7 +109,7 @@ public class AcrossBootstrapper
 					applicationContextFactory.createApplicationContext( context, config, root );
 
 			AcrossApplicationContextHolder moduleApplicationContext = new AcrossApplicationContextHolder( child, root );
-			AcrossContextUtils.setAcrossApplicationContext( config.getModule(), moduleApplicationContext );
+			AcrossContextUtils.setAcrossApplicationContextHolder( config.getModule(), moduleApplicationContext );
 
 			applicationContextFactory.loadApplicationContext( context, config, moduleApplicationContext );
 
@@ -372,7 +372,7 @@ public class AcrossBootstrapper
 		                                         ConfigurerScope.CONTEXT_ONLY );
 
 		AcrossApplicationContextHolder root = new AcrossApplicationContextHolder( rootApplicationContext );
-		AcrossContextUtils.setAcrossApplicationContext( context, root );
+		AcrossContextUtils.setAcrossApplicationContextHolder( context, root );
 
 		applicationContextFactory.loadApplicationContext( context, root );
 

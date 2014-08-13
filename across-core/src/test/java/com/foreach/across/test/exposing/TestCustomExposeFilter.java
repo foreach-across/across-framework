@@ -58,13 +58,14 @@ public class TestCustomExposeFilter
 	@Test
 	public void serviceIsFromServiceModule() {
 		assertNotNull( myService );
-		assertSame( myService, AcrossContextUtils.getBeanOfType( serviceModule, MyService.class ) );
+		assertSame( myService, AcrossContextUtils.getApplicationContext( serviceModule ).getBean( MyService.class ) );
 	}
 
 	@Test
 	public void controllerIsFromControllerModule() {
 		assertNotNull( myController );
-		assertSame( myController, AcrossContextUtils.getBeanOfType( controllerModule, MyController.class ) );
+		assertSame( myController, AcrossContextUtils.getApplicationContext( controllerModule ).getBean(
+				MyController.class ) );
 	}
 
 	@Test

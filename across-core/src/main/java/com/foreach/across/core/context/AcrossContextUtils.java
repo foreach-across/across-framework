@@ -25,13 +25,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.stereotype.Controller;
@@ -183,47 +180,14 @@ public final class AcrossContextUtils
 	}
 
 	/**
-	 * Returns the Spring ApplicationContext associated with the given AcrossContext or AcrossModule.
-	 *
-	 * @param contextOrModule AcrossApplicationHolder instance.
-	 * @return AcrossApplicationContext wrapping the Spring ApplicationContext.
-	 */
-	public static AcrossApplicationContextHolder getAcrossApplicationContext( AbstractAcrossEntity contextOrModule ) {
-		return contextOrModule.getAcrossApplicationContextHolder();
-	}
-
-	/**
 	 * Sets the ApplicationContext wrapper on an AcrossContext or AcrossModule.
 	 *
 	 * @param contextOrModule    AbstractAcrossEntity instance.
 	 * @param applicationContext AcrossApplicationContext instance.
 	 */
-	public static void setAcrossApplicationContext( AbstractAcrossEntity contextOrModule,
-	                                                AcrossApplicationContextHolder applicationContext ) {
+	public static void setAcrossApplicationContextHolder( AbstractAcrossEntity contextOrModule,
+	                                                      AcrossApplicationContextHolder applicationContext ) {
 		contextOrModule.setAcrossApplicationContextHolder( applicationContext );
-	}
-
-	/**
-	 * Searches the specified context for a bean of the given type.
-	 *
-	 * @param contextOrModule AcrossApplicationHolder instance.
-	 * @param requiredType    Type the bean should match.
-	 * @param <T>             Type of the matching bean.
-	 * @return Bean found.  Exception is thrown if none is found.
-	 */
-	public static <T> T getBeanOfType( AcrossEntity contextOrModule, Class<T> requiredType ) {
-		return getAcrossApplicationContext( contextOrModule ).getBeanFactory().getBean( requiredType );
-	}
-
-	/**
-	 * Searches the AcrossContext and its parent for beans of the given type.  Will only include exposed beans.
-	 *
-	 * @param context      AcrossContext instance.
-	 * @param requiredType Type the bean should match.
-	 * @param <T>          Type of the matching beans.
-	 */
-	public static <T> Collection<T> getBeansOfType( AcrossContext context, Class<T> requiredType ) {
-		return getBeansOfType( context, requiredType, false );
 	}
 
 	/**
@@ -232,7 +196,7 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return Across application context information.
 	 */
-	public static AcrossApplicationContextHolder getAcrossApplicationContext( AcrossEntity contextOrModule ) {
+	public static AcrossApplicationContextHolder getAcrossApplicationContextHolder( AcrossEntity contextOrModule ) {
 		if ( contextOrModule instanceof AbstractAcrossEntity ) {
 			return ( (AbstractAcrossEntity) contextOrModule ).getAcrossApplicationContextHolder();
 		}
@@ -244,54 +208,6 @@ public final class AcrossContextUtils
 		}
 
 		return null;
-	}
-
-	/**
-	 * Searches the AcrossContext for beans of the given type.  Depending on the scanModules boolean, this
-	 * will scan the base context and its parent, or all modules separately (including non-exposed beans).
-	 * <p/>
-	 * All beans will be sorted according to the Order, module index and OrderInModule values.
-	 *
-	 * @param context      AcrossContext instance.
-	 * @param requiredType Type the bean should match.
-	 * @param scanModules  True if the individual AcrossModules should be scanned.
-	 * @param <T>          Type of the matching beans.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
-	 * @see com.foreach.across.core.OrderedInModule
-	 * @see org.springframework.core.Ordered
-	 * @deprecated Use {@link com.foreach.across.core.context.info.AcrossContextInfo#getBeansOfType(Class, boolean)} instead
-	 */
-	public static <T> Collection<T> getBeansOfType( AcrossContext context,
-	                                                Class<T> requiredType,
-	                                                boolean scanModules ) {
-		AcrossContextInfo contextInfo = getContextInfo( context );
-
-		Set<T> beans = new LinkedHashSet<>();
-		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
-
-		for ( T bean : BeanFactoryUtils.beansOfTypeIncludingAncestors( getBeanFactory( context ), requiredType )
-		                               .values() ) {
-			comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
-			beans.add( bean );
-		}
-
-		if ( scanModules ) {
-			for ( AcrossModuleInfo module : contextInfo.getModules() ) {
-				ListableBeanFactory beanFactory = getBeanFactory( module.getModule() );
-
-				if ( beanFactory != null ) {
-					for ( T bean : beanFactory.getBeansOfType( requiredType ).values() ) {
-						comparator.register( bean, module.getIndex() );
-						beans.add( bean );
-					}
-				}
-			}
-		}
-
-		List<T> beanList = new ArrayList<>( beans );
-		comparator.sort( beanList );
-
-		return beanList;
 	}
 
 	/**
@@ -334,7 +250,7 @@ public final class AcrossContextUtils
 	 */
 	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context,
 	                                                                              AcrossModule module ) {
-		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
+		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<>();
 
 		// First add configurers defined on the context
 		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context

@@ -1,10 +1,9 @@
 package com.foreach.across.modules.web.config;
 
-import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.PostRefresh;
-import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.template.NamedWebTemplateProcessor;
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
@@ -33,7 +32,7 @@ public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 	private Environment environment;
 
 	@Autowired
-	private AcrossContext context;
+	private AcrossContextBeanRegistry beanRegistry;
 
 	@Override
 	public void addInterceptors( InterceptorRegistry registry ) {
@@ -59,9 +58,9 @@ public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 		if ( autoRegister ) {
 			LOG.info( "Scanning modules for NamedWebTemplateProcessor instances" );
 
-			Collection<NamedWebTemplateProcessor> namedProcessors = AcrossContextUtils.getBeansOfType( context,
-			                                                                                           NamedWebTemplateProcessor.class,
-			                                                                                           true );
+			Collection<NamedWebTemplateProcessor> namedProcessors = beanRegistry.getBeansOfType(
+					NamedWebTemplateProcessor.class,
+					true );
 			WebTemplateRegistry registry = webTemplateRegistry();
 
 			for ( NamedWebTemplateProcessor webTemplateProcessor : namedProcessors ) {

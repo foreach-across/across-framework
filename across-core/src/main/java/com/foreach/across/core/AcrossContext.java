@@ -6,7 +6,6 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
-import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
@@ -34,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AcrossContext extends AbstractAcrossEntity implements DisposableBean
 {
-	private static final AtomicInteger ID_GENERATOR = new AtomicInteger(1);
+	private static final AtomicInteger ID_GENERATOR = new AtomicInteger( 1 );
 
 	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
@@ -234,7 +233,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 * @param event Event instance that will be published.
 	 */
 	public void publishEvent( AcrossEvent event ) {
-		AcrossContextUtils.getBeanOfType( this, AcrossEventPublisher.class ).publish( event );
+		AcrossContextUtils.getBeanRegistry( this ).getBeanOfType( AcrossEventPublisher.class ).publish( event );
 	}
 
 	@PostConstruct
@@ -253,7 +252,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 			// Shutdown all modules in reverse order - note that it is quite possible that beans might have been destroyed
 			// already by Spring in the meantime
 			List<AcrossModuleInfo> reverseList =
-					new ArrayList<>( AcrossContextUtils.getBeanOfType( this, AcrossContextInfo.class ).getModules() );
+					new ArrayList<>( AcrossContextUtils.getContextInfo( this ).getModules() );
 			Collections.reverse( reverseList );
 
 			for ( AcrossModuleInfo moduleInfo : reverseList ) {

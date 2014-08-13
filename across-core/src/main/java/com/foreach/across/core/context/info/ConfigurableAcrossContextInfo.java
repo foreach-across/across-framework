@@ -156,9 +156,4 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 				? exposedBeanRegistry.getExposedDefinitions()
 				: Collections.<String, ExposedBeanDefinition>emptyMap();
 	}
-
-	@Override
-	public <T> Collection<T> getBeansOfType( Class<T> requiredType, boolean scanModules ) {
-		return AcrossContextUtils.getBeansOfType( getContext(), requiredType, scanModules );
-	}
 }

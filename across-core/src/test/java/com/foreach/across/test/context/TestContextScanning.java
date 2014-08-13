@@ -7,6 +7,7 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 public class TestContextScanning
 {
@@ -28,9 +28,11 @@ public class TestContextScanning
 		context.addModule( new ModuleThree() );
 		context.bootstrap();
 
-		List<MyBeanConfig> beans = (List<MyBeanConfig>) AcrossContextUtils.getBeansOfType( context,
-		                                                                                   MyBeanConfig.class,
-		                                                                                   true );
+		AcrossContextBeanRegistry registry = AcrossContextUtils.getBeanRegistry( context );
+		List<MyBeanConfig> beans = registry.getBeansOfType( MyBeanConfig.class );
+		assertTrue( beans.isEmpty() );
+
+		beans = registry.getBeansOfType( MyBeanConfig.class, true );
 		assertEquals( 3, beans.size() );
 
 		assertEquals( "ModuleOne", beans.get( 0 ).getModule() );
@@ -57,9 +59,8 @@ public class TestContextScanning
 
 		context.bootstrap();
 
-		List<MyBeanConfig> beans = (List<MyBeanConfig>) AcrossContextUtils.getBeansOfType( context,
-		                                                                                   MyBeanConfig.class,
-		                                                                                   true );
+		AcrossContextBeanRegistry registry = AcrossContextUtils.getBeanRegistry( context );
+		List<MyBeanConfig> beans = registry.getBeansOfType( MyBeanConfig.class, true );
 		assertEquals( 3, beans.size() );
 
 		assertEquals( "ModuleThree", beans.get( 0 ).getModule() );
@@ -90,9 +91,8 @@ public class TestContextScanning
 
 		context.bootstrap();
 
-		List<MyBeanConfig> beans = (List<MyBeanConfig>) AcrossContextUtils.getBeansOfType( context,
-		                                                                                   MyBeanConfig.class,
-		                                                                                   true );
+		AcrossContextBeanRegistry registry = AcrossContextUtils.getBeanRegistry( context );
+		List<MyBeanConfig> beans = registry.getBeansOfType( MyBeanConfig.class, true );
 		assertEquals( 4, beans.size() );
 
 		assertEquals( "ApplicationContext", beans.get( 0 ).getModule() );

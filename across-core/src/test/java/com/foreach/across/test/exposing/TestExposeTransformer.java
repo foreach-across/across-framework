@@ -54,14 +54,14 @@ public class TestExposeTransformer
 	@Test
 	public void serviceIsFromPrimaryModule() {
 		assertNotNull( someService );
-		assertSame( someService, AcrossContextUtils.getBeanOfType( primaryModule, MyService.class ) );
+		assertSame( someService, AcrossContextUtils.getApplicationContext( primaryModule ).getBean( MyService.class ) );
 	}
 
 	@Test
 	public void configurationIsFromPrimaryModule() {
 		assertNotNull( exposingConfiguration );
 		assertSame( exposingConfiguration,
-		            AcrossContextUtils.getBeanOfType( primaryModule, ExposingConfiguration.class ) );
+		            AcrossContextUtils.getApplicationContext( primaryModule ).getBean( ExposingConfiguration.class ) );
 		assertNull( simpleConfiguration );
 	}
 

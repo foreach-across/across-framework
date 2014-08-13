@@ -6,11 +6,13 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.*;
 import com.foreach.across.test.modules.installer.installers.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,9 +41,15 @@ public class TestAcrossInstallerRegistry
 		installerRepository = mock( AcrossInstallerRepository.class );
 
 		beanFactory = mock( ConfigurableListableBeanFactory.class );
-		when( beanFactory.getBean( AcrossInstallerRepository.class ) ).thenReturn( installerRepository );
+
+		AcrossContextBeanRegistry beanRegistry = mock( AcrossContextBeanRegistry.class );
+		when( beanRegistry.getBeanOfType( AcrossInstallerRepository.class ) ).thenReturn( installerRepository );
+
+		AbstractApplicationContext applicationContext = mock( AbstractApplicationContext.class );
+		when ( applicationContext.getBean( AcrossContextBeanRegistry.class ) ).thenReturn( beanRegistry );
 
 		AcrossApplicationContextHolder acrossApplicationContextHolder = mock( AcrossApplicationContextHolder.class );
+		when( acrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
 		when( acrossApplicationContextHolder.getBeanFactory() ).thenReturn( beanFactory );
 
 		AcrossContext acrossContext = mock( AcrossContext.class );

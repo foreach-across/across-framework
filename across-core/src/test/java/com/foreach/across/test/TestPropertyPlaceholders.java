@@ -1,9 +1,9 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.properties.PropertiesModule;
 import com.foreach.across.test.modules.properties.SetPropertyConfig;
@@ -18,7 +18,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test property setting and spring expression language conditionals.
@@ -29,17 +30,12 @@ import static org.junit.Assert.*;
 public class TestPropertyPlaceholders
 {
 	@Autowired
-	private PropertiesModule onlyFromContext;
-
-	@Autowired
-	private PropertiesModule sourceOnModule;
-
-	@Autowired
-	private PropertiesModule directOnModule;
+	private AcrossContextBeanRegistry contextBeanRegistry;
 
 	@Test
 	public void checkPropertiesSet() {
-		SetPropertyConfig config = AcrossContextUtils.getBeanOfType( onlyFromContext, SetPropertyConfig.class );
+		SetPropertyConfig config = contextBeanRegistry.getBeanOfTypeFromModule( "onlyFromContext",
+		                                                                        SetPropertyConfig.class );
 
 		assertNotNull( config );
 		assertEquals( "acrossContext", config.contextValue );
@@ -52,7 +48,7 @@ public class TestPropertyPlaceholders
 		assertEquals( "acrossContext", config.getProperty( "moduleDirectValue" ) );
 		assertEquals( new Integer( 777 ), config.getProperty( "contextDirectValue", Integer.class ) );
 
-		config = AcrossContextUtils.getBeanOfType( sourceOnModule, SetPropertyConfig.class );
+		config = contextBeanRegistry.getBeanOfTypeFromModule( "sourceOnModule", SetPropertyConfig.class );
 
 		assertNotNull( config );
 		assertEquals( "acrossContext", config.contextValue );
@@ -65,7 +61,7 @@ public class TestPropertyPlaceholders
 		assertEquals( "acrossModule", config.getProperty( "moduleDirectValue" ) );
 		assertEquals( new Integer( 777 ), config.getProperty( "contextDirectValue", Integer.class ) );
 
-		config = AcrossContextUtils.getBeanOfType( directOnModule, SetPropertyConfig.class );
+		config = contextBeanRegistry.getBeanOfTypeFromModule( "directOnModule", SetPropertyConfig.class );
 
 		assertNotNull( config );
 
@@ -106,12 +102,12 @@ public class TestPropertyPlaceholders
 
 		@Bean
 		public PropertiesModule onlyFromContext() {
-			return new PropertiesModule( "moduleOne" );
+			return new PropertiesModule( "onlyFromContext" );
 		}
 
 		@Bean
 		public PropertiesModule sourceOnModule() {
-			PropertiesModule module = new PropertiesModule( "moduleTwo" );
+			PropertiesModule module = new PropertiesModule( "sourceOnModule" );
 			module.addPropertySources(
 					new ClassPathResource( "com/foreach/across/test/TestPropertiesModule.properties" ) );
 			return module;
@@ -119,7 +115,7 @@ public class TestPropertyPlaceholders
 
 		@Bean
 		public PropertiesModule directOnModule() {
-			PropertiesModule module = new PropertiesModule( "moduleThree" );
+			PropertiesModule module = new PropertiesModule( "directOnModule" );
 			module.addPropertySources(
 					new ClassPathResource( "com/foreach/across/test/TestPropertiesModule.properties" ),
 					new ClassPathResource( "com/foreach/across/test/NotExistingProperties.properties" ) );

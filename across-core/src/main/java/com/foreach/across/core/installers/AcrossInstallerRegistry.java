@@ -194,8 +194,9 @@ public class AcrossInstallerRegistry
 
 	private AcrossInstallerRepository getInstallerRepository() {
 		if ( installerRepository == null ) {
-			installerRepository = AcrossContextUtils.getBeanOfType( contextConfig.getContext(),
-			                                                        AcrossInstallerRepository.class );
+			installerRepository = AcrossContextUtils
+					.getBeanRegistry( contextConfig.getContext() )
+					.getBeanOfType( AcrossInstallerRepository.class );
 		}
 
 		return installerRepository;
@@ -251,7 +252,7 @@ public class AcrossInstallerRegistry
 
 	private ConfigurableListableBeanFactory getBeanFactoryForInstallerWiring( AcrossModule module ) {
 		AcrossApplicationContextHolder moduleContext =
-				AcrossContextUtils.getAcrossApplicationContext( module );
+				AcrossContextUtils.getAcrossApplicationContextHolder( module );
 
 		if ( moduleContext == null ) {
 			// If module context not yet available, use the root context

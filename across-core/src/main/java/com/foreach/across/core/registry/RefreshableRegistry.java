@@ -1,9 +1,8 @@
 package com.foreach.across.core.registry;
 
-import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
-import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -11,9 +10,9 @@ import java.util.*;
 
 /**
  * <p>The RefreshableRegistry is a simple bean holding a collection of instances and provides more flexibility than
- * autowiring a list of instances directly.  Depending on the scanModules only members visible in the containing module
- * will be selected (false, default) or all members from all modules (true).  The RefreshableRegistry updates its
- * member list after the AcrossContext has bootstrapped.</p>
+ * autowiring a list of instances directly.  Depending on the includeModuleInternals only members visible in the
+ * containing module will be selected (false, default) or all members from all modules (true).
+ * The RefreshableRegistry updates its member list after the AcrossContext has bootstrapped.</p>
  * <p>Members will be returned in the following order:
  * <ul>
  * <li>implementing {@link org.springframework.core.Ordered} or {@link org.springframework.core.annotation.Order}</li>
@@ -33,10 +32,10 @@ import java.util.*;
 public class RefreshableRegistry<T> implements Collection<T>
 {
 	private Class<T> memberType;
-	private boolean scanModules;
+	private boolean includeModuleInternals;
 
 	@Autowired(required = false)
-	private AcrossContext across;
+	private AcrossContextBeanRegistry beanRegistry;
 
 	private List<T> members = new ArrayList<T>();
 	private Set<T> fixedMembers = new HashSet<T>();
@@ -45,9 +44,9 @@ public class RefreshableRegistry<T> implements Collection<T>
 		this( memberType, false );
 	}
 
-	public RefreshableRegistry( Class<T> type, boolean scanModules ) {
+	public RefreshableRegistry( Class<T> type, boolean includeModuleInternals ) {
 		this.memberType = type;
-		this.scanModules = scanModules;
+		this.includeModuleInternals = includeModuleInternals;
 	}
 
 	/**
@@ -58,9 +57,9 @@ public class RefreshableRegistry<T> implements Collection<T>
 	@PostConstruct
 	@PostRefresh
 	public void refresh() {
-		if ( across != null ) {
+		if ( beanRegistry != null ) {
 			List<T> refreshed =
-					new ArrayList<T>( AcrossContextUtils.getBeansOfType( across, memberType, scanModules ) );
+					new ArrayList<T>( beanRegistry.getBeansOfType( memberType, includeModuleInternals ) );
 
 			// Add fixed members at the end
 			for ( T fixed : fixedMembers ) {

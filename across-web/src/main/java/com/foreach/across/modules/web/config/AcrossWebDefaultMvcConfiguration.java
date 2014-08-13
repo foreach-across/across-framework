@@ -4,7 +4,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
@@ -47,7 +47,6 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.ConversionServiceExposingInterceptor;
@@ -77,12 +76,16 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			ClassUtils.isPresent( "javax.xml.bind.Binder", WebMvcConfigurationSupport.class.getClassLoader() );
 
 	private static final boolean jackson2Present = ClassUtils.isPresent( "com.fasterxml.jackson.databind.ObjectMapper",
-	                                                                     WebMvcConfigurationSupport.class.getClassLoader() ) && ClassUtils.isPresent(
-			"com.fasterxml.jackson.core.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
+	                                                                     WebMvcConfigurationSupport.class
+			                                                                     .getClassLoader() ) && ClassUtils
+			.isPresent(
+					"com.fasterxml.jackson.core.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
 
 	private static final boolean jacksonPresent = ClassUtils.isPresent( "org.codehaus.jackson.map.ObjectMapper",
-	                                                                    WebMvcConfigurationSupport.class.getClassLoader() ) && ClassUtils.isPresent(
-			"org.codehaus.jackson.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
+	                                                                    WebMvcConfigurationSupport.class
+			                                                                    .getClassLoader() ) && ClassUtils
+			.isPresent(
+					"org.codehaus.jackson.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
 
 	private static boolean romePresent = ClassUtils.isPresent( "com.sun.syndication.feed.WireFeed",
 	                                                           WebMvcConfigurationSupport.class.getClassLoader() );
@@ -96,6 +99,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Autowired
 	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private AcrossWebModule webModule;
+
+	@Autowired
+	private AcrossContextBeanRegistry beanRegistry;
 
 	private ApplicationContext applicationContext;
 
@@ -123,7 +129,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		Assert.notNull( webModule );
 
 		Collection<FormattingConversionService> existing =
-				AcrossContextUtils.getBeansOfType( acrossContext, FormattingConversionService.class );
+				beanRegistry.getBeansOfType( FormattingConversionService.class );
 
 		if ( !existing.isEmpty() ) {
 			existingConversionService = existing.iterator().next();
