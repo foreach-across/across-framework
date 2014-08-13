@@ -99,9 +99,8 @@ public class TestSpringApplicationContextLifecycle
 
 		across.shutdown();
 
-		// TODO: fixme see also #38
-		//assertFalse( acrossApplicationContext.isActive() );
-		//assertNull( acrossFactory.getSingleton( AcrossContextInfo.BEAN ) );
+		assertFalse( acrossApplicationContext.isActive() );
+		assertNull( acrossFactory.getSingleton( AcrossContextInfo.BEAN ) );
 		assertNull( moduleOneFactory.getSingleton( "myBean" ) );
 		assertNull( moduleTwoFactory.getSingleton( "myBean" ) );
 	}
@@ -183,9 +182,8 @@ public class TestSpringApplicationContextLifecycle
 
 		parent.close();
 
-		// TODO: fixme see also #38
-		//assertFalse( acrossApplicationContext.isActive() );
-		//assertNull( acrossFactory.getSingleton( AcrossContextInfo.BEAN ) );
+		assertFalse( acrossApplicationContext.isActive() );
+		assertNull( acrossFactory.getSingleton( AcrossContextInfo.BEAN ) );
 		assertNull( moduleOneFactory.getSingleton( "myBean" ) );
 		assertNull( moduleTwoFactory.getSingleton( "myBean" ) );
 	}

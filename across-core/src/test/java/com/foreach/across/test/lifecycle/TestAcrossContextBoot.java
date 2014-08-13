@@ -1,4 +1,4 @@
-package com.foreach.across.test;
+package com.foreach.across.test.lifecycle;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;

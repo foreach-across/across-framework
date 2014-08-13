@@ -270,12 +270,9 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 			}
 
 			// Destroy the root ApplicationContext
-			// todo: fixme, see #38
-			//AcrossContextUtils.getApplicationContext( this ).destroy();
+			AcrossContextUtils.getApplicationContext( this ).destroy();
 
-			//LOG.debug( "Destroyed root ApplicationContext" );
-			LOG.warn(
-					"Module ApplicationContexts have been destroyed, AcrossContext itself cannot be destroyed [see BitBucket issue #38]" );
+			LOG.debug( "Destroyed root ApplicationContext: {}", getId() );
 
 			isBootstrapped = false;
 		}
