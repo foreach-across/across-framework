@@ -9,7 +9,6 @@ import java.util.UUID;
 /**
  * @author Arne Vandamme
  */
-@Service
 public class DistributedLockRepositoryImpl implements DistributedLockRepository
 {
 	private final DistributedLockManager lockManager;
