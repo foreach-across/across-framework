@@ -1,58 +1,52 @@
 package com.foreach.across.core.concurrent;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 
 /**
+ * Interface for custom locks that can be obtained through a
+ * {@link com.foreach.across.core.concurrent.DistributedLockRepository}.
+ *
  * @author Arne Vandamme
  */
-public class DistributedLock implements Lock
+public interface DistributedLock
 {
-	private final String ownerId, lockId;
-	private final DistributedLockRepository repository;
+	/**
+	 * @return Id of the owner wanting this lock.
+	 */
+	String getOwnerId();
 
-	public DistributedLock( DistributedLockRepository repository, String owner, String id ) {
-		this.ownerId = owner;
-		this.lockId = id;
-		this.repository = repository;
-	}
+	/**
+	 * @return Id of the lock that the owner is trying to obtain.
+	 */
+	String getLockId();
 
-	public String getOwnerId() {
-		return ownerId + "[" + Thread.currentThread().getId() + "]";
-	}
+	/**
+	 * Will try to obtain the lock and wait indefinitely to do so.
+	 * In case of an interrupt, a {@link com.foreach.across.core.concurrent.DistributedLockWaitException}
+	 * will be thrown.
+	 */
+	void lock();
 
-	public String getLockId() {
-		return lockId;
-	}
+	/**
+	 * Will try to obtain the lock a single time and return immediately.
+	 *
+	 * @return {@code true} if the lock was acquired and {@code false} otherwise
+	 */
+	boolean tryLock();
 
-	@Override
-	public void lock() {
-		repository.acquire( this );
-	}
+	/**
+	 * Will try to obtain the lock and wait for the specified amount of time to do so.
+	 * In case of an interrupt, a {@link com.foreach.across.core.concurrent.DistributedLockWaitException}
+	 * will be thrown.
+	 *
+	 * @param time the maximum time to wait for the lock
+	 * @param unit the time unit of the {@code time} argument
+	 * @return {@code true} if the lock was acquired and {@code false} if the waiting time elapsed before the lock was acquired
+	 */
+	boolean tryLock( long time, TimeUnit unit );
 
-	@Override
-	public void lockInterruptibly() throws InterruptedException {
-
-	}
-
-	@Override
-	public boolean tryLock() {
-		return repository.acquire( this );
-	}
-
-	@Override
-	public boolean tryLock( long time, TimeUnit unit ) throws InterruptedException {
-		return true;
-	}
-
-	@Override
-	public void unlock() {
-		repository.release( this );
-	}
-
-	@Override
-	public Condition newCondition() {
-		throw new UnsupportedOperationException( "newCondition() is not implemented" );
-	}
+	/**
+	 * Will release the lock.
+	 */
+	void unlock();
 }

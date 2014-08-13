@@ -1,7 +1,6 @@
 package com.foreach.across.test.concurrent;
 
-import com.foreach.across.core.concurrent.DistributedLockRepository;
-import com.foreach.across.core.concurrent.DistributedLockRepositoryImpl;
+import com.foreach.across.core.concurrent.*;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.time.StopWatch;
@@ -18,7 +17,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.sql.DataSource;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.Lock;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,14 +25,14 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestDistributedLock.Config.class)
-public class TestDistributedLock
+@ContextConfiguration(classes = ITDistributedLocking.Config.class)
+public class ITDistributedLocking
 {
 	@Autowired
 	private DataSource dataSource;
 
 	@Test
-	public void batch() throws Exception {
+	public void executeBatch() throws Exception {
 		int batchSize = 5;
 		int totalResults = batchSize * 100;
 		int totalLocks = batchSize * 20;
@@ -71,7 +69,9 @@ public class TestDistributedLock
 		dataSource.setUsername( "sa" );
 		dataSource.setPassword( "" );
 
-		return new DistributedLockRepositoryImpl( dataSource );
+		DistributedLockManager lockManager = new SqlBasedDistributedLockManager( dataSource );
+
+		return new DistributedLockRepositoryImpl( lockManager );
 	}
 
 	protected static class ExecutorBatch implements Callable<Integer>
@@ -89,7 +89,7 @@ public class TestDistributedLock
 			List<Executor> executors = new ArrayList<>( 100 );
 
 			for ( int i = 0; i < 20; i++ ) {
-				Lock lock = distributedLockRepository.getLock( UUID.randomUUID().toString() );
+				DistributedLock lock = distributedLockRepository.createLock( UUID.randomUUID().toString() );
 
 				for ( int j = 0; j < 5; j++ ) {
 					executors.add( new Executor( lock, 10 ) );
@@ -118,12 +118,12 @@ public class TestDistributedLock
 	protected static class Executor implements Runnable
 	{
 		private int sleepTime;
-		private Lock lock;
+		private DistributedLock lock;
 		private StopWatch stopWatch = new StopWatch();
 		private boolean failed;
 		private boolean finished;
 
-		public Executor( Lock lock, int sleepTime ) {
+		public Executor( DistributedLock lock, int sleepTime ) {
 			this.lock = lock;
 			this.sleepTime = sleepTime;
 		}

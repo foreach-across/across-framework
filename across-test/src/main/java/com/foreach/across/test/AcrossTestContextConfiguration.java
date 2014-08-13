@@ -6,8 +6,8 @@ import com.foreach.across.core.installers.InstallerAction;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -18,10 +18,13 @@ import java.util.Map;
 
 @Configuration
 @PropertySource(value = "file:${user.home}/dev-configs/across-test.properties", ignoreResourceNotFound = true)
-public class AcrossTestContextConfiguration
+public class AcrossTestContextConfiguration implements EnvironmentAware
 {
-	@Autowired
 	private Environment environment;
+
+	public void setEnvironment( Environment environment ) {
+		this.environment = environment;
+	}
 
 	@Bean
 	@SuppressWarnings("all")
