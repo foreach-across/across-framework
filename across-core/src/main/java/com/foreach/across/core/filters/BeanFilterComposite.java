@@ -14,7 +14,10 @@ public class BeanFilterComposite implements BeanFilter
 		this.filters = filters;
 	}
 
-	public boolean apply( ConfigurableListableBeanFactory beanFactory, String beanName, Object bean, BeanDefinition definition ) {
+	public boolean apply( ConfigurableListableBeanFactory beanFactory,
+	                      String beanName,
+	                      Object bean,
+	                      BeanDefinition definition ) {
 		for ( BeanFilter filter : filters ) {
 			if ( filter.apply( beanFactory, beanName, bean, definition ) ) {
 				return true;

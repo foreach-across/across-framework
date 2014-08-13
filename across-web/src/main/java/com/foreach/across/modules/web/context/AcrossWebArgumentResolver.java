@@ -28,7 +28,8 @@ public class AcrossWebArgumentResolver implements HandlerMethodArgumentResolver
 	                               WebDataBinderFactory binderFactory ) {
 
 		if ( Menu.class.isAssignableFrom( parameter.getParameterType() ) ) {
-			return menuFactory.buildMenu( parameter.getParameterName(), (Class<? extends Menu>) parameter.getParameterType() );
+			return menuFactory.buildMenu( parameter.getParameterName(),
+			                              (Class<? extends Menu>) parameter.getParameterType() );
 		}
 
 		return WebResourceUtils.getRegistry( webRequest );

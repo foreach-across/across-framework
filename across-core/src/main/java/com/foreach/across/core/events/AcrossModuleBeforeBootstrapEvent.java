@@ -1,7 +1,5 @@
 package com.foreach.across.core.events;
 
-import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;

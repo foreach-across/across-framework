@@ -28,7 +28,7 @@ public class SpringContextRefreshedEventListener implements ApplicationListener<
 	private AcrossEventPublisher publisher;
 
 	@PostConstruct
-	private void registerInParentContext() {
+	protected void registerInParentContext() {
 		ConfigurableApplicationContext parentApplicationContext =
 				(ConfigurableApplicationContext) AcrossContextUtils.getParentApplicationContext( context );
 

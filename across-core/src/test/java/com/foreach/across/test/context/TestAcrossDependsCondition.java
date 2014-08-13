@@ -100,7 +100,7 @@ public class TestAcrossDependsCondition
 		verify( contextConfig ).hasModule( "moduleOne" );
 		verify( contextConfig ).hasModule( "moduleTwo" );
 		verify( contextConfig ).hasModule( "moduleThree" );
-		verify( contextConfig, never()).hasModule( "moduleFour" );
+		verify( contextConfig, never() ).hasModule( "moduleFour" );
 	}
 
 	private void assertConditionsMet( String[] required, String[] optional ) {

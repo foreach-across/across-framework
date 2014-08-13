@@ -4,7 +4,6 @@ import com.foreach.across.test.modules.TestModuleEventListener;
 import com.foreach.across.test.modules.module1.ConstructedBeanModule1;
 import com.foreach.across.test.modules.module1.ScannedBeanModule1;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 public class ConstructedBeanModule2 extends TestModuleEventListener
 {

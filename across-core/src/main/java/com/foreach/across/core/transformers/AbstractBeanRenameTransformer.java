@@ -10,6 +10,7 @@ import java.util.Map;
 
 public abstract class AbstractBeanRenameTransformer implements ExposedBeanDefinitionTransformer
 {
+	@SuppressWarnings("all")
 	private final Logger LOG = LoggerFactory.getLogger( getClass() );
 
 	/**

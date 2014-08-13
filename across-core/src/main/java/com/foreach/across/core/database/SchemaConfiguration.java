@@ -40,7 +40,6 @@ public class SchemaConfiguration
 	}
 
 	public String getCurrentTableName( String original ) {
-		boolean found = false;
 		for ( SchemaObject databaseObject : tables ) {
 			if ( StringUtils.equals( original, databaseObject.getOriginalName() ) ) {
 				return databaseObject.getCurrentName();

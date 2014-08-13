@@ -16,6 +16,7 @@ public class PropertyPlaceholderSupportConfigurer extends AnnotatedClassConfigur
 		super( Config.class );
 	}
 
+	@SuppressWarnings("all")
 	@Configuration
 	public static class Config
 	{

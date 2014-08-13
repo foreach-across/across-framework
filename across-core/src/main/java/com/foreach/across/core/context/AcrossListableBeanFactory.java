@@ -1,19 +1,12 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.core.GenericTypeResolver;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -37,7 +30,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	@Override
 	protected RootBeanDefinition getMergedBeanDefinition( String beanName,
 	                                                      BeanDefinition bd,
-	                                                      BeanDefinition containingBd ) throws BeanDefinitionStoreException {
+	                                                      BeanDefinition containingBd ) {
 		if ( bd instanceof ExposedBeanDefinition ) {
 			return (ExposedBeanDefinition) bd;
 		}

@@ -58,7 +58,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	}
 
 	@Handler
-	private void rescan( AcrossContextBootstrappedEvent event ) {
+	protected void rescan( AcrossContextBootstrappedEvent event ) {
 		for ( AcrossModuleInfo moduleInfo : event.getModules() ) {
 			scan( AcrossContextUtils.getApplicationContext( moduleInfo.getModule() ) );
 		}

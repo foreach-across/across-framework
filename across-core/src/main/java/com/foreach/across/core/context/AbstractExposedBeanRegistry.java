@@ -1,5 +1,6 @@
 package com.foreach.across.core.context;
 
+import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 public abstract class AbstractExposedBeanRegistry
 {
+	@SuppressWarnings("all")
 	private final Logger LOG = LoggerFactory.getLogger( getClass() );
 
 	protected final String moduleName;
@@ -81,7 +83,7 @@ public abstract class AbstractExposedBeanRegistry
 					originalAbstract.resolveBeanClass( Thread.currentThread().getContextClassLoader() );
 				}
 				catch ( Exception e ) {
-					throw new RuntimeException( e );
+					throw new AcrossException( e );
 				}
 			}
 

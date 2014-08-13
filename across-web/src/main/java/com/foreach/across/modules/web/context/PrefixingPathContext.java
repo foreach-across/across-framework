@@ -9,8 +9,11 @@ import org.springframework.util.Assert;
  */
 public class PrefixingPathContext
 {
+	private static final String REDIRECT = "redirect:";
+	private static final String FORWARD = "forward:";
+
 	private final String prefix;
-	private final String[] ignoredPrefixes = new String[] { "redirect:", "forward:" };
+	private final String[] ignoredPrefixes = new String[] { REDIRECT, FORWARD };
 
 	public PrefixingPathContext( String prefix ) {
 		Assert.notNull( prefix );
@@ -50,7 +53,7 @@ public class PrefixingPathContext
 	}
 
 	public String redirect( String path ) {
-		return "redirect:" + path( path.startsWith( "redirect:" ) ? path.substring( 9 ) : path );
+		return REDIRECT + path( path.startsWith( REDIRECT ) ? path.substring( 9 ) : path );
 	}
 
 	private String prefix( String path ) {

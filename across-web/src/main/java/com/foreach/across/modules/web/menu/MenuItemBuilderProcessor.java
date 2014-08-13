@@ -6,7 +6,7 @@ package com.foreach.across.modules.web.menu;
  */
 public interface MenuItemBuilderProcessor
 {
-	public static MenuItemBuilderProcessor NoOpProcessor = new MenuItemBuilderProcessor()
+	MenuItemBuilderProcessor NoOpProcessor = new MenuItemBuilderProcessor()
 	{
 		@Override
 		public Menu process( Menu menu ) {

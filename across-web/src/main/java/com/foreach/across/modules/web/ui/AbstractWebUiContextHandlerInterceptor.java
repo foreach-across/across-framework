@@ -22,7 +22,7 @@ public abstract class AbstractWebUiContextHandlerInterceptor<T extends WebUiCont
 	@Autowired(required = false)
 	private MessageSource messageSource;
 
-	@SuppressWarnings({"unchecked", "SignatureDeclareThrowsException"})
+	@SuppressWarnings({ "unchecked", "SignatureDeclareThrowsException" })
 
 	@Override
 	public boolean preHandle(

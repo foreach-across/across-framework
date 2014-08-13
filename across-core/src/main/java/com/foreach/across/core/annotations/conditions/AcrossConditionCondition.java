@@ -37,11 +37,11 @@ public class AcrossConditionCondition implements Condition
 	 * Based on implementation of OnExpressionCondition in spring-boot package.
 	 * https://github.com/spring-projects/spring-boot/blob/master/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/condition/OnExpressionCondition.java
 	 */
-	public static boolean evaluate( String expression,
+	public static boolean evaluate( String unresolvedExpression,
 	                                ConfigurableListableBeanFactory beanFactory,
 	                                Environment environment ) {
 		// Explicitly allow environment placeholders inside the expression
-		expression = environment.resolvePlaceholders( expression );
+		String expression = environment.resolvePlaceholders( unresolvedExpression );
 
 		if ( !expression.startsWith( "#{" ) ) {
 			// For convenience allow user to provide bare expression with no #{} wrapper

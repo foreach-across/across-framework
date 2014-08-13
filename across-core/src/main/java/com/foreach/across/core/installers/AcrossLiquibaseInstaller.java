@@ -1,7 +1,6 @@
 package com.foreach.across.core.installers;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.AcrossContextUtils;

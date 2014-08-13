@@ -27,7 +27,7 @@ public class RequestMenuBuilder<T extends Menu, E extends BuildMenuEvent<T>> imp
 	}
 
 	protected E createEvent( T menu ) {
-		return (E)new BuildMenuEvent<T>( menu );
+		return (E) new BuildMenuEvent<T>( menu );
 	}
 
 	public E buildEvent( T menu ) {

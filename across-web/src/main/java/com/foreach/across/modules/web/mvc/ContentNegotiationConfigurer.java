@@ -4,6 +4,7 @@ import org.springframework.web.accept.ContentNegotiationManager;
 
 import javax.servlet.ServletContext;
 
+@SuppressWarnings("all")
 public class ContentNegotiationConfigurer extends org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer
 {
 	public ContentNegotiationConfigurer( ServletContext servletContext ) {
@@ -11,7 +12,7 @@ public class ContentNegotiationConfigurer extends org.springframework.web.servle
 	}
 
 	@Override
-	@SuppressWarnings( "SignatureDeclareThrowsException" )
+	@SuppressWarnings("SignatureDeclareThrowsException")
 	public ContentNegotiationManager getContentNegotiationManager() throws Exception {
 		return super.getContentNegotiationManager();
 	}

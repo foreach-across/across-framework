@@ -53,7 +53,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 	}
 
 	@Test
-	public void moduleSettings() throws Exception {
+	public void moduleSettings() {
 		String settingsClassName = module.getClass().getName() + "Settings";
 		Class settingsClass = loadClass( settingsClassName );
 
@@ -66,7 +66,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 			ReflectionUtils.doWithFields( settingsClass, new ReflectionUtils.FieldCallback()
 			{
 				@Override
-				public void doWith( Field field ) throws IllegalArgumentException, IllegalAccessException {
+				public void doWith( Field field ) throws IllegalAccessException {
 					if ( ReflectionUtils.isPublicStaticFinal( field ) ) {
 						found.set( true );
 					}

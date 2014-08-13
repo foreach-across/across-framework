@@ -12,22 +12,23 @@ import java.lang.annotation.Target;
  * as defined in the {@link org.springframework.core.Ordered} interface. Lower values have higher priority.
  * The default value is {@code Ordered.LOWEST_PRECEDENCE}, indicating
  * lowest priority (losing to any other specified order value).
- *
+ * <p/>
  * The regular @Order annotation and Ordered interface define ordering of beans across the entire context,
  * whereas this annotation is used to second level ordering.  If you need to define the order in module at runtime,
  * use the {@link com.foreach.across.core.OrderedInModule} interface instead.
  *
  * @author Arne Vandamme
- * @since 1.0.3
  * @see org.springframework.core.Ordered
  * @see com.foreach.across.core.OrderedInModule
+ * @since 1.0.3
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface OrderInModule
 {
 	/**
 	 * The order value. Default is {@link org.springframework.core.Ordered#LOWEST_PRECEDENCE}.
+	 *
 	 * @see com.foreach.across.core.OrderedInModule#getOrderInModule()
 	 */
 	int value() default Ordered.LOWEST_PRECEDENCE;

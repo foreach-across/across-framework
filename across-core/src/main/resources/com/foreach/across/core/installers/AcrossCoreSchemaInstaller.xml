@@ -62,7 +62,8 @@
 			UPDATE ACROSSMODULES SET installer_id = installer
 		</sql>
 
-		<addNotNullConstraint tableName="ACROSSMODULES" columnName="installer_id" columnDataType="java.sql.Types.VARCHAR(120)" />
+		<addNotNullConstraint tableName="ACROSSMODULES" columnName="installer_id"
+		                      columnDataType="java.sql.Types.VARCHAR(120)"/>
 	</changeSet>
 
 	<changeSet id="201406141452C" author="arne">
@@ -84,7 +85,8 @@
 			UPDATE ACROSSMODULES SET module_id = module
 		</sql>
 
-		<addNotNullConstraint tableName="ACROSSMODULES" columnName="module_id" columnDataType="java.sql.Types.VARCHAR(120)" />
+		<addNotNullConstraint tableName="ACROSSMODULES" columnName="module_id"
+		                      columnDataType="java.sql.Types.VARCHAR(120)"/>
 	</changeSet>
 
 	<changeSet id="201406141453B" author="arne">

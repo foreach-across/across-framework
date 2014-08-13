@@ -49,6 +49,7 @@ public class FixedMenuOrderComparator implements Comparator<Menu>
 
 	/**
 	 * Set the comparator that will be used in case the fixed order is the same.
+	 *
 	 * @param fallbackComparator Comparator instance.
 	 */
 	public void setFallbackComparator( Comparator<Menu> fallbackComparator ) {

@@ -21,7 +21,7 @@ public class BeanRenameTransformer extends AbstractBeanRenameTransformer
 	}
 
 	@Override
-	protected String rename( String beanName, ExposedBeanDefinition definition  ) {
+	protected String rename( String beanName, ExposedBeanDefinition definition ) {
 		String name = renameMap.get( beanName );
 
 		return name != null ? name : ( removeUndefined ? null : beanName );

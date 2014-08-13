@@ -1,9 +1,6 @@
 package com.foreach.across.modules.web.ui;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.stereotype.Service;
 
 /**
  * <p>

@@ -4,8 +4,6 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerRunCondition;
 
-import java.math.BigDecimal;
-
 @Installer(description = "Installer that will always run and has 3 installer methods.",
            runCondition = InstallerRunCondition.AlwaysRun)
 public class MultipleMethodInstaller extends TestInstaller

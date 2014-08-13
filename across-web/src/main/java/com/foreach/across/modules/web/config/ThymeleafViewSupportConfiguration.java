@@ -80,7 +80,8 @@ public class ThymeleafViewSupportConfiguration
 				resolver.setSuffix( suffix );
 
 				applicationContext.getAutowireCapableBeanFactory().initializeBean( resolver,
-				                                                                   "developmentResolver." + views.getKey() );
+				                                                                   "developmentResolver." + views
+						                                                                   .getKey() );
 
 				resolvers.add( resolver );
 			}

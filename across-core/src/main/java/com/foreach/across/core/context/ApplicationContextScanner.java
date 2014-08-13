@@ -32,7 +32,7 @@ public final class ApplicationContextScanner
 	}
 
 	public static Map<String, Object> findSingletonsMatching( ApplicationContext context, BeanFilter filter ) {
-		HashMap<String, Object> beanMap = new HashMap<String, Object>();
+		Map<String, Object> beanMap = new HashMap<String, Object>();
 		ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) context;
 
 		ConfigurableListableBeanFactory beanFactory = ctx.getBeanFactory();
@@ -54,7 +54,7 @@ public final class ApplicationContextScanner
 
 	public static Map<String, BeanDefinition> findBeanDefinitionsMatching( ApplicationContext context,
 	                                                                       BeanFilter filter ) {
-		HashMap<String, BeanDefinition> definitionMap = new HashMap<String, BeanDefinition>();
+		Map<String, BeanDefinition> definitionMap = new HashMap<String, BeanDefinition>();
 		ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) context;
 
 		ConfigurableListableBeanFactory beanFactory = ctx.getBeanFactory();

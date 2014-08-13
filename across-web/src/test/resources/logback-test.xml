@@ -5,7 +5,7 @@
 	<logger name="org.hibernate.cfg.AnnotationBinder" level="WARN"/>
 	<logger name="org.hibernate.cfg.annotations" level="WARN"/>
 	<logger name="org.quartz" level="WARN"/>
-	<logger name="org.jboss" level="WARN" />
+	<logger name="org.jboss" level="WARN"/>
 	<logger name="org.springframework" level="WARN"/>
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">

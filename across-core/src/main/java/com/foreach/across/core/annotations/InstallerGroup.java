@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Inherited
 public @interface InstallerGroup
 {
-	public static String SCHEMA = "schema";
+	String SCHEMA = "schema";
 
 	String value() default "";
 }

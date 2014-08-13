@@ -12,6 +12,15 @@ import java.util.Date;
 
 public class AcrossInstallerRepository
 {
+	private static final String SQL_SELECT_VERSION =
+			"select version from ACROSSMODULES where module_id = ? and installer_id = ?";
+	private static final String SQL_UPDATE_VERSION =
+			"update ACROSSMODULES set version = ?, description = ?, created = ? " +
+					"where module_id = ? and installer_id = ?";
+	private static final String SQL_INSERT_VERSION =
+			"insert into ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) " +
+					"VALUES (?, ?, ?, ?, ?, ?, ?)";
+
 	private final JdbcTemplate jdbcTemplate;
 
 	public AcrossInstallerRepository( DataSource installDatasource ) {
@@ -19,10 +28,8 @@ public class AcrossInstallerRepository
 	}
 
 	public int getInstalledVersion( AcrossModule module, Class<?> installerClass ) {
-		String SQL = "select version from ACROSSMODULES where module_id = ? and installer_id = ?";
-
 		try {
-			return jdbcTemplate.queryForObject( SQL, Integer.class, determineId( module.getName() ),
+			return jdbcTemplate.queryForObject( SQL_SELECT_VERSION, Integer.class, determineId( module.getName() ),
 			                                    determineInstallerId( installerClass ) );
 		}
 		catch ( EmptyResultDataAccessException erdae ) {
@@ -32,19 +39,13 @@ public class AcrossInstallerRepository
 
 	public void setInstalled( AcrossModule module, Installer config, Class<?> installerClass ) {
 		if ( getInstalledVersion( module, installerClass ) != -1 ) {
-			String SQL =
-					"update ACROSSMODULES set version = ?, description = ?, created = ? " +
-							"where module_id = ? and installer_id = ?";
-
-			jdbcTemplate.update( SQL, config.version(), StringUtils.abbreviate( config.description(), 500 ), new Date(),
+			jdbcTemplate.update( SQL_UPDATE_VERSION, config.version(), StringUtils.abbreviate( config.description(),
+			                                                                                   500 ), new Date(),
 			                     determineId( module.getName() ), determineInstallerId( installerClass ) );
 		}
 		else {
-			String SQL =
-					"insert into ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) " +
-							"VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-			jdbcTemplate.update( SQL, determineModuleName( module.getName() ), determineId( module.getName() ),
+			jdbcTemplate.update( SQL_INSERT_VERSION, determineModuleName( module.getName() ), determineId(
+					                     module.getName() ),
 			                     determineInstallerName( installerClass ), determineInstallerId( installerClass ),
 			                     config.version(), new Date(), StringUtils.abbreviate( config.description(), 500 ) );
 		}

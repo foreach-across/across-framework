@@ -5,7 +5,6 @@ import com.foreach.across.core.context.AcrossEntity;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
@@ -16,7 +15,7 @@ public interface AcrossModuleInfo extends AcrossEntity
 	/**
 	 * @return The info object of the AcrossContext this module belongs to.
 	 */
-	public AcrossContextInfo getContextInfo();
+	AcrossContextInfo getContextInfo();
 
 	/**
 	 * @return The index of the module in the context bootstrap.
@@ -26,69 +25,70 @@ public interface AcrossModuleInfo extends AcrossEntity
 	/**
 	 * @return Name of the AcrossModule.
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * @return Description of the AcrossModule.
 	 */
-	public String getDescription();
+	String getDescription();
 
 	/**
 	 * @return AcrossModule instance.
 	 */
-	public AcrossModule getModule();
+	AcrossModule getModule();
 
 	/**
 	 * @return Collection of required module dependencies.
 	 */
-	public Collection<AcrossModuleInfo> getRequiredDependencies();
+	Collection<AcrossModuleInfo> getRequiredDependencies();
 
 	/**
 	 * @return Collection of optional module dependencies.
 	 */
-	public Collection<AcrossModuleInfo> getOptionalDependencies();
+	Collection<AcrossModuleInfo> getOptionalDependencies();
 
 	/**
 	 * @return True if the module was enabled and should be bootstrapped.
 	 */
-	public boolean isEnabled();
+	boolean isEnabled();
 
 	/**
 	 * @return True if the module has been bootstrapped.
 	 */
-	public boolean isBootstrapped();
+	boolean isBootstrapped();
 
 	/**
 	 * @return Actual status of the module boostrap.
 	 */
-	public ModuleBootstrapStatus getBootstrapStatus();
+	ModuleBootstrapStatus getBootstrapStatus();
 
 	/**
 	 * @return Configuration object used for bootstrapping this module.  Null if module was disabled.
 	 */
-	public ModuleBootstrapConfig getBootstrapConfiguration();
+	ModuleBootstrapConfig getBootstrapConfiguration();
 
 	/**
 	 * @return The Spring application context for this module.
 	 */
-	public ApplicationContext getApplicationContext();
+	ApplicationContext getApplicationContext();
 
 	/**
 	 * @return The specific role of the module in the context.
 	 */
-	public AcrossModuleRole getModuleRole();
+	AcrossModuleRole getModuleRole();
 
 	/**
 	 * @return The collection of exposed BeanDefinitions.
 	 */
-	public Map<String, ExposedBeanDefinition> getExposedBeanDefinitions();
+	Map<String, ExposedBeanDefinition> getExposedBeanDefinitions();
 
 	/**
 	 * Gets an instance of a bean.
 	 *
 	 * @param beanName Bean name.
-	 * @param <T> Bean type.
+	 * @param <T>      Bean type.
 	 * @return Instance of the requested bean.
 	 */
-	public <T> T getBean( String beanName );
+	@Deprecated
+	<T> T getBean( String beanName );
 }

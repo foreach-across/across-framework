@@ -6,6 +6,7 @@ import net.engio.mbassy.bus.config.BusConfiguration;
 import net.engio.mbassy.bus.error.IPublicationErrorHandler;
 import net.engio.mbassy.bus.error.PublicationError;
 
+import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
@@ -18,7 +19,7 @@ import java.util.WeakHashMap;
  */
 public class MBassadorEventPublisher extends MBassador<AcrossEvent> implements AcrossEventPublisher
 {
-	private final WeakHashMap<Object, Boolean> listeners = new WeakHashMap<>();
+	private final Map<Object, Boolean> listeners = new WeakHashMap<>();
 
 	public MBassadorEventPublisher() {
 		super( BusConfiguration.Default() );

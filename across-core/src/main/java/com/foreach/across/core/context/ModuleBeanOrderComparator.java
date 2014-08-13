@@ -92,6 +92,7 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 
 	/**
 	 * Sorts the list of instances according to the comparator.
+	 *
 	 * @param beans List of instances to sort.
 	 */
 	public void sort( List<?> beans ) {

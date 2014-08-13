@@ -22,13 +22,13 @@ public interface AcrossEventPublisher
 
 	MessagePublication publishAsync( AcrossEvent message );
 
-	public MessagePublication publishAsync( AcrossEvent message, long timeout, TimeUnit unit );
+	MessagePublication publishAsync( AcrossEvent message, long timeout, TimeUnit unit );
 
-	public void publish( AcrossEvent message );
+	void publish( AcrossEvent message );
 
-	public SyncAsyncPostCommand<AcrossEvent> post( AcrossEvent message );
+	SyncAsyncPostCommand<AcrossEvent> post( AcrossEvent message );
 
-	public void shutdown();
+	void shutdown();
 
 	boolean isListener( Object listener );
 }

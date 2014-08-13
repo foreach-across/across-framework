@@ -25,7 +25,10 @@ public abstract class AbstractClassBasedBeanFilter<T> implements BeanFilter
 		this.allowedItems = allowedItems;
 	}
 
-	public boolean apply( ConfigurableListableBeanFactory beanFactory, String beanName, Object bean, BeanDefinition definition ) {
+	public boolean apply( ConfigurableListableBeanFactory beanFactory,
+	                      String beanName,
+	                      Object bean,
+	                      BeanDefinition definition ) {
 		if ( bean != null ) {
 			Class targetClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( bean ) );
 

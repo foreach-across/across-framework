@@ -111,7 +111,7 @@ public class AcrossInstallerRegistry
 	                                     AcrossModule module,
 	                                     Object installer,
 	                                     Installer metadata ) {
-		AcrossInstallerRepository installerRepository = getInstallerRepository();
+		AcrossInstallerRepository repository = getInstallerRepository();
 
 		if ( action != InstallerAction.REGISTER ) {
 			LOG.debug( "Executing installer {} for module {}", installer.getClass(), module.getName() );
@@ -155,7 +155,7 @@ public class AcrossInstallerRegistry
 			);
 		}
 
-		installerRepository.setInstalled( module, metadata, installer.getClass() );
+		repository.setInstalled( module, metadata, installer.getClass() );
 	}
 
 	private boolean shouldCheckRunCondition( InstallerAction action ) {
@@ -168,7 +168,7 @@ public class AcrossInstallerRegistry
 	                                     Installer metadata ) {
 		// Get the installer repository because now we need to perform version lookups
 		// and possibly register on execution.  This will also install the core schema if necessary.
-		AcrossInstallerRepository installerRepository = getInstallerRepository();
+		AcrossInstallerRepository repository = getInstallerRepository();
 
 		if ( action == InstallerAction.FORCE ) {
 			return true;
@@ -180,12 +180,14 @@ public class AcrossInstallerRegistry
 				           installerClass );
 				return true;
 			case VersionDifferent:
-				int installedVersion = installerRepository.getInstalledVersion( module, installerClass );
+				int installedVersion = repository.getInstalledVersion( module, installerClass );
 				if ( metadata.version() > installedVersion ) {
 					LOG.debug( "Performing action {} for installer {} because version {} is higher than installed {}",
 					           action, installerClass, metadata.version(), installedVersion );
 					return true;
 				}
+				break;
+			default:
 				break;
 		}
 

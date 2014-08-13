@@ -23,7 +23,7 @@
 	</li>
 </ul>
 
-<!--/* Breadcrumb generation */-->
+		<!--/* Breadcrumb generation */-->
 <ol th:fragment="breadcrumb (menu)" class="breadcrumb">
 <li th:each="item : ${menu.selectedItemPath}" th:classappend="${itemStat.last} ? 'active'" th:if="${item.hasTitle()}">
 	<span th:if="${itemStat.last}" th:text="${item.title}">title selected item</span>

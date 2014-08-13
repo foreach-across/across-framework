@@ -98,5 +98,5 @@ public interface AcrossContextInfo extends AcrossEntity
 	 *
 	 * @return The collection of exposed BeanDefinitions.
 	 */
-	public Map<String, ExposedBeanDefinition> getExposedBeanDefinitions();
+	Map<String, ExposedBeanDefinition> getExposedBeanDefinitions();
 }

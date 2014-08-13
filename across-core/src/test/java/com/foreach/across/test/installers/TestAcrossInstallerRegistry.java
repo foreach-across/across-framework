@@ -46,7 +46,7 @@ public class TestAcrossInstallerRegistry
 		when( beanRegistry.getBeanOfType( AcrossInstallerRepository.class ) ).thenReturn( installerRepository );
 
 		AbstractApplicationContext applicationContext = mock( AbstractApplicationContext.class );
-		when ( applicationContext.getBean( AcrossContextBeanRegistry.class ) ).thenReturn( beanRegistry );
+		when( applicationContext.getBean( AcrossContextBeanRegistry.class ) ).thenReturn( beanRegistry );
 
 		AcrossApplicationContextHolder acrossApplicationContextHolder = mock( AcrossApplicationContextHolder.class );
 		when( acrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
@@ -150,7 +150,8 @@ public class TestAcrossInstallerRegistry
 
 		ConfigurableListableBeanFactory moduleBeanFactory = mock( ConfigurableListableBeanFactory.class );
 
-		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock( AcrossApplicationContextHolder.class );
+		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
+				AcrossApplicationContextHolder.class );
 		when( moduleAcrossApplicationContextHolder.getBeanFactory() ).thenReturn( moduleBeanFactory );
 
 		when( module.hasApplicationContext() ).thenReturn( true );

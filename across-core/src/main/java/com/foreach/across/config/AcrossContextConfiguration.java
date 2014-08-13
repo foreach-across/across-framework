@@ -26,6 +26,7 @@ public class AcrossContextConfiguration
 	@Autowired
 	private Collection<AcrossContextConfigurer> configurers;
 
+	@SuppressWarnings("all")
 	@Bean
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 		AcrossContext context = new AcrossContext( applicationContext );

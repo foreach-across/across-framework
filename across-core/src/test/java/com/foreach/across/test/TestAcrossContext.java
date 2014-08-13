@@ -1,7 +1,6 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.exposing.ExposingModule;
 import com.foreach.across.test.modules.installer.InstallerModule;

@@ -4,7 +4,6 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -17,6 +16,7 @@ import java.util.*;
  * This class creates the optimal bootstrap order for all modules and can throw an exception if two
  * modules have a cyclic dependency and are impossible to bootstrap (very bad - impossible to fix).
  */
+@SuppressWarnings("all")
 public class ModuleBootstrapOrderBuilder
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ModuleBootstrapOrderBuilder.class );

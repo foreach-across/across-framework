@@ -21,7 +21,7 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 
 	@Override
 	protected DefaultListableBeanFactory createBeanFactory() {
-		return new AcrossListableBeanFactory(getInternalParentBeanFactory());
+		return new AcrossListableBeanFactory( getInternalParentBeanFactory() );
 	}
 
 	/**

@@ -13,7 +13,7 @@ import javax.sql.DataSource;
  */
 public class AcrossCoreSchemaInstaller
 {
-	private final static Logger LOG = LoggerFactory.getLogger( AcrossCoreSchemaInstaller.class );
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossCoreSchemaInstaller.class );
 
 	private final DataSource dataSource;
 	private final AutowireCapableBeanFactory beanFactory;

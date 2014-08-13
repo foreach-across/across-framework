@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import java.util.Collections;
 import java.util.Map;
 
+@SuppressWarnings("all")
 public class ResourceHandlerRegistry extends org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 {
 	public ResourceHandlerRegistry( ApplicationContext applicationContext, ServletContext servletContext ) {

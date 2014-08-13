@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -117,12 +116,12 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		this.servletContext = servletContext;
 	}
 
-	public void setApplicationContext( ApplicationContext applicationContext ) throws BeansException {
+	public void setApplicationContext( ApplicationContext applicationContext ) {
 		this.applicationContext = applicationContext;
 	}
 
 	@PostConstruct
-	private void validateServletContext() {
+	protected void validateServletContext() {
 		Assert.notNull( applicationContext, "applicationContext should be autowired and cannot be null" );
 		Assert.notNull( servletContext, "servletContext should be autowired and cannot be null" );
 		Assert.notNull( acrossContext );
@@ -140,7 +139,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	 * Reload the configuration by applying all WebMvcConfigurers in the context.
 	 */
 	@Handler
-	private void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
+	protected void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
 		RefreshableRegistry<WebMvcConfigurer> webMvcConfigurers = webMvcConfigurers();
 		webMvcConfigurers.refresh();
 

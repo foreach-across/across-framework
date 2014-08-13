@@ -4,7 +4,6 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.RequestMenuBuilder;
 import com.foreach.across.modules.web.menu.RequestMenuStore;
 import org.junit.Test;
