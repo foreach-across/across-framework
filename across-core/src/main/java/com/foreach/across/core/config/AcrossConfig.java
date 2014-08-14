@@ -33,8 +33,15 @@ public class AcrossConfig
 
 	@Bean
 	@Lazy
+	@DependsOn({ "sqlBasedDistributedLockManager" })
+	public DistributedLockRepository distributedLockRepository( SqlBasedDistributedLockManager sqlBasedDistributedLockManager ) {
+		return new DistributedLockRepositoryImpl( sqlBasedDistributedLockManager );
+	}
+
+	@Bean(destroyMethod = "close")
+	@Lazy
 	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
-	public DistributedLockRepository distributedLockRepository( DataSource acrossDataSource ) {
+	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( DataSource acrossDataSource ) {
 		if ( acrossDataSource == null ) {
 			throw new AcrossException(
 					"Unable to create the DistributedLockRepository because there is no DataSource configured.  " +
@@ -42,8 +49,6 @@ public class AcrossConfig
 			);
 		}
 
-		SqlBasedDistributedLockManager lockManager = new SqlBasedDistributedLockManager( acrossDataSource );
-
-		return new DistributedLockRepositoryImpl( lockManager );
+		return new SqlBasedDistributedLockManager( acrossDataSource );
 	}
 }

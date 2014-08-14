@@ -7,9 +7,8 @@
 	<logger name="org.quartz" level="WARN"/>
 	<logger name="org.jboss" level="WARN"/>
 	<logger name="org.springframework" level="WARN"/>
-	<!--
-	<logger name="com.foreach.across.core.concurrent" level="TRACE" />
-	-->
+	<logger name="com.foreach.across.core.concurrent" level="DEBUG" />
+	<logger name="liquibase" level="WARN" />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>

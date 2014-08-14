@@ -1,4 +1,4 @@
-package com.foreach.across.it;
+package com.foreach.across.it.concurrent;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
@@ -9,6 +9,7 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossTestContextConfiguration;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,22 +34,30 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = ITDistributedLockRepository.Config.class)
 public class ITDistributedLockRepository
 {
+	private static final int BATCHES = 3;
+	private static final int LOCKS_PER_BATCH = 50;
+	private static final int EXECUTORS_PER_LOCK = 10;
+
 	@Autowired
 	private Environment environment;
 
 	@Autowired
 	private DataSource dataSource;
 
-	@Autowired
-	private AcrossContextBeanRegistry beanRegistry;
+	private final Map<String, Integer> resultsByLock = Collections.synchronizedMap(
+			new HashMap<String, Integer>() );
+
+	@Before
+	public void setup() {
+		resultsByLock.clear();
+	}
 
 	@Test
 	public void executeBatch() throws Exception {
-		int batchSize = 5;
-		int totalResults = batchSize * 200;
-		int totalLocks = batchSize * 25;
-
-		beanRegistry.getBeanOfType( DistributedLockRepository.class );
+		int batchSize = BATCHES;
+		int totalResults = BATCHES * LOCKS_PER_BATCH * EXECUTORS_PER_LOCK;
+		int totalLocks = LOCKS_PER_BATCH;
+		int resultsPerLock = EXECUTORS_PER_LOCK * BATCHES;
 
 		ExecutorService batchExecutorService = Executors.newFixedThreadPool( batchSize );
 
@@ -60,7 +69,7 @@ public class ITDistributedLockRepository
 		}
 
 		batchExecutorService.shutdown();
-		batchExecutorService.awaitTermination( 60, TimeUnit.SECONDS );
+		batchExecutorService.awaitTermination( 3, TimeUnit.MINUTES );
 
 		int actualResults = 0;
 
@@ -73,6 +82,12 @@ public class ITDistributedLockRepository
 		JdbcTemplate jdbcTemplate = new JdbcTemplate( dataSource );
 		assertEquals( Integer.valueOf( totalLocks ),
 		              jdbcTemplate.queryForObject( "SELECT count(*) FROM across_locks", Integer.class ) );
+
+		// Check synchronization was correct
+		assertEquals( totalLocks, resultsByLock.size() );
+		for ( Map.Entry<String, Integer> entry : resultsByLock.entrySet() ) {
+			assertEquals( Integer.valueOf( resultsPerLock ), entry.getValue() );
+		}
 	}
 
 	private AcrossContext createContext() {
@@ -112,12 +127,12 @@ public class ITDistributedLockRepository
 
 			ExecutorService fixedThreadPool = Executors.newFixedThreadPool( 50 );
 
-			List<Executor> executors = new ArrayList<>( 200 );
+			List<Executor> executors = new ArrayList<>( LOCKS_PER_BATCH * EXECUTORS_PER_LOCK );
 
-			for ( int i = 0; i < 25; i++ ) {
-				DistributedLock lock = distributedLockRepository.createLock( UUID.randomUUID().toString() );
+			for ( int i = 0; i < LOCKS_PER_BATCH; i++ ) {
+				DistributedLock lock = distributedLockRepository.createLock( "batch-lock-" + i );
 
-				for ( int j = 0; j < 8; j++ ) {
+				for ( int j = 0; j < EXECUTORS_PER_LOCK; j++ ) {
 					executors.add( new Executor( lock, 10 ) );
 				}
 			}
@@ -127,7 +142,7 @@ public class ITDistributedLockRepository
 			}
 
 			fixedThreadPool.shutdown();
-			fixedThreadPool.awaitTermination( 30, TimeUnit.SECONDS );
+			fixedThreadPool.awaitTermination( 3, TimeUnit.MINUTES );
 
 			int totalSucceeded = 0;
 
@@ -143,15 +158,19 @@ public class ITDistributedLockRepository
 		}
 	}
 
-	protected static class Executor implements Runnable
+	protected class Executor implements Runnable
 	{
-		private int sleepTime;
-		private DistributedLock lock;
-		private StopWatch stopWatch = new StopWatch();
+		private final int sleepTime;
+		private final DistributedLock lock;
+		private final StopWatch stopWatch = new StopWatch();
 		private boolean failed;
 		private boolean finished;
 
 		public Executor( DistributedLock lock, int sleepTime ) {
+			if ( !resultsByLock.containsKey( lock.getLockId() ) ) {
+				resultsByLock.put( lock.getLockId(), 0 );
+			}
+
 			this.lock = lock;
 			this.sleepTime = sleepTime;
 		}
@@ -178,12 +197,16 @@ public class ITDistributedLockRepository
 					Thread.sleep( sleepTime );
 				}
 
+				Integer currentCount = resultsByLock.get( lock.getLockId() );
+				resultsByLock.put( lock.getLockId(), currentCount + 1 );
+
 				finished = true;
 
 				stopWatch.stop();
 			}
 			catch ( Exception ie ) {
 				failed = true;
+				ie.printStackTrace();
 			}
 			finally {
 				lock.unlock();
