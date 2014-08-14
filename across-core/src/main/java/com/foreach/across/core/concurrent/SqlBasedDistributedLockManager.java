@@ -135,10 +135,12 @@ public class SqlBasedDistributedLockManager implements DistributedLockManager
 	}
 
 	public void close() {
-		LOG.info( "Destroying the distributed lock manager - releasing all locks still held" );
+		LOG.trace( "Destruction of the distributed lock manager requested" );
 
 		try {
 			Map<SqlBasedDistributedLockMonitor.ActiveLock, DistributedLock> activeLocks = lockMonitor.getActiveLocks();
+
+			LOG.info( "Destroying distributed lock manager - releasing {} held locks", activeLocks.size() );
 
 			for ( SqlBasedDistributedLockMonitor.ActiveLock activeLock : activeLocks.keySet() ) {
 				release( activeLock.getOwnerId(), activeLock.getLockId() );

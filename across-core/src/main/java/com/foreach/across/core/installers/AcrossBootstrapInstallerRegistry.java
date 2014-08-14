@@ -9,6 +9,7 @@ import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.bootstrap.BootstrapLockManager;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,15 +27,18 @@ import java.lang.reflect.Method;
  * Builds the list of all installers in a configured AcrossContext.
  * Provides easy methods to run installers in different bootstrap phases.
  */
-public class AcrossInstallerRegistry
+public class AcrossBootstrapInstallerRegistry
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossInstallerRegistry.class );
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossBootstrapInstallerRegistry.class );
 
+	private final BootstrapLockManager bootstrapLockManager;
 	private final AcrossBootstrapConfig contextConfig;
 
 	private AcrossInstallerRepository installerRepository;
 
-	public AcrossInstallerRegistry( AcrossBootstrapConfig contextConfig ) {
+	public AcrossBootstrapInstallerRegistry( AcrossBootstrapConfig contextConfig,
+	                                         BootstrapLockManager bootstrapLockManager ) {
+		this.bootstrapLockManager = bootstrapLockManager;
 		this.contextConfig = contextConfig;
 	}
 
@@ -199,6 +203,12 @@ public class AcrossInstallerRegistry
 			installerRepository = AcrossContextUtils
 					.getBeanRegistry( contextConfig.getContext() )
 					.getBeanOfType( AcrossInstallerRepository.class );
+
+			// As soon as we have retrieved the installer registry, and there is a lock manager,
+			// make sure we lock for the remainder of the bootstrap
+			if ( bootstrapLockManager != null ) {
+				bootstrapLockManager.ensureLocked();
+			}
 		}
 
 		return installerRepository;

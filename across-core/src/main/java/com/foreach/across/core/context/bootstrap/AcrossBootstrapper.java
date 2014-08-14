@@ -17,7 +17,7 @@ import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.core.filters.BeanFilter;
-import com.foreach.across.core.installers.AcrossInstallerRegistry;
+import com.foreach.across.core.installers.AcrossBootstrapInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.slf4j.Logger;
@@ -77,75 +77,85 @@ public class AcrossBootstrapper
 		createBootstrapConfiguration( contextInfo );
 		prepareForBootstrap( contextInfo );
 
-		AcrossInstallerRegistry installerRegistry =
-				new AcrossInstallerRegistry( contextInfo.getBootstrapConfiguration() );
+		BootstrapLockManager bootstrapLockManager = new BootstrapLockManager( contextInfo );
 
-		// Run installers that don't need anything bootstrapped
-		installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
+		try {
+			AcrossBootstrapInstallerRegistry installerRegistry =
+					new AcrossBootstrapInstallerRegistry( contextInfo.getBootstrapConfiguration(),
+					                                      bootstrapLockManager );
 
-		boolean pushExposedToParentContext = shouldPushExposedBeansToParent( contextInfo );
-		ExposedContextBeanRegistry exposedBeanRegistry = new ExposedContextBeanRegistry(
-				AcrossContextUtils.getBeanRegistry( contextInfo ),
-				rootContext.getBeanFactory(),
-				null
-		);
+			// Run installers that don't need anything bootstrapped
+			installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
 
-		exposedBeanRegistry.add( AcrossContextInfo.BEAN );
+			boolean pushExposedToParentContext = shouldPushExposedBeansToParent( contextInfo );
+			ExposedContextBeanRegistry exposedBeanRegistry = new ExposedContextBeanRegistry(
+					AcrossContextUtils.getBeanRegistry( contextInfo ),
+					rootContext.getBeanFactory(),
+					null
+			);
 
-		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
-			ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
-			ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
-			LOG.debug( "Bootstrapping {} module", config.getModuleName() );
+			exposedBeanRegistry.add( AcrossContextInfo.BEAN );
 
-			configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
+			for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
+				ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
+				ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
+				LOG.debug( "Bootstrapping {} module", config.getModuleName() );
 
-			context.publishEvent( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
+				configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
 
-			// Run installers before bootstrapping this particular module
-			installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.BeforeModuleBootstrap );
+				context.publishEvent( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
 
-			// Create the module context
-			AbstractApplicationContext child =
-					applicationContextFactory.createApplicationContext( context, config, root );
+				// Run installers before bootstrapping this particular module
+				installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.BeforeModuleBootstrap );
 
-			AcrossApplicationContextHolder moduleApplicationContext = new AcrossApplicationContextHolder( child, root );
-			AcrossContextUtils.setAcrossApplicationContextHolder( config.getModule(), moduleApplicationContext );
+				// Create the module context
+				AbstractApplicationContext child =
+						applicationContextFactory.createApplicationContext( context, config, root );
 
-			applicationContextFactory.loadApplicationContext( context, config, moduleApplicationContext );
+				AcrossApplicationContextHolder moduleApplicationContext = new AcrossApplicationContextHolder( child,
+				                                                                                              root );
+				AcrossContextUtils.setAcrossApplicationContextHolder( config.getModule(), moduleApplicationContext );
 
-			// Bootstrap the module
-			config.getModule().bootstrap();
+				applicationContextFactory.loadApplicationContext( context, config, moduleApplicationContext );
 
-			configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Bootstrapped );
+				// Bootstrap the module
+				config.getModule().bootstrap();
 
-			// Send event that this module has bootstrapped
-			context.publishEvent( new AcrossModuleBootstrappedEvent( moduleInfo ) );
+				configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Bootstrapped );
 
-			// Run installers after module itself has bootstrapped
-			installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.AfterModuleBootstrap );
+				// Send event that this module has bootstrapped
+				context.publishEvent( new AcrossModuleBootstrappedEvent( moduleInfo ) );
 
-			// Copy the beans to the parent context
-			exposeBeans( configurableAcrossModuleInfo, config.getExposeFilter(), config.getExposeTransformer(),
-			             rootContext );
+				// Run installers after module itself has bootstrapped
+				installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.AfterModuleBootstrap );
 
-			if ( pushExposedToParentContext ) {
-				exposedBeanRegistry.addAll( configurableAcrossModuleInfo.getExposedBeanDefinitions() );
+				// Copy the beans to the parent context
+				exposeBeans( configurableAcrossModuleInfo, config.getExposeFilter(), config.getExposeTransformer(),
+				             rootContext );
+
+				if ( pushExposedToParentContext ) {
+					exposedBeanRegistry.addAll( configurableAcrossModuleInfo.getExposedBeanDefinitions() );
+				}
+
+				AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean(
+						AcrossEventPublisher.class ) );
 			}
 
-			AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean( AcrossEventPublisher.class ) );
+			LOG.info( "Bootstrapping {} modules - finished", modulesInOrder.size() );
+
+			if ( pushExposedToParentContext ) {
+				pushExposedBeansToParent( exposedBeanRegistry, rootContext.getParent() );
+			}
+
+			// Refresh beans
+			AcrossContextUtils.refreshBeans( context );
+
+			// Bootstrapping done, run installers that require context bootstrap finished
+			installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
 		}
-
-		LOG.info( "Bootstrapping {} modules - finished", modulesInOrder.size() );
-
-		if ( pushExposedToParentContext ) {
-			pushExposedBeansToParent( exposedBeanRegistry, rootContext.getParent() );
+		finally {
+			bootstrapLockManager.ensureUnlocked();
 		}
-
-		// Refresh beans
-		AcrossContextUtils.refreshBeans( context );
-
-		// Bootstrapping done, run installers that require context bootstrap finished
-		installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
 
 		// Bootstrap finished - publish the event
 		context.publishEvent( new AcrossContextBootstrappedEvent( contextInfo ) );

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 public class TestAcrossInstallerRegistry
 {
-	private AcrossInstallerRegistry registry;
+	private AcrossBootstrapInstallerRegistry registry;
 	private AcrossBootstrapConfig contextConfig;
 	private ModuleBootstrapConfig moduleConfig;
 	private AcrossInstallerRepository installerRepository;
@@ -68,7 +68,7 @@ public class TestAcrossInstallerRegistry
 		when( contextConfig.getModule( anyString() ) ).thenReturn( moduleConfig );
 		when( contextConfig.getInstallerSettings() ).thenReturn( contextSettings );
 
-		registry = new AcrossInstallerRegistry( contextConfig );
+		registry = new AcrossBootstrapInstallerRegistry( contextConfig, null );
 
 		TestInstaller.reset();
 	}

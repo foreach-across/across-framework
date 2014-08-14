@@ -18,6 +18,7 @@ Simply put a logback-test.xml on the classpath and include this file as a resour
 	<logger name="com.foreach.across.core" level="INFO"/>
 	<logger name="com.foreach.across.core.installers" level="DEBUG"/>
 	<logger name="com.foreach.across.core.context" level="WARN"/>
+	<logger name="com.foreach.across.core.context.bootstrap" level="INFO"/>
 	<logger name="com.foreach.across.modules.web" level="INFO"/>
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
