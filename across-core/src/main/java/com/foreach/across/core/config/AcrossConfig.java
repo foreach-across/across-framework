@@ -2,12 +2,13 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
-import com.foreach.across.core.concurrent.DistributedLockRepository;
-import com.foreach.across.core.concurrent.DistributedLockRepositoryImpl;
-import com.foreach.across.core.concurrent.SqlBasedDistributedLockManager;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.MBassadorEventPublisher;
 import com.foreach.across.core.events.SpringContextRefreshedEventListener;
+import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
+import com.foreach.common.concurrent.locks.distributed.DistributedLockRepositoryImpl;
+import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockConfiguration;
+import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -49,6 +50,11 @@ public class AcrossConfig
 			);
 		}
 
-		return new SqlBasedDistributedLockManager( acrossDataSource );
+		return new SqlBasedDistributedLockManager( acrossDataSource, sqlBasedDistributedLockConfiguration() );
+	}
+
+	@Bean
+	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration() {
+		return new SqlBasedDistributedLockConfiguration( "across_locks" );
 	}
 }

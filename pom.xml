@@ -92,6 +92,15 @@
 		<developerConnection>scm:git:https://bitbucket.org/beforeach/across.git</developerConnection>
 	</scm>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-concurrent</artifactId>
+				<version>0.9-SNAPSHOT</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

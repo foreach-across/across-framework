@@ -123,16 +123,19 @@
 		</preConditions>
 		<comment>Creates across_locks table</comment>
 		<createTable tableName="across_locks">
-			<column name="lock_id" type="java.sql.Types.VARCHAR(120)">
+			<column name="lock_id" type="java.sql.Types.VARCHAR(150)">
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
-			<column name="owner_id" type="java.sql.Types.VARCHAR(120)">
+			<column name="owner_id" type="java.sql.Types.VARCHAR(150)">
 				<constraints nullable="true"/>
 			</column>
 			<column name="created" type="java.sql.Types.BIGINT">
 				<constraints nullable="false"/>
 			</column>
 			<column name="updated" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="holds" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>

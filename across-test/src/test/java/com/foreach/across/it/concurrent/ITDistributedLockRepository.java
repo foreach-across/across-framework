@@ -2,12 +2,11 @@ package com.foreach.across.it.concurrent;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.concurrent.DistributedLock;
-import com.foreach.across.core.concurrent.DistributedLockRepository;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossTestContextConfiguration;
+import com.foreach.common.concurrent.locks.distributed.DistributedLock;
+import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Before;
 import org.junit.Test;
@@ -130,7 +129,7 @@ public class ITDistributedLockRepository
 			List<Executor> executors = new ArrayList<>( LOCKS_PER_BATCH * EXECUTORS_PER_LOCK );
 
 			for ( int i = 0; i < LOCKS_PER_BATCH; i++ ) {
-				DistributedLock lock = distributedLockRepository.createLock( "batch-lock-" + i );
+				DistributedLock lock = distributedLockRepository.getLock( "batch-lock-" + i );
 
 				for ( int j = 0; j < EXECUTORS_PER_LOCK; j++ ) {
 					executors.add( new Executor( lock, 10 ) );
@@ -167,8 +166,8 @@ public class ITDistributedLockRepository
 		private boolean finished;
 
 		public Executor( DistributedLock lock, int sleepTime ) {
-			if ( !resultsByLock.containsKey( lock.getLockId() ) ) {
-				resultsByLock.put( lock.getLockId(), 0 );
+			if ( !resultsByLock.containsKey( lock.getKey() ) ) {
+				resultsByLock.put( lock.getKey(), 0 );
 			}
 
 			this.lock = lock;
@@ -197,8 +196,8 @@ public class ITDistributedLockRepository
 					Thread.sleep( sleepTime );
 				}
 
-				Integer currentCount = resultsByLock.get( lock.getLockId() );
-				resultsByLock.put( lock.getLockId(), currentCount + 1 );
+				Integer currentCount = resultsByLock.get( lock.getKey() );
+				resultsByLock.put( lock.getKey(), currentCount + 1 );
 
 				finished = true;
 

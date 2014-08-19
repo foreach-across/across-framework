@@ -1,9 +1,9 @@
 package com.foreach.across.core.context.bootstrap;
 
-import com.foreach.across.core.concurrent.DistributedLock;
-import com.foreach.across.core.concurrent.DistributedLockRepository;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.common.concurrent.locks.distributed.DistributedLock;
+import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class BootstrapLockManager
 	public void ensureLocked() {
 		DistributedLock lock = loadLock();
 
-		if ( !lock.isLockedByMe() ) {
+		if ( !lock.isHeldByCurrentThread() ) {
 			LOG.debug( "Acquiring Across bootstrap lock, owner id: {}", lock.getOwnerId() );
 
 			long lockStartTime = System.currentTimeMillis();
@@ -55,7 +55,7 @@ public class BootstrapLockManager
 			installerLock = AcrossContextUtils
 					.getBeanRegistry( contextInfo )
 					.getBeanOfType( DistributedLockRepository.class )
-					.createLock( BOOTSTRAP_LOCK );
+					.getLock( BOOTSTRAP_LOCK );
 		}
 
 		return installerLock;
