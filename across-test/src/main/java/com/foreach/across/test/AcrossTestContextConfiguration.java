@@ -2,6 +2,7 @@ package com.foreach.across.test;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.database.DatabaseInfo;
 import com.foreach.across.core.installers.InstallerAction;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -54,6 +55,10 @@ public class AcrossTestContextConfiguration implements EnvironmentAware
 			dataSource.setPassword(
 					environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".password" ) );
 		}
+
+		DatabaseInfo databaseInfo = DatabaseInfo.retrieve( dataSource );
+		System.out.println(
+				"Connection to " + databaseInfo.getProductName() + " - version: " + databaseInfo.getProductVersion() );
 
 		return dataSource;
 	}
