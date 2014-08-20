@@ -115,7 +115,7 @@
 		                newDataType="java.sql.Types.NVARCHAR(500)"/>
 	</changeSet>
 
-	<changeSet id="201408131608" author="arne">
+	<changeSet id="201408131608B" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="across_locks"/>
