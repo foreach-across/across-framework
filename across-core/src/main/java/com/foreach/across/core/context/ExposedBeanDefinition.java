@@ -92,6 +92,8 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		setDescription( original.getDescription() );
 		setRole( original.getRole() );
 
+		setAutowireCandidate( original.isAutowireCandidate() );
+
 		// Add detailed information
 		if ( original instanceof AbstractBeanDefinition ) {
 			AbstractBeanDefinition originalAbstract = (AbstractBeanDefinition) original;

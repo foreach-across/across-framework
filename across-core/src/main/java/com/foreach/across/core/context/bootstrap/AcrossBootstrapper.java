@@ -153,6 +153,17 @@ public class AcrossBootstrapper
 			// Bootstrapping done, run installers that require context bootstrap finished
 			installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
 		}
+		catch ( Exception e ) {
+			LOG.debug( "Attempt to shut down badly bootstrapped Across context" );
+			try {
+				context.shutdown();
+			}
+			catch ( Exception child ) {
+				LOG.trace( "Exception shutting down context", child );
+			}
+
+			throw new AcrossException( "Across bootstrap failed", e );
+		}
 		finally {
 			bootstrapLockManager.ensureUnlocked();
 		}

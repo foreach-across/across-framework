@@ -3,12 +3,16 @@ package com.foreach.across.test.modules.web.it;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.EmptyAcrossModule;
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.menu.RequestMenuBuilder;
 import com.foreach.across.modules.web.menu.RequestMenuStore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
@@ -29,10 +34,19 @@ public class ITRequestScopedBeans
 	@Autowired(required = false)
 	private RequestMenuStore requestMenuStore;
 
+	@Autowired(required = false)
+	private Component component;
+
 	@Test
 	public void scopedTargetsCreated() {
 		assertNotNull( requestMenuBuilder );
 		assertNotNull( requestMenuStore );
+	}
+
+	@Test
+	public void scopedTargetCanBeUsedInOtherModule() {
+		assertNotNull( component.getRequestMenuBuilder() );
+		assertSame( requestMenuBuilder, component.getRequestMenuBuilder() );
 	}
 
 	@EnableAcrossContext
@@ -42,6 +56,34 @@ public class ITRequestScopedBeans
 		@Override
 		public void configure( AcrossContext context ) {
 			context.addModule( new AcrossWebModule() );
+			context.addModule( testModule() );
+		}
+
+		private AcrossModule testModule() {
+			AcrossModule module = new EmptyAcrossModule( "TestModule" );
+			module.addApplicationContextConfigurer( ComponentConfig.class );
+
+			return module;
+		}
+	}
+
+	@Configuration
+	static class ComponentConfig
+	{
+		@Bean
+		@Exposed
+		public Component component() {
+			return new Component();
+		}
+	}
+
+	static class Component
+	{
+		@Autowired
+		private RequestMenuBuilder requestMenuBuilder;
+
+		public RequestMenuBuilder getRequestMenuBuilder() {
+			return requestMenuBuilder;
 		}
 	}
 }

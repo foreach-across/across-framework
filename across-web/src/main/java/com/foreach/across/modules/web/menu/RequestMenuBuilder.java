@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * Builds a menu and assigns the request path to the selected path.
  */
 @Service
-@Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class RequestMenuBuilder<T extends Menu, E extends BuildMenuEvent<T>> implements MenuBuilder<T, E>
 {
 	@Autowired

@@ -3,8 +3,10 @@ package com.foreach.across.core.context;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -41,21 +43,24 @@ public abstract class AbstractExposedBeanRegistry
 		Map<String, ExposedBeanDefinition> candidates = new HashMap<>();
 
 		for ( Map.Entry<String, BeanDefinition> definition : definitions.entrySet() ) {
-			BeanDefinition original = definition.getValue();
-			ExposedBeanDefinition exposed = new ExposedBeanDefinition(
-					contextBeanRegistry,
-					moduleName,
-					definition.getKey(),
-					original,
-					determineBeanClass( original, beans.get( definition.getKey() ) )
-			);
+			if ( !isScopedTarget( definition.getKey() ) ) {
+				BeanDefinition original = definition.getValue();
+				ExposedBeanDefinition exposed = new ExposedBeanDefinition(
+						contextBeanRegistry,
+						moduleName,
+						definition.getKey(),
+						original,
+						determineBeanClass( original, beans.get( definition.getKey() ) )
+				);
 
-			candidates.put( definition.getKey(), exposed );
+				candidates.put( definition.getKey(), exposed );
+			}
 		}
 
 		for ( Map.Entry<String, Object> singleton : beans.entrySet() ) {
 			if ( !candidates.containsKey( singleton.getKey() )
-					&& singleton.getValue() != null ) {
+					&& singleton.getValue() != null
+					&& !isScopedTarget( singleton.getKey() ) ) {
 				ExposedBeanDefinition exposed = new ExposedBeanDefinition(
 						contextBeanRegistry,
 						moduleName,
@@ -74,6 +79,10 @@ public abstract class AbstractExposedBeanRegistry
 		exposedDefinitions.putAll( candidates );
 	}
 
+	private boolean isScopedTarget( String name ) {
+		return StringUtils.startsWith( name, "scopedTarget." );
+	}
+
 	private Class<?> determineBeanClass( BeanDefinition beanDefinition, Object singleton ) {
 		if ( beanDefinition instanceof AbstractBeanDefinition ) {
 			AbstractBeanDefinition originalAbstract = (AbstractBeanDefinition) beanDefinition;
@@ -88,11 +97,31 @@ public abstract class AbstractExposedBeanRegistry
 			}
 
 			if ( originalAbstract.hasBeanClass() ) {
-				return originalAbstract.getBeanClass();
+				Class<?> beanClass = originalAbstract.getBeanClass();
+
+				if( FactoryBean.class.isAssignableFrom( beanClass ) ) {
+					BeanDefinition originating = beanDefinition.getOriginatingBeanDefinition();
+
+					if ( originating != null ) {
+						return determineBeanClass( originating, singleton );
+					}
+				}
+				else {
+					return beanClass;
+				}
 			}
 		}
 
 		if ( singleton != null ) {
+			if ( singleton instanceof FactoryBean ) {
+				try {
+					return ((FactoryBean) singleton).getObjectType();
+				}
+				catch ( Exception e ) {
+					return singleton.getClass();
+				}
+			}
+
 			return singleton.getClass();
 		}
 

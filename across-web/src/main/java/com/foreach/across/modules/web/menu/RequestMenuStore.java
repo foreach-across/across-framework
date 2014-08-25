@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * Stores Menu instance as attribute on the request, under the name specified.
  */
 @Service
-@Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class RequestMenuStore implements MenuStore
 {
 	@Autowired
