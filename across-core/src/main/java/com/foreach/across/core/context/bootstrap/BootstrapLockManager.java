@@ -44,8 +44,13 @@ public class BootstrapLockManager
 
 	public void ensureUnlocked() {
 		if ( installerLock != null ) {
-			LOG.info( "Releasing Across bootstrap lock - owner {}", installerLock.getOwnerId() );
-			installerLock.unlock();
+			try {
+				LOG.info( "Releasing Across bootstrap lock - owner {}", installerLock.getOwnerId() );
+				installerLock.unlock();
+			}
+			catch ( Exception e ) {
+				LOG.warn( "Could not release the bootstrap lock: {}", e );
+			}
 			installerLock = null;
 		}
 	}
