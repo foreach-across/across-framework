@@ -16,6 +16,7 @@ import java.util.*;
  */
 public class ModuleBootstrapConfig
 {
+	private final int bootstrapIndex;
 	private final AcrossModule module;
 
 	private BeanFilter exposeFilter;
@@ -25,8 +26,9 @@ public class ModuleBootstrapConfig
 	private Collection<Object> installers = new LinkedList<Object>();
 	private InstallerSettings installerSettings;
 
-	public ModuleBootstrapConfig( AcrossModule module ) {
+	public ModuleBootstrapConfig( AcrossModule module, int bootstrapIndex ) {
 		this.module = module;
+		this.bootstrapIndex = bootstrapIndex;
 	}
 
 	public AcrossModule getModule() {
@@ -43,6 +45,10 @@ public class ModuleBootstrapConfig
 
 	public void setExposeFilter( BeanFilter exposeFilter ) {
 		this.exposeFilter = exposeFilter;
+	}
+
+	public int getBootstrapIndex() {
+		return bootstrapIndex;
 	}
 
 	/**

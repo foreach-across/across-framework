@@ -177,7 +177,7 @@ public class AcrossBootstrapper
 
 			destroyAllCreatedApplicationContexts();
 
-			throw new AcrossException( "Across bootstrap failed: {}", e );
+			throw new AcrossException( "Across bootstrap failed", e );
 		}
 	}
 
@@ -315,7 +315,7 @@ public class AcrossBootstrapper
 
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 			AcrossModule module = moduleInfo.getModule();
-			ModuleBootstrapConfig config = new ModuleBootstrapConfig( module );
+			ModuleBootstrapConfig config = new ModuleBootstrapConfig( module, moduleInfo.getIndex() );
 			config.setExposeFilter( module.getExposeFilter() );
 			config.setExposeTransformer( module.getExposeTransformer() );
 			config.setInstallerSettings( module.getInstallerSettings() );
