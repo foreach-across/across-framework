@@ -36,8 +36,7 @@ public class AcrossDependsCondition implements Condition
 		String[] required = (String[]) attributes.get( "required" );
 		String[] optional = (String[]) attributes.get( "optional" );
 
-		AcrossContextInfo acrossContext =
-				context.getBeanFactory().getParentBeanFactory().getBean( AcrossContextInfo.class );
+		AcrossContextInfo acrossContext = context.getBeanFactory().getBean( AcrossContextInfo.class );
 
 		return applies( acrossContext.getBootstrapConfiguration(), required, optional );
 	}
