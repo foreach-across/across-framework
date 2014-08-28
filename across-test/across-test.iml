@@ -23,7 +23,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="across-core" />
-    <orderEntry type="library" name="Maven: com.foreach.libs:common-concurrent:0.9-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.libs:common-concurrent:0.9" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.7" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context:4.0.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:4.0.6.RELEASE" level="project" />

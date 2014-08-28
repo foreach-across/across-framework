@@ -97,7 +97,7 @@
 			<dependency>
 				<groupId>com.foreach.libs</groupId>
 				<artifactId>common-concurrent</artifactId>
-				<version>0.9-SNAPSHOT</version>
+				<version>0.9</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
