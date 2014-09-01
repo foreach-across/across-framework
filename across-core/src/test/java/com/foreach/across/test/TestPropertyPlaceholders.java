@@ -3,6 +3,7 @@ package com.foreach.across.test;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.properties.PropertiesModule;
@@ -13,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,6 +36,9 @@ public class TestPropertyPlaceholders
 {
 	@Autowired
 	private AcrossContextBeanRegistry contextBeanRegistry;
+
+	@Autowired
+	private AcrossContextInfo contextInfo;
 
 	@Test
 	public void checkPropertiesSet() {
@@ -74,9 +82,30 @@ public class TestPropertyPlaceholders
 		assertEquals( "acrossModule", config.getProperty( "moduleSourceValue" ) );
 		assertEquals( "directValue", config.getProperty( "moduleDirectValue" ) );
 		assertEquals( new Integer( 777 ), config.getProperty( "contextDirectValue", Integer.class ) );
+
+		assertEquals( "default", config.getProperty( "defaultOnlyValue" ) );
+		assertEquals( "applicationContext", config.getProperty( "parentContextValue" ) );
+	}
+
+	@Test
+	public void propertySourceOrder() {
+		ConfigurableEnvironment env = (ConfigurableEnvironment) contextInfo.getModuleInfo( "directOnModule" )
+		                                                                   .getApplicationContext().getEnvironment();
+
+		assertNotNull( env );
+
+		MutablePropertySources sources = env.getPropertySources();
+		assertNotNull( sources );
+		assertEquals( 8, sources.size() );
+
+		assertEquals( 4, sources.precedenceOf( sources.get( StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME ) ) );
+		assertEquals( 5, sources.precedenceOf( sources.get( StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME ) ) );
+		assertEquals( 7, sources.precedenceOf( sources.get( "PropertiesModuleSettings: default values" ) ) );
 	}
 
 	@Configuration
+	@org.springframework.context.annotation.PropertySource(
+			value = "com/foreach/across/test/TestParentProperties.properties")
 	public static class Config
 	{
 		@Bean

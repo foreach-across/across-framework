@@ -4,6 +4,7 @@ import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -18,6 +19,11 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 
 	public AcrossApplicationContext() {
 		super( new AcrossListableBeanFactory() );
+	}
+
+	@Override
+	protected ConfigurableEnvironment createEnvironment() {
+		return new StandardAcrossEnvironment();
 	}
 
 	/**

@@ -24,13 +24,13 @@ public class SetPropertyConfig
 	public long unresolvable;
 
 	@Autowired
-	private Environment environment;
+	private PropertiesModuleSettings settings;
 
 	public String getProperty( String propertyName ) {
-		return environment.getProperty( propertyName );
+		return settings.getProperty( propertyName );
 	}
 
 	public <T> T getProperty( String propertyName, Class<T> propertyClass ) {
-		return environment.getProperty( propertyName, propertyClass );
+		return settings.getProperty( propertyName, propertyClass );
 	}
 }

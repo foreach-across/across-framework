@@ -6,6 +6,7 @@ import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.util.Collection;
@@ -22,6 +23,11 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 	@Override
 	protected DefaultListableBeanFactory createBeanFactory() {
 		return new AcrossListableBeanFactory( getInternalParentBeanFactory() );
+	}
+
+	@Override
+	protected ConfigurableEnvironment createEnvironment() {
+		return new StandardAcrossServletEnvironment();
 	}
 
 	/**

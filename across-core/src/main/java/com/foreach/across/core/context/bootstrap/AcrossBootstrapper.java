@@ -3,10 +3,12 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.*;
 import com.foreach.across.core.context.beans.PrimarySingletonBean;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import com.foreach.across.core.context.beans.SingletonBean;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
@@ -28,6 +30,7 @@ import org.springframework.beans.factory.support.AutowireCandidateQualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.util.ClassUtils;
 
 import java.util.*;
 
@@ -124,6 +127,12 @@ public class AcrossBootstrapper
 					                                                                                              root );
 					AcrossContextUtils.setAcrossApplicationContextHolder( config.getModule(),
 					                                                      moduleApplicationContext );
+
+					AcrossModuleSettings moduleSettings = moduleInfo.getSettings();
+
+					if ( moduleSettings != null ) {
+						moduleSettings.setEnvironment( child.getEnvironment() );
+					}
 
 					applicationContextFactory.loadApplicationContext( context, config, moduleApplicationContext );
 
@@ -270,7 +279,10 @@ public class AcrossBootstrapper
 
 		int row = 1;
 		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
-			configured.add( new ConfigurableAcrossModuleInfo( contextInfo, module, row++ ) );
+			ConfigurableAcrossModuleInfo moduleInfo = new ConfigurableAcrossModuleInfo( contextInfo, module, row++ );
+			moduleInfo.setSettings( createModuleSettings( module.getClass() ) );
+
+			configured.add( moduleInfo );
 		}
 
 		contextInfo.setConfiguredModules( configured );
@@ -288,6 +300,30 @@ public class AcrossBootstrapper
 		}
 
 		return contextInfo;
+	}
+
+	private AcrossModuleSettings createModuleSettings( Class<? extends AcrossModule> moduleClass ) {
+		String settingsClassName = ClassUtils.getUserClass( moduleClass ).getName() + "Settings";
+
+		try {
+			Class settingsClass = Class.forName( settingsClassName );
+
+			if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
+				return (AcrossModuleSettings) settingsClass.newInstance();
+			}
+
+			throw new AcrossException(
+					"Illegal configuration, " + settingsClassName + " should extend AcrossModuleSettings" );
+		}
+		catch ( ClassNotFoundException e ) {
+			// Create generic settings
+			return new GenericAcrossModuleSettings();
+		}
+		catch ( InstantiationException | IllegalAccessException iae ) {
+			throw new AcrossException(
+					"Illegal configuration, " + settingsClassName + " should have a public parameter-less constructor",
+					iae );
+		}
 	}
 
 	private Collection<AcrossModuleInfo> convertToModuleInfo( Collection<AcrossModule> list,
@@ -321,7 +357,7 @@ public class AcrossBootstrapper
 			config.setInstallerSettings( module.getInstallerSettings() );
 			config.getInstallers().addAll( Arrays.asList( module.getInstallers() ) );
 
-			// Provide the current module bean
+			// Provide the current module beans
 			Map<String, Object> providedSingletons = new HashMap<>();
 			providedSingletons.put( AcrossModule.CURRENT_MODULE + "Info",
 			                        new PrimarySingletonBean(
@@ -333,6 +369,13 @@ public class AcrossBootstrapper
 			providedSingletons.put( AcrossModule.CURRENT_MODULE,
 			                        new PrimarySingletonBean(
 					                        module,
+					                        new AutowireCandidateQualifier( Module.class.getName(),
+					                                                        AcrossModule.CURRENT_MODULE )
+			                        )
+			);
+			providedSingletons.put( AcrossModule.CURRENT_MODULE + "Settings",
+			                        new PrimarySingletonBean(
+					                        moduleInfo.getSettings(),
 					                        new AutowireCandidateQualifier( Module.class.getName(),
 					                                                        AcrossModule.CURRENT_MODULE )
 			                        )
@@ -399,6 +442,8 @@ public class AcrossBootstrapper
 
 		// Put the module info as singletons in the context
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getConfiguredModules() ) {
+			// Create the module instances as primary beans so they do not clash with modules
+			// configured as beans in a parent application context
 			providedBeans.put( "across.module." + moduleInfo.getName(),
 			                   new PrimarySingletonBean(
 					                   moduleInfo.getModule(),
@@ -407,12 +452,18 @@ public class AcrossBootstrapper
 			                   )
 			);
 			providedBeans.put( moduleInfo.getName(),
-			                   new PrimarySingletonBean(
+			                   new SingletonBean(
 					                   moduleInfo,
 					                   new AutowireCandidateQualifier( Module.class.getName(),
 					                                                   moduleInfo.getName() )
 			                   )
 			);
+			providedBeans.put( "across.moduleSettings." + moduleInfo.getName(),
+			                   new SingletonBean(
+					                   moduleInfo.getSettings(),
+					                   new AutowireCandidateQualifier( Module.class.getName(),
+					                                                   moduleInfo.getName() )
+			                   ) );
 		}
 
 		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),

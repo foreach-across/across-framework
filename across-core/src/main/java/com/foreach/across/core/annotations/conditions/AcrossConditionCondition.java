@@ -1,6 +1,7 @@
 package com.foreach.across.core.annotations.conditions;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
@@ -77,6 +78,13 @@ public class AcrossConditionCondition implements Condition
 
 			return moduleInfo != null ? moduleInfo.getModule() : null;
 
+		}
+
+		public AcrossModuleSettings getSettings() {
+			AcrossModuleInfo moduleInfo = getBeanFactory().getBean( AcrossContextInfo.class )
+			                                              .getModuleBeingBootstrapped();
+
+			return moduleInfo != null ? moduleInfo.getSettings() : null;
 		}
 	}
 }

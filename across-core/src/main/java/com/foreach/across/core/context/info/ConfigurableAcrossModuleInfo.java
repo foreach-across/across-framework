@@ -1,6 +1,7 @@
 package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
@@ -31,6 +32,8 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
 
 	private ExposedModuleBeanRegistry exposedBeanRegistry;
+
+	private AcrossModuleSettings settings;
 
 	public ConfigurableAcrossModuleInfo( AcrossContextInfo context, AcrossModule module, int index ) {
 		this.context = context;
@@ -124,6 +127,15 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 
 	public void setExposedBeanRegistry( ExposedModuleBeanRegistry exposedBeanRegistry ) {
 		this.exposedBeanRegistry = exposedBeanRegistry;
+	}
+
+	@Override
+	public AcrossModuleSettings getSettings() {
+		return settings;
+	}
+
+	public void setSettings( AcrossModuleSettings settings ) {
+		this.settings = settings;
 	}
 
 	@Override

@@ -1,13 +1,13 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.AcrossModuleSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.*;
 
@@ -61,19 +61,9 @@ public abstract class AbstractAcrossModuleConventionsTest
 			assertNotNull( "Test declares module has settings but class was not found: " + settingsClassName,
 			               settingsClass );
 
-			final AtomicBoolean found = new AtomicBoolean( false );
-
-			ReflectionUtils.doWithFields( settingsClass, new ReflectionUtils.FieldCallback()
-			{
-				@Override
-				public void doWith( Field field ) throws IllegalAccessException {
-					if ( ReflectionUtils.isPublicStaticFinal( field ) ) {
-						found.set( true );
-					}
-				}
-			} );
-
-			assertTrue( "A settings class should contain at least on public static final field", found.get() );
+			if ( !AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
+				fail( "A settings class must extend AcrossModuleSettings" );
+			}
 		}
 		else {
 			assertNull( "Test declares module does not have settings but class was found", settingsClass );

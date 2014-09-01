@@ -41,11 +41,6 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 
 		if ( parentApplicationContext != null ) {
 			applicationContext.setParent( parentApplicationContext );
-
-			if ( parentApplicationContext.getEnvironment() instanceof ConfigurableEnvironment ) {
-				applicationContext.getEnvironment().merge(
-						(ConfigurableEnvironment) parentApplicationContext.getEnvironment() );
-			}
 		}
 
 		return applicationContext;
@@ -66,7 +61,6 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 		AbstractApplicationContext child = createApplicationContext();
 		child.setDisplayName( moduleBootstrapConfig.getModuleName() );
 		child.setParent( parentContext.getApplicationContext() );
-		child.getEnvironment().merge( parentContext.getApplicationContext().getEnvironment() );
 
 		return child;
 	}

@@ -1,6 +1,8 @@
 package com.foreach.across.core.context.beans;
 
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AutowireCandidateQualifier;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 /**
  * Wrapper to force an instance to be configured as a singleton in a ProvidedBeansMap.
@@ -17,6 +19,19 @@ public class SingletonBean
 
 	public SingletonBean( Object object ) {
 		this.object = object;
+	}
+
+	public SingletonBean( Object object, AutowireCandidateQualifier... qualifiers ) {
+		this( object );
+
+		GenericBeanDefinition definition = new GenericBeanDefinition();
+		definition.setPrimary( false );
+
+		for ( AutowireCandidateQualifier qualifier : qualifiers ) {
+			definition.addQualifier( qualifier );
+		}
+
+		setBeanDefinition( definition );
 	}
 
 	public SingletonBean( Object object, BeanDefinition beanDefinition ) {

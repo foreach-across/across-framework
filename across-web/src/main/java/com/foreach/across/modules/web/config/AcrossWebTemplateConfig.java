@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -23,13 +22,13 @@ import java.util.Collection;
  * Configures web template support with automatic registration of named web templates.
  */
 @Configuration
-@AcrossCondition("${" + AcrossWebModuleSettings.TEMPLATES_ENABLED + ":true}")
+@AcrossCondition("settings.templatesEnabled")
 public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebTemplateConfig.class );
 
 	@Autowired
-	private Environment environment;
+	private AcrossWebModuleSettings settings;
 
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
@@ -52,10 +51,7 @@ public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 
 	@PostRefresh
 	public void registerNamedWebTemplateProcessors() {
-		boolean autoRegister = environment.getProperty( AcrossWebModuleSettings.TEMPLATES_AUTO_REGISTER, Boolean.class,
-		                                                true );
-
-		if ( autoRegister ) {
+		if ( settings.isAutoRegisterTemplates() ) {
 			LOG.info( "Scanning modules for NamedWebTemplateProcessor instances" );
 
 			Collection<NamedWebTemplateProcessor> namedProcessors = beanRegistry.getBeansOfType(
