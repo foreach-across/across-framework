@@ -312,18 +312,19 @@ public class AcrossBootstrapper
 				return (AcrossModuleSettings) settingsClass.newInstance();
 			}
 
-			throw new AcrossException(
-					"Illegal configuration, " + settingsClassName + " should extend AcrossModuleSettings" );
+			LOG.warn( "Unable to load settings, {} should extend AcrossModuleSettings", moduleClass );
 		}
 		catch ( ClassNotFoundException e ) {
-			// Create generic settings
-			return new GenericAcrossModuleSettings();
+			LOG.trace( "No specific settings implementation defined for {}", moduleClass );
 		}
 		catch ( InstantiationException | IllegalAccessException iae ) {
 			throw new AcrossException(
 					"Illegal configuration, " + settingsClassName + " should have a public parameter-less constructor",
 					iae );
 		}
+
+		// Create generic setting
+		return new GenericAcrossModuleSettings();
 	}
 
 	private Collection<AcrossModuleInfo> convertToModuleInfo( Collection<AcrossModule> list,
