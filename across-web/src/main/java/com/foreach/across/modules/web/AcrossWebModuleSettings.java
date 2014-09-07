@@ -27,10 +27,15 @@ public class AcrossWebModuleSettings extends AcrossModuleSettings
 	 */
 	public static final String TEMPLATES_AUTO_REGISTER = "acrossWeb.templates.autoregister";
 
+	public static final String DEVELOPMENT_VIEWS_PROPERTIES_LOCATION = "acrossWeb.development.views.properties";
+
 	@Override
 	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
 		registry.register( TEMPLATES_ENABLED, Boolean.class, true );
 		registry.register( TEMPLATES_AUTO_REGISTER, Boolean.class, true );
+		registry.register( DEVELOPMENT_VIEWS_PROPERTIES_LOCATION, String.class,
+		                   "${user.home}/dev-configs/across-devel.properties",
+		                   "Location of the properties file containing acrossWeb.views.* entries for development mode." );
 	}
 
 	public boolean isTemplatesEnabled() {
