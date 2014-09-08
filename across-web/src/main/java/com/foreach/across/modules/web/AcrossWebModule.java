@@ -36,11 +36,12 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 {
 	public static final String NAME = "AcrossWebModule";
 
-	private boolean developmentMode = false;
+	// AcrossWebModule is the special case providing root resources
+	public static final String RESOURCES = "";
+
 	private String viewsResourcePath;
 	private AcrossWebViewSupport[] supportedViews =
 			new AcrossWebViewSupport[] { AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF };
-	private Map<String, String> developmentViews = new HashMap<String, String>();
 
 	public String getViewsResourcePath() {
 		return viewsResourcePath;
@@ -72,29 +73,14 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 		return supportedViews;
 	}
 
-	public boolean isDevelopmentMode() {
-		return developmentMode;
-	}
-
-	public void setDevelopmentMode( boolean developmentMode ) {
-		this.developmentMode = developmentMode;
-	}
-
-	public Map<String, String> getDevelopmentViews() {
-		return developmentViews;
-	}
-
-	public void setDevelopmentViews( Map<String, String> developmentViews ) {
-		this.developmentViews = developmentViews;
-	}
-
-	public void addDevelopmentViews( String moduleKey, String path ) {
-		developmentViews.put( moduleKey, path );
-	}
-
 	@Override
 	public String getName() {
 		return NAME;
+	}
+
+	@Override
+	public String getResourcesKey() {
+		return RESOURCES;
 	}
 
 	@Override

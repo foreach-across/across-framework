@@ -66,6 +66,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	private List<AcrossModule> modules = new LinkedList<>();
 
+	private boolean developmentMode;
 	private boolean isBootstrapped = false;
 	private final String id;
 	private ApplicationContext parentApplicationContext;
@@ -117,6 +118,14 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	public Collection<AcrossModule> getModules() {
 		return modules;
+	}
+
+	public boolean isDevelopmentMode() {
+		return developmentMode;
+	}
+
+	public void setDevelopmentMode( boolean developmentMode ) {
+		this.developmentMode = developmentMode;
 	}
 
 	public void setModules( Collection<AcrossModule> modules ) {

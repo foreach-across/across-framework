@@ -19,6 +19,9 @@ package com.foreach.across.modules.web;
 import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.AcrossModuleSettingsRegistry;
 
+import java.util.Collections;
+import java.util.Map;
+
 public class AcrossWebModuleSettings extends AcrossModuleSettings
 {
 	/**
@@ -43,15 +46,14 @@ public class AcrossWebModuleSettings extends AcrossModuleSettings
 	 */
 	public static final String TEMPLATES_AUTO_REGISTER = "acrossWeb.templates.autoregister";
 
-	public static final String DEVELOPMENT_VIEWS_PROPERTIES_LOCATION = "acrossWeb.development.views.properties";
+	public static final String DEVELOPMENT_VIEWS = "acrossWeb.development.views";
 
 	@Override
 	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
 		registry.register( TEMPLATES_ENABLED, Boolean.class, true );
 		registry.register( TEMPLATES_AUTO_REGISTER, Boolean.class, true );
-		registry.register( DEVELOPMENT_VIEWS_PROPERTIES_LOCATION, String.class,
-		                   "${user.home}/dev-configs/across-devel.properties",
-		                   "Location of the properties file containing acrossWeb.views.* entries for development mode." );
+		registry.register( DEVELOPMENT_VIEWS, Map.class, Collections.<String, String>emptyMap(),
+		                   "Map of physical locations for views resources." );
 	}
 
 	public boolean isTemplatesEnabled() {

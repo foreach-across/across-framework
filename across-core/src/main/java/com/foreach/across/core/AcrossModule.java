@@ -216,6 +216,19 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	}
 
 	/**
+	 * The resources key is the key identifying the resources location for this module in the larger
+	 * set of resources.  By default it is the same as the module name, but it can be overridden to provide
+	 * a simpler (eg lowercase) string.
+	 *
+	 * @return Key (sub path) of the resources for this module.
+	 */
+	public String getResourcesKey() {
+		return getName();
+	}
+
+	/**
+	 * An AcrossModule name should not contain any whitespace and should only be ASCII characters.
+	 *
 	 * @return Name of this module.  Should be unique within a configured AcrossContext.
 	 */
 	public abstract String getName();

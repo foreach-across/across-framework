@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.context.AcrossWebArgumentResolver;
@@ -41,16 +42,14 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 @Exposed
 public class AcrossWebConfig extends WebMvcConfigurerAdapter
 {
-	private static final String VIEWS_PROPERTY_PREFIX = "acrossWeb.views.";
-
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );
 	private static final String[] DEFAULT_RESOURCES = new String[] { "css", "js" };
 
@@ -59,78 +58,31 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter
 	private AcrossWebModule acrossWebModule;
 
 	@Autowired
-	private AcrossWebModuleSettings settings;
+	private AcrossDevelopmentMode developmentMode;
 
 	@Override
 	public void addResourceHandlers( ResourceHandlerRegistry registry ) {
-		Map<String, String> developmentViews = Collections.emptyMap();
-
-		if ( acrossWebModule.isDevelopmentMode() ) {
-			developmentViews = loadDevelopmentViews();
-		}
-
 		for ( String resource : DEFAULT_RESOURCES ) {
 			registry.addResourceHandler(
 					acrossWebModule.getViewsResourcePath() + "/" + resource + "/**" ).addResourceLocations(
 					"classpath:/views/" + resource + "/" );
 
-			if ( acrossWebModule.isDevelopmentMode() ) {
+			if ( developmentMode.isActive() ) {
 				LOG.info( "Activating {} development mode resource handlers", resource );
 
-				for ( Map.Entry<String, String> entry : developmentViews.entrySet() ) {
+				Map<String, String> views = developmentMode.getDevelopmentLocationsForResourcePath(
+						"views/" + resource );
+
+				for ( Map.Entry<String, String> entry : views.entrySet() ) {
 					String url = acrossWebModule.getViewsResourcePath() + "/" + resource + "/" + entry.getKey() + "/**";
-					File physical = new File( entry.getValue(), resource + "/" + entry.getKey() );
+					File physical = new File( entry.getValue() );
 
-					if ( physical.exists() ) {
-						LOG.info( "Mapping {} development views for {} to physical path {}", resource, url, physical );
-						registry.addResourceHandler( url )
-						        .addResourceLocations( physical.toURI().toString() );
-					}
-					else {
-						LOG.warn( "Ignoring {} development views for {} since location {} does not exist",
-						          resource, entry.getKey(), physical );
-					}
+					LOG.info( "Mapping {} development views for {} to physical path {}", resource, url, physical );
+					registry.addResourceHandler( url )
+					        .addResourceLocations( physical.toURI().toString() );
 				}
 			}
 		}
-	}
-
-	private Map<String, String> loadDevelopmentViews() {
-		Map<String, String> views = new HashMap<>();
-
-		// Fetch from properties
-		String propertiesFilePath = settings.resolvePlaceholders(
-				settings.getProperty( AcrossWebModuleSettings.DEVELOPMENT_VIEWS_PROPERTIES_LOCATION )
-		);
-
-		File propertiesFile = new File( propertiesFilePath );
-
-		if ( propertiesFile.exists() ) {
-			LOG.info( "Loading development views properties from {}", propertiesFile );
-
-			Properties props = new Properties();
-			try (FileInputStream fis = new FileInputStream( propertiesFile )) {
-				props.load( fis );
-
-				for ( Map.Entry<Object, Object> entry : props.entrySet() ) {
-					String propertyName = (String) entry.getKey();
-
-					if ( propertyName.startsWith( VIEWS_PROPERTY_PREFIX ) ) {
-						String module = propertyName.replace( VIEWS_PROPERTY_PREFIX, "" );
-
-						views.put( module, (String) entry.getValue() );
-					}
-				}
-			}
-			catch ( IOException ioe ) {
-				LOG.warn( "Failed to load development views from {}", propertiesFile, ioe );
-			}
-		}
-
-		// Override with entries configured directly set entries
-		views.putAll( acrossWebModule.getDevelopmentViews() );
-
-		return views;
 	}
 
 	@Override

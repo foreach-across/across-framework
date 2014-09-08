@@ -16,9 +16,9 @@
 
 package com.foreach.across.modules.web.config;
 
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.core.development.AcrossDevelopmentMode;
+import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +32,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -44,11 +45,13 @@ public class ThymeleafViewSupportConfiguration
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );
 
 	@Autowired
-	@Qualifier(AcrossModule.CURRENT_MODULE)
-	private AcrossWebModule acrossWebModule;
+	private ApplicationContext applicationContext;
 
 	@Autowired
-	private ApplicationContext applicationContext;
+	private AcrossWebModuleSettings settings;
+
+	@Autowired
+	private AcrossDevelopmentMode developmentMode;
 
 	@Bean
 	@Exposed
@@ -57,7 +60,7 @@ public class ThymeleafViewSupportConfiguration
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.addTemplateResolver( templateResolver() );
 
-		if ( acrossWebModule.isDevelopmentMode() ) {
+		if ( developmentMode.isActive() ) {
 			for ( TemplateResolver resolver : developmentResolvers() ) {
 				engine.addTemplateResolver( resolver );
 			}
@@ -80,15 +83,23 @@ public class ThymeleafViewSupportConfiguration
 		return resolver;
 	}
 
+	@SuppressWarnings( "unchecked" )
 	private Collection<TemplateResolver> developmentResolvers() {
 		Collection<TemplateResolver> resolvers = new LinkedList<TemplateResolver>();
 
-		if ( acrossWebModule.isDevelopmentMode() ) {
-			for ( Map.Entry<String, String> views : acrossWebModule.getDevelopmentViews().entrySet() ) {
-				String prefix = "file:" + views.getValue();
+		if ( developmentMode.isActive() ) {
+			Map<String, String> developmentViews = developmentMode.getDevelopmentLocations( "views" );
+			developmentViews.putAll(
+					settings.getProperty( AcrossWebModuleSettings.DEVELOPMENT_VIEWS, Map.class,
+					                      Collections.<String, String>emptyMap() )
+			);
+
+			for ( Map.Entry<String, String> views : developmentViews.entrySet() ) {
+				String prefix = "file:" + views.getValue() + "/";
 				String suffix = ".thtml";
 
-				LOG.debug( "Registering development Thymeleaf lookup with prefix {} and suffix {}", prefix, suffix );
+				LOG.info( "Registering development Thymeleaf lookup for {} with physical path {}", views.getKey(),
+				          views.getValue() );
 
 				TemplateResolver resolver = new SpringResourceTemplateResolver();
 				resolver.setOrder( 19 );
@@ -115,7 +126,7 @@ public class ThymeleafViewSupportConfiguration
 		TemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setCharacterEncoding( "UTF-8" );
 		resolver.setTemplateMode( "HTML5" );
-		resolver.setCacheable( !acrossWebModule.isDevelopmentMode() );
+		resolver.setCacheable( !developmentMode.isActive() );
 		resolver.setPrefix( "classpath:/views/" );
 		resolver.setSuffix( ".thtml" );
 		resolver.setOrder( 20 );

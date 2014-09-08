@@ -45,6 +45,11 @@ public interface AcrossModuleInfo extends AcrossEntity
 	String getName();
 
 	/**
+	 * @return Key for the resources of the AcrossModule.
+	 */
+	String getResourcesKey();
+
+	/**
 	 * @return Description of the AcrossModule.
 	 */
 	String getDescription();

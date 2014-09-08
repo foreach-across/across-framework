@@ -18,6 +18,7 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.MBassadorEventPublisher;
 import com.foreach.across.core.events.SpringContextRefreshedEventListener;
@@ -25,10 +26,7 @@ import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepositoryImpl;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockConfiguration;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
 
@@ -46,6 +44,13 @@ public class AcrossConfig
 	@Bean
 	public SpringContextRefreshedEventListener refreshedEventListener() {
 		return new SpringContextRefreshedEventListener();
+	}
+
+	@Bean
+	@Lazy
+	@Primary
+	public AcrossDevelopmentMode acrossDevelopmentMode() {
+		return new AcrossDevelopmentMode();
 	}
 
 	@Bean
