@@ -23,15 +23,20 @@ package com.foreach.across.core.revision;
  *
  * @author Arne Vandamme
  */
-public interface Revision
+public interface Revision<T>
 {
 	int DRAFT = -1;
 	int LATEST = 0;
 
 	/**
-	 * @return The unique revision id within the entire revision series of the entity.
+	 * @return Identifier for the owner of the revision series.
 	 */
-	int getRevisionId();
+	T getRevisionOwner();
+
+	/**
+	 * @return The unique revision id within the entire revision series of the owning entity.
+	 */
+	int getRevisionNumber();
 
 	/**
 	 * @return True if this is the draft (private working copy) revision of the entity.
