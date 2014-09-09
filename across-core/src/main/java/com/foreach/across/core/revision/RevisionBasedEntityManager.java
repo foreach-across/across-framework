@@ -35,6 +35,26 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 	}
 
 	/**
+	 * Returns the single entity for that revision.
+	 */
+	@Transactional(readOnly = true)
+	public T getEntityForRevision( R revision ) {
+		return getEntityForRevision( revision.getRevisionOwner(), revision.getRevisionNumber() );
+	}
+
+	@Transactional(readOnly = true)
+	public T getEntityForRevision( U owner, int revisionNumber ) {
+		Collection<T> list = getEntitiesForRevision( owner, revisionNumber );
+
+		if ( list.size() > 1 ) {
+			throw new IllegalStateException( "Data store in illegal state: multiple entities found for object "
+					                                 + owner + " and revision " + revisionNumber );
+		}
+
+		return list.isEmpty() ? null : list.iterator().next();
+	}
+
+	/**
 	 * Fetches the most applicable entities for a particular revision.  In case the requested revision is
 	 * a draft, either draft or latest checked in version might be returned, but only one of both.
 	 */
@@ -71,6 +91,16 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 		}
 
 		return filtered;
+	}
+
+	@Transactional
+	public void saveEntityForRevision( T entity, R revision ) {
+		saveEntityForRevision( entity, revision.getRevisionOwner(), revision.getRevisionNumber() );
+	}
+
+	@Transactional
+	public void saveEntityForRevision( T entity, U owner, int revisionNumber ) {
+		saveEntitiesForRevision( Collections.singleton( entity ), owner, revisionNumber );
 	}
 
 	@Transactional
@@ -221,13 +251,13 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 	}
 
 	/**
-		 * Deletes all entities attached to the revision, usually a draft revision.
-		 * This will only delete entities existing only in that revision.
-		 * Entities starting before or ending after will be left kept.
-		 * <p/>
-		 * This means that even after a delete, you could get results if you ask
-		 * for the revision number you just deleted.
-		 */
+	 * Deletes all entities attached to the revision, usually a draft revision.
+	 * This will only delete entities existing only in that revision.
+	 * Entities starting before or ending after will be left kept.
+	 * <p/>
+	 * This means that even after a delete, you could get results if you ask
+	 * for the revision number you just deleted.
+	 */
 	@Transactional
 	public void deleteEntities( U owner, int revisionNumber ) {
 		Collection<T> entities = loadEntitiesForRevision( owner, revisionNumber );
@@ -252,15 +282,15 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 			if ( pair.nonDraft != null ) {
 				// Existing record being updated
 				if ( pair.draft != null ) {
-					if ( pair.draft.isDifferentVersionOf( pair.nonDraft ) ) {
-						// If draft and non-draft are different, draft should replace non-draft
-						expire( pair.nonDraft, revisionNumber );
-						activate( pair.draft, revisionNumber );
-					}
-					else if ( pair.draft.isDeleted() ) {
+					if ( pair.draft.isDeleted() ) {
 						// Expire the non-draft and remove the draft
 						expire( pair.nonDraft, revisionNumber );
 						delete( pair.draft );
+					}
+					else if ( pair.draft.isDifferentVersionOf( pair.nonDraft ) ) {
+						// If draft and non-draft are different, draft should replace non-draft
+						expire( pair.nonDraft, revisionNumber );
+						activate( pair.draft, revisionNumber );
 					}
 					else {
 						// There's no point for this draft record
