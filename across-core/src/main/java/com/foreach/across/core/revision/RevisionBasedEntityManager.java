@@ -85,7 +85,7 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 		for ( RevisionPair<T> pair : pairs.values() ) {
 			T use = pair.draft != null ? pair.draft : pair.nonDraft;
 
-			if ( !use.isDeleted() ) {
+			if ( !use.isDeleteForRevision() ) {
 				filtered.add( use );
 			}
 		}
@@ -117,7 +117,7 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 
 		for ( T entity : entities ) {
 			entity.setFirstRevision( revisionNumber );
-			entity.setLastRevision( revisionNumber );
+			entity.setRemovalRevision( revisionNumber );
 
 			RevisionPair<T> pair = pairs.get( entity.getEntityIdentifier() );
 			T current = pair != null ? pair.nonDraft : null;
@@ -131,7 +131,7 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 					}
 					else if ( entity.isDifferentVersionOf( draft ) ) {
 						// update the draft item if different
-						update( entity, entity.getFirstRevision(), entity.getLastRevision() );
+						update( entity, entity.getFirstRevision(), entity.getRemovalRevision() );
 					}
 				}
 				else if ( current == null ) {
@@ -139,7 +139,7 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 				}
 				else {
 					copyEntityValuesFromExisting( current, entity );
-					update( current, current.getFirstRevision(), current.getLastRevision() );
+					update( current, current.getFirstRevision(), current.getRemovalRevision() );
 				}
 			}
 			else if ( draft != null ) {
@@ -157,8 +157,8 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 					// new draft that needs to delete the item
 					T candidate = createEntityFromExisting( remaining.nonDraft );
 					candidate.setFirstRevision( Revision.DRAFT );
-					candidate.setLastRevision( Revision.DRAFT );
-					candidate.setDeleted( true );
+					candidate.setRemovalRevision( Revision.DRAFT );
+					candidate.setDeleteForRevision( true );
 
 					insert( candidate );
 				}
@@ -171,10 +171,10 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 				// draft should be removed
 				delete( remaining.draft );
 			}
-			else if ( !remaining.draft.isDeleted() ) {
+			else if ( !remaining.draft.isDeleteForRevision() ) {
 				// update draft for deletion
-				remaining.draft.setDeleted( true );
-				update( remaining.draft, remaining.draft.getFirstRevision(), remaining.draft.getLastRevision() );
+				remaining.draft.setDeleteForRevision( true );
+				update( remaining.draft, remaining.draft.getFirstRevision(), remaining.draft.getRemovalRevision() );
 			}
 		}
 	}
@@ -264,8 +264,8 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 
 		for ( T entity : entities ) {
 			if ( entity.getFirstRevision() == revisionNumber
-					&& ( entity.getLastRevision() == Revision.DRAFT
-					|| entity.getLastRevision() == revisionNumber + 1 ) ) {
+					&& ( entity.getRemovalRevision() == Revision.DRAFT
+					|| entity.getRemovalRevision() == revisionNumber + 1 ) ) {
 				delete( entity );
 			}
 		}
@@ -282,7 +282,7 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 			if ( pair.nonDraft != null ) {
 				// Existing record being updated
 				if ( pair.draft != null ) {
-					if ( pair.draft.isDeleted() ) {
+					if ( pair.draft.isDeleteForRevision() ) {
 						// Expire the non-draft and remove the draft
 						expire( pair.nonDraft, revisionNumber );
 						delete( pair.draft );
@@ -297,14 +297,14 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 						delete( pair.draft );
 					}
 				}
-				else if ( pair.nonDraft.isDeleted() ) {
+				else if ( pair.nonDraft.isDeleteForRevision() ) {
 					// If the existing record is deleted, put it on update list for expiring
 					expire( pair.nonDraft, revisionNumber );
 				}
 			}
 			else if ( pair.draft != null ) { // New record
 				// If it's already deleted again, the record is pointless
-				if ( pair.draft.isDeleted() ) {
+				if ( pair.draft.isDeleteForRevision() ) {
 					delete( pair.draft );
 				}
 				else {
@@ -341,7 +341,7 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 
 			if ( pair == null ) {
 				pair = new RevisionPair<>();
-				pair.id = pair;
+				pair.id = id;
 
 				map.put( id, pair );
 			}
@@ -363,11 +363,11 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 	 */
 	protected void activate( T entity, int revision ) {
 		int previousFirst = entity.getFirstRevision();
-		int previousLast = entity.getLastRevision();
+		int previousLast = entity.getRemovalRevision();
 
 		entity.setFirstRevision( revision );
-		entity.setLastRevision( 0 );
-		entity.setDeleted( false );
+		entity.setRemovalRevision( 0 );
+		entity.setDeleteForRevision( false );
 
 		update( entity, previousFirst, previousLast );
 	}
@@ -376,10 +376,10 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 	 * Makes an active instance end in this revision.
 	 */
 	protected void expire( T entity, int revision ) {
-		int previousLast = entity.getLastRevision();
+		int previousLast = entity.getRemovalRevision();
 
-		entity.setLastRevision( revision );
-		entity.setDeleted( false );
+		entity.setRemovalRevision( revision );
+		entity.setDeleteForRevision( false );
 
 		update( entity, entity.getFirstRevision(), previousLast );
 	}

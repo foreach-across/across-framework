@@ -30,7 +30,7 @@ public interface RevisionBasedEntity<T extends RevisionBasedEntity>
 {
 	/**
 	 * The identifier of this entity that is the same across all revisions.
-	 * This is used to match existing entities.
+	 * This is used to match the different versions of an entity with each other.
 	 *
 	 * @return The identifier that will be used to match against existing entities.
 	 */
@@ -46,16 +46,19 @@ public interface RevisionBasedEntity<T extends RevisionBasedEntity>
 	/**
 	 * @return First revision in which this entity was NOT active.
 	 */
-	int getLastRevision();
+	int getRemovalRevision();
 
-	void setLastRevision( int revision );
+	void setRemovalRevision( int revision );
 
 	/**
-	 * @return True if this entity has been deleted (and it is a draft entity).
+	 * Special property used to determine if a draft entity is the "deleted version" of another
+	 * entity.  Meaning that upon the next checkin, the other entity will stop existing.
+	 *
+	 * @return True if this entity is the deleted version for a currently active one.
 	 */
-	boolean isDeleted();
+	boolean isDeleteForRevision();
 
-	void setDeleted( boolean deleted );
+	void setDeleteForRevision( boolean deleted );
 
 	/**
 	 * @return True if this entity is a draft, it does not have an official starting revision yet.
