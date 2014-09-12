@@ -34,6 +34,33 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 		private T draft, nonDraft;
 	}
 
+	private boolean allowRevisionModification;
+
+	protected RevisionBasedEntityManager() {
+		this( false );
+	}
+
+	/**
+	 * The single parameter of this constructor determines if it is allowed to modify entities for a specific
+	 * revision.  It is always allowed to modify a draft revision and possibly a special latest revision
+	 * (with start and removal revision number of 0).  Modifying a specific revision could impact all future
+	 * revisions and can be considered a falsification of the history.  In short, it's usually better
+	 * not to allow it in which case an exception will be thrown when trying.
+	 *
+	 * @param allowRevisionModification True if modifying a specific revision is allowed.
+	 */
+	protected RevisionBasedEntityManager( boolean allowRevisionModification ) {
+		this.allowRevisionModification = allowRevisionModification;
+	}
+
+	public boolean isAllowRevisionModification() {
+		return allowRevisionModification;
+	}
+
+	protected void setAllowRevisionModification( boolean allowRevisionModification ) {
+		this.allowRevisionModification = allowRevisionModification;
+	}
+
 	/**
 	 * Returns the single entity for that revision.
 	 */
@@ -117,7 +144,18 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 
 		for ( T entity : entities ) {
 			entity.setFirstRevision( revisionNumber );
-			entity.setRemovalRevision( revisionNumber );
+
+			if ( revisionNumber != Revision.DRAFT && revisionNumber != Revision.LATEST ) {
+				if ( !allowRevisionModification ) {
+					throw new RevisionModificationException(
+							"Attempt to modify specific revision " + revisionNumber +
+									" but this is not allowed by the revision manager" );
+				}
+				entity.setRemovalRevision( revisionNumber + 1 );
+			}
+			else {
+				entity.setRemovalRevision( revisionNumber );
+			}
 
 			RevisionPair<T> pair = pairs.get( entity.getEntityIdentifier() );
 			T current = pair != null ? pair.nonDraft : null;
