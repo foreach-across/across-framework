@@ -24,6 +24,7 @@
 
 	<properties>
 		<spring.version>4.0.6.RELEASE</spring.version>
+		<foreach.common.version>0.10-SNAPSHOT</foreach.common.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -112,7 +113,7 @@
 			<dependency>
 				<groupId>com.foreach.libs</groupId>
 				<artifactId>common-concurrent</artifactId>
-				<version>0.9</version>
+				<version>${foreach.common.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
