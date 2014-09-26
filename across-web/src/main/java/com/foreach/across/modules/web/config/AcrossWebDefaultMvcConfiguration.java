@@ -184,9 +184,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			configurer.configureHandlerExceptionResolvers( exceptionResolvers );
 		}
 
-		if ( messageConverters.isEmpty() ) {
-			addDefaultHttpMessageConverters( messageConverters );
-		}
+		//if ( messageConverters.isEmpty() ) {
+		addDefaultHttpMessageConverters( messageConverters );
+		//}
 
 		interceptorRegistry.addInterceptor( new ConversionServiceExposingInterceptor( conversionService ) );
 
@@ -333,26 +333,43 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	 */
 	@SuppressWarnings("deprecation")
 	protected final void addDefaultHttpMessageConverters( List<HttpMessageConverter<?>> messageConverters ) {
+		// Todo: write a custom AcrossWebConfigurer configurer
 		StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
 		stringConverter.setWriteAcceptCharset( false );
 
-		messageConverters.add( new ByteArrayHttpMessageConverter() );
-		messageConverters.add( stringConverter );
-		messageConverters.add( new ResourceHttpMessageConverter() );
-		messageConverters.add( new SourceHttpMessageConverter<Source>() );
-		messageConverters.add( new AllEncompassingFormHttpMessageConverter() );
+		addIfNoInstanceYetPresent( messageConverters, new ByteArrayHttpMessageConverter() );
+		addIfNoInstanceYetPresent( messageConverters, stringConverter );
+		addIfNoInstanceYetPresent( messageConverters, new ResourceHttpMessageConverter() );
+		addIfNoInstanceYetPresent( messageConverters, new SourceHttpMessageConverter<Source>() );
+		addIfNoInstanceYetPresent( messageConverters, new AllEncompassingFormHttpMessageConverter() );
 		if ( romePresent ) {
-			messageConverters.add( new AtomFeedHttpMessageConverter() );
-			messageConverters.add( new RssChannelHttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters, new AtomFeedHttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters, new RssChannelHttpMessageConverter() );
 		}
 		if ( jaxb2Present ) {
-			messageConverters.add( new Jaxb2RootElementHttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters, new Jaxb2RootElementHttpMessageConverter() );
 		}
 		if ( jackson2Present ) {
-			messageConverters.add( new MappingJackson2HttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters, new MappingJackson2HttpMessageConverter() );
 		}
 		else if ( jacksonPresent ) {
-			messageConverters.add( new org.springframework.http.converter.json.MappingJacksonHttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters,
+			                           new org.springframework.http.converter.json.MappingJacksonHttpMessageConverter() );
+		}
+	}
+
+	private void addIfNoInstanceYetPresent( List<HttpMessageConverter<?>> messageConverters,
+	                                        HttpMessageConverter<?> converter ) {
+		boolean found = false;
+
+		for ( HttpMessageConverter current : messageConverters ) {
+			if ( converter.getClass().isAssignableFrom( current.getClass() ) ) {
+				found = true;
+			}
+		}
+
+		if ( !found ) {
+			messageConverters.add( converter );
 		}
 	}
 
