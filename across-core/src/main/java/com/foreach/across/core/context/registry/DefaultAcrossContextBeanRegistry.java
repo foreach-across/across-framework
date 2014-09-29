@@ -16,14 +16,20 @@
 
 package com.foreach.across.core.context.registry;
 
+import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.core.ResolvableType;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -57,7 +63,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		return contextInfo.getApplicationContext().getType( beanName );
 	}
 
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getBeanFromModule( String moduleName, String beanName ) {
 		if ( StringUtils.isEmpty( moduleName ) ) {
@@ -97,23 +103,44 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 
 	@Override
 	public <T> List<T> getBeansOfType( Class<T> beanClass, boolean includeModuleInternals ) {
+		return getBeansOfType( ResolvableType.forClass( beanClass ), includeModuleInternals );
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getBeansOfType( ResolvableType resolvableType, boolean includeModuleInternals ) {
 		Set<T> beans = new LinkedHashSet<>();
 		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
 
-		for ( T bean : BeanFactoryUtils.beansOfTypeIncludingAncestors( contextInfo.getApplicationContext(), beanClass )
-		                               .values() ) {
-			comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
-			beans.add( bean );
+		DependencyDescriptor dd = new ResolvableTypeDescriptor( resolvableType );
+		ResolvableTypeAutowireCandidateResolver resolver = new ResolvableTypeAutowireCandidateResolver();
+		AcrossListableBeanFactory beanFactory = beanFactory( contextInfo.getApplicationContext() );
+
+		resolver.setBeanFactory( beanFactory );
+		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory,
+		                                                                        resolvableType.getRawClass() )
+		                                        .keySet() ) {
+
+			if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
+				Object bean = beanFactory.getBean( beanName );
+				comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
+				beans.add( (T) bean );
+			}
 		}
 
 		if ( includeModuleInternals ) {
 			for ( AcrossModuleInfo module : contextInfo.getModules() ) {
-				ListableBeanFactory beanFactory = module.getApplicationContext();
+				beanFactory = beanFactory( module.getApplicationContext() );
 
 				if ( beanFactory != null ) {
-					for ( T bean : beanFactory.getBeansOfType( beanClass ).values() ) {
-						comparator.register( bean, module.getIndex() );
-						beans.add( bean );
+					resolver.setBeanFactory( beanFactory );
+
+					for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
+						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
+							Object bean = beanFactory.getBean( beanName );
+							comparator.register( bean, module.getIndex() );
+							beans.add( (T) bean );
+						}
 					}
 				}
 			}
@@ -123,5 +150,46 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		comparator.sort( beanList );
 
 		return beanList;
+	}
+
+	private AcrossListableBeanFactory beanFactory( ApplicationContext applicationContext ) {
+		ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) applicationContext;
+		return ctx != null ? (AcrossListableBeanFactory) ctx.getBeanFactory() : null;
+	}
+
+	protected static class ResolvableTypeDescriptor extends DependencyDescriptor
+	{
+		private static final Field DUMMY_FIELD;
+
+		private final ResolvableType resolvableType;
+
+		static {
+			try {
+				DUMMY_FIELD = ResolvableTypeDescriptor.class.getDeclaredField( "resolvableType" );
+			}
+			catch ( NoSuchFieldException nsfe ) {
+				throw new RuntimeException( nsfe );
+			}
+		}
+
+		ResolvableTypeDescriptor( ResolvableType resolvableType ) {
+			super( DUMMY_FIELD, false );
+			this.resolvableType = resolvableType;
+		}
+
+		@Override
+		public ResolvableType getResolvableType() {
+			return resolvableType;
+		}
+
+		@Override
+		public boolean fallbackMatchAllowed() {
+			return false;
+		}
+
+		@Override
+		public Class<?> getDependencyType() {
+			return resolvableType.getRawClass();
+		}
 	}
 }

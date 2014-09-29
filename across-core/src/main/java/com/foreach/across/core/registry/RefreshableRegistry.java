@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ResolvableType;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -47,8 +48,8 @@ import java.util.*;
 @Refreshable
 public class RefreshableRegistry<T> implements Collection<T>
 {
-	private Class<T> memberType;
-	private boolean includeModuleInternals;
+	private final ResolvableType resolvableType;
+	private final boolean includeModuleInternals;
 
 	@Autowired(required = false)
 	private AcrossContextBeanRegistry beanRegistry;
@@ -61,7 +62,11 @@ public class RefreshableRegistry<T> implements Collection<T>
 	}
 
 	public RefreshableRegistry( Class<T> type, boolean includeModuleInternals ) {
-		this.memberType = type;
+		this( ResolvableType.forClass( type ), includeModuleInternals );
+	}
+
+	public RefreshableRegistry( ResolvableType resolvableType, boolean includeModuleInternals ) {
+		this.resolvableType = resolvableType;
 		this.includeModuleInternals = includeModuleInternals;
 	}
 
@@ -72,10 +77,11 @@ public class RefreshableRegistry<T> implements Collection<T>
 	 */
 	@PostConstruct
 	@PostRefresh
+	@SuppressWarnings( "unchecked" )
 	public void refresh() {
 		if ( beanRegistry != null ) {
 			List<T> refreshed =
-					new ArrayList<T>( beanRegistry.getBeansOfType( memberType, includeModuleInternals ) );
+					new ArrayList<>( (List<T>) beanRegistry.getBeansOfType( resolvableType, includeModuleInternals ) );
 
 			// Add fixed members at the end
 			for ( T fixed : fixedMembers ) {

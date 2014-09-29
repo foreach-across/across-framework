@@ -16,6 +16,8 @@
 
 package com.foreach.across.core.context.registry;
 
+import org.springframework.core.ResolvableType;
+
 import java.util.List;
 
 /**
@@ -119,4 +121,21 @@ public interface AcrossContextBeanRegistry
 	 * @see org.springframework.core.Ordered
 	 */
 	<T> List<T> getBeansOfType( Class<T> beanClass, boolean includeModuleInternals );
+
+	/**
+	 * Collect all beans of a given type that are visible inside this bean registry.
+	 * Depending on the second parameter, module internal beans will be included.
+	 * <p/>
+	 * All beans will be sorted according to the Order, module index and OrderInModule values.
+	 *
+	 * This method allows looking for beans having specific generic parameters.
+	 *
+	 * @param resolvableType Type of bean to look for.
+	 * @param <T>       Specific bean type.
+	 * @return List of bean instances.
+	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see com.foreach.across.core.OrderedInModule
+	 * @see org.springframework.core.Ordered
+	 */
+	<T> List<T> getBeansOfType( ResolvableType resolvableType, boolean includeModuleInternals );
 }

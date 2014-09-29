@@ -42,6 +42,8 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 		return new StandardAcrossEnvironment();
 	}
 
+
+
 	/**
 	 * Adds a collection of provided beans to application context.
 	 *

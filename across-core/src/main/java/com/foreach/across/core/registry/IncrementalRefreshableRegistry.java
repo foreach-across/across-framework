@@ -22,6 +22,7 @@ import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import net.engio.mbassy.listener.Handler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ResolvableType;
 
 import javax.annotation.PostConstruct;
 
@@ -41,8 +42,12 @@ public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 		super( memberType );
 	}
 
-	public IncrementalRefreshableRegistry( Class<T> type, boolean scanModules ) {
-		super( type, scanModules );
+	public IncrementalRefreshableRegistry( Class<T> type, boolean includeModuleInternals ) {
+		super( type, includeModuleInternals );
+	}
+
+	public IncrementalRefreshableRegistry( ResolvableType resolvableType, boolean includeModuleInternals ) {
+		super( resolvableType, includeModuleInternals );
 	}
 
 	@PostConstruct

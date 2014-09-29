@@ -18,8 +18,11 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
@@ -52,6 +55,13 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		}
 
 		return super.getMergedBeanDefinition( beanName, bd, containingBd );
+	}
+
+	@Override
+	public boolean isAutowireCandidate( String beanName,
+	                                       DependencyDescriptor descriptor,
+	                                       AutowireCandidateResolver resolver ) throws NoSuchBeanDefinitionException {
+		return super.isAutowireCandidate( beanName, descriptor, resolver );
 	}
 
 	/**

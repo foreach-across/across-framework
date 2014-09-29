@@ -26,9 +26,12 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.ResolvableType;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -56,6 +59,44 @@ public class TestContextScanning
 		assertEquals( "ModuleThree", beans.get( 2 ).getModule() );
 
 		context.shutdown();
+	}
+
+	@Test
+	public void internalGenericBeanResolving() {
+		AcrossContext context = new AcrossContext();
+		context.addModule( new ModuleOne() );
+		context.addModule( new ModuleTwo() );
+		context.addModule( new ModuleThree() );
+		context.bootstrap();
+
+		AcrossContextBeanRegistry registry = AcrossContextUtils.getBeanRegistry( context );
+		List<GenericBean> beans = registry.getBeansOfType( GenericBean.class, true );
+
+		assertEquals( 6, beans.size() );
+
+		ResolvableType listType = ResolvableType.forClassWithGenerics( List.class, Integer.class );
+		ResolvableType type = ResolvableType.forClassWithGenerics( GenericBean.class,
+		                                                           ResolvableType.forClass( Long.class ),
+		                                                           listType
+		);
+
+		beans = registry.getBeansOfType( type, true );
+		assertEquals( 3, beans.size() );
+		assertEquals( "longWithIntegerList", beans.get( 0 ).getName() );
+		assertEquals( "longWithIntegerList", beans.get( 1 ).getName() );
+		assertEquals( "longWithIntegerList", beans.get( 2 ).getName() );
+
+		listType = ResolvableType.forClassWithGenerics( List.class, Date.class );
+		type = ResolvableType.forClassWithGenerics( GenericBean.class,
+		                                            ResolvableType.forClass( String.class ),
+		                                            listType
+		);
+
+		beans = registry.getBeansOfType( type, true );
+		assertEquals( 3, beans.size() );
+		assertEquals( "stringWithDateList", beans.get( 0 ).getName() );
+		assertEquals( "stringWithDateList", beans.get( 1 ).getName() );
+		assertEquals( "stringWithDateList", beans.get( 2 ).getName() );
 	}
 
 	@Test
@@ -134,6 +175,29 @@ public class TestContextScanning
 		public String getModule() {
 			assertSame( module, moduleInfo.getModule() );
 			return module.getName();
+		}
+
+		@Bean
+		public GenericBean<Long, List<Integer>> longWithIntegerList() {
+			return new GenericBean<>( "longWithIntegerList" );
+		}
+
+		@Bean
+		public GenericBean<String, List<Date>> stringWithDateList() {
+			return new GenericBean<>( "stringWithDateList" );
+		}
+	}
+
+	static class GenericBean<T, Y>
+	{
+		private final String name;
+
+		GenericBean( String name ) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
 		}
 	}
 
