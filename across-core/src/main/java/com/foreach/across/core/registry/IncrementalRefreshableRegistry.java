@@ -29,9 +29,9 @@ import javax.annotation.PostConstruct;
 /**
  * <p>Extends the {@link com.foreach.across.core.registry.RefreshableRegistry} by scanning for members
  * every time a module has bootstrapped.  Modules later in the bootstrapping order will immediately see
- * all members added by previous modules.</p>
- * <p>Note that this implementation slows down AcrossContext bootstrap duration, so use only if necessary.</p>
- */
+ * all members added by previous modules, whereas a regular RefreshableRegistry will only refresh its
+ * members after the entire context has been bootstrapped.</p>
+  */
 @Refreshable
 public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 {

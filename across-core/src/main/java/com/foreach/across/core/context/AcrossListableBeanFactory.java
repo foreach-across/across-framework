@@ -16,7 +16,12 @@
 
 package com.foreach.across.core.context;
 
+import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.registry.IncrementalRefreshableRegistry;
+import com.foreach.across.core.registry.RefreshableRegistry;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -25,8 +30,14 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.annotation.AnnotationUtils;
 
+import java.lang.reflect.AnnotatedElement;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Extends a {@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
@@ -59,8 +70,8 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 
 	@Override
 	public boolean isAutowireCandidate( String beanName,
-	                                       DependencyDescriptor descriptor,
-	                                       AutowireCandidateResolver resolver ) throws NoSuchBeanDefinitionException {
+	                                    DependencyDescriptor descriptor,
+	                                    AutowireCandidateResolver resolver ) throws NoSuchBeanDefinitionException {
 		return super.isAutowireCandidate( beanName, descriptor, resolver );
 	}
 
@@ -96,5 +107,49 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		}
 
 		return super.getTypeForFactoryBean( beanName, mbd );
+	}
+
+	@Override
+	public Object doResolveDependency( DependencyDescriptor descriptor,
+	                                   String beanName,
+	                                   Set<String> autowiredBeanNames,
+	                                   TypeConverter typeConverter ) throws BeansException {
+		Class<?> type = descriptor.getDependencyType();
+
+		if ( Collection.class.isAssignableFrom( type ) && type.isInterface() ) {
+			AnnotatedElement annotatedElement =
+					descriptor.getField() != null ? descriptor.getField() : descriptor.getMethodParameter().getMethod();
+
+			RefreshableCollection annotation = AnnotationUtils.getAnnotation( annotatedElement,
+			                                                                  RefreshableCollection.class );
+
+			if ( annotation != null ) {
+				ResolvableType resolvableType = descriptor.getResolvableType();
+
+				if ( resolvableType.hasGenerics() ) {
+					resolvableType = resolvableType.getNested( 2 );
+				}
+				else {
+					resolvableType = ResolvableType.forClass( Object.class );
+				}
+
+				RefreshableRegistry<?> registry;
+				if ( annotation.incremental() ) {
+					registry = new IncrementalRefreshableRegistry<>( resolvableType,
+					                                                 annotation.includeModuleInternals() );
+				}
+				else {
+					registry = new RefreshableRegistry<>( resolvableType, annotation.includeModuleInternals() );
+				}
+
+				autowireBean( registry );
+				registerSingleton( RefreshableRegistry.class.getName() + "~" + UUID.randomUUID().toString(), registry );
+
+				return registry;
+			}
+
+		}
+
+		return super.doResolveDependency( descriptor, beanName, autowiredBeanNames, typeConverter );
 	}
 }

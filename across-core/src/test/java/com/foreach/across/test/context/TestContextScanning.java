@@ -19,11 +19,14 @@ package com.foreach.across.test.context;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Module;
+import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.registry.IncrementalRefreshableRegistry;
+import com.foreach.across.core.registry.RefreshableRegistry;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.ResolvableType;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -97,6 +101,38 @@ public class TestContextScanning
 		assertEquals( "stringWithDateList", beans.get( 0 ).getName() );
 		assertEquals( "stringWithDateList", beans.get( 1 ).getName() );
 		assertEquals( "stringWithDateList", beans.get( 2 ).getName() );
+	}
+
+	@Test
+	public void refreshableCollectionTesting() {
+		AcrossContext context = new AcrossContext();
+		context.addModule( new ModuleOne() );
+		context.addModule( new ModuleTwo() );
+		context.bootstrap();
+
+		AcrossContextBeanRegistry registry = AcrossContextUtils.getBeanRegistry( context );
+		MyBeanConfig one = registry.getBeanOfTypeFromModule( "ModuleOne", MyBeanConfig.class );
+		MyBeanConfig two = registry.getBeanOfTypeFromModule( "ModuleTwo", MyBeanConfig.class );
+
+		Collection<GenericBean<Long, List<Integer>>> integersOne = one.getIntegerLists();
+		assertNotNull( integersOne );
+		assertTrue( integersOne.getClass().equals( RefreshableRegistry.class ) );
+		assertEquals( 2, integersOne.size() );
+
+		Collection<GenericBean<String, List<Date>>> datesOne = one.getDateLists();
+		assertNotNull( datesOne );
+		assertTrue( datesOne.getClass().equals( IncrementalRefreshableRegistry.class ) );
+		assertTrue( datesOne.isEmpty() );
+
+		Collection<GenericBean<Long, List<Integer>>> integersTwo = two.getIntegerLists();
+		assertNotNull( integersTwo );
+		assertTrue( integersTwo.getClass().equals( RefreshableRegistry.class ) );
+		assertEquals( 2, integersTwo.size() );
+
+		Collection<GenericBean<String, List<Date>>> datesTwo = two.getDateLists();
+		assertNotNull( datesTwo );
+		assertTrue( datesTwo.getClass().equals( IncrementalRefreshableRegistry.class ) );
+		assertTrue( datesTwo.isEmpty() );
 	}
 
 	@Test
@@ -172,9 +208,23 @@ public class TestContextScanning
 		@Module(AcrossModule.CURRENT_MODULE)
 		private AcrossModuleInfo moduleInfo;
 
+		@RefreshableCollection(includeModuleInternals = true)
+		private Collection<GenericBean<Long, List<Integer>>> integerLists;
+
+		@RefreshableCollection(incremental = true)
+		private Collection<GenericBean<String, List<Date>>> dateLists;
+
 		public String getModule() {
 			assertSame( module, moduleInfo.getModule() );
 			return module.getName();
+		}
+
+		public Collection<GenericBean<Long, List<Integer>>> getIntegerLists() {
+			return integerLists;
+		}
+
+		public Collection<GenericBean<String, List<Date>>> getDateLists() {
+			return dateLists;
 		}
 
 		@Bean
