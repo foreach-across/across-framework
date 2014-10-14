@@ -1,6 +1,23 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.transformers;
 
-import org.springframework.beans.factory.config.BeanDefinition;
+import com.foreach.across.core.context.ExposedBeanDefinition;
+import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Map;
@@ -10,7 +27,7 @@ import java.util.Map;
  * that should be set primary can be defined.</p>
  * <p>Note that this will in fact modify the original BeanDefinition.</p>
  */
-public class PrimaryBeanTransformer implements BeanDefinitionTransformer
+public class PrimaryBeanTransformer implements ExposedBeanDefinitionTransformer
 {
 	private Collection<String> beanNames;
 
@@ -21,35 +38,20 @@ public class PrimaryBeanTransformer implements BeanDefinitionTransformer
 		this.beanNames = beanNames;
 	}
 
-	/**
-	 * Modify the collection of singletons.
-	 *
-	 * @param singletons Original map of singletons.
-	 * @return Modified map of singletons.
-	 */
-	public Map<String, Object> transformSingletons( Map<String, Object> singletons ) {
-		return singletons;
+	public void setBeanNames( Collection<String> beanNames ) {
+		Assert.notNull( beanNames );
+		this.beanNames = beanNames;
 	}
 
-	/**
-	 * Modify the collection of BeanDefinitions.
-	 *
-	 * @param beanDefinitions Original map of bean definitions.
-	 * @return Modified map of bean definitions.
-	 */
-	public Map<String, BeanDefinition> transformBeanDefinitions( Map<String, BeanDefinition> beanDefinitions ) {
-		for ( Map.Entry<String, BeanDefinition> definition : beanDefinitions.entrySet() ) {
+	public void transformBeanDefinitions( Map<String, ExposedBeanDefinition> beanDefinitions ) {
+		for ( Map.Entry<String, ExposedBeanDefinition> definition : beanDefinitions.entrySet() ) {
 			makePrimary( definition.getKey(), definition.getValue() );
 		}
-
-		return beanDefinitions;
 	}
 
-	private void makePrimary( String beanName, BeanDefinition definition ) {
-		if ( !definition.isPrimary() ) {
-			if ( beanNames == null || beanNames.contains( beanName ) ) {
-				definition.setPrimary( true );
-			}
+	private void makePrimary( String beanName, ExposedBeanDefinition definition ) {
+		if ( !definition.isPrimary() && ( beanNames == null || beanNames.contains( beanName ) ) ) {
+			definition.setPrimary( true );
 		}
 	}
 }

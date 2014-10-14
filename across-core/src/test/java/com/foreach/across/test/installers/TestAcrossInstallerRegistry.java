@@ -1,16 +1,34 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.test.installers;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.*;
 import com.foreach.across.test.modules.installer.installers.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +43,7 @@ import static org.mockito.Mockito.*;
 
 public class TestAcrossInstallerRegistry
 {
-	private AcrossInstallerRegistry registry;
+	private AcrossBootstrapInstallerRegistry registry;
 	private AcrossBootstrapConfig contextConfig;
 	private ModuleBootstrapConfig moduleConfig;
 	private AcrossInstallerRepository installerRepository;
@@ -39,14 +57,20 @@ public class TestAcrossInstallerRegistry
 		installerRepository = mock( AcrossInstallerRepository.class );
 
 		beanFactory = mock( ConfigurableListableBeanFactory.class );
-		when( beanFactory.getBean( AcrossInstallerRepository.class ) ).thenReturn( installerRepository );
 
-		AcrossApplicationContext acrossApplicationContext = mock( AcrossApplicationContext.class );
-		when( acrossApplicationContext.getBeanFactory() ).thenReturn( beanFactory );
+		AcrossContextBeanRegistry beanRegistry = mock( AcrossContextBeanRegistry.class );
+		when( beanRegistry.getBeanOfType( AcrossInstallerRepository.class ) ).thenReturn( installerRepository );
+
+		AbstractApplicationContext applicationContext = mock( AbstractApplicationContext.class );
+		when( applicationContext.getBean( AcrossContextBeanRegistry.class ) ).thenReturn( beanRegistry );
+
+		AcrossApplicationContextHolder acrossApplicationContextHolder = mock( AcrossApplicationContextHolder.class );
+		when( acrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
+		when( acrossApplicationContextHolder.getBeanFactory() ).thenReturn( beanFactory );
 
 		AcrossContext acrossContext = mock( AcrossContext.class );
 		when( acrossContext.hasApplicationContext() ).thenReturn( true );
-		when( acrossContext.getAcrossApplicationContext() ).thenReturn( acrossApplicationContext );
+		when( acrossContext.getAcrossApplicationContextHolder() ).thenReturn( acrossApplicationContextHolder );
 
 		module = mock( AcrossModule.class );
 		contextConfig = mock( AcrossBootstrapConfig.class );
@@ -60,7 +84,7 @@ public class TestAcrossInstallerRegistry
 		when( contextConfig.getModule( anyString() ) ).thenReturn( moduleConfig );
 		when( contextConfig.getInstallerSettings() ).thenReturn( contextSettings );
 
-		registry = new AcrossInstallerRegistry( contextConfig );
+		registry = new AcrossBootstrapInstallerRegistry( contextConfig, null );
 
 		TestInstaller.reset();
 	}
@@ -142,11 +166,12 @@ public class TestAcrossInstallerRegistry
 
 		ConfigurableListableBeanFactory moduleBeanFactory = mock( ConfigurableListableBeanFactory.class );
 
-		AcrossApplicationContext moduleAcrossApplicationContext = mock( AcrossApplicationContext.class );
-		when( moduleAcrossApplicationContext.getBeanFactory() ).thenReturn( moduleBeanFactory );
+		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
+				AcrossApplicationContextHolder.class );
+		when( moduleAcrossApplicationContextHolder.getBeanFactory() ).thenReturn( moduleBeanFactory );
 
 		when( module.hasApplicationContext() ).thenReturn( true );
-		when( module.getAcrossApplicationContext() ).thenReturn( moduleAcrossApplicationContext );
+		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
 
 		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
 

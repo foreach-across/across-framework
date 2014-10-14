@@ -1,13 +1,33 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.AcrossModuleRole;
+import com.foreach.across.core.context.ExposedBeanDefinition;
+import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 {
@@ -26,6 +46,10 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
 	private Collection<AcrossModuleInfo> optionalDependencies =
 			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
+
+	private ExposedModuleBeanRegistry exposedBeanRegistry;
+
+	private AcrossModuleSettings settings;
 
 	public ConfigurableAcrossModuleInfo( AcrossContextInfo context, AcrossModule module, int index ) {
 		this.context = context;
@@ -55,6 +79,11 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	@Override
 	public String getDescription() {
 		return getModule().getDescription();
+	}
+
+	@Override
+	public String getResourcesKey() {
+		return getModule().getResourcesKey();
 	}
 
 	@Override
@@ -111,6 +140,30 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	@Override
 	public ModuleBootstrapConfig getBootstrapConfiguration() {
 		return bootstrapConfiguration;
+	}
+
+	public ExposedModuleBeanRegistry getExposedBeanRegistry() {
+		return exposedBeanRegistry;
+	}
+
+	public void setExposedBeanRegistry( ExposedModuleBeanRegistry exposedBeanRegistry ) {
+		this.exposedBeanRegistry = exposedBeanRegistry;
+	}
+
+	@Override
+	public AcrossModuleSettings getSettings() {
+		return settings;
+	}
+
+	public void setSettings( AcrossModuleSettings settings ) {
+		this.settings = settings;
+	}
+
+	@Override
+	public Map<String, ExposedBeanDefinition> getExposedBeanDefinitions() {
+		return exposedBeanRegistry != null
+				? exposedBeanRegistry.getExposedDefinitions()
+				: Collections.<String, ExposedBeanDefinition>emptyMap();
 	}
 
 	public void setBootstrapConfiguration( ModuleBootstrapConfig bootstrapConfiguration ) {

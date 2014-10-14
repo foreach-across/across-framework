@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.installers;
 
 import com.foreach.across.core.AcrossModule;
@@ -12,6 +28,15 @@ import java.util.Date;
 
 public class AcrossInstallerRepository
 {
+	private static final String SQL_SELECT_VERSION =
+			"select version from ACROSSMODULES where module_id = ? and installer_id = ?";
+	private static final String SQL_UPDATE_VERSION =
+			"update ACROSSMODULES set version = ?, description = ?, created = ? " +
+					"where module_id = ? and installer_id = ?";
+	private static final String SQL_INSERT_VERSION =
+			"insert into ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) " +
+					"VALUES (?, ?, ?, ?, ?, ?, ?)";
+
 	private final JdbcTemplate jdbcTemplate;
 
 	public AcrossInstallerRepository( DataSource installDatasource ) {
@@ -19,10 +44,8 @@ public class AcrossInstallerRepository
 	}
 
 	public int getInstalledVersion( AcrossModule module, Class<?> installerClass ) {
-		String SQL = "select version from ACROSSMODULES where module_id = ? and installer_id = ?";
-
 		try {
-			return jdbcTemplate.queryForObject( SQL, Integer.class, determineId( module.getName() ),
+			return jdbcTemplate.queryForObject( SQL_SELECT_VERSION, Integer.class, determineId( module.getName() ),
 			                                    determineInstallerId( installerClass ) );
 		}
 		catch ( EmptyResultDataAccessException erdae ) {
@@ -32,19 +55,13 @@ public class AcrossInstallerRepository
 
 	public void setInstalled( AcrossModule module, Installer config, Class<?> installerClass ) {
 		if ( getInstalledVersion( module, installerClass ) != -1 ) {
-			String SQL =
-					"update ACROSSMODULES set version = ?, description = ?, created = ? " +
-							"where module_id = ? and installer_id = ?";
-
-			jdbcTemplate.update( SQL, config.version(), StringUtils.abbreviate( config.description(), 500 ), new Date(),
+			jdbcTemplate.update( SQL_UPDATE_VERSION, config.version(), StringUtils.abbreviate( config.description(),
+			                                                                                   500 ), new Date(),
 			                     determineId( module.getName() ), determineInstallerId( installerClass ) );
 		}
 		else {
-			String SQL =
-					"insert into ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) " +
-							"VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-			jdbcTemplate.update( SQL, determineModuleName( module.getName() ), determineId( module.getName() ),
+			jdbcTemplate.update( SQL_INSERT_VERSION, determineModuleName( module.getName() ), determineId(
+					                     module.getName() ),
 			                     determineInstallerName( installerClass ), determineInstallerId( installerClass ),
 			                     config.version(), new Date(), StringUtils.abbreviate( config.description(), 500 ) );
 		}

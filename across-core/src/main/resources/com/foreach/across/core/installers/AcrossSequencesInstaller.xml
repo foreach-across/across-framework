@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 the original author or authors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
 <databaseChangeLog
 		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet id="201406141716" author="arne" runAlways="true" dbms="oracle">
 		<sql>
@@ -11,16 +26,16 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="201406141510B" author="arne">
+	<changeSet id="201406141510C" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="ACROSS_SEQUENCES"/>
+				<tableExists tableName="across_sequences"/>
 			</not>
 		</preConditions>
 
 		<comment>Creates Across sequences table</comment>
 
-		<createTable tableName="ACROSS_SEQUENCES">
+		<createTable tableName="across_sequences">
 			<column name="seq_name" type="java.sql.Types.VARCHAR(50)">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_ACROSS_SEQUENCES"/>
 			</column>

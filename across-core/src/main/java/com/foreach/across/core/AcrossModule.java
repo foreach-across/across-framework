@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.Exposed;
@@ -12,7 +28,7 @@ import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.installers.InstallerSettings;
-import com.foreach.across.core.transformers.BeanDefinitionTransformer;
+import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.stereotype.Service;
@@ -30,7 +46,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	private AcrossContext context;
 
 	private BeanFilter exposeFilter = defaultExposeFilter();
-	private BeanDefinitionTransformer exposeTransformer = null;
+	private ExposedBeanDefinitionTransformer exposeTransformer = null;
 	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
 			new HashSet<>();
 
@@ -82,7 +98,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	 * Sets the filter that will be used after module bootstrap to copy beans to the parent context and make
 	 * them available to other modules in the AcrossContext.
 	 *
-	 * @param exposeFilter The filter that beans should match to exposed to other modules in the AcrossContext.
+	 * @param exposeFilter The filter that beans should match to be exposed to other modules in the AcrossContext.
 	 */
 	public void setExposeFilter( BeanFilter exposeFilter ) {
 		this.exposeFilter = exposeFilter;
@@ -91,7 +107,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	/**
 	 * @return The transformer that will be applied to all exposed beans before copying them to the parent context.
 	 */
-	public BeanDefinitionTransformer getExposeTransformer() {
+	public ExposedBeanDefinitionTransformer getExposeTransformer() {
 		return exposeTransformer;
 	}
 
@@ -101,7 +117,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	 *
 	 * @param exposeTransformer The transformer that should be applies to all exposed beans.
 	 */
-	public void setExposeTransformer( BeanDefinitionTransformer exposeTransformer ) {
+	public void setExposeTransformer( ExposedBeanDefinitionTransformer exposeTransformer ) {
 		this.exposeTransformer = exposeTransformer;
 	}
 
@@ -200,6 +216,19 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	}
 
 	/**
+	 * The resources key is the key identifying the resources location for this module in the larger
+	 * set of resources.  By default it is the same as the module name, but it can be overridden to provide
+	 * a simpler (eg lowercase) string.
+	 *
+	 * @return Key (sub path) of the resources for this module.
+	 */
+	public String getResourcesKey() {
+		return getName();
+	}
+
+	/**
+	 * An AcrossModule name should not contain any whitespace and should only be ASCII characters.
+	 *
 	 * @return Name of this module.  Should be unique within a configured AcrossContext.
 	 */
 	public abstract String getName();

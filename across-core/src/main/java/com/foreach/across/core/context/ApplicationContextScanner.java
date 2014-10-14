@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.filters.AnnotationBeanFilter;
@@ -32,7 +48,7 @@ public final class ApplicationContextScanner
 	}
 
 	public static Map<String, Object> findSingletonsMatching( ApplicationContext context, BeanFilter filter ) {
-		HashMap<String, Object> beanMap = new HashMap<String, Object>();
+		Map<String, Object> beanMap = new HashMap<String, Object>();
 		ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) context;
 
 		ConfigurableListableBeanFactory beanFactory = ctx.getBeanFactory();
@@ -54,13 +70,13 @@ public final class ApplicationContextScanner
 
 	public static Map<String, BeanDefinition> findBeanDefinitionsMatching( ApplicationContext context,
 	                                                                       BeanFilter filter ) {
-		HashMap<String, BeanDefinition> definitionMap = new HashMap<String, BeanDefinition>();
+		Map<String, BeanDefinition> definitionMap = new HashMap<String, BeanDefinition>();
 		ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) context;
 
 		ConfigurableListableBeanFactory beanFactory = ctx.getBeanFactory();
 
 		for ( String defName : ctx.getBeanDefinitionNames() ) {
-			BeanDefinition def = ctx.getBeanFactory().getBeanDefinition( defName );
+			BeanDefinition def = ctx.getBeanFactory().getMergedBeanDefinition( defName );
 			Object bean = beanFactory.getSingleton( defName );
 
 			if ( filter.apply( beanFactory, defName, bean, def ) ) {

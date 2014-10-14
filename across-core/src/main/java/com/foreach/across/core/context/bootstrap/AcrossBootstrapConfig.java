@@ -1,8 +1,25 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -100,6 +117,22 @@ public class AcrossBootstrapConfig
 	public boolean extendModule( String moduleName, ApplicationContextConfigurer... configurers ) {
 		if ( hasModule( moduleName ) ) {
 			getModule( moduleName ).addApplicationContextConfigurer( configurers );
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Method to add one or more expose filter to a module bootstrap configuration.
+	 *
+	 * @param moduleName    Unique name of the module in the context.
+	 * @param exposeFilters BeanFilter instances to add as additional expose filters.
+	 * @return True if the module was present.
+	 */
+	public boolean extendModule( String moduleName, BeanFilter... exposeFilters ) {
+		if ( hasModule( moduleName ) ) {
+			getModule( moduleName ).addExposeFilter( exposeFilters );
 			return true;
 		}
 

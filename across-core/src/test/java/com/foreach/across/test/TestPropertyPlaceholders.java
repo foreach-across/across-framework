@@ -1,9 +1,26 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.properties.PropertiesModule;
 import com.foreach.across.test.modules.properties.SetPropertyConfig;
@@ -13,12 +30,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test property setting and spring expression language conditionals.
@@ -29,17 +51,15 @@ import static org.junit.Assert.*;
 public class TestPropertyPlaceholders
 {
 	@Autowired
-	private PropertiesModule onlyFromContext;
+	private AcrossContextBeanRegistry contextBeanRegistry;
 
 	@Autowired
-	private PropertiesModule sourceOnModule;
-
-	@Autowired
-	private PropertiesModule directOnModule;
+	private AcrossContextInfo contextInfo;
 
 	@Test
 	public void checkPropertiesSet() {
-		SetPropertyConfig config = AcrossContextUtils.getBeanOfType( onlyFromContext, SetPropertyConfig.class );
+		SetPropertyConfig config = contextBeanRegistry.getBeanOfTypeFromModule( "onlyFromContext",
+		                                                                        SetPropertyConfig.class );
 
 		assertNotNull( config );
 		assertEquals( "acrossContext", config.contextValue );
@@ -52,7 +72,7 @@ public class TestPropertyPlaceholders
 		assertEquals( "acrossContext", config.getProperty( "moduleDirectValue" ) );
 		assertEquals( new Integer( 777 ), config.getProperty( "contextDirectValue", Integer.class ) );
 
-		config = AcrossContextUtils.getBeanOfType( sourceOnModule, SetPropertyConfig.class );
+		config = contextBeanRegistry.getBeanOfTypeFromModule( "sourceOnModule", SetPropertyConfig.class );
 
 		assertNotNull( config );
 		assertEquals( "acrossContext", config.contextValue );
@@ -65,7 +85,7 @@ public class TestPropertyPlaceholders
 		assertEquals( "acrossModule", config.getProperty( "moduleDirectValue" ) );
 		assertEquals( new Integer( 777 ), config.getProperty( "contextDirectValue", Integer.class ) );
 
-		config = AcrossContextUtils.getBeanOfType( directOnModule, SetPropertyConfig.class );
+		config = contextBeanRegistry.getBeanOfTypeFromModule( "directOnModule", SetPropertyConfig.class );
 
 		assertNotNull( config );
 
@@ -78,9 +98,30 @@ public class TestPropertyPlaceholders
 		assertEquals( "acrossModule", config.getProperty( "moduleSourceValue" ) );
 		assertEquals( "directValue", config.getProperty( "moduleDirectValue" ) );
 		assertEquals( new Integer( 777 ), config.getProperty( "contextDirectValue", Integer.class ) );
+
+		assertEquals( "default", config.getProperty( "defaultOnlyValue" ) );
+		assertEquals( "applicationContext", config.getProperty( "parentContextValue" ) );
+	}
+
+	@Test
+	public void propertySourceOrder() {
+		ConfigurableEnvironment env = (ConfigurableEnvironment) contextInfo.getModuleInfo( "directOnModule" )
+		                                                                   .getApplicationContext().getEnvironment();
+
+		assertNotNull( env );
+
+		MutablePropertySources sources = env.getPropertySources();
+		assertNotNull( sources );
+		assertEquals( 8, sources.size() );
+
+		assertEquals( 4, sources.precedenceOf( sources.get( StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME ) ) );
+		assertEquals( 5, sources.precedenceOf( sources.get( StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME ) ) );
+		assertEquals( 7, sources.precedenceOf( sources.get( "PropertiesModuleSettings: default values" ) ) );
 	}
 
 	@Configuration
+	@org.springframework.context.annotation.PropertySource(
+			value = "com/foreach/across/test/TestParentProperties.properties")
 	public static class Config
 	{
 		@Bean
@@ -106,12 +147,12 @@ public class TestPropertyPlaceholders
 
 		@Bean
 		public PropertiesModule onlyFromContext() {
-			return new PropertiesModule( "moduleOne" );
+			return new PropertiesModule( "onlyFromContext" );
 		}
 
 		@Bean
 		public PropertiesModule sourceOnModule() {
-			PropertiesModule module = new PropertiesModule( "moduleTwo" );
+			PropertiesModule module = new PropertiesModule( "sourceOnModule" );
 			module.addPropertySources(
 					new ClassPathResource( "com/foreach/across/test/TestPropertiesModule.properties" ) );
 			return module;
@@ -119,7 +160,7 @@ public class TestPropertyPlaceholders
 
 		@Bean
 		public PropertiesModule directOnModule() {
-			PropertiesModule module = new PropertiesModule( "moduleThree" );
+			PropertiesModule module = new PropertiesModule( "directOnModule" );
 			module.addPropertySources(
 					new ClassPathResource( "com/foreach/across/test/TestPropertiesModule.properties" ),
 					new ClassPathResource( "com/foreach/across/test/NotExistingProperties.properties" ) );

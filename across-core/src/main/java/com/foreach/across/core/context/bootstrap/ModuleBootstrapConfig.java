@@ -1,10 +1,27 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
+import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.installers.InstallerSettings;
-import com.foreach.across.core.transformers.BeanDefinitionTransformer;
+import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 
 import java.util.*;
 
@@ -15,17 +32,19 @@ import java.util.*;
  */
 public class ModuleBootstrapConfig
 {
+	private final int bootstrapIndex;
 	private final AcrossModule module;
 
 	private BeanFilter exposeFilter;
-	private BeanDefinitionTransformer exposeTransformer;
+	private ExposedBeanDefinitionTransformer exposeTransformer;
 	private Set<ApplicationContextConfigurer> applicationContextConfigurers =
 			new LinkedHashSet<ApplicationContextConfigurer>();
 	private Collection<Object> installers = new LinkedList<Object>();
 	private InstallerSettings installerSettings;
 
-	public ModuleBootstrapConfig( AcrossModule module ) {
+	public ModuleBootstrapConfig( AcrossModule module, int bootstrapIndex ) {
 		this.module = module;
+		this.bootstrapIndex = bootstrapIndex;
 	}
 
 	public AcrossModule getModule() {
@@ -44,11 +63,35 @@ public class ModuleBootstrapConfig
 		this.exposeFilter = exposeFilter;
 	}
 
-	public BeanDefinitionTransformer getExposeTransformer() {
+	public int getBootstrapIndex() {
+		return bootstrapIndex;
+	}
+
+	/**
+	 * Adds filters that will be used after module bootstrap to copy beans to the parent context.
+	 * This adds the filters to the already configured expose filter.
+	 *
+	 * @param exposeFilters One or more filters that beans should match to be exposed to other modules.
+	 */
+	public void addExposeFilter( BeanFilter... exposeFilters ) {
+		BeanFilter[] members = exposeFilters;
+		BeanFilter current = getExposeFilter();
+
+		if ( current != null ) {
+			members = new BeanFilter[members.length + 1];
+			members[0] = current;
+			System.arraycopy( exposeFilters, 0, members, 1, exposeFilters.length );
+		}
+
+		BeanFilterComposite composite = new BeanFilterComposite( members );
+		setExposeFilter( composite );
+	}
+
+	public ExposedBeanDefinitionTransformer getExposeTransformer() {
 		return exposeTransformer;
 	}
 
-	public void setExposeTransformer( BeanDefinitionTransformer exposeTransformer ) {
+	public void setExposeTransformer( ExposedBeanDefinitionTransformer exposeTransformer ) {
 		this.exposeTransformer = exposeTransformer;
 	}
 

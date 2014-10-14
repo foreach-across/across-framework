@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.modules.web.context;
 
 import org.springframework.util.Assert;
@@ -9,8 +25,11 @@ import org.springframework.util.Assert;
  */
 public class PrefixingPathContext
 {
+	private static final String REDIRECT = "redirect:";
+	private static final String FORWARD = "forward:";
+
 	private final String prefix;
-	private final String[] ignoredPrefixes = new String[] { "redirect:", "forward:" };
+	private final String[] ignoredPrefixes = new String[] { REDIRECT, FORWARD };
 
 	public PrefixingPathContext( String prefix ) {
 		Assert.notNull( prefix );
@@ -28,6 +47,13 @@ public class PrefixingPathContext
 		}
 	}
 
+	/**
+	 * @return Root of the prefixed context (no sub path).
+	 */
+	public String getRoot() {
+		return path( "" );
+	}
+
 	public String getPathPrefix() {
 		return prefix;
 	}
@@ -43,7 +69,7 @@ public class PrefixingPathContext
 	}
 
 	public String redirect( String path ) {
-		return "redirect:" + path( path.startsWith( "redirect:" ) ? path.substring( 9 ) : path );
+		return REDIRECT + path( path.startsWith( REDIRECT ) ? path.substring( 9 ) : path );
 	}
 
 	private String prefix( String path ) {

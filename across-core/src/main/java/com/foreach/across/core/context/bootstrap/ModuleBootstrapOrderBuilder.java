@@ -1,10 +1,25 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -17,6 +32,7 @@ import java.util.*;
  * This class creates the optimal bootstrap order for all modules and can throw an exception if two
  * modules have a cyclic dependency and are impossible to bootstrap (very bad - impossible to fix).
  */
+@SuppressWarnings("all")
 public class ModuleBootstrapOrderBuilder
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ModuleBootstrapOrderBuilder.class );

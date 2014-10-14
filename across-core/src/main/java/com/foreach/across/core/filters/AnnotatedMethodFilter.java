@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.filters;
 
 import org.springframework.aop.framework.AopProxyUtils;
@@ -28,10 +44,13 @@ public class AnnotatedMethodFilter implements BeanFilter
 	 *
 	 * @param beanFactory BeanFactory that owns the bean and definition.
 	 * @param beanName
-	 *@param bean        Bean instance to check (can be null).
+	 * @param bean        Bean instance to check (can be null).
 	 * @param definition  BeanDefinition corresponding to this bean (can be null).   @return True if the bean and bean definition match.
 	 */
-	public boolean apply( ConfigurableListableBeanFactory beanFactory, String beanName, Object bean, BeanDefinition definition ) {
+	public boolean apply( ConfigurableListableBeanFactory beanFactory,
+	                      String beanName,
+	                      Object bean,
+	                      BeanDefinition definition ) {
 		if ( bean != null ) {
 			Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( bean ) );
 
@@ -63,7 +82,8 @@ public class AnnotatedMethodFilter implements BeanFilter
 
 				if ( targetHolder != null ) {
 					Object targetBean = beanFactory.getSingleton( targetHolder.getBeanName() );
-					return apply( beanFactory, targetHolder.getBeanName(), targetBean, targetHolder.getBeanDefinition() );
+					return apply( beanFactory, targetHolder.getBeanName(), targetBean,
+					              targetHolder.getBeanDefinition() );
 				}
 			}
 		}

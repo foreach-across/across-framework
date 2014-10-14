@@ -1,8 +1,26 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.context.AcrossWebArgumentResolver;
 import com.foreach.across.modules.web.menu.MenuBuilder;
 import com.foreach.across.modules.web.menu.MenuFactory;
@@ -18,15 +36,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +57,9 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter
 	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private AcrossWebModule acrossWebModule;
 
+	@Autowired
+	private AcrossDevelopmentMode developmentMode;
+
 	@Override
 	public void addResourceHandlers( ResourceHandlerRegistry registry ) {
 		for ( String resource : DEFAULT_RESOURCES ) {
@@ -48,16 +67,19 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter
 					acrossWebModule.getViewsResourcePath() + "/" + resource + "/**" ).addResourceLocations(
 					"classpath:/views/" + resource + "/" );
 
-			if ( acrossWebModule.isDevelopmentMode() ) {
-				LOG.info( "Activating development mode resource handlers" );
+			if ( developmentMode.isActive() ) {
+				LOG.info( "Activating {} development mode resource handlers", resource );
 
-				for ( Map.Entry<String, String> views : acrossWebModule.getDevelopmentViews().entrySet() ) {
-					String url = acrossWebModule.getViewsResourcePath() + "/" + resource + "/" + views.getKey() + "/**";
-					String physical = new File( views.getValue(), resource + "/" + views.getKey() ).toURI().toString();
+				Map<String, String> views = developmentMode.getDevelopmentLocationsForResourcePath(
+						"views/" + resource );
 
-					LOG.debug( "Mapping {} to physical path {}", url, physical );
+				for ( Map.Entry<String, String> entry : views.entrySet() ) {
+					String url = acrossWebModule.getViewsResourcePath() + "/" + resource + "/" + entry.getKey() + "/**";
+					File physical = new File( entry.getValue() );
 
-					registry.addResourceHandler( url ).addResourceLocations( physical );
+					LOG.info( "Mapping {} development views for {} to physical path {}", resource, url, physical );
+					registry.addResourceHandler( url )
+					        .addResourceLocations( physical.toURI().toString() );
 				}
 			}
 		}

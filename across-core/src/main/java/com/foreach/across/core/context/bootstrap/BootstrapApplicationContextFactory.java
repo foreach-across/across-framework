@@ -1,7 +1,23 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossApplicationContext;
+import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
@@ -10,6 +26,13 @@ import org.springframework.context.support.AbstractApplicationContext;
  */
 public interface BootstrapApplicationContextFactory
 {
+	/**
+	 * Create a new ApplicationContext instance that support Across context behavior.
+	 *
+	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
+	 */
+	AbstractApplicationContext createApplicationContext();
+
 	/**
 	 * Create the Spring ApplicationContext for the root of the AcrossContext.
 	 * Optionally a parent ApplicationContext can be specified and a map of singletons that are guaranteed
@@ -32,7 +55,7 @@ public interface BootstrapApplicationContextFactory
 	 */
 	AbstractApplicationContext createApplicationContext( AcrossContext across,
 	                                                     ModuleBootstrapConfig moduleBootstrapConfig,
-	                                                     AcrossApplicationContext parentContext );
+	                                                     AcrossApplicationContextHolder parentContext );
 
 	/**
 	 * Loads beans and definitions in the root ApplicationContext.
@@ -40,7 +63,7 @@ public interface BootstrapApplicationContextFactory
 	 * @param across  AcrossContext being loaded.
 	 * @param context Contains the root Spring ApplicationContext.
 	 */
-	void loadApplicationContext( AcrossContext across, AcrossApplicationContext context );
+	void loadApplicationContext( AcrossContext across, AcrossApplicationContextHolder context );
 
 	/**
 	 * Loads beans and definitions in the module ApplicationContext.
@@ -51,5 +74,5 @@ public interface BootstrapApplicationContextFactory
 	 */
 	void loadApplicationContext( AcrossContext across,
 	                             ModuleBootstrapConfig moduleBootstrapConfig,
-	                             AcrossApplicationContext context );
+	                             AcrossApplicationContextHolder context );
 }

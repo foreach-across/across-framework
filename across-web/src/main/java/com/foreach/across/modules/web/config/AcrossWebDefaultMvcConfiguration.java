@@ -1,10 +1,26 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
@@ -14,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +62,6 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.ConversionServiceExposingInterceptor;
@@ -77,12 +91,16 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			ClassUtils.isPresent( "javax.xml.bind.Binder", WebMvcConfigurationSupport.class.getClassLoader() );
 
 	private static final boolean jackson2Present = ClassUtils.isPresent( "com.fasterxml.jackson.databind.ObjectMapper",
-	                                                                     WebMvcConfigurationSupport.class.getClassLoader() ) && ClassUtils.isPresent(
-			"com.fasterxml.jackson.core.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
+	                                                                     WebMvcConfigurationSupport.class
+			                                                                     .getClassLoader() ) && ClassUtils
+			.isPresent(
+					"com.fasterxml.jackson.core.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
 
 	private static final boolean jacksonPresent = ClassUtils.isPresent( "org.codehaus.jackson.map.ObjectMapper",
-	                                                                    WebMvcConfigurationSupport.class.getClassLoader() ) && ClassUtils.isPresent(
-			"org.codehaus.jackson.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
+	                                                                    WebMvcConfigurationSupport.class
+			                                                                    .getClassLoader() ) && ClassUtils
+			.isPresent(
+					"org.codehaus.jackson.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
 
 	private static boolean romePresent = ClassUtils.isPresent( "com.sun.syndication.feed.WireFeed",
 	                                                           WebMvcConfigurationSupport.class.getClassLoader() );
@@ -96,6 +114,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Autowired
 	@Qualifier(AcrossModule.CURRENT_MODULE)
 	private AcrossWebModule webModule;
+
+	@Autowired
+	private AcrossContextBeanRegistry beanRegistry;
 
 	private ApplicationContext applicationContext;
 
@@ -111,19 +132,19 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		this.servletContext = servletContext;
 	}
 
-	public void setApplicationContext( ApplicationContext applicationContext ) throws BeansException {
+	public void setApplicationContext( ApplicationContext applicationContext ) {
 		this.applicationContext = applicationContext;
 	}
 
 	@PostConstruct
-	private void validateServletContext() {
+	protected void validateServletContext() {
 		Assert.notNull( applicationContext, "applicationContext should be autowired and cannot be null" );
 		Assert.notNull( servletContext, "servletContext should be autowired and cannot be null" );
 		Assert.notNull( acrossContext );
 		Assert.notNull( webModule );
 
 		Collection<FormattingConversionService> existing =
-				AcrossContextUtils.getBeansOfType( acrossContext, FormattingConversionService.class );
+				beanRegistry.getBeansOfType( FormattingConversionService.class );
 
 		if ( !existing.isEmpty() ) {
 			existingConversionService = existing.iterator().next();
@@ -134,7 +155,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	 * Reload the configuration by applying all WebMvcConfigurers in the context.
 	 */
 	@Handler
-	private void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
+	protected void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
 		RefreshableRegistry<WebMvcConfigurer> webMvcConfigurers = webMvcConfigurers();
 		webMvcConfigurers.refresh();
 
@@ -163,9 +184,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			configurer.configureHandlerExceptionResolvers( exceptionResolvers );
 		}
 
-		if ( messageConverters.isEmpty() ) {
-			addDefaultHttpMessageConverters( messageConverters );
-		}
+		//if ( messageConverters.isEmpty() ) {
+		addDefaultHttpMessageConverters( messageConverters );
+		//}
 
 		interceptorRegistry.addInterceptor( new ConversionServiceExposingInterceptor( conversionService ) );
 
@@ -312,26 +333,43 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	 */
 	@SuppressWarnings("deprecation")
 	protected final void addDefaultHttpMessageConverters( List<HttpMessageConverter<?>> messageConverters ) {
+		// Todo: write a custom AcrossWebConfigurer configurer
 		StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
 		stringConverter.setWriteAcceptCharset( false );
 
-		messageConverters.add( new ByteArrayHttpMessageConverter() );
-		messageConverters.add( stringConverter );
-		messageConverters.add( new ResourceHttpMessageConverter() );
-		messageConverters.add( new SourceHttpMessageConverter<Source>() );
-		messageConverters.add( new AllEncompassingFormHttpMessageConverter() );
+		addIfNoInstanceYetPresent( messageConverters, new ByteArrayHttpMessageConverter() );
+		addIfNoInstanceYetPresent( messageConverters, stringConverter );
+		addIfNoInstanceYetPresent( messageConverters, new ResourceHttpMessageConverter() );
+		addIfNoInstanceYetPresent( messageConverters, new SourceHttpMessageConverter<Source>() );
+		addIfNoInstanceYetPresent( messageConverters, new AllEncompassingFormHttpMessageConverter() );
 		if ( romePresent ) {
-			messageConverters.add( new AtomFeedHttpMessageConverter() );
-			messageConverters.add( new RssChannelHttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters, new AtomFeedHttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters, new RssChannelHttpMessageConverter() );
 		}
 		if ( jaxb2Present ) {
-			messageConverters.add( new Jaxb2RootElementHttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters, new Jaxb2RootElementHttpMessageConverter() );
 		}
 		if ( jackson2Present ) {
-			messageConverters.add( new MappingJackson2HttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters, new MappingJackson2HttpMessageConverter() );
 		}
 		else if ( jacksonPresent ) {
-			messageConverters.add( new org.springframework.http.converter.json.MappingJacksonHttpMessageConverter() );
+			addIfNoInstanceYetPresent( messageConverters,
+			                           new org.springframework.http.converter.json.MappingJacksonHttpMessageConverter() );
+		}
+	}
+
+	private void addIfNoInstanceYetPresent( List<HttpMessageConverter<?>> messageConverters,
+	                                        HttpMessageConverter<?> converter ) {
+		boolean found = false;
+
+		for ( HttpMessageConverter current : messageConverters ) {
+			if ( converter.getClass().isAssignableFrom( current.getClass() ) ) {
+				found = true;
+			}
+		}
+
+		if ( !found ) {
+			messageConverters.add( converter );
 		}
 	}
 

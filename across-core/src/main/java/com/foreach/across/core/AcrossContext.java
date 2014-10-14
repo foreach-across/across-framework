@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core;
 
 import com.foreach.across.core.context.AbstractAcrossEntity;
@@ -6,7 +22,6 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
-import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
@@ -25,6 +40,7 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Main class representing a set of Across modules.
@@ -33,6 +49,8 @@ import java.util.*;
  */
 public class AcrossContext extends AbstractAcrossEntity implements DisposableBean
 {
+	private static final AtomicInteger ID_GENERATOR = new AtomicInteger( 1 );
+
 	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
 
@@ -48,8 +66,9 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	private List<AcrossModule> modules = new LinkedList<>();
 
+	private boolean developmentMode;
 	private boolean isBootstrapped = false;
-
+	private final String id;
 	private ApplicationContext parentApplicationContext;
 
 	/**
@@ -68,7 +87,17 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 * @param parentContext Parent ApplicationContext.
 	 */
 	public AcrossContext( ApplicationContext parentContext ) {
+		id = "AcrossContext-" + ID_GENERATOR.getAndIncrement();
 		parentApplicationContext = parentContext;
+	}
+
+	/**
+	 * The unique id of this AcrossContext.  Used in generating BeanDefinition names.
+	 *
+	 * @return The unique id of this AcrossContext.
+	 */
+	public String getId() {
+		return id;
 	}
 
 	public void setParentApplicationContext( ApplicationContext parentApplicationContext ) {
@@ -89,6 +118,14 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	public Collection<AcrossModule> getModules() {
 		return modules;
+	}
+
+	public boolean isDevelopmentMode() {
+		return developmentMode;
+	}
+
+	public void setDevelopmentMode( boolean developmentMode ) {
+		this.developmentMode = developmentMode;
 	}
 
 	public void setModules( Collection<AcrossModule> modules ) {
@@ -221,7 +258,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 * @param event Event instance that will be published.
 	 */
 	public void publishEvent( AcrossEvent event ) {
-		AcrossContextUtils.getBeanOfType( this, AcrossEventPublisher.class ).publish( event );
+		AcrossContextUtils.getBeanRegistry( this ).getBeanOfType( AcrossEventPublisher.class ).publish( event );
 	}
 
 	@PostConstruct
@@ -237,10 +274,10 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		if ( isBootstrapped ) {
 			LOG.info( "Shutdown signal received - destroying ApplicationContext instances" );
 
-			// Shutdown all modules in reverse order - note that it is quite possible to beans might have been destroyed
+			// Shutdown all modules in reverse order - note that it is quite possible that beans might have been destroyed
 			// already by Spring in the meantime
 			List<AcrossModuleInfo> reverseList =
-					new ArrayList<>( AcrossContextUtils.getBeanOfType( this, AcrossContextInfo.class ).getModules() );
+					new ArrayList<>( AcrossContextUtils.getContextInfo( this ).getModules() );
 			Collections.reverse( reverseList );
 
 			for ( AcrossModuleInfo moduleInfo : reverseList ) {
@@ -260,7 +297,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 			// Destroy the root ApplicationContext
 			AcrossContextUtils.getApplicationContext( this ).destroy();
 
-			LOG.debug( "Destroyed root ApplicationContext" );
+			LOG.debug( "Destroyed root ApplicationContext: {}", getId() );
 
 			isBootstrapped = false;
 		}

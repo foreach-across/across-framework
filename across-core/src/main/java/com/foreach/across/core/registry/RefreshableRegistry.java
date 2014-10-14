@@ -1,22 +1,43 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.registry;
 
-import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
-import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.OrderComparator;
+import org.springframework.core.ResolvableType;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**
  * <p>The RefreshableRegistry is a simple bean holding a collection of instances and provides more flexibility than
- * autowiring a list of instances directly.  Depending on the scanModules only members visible in the containing module
- * will be selected (false, default) or all members from all modules (true).  The RefreshableRegistry updates its
- * member list after the AcrossContext has bootstrapped.</p>
- * <p>If members implement the {@link org.springframework.core.Ordered} or {@link org.springframework.core.PriorityOrdered}
- * interface they will be sorted accordingly.</p>
+ * autowiring a list of instances directly.  Depending on the includeModuleInternals only members visible in the
+ * containing module will be selected (false, default) or all members from all modules (true).
+ * The RefreshableRegistry updates its member list after the AcrossContext has bootstrapped.</p>
+ * <p>Members will be returned in the following order:
+ * <ul>
+ * <li>implementing {@link org.springframework.core.Ordered} or {@link org.springframework.core.annotation.Order}</li>
+ * <li>based on bootstrap index of the module that provides the member</li>
+ * <li>implementing {@link com.foreach.across.core.OrderedInModule} or {@link com.foreach.across.core.annotations.OrderInModule}</li>
+ * <li>any manually added members that were not picked up by the context scan</li>
+ * </ul>
+ * </p>
  * <p>Note that a RefreshableRegistry behaves as a set: duplicate members will be ignored.</p>
  *
  * @see com.foreach.across.core.registry.IncrementalRefreshableRegistry
@@ -27,11 +48,11 @@ import java.util.*;
 @Refreshable
 public class RefreshableRegistry<T> implements Collection<T>
 {
-	private Class<T> memberType;
-	private boolean scanModules;
+	private final ResolvableType resolvableType;
+	private final boolean includeModuleInternals;
 
 	@Autowired(required = false)
-	private AcrossContext across;
+	private AcrossContextBeanRegistry beanRegistry;
 
 	private List<T> members = new ArrayList<T>();
 	private Set<T> fixedMembers = new HashSet<T>();
@@ -40,9 +61,13 @@ public class RefreshableRegistry<T> implements Collection<T>
 		this( memberType, false );
 	}
 
-	public RefreshableRegistry( Class<T> type, boolean scanModules ) {
-		this.memberType = type;
-		this.scanModules = scanModules;
+	public RefreshableRegistry( Class<T> type, boolean includeModuleInternals ) {
+		this( ResolvableType.forClass( type ), includeModuleInternals );
+	}
+
+	public RefreshableRegistry( ResolvableType resolvableType, boolean includeModuleInternals ) {
+		this.resolvableType = resolvableType;
+		this.includeModuleInternals = includeModuleInternals;
 	}
 
 	/**
@@ -52,18 +77,18 @@ public class RefreshableRegistry<T> implements Collection<T>
 	 */
 	@PostConstruct
 	@PostRefresh
+	@SuppressWarnings( "unchecked" )
 	public void refresh() {
-		if ( across != null ) {
+		if ( beanRegistry != null ) {
 			List<T> refreshed =
-					new ArrayList<T>( AcrossContextUtils.getBeansOfType( across, memberType, scanModules ) );
+					new ArrayList<>( (List<T>) beanRegistry.getBeansOfType( resolvableType, includeModuleInternals ) );
 
+			// Add fixed members at the end
 			for ( T fixed : fixedMembers ) {
 				if ( !refreshed.contains( fixed ) ) {
 					refreshed.add( fixed );
 				}
 			}
-
-			OrderComparator.sort( refreshed );
 
 			members = refreshed;
 		}
@@ -84,8 +109,6 @@ public class RefreshableRegistry<T> implements Collection<T>
 			added = members.add( member );
 		}
 
-		OrderComparator.sort( members );
-
 		return added;
 	}
 
@@ -99,8 +122,6 @@ public class RefreshableRegistry<T> implements Collection<T>
 				added &= members.add( member );
 			}
 		}
-
-		OrderComparator.sort( members );
 
 		return added;
 	}

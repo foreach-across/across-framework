@@ -1,6 +1,22 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.transformers;
 
-import org.springframework.beans.factory.config.BeanDefinition;
+import com.foreach.across.core.context.ExposedBeanDefinition;
 
 import java.util.Map;
 
@@ -8,43 +24,17 @@ import java.util.Map;
  * Will apply all configured BeanDefinitionTransformers in the order registered.
  * The result of the current transformer will be used as the input for the next one, etc.
  */
-public class BeanDefinitionTransformerComposite implements BeanDefinitionTransformer
+public class BeanDefinitionTransformerComposite implements ExposedBeanDefinitionTransformer
 {
-	private BeanDefinitionTransformer[] transformers;
+	private ExposedBeanDefinitionTransformer[] transformers;
 
-	public BeanDefinitionTransformerComposite( BeanDefinitionTransformer... transformers ) {
+	public BeanDefinitionTransformerComposite( ExposedBeanDefinitionTransformer... transformers ) {
 		this.transformers = transformers;
 	}
 
-	/**
-	 * Modify the collection of singletons.
-	 *
-	 * @param singletons Original map of singletons.
-	 * @return Modified map of singletons.
-	 */
-	public Map<String, Object> transformSingletons( Map<String, Object> singletons ) {
-		Map<String, Object> modified = singletons;
-
-		for ( BeanDefinitionTransformer transformer : transformers ) {
-			modified = transformer.transformSingletons( modified );
+	public void transformBeanDefinitions( Map<String, ExposedBeanDefinition> beanDefinitions ) {
+		for ( ExposedBeanDefinitionTransformer transformer : transformers ) {
+			transformer.transformBeanDefinitions( beanDefinitions );
 		}
-
-		return modified;
-	}
-
-	/**
-	 * Modify the collection of BeanDefinitions.
-	 *
-	 * @param beanDefinitions Original map of bean definitions.
-	 * @return Modified map of bean definitions.
-	 */
-	public Map<String, BeanDefinition> transformBeanDefinitions( Map<String, BeanDefinition> beanDefinitions ) {
-		Map<String, BeanDefinition> modified = beanDefinitions;
-
-		for ( BeanDefinitionTransformer transformer : transformers ) {
-			modified = transformer.transformBeanDefinitions( modified );
-		}
-
-		return modified;
 	}
 }

@@ -1,8 +1,26 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.ExposedBeanDefinition;
+import com.foreach.across.core.context.ExposedContextBeanRegistry;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
@@ -12,9 +30,11 @@ import org.springframework.util.Assert;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 {
+	private final String id;
 	private final AcrossContext context;
 
 	private boolean bootstrapped;
@@ -23,8 +43,16 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 
 	private AcrossBootstrapConfig bootstrapConfiguration;
 
+	private ExposedContextBeanRegistry exposedBeanRegistry;
+
 	public ConfigurableAcrossContextInfo( AcrossContext context ) {
+		this.id = context.getId();
 		this.context = context;
+	}
+
+	@Override
+	public String getId() {
+		return id;
 	}
 
 	@Override
@@ -128,5 +156,20 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	public int getModuleIndex( AcrossModuleInfo moduleInfo ) {
 		Assert.notNull( moduleInfo );
 		return getModuleIndex( moduleInfo.getName() );
+	}
+
+	public ExposedContextBeanRegistry getExposedBeanRegistry() {
+		return exposedBeanRegistry;
+	}
+
+	public void setExposedBeanRegistry( ExposedContextBeanRegistry exposedBeanRegistry ) {
+		this.exposedBeanRegistry = exposedBeanRegistry;
+	}
+
+	@Override
+	public Map<String, ExposedBeanDefinition> getExposedBeanDefinitions() {
+		return exposedBeanRegistry != null
+				? exposedBeanRegistry.getExposedDefinitions()
+				: Collections.<String, ExposedBeanDefinition>emptyMap();
 	}
 }

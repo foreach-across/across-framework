@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.AcrossContext;
@@ -14,6 +30,7 @@ import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.filters.AnnotatedMethodFilter;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
@@ -24,8 +41,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -122,9 +137,17 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return ApplicationContext defined in the holder or null if none.
 	 */
-	public static AbstractApplicationContext getApplicationContext( AbstractAcrossEntity contextOrModule ) {
-		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext()
-		                                                                .getApplicationContext() : null;
+	public static AbstractApplicationContext getApplicationContext( AcrossEntity contextOrModule ) {
+		if ( contextOrModule instanceof AcrossModuleInfo ) {
+			return getApplicationContext( ( (AcrossModuleInfo) contextOrModule ).getModule() );
+		}
+		if ( contextOrModule instanceof AcrossContextInfo ) {
+			return getApplicationContext( ( (AcrossContextInfo) contextOrModule ).getContext() );
+		}
+
+		AbstractAcrossEntity aEntity = (AbstractAcrossEntity) contextOrModule;
+		return aEntity.hasApplicationContext() ?
+				aEntity.getAcrossApplicationContextHolder().getApplicationContext() : null;
 	}
 
 	/**
@@ -144,18 +167,32 @@ public final class AcrossContextUtils
 	 * @return BeanFactory linked to the ApplicationContext in the holder or null if not yet available.
 	 */
 	public static ConfigurableListableBeanFactory getBeanFactory( AbstractAcrossEntity contextOrModule ) {
-		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContext()
+		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContextHolder()
 		                                                                .getBeanFactory() : null;
 	}
 
 	/**
-	 * Returns the Spring ApplicationContext associated with the given AcrossContext or AcrossModule.
+	 * Returns the running AcrossContextInfo for a defined AcrossContext.
 	 *
-	 * @param contextOrModule AcrossApplicationHolder instance.
-	 * @return AcrossApplicationContext wrapping the Spring ApplicationContext.
+	 * @param context AcrossContext instance.
+	 * @return AcrossContextInfo of the running context (null if none).
 	 */
-	public static AcrossApplicationContext getAcrossApplicationContext( AbstractAcrossEntity contextOrModule ) {
-		return contextOrModule.getAcrossApplicationContext();
+	public static AcrossContextInfo getContextInfo( AcrossContext context ) {
+		ApplicationContext applicationContext = getApplicationContext( context );
+
+		return applicationContext != null ? applicationContext.getBean( AcrossContextInfo.class ) : null;
+	}
+
+	/**
+	 * Returns the created BeanRegistry for a configured Across entity.
+	 *
+	 * @param acrossEntity AcrossContext/AcrossModule or AcrossContextInfo/AcrossModuleInfo instance
+	 * @return AcrossContextBeanRegistry of the running context (null if none).
+	 */
+	public static AcrossContextBeanRegistry getBeanRegistry( AcrossEntity acrossEntity ) {
+		ApplicationContext applicationContext = getApplicationContext( acrossEntity );
+
+		return applicationContext != null ? applicationContext.getBean( AcrossContextBeanRegistry.class ) : null;
 	}
 
 	/**
@@ -164,32 +201,9 @@ public final class AcrossContextUtils
 	 * @param contextOrModule    AbstractAcrossEntity instance.
 	 * @param applicationContext AcrossApplicationContext instance.
 	 */
-	public static void setAcrossApplicationContext( AbstractAcrossEntity contextOrModule,
-	                                                AcrossApplicationContext applicationContext ) {
-		contextOrModule.setAcrossApplicationContext( applicationContext );
-	}
-
-	/**
-	 * Searches the specified context for a bean of the given type.
-	 *
-	 * @param contextOrModule AcrossApplicationHolder instance.
-	 * @param requiredType    Type the bean should match.
-	 * @param <T>             Type of the matching bean.
-	 * @return Bean found.  Exception is thrown if none is found.
-	 */
-	public static <T> T getBeanOfType( AcrossEntity contextOrModule, Class<T> requiredType ) {
-		return getAcrossApplicationContext( contextOrModule ).getBeanFactory().getBean( requiredType );
-	}
-
-	/**
-	 * Searches the AcrossContext and its parent for beans of the given type.  Will only include exposed beans.
-	 *
-	 * @param context      AcrossContext instance.
-	 * @param requiredType Type the bean should match.
-	 * @param <T>          Type of the matching beans.
-	 */
-	public static <T> Collection<T> getBeansOfType( AcrossContext context, Class<T> requiredType ) {
-		return getBeansOfType( context, requiredType, false );
+	public static void setAcrossApplicationContextHolder( AbstractAcrossEntity contextOrModule,
+	                                                      AcrossApplicationContextHolder applicationContext ) {
+		contextOrModule.setAcrossApplicationContextHolder( applicationContext );
 	}
 
 	/**
@@ -198,47 +212,18 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return Across application context information.
 	 */
-	public static AcrossApplicationContext getAcrossApplicationContext( AcrossEntity contextOrModule ) {
+	public static AcrossApplicationContextHolder getAcrossApplicationContextHolder( AcrossEntity contextOrModule ) {
 		if ( contextOrModule instanceof AbstractAcrossEntity ) {
-			return ( (AbstractAcrossEntity) contextOrModule ).getAcrossApplicationContext();
+			return ( (AbstractAcrossEntity) contextOrModule ).getAcrossApplicationContextHolder();
 		}
 		else if ( contextOrModule instanceof AcrossModuleInfo ) {
-			return ( (AcrossModuleInfo) contextOrModule ).getModule().getAcrossApplicationContext();
+			return ( (AcrossModuleInfo) contextOrModule ).getModule().getAcrossApplicationContextHolder();
 		}
 		else if ( contextOrModule instanceof AcrossContextInfo ) {
-			return ( (AcrossContextInfo) contextOrModule ).getContext().getAcrossApplicationContext();
+			return ( (AcrossContextInfo) contextOrModule ).getContext().getAcrossApplicationContextHolder();
 		}
 
 		return null;
-	}
-
-	/**
-	 * Searches the AcrossContext for beans of the given type.  Depending on the scanModules boolean, this
-	 * will scan the base context and its parent, or all modules separately (including non-exposed beans).
-	 *
-	 * @param context      AcrossContext instance.
-	 * @param requiredType Type the bean should match.
-	 * @param scanModules  True if the individual AcrossModules should be scanned.
-	 * @param <T>          Type of the matching beans.
-	 */
-	public static <T> Collection<T> getBeansOfType( AcrossContext context,
-	                                                Class<T> requiredType,
-	                                                boolean scanModules ) {
-		Set<T> beans = new HashSet<T>();
-		beans.addAll(
-				BeanFactoryUtils.beansOfTypeIncludingAncestors( getBeanFactory( context ), requiredType ).values() );
-
-		if ( scanModules ) {
-			for ( AcrossModule module : context.getModules() ) {
-				ListableBeanFactory beanFactory = getBeanFactory( module );
-
-				if ( beanFactory != null ) {
-					beans.addAll( beanFactory.getBeansOfType( requiredType ).values() );
-				}
-			}
-		}
-
-		return beans;
 	}
 
 	/**
@@ -248,7 +233,7 @@ public final class AcrossContextUtils
 	 * @return Merges set of ApplicationContextConfigurers.
 	 */
 	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context ) {
-		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
+		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<>();
 		configurers.add( new AnnotatedClassConfigurer( AcrossConfig.class ) );
 
 		configurers.add( new AnnotatedClassConfigurer( AcrossInstallerConfig.class ) );
@@ -281,7 +266,7 @@ public final class AcrossContextUtils
 	 */
 	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context,
 	                                                                              AcrossModule module ) {
-		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<ApplicationContextConfigurer>();
+		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<>();
 
 		// First add configurers defined on the context
 		for ( Map.Entry<ApplicationContextConfigurer, ConfigurerScope> configurerEntry : context
