@@ -34,10 +34,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.AnnotatedElement;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Extends a {@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
@@ -47,11 +44,31 @@ import java.util.UUID;
  */
 public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 {
+	private Set<String> exposedBeanNames = new HashSet<>();
+
 	public AcrossListableBeanFactory() {
 	}
 
 	public AcrossListableBeanFactory( BeanFactory parentBeanFactory ) {
 		super( parentBeanFactory );
+	}
+
+
+	/**
+	 * Forcibly expose the beans with the given name.  Beans exposed this way will be exposed no matter
+	 * which expose filter is configured on the module.  They will still pass through the expose transformer.
+	 *
+	 * @param beanNames One or more bean names to expose.
+	 */
+	public void expose( String... beanNames ) {
+		exposedBeanNames.addAll( Arrays.asList( beanNames ) );
+	}
+
+	/**
+	 * @return The array of all forcibly exposed beans.
+	 */
+	public String[] getExposedBeanNames() {
+		return exposedBeanNames.toArray( new String[ exposedBeanNames.size() ] );
 	}
 
 	/**

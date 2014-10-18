@@ -20,6 +20,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
@@ -50,13 +51,13 @@ public class TestAcrossInstallerRegistry
 	private AcrossModule module;
 
 	private InstallerSettings contextSettings;
-	private ConfigurableListableBeanFactory beanFactory;
+	private AcrossListableBeanFactory beanFactory;
 
 	@Before
 	public void setup() {
 		installerRepository = mock( AcrossInstallerRepository.class );
 
-		beanFactory = mock( ConfigurableListableBeanFactory.class );
+		beanFactory = mock( AcrossListableBeanFactory.class );
 
 		AcrossContextBeanRegistry beanRegistry = mock( AcrossContextBeanRegistry.class );
 		when( beanRegistry.getBeanOfType( AcrossInstallerRepository.class ) ).thenReturn( installerRepository );
@@ -164,7 +165,7 @@ public class TestAcrossInstallerRegistry
 		installers( AlwaysRunBeforeContextBootstrapInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		ConfigurableListableBeanFactory moduleBeanFactory = mock( ConfigurableListableBeanFactory.class );
+		AcrossListableBeanFactory moduleBeanFactory = mock( AcrossListableBeanFactory.class );
 
 		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
 				AcrossApplicationContextHolder.class );

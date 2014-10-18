@@ -31,7 +31,7 @@ import java.util.Set;
 
 /**
  * Represents an exposed BeanDefinition.  An exposed BeanDefinition always uses the original
- * ApplicationContext as a
+ * ApplicationContext as a source for the original beans.
  *
  * @author Arne Vandamme
  */

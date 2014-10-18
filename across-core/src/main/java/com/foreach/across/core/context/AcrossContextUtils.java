@@ -166,9 +166,8 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return BeanFactory linked to the ApplicationContext in the holder or null if not yet available.
 	 */
-	public static ConfigurableListableBeanFactory getBeanFactory( AbstractAcrossEntity contextOrModule ) {
-		return contextOrModule.hasApplicationContext() ? contextOrModule.getAcrossApplicationContextHolder()
-		                                                                .getBeanFactory() : null;
+	public static AcrossListableBeanFactory getBeanFactory( AcrossEntity contextOrModule ) {
+		return getAcrossApplicationContextHolder( contextOrModule ).getBeanFactory();
 	}
 
 	/**
