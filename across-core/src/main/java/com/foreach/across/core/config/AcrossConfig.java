@@ -18,6 +18,7 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.MBassadorEventPublisher;
@@ -26,6 +27,8 @@ import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepositoryImpl;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockConfiguration;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
@@ -36,6 +39,10 @@ import javax.sql.DataSource;
 @Configuration
 public class AcrossConfig
 {
+
+	@Autowired
+	private AcrossContext acrossContext;
+
 	@Bean
 	public AcrossEventPublisher eventPublisher() {
 		return new MBassadorEventPublisher();
@@ -44,6 +51,12 @@ public class AcrossConfig
 	@Bean
 	public SpringContextRefreshedEventListener refreshedEventListener() {
 		return new SpringContextRefreshedEventListener();
+	}
+
+	@Bean
+	@Primary
+	public CacheManager cacheManager() {
+		return new AcrossCompositeCacheManager( acrossContext.isDisableNoOpCacheManager() );
 	}
 
 	@Bean
