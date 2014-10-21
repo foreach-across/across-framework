@@ -18,18 +18,15 @@ package com.foreach.across.test;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.database.DatabaseInfo;
 import com.foreach.across.core.installers.InstallerAction;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
@@ -90,12 +87,6 @@ public class AcrossTestContextConfiguration implements EnvironmentAware
 		springLiquibase.setDropFirst( true );
 
 		return springLiquibase;
-	}
-
-	@Bean
-	@Primary
-	public CacheManager cacheManager( AcrossContext acrossContext ) {
-		return new AcrossCompositeCacheManager( acrossContext.isDisableNoOpCacheManager() );
 	}
 
 	@Bean

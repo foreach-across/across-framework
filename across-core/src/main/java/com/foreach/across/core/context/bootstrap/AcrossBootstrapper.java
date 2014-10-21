@@ -119,7 +119,9 @@ public class AcrossBootstrapper
 						null
 				);
 
+				// TODO add global hook to expose beans from the root context
 				exposedBeanRegistry.add( AcrossContextInfo.BEAN );
+				exposedBeanRegistry.add( "cacheManager" );
 
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo =

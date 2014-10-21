@@ -2,15 +2,11 @@ package com.foreach.across.test;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.events.AcrossEventPublisher;
-import com.foreach.across.core.events.MBassadorEventPublisher;
-import com.foreach.across.core.events.SpringContextRefreshedEventListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -42,16 +38,6 @@ public class TestAcrossCompositeCacheManagerWithoutNoOp
 	@AcrossTestConfiguration
 	static class Config implements AcrossContextConfigurer
 	{
-		@Bean
-		public AcrossEventPublisher eventPublisher() {
-			return new MBassadorEventPublisher();
-		}
-
-		@Bean
-		public SpringContextRefreshedEventListener refreshedEventListener() {
-			return new SpringContextRefreshedEventListener();
-		}
-
 		@Override
 		public void configure( AcrossContext context ) {
 			context.setDisableNoOpCacheManager( true );
