@@ -45,7 +45,6 @@ public class TestAcrossCompositeCacheManager
 	@Configuration
 	static class Config
 	{
-
 		@Bean
 		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 			Map<String, AcrossContextConfigurer> configurerMap =

@@ -51,11 +51,10 @@ public class AcrossConfig
 	}
 
 	@Bean
-	// TODO fix this, because it doesn't seem to work
-	// @Lazy
-	// TODO currently this does not work either, but we hardcoded it in the AcrossBootstrapper
-	@Exposed
-	public CacheManager cacheManager( AcrossContext acrossContext ) {
+	@Lazy
+	// TODO currently this does not work, but we hardcoded it in the AcrossBootstrapper
+	//@Exposed
+	public AcrossCompositeCacheManager cacheManager( AcrossContext acrossContext ) {
 		return new AcrossCompositeCacheManager( acrossContext.isDisableNoOpCacheManager() );
 	}
 

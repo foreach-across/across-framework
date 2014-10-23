@@ -32,30 +32,32 @@ public class AcrossCompositeCacheManager implements CacheManager
 
 	/**
 	 * Construct an AcrossCompositeCacheManager from the given delegate CacheManagers.
+	 *
 	 * @param cacheManagers the CacheManagers to delegate to
 	 */
-	public AcrossCompositeCacheManager( boolean disableNoOpCacheManager, CacheManager... cacheManagers) {
+	public AcrossCompositeCacheManager( boolean disableNoOpCacheManager, CacheManager... cacheManagers ) {
 		this( disableNoOpCacheManager );
-		setCacheManagers( Arrays.asList( cacheManagers ) );
+		addCacheManager( cacheManagers );
 	}
 
-
 	/**
-	 * Specify the CacheManagers to delegate to.
+	 * Add a CacheManager to delegate to.
 	 */
-	public void setCacheManagers(Collection<CacheManager> cacheManagers) {
+	public void addCacheManager( CacheManager... cacheManagers ) {
+		Collection<CacheManager> list = Arrays.asList( cacheManagers );
 		if ( this.noOpCacheManagerEnabled ) {
-			this.cacheManagers.addAll( this.cacheManagers.size() - 1, cacheManagers );
-		} else {
-			this.cacheManagers.addAll( cacheManagers );
+			this.cacheManagers.addAll( this.cacheManagers.size() - 1, list );
+		}
+		else {
+			this.cacheManagers.addAll( list );
 		}
 	}
 
 	@Override
 	public Cache getCache( String name ) {
-		for (CacheManager cacheManager : this.cacheManagers) {
-			Cache cache = cacheManager.getCache(name);
-			if (cache != null) {
+		for ( CacheManager cacheManager : this.cacheManagers ) {
+			Cache cache = cacheManager.getCache( name );
+			if ( cache != null ) {
 				return cache;
 			}
 		}
@@ -65,9 +67,9 @@ public class AcrossCompositeCacheManager implements CacheManager
 	@Override
 	public Collection<String> getCacheNames() {
 		Set<String> names = new LinkedHashSet<>();
-		for (CacheManager manager : this.cacheManagers) {
-			names.addAll(manager.getCacheNames());
+		for ( CacheManager manager : this.cacheManagers ) {
+			names.addAll( manager.getCacheNames() );
 		}
-		return Collections.unmodifiableSet(names);
+		return Collections.unmodifiableSet( names );
 	}
 }
