@@ -18,16 +18,20 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * Interface the ApplicationContext must implement for Across to be able to use it.
  */
-public interface AcrossConfigurableApplicationContext
+public interface AcrossConfigurableApplicationContext extends ConfigurableApplicationContext
 {
 	ConfigurableEnvironment getEnvironment();
 
 	void provide( ProvidedBeansMap... beans );
+
+	ConfigurableListableBeanFactory getBeanFactory();
 
 	void addBeanFactoryPostProcessor( BeanFactoryPostProcessor postProcessor );
 

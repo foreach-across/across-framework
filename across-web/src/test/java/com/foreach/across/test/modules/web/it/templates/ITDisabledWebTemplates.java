@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.test.modules.web.it;
+package com.foreach.across.test.modules.web.it.templates;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;

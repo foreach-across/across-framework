@@ -16,7 +16,6 @@
 
 package com.foreach.across.core.context;
 
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 
 /**
@@ -41,8 +40,8 @@ public class AcrossApplicationContextHolder
 		return applicationContext;
 	}
 
-	public ConfigurableListableBeanFactory getBeanFactory() {
-		return applicationContext.getBeanFactory();
+	public AcrossListableBeanFactory getBeanFactory() {
+		return (AcrossListableBeanFactory) applicationContext.getBeanFactory();
 	}
 
 	public AcrossApplicationContextHolder getParent() {

@@ -21,8 +21,10 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 
 /**
  * Initializes a single dispatchers servlet with a root Application context that is initialized upon creation.
@@ -38,9 +40,15 @@ import javax.servlet.ServletException;
 public abstract class AbstractAcrossServletInitializer extends AbstractDispatcherServletInitializer
 {
 	public static final String DYNAMIC_INITIALIZER = "com.foreach.across.modules.web.servlet.AcrossServletInitializer";
+	public static final String ATTRIBUTE_DYNAMIC_MULTIPART_CONFIG =
+			"com.foreach.across.modules.web.servlet.AcrossServletInitializer.MultiPartConfigElement";
+
+	private ServletContext servletContext;
 
 	@Override
 	public void onStartup( ServletContext servletContext ) throws ServletException {
+		this.servletContext = servletContext;
+
 		super.onStartup( servletContext );
 
 		extendServletContext( servletContext );
@@ -99,5 +107,17 @@ public abstract class AbstractAcrossServletInitializer extends AbstractDispatche
 	 * @param servletContext ServletContext while initialization is busy.
 	 */
 	protected void extendServletContext( ServletContext servletContext ) {
+	}
+
+	@Override
+	protected void customizeRegistration( ServletRegistration.Dynamic registration ) {
+		MultipartConfigElement multipartConfigElement = (MultipartConfigElement) servletContext.getAttribute(
+				ATTRIBUTE_DYNAMIC_MULTIPART_CONFIG );
+
+		if ( multipartConfigElement != null ) {
+			registration.setMultipartConfig( multipartConfigElement );
+
+			servletContext.removeAttribute( ATTRIBUTE_DYNAMIC_MULTIPART_CONFIG );
+		}
 	}
 }

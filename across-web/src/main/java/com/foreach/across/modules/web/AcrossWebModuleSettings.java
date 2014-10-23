@@ -19,6 +19,7 @@ package com.foreach.across.modules.web;
 import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.AcrossModuleSettingsRegistry;
 
+import javax.servlet.MultipartConfigElement;
 import java.util.Collections;
 import java.util.Map;
 
@@ -46,15 +47,33 @@ public class AcrossWebModuleSettings extends AcrossModuleSettings
 	 */
 	public static final String TEMPLATES_AUTO_REGISTER = "acrossWeb.templates.autoregister";
 
+	public static final String MULTIPART_AUTO_CONFIGURE = "acrossWeb.multipart.autoconfigure";
+
+	public static final String MULTIPART_SETTINGS = "acrossWeb.multipart.settings";
+
 	public static final String DEVELOPMENT_VIEWS = "acrossWeb.development.views";
 
 	@Override
 	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
 		registry.register( TEMPLATES_ENABLED, Boolean.class, true );
+
+		registry.register( MULTIPART_AUTO_CONFIGURE, Boolean.class, true, "Auto configure a multipart resolver." );
+		registry.register( MULTIPART_SETTINGS, MultipartConfigElement.class,
+		                   null, "MultipartConfigElement holding the multipart upload settings." );
+
 		registry.register( TEMPLATES_AUTO_REGISTER, Boolean.class, true );
 		registry.register( DEVELOPMENT_VIEWS, Map.class, Collections.<String, String>emptyMap(),
 		                   "Map of physical locations for views resources." );
 	}
+
+	public boolean isAutoConfigureMultipartResolver() {
+		return getProperty( MULTIPART_AUTO_CONFIGURE, Boolean.class );
+	}
+
+	/*
+	public String getMultipartResolverBeanName() {
+	}
+	*/
 
 	public boolean isTemplatesEnabled() {
 		return getProperty( TEMPLATES_ENABLED, Boolean.class );

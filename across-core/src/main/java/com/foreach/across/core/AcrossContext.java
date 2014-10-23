@@ -67,6 +67,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private List<AcrossModule> modules = new LinkedList<>();
 
 	private boolean developmentMode;
+	private boolean disableNoOpCacheManager = false;
 	private boolean isBootstrapped = false;
 	private final String id;
 	private ApplicationContext parentApplicationContext;
@@ -126,6 +127,23 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	public void setDevelopmentMode( boolean developmentMode ) {
 		this.developmentMode = developmentMode;
+	}
+
+	/**
+	 * Specifies whether we want to fall back on a {@link org.springframework.cache.support.NoOpCacheManager NoOpCacheManager}
+	 * when asking the global cache manager for a specific cache instance.
+	 * Leaving this enabled potentially avoids many null checks when dealing with the caching layer.
+	 * It does open up the potential for misconfigured caches, as you might inadvertently omit configurations.
+	 *
+	 * @return <code>true</code> if we do not want to fall back on a NoOpCacheManager
+	 * @see com.foreach.across.core.cache.AcrossCompositeCacheManager
+	 */
+	public boolean isDisableNoOpCacheManager() {
+		return disableNoOpCacheManager;
+	}
+
+	public void setDisableNoOpCacheManager( boolean disableNoOpCacheManager ) {
+		this.disableNoOpCacheManager = disableNoOpCacheManager;
 	}
 
 	public void setModules( Collection<AcrossModule> modules ) {

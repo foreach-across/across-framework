@@ -17,16 +17,24 @@
 package com.foreach.across.modules.web.template;
 
 import com.foreach.across.core.AcrossException;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.Callable;
 
 /**
  * Finds and applies the web template configured to a particular request.
+ * @see com.foreach.across.modules.web.template.Template
+ * @see com.foreach.across.modules.web.template.ClearTemplate
  */
 public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 {
@@ -73,23 +81,66 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 
 	private String determineTemplateName( Object handler ) {
 		if ( handler instanceof HandlerMethod ) {
-			// TODO: allow annotations on the controller, ignore ResponseEntity as well for templates
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-			if ( handlerMethod.getMethodAnnotation( ClearTemplate.class ) != null || handlerMethod.getMethodAnnotation(
-					ResponseBody.class ) != null ) {
-				return null;
+			if ( supportsTemplate( handlerMethod ) ) {
+				Template templateAnnotation = handlerMethod.getMethodAnnotation( Template.class );
+
+				if ( templateAnnotation == null ) {
+					// Get template from the controller
+					Class<?> controllerClass = handlerMethod.getBeanType();
+					templateAnnotation = AnnotationUtils.findAnnotation( controllerClass, Template.class );
+				}
+
+				if ( templateAnnotation != null ) {
+					return templateAnnotation.value();
+				}
+
+				return webTemplateRegistry.getDefaultTemplateName();
 			}
-
-			Template templateAnnotation = handlerMethod.getMethodAnnotation( Template.class );
-
-			if ( templateAnnotation != null ) {
-				return templateAnnotation.value();
-			}
-
-			return webTemplateRegistry.getDefaultTemplateName();
 		}
 
 		return null;
+	}
+
+	private boolean supportsTemplate( HandlerMethod handlerMethod ) {
+		// Clearing template on method trumps all
+		if ( handlerMethod.getMethodAnnotation( ClearTemplate.class ) != null ) {
+			return false;
+		}
+
+		// If the handler method has an annotation directly,
+		// we ignore default settings but assume template handling is wanted
+		if ( handlerMethod.getMethodAnnotation( Template.class ) != null ) {
+			return true;
+		}
+
+		Class<?> controllerClass = handlerMethod.getBeanType();
+
+		// ResponseBody methods don't support templates,
+		// clearing template on controller without overriding on method has same effect
+		if ( handlerMethod.getMethodAnnotation( ResponseBody.class ) != null
+				|| AnnotationUtils.findAnnotation( controllerClass, ResponseBody.class ) != null
+				|| AnnotationUtils.findAnnotation( controllerClass, ClearTemplate.class ) != null ) {
+			return false;
+		}
+
+		if ( !handlerMethod.isVoid() ) {
+			Class<?> returnType = handlerMethod.getReturnType().getParameterType();
+
+			// HttpEntity and HttpHeaders don't support templates
+			if ( HttpEntity.class.isAssignableFrom( returnType ) || HttpHeaders.class.isAssignableFrom( returnType ) ) {
+				return false;
+			}
+
+			// Asynchronous calls are not supported either
+			if ( Callable.class.isAssignableFrom( returnType )
+					|| DeferredResult.class.isAssignableFrom( returnType )
+					|| ListenableFuture.class.isAssignableFrom( returnType ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

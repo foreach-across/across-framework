@@ -30,12 +30,13 @@ import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
-import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.core.filters.BeanFilter;
+import com.foreach.across.core.filters.BeanFilterComposite;
+import com.foreach.across.core.filters.NamedBeanFilter;
 import com.foreach.across.core.installers.AcrossBootstrapInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
@@ -120,7 +121,9 @@ public class AcrossBootstrapper
 						null
 				);
 
+				// TODO add global hook to expose beans from the root context
 				exposedBeanRegistry.add( AcrossContextInfo.BEAN );
+				exposedBeanRegistry.add( "cacheManager" );
 
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo =
@@ -273,12 +276,25 @@ public class AcrossBootstrapper
 	                          BeanFilter exposeFilter,
 	                          ExposedBeanDefinitionTransformer exposeTransformer,
 	                          AbstractApplicationContext parentContext ) {
+		BeanFilter exposeFilterToApply = exposeFilter;
+
+		AcrossListableBeanFactory moduleBeanFactory = AcrossContextUtils.getBeanFactory(
+				acrossModuleInfo );
+
+		String[] exposedBeanNames = moduleBeanFactory.getExposedBeanNames();
+
+		if ( exposedBeanNames.length > 0 ) {
+			exposeFilterToApply = new BeanFilterComposite(
+					exposeFilter,
+					new NamedBeanFilter( exposedBeanNames )
+			);
+		}
 
 		ExposedModuleBeanRegistry exposedBeanRegistry = new ExposedModuleBeanRegistry(
 				AcrossContextUtils.getBeanRegistry( acrossModuleInfo.getContextInfo() ),
 				acrossModuleInfo,
 				(AbstractApplicationContext) acrossModuleInfo.getApplicationContext(),
-				exposeFilter,
+				exposeFilterToApply,
 				exposeTransformer
 		);
 

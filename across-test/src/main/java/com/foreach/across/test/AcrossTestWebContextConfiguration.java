@@ -44,8 +44,8 @@ public class AcrossTestWebContextConfiguration implements AcrossContextConfigure
 	@PostConstruct
 	void verifyWebApplicationContext() {
 		Assert.isTrue( applicationContext instanceof WebApplicationContext,
-		               "The test ApplicationContext is not of the required WebApplicationContext type.  " +
-				               "Try annotation your test class with @WebAppConfiguration." );
+		               "The test ApplicationContext is not of the required WebApplicationContext type. " +
+				               "Try annotating your test class with @WebAppConfiguration." );
 	}
 
 	@Override

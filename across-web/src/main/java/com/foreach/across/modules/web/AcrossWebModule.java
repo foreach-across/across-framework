@@ -28,8 +28,6 @@ import com.foreach.across.modules.web.config.*;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
@@ -95,10 +93,20 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	 */
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-		contextConfigurers.add( new AnnotatedClassConfigurer( AcrossWebConfig.class, AcrossWebTemplateConfig.class ) );
-		contextConfigurers.add( new AnnotatedClassConfigurer( AcrossWebDefaultMvcConfiguration.class ) );
-		contextConfigurers.add( new ComponentScanConfigurer( "com.foreach.across.modules.web.menu",
-		                                                     "com.foreach.across.modules.web.ui" ) );
+		contextConfigurers.add(
+				new AnnotatedClassConfigurer(
+						AcrossWebConfig.class,
+						AcrossWebTemplateConfig.class,
+						AcrossWebDefaultMvcConfiguration.class,
+						MultipartResolverConfiguration.class
+				)
+		);
+		contextConfigurers.add(
+				new ComponentScanConfigurer(
+						"com.foreach.across.modules.web.menu",
+						"com.foreach.across.modules.web.ui"
+				)
+		);
 	}
 
 	/**

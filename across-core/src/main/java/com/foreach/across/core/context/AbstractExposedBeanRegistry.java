@@ -16,16 +16,13 @@
 
 package com.foreach.across.core.context;
 
-import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.Collections;
@@ -66,7 +63,7 @@ public abstract class AbstractExposedBeanRegistry
 						moduleName,
 						definition.getKey(),
 						original,
-						determineBeanClass( original, beans.get( definition.getKey() ) )
+						contextBeanRegistry.getBeanTypeFromModule( moduleName, definition.getKey() )
 				);
 
 				candidates.put( definition.getKey(), exposed );
@@ -81,7 +78,7 @@ public abstract class AbstractExposedBeanRegistry
 						contextBeanRegistry,
 						moduleName,
 						singleton.getKey(),
-						determineBeanClass( null, singleton.getValue() )
+						contextBeanRegistry.getBeanTypeFromModule( moduleName, singleton.getKey() )
 				);
 
 				candidates.put( singleton.getKey(), exposed );
@@ -97,51 +94,6 @@ public abstract class AbstractExposedBeanRegistry
 
 	private boolean isScopedTarget( String name ) {
 		return StringUtils.startsWith( name, "scopedTarget." );
-	}
-
-	private Class<?> determineBeanClass( BeanDefinition beanDefinition, Object singleton ) {
-		if ( beanDefinition instanceof AbstractBeanDefinition ) {
-			AbstractBeanDefinition originalAbstract = (AbstractBeanDefinition) beanDefinition;
-
-			if ( !originalAbstract.hasBeanClass() ) {
-				try {
-					originalAbstract.resolveBeanClass( Thread.currentThread().getContextClassLoader() );
-				}
-				catch ( Exception e ) {
-					throw new AcrossException( e );
-				}
-			}
-
-			if ( originalAbstract.hasBeanClass() ) {
-				Class<?> beanClass = originalAbstract.getBeanClass();
-
-				if( FactoryBean.class.isAssignableFrom( beanClass ) ) {
-					BeanDefinition originating = beanDefinition.getOriginatingBeanDefinition();
-
-					if ( originating != null ) {
-						return determineBeanClass( originating, singleton );
-					}
-				}
-				else {
-					return beanClass;
-				}
-			}
-		}
-
-		if ( singleton != null ) {
-			if ( singleton instanceof FactoryBean ) {
-				try {
-					return ((FactoryBean) singleton).getObjectType();
-				}
-				catch ( Exception e ) {
-					return singleton.getClass();
-				}
-			}
-
-			return singleton.getClass();
-		}
-
-		return null;
 	}
 
 	/**
