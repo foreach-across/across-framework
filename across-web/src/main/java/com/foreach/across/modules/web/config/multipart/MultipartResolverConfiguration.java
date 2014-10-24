@@ -1,4 +1,4 @@
-package com.foreach.across.modules.web.config;
+package com.foreach.across.modules.web.config.multipart;
 
 import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
@@ -189,7 +189,7 @@ public class MultipartResolverConfiguration extends AcrossWebDynamicServletConfi
 			}
 			else {
 				LOG.trace( "Creating default MultipartConfigElement" );
-				config = new MultipartConfigElement( System.getProperty( "java.io.tmpdir" ), -1L, -1L, 10 * 1024 );
+				config = new MultipartConfiguration( System.getProperty( "java.io.tmpdir" ), -1L, -1L, 10 * 1024 );
 			}
 		}
 		else {

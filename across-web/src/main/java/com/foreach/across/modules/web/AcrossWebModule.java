@@ -25,6 +25,7 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.web.config.*;
+import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import org.apache.commons.lang3.ArrayUtils;
 
