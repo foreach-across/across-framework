@@ -17,7 +17,7 @@ public class ParameterizedAcrossEventFilter implements IMessageFilter<AcrossEven
 	@Override
 	public boolean accepts( AcrossEvent message, MessageHandler metadata ) {
 		if ( message instanceof ParameterizedAcrossEvent ) {
-			Class[] types = ( (ParameterizedAcrossEvent) message ).getGenericTypes();
+			ResolvableType[] types = ( (ParameterizedAcrossEvent) message ).getEventGenericTypes();
 			ResolvableType eventType = ResolvableType.forMethodParameter( metadata.getHandler(), 0 );
 
 			ResolvableType[] generics = eventType.getGenerics();
@@ -29,7 +29,7 @@ public class ParameterizedAcrossEventFilter implements IMessageFilter<AcrossEven
 			for ( int i = 0; i < generics.length; i++ ) {
 				ResolvableType genericType = generics[i];
 
-				if ( !genericType.getRawClass().isAssignableFrom( types[i] ) ) {
+				if ( !genericType.isAssignableFrom( types[i] ) ) {
 					return false;
 				}
 			}

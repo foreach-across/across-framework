@@ -1,19 +1,28 @@
 package com.foreach.across.test.modules.module2;
 
 import com.foreach.across.core.events.ParameterizedAcrossEvent;
+import org.springframework.core.ResolvableType;
 
 public class GenericEvent<T, Y> extends SimpleEvent implements ParameterizedAcrossEvent
 {
-	private final Class<T> classOne;
-	private final Class<Y> classTwo;
+	private final ResolvableType[] genericTypes;
 
-	public GenericEvent( Class<T> classOne, Class<Y> classTwo ) {
-		this.classOne = classOne;
-		this.classTwo = classTwo;
+	public GenericEvent( Class<T> classOne, Class classTwo ) {
+		genericTypes = new ResolvableType[] {
+				ResolvableType.forClass( classOne ),
+				ResolvableType.forClass( classTwo )
+		};
+	}
+
+	public GenericEvent( Class<T> classOne, ResolvableType resolvableType ) {
+		genericTypes = new ResolvableType[] {
+				ResolvableType.forClass( classOne ),
+				resolvableType
+		};
 	}
 
 	@Override
-	public Class[] getGenericTypes() {
-		return new Class[] { classOne, classTwo };
+	public ResolvableType[] getEventGenericTypes() {
+		return genericTypes;
 	}
 }

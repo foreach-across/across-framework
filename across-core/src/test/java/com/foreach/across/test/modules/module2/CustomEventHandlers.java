@@ -78,7 +78,7 @@ public class CustomEventHandlers
 	}
 
 	@Event
-	public void typedIntegerList( GenericEvent<Integer, List> event ) {
+	public void typedIntegerList( GenericEvent<Integer, List<Integer>> event ) {
 		receivedTypedIntegerList.add( event );
 	}
 

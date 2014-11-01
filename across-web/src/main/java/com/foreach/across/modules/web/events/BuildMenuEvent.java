@@ -17,10 +17,14 @@
 package com.foreach.across.modules.web.events;
 
 import com.foreach.across.core.events.NamedAcrossEvent;
+import com.foreach.across.core.events.ParameterizedAcrossEvent;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.MenuSelector;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.ResolvableType;
+import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 
 /**
  * Event fired by the MenuFactory whenever a menu is being generated.  After menu generation,
@@ -30,20 +34,34 @@ import org.apache.commons.lang3.StringUtils;
  * @see com.foreach.across.modules.web.menu.MenuFactory
  * @see com.foreach.across.modules.web.menu.MenuBuilder
  */
-public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent
+public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent, ParameterizedAcrossEvent
 {
-	private T menu;
+	private final T menu;
+	private final PathBasedMenuBuilder menuBuilder;
+	private final ResolvableType[] genericTypes;
+
 	private MenuSelector selector;
-	private PathBasedMenuBuilder menuBuilder;
 
 	public BuildMenuEvent( T menu ) {
-		this.menu = menu;
-		this.menuBuilder = new PathBasedMenuBuilder();
+		this( menu, new PathBasedMenuBuilder() );
 	}
 
 	public BuildMenuEvent( T menu, PathBasedMenuBuilder menuBuilder ) {
+		this( menu, menuBuilder, ResolvableType.forClass( ClassUtils.getUserClass( menu.getClass() ) ) );
+	}
+
+	public BuildMenuEvent( T menu, PathBasedMenuBuilder menuBuilder, ResolvableType menuResolvableType ) {
+		Assert.notNull( menu );
+
+		genericTypes = new ResolvableType[] { menuResolvableType };
+
 		this.menu = menu;
 		this.menuBuilder = menuBuilder;
+	}
+
+	@Override
+	public final ResolvableType[] getEventGenericTypes() {
+		return genericTypes;
 	}
 
 	public PathBasedMenuBuilder builder() {

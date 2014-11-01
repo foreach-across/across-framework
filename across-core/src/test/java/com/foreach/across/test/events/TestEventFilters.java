@@ -27,12 +27,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.ResolvableType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -100,14 +102,23 @@ public class TestEventFilters
 		assertFalse( eventHandlers.getReceivedTwo().contains( event ) );
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void specificTypedEventsAreReceivedByAllMatchingHandlers() {
 		GenericEvent<Long, HashMap> longMap = new GenericEvent<>( Long.class, HashMap.class );
-		GenericEvent<Integer, List> integerList = new GenericEvent<>( Integer.class, List.class );
+		GenericEvent<Integer, List<Integer>> integerList = new GenericEvent<>(
+				Integer.class,
+				ResolvableType.forClassWithGenerics( ArrayList.class, Integer.class )
+		);
+		GenericEvent<Integer, List<Long>> longList = new GenericEvent<>(
+				Integer.class,
+				ResolvableType.forClassWithGenerics( ArrayList.class, Long.class )
+		);
 		GenericEvent<BigDecimal, Set> decimalSet = new GenericEvent<>( BigDecimal.class, Set.class );
 
 		context.publishEvent( longMap );
 		context.publishEvent( integerList );
+		context.publishEvent( longList );
 		context.publishEvent( decimalSet );
 
 		assertTrue( eventHandlers.getReceivedAll().contains( longMap ) );
@@ -123,6 +134,13 @@ public class TestEventFilters
 		assertFalse( eventHandlers.getReceivedTypedLongMap().contains( integerList ) );
 		assertTrue( eventHandlers.getReceivedTypedIntegerList().contains( integerList ) );
 		assertTrue( eventHandlers.getReceivedTypedNumberCollection().contains( integerList ) );
+
+		assertTrue( eventHandlers.getReceivedAll().contains( longList ) );
+		assertFalse( eventHandlers.getReceivedOne().contains( longList ) );
+		assertFalse( eventHandlers.getReceivedTwo().contains( longList ) );
+		assertFalse( eventHandlers.getReceivedTypedLongMap().contains( longList ) );
+		assertFalse( eventHandlers.getReceivedTypedIntegerList().contains( longList ) );
+		assertTrue( eventHandlers.getReceivedTypedNumberCollection().contains( longList ) );
 
 		assertTrue( eventHandlers.getReceivedAll().contains( decimalSet ) );
 		assertFalse( eventHandlers.getReceivedOne().contains( decimalSet ) );
