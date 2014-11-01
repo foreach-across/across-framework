@@ -17,10 +17,10 @@
 package com.foreach.across.modules.web.mvc;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
+import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
-import net.engio.mbassy.listener.Handler;
 import org.springframework.aop.ClassFilter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
@@ -73,7 +73,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 		setInterceptors( interceptor );
 	}
 
-	@Handler
+	@Event
 	protected void rescan( AcrossContextBootstrappedEvent event ) {
 		for ( AcrossModuleInfo moduleInfo : event.getModules() ) {
 			scan( AcrossContextUtils.getApplicationContext( moduleInfo.getModule() ) );

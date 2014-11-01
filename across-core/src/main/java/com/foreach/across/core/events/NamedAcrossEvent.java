@@ -17,11 +17,12 @@
 package com.foreach.across.core.events;
 
 /**
+ * Event with a specific name that can be used for name based filtering of events.
  *
+ * @see com.foreach.across.core.events.EventNameFilter
  */
 public interface NamedAcrossEvent extends AcrossEvent
 {
-
 	/**
 	 * @return Name associated with this event.
 	 */

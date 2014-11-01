@@ -20,42 +20,42 @@ import com.foreach.across.core.annotations.EventName;
 import net.engio.mbassy.listener.IMessageFilter;
 import net.engio.mbassy.listener.MessageHandler;
 import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 
 /**
  * Filters events based on the @EventName annotation and the eventName property of the message.
- * If the message is not a NamedAcrossEvent instance, it will not be handled.
+ * If the message is not a NamedAcrossEvent instance and the handler defines an EventName annotation,
+ * it will not be handled.  If the handler does not define an EventName, the message can be handled.
  */
-public class EventNameFilter implements IMessageFilter
+public class EventNameFilter implements IMessageFilter<AcrossEvent>
 {
+	public boolean accepts( AcrossEvent message, MessageHandler metadata ) {
+		EventName methodAnnotation = findEventNameAnnotation( metadata );
 
-	private static final Logger LOG = LoggerFactory.getLogger( EventNameFilter.class );
+		if ( methodAnnotation == null ) {
+			return true;
+		}
 
-	public boolean accepts( Object message, MessageHandler metadata ) {
 		if ( message instanceof NamedAcrossEvent ) {
 			String eventName = ( (NamedAcrossEvent) message ).getEventName();
+			String[] acceptable = methodAnnotation.value();
 
-			Annotation[][] annotationMap = metadata.getHandler().getParameterAnnotations();
-
-			if ( annotationMap.length > 0 ) {
-				for ( Annotation annotation : annotationMap[0] ) {
-					if ( annotation instanceof EventName ) {
-						String[] acceptable = ( (EventName) annotation ).value();
-
-						return ArrayUtils.contains( acceptable, eventName );
-					}
-				}
-			}
-
-		}
-		else {
-			LOG.trace( "Message type {} does not implement NamedAcrossEvent",
-			           message != null ? message.getClass() : null );
+			return ArrayUtils.contains( acceptable, eventName );
 		}
 
+		// Event name is declared but event is not named, refuse it
 		return false;
+	}
+
+	private EventName findEventNameAnnotation( MessageHandler metadata ) {
+		for ( Annotation annotation : metadata.getHandler().getParameterAnnotations()[0] ) {
+			if ( annotation instanceof EventName ) {
+				return (EventName) annotation;
+			}
+		}
+
+		return null;
 	}
 }

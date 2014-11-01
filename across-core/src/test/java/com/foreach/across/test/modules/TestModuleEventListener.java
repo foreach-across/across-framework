@@ -17,7 +17,7 @@
 package com.foreach.across.test.modules;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
-import net.engio.mbassy.listener.Handler;
+import com.foreach.across.core.annotations.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class TestModuleEventListener
 		return eventsReceived;
 	}
 
-	@Handler
+	@Event
 	public void receiveEvent( TestEvent event ) {
 		eventsReceived.add( event );
 	}

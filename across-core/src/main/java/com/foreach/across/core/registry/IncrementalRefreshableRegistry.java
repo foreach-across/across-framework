@@ -16,11 +16,11 @@
 
 package com.foreach.across.core.registry;
 
+import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
-import net.engio.mbassy.listener.Handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 
@@ -31,7 +31,7 @@ import javax.annotation.PostConstruct;
  * every time a module has bootstrapped.  Modules later in the bootstrapping order will immediately see
  * all members added by previous modules, whereas a regular RefreshableRegistry will only refresh its
  * members after the entire context has been bootstrapped.</p>
-  */
+ */
 @Refreshable
 public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 {
@@ -55,7 +55,7 @@ public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 		eventBus.subscribe( this );
 	}
 
-	@Handler
+	@Event
 	void moduleBootstrapped( AcrossModuleBootstrappedEvent moduleBootstrapped ) {
 		refresh();
 	}

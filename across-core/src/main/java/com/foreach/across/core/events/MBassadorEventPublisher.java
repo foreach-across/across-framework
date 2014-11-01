@@ -38,7 +38,7 @@ public class MBassadorEventPublisher extends MBassador<AcrossEvent> implements A
 	private final Map<Object, Boolean> listeners = new WeakHashMap<>();
 
 	public MBassadorEventPublisher() {
-		super( BusConfiguration.Default() );
+		super( BusConfiguration.SyncAsync() );
 
 		this.addErrorHandler( new IPublicationErrorHandler()
 		{

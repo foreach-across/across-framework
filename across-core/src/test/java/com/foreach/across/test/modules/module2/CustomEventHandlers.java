@@ -17,21 +17,21 @@
 package com.foreach.across.test.modules.module2;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
+import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.EventName;
-import com.foreach.across.core.events.EventNameFilter;
-import net.engio.mbassy.listener.Filter;
-import net.engio.mbassy.listener.Handler;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @AcrossEventHandler
 public class CustomEventHandlers
 {
-
 	private Set<SimpleEvent> receivedAll = new HashSet<SimpleEvent>();
 	private Set<SimpleEvent> receivedOne = new HashSet<SimpleEvent>();
 	private Set<SimpleEvent> receivedTwo = new HashSet<SimpleEvent>();
+
+	private Set<SimpleEvent> receivedTypedLongMap = new HashSet<>();
+	private Set<SimpleEvent> receivedTypedIntegerList = new HashSet<>();
+	private Set<SimpleEvent> receivedTypedNumberCollection = new HashSet<>();
 
 	public Set<SimpleEvent> getReceivedAll() {
 		return receivedAll;
@@ -45,18 +45,45 @@ public class CustomEventHandlers
 		return receivedTwo;
 	}
 
-	@Handler
+	public Set<SimpleEvent> getReceivedTypedLongMap() {
+		return receivedTypedLongMap;
+	}
+
+	public Set<SimpleEvent> getReceivedTypedIntegerList() {
+		return receivedTypedIntegerList;
+	}
+
+	public Set<SimpleEvent> getReceivedTypedNumberCollection() {
+		return receivedTypedNumberCollection;
+	}
+
+	@Event
 	public void allEvents( SimpleEvent event ) {
 		receivedAll.add( event );
 	}
 
-	@Handler(filters = @Filter(EventNameFilter.class))
+	@Event
 	public void namedOne( @EventName({ "one", "three" }) NamedEvent event ) {
 		receivedOne.add( event );
 	}
 
-	@Handler(filters = @Filter(EventNameFilter.class))
+	@Event
 	public void namedTwo( @EventName({ "two", "three" }) NamedEvent event ) {
 		receivedTwo.add( event );
+	}
+
+	@Event
+	public void typedLongMap( GenericEvent<Long, Map> event ) {
+		receivedTypedLongMap.add( event );
+	}
+
+	@Event
+	public void typedIntegerList( GenericEvent<Integer, List> event ) {
+		receivedTypedIntegerList.add( event );
+	}
+
+	@Event
+	public void typedNumberCollection( GenericEvent<Number, Collection> event ) {
+		receivedTypedNumberCollection.add( event );
 	}
 }

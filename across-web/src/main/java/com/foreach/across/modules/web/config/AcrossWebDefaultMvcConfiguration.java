@@ -19,13 +19,13 @@ package com.foreach.across.modules.web.config;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossEventHandler;
+import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.mvc.*;
-import net.engio.mbassy.listener.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
@@ -154,7 +154,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	/**
 	 * Reload the configuration by applying all WebMvcConfigurers in the context.
 	 */
-	@Handler
+	@Event
 	protected void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
 		RefreshableRegistry<WebMvcConfigurer> webMvcConfigurers = webMvcConfigurers();
 		webMvcConfigurers.refresh();

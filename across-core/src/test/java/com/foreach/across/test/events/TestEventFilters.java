@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package com.foreach.across.test;
+package com.foreach.across.test.events;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.module1.TestModule1;
-import com.foreach.across.test.modules.module2.CustomEventHandlers;
-import com.foreach.across.test.modules.module2.NamedEvent;
-import com.foreach.across.test.modules.module2.SimpleEvent;
-import com.foreach.across.test.modules.module2.TestModule2;
+import com.foreach.across.test.modules.module2.*;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +32,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -97,6 +98,38 @@ public class TestEventFilters
 		assertTrue( eventHandlers.getReceivedAll().contains( event ) );
 		assertFalse( eventHandlers.getReceivedOne().contains( event ) );
 		assertFalse( eventHandlers.getReceivedTwo().contains( event ) );
+	}
+
+	@Test
+	public void specificTypedEventsAreReceivedByAllMatchingHandlers() {
+		GenericEvent<Long, HashMap> longMap = new GenericEvent<>( Long.class, HashMap.class );
+		GenericEvent<Integer, List> integerList = new GenericEvent<>( Integer.class, List.class );
+		GenericEvent<BigDecimal, Set> decimalSet = new GenericEvent<>( BigDecimal.class, Set.class );
+
+		context.publishEvent( longMap );
+		context.publishEvent( integerList );
+		context.publishEvent( decimalSet );
+
+		assertTrue( eventHandlers.getReceivedAll().contains( longMap ) );
+		assertFalse( eventHandlers.getReceivedOne().contains( longMap ) );
+		assertFalse( eventHandlers.getReceivedTwo().contains( longMap ) );
+		assertTrue( eventHandlers.getReceivedTypedLongMap().contains( longMap ) );
+		assertFalse( eventHandlers.getReceivedTypedIntegerList().contains( longMap ) );
+		assertFalse( eventHandlers.getReceivedTypedNumberCollection().contains( longMap ) );
+
+		assertTrue( eventHandlers.getReceivedAll().contains( integerList ) );
+		assertFalse( eventHandlers.getReceivedOne().contains( integerList ) );
+		assertFalse( eventHandlers.getReceivedTwo().contains( integerList ) );
+		assertFalse( eventHandlers.getReceivedTypedLongMap().contains( integerList ) );
+		assertTrue( eventHandlers.getReceivedTypedIntegerList().contains( integerList ) );
+		assertTrue( eventHandlers.getReceivedTypedNumberCollection().contains( integerList ) );
+
+		assertTrue( eventHandlers.getReceivedAll().contains( decimalSet ) );
+		assertFalse( eventHandlers.getReceivedOne().contains( decimalSet ) );
+		assertFalse( eventHandlers.getReceivedTwo().contains( decimalSet ) );
+		assertFalse( eventHandlers.getReceivedTypedLongMap().contains( decimalSet ) );
+		assertFalse( eventHandlers.getReceivedTypedIntegerList().contains( decimalSet ) );
+		assertTrue( eventHandlers.getReceivedTypedNumberCollection().contains( decimalSet ) );
 	}
 
 	@Configuration
