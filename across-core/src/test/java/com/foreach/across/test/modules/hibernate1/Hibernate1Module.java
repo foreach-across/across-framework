@@ -17,6 +17,10 @@
 package com.foreach.across.test.modules.hibernate1;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
+
+import java.util.Set;
 
 public class Hibernate1Module extends AcrossModule
 {
@@ -28,5 +32,10 @@ public class Hibernate1Module extends AcrossModule
 	@Override
 	public String getDescription() {
 		return null;
+	}
+
+	@Override
+	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+		contextConfigurers.add( new ComponentScanConfigurer( getClass().getPackage().getName() ) );
 	}
 }

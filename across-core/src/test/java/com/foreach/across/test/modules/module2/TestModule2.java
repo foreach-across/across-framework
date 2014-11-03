@@ -18,7 +18,11 @@ package com.foreach.across.test.modules.module2;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.util.Set;
 
 @AcrossDepends(required = "TestModule1")
 public class TestModule2 extends AcrossModule
@@ -38,5 +42,10 @@ public class TestModule2 extends AcrossModule
 	@Override
 	public String getDescription() {
 		return "Module 2 for unit/integration tests";
+	}
+
+	@Override
+	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+		contextConfigurers.add( new ComponentScanConfigurer( getClass().getPackage().getName() ) );
 	}
 }

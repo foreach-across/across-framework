@@ -171,7 +171,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 	 * @param contextConfigurers Set of existing configurers to add to.
 	 */
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-		contextConfigurers.add( new ComponentScanConfigurer( getClass().getPackage().getName() ) );
+		contextConfigurers.add( new ComponentScanConfigurer( getClass().getPackage().getName() + ".config" ) );
 	}
 
 	public Set<ApplicationContextConfigurer> getApplicationContextConfigurers() {

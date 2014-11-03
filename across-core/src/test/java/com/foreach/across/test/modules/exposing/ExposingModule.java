@@ -17,6 +17,10 @@
 package com.foreach.across.test.modules.exposing;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
+
+import java.util.Set;
 
 public class ExposingModule extends AcrossModule
 {
@@ -40,6 +44,11 @@ public class ExposingModule extends AcrossModule
 	@Override
 	public String getDescription() {
 		return null;
+	}
+
+	@Override
+	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+		contextConfigurers.add( new ComponentScanConfigurer( getClass().getPackage().getName() ) );
 	}
 }
 
