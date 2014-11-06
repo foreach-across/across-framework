@@ -17,8 +17,10 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import com.foreach.across.core.context.support.MessageSourceBuilder;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
@@ -73,5 +75,12 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 				beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}
+	}
+
+	@Override
+	protected void initMessageSource() {
+		new MessageSourceBuilder( getBeanFactory() ).build( getInternalParentMessageSource() );
+
+		super.initMessageSource();
 	}
 }

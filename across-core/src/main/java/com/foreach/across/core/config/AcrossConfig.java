@@ -18,8 +18,9 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
+import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
+import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.MBassadorEventPublisher;
@@ -28,8 +29,11 @@ import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepositoryImpl;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockConfiguration;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockManager;
-import org.springframework.cache.CacheManager;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.HierarchicalMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.sql.DataSource;
 
@@ -39,7 +43,6 @@ import javax.sql.DataSource;
 @Configuration
 public class AcrossConfig
 {
-
 	@Bean
 	public AcrossEventPublisher eventPublisher() {
 		return new MBassadorEventPublisher();
@@ -48,6 +51,22 @@ public class AcrossConfig
 	@Bean
 	public SpringContextRefreshedEventListener refreshedEventListener() {
 		return new SpringContextRefreshedEventListener();
+	}
+
+	@Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
+	public MessageSource messageSource( ApplicationContext applicationContext ) {
+		ApplicationContext parent = applicationContext.getParent();
+		HierarchicalMessageSource endpoint = null;
+
+		// Put the parent message sources *before* the AcrossContext source,
+		// allows for easy message overriding in the configured application
+		if ( parent != null && parent.containsLocalBean( AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME ) ) {
+			endpoint = MessageSourceBuilder.findHighestAvailableMessageSource(
+					parent.getBean( AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME, MessageSource.class )
+			);
+		}
+
+		return new AcrossContextOrderedMessageSource( endpoint );
 	}
 
 	@Bean

@@ -30,6 +30,7 @@ import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
+import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
@@ -47,6 +48,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.HierarchicalMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.util.ClassUtils;
 

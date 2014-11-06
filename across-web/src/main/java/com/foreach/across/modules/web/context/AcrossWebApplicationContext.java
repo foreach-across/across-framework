@@ -19,6 +19,7 @@ package com.foreach.across.modules.web.context;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import com.foreach.across.core.context.support.MessageSourceBuilder;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -79,5 +80,12 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 				listableBeanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}
+	}
+
+	@Override
+	protected void initMessageSource() {
+		new MessageSourceBuilder( getBeanFactory() ).build( getInternalParentMessageSource() );
+
+		super.initMessageSource();
 	}
 }
