@@ -141,7 +141,7 @@ public class PathBasedMenuBuilder
 
 			pathMap.put( item, path );
 
-			while ( !current.isRoot() && !path.startsWith( pathMap.get( current ) ) ) {
+			while ( !current.isRoot() && !path.startsWith( suffixPath( pathMap.get( current ) ) ) ) {
 				current = current.getParent();
 			}
 
@@ -150,6 +150,10 @@ public class PathBasedMenuBuilder
 		}
 
 		return root;
+	}
+
+	private String suffixPath( String path ) {
+		return path.endsWith( "/" ) ? path : path + "/";
 	}
 
 	/**

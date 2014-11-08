@@ -122,7 +122,9 @@ public class TestPathBasedMenuBuilder
 		       .and()
 		       .item( "/news/international", "International news", "intnl" )
 		       .and()
-		       .item( "/news/national", "National news", "national" );
+		       .item( "/news/national", "National news", "national" )
+		       .and()
+		       .item( "/news/nationalAlmost", "Almost national news", "nationalAlmost" );
 
 		Menu cursor = builder.build();
 		assertNotNull( cursor );
@@ -136,6 +138,7 @@ public class TestPathBasedMenuBuilder
 		verify( cursor.getFirstItem(), "/news/international/australia", "Australia", "aussies" );
 
 		verify( news.getItems().get( 1 ), "/news/national", "National news", "national" );
+		verify( news.getItems().get( 2 ), "/news/nationalAlmost", "Almost national news", "nationalAlmost" );
 	}
 
 	@Test
