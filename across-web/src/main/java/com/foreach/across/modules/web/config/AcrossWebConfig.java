@@ -19,6 +19,7 @@ package com.foreach.across.modules.web.config;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
+import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.context.AcrossWebArgumentResolver;
@@ -107,7 +108,15 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter
 
 	@Bean
 	public WebResourceRegistryInterceptor webResourceRegistryInterceptor() {
-		return new WebResourceRegistryInterceptor( webResourcePackageManager() );
+		WebResourceRegistryInterceptor interceptor = new WebResourceRegistryInterceptor( webResourcePackageManager() );
+		interceptor.setWebResourceTranslators( webResourceTranslatorRegistry() );
+
+		return interceptor;
+	}
+
+	@Bean
+	protected RefreshableRegistry<WebResourceTranslator> webResourceTranslatorRegistry() {
+		return new RefreshableRegistry<>( WebResourceTranslator.class, true );
 	}
 
 	@Bean
