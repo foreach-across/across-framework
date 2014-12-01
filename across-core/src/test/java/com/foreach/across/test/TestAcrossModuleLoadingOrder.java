@@ -23,6 +23,7 @@ import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapOrderBuilder;
 import org.junit.Test;
+import org.springframework.core.Ordered;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,6 +45,10 @@ public class TestAcrossModuleLoadingOrder
 	private ModuleTen requiresOneAndOptionalTwoNine = new ModuleTen();
 	private ModuleEleven postProcessorRequiringOther = new ModuleEleven();
 	private ModuleTwelve postProcessor = new ModuleTwelve();
+	private ModuleFifteen postProcessorOptionalOther = new ModuleFifteen();
+	private ModuleThirteen infraOne = new ModuleThirteen();
+	private ModuleFourteen infraOptionalInfraOne = new ModuleFourteen();
+	private ModuleSixteen firstInfrastructure = new ModuleSixteen();
 
 	@Test
 	public void resetEnabled() {
@@ -126,6 +131,14 @@ public class TestAcrossModuleLoadingOrder
 	}
 
 	@Test
+	public void optionalAndOrderedInfrastructureOrdering() {
+		Collection<AcrossModule> added = list( one, infraOptionalInfraOne, infraOne, firstInfrastructure );
+		Collection<AcrossModule> ordered = order( added );
+
+		assertEquals( list( firstInfrastructure, infraOne, infraOptionalInfraOne, one ), ordered );
+	}
+
+	@Test
 	public void disablingInfrastructureModuleIsNoProblem() {
 		Collection<AcrossModule> added =
 				list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three, infrastructureRequiringTwo );
@@ -134,7 +147,7 @@ public class TestAcrossModuleLoadingOrder
 		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder( added );
 		Collection<AcrossModule> ordered = moduleBootstrapOrderBuilder.getOrderedModules();
 
-		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo, infrastructureRequiringTwo ),
+		assertEquals( list( two, infrastructureRequiringTwo, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ),
 		              ordered );
 
 		Collection<AcrossModule> dependencies = moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( one );
@@ -143,12 +156,12 @@ public class TestAcrossModuleLoadingOrder
 
 	@Test
 	public void postProcessorModulesGetPushedToLastPossibleSpot() {
-		Collection<AcrossModule> added = list( postProcessorRequiringOther, postProcessor, one, requiresTwo, two, three,
-		                                       infrastructureRequiringTwo );
+		Collection<AcrossModule> added = list( postProcessorRequiringOther, postProcessorOptionalOther, postProcessor,
+		                                       one, requiresTwo, two, three, infrastructureRequiringTwo );
 		Collection<AcrossModule> ordered = order( added );
 
 		assertEquals( list( two, infrastructureRequiringTwo, one, requiresTwo, three, postProcessor,
-		                    postProcessorRequiringOther ), ordered );
+		                    postProcessorRequiringOther, postProcessorOptionalOther ), ordered );
 	}
 
 	@Test(expected = RuntimeException.class)
@@ -336,6 +349,44 @@ public class TestAcrossModuleLoadingOrder
 		@Override
 		public String getName() {
 			return "ModuleTwelve";
+		}
+	}
+
+	@AcrossRole(AcrossModuleRole.INFRASTRUCTURE)
+	public static class ModuleThirteen extends ModuleOne
+	{
+		@Override
+		public String getName() {
+			return "ModuleThirteen";
+		}
+	}
+
+	@AcrossRole(AcrossModuleRole.INFRASTRUCTURE)
+	@AcrossDepends(optional = "ModuleThirteen")
+	public static class ModuleFourteen extends ModuleOne
+	{
+		@Override
+		public String getName() {
+			return "ModuleFourteen";
+		}
+	}
+
+	@AcrossRole(AcrossModuleRole.POSTPROCESSOR)
+	@AcrossDepends(optional = "ModuleEleven")
+	public static class ModuleFifteen extends ModuleOne
+	{
+		@Override
+		public String getName() {
+			return "ModuleFifteen";
+		}
+	}
+
+	@AcrossRole(value = AcrossModuleRole.INFRASTRUCTURE, order = Ordered.HIGHEST_PRECEDENCE)
+	public static class ModuleSixteen extends ModuleOne
+	{
+		@Override
+		public String getName() {
+			return "ModuleSixteen";
 		}
 	}
 }

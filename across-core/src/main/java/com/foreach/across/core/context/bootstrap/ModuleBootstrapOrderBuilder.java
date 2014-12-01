@@ -79,16 +79,14 @@ public class ModuleBootstrapOrderBuilder
 	}
 
 	private void orderModules() {
+		buildModuleMetaData();
+
 		orderedModules = new LinkedList<>();
 
-		for ( AcrossModule module : source ) {
-			modulesById.put( module.getName(), module );
-			modulesById.put( module.getClass().getName(), module );
-		}
+		List<AcrossModule> orderedByRole = applyRoleOrder( this.source );
 
-		for ( AcrossModule module : source ) {
+		for ( AcrossModule module : orderedByRole ) {
 			buildDependencies( module );
-			determineRole( module );
 		}
 
 		applyEnabledInfrastructureModules();
@@ -97,7 +95,7 @@ public class ModuleBootstrapOrderBuilder
 		Map<AcrossModule, Boolean> requiredStack = new HashMap<>();
 
 		// Place in required order
-		for ( AcrossModule module : source ) {
+		for ( AcrossModule module : orderedByRole ) {
 			place( requiredStack, orderedModules, module );
 		}
 
@@ -107,15 +105,14 @@ public class ModuleBootstrapOrderBuilder
 		do {
 			shuffled = false;
 
-			for ( AcrossModule module : source ) {
+			for ( AcrossModule module : orderedByRole ) {
 				AcrossModuleRole role = getModuleRole( module );
-				if ( role != AcrossModuleRole.INFRASTRUCTURE && role != AcrossModuleRole.POSTPROCESSOR ) {
-					Collection<AcrossModule> optionalModules = getAppliedOptionalDependencies( module );
+				Collection<AcrossModule> optionalModules = getAppliedOptionalDependencies( module );
 
-					for ( AcrossModule optional : optionalModules ) {
-						if ( moveToIndexIfPossible( orderedModules, optional, orderedModules.indexOf( module ) ) ) {
-							shuffled = true;
-						}
+				for ( AcrossModule optional : optionalModules ) {
+					if ( hasModuleRole( optional, role ) &&
+							moveToIndexIfPossible( orderedModules, optional, orderedModules.indexOf( module ) ) ) {
+						shuffled = true;
 					}
 				}
 			}
@@ -123,6 +120,42 @@ public class ModuleBootstrapOrderBuilder
 		while ( shuffled );
 
 		verifyModuleList( orderedModules );
+	}
+
+	private void buildModuleMetaData() {
+		for ( AcrossModule module : source ) {
+			modulesById.put( module.getName(), module );
+			modulesById.put( module.getClass().getName(), module );
+			determineRole( module );
+		}
+	}
+
+	private List<AcrossModule> applyRoleOrder( final List<AcrossModule> source ) {
+		List<AcrossModule> ordered = new ArrayList<>( source );
+
+		Collections.sort( ordered, new Comparator<AcrossModule>()
+		{
+			@Override
+			public int compare( AcrossModule left, AcrossModule right ) {
+				Integer comparison = Integer.compare( getRoleOrder( left ), getRoleOrder( right ) );
+
+				if ( comparison == 0 ) {
+					comparison = Integer.compare( getOrderInRole( left ), getOrderInRole( right ) );
+				}
+
+				if ( comparison == 0 ) {
+					comparison = Integer.compare( source.indexOf( left ), source.indexOf( right ) );
+				}
+
+				return comparison;
+			}
+		} );
+
+		return ordered;
+	}
+
+	private boolean hasModuleRole( AcrossModule module, AcrossModuleRole role ) {
+		return getModuleRole( module ).equals( role );
 	}
 
 	private boolean moveToIndexIfPossible( LinkedList<AcrossModule> orderedModules,
@@ -185,9 +218,8 @@ public class ModuleBootstrapOrderBuilder
 					for ( Map.Entry<AcrossModule, AcrossModuleRole> targetModuleRole : moduleRoles.entrySet() ) {
 						AcrossModule target = targetModuleRole.getKey();
 
-						if ( targetModuleRole
-								.getValue() != AcrossModuleRole.INFRASTRUCTURE && !appliedRequiredDependencies.get(
-								infrastructure ).contains( target ) ) {
+						if ( targetModuleRole.getValue() != AcrossModuleRole.INFRASTRUCTURE
+								&& !appliedRequiredDependencies.get( infrastructure ).contains( target ) ) {
 							appliedRequiredDependencies.get( targetModuleRole.getKey() ).add( moduleRole.getKey() );
 						}
 					}
@@ -324,5 +356,26 @@ public class ModuleBootstrapOrderBuilder
 		else {
 			moduleRoles.put( module, AcrossModuleRole.APPLICATION );
 		}
+	}
+
+	private int getRoleOrder( AcrossModule module ) {
+		switch ( getModuleRole( module ) ) {
+			case INFRASTRUCTURE:
+				return -1;
+			case POSTPROCESSOR:
+				return 1;
+			default:
+				return 0;
+		}
+	}
+
+	private int getOrderInRole( AcrossModule module ) {
+		Annotation role = AnnotationUtils.getAnnotation( module.getClass(), AcrossRole.class );
+
+		if ( role != null ) {
+			return (Integer) AnnotationUtils.getAnnotationAttributes( role ).get( "order" );
+		}
+
+		return 0;
 	}
 }

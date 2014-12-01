@@ -33,4 +33,9 @@ import java.lang.annotation.Target;
 public @interface AcrossRole
 {
 	AcrossModuleRole value();
+
+	/**
+	 * The sort order of the module within all modules with the same role.
+	 */
+	int order() default 0;
 }
