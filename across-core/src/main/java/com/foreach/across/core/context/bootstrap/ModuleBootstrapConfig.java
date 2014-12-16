@@ -37,9 +37,8 @@ public class ModuleBootstrapConfig
 
 	private BeanFilter exposeFilter;
 	private ExposedBeanDefinitionTransformer exposeTransformer;
-	private Set<ApplicationContextConfigurer> applicationContextConfigurers =
-			new LinkedHashSet<ApplicationContextConfigurer>();
-	private Collection<Object> installers = new LinkedList<Object>();
+	private Set<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
+	private Collection<Object> installers = new LinkedList<>();
 	private InstallerSettings installerSettings;
 
 	public ModuleBootstrapConfig( AcrossModule module, int bootstrapIndex ) {

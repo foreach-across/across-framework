@@ -34,10 +34,7 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AcrossModule extends AbstractAcrossEntity implements AcrossModuleEntity
 {
@@ -48,8 +45,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 
 	private BeanFilter exposeFilter = defaultExposeFilter();
 	private ExposedBeanDefinitionTransformer exposeTransformer = null;
-	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
-			new HashSet<>();
+	private final Set<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
 
 	private final Set<String> runtimeDependencies = new HashSet<>();
 
