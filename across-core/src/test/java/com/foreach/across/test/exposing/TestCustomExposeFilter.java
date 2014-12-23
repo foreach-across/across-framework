@@ -22,6 +22,7 @@ import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.ClassBeanFilter;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.test.modules.exposing.*;
+import com.foreach.across.test.modules.module1.SomeInterface;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,6 +72,9 @@ public class TestCustomExposeFilter
 	@Autowired(required = false)
 	private SimpleConfiguration simpleConfiguration;
 
+	@Autowired(required = false)
+	private SomeInterface someInterface;
+
 	@Test
 	public void serviceIsFromServiceModule() {
 		assertNotNull( myService );
@@ -100,6 +104,11 @@ public class TestCustomExposeFilter
 		assertEquals( 5, exposedBeans.size() );
 		assertEquals( 5, moduleBeans.size() );
 		assertEquals( moduleBeans, exposedBeans );
+	}
+
+	@Test
+	public void interfaceFromFactoryBeanIsAvailable() {
+		assertNotNull( someInterface );
 	}
 
 	@Configuration
@@ -148,7 +157,7 @@ public class TestCustomExposeFilter
 		@Bean
 		public ExposingModule mybeanModule() {
 			ExposingModule module = new ExposingModule( "mybean" );
-			module.setExposeFilter( new ClassBeanFilter( MyBean.class ) );
+			module.setExposeFilter( new ClassBeanFilter( MyBean.class, SomeInterface.class ) );
 
 			return module;
 		}

@@ -17,6 +17,7 @@
 package com.foreach.across.core.filters;
 
 import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.type.MethodMetadata;
@@ -51,6 +52,17 @@ public abstract class AbstractClassBasedBeanFilter<T> implements BeanFilter
 			for ( T allowed : allowedItems ) {
 				if ( matches( targetClass, allowed ) ) {
 					return true;
+				}
+			}
+
+			if ( bean instanceof FactoryBean ) {
+				// in case of a factory bean, check it as well
+				targetClass = ( (FactoryBean) bean ).getObjectType();
+
+				for ( T allowed : allowedItems ) {
+					if ( matches( targetClass, allowed ) ) {
+						return true;
+					}
 				}
 			}
 		}

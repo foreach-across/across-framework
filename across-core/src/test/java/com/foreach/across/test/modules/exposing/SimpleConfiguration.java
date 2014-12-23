@@ -17,6 +17,8 @@
 package com.foreach.across.test.modules.exposing;
 
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.test.modules.module1.SomeInterface;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,5 +34,32 @@ public class SimpleConfiguration
 	@Exposed
 	public MyBean exposedBean() {
 		return new MyBean();
+	}
+
+	@Bean
+	public FactoryBean<SomeInterface> someInterfaceFactory() {
+		return new FactoryBean<SomeInterface>()
+		{
+			@Override
+			public SomeInterface getObject() throws Exception {
+				return new SomeInterface()
+				{
+					@Override
+					public int getOrder() {
+						return 0;
+					}
+				};
+			}
+
+			@Override
+			public Class<?> getObjectType() {
+				return SomeInterface.class;
+			}
+
+			@Override
+			public boolean isSingleton() {
+				return false;
+			}
+		};
 	}
 }
