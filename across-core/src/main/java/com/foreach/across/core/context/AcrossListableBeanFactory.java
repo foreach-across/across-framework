@@ -160,8 +160,11 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 					registry = new RefreshableRegistry<>( resolvableType, annotation.includeModuleInternals() );
 				}
 
+				String registryBeanName = RefreshableRegistry.class.getName() + "~" + UUID.randomUUID().toString();
+
 				autowireBean( registry );
-				registerSingleton( RefreshableRegistry.class.getName() + "~" + UUID.randomUUID().toString(), registry );
+				initializeBean( registry, registryBeanName );
+				registerSingleton( registryBeanName, registry );
 
 				return registry;
 			}
