@@ -21,4 +21,6 @@ package com.foreach.across.core.context;
 public interface AcrossModuleEntity extends AcrossEntity
 {
 	String getName();
+
+	String getResourcesKey();
 }
