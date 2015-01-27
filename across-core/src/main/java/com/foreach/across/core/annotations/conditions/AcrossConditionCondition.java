@@ -24,7 +24,12 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.*;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.BeanExpressionContext;
+import org.springframework.beans.factory.config.BeanExpressionResolver;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.Scope;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.expression.StandardBeanExpressionResolver;
@@ -37,8 +42,8 @@ public class AcrossConditionCondition implements Condition
 
 	@Override
 	public boolean matches( ConditionContext context, AnnotatedTypeMetadata metadata ) {
-		String[] expressions = (String[]) metadata.getAnnotationAttributes( AcrossCondition.class.getName() ).get(
-				"value" );
+		String[] expressions = (String[]) metadata.getAnnotationAttributes( AcrossCondition.class.getName() )
+		                                          .get( "value" );
 
 		for ( String expression : expressions ) {
 			if ( !StringUtils.isBlank( expression )
@@ -83,7 +88,7 @@ public class AcrossConditionCondition implements Condition
 
 	private static final class CurrentModuleBeanExpressionContext extends BeanExpressionContext
 	{
-		private CurrentModuleBeanExpressionContext( ConfigurableBeanFactory beanFactory, Scope scope ) {
+		private CurrentModuleBeanExpressionContext( ConfigurableListableBeanFactory beanFactory, Scope scope ) {
 			super( beanFactory, scope );
 		}
 
@@ -102,5 +107,21 @@ public class AcrossConditionCondition implements Condition
 
 			return moduleInfo != null ? moduleInfo.getSettings() : null;
 		}
+
+		/**
+		 * Can this module find a bean with the given name in the context.
+		 */
+		public boolean hasBean( String beanName ) {
+			return getBeanFactory().containsBean( beanName );
+		}
+
+		/**
+		 * Can this module pick up a bean of the given type from the context.
+		 */
+		public boolean hasBeanOfType( Class beanType ) {
+			return !BeanFactoryUtils.beansOfTypeIncludingAncestors( (ListableBeanFactory) getBeanFactory(), beanType )
+			                        .isEmpty();
+		}
+
 	}
 }
