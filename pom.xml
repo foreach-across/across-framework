@@ -33,7 +33,7 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://java.libs.foreach.com/nexus/content/groups/public/</url>
+			<url>http://repository.foreach.be/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 
@@ -122,12 +122,12 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://java.libs.foreach.com/nexus/content/repositories/releases</url>
+			<url>http://repository.foreach.be/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://java.libs.foreach.com/nexus/content/repositories/snapshots</url>
+			<url>http://repository.foreach.be/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<scm>
