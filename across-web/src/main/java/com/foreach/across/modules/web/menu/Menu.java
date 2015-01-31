@@ -441,6 +441,14 @@ public class Menu implements Ordered
 		return addItem( item );
 	}
 
+	public Menu addItem( String path, String title, String url ) {
+		Menu item = new Menu( path );
+		item.setTitle( title );
+		item.setUrl( url );
+
+		return addItem( item );
+	}
+
 	public Menu addItem( Menu item ) {
 		if ( item.hasParent() ) {
 			throw new AcrossException( "A Menu can only belong to a single parent menu." );

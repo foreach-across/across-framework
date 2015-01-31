@@ -41,36 +41,44 @@ public class RequestMenuSelector implements MenuSelector
 	 */
 	public static final String ATTRIBUTE_MATCHERS = RequestMenuSelector.class.getCanonicalName() + ".MATCHERS";
 
-	private final HttpServletRequest request;
-	private final UrlPathHelper urlPathHelper;
-
 	private int maxScore = 0;
 	private Menu itemFound = null;
 
-	private String fullUrl;
-	private String servletPath;
-	private String servletPathWithQueryString;
+	private final String fullUrl;
+	private final String servletPath;
+	private final String servletPathWithQueryString;
 
 	public RequestMenuSelector( HttpServletRequest request ) {
-		this.request = request;
+		UrlPathHelper urlPathHelper = new UrlPathHelper();
+		String url = request.getRequestURL().toString();
+		servletPath = urlPathHelper.getPathWithinApplication( request );
+		String pathWithQueryString = servletPath;
 
-		urlPathHelper = new UrlPathHelper();
+		String qs = request.getQueryString();
+
+		if ( !StringUtils.isBlank( qs ) ) {
+			url += "?" + qs;
+			pathWithQueryString += "?" + qs;
+		}
+
+		fullUrl = url;
+		servletPathWithQueryString = pathWithQueryString;
+	}
+
+	/**
+	 * @param fullUrl                    Full url - including schema and querystring.
+	 * @param servletPath                Path within the application, excluding the querystring.
+	 * @param servletPathWithQueryString Path within the application including the querystring.
+	 */
+	public RequestMenuSelector( String fullUrl, String servletPath, String servletPathWithQueryString ) {
+		this.fullUrl = fullUrl;
+		this.servletPath = servletPath;
+		this.servletPathWithQueryString = servletPathWithQueryString;
 	}
 
 	public synchronized Menu find( Menu menu ) {
 		maxScore = 0;
 		itemFound = null;
-
-		fullUrl = request.getRequestURL().toString();
-		servletPath = urlPathHelper.getPathWithinApplication( request );
-		servletPathWithQueryString = servletPath;
-
-		String qs = request.getQueryString();
-
-		if ( !StringUtils.isBlank( qs ) ) {
-			fullUrl += "?" + qs;
-			servletPathWithQueryString += "?" + qs;
-		}
 
 		scoreItems( menu );
 
@@ -119,10 +127,10 @@ public class RequestMenuSelector implements MenuSelector
 
 	private void match( String url, String pathToTest, int equalsScore, int startsWithScore, AtomicInteger total ) {
 		if ( StringUtils.equals( url, pathToTest ) && total.intValue() < equalsScore ) {
-			total.set( equalsScore );
+			total.set( equalsScore * 1000 );
 		}
 		else if ( StringUtils.startsWith( url, pathToTest ) && total.intValue() < startsWithScore ) {
-			total.set( startsWithScore );
+			total.set( startsWithScore * 1000 + pathToTest.length() );
 		}
 	}
 }
