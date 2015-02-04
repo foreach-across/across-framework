@@ -430,6 +430,10 @@ public class Menu implements Ordered
 		return !items.isEmpty();
 	}
 
+	public boolean isEmpty() {
+		return items.isEmpty();
+	}
+
 	public Menu addItem( String path ) {
 		return addItem( path, path );
 	}

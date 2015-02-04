@@ -19,8 +19,10 @@
 	<li th:each="menu : ${mainMenu.items}" th:if="${menu.hasItems() or menu.hasUrl()}"
 	    th:class="${menu.hasItems()}? 'dropdown'" th:classappend="${menu.selected}? 'active'">
 		<a th:unless="${menu.hasItems()}" th:href="@{${menu.url}}" th:text="${menu.title}">main item</a>
-		<a th:if="${menu.hasItems()}" href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="${menu.title}"></span>
-			<b class="caret"></b></a>
+		<a th:if="${menu.hasItems()}" href="#" class="dropdown-toggle" data-toggle="dropdown">
+			<span th:text="${menu.title}"></span>
+			<b class="caret"></b>
+		</a>
 		<ul th:if="${menu.hasItems()}" class="dropdown-menu">
 			<div th:each="subItem : ${menu.items}" th:remove="tag">
 				<li th:unless="${subItem.isGroup()}" th:classappend="${subItem.selected}? 'active'">
@@ -32,16 +34,44 @@
 					<li th:each="subSubItem : ${subItem.items}" th:classappend="${subSubItem.selected}? 'active'">
 						<a th:href="@{${subSubItem.url}}" th:text="${subSubItem.title}">sub item</a>
 					</li>
-					<li th:unless="${subItemStat.last}" class="divider"></li>
+
 				</div>
 			</div>
 		</ul>
 	</li>
 </ul>
 
-		<!--/* Breadcrumb generation */-->
+<!--/* Panels menu */-->
+<div th:fragment="panels (mainMenu)">
+	<div th:each="menu : ${mainMenu.items}" th:if="${menu.hasItems() or menu.hadUrl()}" class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title" th:text="${menu.title}">Menu title</h3>
+		</div>
+		<ul th:if="${menu.hasItems()}" class="nav nav-sidebar list-group">
+			<li th:each="subItem : ${menu.items}"
+			    th:with="hasSubItems = ${subItem.isGroup() and subItem.hasItems()}"
+			    class="list-group-item" th:classappend="${subItem.selected and not hasSubItems} ? 'active'">
+				<a th:unless="${hasSubItems}" th:href="@{${subItem.url}}" th:text="${subItem.title}">menu item</a>
+				<a th:if="${hasSubItems}" data-toggle="collapse" th:href="|#${#ids.seq('sidebarMenu')}|"
+				   th:classappend="${not subItem.selected} ? 'collapsed'">
+					<span th:text="${subItem.title}">menu item</span>
+					<b class="caret"></b>
+				</a>
+				<ul th:if="${hasSubItems}" class="list-group submenu nav nav-sidebar"
+				    th:id="${#ids.prev('sidebarMenu')}" th:classappend="${not subItem.selected} ? 'collapse' : 'in'">
+					<li class="list-group-item" th:each="subSubItem : ${subItem.items}"
+					    th:classappend="${subSubItem.selected}? 'active'">
+						<a th:href="@{${subSubItem.url}}" th:text="${subSubItem.title}">sub item</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<!--/* Breadcrumb generation */-->
 <ol th:fragment="breadcrumb (menu)" class="breadcrumb">
-<li th:each="item : ${menu.selectedItemPath}" th:classappend="${itemStat.last} ? 'active'" th:if="${item.hasTitle()}">
+<li th:each="item : ${menu.selectedItemPath}" th:unless="${item.disabled}" th:classappend="${itemStat.last} ? 'active'" th:if="${item.hasTitle()}">
 	<span th:if="${itemStat.last}" th:text="${item.title}">title selected item</span>
 
 	<div th:unless="${itemStat.last}" th:remove="tag">
