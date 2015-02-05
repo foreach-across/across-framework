@@ -33,12 +33,14 @@ import java.util.concurrent.Callable;
 
 /**
  * Finds and applies the web template configured to a particular request.
+ *
  * @see com.foreach.across.modules.web.template.Template
  * @see com.foreach.across.modules.web.template.ClearTemplate
  */
 public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 {
 	public static final String PROCESSOR_ATTRIBUTE = WebTemplateProcessor.class.toString();
+	public static final String PARTIAL_PARAMETER = "_partial";
 
 	private final WebTemplateRegistry webTemplateRegistry;
 
@@ -50,17 +52,21 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	public boolean preHandle( HttpServletRequest request,
 	                          HttpServletResponse response,
 	                          Object handler ) {
-		String templateName = determineTemplateName( handler );
+		boolean containsPartialParameter = request.getParameterMap().containsKey( PARTIAL_PARAMETER );
+		// if the request contains a parameter _partial, then we will not render a template
+		if ( !containsPartialParameter ) {
+			String templateName = determineTemplateName( handler );
 
-		if ( templateName != null ) {
-			WebTemplateProcessor processor = webTemplateRegistry.get( templateName );
+			if ( templateName != null ) {
+				WebTemplateProcessor processor = webTemplateRegistry.get( templateName );
 
-			if ( processor != null ) {
-				request.setAttribute( PROCESSOR_ATTRIBUTE, processor );
-				processor.prepareForTemplate( request, response, handler );
-			}
-			else {
-				throw new AcrossException( "No WebTemplateProcessor registered with name: " + templateName );
+				if ( processor != null ) {
+					request.setAttribute( PROCESSOR_ATTRIBUTE, processor );
+					processor.prepareForTemplate( request, response, handler );
+				}
+				else {
+					throw new AcrossException( "No WebTemplateProcessor registered with name: " + templateName );
+				}
 			}
 		}
 
