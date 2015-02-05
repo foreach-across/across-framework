@@ -260,7 +260,7 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 	public Collection<T> checkout( U owner, int revisionNumber ) {
 		if ( revisionNumber != Revision.DRAFT && revisionNumber != Revision.LATEST ) {
 			// A specific base revision was passed in for checkout, let's update the draft first with its values
-			Collection<T> revisionEntities = getEntitiesForRevision( owner, revisionNumber );
+			Collection<T> revisionEntities = convertToNewDtos( getEntitiesForRevision( owner, revisionNumber ) );
 			saveEntitiesForRevision( revisionEntities, owner, Revision.DRAFT );
 		}
 
@@ -420,6 +420,18 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 		entity.setDeleteForRevision( false );
 
 		update( entity, entity.getFirstRevision(), previousLast );
+	}
+
+	/**
+	 * Convert a collection of existing/attached instances to "create" dtos as if they are
+	 * entirely new values.  You must override this method to support specific revision checkouts.
+	 *
+	 * @param entitiesForRevision Collection of entities for a revision.
+	 * @return Collection of dtos.
+	 */
+	protected Collection<T> convertToNewDtos( Collection<T> entitiesForRevision ) {
+		throw new UnsupportedOperationException(
+				"You must implement RevisionBasedEntityManager.convertToNewDtos() to support revision based checkouts." );
 	}
 
 	/**
