@@ -21,6 +21,7 @@ import com.foreach.across.core.annotations.OrderInModule;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
+import org.springframework.util.ClassUtils;
 
 import java.util.*;
 
@@ -59,7 +60,7 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 			return ( (Ordered) bean ).getOrder();
 		}
 		if ( bean != null ) {
-			Class<?> clazz = ( bean instanceof Class ? (Class<?>) bean : bean.getClass() );
+			Class<?> clazz = ClassUtils.getUserClass( bean instanceof Class ? (Class<?>) bean : bean.getClass() );
 			Order order = AnnotationUtils.findAnnotation( clazz, Order.class );
 			if ( order != null ) {
 				return order.value();
@@ -73,7 +74,7 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 			return ( (OrderedInModule) bean ).getOrderInModule();
 		}
 		if ( bean != null ) {
-			Class<?> clazz = ( bean instanceof Class ? (Class<?>) bean : bean.getClass() );
+			Class<?> clazz = ClassUtils.getUserClass( bean instanceof Class ? (Class<?>) bean : bean.getClass() );
 			OrderInModule order = AnnotationUtils.findAnnotation( clazz, OrderInModule.class );
 			if ( order != null ) {
 				return order.value();
