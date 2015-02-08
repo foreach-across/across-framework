@@ -1,0 +1,20 @@
+[[across-core]]
+=== Across core
+
+sdfjqdshdjsk
+
+[discrete]
+==== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>across</groupId>
+			<artifactId>across-core</artifactId>
+			<version>{across-version}</version>
+		</dependency>
+	</dependencies>
+----
+
+==== Dependencies
