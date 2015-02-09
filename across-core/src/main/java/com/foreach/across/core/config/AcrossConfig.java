@@ -93,16 +93,16 @@ public class AcrossConfig
 
 	@Bean(destroyMethod = "close")
 	@Lazy
-	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
-	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( DataSource acrossDataSource ) {
-		if ( acrossDataSource == null ) {
+	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.INSTALLER_DATASOURCE })
+	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( DataSource acrossInstallerDataSource ) {
+		if ( acrossInstallerDataSource == null ) {
 			throw new AcrossException(
 					"Unable to create the DistributedLockRepository because there is no DataSource configured.  " +
 							"A DataSource is required to install the core schema."
 			);
 		}
 
-		return new SqlBasedDistributedLockManager( acrossDataSource, sqlBasedDistributedLockConfiguration() );
+		return new SqlBasedDistributedLockManager( acrossInstallerDataSource, sqlBasedDistributedLockConfiguration() );
 	}
 
 	@Bean

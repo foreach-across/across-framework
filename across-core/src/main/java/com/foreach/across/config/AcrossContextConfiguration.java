@@ -38,6 +38,10 @@ public class AcrossContextConfiguration
 	@Qualifier("acrossDataSource")
 	private DataSource dataSource;
 
+	@Autowired(required = false)
+	@Qualifier("acrossInstallerDataSource")
+	private DataSource installerDataSource;
+
 	@Autowired
 	private Collection<AcrossContextConfigurer> configurers;
 
@@ -46,9 +50,13 @@ public class AcrossContextConfiguration
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 		AcrossContext context = new AcrossContext( applicationContext );
 
-		if ( dataSource != null ) {
+		if ( installerDataSource != null ) {
 			context.setInstallerAction( InstallerAction.EXECUTE );
-			context.setDataSource( dataSource );
+			context.setInstallerDataSource( installerDataSource );
+		}
+		else if ( dataSource != null ) {
+			context.setInstallerAction( InstallerAction.EXECUTE );
+			context.setInstallerDataSource( dataSource );
 		}
 		else {
 			context.setInstallerAction( InstallerAction.DISABLED );

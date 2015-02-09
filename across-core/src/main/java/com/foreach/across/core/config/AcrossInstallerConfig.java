@@ -54,32 +54,40 @@ public class AcrossInstallerConfig
 	@Lazy
 	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
 	public AcrossInstallerRepository installerRepository() {
+		DataSource installerDataSource = acrossInstallerDataSource();
 		DataSource dataSource = acrossDataSource();
+		if ( installerDataSource == null ) {
+			installerDataSource = dataSource;
+		}
 
-		if ( dataSource == null ) {
+		if ( installerDataSource == null ) {
 			throw new AcrossException(
 					"Unable to create the AcrossInstallerRepository because there is no DataSource configured.  " +
 							"A DataSource is required if there is at least one non-disabled installer."
 			);
 		}
 
-		return new AcrossInstallerRepository( acrossDataSource() );
+		return new AcrossInstallerRepository( installerDataSource );
 	}
 
 	@Bean
 	@Lazy
-	@DependsOn(AcrossContext.DATASOURCE)
+	@DependsOn(value = { AcrossContext.INSTALLER_DATASOURCE, AcrossContext.DATASOURCE })
 	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
+		DataSource installerDataSource = acrossInstallerDataSource();
 		DataSource dataSource = acrossDataSource();
+		if ( installerDataSource == null ) {
+			installerDataSource = dataSource;
+		}
 
-		if ( dataSource == null ) {
+		if ( installerDataSource == null ) {
 			throw new AcrossException(
 					"Unable to create the AcrossCoreSchemaInstaller because there is no DataSource configured.  " +
 							"A DataSource is required if there is at least one non-disabled installer."
 			);
 		}
 
-		return new AcrossCoreSchemaInstaller( dataSource, AcrossContextUtils.getBeanFactory( acrossContext ) );
+		return new AcrossCoreSchemaInstaller( installerDataSource, AcrossContextUtils.getBeanFactory( acrossContext ) );
 	}
 
 	@Bean(name = AcrossContext.DATASOURCE)
@@ -91,5 +99,10 @@ public class AcrossInstallerConfig
 		}
 
 		return dataSource;
+	}
+
+	@Bean(name = AcrossContext.INSTALLER_DATASOURCE)
+	public DataSource acrossInstallerDataSource() {
+		return acrossContext.getInstallerDataSource();
 	}
 }
