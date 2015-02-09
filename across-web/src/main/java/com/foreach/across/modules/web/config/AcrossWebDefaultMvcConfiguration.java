@@ -25,6 +25,7 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -425,6 +426,12 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		handlerMapping.setOrder( 0 );
 
 		return handlerMapping;
+	}
+
+	@Bean
+	@Exposed
+	public PrefixingPathRegistry prefixingPathRegistry() {
+		return new PrefixingPathRegistry();
 	}
 
 	@Bean

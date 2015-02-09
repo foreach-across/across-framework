@@ -19,6 +19,7 @@ package com.foreach.across.modules.web.config;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
+import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ public class ThymeleafViewSupportConfiguration
 	@Qualifier("springTemplateEngine")
 	public SpringTemplateEngine springTemplateEngine() {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
+		engine.addDialect( new AcrossWebDialect() );
 		engine.addTemplateResolver( templateResolver() );
 
 		if ( developmentMode.isActive() ) {

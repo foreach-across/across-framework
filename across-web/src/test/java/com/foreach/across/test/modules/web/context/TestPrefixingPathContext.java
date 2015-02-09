@@ -17,7 +17,11 @@
 package com.foreach.across.test.modules.web.context;
 
 import com.foreach.across.modules.web.context.PrefixingPathContext;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -48,6 +52,7 @@ public class TestPrefixingPathContext
 		assertEquals( "redirect:/boe/test/path", ctx.path( "redirect:test/path" ) );
 		assertEquals( "redirect:/boe/test/path", ctx.path( "redirect:/test/path" ) );
 		assertEquals( "redirect:http://www.google.be", ctx.path( "redirect:http://www.google.be" ) );
+		assertEquals( "//www.google.be", ctx.path( "//www.google.be" ) );
 		assertEquals( "redirect:~/test/path", ctx.path( "redirect:~/test/path" ) );
 		assertEquals( "forward:/boe/test/path", ctx.path( "forward:test/path" ) );
 		assertEquals( "forward:/boe/test/path", ctx.path( "forward:/test/path" ) );
@@ -56,9 +61,26 @@ public class TestPrefixingPathContext
 	}
 
 	@Test
-	public void redirectMethod() {
+	public void suppressPrefixing() {
 		PrefixingPathContext ctx = new PrefixingPathContext( "/boe" );
 
+		assertEquals( "test/path", ctx.path( "!test/path" ) );
+		assertEquals( "/test/path", ctx.path( "!/test/path" ) );
+		assertEquals( "~/test/path", ctx.path( "!~/test/path" ) );
+		assertEquals( "redirect:test/path", ctx.path( "redirect:!test/path" ) );
+		assertEquals( "redirect:/test/path", ctx.path( "redirect:!/test/path" ) );
+		assertEquals( "redirect:http://www.google.be", ctx.path( "redirect:!http://www.google.be" ) );
+		assertEquals( "redirect:~/test/path", ctx.path( "redirect:!~/test/path" ) );
+		assertEquals( "forward:test/path", ctx.path( "forward:!test/path" ) );
+		assertEquals( "forward:/test/path", ctx.path( "forward:!/test/path" ) );
+		assertEquals( "forward:http://www.google.be", ctx.path( "forward:!http://www.google.be" ) );
+		assertEquals( "forward:~/test/path", ctx.path( "forward:!~/test/path" ) );
+		assertEquals( "redirect:/test/path", ctx.redirect( "!/test/path" ) );
+	}
+
+	@Test
+	public void redirectMethod() {
+		PrefixingPathContext ctx = new PrefixingPathContext( "/boe" );
 		assertEquals( "redirect:/boe/test/path", ctx.redirect( "test/path" ) );
 		assertEquals( "redirect:/boe/test/path", ctx.redirect( "/test/path" ) );
 		assertEquals( "redirect:http://www.google.be", ctx.redirect( "http://www.google.be" ) );
@@ -73,5 +95,49 @@ public class TestPrefixingPathContext
 		assertEquals( "redirect:forward:/boe/test/path", ctx.redirect( "forward:/test/path" ) );
 		assertEquals( "redirect:forward:http://www.google.be", ctx.redirect( "forward:http://www.google.be" ) );
 		assertEquals( "redirect:forward:~/test/path", ctx.redirect( "forward:~/test/path" ) );
+	}
+
+	@Test
+	public void absolutePrefixers() {
+		PrefixingPathContext ctx = new PrefixingPathContext( "/boe" );
+		PrefixingPathContext other = new PrefixingPathContext( "/other/prefix" );
+
+		Map<String, PrefixingPathContext> prefixers = new HashMap<>();
+		prefixers.put( "current", ctx );
+		prefixers.put( "other", other );
+
+		ctx.setNamedPrefixMap( prefixers );
+
+		assertEquals( "/boe/test/path", ctx.path( "@current:test/path" ) );
+		assertEquals( "/boe/test/path", ctx.path( "@current:/test/path" ) );
+		assertEquals( "redirect:/boe/test/path", ctx.path( "redirect:@current:test/path" ) );
+		assertEquals( "redirect:/boe/test/path", ctx.path( "redirect:@current:/test/path" ) );
+		assertEquals( "redirect:/boe/test/path", ctx.redirect( "@current:test/path" ) );
+		assertEquals( "redirect:/boe/test/path", ctx.redirect( "@current:/test/path" ) );
+
+		assertEquals( "/other/prefix/test/path", ctx.path( "@other:test/path" ) );
+		assertEquals( "/other/prefix/test/path", ctx.path( "@other:/test/path" ) );
+		assertEquals( "redirect:/other/prefix/test/path", ctx.path( "redirect:@other:test/path" ) );
+		assertEquals( "redirect:/other/prefix/test/path", ctx.path( "redirect:@other:/test/path" ) );
+		assertEquals( "redirect:/other/prefix/test/path", ctx.redirect( "@other:test/path" ) );
+		assertEquals( "redirect:/other/prefix/test/path", ctx.redirect( "@other:/test/path" ) );
+	}
+
+	@Test
+	public void emptyPrefix() {
+		PrefixingPathContext ctx = new PrefixingPathContext( StringUtils.EMPTY );
+
+		assertEquals( "/test/path", ctx.path( "test/path" ) );
+		assertEquals( "/test/path", ctx.path( "/test/path" ) );
+		assertEquals( "~/test/path", ctx.path( "~/test/path" ) );
+		assertEquals( "redirect:/test/path", ctx.path( "redirect:test/path" ) );
+		assertEquals( "redirect:/test/path", ctx.path( "redirect:/test/path" ) );
+		assertEquals( "redirect:http://www.google.be", ctx.path( "redirect:http://www.google.be" ) );
+		assertEquals( "redirect:~/test/path", ctx.path( "redirect:~/test/path" ) );
+		assertEquals( "forward:/test/path", ctx.path( "forward:test/path" ) );
+		assertEquals( "forward:/test/path", ctx.path( "forward:/test/path" ) );
+		assertEquals( "forward:http://www.google.be", ctx.path( "forward:http://www.google.be" ) );
+		assertEquals( "forward:~/test/path", ctx.path( "forward:~/test/path" ) );
+		assertEquals( "redirect:/test/path", ctx.redirect( "/test/path" ) );
 	}
 }

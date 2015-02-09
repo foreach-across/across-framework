@@ -43,7 +43,7 @@
 
 <!--/* Panels menu */-->
 <div th:fragment="panels (mainMenu)">
-	<div th:each="menu : ${mainMenu.items}" th:if="${menu.hasItems() or menu.hadUrl()}" class="panel panel-default">
+	<div th:each="menu : ${mainMenu.items}" th:if="${menu.hasItems() or menu.hasUrl()}" class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title" th:text="${menu.title}">Menu title</h3>
 		</div>

@@ -21,11 +21,12 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.context.AcrossWebArgumentResolver;
+import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.menu.MenuBuilder;
 import com.foreach.across.modules.web.menu.MenuFactory;
 import com.foreach.across.modules.web.menu.MenuStore;
+import com.foreach.across.modules.web.mvc.WebAppPathResolverExposingInterceptor;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourcePackageManager;
 import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
@@ -43,7 +44,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +60,9 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter
 
 	@Autowired
 	private AcrossDevelopmentMode developmentMode;
+
+	@Autowired
+	private PrefixingPathRegistry prefixingPathRegistry;
 
 	@Override
 	public void addResourceHandlers( ResourceHandlerRegistry registry ) {
@@ -88,6 +91,7 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter
 
 	@Override
 	public void addInterceptors( InterceptorRegistry registry ) {
+		registry.addInterceptor( new WebAppPathResolverExposingInterceptor( prefixingPathRegistry ) );
 		registry.addInterceptor( webResourceRegistryInterceptor() );
 	}
 
