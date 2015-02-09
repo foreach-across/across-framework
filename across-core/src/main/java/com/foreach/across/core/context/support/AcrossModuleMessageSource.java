@@ -49,6 +49,10 @@ public class AcrossModuleMessageSource extends ReloadableResourceBundleMessageSo
 
 	private String[] baseNames = new String[0];
 
+	public AcrossModuleMessageSource() {
+		setUseCodeAsDefaultMessage( true );
+	}
+
 	@PostConstruct
 	protected void createDefaultAndSetUpDevelopmentMode() {
 		String basePath = "classpath:/messages/" + currentModule.getResourcesKey();
@@ -61,7 +65,6 @@ public class AcrossModuleMessageSource extends ReloadableResourceBundleMessageSo
 
 		if ( developmentMode.isActive() ) {
 			setCacheSeconds( 1 );
-			setUseCodeAsDefaultMessage( true );
 
 			String physicalPath = developmentMode.getDevelopmentLocationForResourcePath( currentModule, "messages" );
 
