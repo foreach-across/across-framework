@@ -18,13 +18,12 @@ package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.AcrossEventHandler;
-import com.foreach.across.core.annotations.Event;
-import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.annotations.*;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
-import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.*;
 import org.slf4j.Logger;
@@ -113,11 +112,17 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	private AcrossContext acrossContext;
 
 	@Autowired
-	@Qualifier(AcrossModule.CURRENT_MODULE)
-	private AcrossWebModule webModule;
+	@Module(AcrossModule.CURRENT_MODULE)
+	private AcrossModuleInfo currentModuleInfo;
 
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
+
+	@RefreshableCollection(includeModuleInternals = true)
+	private Collection<PrefixingHandlerMappingConfigurer> prefixingHandlerMappingConfigurers;
+
+	@RefreshableCollection(includeModuleInternals = true)
+	private Collection<WebMvcConfigurer> webMvcConfigurers;
 
 	private ApplicationContext applicationContext;
 
@@ -142,7 +147,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		Assert.notNull( applicationContext, "applicationContext should be autowired and cannot be null" );
 		Assert.notNull( servletContext, "servletContext should be autowired and cannot be null" );
 		Assert.notNull( acrossContext );
-		Assert.notNull( webModule );
 
 		Collection<FormattingConversionService> existing =
 				beanRegistry.getBeansOfType( FormattingConversionService.class );
@@ -157,9 +161,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	 */
 	@Event
 	protected void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
-		RefreshableRegistry<WebMvcConfigurer> webMvcConfigurers = webMvcConfigurers();
-		webMvcConfigurers.refresh();
-
 		// Reload the adapter
 		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>();
 		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
@@ -183,6 +184,12 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			configurer.addResourceHandlers( resourceHandlerRegistry );
 			configurer.addFormatters( conversionService );
 			configurer.configureHandlerExceptionResolvers( exceptionResolvers );
+		}
+
+		for ( PrefixingHandlerMappingConfigurer configurer : prefixingHandlerMappingConfigurers ) {
+			if ( configurer.supports( AcrossWebModule.NAME  ) ) {
+				configurer.addInterceptors( interceptorRegistry );
+			}
 		}
 
 		//if ( messageConverters.isEmpty() ) {
@@ -414,16 +421,11 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	}
 
 	@Bean
-	protected RefreshableRegistry<WebMvcConfigurer> webMvcConfigurers() {
-		return new RefreshableRegistry<>( WebMvcConfigurer.class, true );
-	}
-
-	@Bean
 	@Exposed
 	public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping handlerMapping =
 				new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class, true ) );
-		handlerMapping.setOrder( 0 );
+		handlerMapping.setOrder( currentModuleInfo.getIndex() );
 
 		return handlerMapping;
 	}
@@ -471,7 +473,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Exposed
 	public HandlerExceptionResolverComposite handlerExceptionResolver() {
 		HandlerExceptionResolverComposite composite = new HandlerExceptionResolverComposite();
-		composite.setOrder( 0 );
+		composite.setOrder( currentModuleInfo.getIndex() );
 		return composite;
 	}
 
