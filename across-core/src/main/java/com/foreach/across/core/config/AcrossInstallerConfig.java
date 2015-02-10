@@ -55,10 +55,6 @@ public class AcrossInstallerConfig
 	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
 	public AcrossInstallerRepository installerRepository() {
 		DataSource installerDataSource = acrossInstallerDataSource();
-		DataSource dataSource = acrossDataSource();
-		if ( installerDataSource == null ) {
-			installerDataSource = dataSource;
-		}
 
 		if ( installerDataSource == null ) {
 			throw new AcrossException(
@@ -75,10 +71,6 @@ public class AcrossInstallerConfig
 	@DependsOn(AcrossContext.DATASOURCE)
 	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
 		DataSource installerDataSource = acrossInstallerDataSource();
-		DataSource dataSource = acrossDataSource();
-		if ( installerDataSource == null ) {
-			installerDataSource = dataSource;
-		}
 
 		if ( installerDataSource == null ) {
 			throw new AcrossException(
@@ -102,7 +94,12 @@ public class AcrossInstallerConfig
 	}
 
 	@Bean(name = AcrossContext.INSTALLER_DATASOURCE)
+	@DependsOn(AcrossContext.DATASOURCE)
 	public DataSource acrossInstallerDataSource() {
-		return acrossContext.getInstallerDataSource();
+		DataSource installerDataSource = acrossContext.getInstallerDataSource();
+		if ( installerDataSource == null ) {
+			return acrossDataSource();
+		}
+		return installerDataSource;
 	}
 }
