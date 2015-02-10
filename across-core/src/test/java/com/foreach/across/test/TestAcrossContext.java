@@ -22,7 +22,6 @@ import com.foreach.across.test.modules.exposing.ExposingModule;
 import com.foreach.across.test.modules.installer.InstallerModule;
 import com.foreach.across.test.modules.module1.TestModule1;
 import com.foreach.across.test.modules.module2.TestModule2;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -100,22 +99,6 @@ public class TestAcrossContext
 		}
 
 		assertTrue( "A datasource should be required if installers want to run.", failed );
-	}
-
-	@Test
-	public void dataSourceIsNotRequiredIfInstallerDataSourceIsAvailable() {
-		AcrossContext context = new AcrossContext();
-		context.setInstallerAction( InstallerAction.EXECUTE );
-		BasicDataSource dataSource = new BasicDataSource();
-		dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-		dataSource.setUrl( "jdbc:hsqldb:mem:acrossTest" );
-		dataSource.setUsername( "sa" );
-		dataSource.setPassword( "" );
-
-		context.setInstallerDataSource( dataSource );
-		context.addModule( new InstallerModule() );
-
-		context.bootstrap();
 	}
 
 	@Test
