@@ -72,7 +72,7 @@ public class AcrossInstallerConfig
 
 	@Bean
 	@Lazy
-	@DependsOn(value = { AcrossContext.INSTALLER_DATASOURCE, AcrossContext.DATASOURCE })
+	@DependsOn(AcrossContext.DATASOURCE)
 	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
 		DataSource installerDataSource = acrossInstallerDataSource();
 		DataSource dataSource = acrossDataSource();
