@@ -64,7 +64,6 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.handler.ConversionServiceExposingInterceptor;
 import org.springframework.web.servlet.handler.HandlerExceptionResolverComposite;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
@@ -187,7 +186,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		}
 
 		for ( PrefixingHandlerMappingConfigurer configurer : prefixingHandlerMappingConfigurers ) {
-			if ( configurer.supports( AcrossWebModule.NAME  ) ) {
+			if ( configurer.supports( AcrossWebModule.NAME ) ) {
 				configurer.addInterceptors( interceptorRegistry );
 			}
 		}
@@ -195,8 +194,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		//if ( messageConverters.isEmpty() ) {
 		addDefaultHttpMessageConverters( messageConverters );
 		//}
-
-		interceptorRegistry.addInterceptor( new ConversionServiceExposingInterceptor( conversionService ) );
 
 		ContentNegotiationManager contentNegotiationManager;
 

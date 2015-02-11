@@ -18,9 +18,11 @@ package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.AcrossWebArgumentResolver;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.menu.MenuBuilder;
@@ -39,7 +41,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -49,7 +50,8 @@ import java.util.Map;
 
 @Configuration
 @Exposed
-public class AcrossWebConfig extends WebMvcConfigurerAdapter
+@OrderInModule(1)
+public class AcrossWebConfig extends WebMvcConfigurerAdapter implements PrefixingHandlerMappingConfigurer
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );
 	private static final String[] DEFAULT_RESOURCES = new String[] { "css", "js" };
@@ -90,7 +92,12 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter
 	}
 
 	@Override
-	public void addInterceptors( InterceptorRegistry registry ) {
+	public boolean supports( String mapperName ) {
+		return AcrossWebModule.NAME.equals( mapperName );
+	}
+
+	@Override
+	public void addInterceptors( com.foreach.across.modules.web.mvc.InterceptorRegistry registry ) {
 		registry.addInterceptor( new WebAppPathResolverExposingInterceptor( prefixingPathRegistry ) );
 		registry.addInterceptor( webResourceRegistryInterceptor() );
 	}
