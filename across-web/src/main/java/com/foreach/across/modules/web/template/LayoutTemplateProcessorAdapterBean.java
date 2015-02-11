@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.web.template;
 
+import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.modules.web.events.BuildTemplateWebResourcesEvent;
 import com.foreach.across.modules.web.menu.MenuFactory;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
@@ -31,15 +33,24 @@ import javax.servlet.http.HttpServletResponse;
  * Applies a layout to a view, load resource packages and generate menu instances.
  * Will put the original view under the childPage attribute.
  */
-public class LayoutTemplateProcessorAdapterBean implements WebTemplateProcessor
+public class LayoutTemplateProcessorAdapterBean implements NamedWebTemplateProcessor
 {
 	@Autowired
 	private MenuFactory menuFactory;
 
-	private String layout;
+	@Autowired
+	private AcrossEventPublisher eventPublisher;
 
-	public LayoutTemplateProcessorAdapterBean( String layout ) {
+	private final String name, layout;
+
+	public LayoutTemplateProcessorAdapterBean( String name, String layout ) {
+		this.name = name;
 		this.layout = layout;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -51,6 +62,8 @@ public class LayoutTemplateProcessorAdapterBean implements WebTemplateProcessor
 		}
 
 		buildMenus( menuFactory );
+
+		eventPublisher.publish( new BuildTemplateWebResourcesEvent( getName(), webResourceRegistry ) );
 	}
 
 	protected void registerWebResources( WebResourceRegistry registry ) {

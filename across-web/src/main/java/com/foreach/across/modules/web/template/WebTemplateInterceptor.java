@@ -53,6 +53,7 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	                          HttpServletResponse response,
 	                          Object handler ) {
 		boolean containsPartialParameter = request.getParameterMap().containsKey( PARTIAL_PARAMETER );
+
 		// if the request contains a parameter _partial, then we will not render a template
 		if ( !containsPartialParameter ) {
 			String templateName = determineTemplateName( handler );
