@@ -21,6 +21,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
+import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
@@ -50,6 +51,9 @@ public class TestContextWithInstallerDataSource
 	private DataSource mockDataSource;
 
 	@Autowired
+	private DataSource acrossInstallerDataSource;
+
+	@Autowired
 	private AcrossContext acrossContext;
 
 	@Test
@@ -58,6 +62,7 @@ public class TestContextWithInstallerDataSource
 		assertNotNull( acrossContext.getInstallerDataSource() );
 		assertNotSame( acrossContext.getDataSource(), acrossContext.getInstallerDataSource() );
 		assertSame( mockDataSource, acrossContext.getDataSource() );
+		assertNotSame( mockDataSource, acrossInstallerDataSource );
 	}
 
 	@Test
@@ -66,6 +71,17 @@ public class TestContextWithInstallerDataSource
 				.getInstaller();
 		assertTrue( installer.isExecuted() );
 		assertSame( mockDataSource, installer.getPrimaryDataSource() );
+	}
+
+	@Test
+	public void liquibaseInstallerShouldGetInstallerDataSource() {
+		LiquibaseInstaller liquibaseInstaller = ( (TestInstallerModule) acrossContext.getModule(
+				"TestInstallerModule" ) )
+				.getLiquibaseInstaller();
+
+		assertNotNull( liquibaseInstaller.getDataSource() );
+		assertNotSame( mockDataSource, liquibaseInstaller.getDataSource() );
+		assertSame( acrossInstallerDataSource, liquibaseInstaller.getDataSource() );
 	}
 
 	@Configuration
@@ -101,9 +117,14 @@ public class TestContextWithInstallerDataSource
 	static class TestInstallerModule extends AcrossModule
 	{
 		private TestInstaller installer = new TestInstaller();
+		private LiquibaseInstaller liquibaseInstaller = new LiquibaseInstaller();
 
 		public TestInstaller getInstaller() {
 			return installer;
+		}
+
+		public LiquibaseInstaller getLiquibaseInstaller() {
+			return liquibaseInstaller;
 		}
 
 		@Override
@@ -118,7 +139,7 @@ public class TestContextWithInstallerDataSource
 
 		@Override
 		public Object[] getInstallers() {
-			return new Object[] { installer };
+			return new Object[] { installer, liquibaseInstaller };
 		}
 	}
 
@@ -141,6 +162,15 @@ public class TestContextWithInstallerDataSource
 		@InstallerMethod
 		public void execute() {
 			executed = true;
+		}
+	}
+
+	@Installer(description = "Liquibase installer", runCondition = InstallerRunCondition.AlwaysRun)
+	static class LiquibaseInstaller extends AcrossLiquibaseInstaller
+	{
+		@Override
+		protected DataSource getDataSource() {
+			return super.getDataSource();
 		}
 	}
 }

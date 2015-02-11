@@ -85,6 +85,10 @@ public abstract class AcrossLiquibaseInstaller
 		this.dataSource = dataSource;
 	}
 
+	protected DataSource getDataSource() {
+		return dataSource;
+	}
+
 	@InstallerMethod
 	public void install() {
 		AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext.getContext() );
