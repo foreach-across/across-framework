@@ -35,8 +35,12 @@ import java.util.Collection;
 public class AcrossContextConfiguration
 {
 	@Autowired(required = false)
-	@Qualifier("acrossDataSource")
+	@Qualifier(AcrossContext.DATASOURCE)
 	private DataSource dataSource;
+
+	@Autowired(required = false)
+	@Qualifier(AcrossContext.INSTALLER_DATASOURCE)
+	private DataSource installerDataSource;
 
 	@Autowired
 	private Collection<AcrossContextConfigurer> configurers;
@@ -46,20 +50,35 @@ public class AcrossContextConfiguration
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 		AcrossContext context = new AcrossContext( applicationContext );
 
-		if ( dataSource != null ) {
+		// Set installer datasource
+		DataSource ds = dataSourceForInstallers();
+
+		if ( ds != null ) {
 			context.setInstallerAction( InstallerAction.EXECUTE );
-			context.setDataSource( dataSource );
+			context.setInstallerDataSource( ds );
 		}
 		else {
 			context.setInstallerAction( InstallerAction.DISABLED );
 			System.err.println(
-					"No datasource bean named acrossDataSource found - configuring a context without datasource and disabling the installers." );
+					"No datasource bean named acrossDataSource or acrossInstallerDataSource found - " +
+							"configuring a context without datasource and disabling the installers." );
 		}
+
+		// Set the context datasource
+		context.setDataSource( dataSource );
 
 		for ( AcrossContextConfigurer configurer : configurers ) {
 			configurer.configure( context );
 		}
 
 		return context;
+	}
+
+	private DataSource dataSourceForInstallers() {
+		if ( installerDataSource != null ) {
+			return installerDataSource;
+		}
+
+		return dataSource;
 	}
 }

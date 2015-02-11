@@ -53,10 +53,12 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
+	public static final String INSTALLER_DATASOURCE = "acrossInstallerDataSource";
 
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContext.class );
 
 	private DataSource dataSource;
+	private DataSource installerDataSource;
 
 	// By default no installers are allowed
 	private InstallerSettings installerSettings = new InstallerSettings( InstallerAction.DISABLED );
@@ -115,6 +117,14 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	public void setDataSource( DataSource dataSource ) {
 		this.dataSource = dataSource;
+	}
+
+	public DataSource getInstallerDataSource() {
+		return installerDataSource;
+	}
+
+	public void setInstallerDataSource( DataSource installerDataSource ) {
+		this.installerDataSource = installerDataSource;
 	}
 
 	public Collection<AcrossModule> getModules() {
