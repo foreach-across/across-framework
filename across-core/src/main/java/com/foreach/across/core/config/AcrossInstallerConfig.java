@@ -24,10 +24,7 @@ import com.foreach.across.core.installers.AcrossInstallerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
 
@@ -52,7 +49,7 @@ public class AcrossInstallerConfig
 	 */
 	@Bean
 	@Lazy
-	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
+	@DependsOn("acrossCoreSchemaInstaller")
 	public AcrossInstallerRepository installerRepository() {
 		DataSource installerDataSource = acrossInstallerDataSource();
 
@@ -68,7 +65,7 @@ public class AcrossInstallerConfig
 
 	@Bean
 	@Lazy
-	@DependsOn(AcrossContext.DATASOURCE)
+	@DependsOn(AcrossContext.INSTALLER_DATASOURCE)
 	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
 		DataSource installerDataSource = acrossInstallerDataSource();
 
@@ -82,24 +79,25 @@ public class AcrossInstallerConfig
 		return new AcrossCoreSchemaInstaller( installerDataSource, AcrossContextUtils.getBeanFactory( acrossContext ) );
 	}
 
-	@Bean(name = AcrossContext.DATASOURCE)
-	public DataSource acrossDataSource() {
-		DataSource dataSource = acrossContext.getDataSource();
-
-		if ( dataSource == null ) {
-			LOG.warn( "No Across data source specified - it will be impossible to run any installers." );
-		}
-
-		return dataSource;
-	}
-
 	@Bean(name = AcrossContext.INSTALLER_DATASOURCE)
 	@DependsOn(AcrossContext.DATASOURCE)
 	public DataSource acrossInstallerDataSource() {
 		DataSource installerDataSource = acrossContext.getInstallerDataSource();
+
 		if ( installerDataSource == null ) {
-			return acrossDataSource();
+			installerDataSource = acrossDataSource();
 		}
+
+		if ( installerDataSource == null ) {
+			LOG.warn( "No Across installer data source specified - it will be impossible to run any installers." );
+		}
+
 		return installerDataSource;
+	}
+
+	@Primary
+	@Bean(name = AcrossContext.DATASOURCE)
+	public DataSource acrossDataSource() {
+		return acrossContext.getDataSource();
 	}
 }

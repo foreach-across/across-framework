@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.it;
+package com.foreach.across.test.datasource;
 
 import com.foreach.across.config.AcrossContextConfiguration;
 import com.foreach.across.config.AcrossContextConfigurer;
+import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossApplicationContext;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,29 +32,31 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.sql.DataSource;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 /**
  * @author Andy Somers
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = ITContextWithInstallerDataSource.Config.class)
-public class ITContextWithInstallerDataSource
+@ContextConfiguration(classes = TestContextWithoutInstallerDataSource.Config.class)
+public class TestContextWithoutInstallerDataSource
 {
 	@Autowired
-	private AcrossContextConfiguration acrossContextConfiguration;
+	private AcrossContext acrossContext;
 
 	@Test
-	public void contextWithInstallerDataSourceSetsInstallerDataSourceOnConfig() {
-		AcrossContext acrossContext = acrossContextConfiguration.acrossContext( new AcrossApplicationContext() );
+	public void contextWithoutInstallerDataSourceSetsDefaultDataSourceAsInstallerDataSourceOnConfig() {
 		DataSource dataSource = acrossContext.getDataSource();
 		DataSource installerDataSource = acrossContext.getInstallerDataSource();
-		assertNull( dataSource );
+
+		assertNotNull( dataSource );
 		assertNotNull( installerDataSource );
+		assertSame( dataSource, installerDataSource );
 	}
 
 	@Configuration
+	@EnableAcrossContext
 	static class Config implements AcrossContextConfigurer
 	{
 		@Bean
@@ -64,11 +66,6 @@ public class ITContextWithInstallerDataSource
 
 		@Bean
 		public DataSource acrossDataSource() {
-			return null;
-		}
-
-		@Bean
-		public DataSource acrossInstallerDataSource() {
 			BasicDataSource dataSource = new BasicDataSource();
 			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
 			dataSource.setUrl( "jdbc:hsqldb:mem:acrossTest" );

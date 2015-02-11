@@ -76,6 +76,11 @@ public abstract class AcrossLiquibaseInstaller
 		this.schemaConfiguration = schemaConfiguration;
 	}
 
+	/**
+	 * Override the dataSource this installer should use (defaults to the installer datasource otherwise).
+	 *
+	 * @param dataSource instance
+	 */
 	protected void setDataSource( DataSource dataSource ) {
 		this.dataSource = dataSource;
 	}
