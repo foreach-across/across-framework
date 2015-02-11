@@ -17,6 +17,7 @@
 <!--/* Navbar menu */-->
 <ul th:fragment="navbar (mainMenu)" class="nav navbar-nav">
 	<li th:each="menu : ${mainMenu.items}" th:if="${menu.hasItems() or menu.hasUrl()}"
+	    th:with="prevDivider=false,addDivider=false"
 	    th:class="${menu.hasItems()}? 'dropdown'" th:classappend="${menu.selected}? 'active'">
 		<a th:unless="${menu.hasItems()}" th:href="@{${menu.url}}" th:text="${menu.title}">main item</a>
 		<a th:if="${menu.hasItems()}" href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -24,17 +25,18 @@
 			<b class="caret"></b>
 		</a>
 		<ul th:if="${menu.hasItems()}" class="dropdown-menu">
-			<div th:each="subItem : ${menu.items}" th:remove="tag">
+			<div th:each="subItem : ${menu.items}" th:unless="${!subItem.group and subItem.disabled}" th:remove="tag">
 				<li th:unless="${subItem.isGroup()}" th:classappend="${subItem.selected}? 'active'">
 					<a th:href="@{${subItem.url}}" th:text="${subItem.title}">sub item</a>
 				</li>
 				<div th:if="${subItem.isGroup() and subItem.hasItems()}" th:remove="tag">
-					<li th:unless="${subItemStat.first}" class="divider"></li>
-					<li class="dropdown-header" th:if="${subItem.hasTitle()}" th:text="${subItem.title}"></li>
-					<li th:each="subSubItem : ${subItem.items}" th:classappend="${subSubItem.selected}? 'active'">
-						<a th:href="@{${subSubItem.url}}" th:text="${subSubItem.title}">sub item</a>
-					</li>
-
+					<li th:unless="${subItemStat.first or prevDivider}" class="divider"></li>
+					<li class="dropdown-header" th:if="${subItem.hasTitle()}" th:text="${subItem.title}">group title</li>
+					<th:block th:each="subSubItem : ${subItem.items}" th:with="addDivider=true">
+						<li th:classappend="${subSubItem.selected}? 'active'">
+							<a th:href="@{${subSubItem.url}}" th:text="${subSubItem.title}">sub item</a>
+						</li>
+					</th:block>
 				</div>
 			</div>
 		</ul>
@@ -49,17 +51,17 @@
 		</div>
 		<ul th:if="${menu.hasItems()}" class="nav nav-sidebar list-group">
 			<li th:each="subItem : ${menu.items}"
+			    th:unless="${!subItem.group and subItem.disabled}"
 			    th:with="hasSubItems = ${subItem.isGroup() and subItem.hasItems()}"
 			    class="list-group-item" th:classappend="${subItem.selected and not hasSubItems} ? 'active'">
 				<a th:unless="${hasSubItems}" th:href="@{${subItem.url}}" th:text="${subItem.title}">menu item</a>
 				<a th:if="${hasSubItems}" data-toggle="collapse" th:href="|#${#ids.seq('sidebarMenu')}|"
 				   th:classappend="${not subItem.selected} ? 'collapsed'">
 					<span th:text="${subItem.title}">menu item</span>
-					<b class="caret"></b>
 				</a>
 				<ul th:if="${hasSubItems}" class="list-group submenu nav nav-sidebar"
 				    th:id="${#ids.prev('sidebarMenu')}" th:classappend="${not subItem.selected} ? 'collapse' : 'in'">
-					<li class="list-group-item" th:each="subSubItem : ${subItem.items}"
+					<li class="list-group-item" th:each="subSubItem : ${subItem.items}" th:unless="${subSubItem.disabled}"
 					    th:classappend="${subSubItem.selected}? 'active'">
 						<a th:href="@{${subSubItem.url}}" th:text="${subSubItem.title}">sub item</a>
 					</li>
