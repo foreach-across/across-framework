@@ -82,7 +82,52 @@
 						<goals>
 							<goal>aggregate</goal>
 						</goals>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
+						<configuration>
+							<reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
+							<destDir>${project.version}/javadoc</destDir>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>1.5.0</version>
+				<inherited>false</inherited>
+				<configuration>
+					<sourceDirectory>docs</sourceDirectory>
+					<sourceDocumentName>index.adoc</sourceDocumentName>
+					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
+					<backend>html</backend>
+				</configuration>
+				<executions>
+					<execution>
+						<id>output-html</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.3</version>
+				<inherited>false</inherited>
+				<configuration>
+					<finalName>${project.artifactId}</finalName>
+					<descriptors>
+						<descriptor>docs/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
