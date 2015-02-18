@@ -3,10 +3,6 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
-  <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$/demo-web" />
-    <file type="web" url="file://$PROJECT_DIR$/test-web" />
-  </component>
   <component name="IdProvider" IDEtalkID="DB3B0B76923C4E8337D6E50B65FCF5BB" />
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
@@ -44,4 +40,3 @@
     <output url="file://$PROJECT_DIR$/target" />
   </component>
 </project>
-
