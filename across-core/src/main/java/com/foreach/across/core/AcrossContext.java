@@ -73,6 +73,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private boolean isBootstrapped = false;
 	private final String id;
 	private ApplicationContext parentApplicationContext;
+	private boolean failBootstrapOnEventPublicationErrors = true;
 
 	/**
 	 * Constructs a new AcrossContext in its own ApplicationContext.
@@ -154,6 +155,20 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	public void setDisableNoOpCacheManager( boolean disableNoOpCacheManager ) {
 		this.disableNoOpCacheManager = disableNoOpCacheManager;
+	}
+
+	/**
+	 * Should the bootstrap fail if event publication errors occur during the bootstrapping.
+	 * Defaults to true as this is usually the wanted behavior.
+	 *
+	 * @param failBootstrapOnEventPublicationErrors true if bootstrap should fail on event handler errors
+	 */
+	public void setFailBootstrapOnEventPublicationErrors( boolean failBootstrapOnEventPublicationErrors ) {
+		this.failBootstrapOnEventPublicationErrors = failBootstrapOnEventPublicationErrors;
+	}
+
+	public boolean isFailBootstrapOnEventPublicationErrors() {
+		return failBootstrapOnEventPublicationErrors;
 	}
 
 	public void setModules( Collection<AcrossModule> modules ) {

@@ -77,6 +77,13 @@ public class AcrossConfig
 		return new AcrossCompositeCacheManager( acrossContext.isDisableNoOpCacheManager() );
 	}
 
+//	@Bean
+//	@Lazy
+//	@Primary
+//	public ConfigurableConversionService conversionService() {
+//		return new DefaultFormattingConversionService();
+//	}
+
 	@Bean
 	@Lazy
 	@Primary
