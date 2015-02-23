@@ -134,7 +134,7 @@ public class AcrossBootstrapInstallerRegistry
 		AcrossInstallerRepository repository = getInstallerRepository();
 
 		if ( action != InstallerAction.REGISTER ) {
-			LOG.debug( "Executing installer {} for module {}", installer.getClass(), module.getName() );
+			LOG.info( "Executing installer {} for module {}", installer.getClass(), module.getName() );
 
 			ConfigurableListableBeanFactory beanFactory = getBeanFactoryForInstallerWiring( module );
 
@@ -167,7 +167,7 @@ public class AcrossBootstrapInstallerRegistry
 		}
 		else {
 			// Register the installer version
-			LOG.trace(
+			LOG.info(
 					"Only performing registration of installer {} - version {} for module {}",
 					installer.getClass(),
 					metadata.version(),
