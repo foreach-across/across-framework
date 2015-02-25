@@ -85,7 +85,7 @@ public class ThymeleafViewSupportConfiguration
 		return resolver;
 	}
 
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	private Collection<TemplateResolver> developmentResolvers() {
 		Collection<TemplateResolver> resolvers = new LinkedList<TemplateResolver>();
 
@@ -107,7 +107,8 @@ public class ThymeleafViewSupportConfiguration
 				resolver.setOrder( 19 );
 				resolver.setCharacterEncoding( "UTF-8" );
 				resolver.setTemplateMode( "HTML5" );
-				resolver.setCacheable( false );
+				resolver.setCacheable( true );
+				resolver.setCacheTTLMs( 1000L );
 				resolver.setPrefix( prefix );
 				resolver.setSuffix( suffix );
 
@@ -128,7 +129,12 @@ public class ThymeleafViewSupportConfiguration
 		TemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setCharacterEncoding( "UTF-8" );
 		resolver.setTemplateMode( "HTML5" );
-		resolver.setCacheable( !developmentMode.isActive() );
+		resolver.setCacheable( true );
+
+		if ( developmentMode.isActive() ) {
+			resolver.setCacheTTLMs( 1000L );
+		}
+
 		resolver.setPrefix( "classpath:/views/" );
 		resolver.setSuffix( ".thtml" );
 		resolver.setOrder( 20 );
