@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.*;
@@ -46,9 +47,12 @@ import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.feed.AtomFeedHttpMessageConverter;
 import org.springframework.http.converter.feed.RssChannelHttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
@@ -86,23 +90,25 @@ import java.util.*;
 @AcrossEventHandler
 public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware, ServletContextAware
 {
+	private static boolean romePresent =
+			ClassUtils.isPresent( "com.rometools.rome.feed.WireFeed",
+			                      WebMvcConfigurationSupport.class.getClassLoader() );
+
 	private static final boolean jaxb2Present =
 			ClassUtils.isPresent( "javax.xml.bind.Binder", WebMvcConfigurationSupport.class.getClassLoader() );
 
-	private static final boolean jackson2Present = ClassUtils.isPresent( "com.fasterxml.jackson.databind.ObjectMapper",
-	                                                                     WebMvcConfigurationSupport.class
-			                                                                     .getClassLoader() ) && ClassUtils
-			.isPresent(
-					"com.fasterxml.jackson.core.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
+	private static final boolean jackson2Present =
+			ClassUtils.isPresent( "com.fasterxml.jackson.databind.ObjectMapper",
+			                      WebMvcConfigurationSupport.class.getClassLoader() ) &&
+					ClassUtils.isPresent( "com.fasterxml.jackson.core.JsonGenerator",
+					                      WebMvcConfigurationSupport.class.getClassLoader() );
 
-	private static final boolean jacksonPresent = ClassUtils.isPresent( "org.codehaus.jackson.map.ObjectMapper",
-	                                                                    WebMvcConfigurationSupport.class
-			                                                                    .getClassLoader() ) && ClassUtils
-			.isPresent(
-					"org.codehaus.jackson.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader() );
+	private static final boolean jackson2XmlPresent =
+			ClassUtils.isPresent( "com.fasterxml.jackson.dataformat.xml.XmlMapper",
+			                      WebMvcConfigurationSupport.class.getClassLoader() );
 
-	private static boolean romePresent = ClassUtils.isPresent( "com.sun.syndication.feed.WireFeed",
-	                                                           WebMvcConfigurationSupport.class.getClassLoader() );
+	private static final boolean gsonPresent =
+			ClassUtils.isPresent( "com.google.gson.Gson", WebMvcConfigurationSupport.class.getClassLoader() );
 
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebDefaultMvcConfiguration.class );
 
@@ -292,10 +298,10 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			map.put( "atom", MediaType.APPLICATION_ATOM_XML );
 			map.put( "rss", MediaType.valueOf( "application/rss+xml" ) );
 		}
-		if ( jackson2Present || jacksonPresent ) {
+		if ( jackson2Present || gsonPresent ) {
 			map.put( "json", MediaType.APPLICATION_JSON );
 		}
-		if ( jaxb2Present ) {
+		if ( jaxb2Present || jackson2XmlPresent ) {
 			map.put( "xml", MediaType.APPLICATION_XML );
 		}
 		return map;
@@ -347,19 +353,26 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		addIfNoInstanceYetPresent( messageConverters, new ResourceHttpMessageConverter() );
 		addIfNoInstanceYetPresent( messageConverters, new SourceHttpMessageConverter<Source>() );
 		addIfNoInstanceYetPresent( messageConverters, new AllEncompassingFormHttpMessageConverter() );
+
 		if ( romePresent ) {
 			addIfNoInstanceYetPresent( messageConverters, new AtomFeedHttpMessageConverter() );
 			addIfNoInstanceYetPresent( messageConverters, new RssChannelHttpMessageConverter() );
 		}
-		if ( jaxb2Present ) {
+		if ( jackson2XmlPresent ) {
+			ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.xml().applicationContext( this.applicationContext )
+			                                                       .build();
+			addIfNoInstanceYetPresent( messageConverters, new MappingJackson2XmlHttpMessageConverter( objectMapper ) );
+		}
+		else if ( jaxb2Present ) {
 			addIfNoInstanceYetPresent( messageConverters, new Jaxb2RootElementHttpMessageConverter() );
 		}
 		if ( jackson2Present ) {
-			addIfNoInstanceYetPresent( messageConverters, new MappingJackson2HttpMessageConverter() );
+			ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().applicationContext( this.applicationContext )
+			                                                       .build();
+			addIfNoInstanceYetPresent( messageConverters, new MappingJackson2HttpMessageConverter( objectMapper ) );
 		}
-		else if ( jacksonPresent ) {
-			addIfNoInstanceYetPresent( messageConverters,
-			                           new org.springframework.http.converter.json.MappingJacksonHttpMessageConverter() );
+		else if ( gsonPresent ) {
+			messageConverters.add( new GsonHttpMessageConverter() );
 		}
 	}
 

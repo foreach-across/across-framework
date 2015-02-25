@@ -2,8 +2,8 @@
 Arne Vandamme
 :toc:
 :sectanchors:
-:across-version: 1.0.5
-:spring-version: 4.0.8.RELEASE
+:across-version: 1.1.0
+:spring-version: 4.1.4.RELEASE
 :spring-url: http://projects.spring.io/spring-framework/
 :spring-data-url: http://projects.spring.io/spring-data/
 :spring-batch-url: http://projects.spring.io/spring-batch/
