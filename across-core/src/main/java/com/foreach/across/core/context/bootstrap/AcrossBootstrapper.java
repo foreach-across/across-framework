@@ -532,7 +532,11 @@ public class AcrossBootstrapper
 	{
 		@Override
 		public void handleError( PublicationError error ) {
-			eventErrors.set( 0, error.getCause() );
+			if( eventErrors.isEmpty() ) {
+				eventErrors.add( error.getCause() );
+			} else {
+				eventErrors.set( 0, error.getCause() );
+			}
 		}
 	}
 }
