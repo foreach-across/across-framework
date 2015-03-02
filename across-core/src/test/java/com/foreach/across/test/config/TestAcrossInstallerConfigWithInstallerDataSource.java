@@ -57,7 +57,9 @@ public class TestAcrossInstallerConfigWithInstallerDataSource
 	{
 		@Bean
 		public AcrossContext acrossContext() {
-			return new AcrossContext();
+			AcrossContext ctx = new AcrossContext();
+			ctx.bootstrap();
+			return ctx;
 		}
 
 		@Bean

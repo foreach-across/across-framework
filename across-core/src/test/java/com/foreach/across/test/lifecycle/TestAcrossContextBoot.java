@@ -246,6 +246,8 @@ public class TestAcrossContextBoot
 			context.addModule( testModule1() );
 			context.addModule( testModule2() );
 
+			context.bootstrap();
+
 			return context;
 		}
 

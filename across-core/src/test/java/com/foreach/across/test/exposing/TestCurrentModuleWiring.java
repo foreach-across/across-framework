@@ -103,6 +103,8 @@ public class TestCurrentModuleWiring
 			context.addModule( new ModuleOne() );
 			context.addModule( new ModuleTwo() );
 
+			context.bootstrap();
+
 			return context;
 		}
 	}

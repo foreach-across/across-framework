@@ -104,6 +104,8 @@ public class AcrossTestContextConfiguration implements EnvironmentAware
 			configurer.configure( context );
 		}
 
+		context.bootstrap();
+
 		return context;
 	}
 }

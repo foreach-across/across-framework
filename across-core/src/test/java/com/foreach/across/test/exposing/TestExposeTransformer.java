@@ -118,6 +118,8 @@ public class TestExposeTransformer
 			context.addModule( primaryModule() );
 			context.addModule( prefixedModule() );
 
+			context.bootstrap();
+
 			return context;
 		}
 

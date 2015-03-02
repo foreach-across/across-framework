@@ -1,4 +1,4 @@
 [[across-test]]
-=== Across test
+== Across test
 
 artifact

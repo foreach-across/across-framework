@@ -196,6 +196,8 @@ public class TestTransactionalWithoutBaseModule
 			acrossContext.addApplicationContextConfigurer( new TransactionManagementConfigurer(),
 			                                               ConfigurerScope.CONTEXT_AND_MODULES );
 
+			acrossContext.bootstrap();
+
 			return acrossContext;
 		}
 

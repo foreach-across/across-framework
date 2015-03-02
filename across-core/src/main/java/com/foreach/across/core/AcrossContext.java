@@ -37,7 +37,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -304,7 +303,6 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		AcrossContextUtils.getBeanRegistry( this ).getBeanOfType( AcrossEventPublisher.class ).publish( event );
 	}
 
-	@PostConstruct
 	public void bootstrap() {
 		if ( !isBootstrapped ) {
 			isBootstrapped = true;

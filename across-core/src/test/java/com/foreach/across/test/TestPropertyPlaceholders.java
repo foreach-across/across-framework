@@ -32,7 +32,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
@@ -141,6 +140,8 @@ public class TestPropertyPlaceholders
 					new ClassPathResource( "com/foreach/across/test/TestPropertiesContext.properties" ) );
 
 			acrossContext.setProperty( "contextDirectValue", 777 );
+
+			acrossContext.bootstrap();
 
 			return acrossContext;
 		}

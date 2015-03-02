@@ -42,7 +42,6 @@ public class TestAcrossCompositeCacheManagerWithoutNoOp
 	@Configuration
 	static class Config implements AcrossContextConfigurer
 	{
-
 		@Bean
 		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 			Map<String, AcrossContextConfigurer> configurerMap =
@@ -54,6 +53,8 @@ public class TestAcrossCompositeCacheManagerWithoutNoOp
 			for ( AcrossContextConfigurer configurer : configurerMap.values() ) {
 				configurer.configure( context );
 			}
+
+			context.bootstrap();
 
 			return context;
 		}

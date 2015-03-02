@@ -57,6 +57,8 @@ public class TestAcrossCompositeCacheManager
 				configurer.configure( context );
 			}
 
+			context.bootstrap();
+
 			return context;
 		}
 

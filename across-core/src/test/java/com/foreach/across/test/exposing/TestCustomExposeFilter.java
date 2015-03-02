@@ -135,6 +135,8 @@ public class TestCustomExposeFilter
 			context.addModule( controllerModule() );
 			context.addModule( mybeanModule() );
 
+			context.bootstrap();
+
 			return context;
 		}
 

@@ -156,6 +156,8 @@ public class TestMessageSourceInheritance
 			ctx.addModule( new MessageModule( "module3", false ) );
 			ctx.addModule( new MessageModule( "module4", true ) );
 
+			ctx.bootstrap();
+
 			return ctx;
 		}
 	}

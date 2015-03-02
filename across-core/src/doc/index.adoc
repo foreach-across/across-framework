@@ -1,10 +1,8 @@
 [[across-core]]
-=== Across core
-
-sdfjqdshdjsk
+== Across core
 
 [discrete]
-==== Artifact
+=== Artifact
 [source,xml,indent=0]
 [subs="verbatim,quotes,attributes"]
 ----
@@ -17,21 +15,77 @@ sdfjqdshdjsk
 	</dependencies>
 ----
 
-==== Dependencies
+=== Dependencies
 
-== Datasources and installers
-An AcrossContext supports the configuration of a DataSource instance.  The datasource will be available for all modules
- as bean named acrossDataSource.  Additionally a second datasource can be configured that will be available as
- the acrossInstallerDataSource.  If no separate installer datasource is specified, the default across datasource
- will be used.
+=== Creating an AcrossContext
+==== Manual creation of an AcrossContext
+An `AcrossContext` can be configured manually and is started using the `bootstrap()` method, and stopped using `shutdown()`.
+These methods take care of the Spring `ApplicationContext` lifecycle of all modules configured in the context.
 
- A valid default datasource is required for installers to run. It is not possible to configure only an installer
- datasource as the distributed locking mechanism uses the default datasource.
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+AcrossContext context = new AcrossContext();
+context.setParentApplicationContext( optionalParentContext );
+context.setDataSource( someDataSource );
+context.addModule( new SomeModule() );
 
- The installer datasource can be wired anywhere, but will be the default datasource used for all
- AcrossLiquibaseInstaller instances.  Its purpose is to provide a separate datasource with augmented permissions
- to perform schema changes and installer tracking in the database.
+// Start the context
+context.bootstrap();
 
- For security purposes the installer datasource could be closed after the context has bootstrapped.  This is the
- responsibilty of the application configuration and be aware that some functionality related to querying the
- installer repository will not be available if the installer datasource goes offline.
+// Stop the context
+context.shutdown();
+----
+
+==== Using @EnableAcrossContext and AcrossContextConfigurer
+Usually your application will consist of a single `AcrossContext` that is configured in the main Spring `ApplicationContext`.
+You can enable the automatic creation of an `AcrossContext` by putting the `@EnableAcrossContext` on any `@Configuration` class.
+This will initialize a new `AcrossContext` with the main `ApplicationContext` as parent, look for a default datasource bean named
+`acrossDataSource` and then delegate context configuration to all `AcrossContextConfigurer` beans it can find in the `ApplicationContext` before bootstrapping.
+
+The `AcrossContext` will be configured with sensible defaults but all settings can be overridden in any `AcrossContextConfigurer`.
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Configuration
+@EnableAcrossContext
+public class WebConfiguration implements AcrossContextConfigurer
+{
+	@Bean
+	public DataSource acrossDataSource() {
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
+		dataSource.setUrl( "jdbc:hsqldb:mem:/hsql/testDataSource" );
+		dataSource.setUsername( "sa" );
+		dataSource.setPassword( "" );
+
+		return dataSource;
+	}
+
+	@Override
+	public void configure( AcrossContext context ) {
+		context.setDevelopmentMode( true );
+
+		context.addModule( new SomeModule() );
+	}
+}
+----
+
+=== Datasources and installers
+An `AcrossContext` requires at least one datasource if modules need to run installers.  Certain core features like the
+`DistributedLockRepository` also require the core schema to be installed and will require a valid datasource to be configured.
+
+The main datasource is available for all modules as a bean named `acrossDataSource`. Optionally a separate installer datasource
+can be configured that will be available as `acrossInstallerDataSource`.  If no separate installer datasource is specified,
+the default across datasource will be used.
+
+IMPORTANT: A valid default datasource is always required for installers to run. It is not possible to configure only an installer
+datasource as the distributed locking mechanism uses the default datasource.
+
+The installer datasource can be wired anywhere, but will be the default datasource used for all `AcrossLiquibaseInstaller instances.
+Its purpose is to provide a separate datasource with augmented permissions to perform schema changes and installer tracking in the database.
+
+For security purposes the installer datasource could be closed after the context has bootstrapped.  This is the responsibilty
+of the application configuration and be aware that some functionality related to querying the installer repository will
+not be available if the installer datasource goes offline.

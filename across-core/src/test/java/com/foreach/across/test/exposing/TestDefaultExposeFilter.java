@@ -114,6 +114,8 @@ public class TestDefaultExposeFilter
 
 			context.addModule( testModule1() );
 
+			context.bootstrap();
+
 			return context;
 		}
 

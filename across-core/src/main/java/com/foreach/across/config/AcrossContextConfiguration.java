@@ -71,6 +71,9 @@ public class AcrossContextConfiguration
 			configurer.configure( context );
 		}
 
+		// Start the context
+		context.bootstrap();
+
 		return context;
 	}
 
