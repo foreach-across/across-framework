@@ -34,7 +34,7 @@
       <module name="across-core" target="1.7" />
       <module name="across-test" target="1.7" />
       <module name="across-web" target="1.7" />
+      <module name="platform-bom" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
-

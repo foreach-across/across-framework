@@ -187,41 +187,14 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>io.spring.platform</groupId>
+				<groupId>across</groupId>
 				<artifactId>platform-bom</artifactId>
-				<version>${spring.platform.version}</version>
+				<version>${across.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-				<exclusions>
-					<exclusion>
-						<groupId>org.liquibase</groupId>
-						<artifactId>liquibase-core</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-core</artifactId>
-				<version>3.1.0</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>jetty-servlet</artifactId>
-						<groupId>org.eclipse.jetty</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>velocity</artifactId>
-						<groupId>org.apache.velocity</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-concurrent</artifactId>
-				<version>${foreach.common.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 
 	<dependencies>
 		<dependency>
