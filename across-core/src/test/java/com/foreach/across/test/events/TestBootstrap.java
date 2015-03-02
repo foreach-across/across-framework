@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -51,6 +52,7 @@ public class TestBootstrap
 		}
 		catch ( AcrossException ae ) {
 			caught = true;
+			assertFalse( ae.getCause() instanceof IndexOutOfBoundsException );
 		}
 
 		assertTrue( events.contains( "two" ) );
