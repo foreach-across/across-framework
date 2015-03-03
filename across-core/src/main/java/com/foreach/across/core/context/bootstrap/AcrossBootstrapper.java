@@ -65,7 +65,7 @@ public class AcrossBootstrapper
 	private BootstrapApplicationContextFactory applicationContextFactory;
 
 	private final Stack<ConfigurableApplicationContext> createdApplicationContexts = new Stack<>();
-	private final List<Throwable> eventErrors = new ArrayList<>( 1 );
+	private Throwable bootstrapEventError;
 
 	public AcrossBootstrapper( AcrossContext context ) {
 		this.context = context;
@@ -86,6 +86,8 @@ public class AcrossBootstrapper
 	 */
 	public void bootstrap() {
 		try {
+			bootstrapEventError = null;
+
 			checkBootstrapIsPossible();
 
 			ConfigurableAcrossContextInfo contextInfo = buildContextAndModuleInfo();
@@ -222,8 +224,8 @@ public class AcrossBootstrapper
 	}
 
 	private void failOnEventErrors() {
-		if ( context.isFailBootstrapOnEventPublicationErrors() && !eventErrors.isEmpty() ) {
-			throw new RuntimeException( eventErrors.get( 0 ) );
+		if ( context.isFailBootstrapOnEventPublicationErrors() && bootstrapEventError != null ) {
+			throw new RuntimeException( bootstrapEventError );
 		}
 	}
 
@@ -532,11 +534,7 @@ public class AcrossBootstrapper
 	{
 		@Override
 		public void handleError( PublicationError error ) {
-			if( eventErrors.isEmpty() ) {
-				eventErrors.add( error.getCause() );
-			} else {
-				eventErrors.set( 0, error.getCause() );
-			}
+			bootstrapEventError = error.getCause();
 		}
 	}
 }
