@@ -104,10 +104,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 				)
 		);
 		contextConfigurers.add(
-				new ComponentScanConfigurer(
-						"com.foreach.across.modules.web.menu",
-						"com.foreach.across.modules.web.ui"
-				)
+				new ComponentScanConfigurer( "com.foreach.across.modules.web.menu" )
 		);
 	}
 
