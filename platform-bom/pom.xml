@@ -269,6 +269,11 @@
 			</dependency>
 			<dependency>
 				<groupId>across-standard-modules</groupId>
+				<artifactId>metric-module</artifactId>
+				<version>${across.standard.modules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
 				<artifactId>entity-module</artifactId>
 				<version>${across.standard.modules.version}</version>
 			</dependency>
