@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<h3 th:fragment="render(component)" class="page-header" th:text="${component.text}">
+	header text
+</h3>
+
+<div th:fragment="randomText" th:remove="tag">
+	Some random text instead...
+</div>
+
+<div th:fragment="otherTemplate(component)" th:text="|Received text: ${component.text}|">
+	Received text will be shown here.
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<root xmlns:across="http://across.foreach.be">
+	<across:view element="${element}" />
+</root>

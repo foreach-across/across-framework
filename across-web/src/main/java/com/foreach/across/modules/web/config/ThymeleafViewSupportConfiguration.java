@@ -20,6 +20,13 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.NodeViewElement;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.ContainerViewElementNodeBuilder;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.NodeViewElementNodeBuilder;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.TextViewElementNodeBuilder;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +76,17 @@ public class ThymeleafViewSupportConfiguration
 		}
 
 		return engine;
+	}
+
+	@Bean
+	@Exposed
+	public ViewElementNodeBuilderRegistry thymeleafViewElementProcessorRegistry() {
+		ViewElementNodeBuilderRegistry registry = new ViewElementNodeBuilderRegistry();
+		registry.registerNodeBuilder( TextViewElement.class, new TextViewElementNodeBuilder() );
+		registry.registerNodeBuilder( ContainerViewElement.class, new ContainerViewElementNodeBuilder() );
+		registry.registerNodeBuilder( NodeViewElement.class, new NodeViewElementNodeBuilder() );
+
+		return registry;
 	}
 
 	@Bean

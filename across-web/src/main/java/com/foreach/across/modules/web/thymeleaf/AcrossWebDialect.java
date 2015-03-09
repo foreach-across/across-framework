@@ -19,9 +19,12 @@ import com.foreach.across.modules.web.resource.WebResourceUtils;
 import org.thymeleaf.context.IProcessingContext;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.dialect.IExpressionEnhancingDialect;
+import org.thymeleaf.processor.IProcessor;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Custom Thymeleaf dialect supporting AcrossWebModule setups.
@@ -51,6 +54,14 @@ public class AcrossWebDialect extends AbstractDialect implements IExpressionEnha
 		}
 
 		return objects;
+	}
+
+	@Override
+	public Set<IProcessor> getProcessors() {
+		Set<IProcessor> processors = new HashSet<>();
+		processors.add( new ViewElementElementProcessor() );
+
+		return processors;
 	}
 
 	@Override

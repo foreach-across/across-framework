@@ -2,3 +2,19 @@
 == Across test
 
 artifact
+
+Thymeleaf integration: AcrossWebDialect
+
+#webapp.path('')
+across:view
+across:attributes
+
+Test module: WebTestModule
+
+test view element thymeleaf generation
+xml based generation testing
+
+AbstractViewElementTemplateTest
+
+test view element builder
+AbstractViewElementBuilderTest
