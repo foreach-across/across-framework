@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.NestableAttributeHolderNode;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
 import org.thymeleaf.spring4.context.SpringWebContext;
@@ -33,6 +34,7 @@ import org.thymeleaf.standard.fragment.StandardFragmentProcessor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
@@ -70,6 +72,18 @@ public class ViewElementElementProcessor
 		}
 
 		throw new IllegalArgumentException( "Unable to render ViewElement of type " + viewElement.getClass() );
+	}
+
+	@Override
+	public void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes ) {
+		for ( Map.Entry<String, Object> attribute : attributes.entrySet() ) {
+			if ( attribute.getValue() == null ) {
+				node.removeAttribute( attribute.getKey() );
+			}
+			else {
+				node.setAttribute( attribute.getKey(), attribute.getValue().toString() );
+			}
+		}
 	}
 
 	private ViewElementNodeBuilder findElementProcessor( ViewElement viewElement, Arguments arguments ) {

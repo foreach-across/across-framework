@@ -23,18 +23,22 @@ import com.foreach.across.test.modules.webtest.WebTestModule;
 import com.foreach.across.test.modules.webtest.controllers.RenderViewElementController;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.XmlExpectationsHelper;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -53,6 +57,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = AbstractViewElementTemplateTest.Config.class)
 public abstract class AbstractViewElementTemplateTest
 {
+	private final Logger LOG = LoggerFactory.getLogger( getClass() );
+
 	@Autowired
 	private WebApplicationContext wac;
 
@@ -76,14 +82,29 @@ public abstract class AbstractViewElementTemplateTest
 	public void renderAndExpect( ViewElement viewElement, final String expectedContent ) {
 		renderController.setElement( viewElement );
 
-		String xml =
+		final String expectedXml =
 				"<?xml version=\"1.0\"?><root xmlns:across='http://across.foreach.be'>" + expectedContent + "</root>";
 
 		try {
 			mockMvc.perform( get( RenderViewElementController.PATH ) )
 			       .andExpect( status().isOk() )
-			       .andExpect( content().xml( xml ) );
+			       .andDo( new ResultHandler()
+			       {
+				       @Override
+				       public void handle( MvcResult mvcResult ) throws Exception {
+					       String receivedXml = mvcResult.getResponse().getContentAsString();
+					       try {
+						       new XmlExpectationsHelper().assertXmlEqual( expectedXml, receivedXml );
+					       }
+					       catch ( AssertionError ae ) {
+						       throw new AssertionError( "Unexpected content:\n" + receivedXml, ae );
+					       }
+				       }
+			       } );
 
+		}
+		catch ( AssertionError ae ) {
+			throw ae;
 		}
 		catch ( Exception e ) {
 			throw new RuntimeException( e );
