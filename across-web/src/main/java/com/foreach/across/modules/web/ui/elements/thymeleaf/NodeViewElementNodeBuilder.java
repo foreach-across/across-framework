@@ -25,7 +25,6 @@ import org.thymeleaf.dom.Node;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class NodeViewElementNodeBuilder implements ViewElementNodeBuilder<NodeViewElement>
 {
@@ -35,9 +34,7 @@ public class NodeViewElementNodeBuilder implements ViewElementNodeBuilder<NodeVi
 	                              ViewElementNodeFactory viewElementNodeFactory ) {
 		Element node = new Element( element.getTagName() );
 
-		for ( Map.Entry<String, String> attribute : element.getAttributes().entrySet() ) {
-			node.setAttribute( attribute.getKey(), attribute.getValue() );
-		}
+		viewElementNodeFactory.setAttributes( node, element.getAttributes() );
 
 		for ( ViewElement child : element ) {
 			for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
