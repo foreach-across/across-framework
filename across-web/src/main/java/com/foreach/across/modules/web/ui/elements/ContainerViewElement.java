@@ -29,7 +29,6 @@ import com.foreach.across.modules.web.ui.ViewElements;
  *
  * @author Arne Vandamme
  */
-
 public class ContainerViewElement extends ViewElements implements ViewElement
 {
 	public static final String TYPE = StandardViewElements.CONTAINER;
