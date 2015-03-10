@@ -24,21 +24,21 @@ import com.foreach.across.modules.web.ui.StandardViewElements;
  */
 public class NodeViewElement extends NodeViewElementSupport
 {
-	public static final String TYPE = StandardViewElements.NODE;
+	public static final String ELEMENT_TYPE = StandardViewElements.NODE;
 
 	private String tagName;
 
 	public NodeViewElement() {
-		super( TYPE );
+		super( ELEMENT_TYPE );
 	}
 
 	public NodeViewElement( String name ) {
-		super( TYPE );
+		super( ELEMENT_TYPE );
 		setName( name );
 	}
 
 	public NodeViewElement( String name, String tag ) {
-		super( TYPE );
+		super( ELEMENT_TYPE );
 		setName( name );
 		setTagName( tag );
 	}

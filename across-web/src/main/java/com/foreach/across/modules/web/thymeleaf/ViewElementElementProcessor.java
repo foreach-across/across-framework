@@ -75,14 +75,20 @@ public class ViewElementElementProcessor
 	}
 
 	@Override
+	public void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value ) {
+		if ( value == null ) {
+			node.removeAttribute( attributeName );
+		}
+		else {
+			node.setAttribute( attributeName, value.toString() );
+		}
+	}
+
+	@Override
 	public void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes ) {
 		for ( Map.Entry<String, Object> attribute : attributes.entrySet() ) {
-			if ( attribute.getValue() == null ) {
-				node.removeAttribute( attribute.getKey() );
-			}
-			else {
-				node.setAttribute( attribute.getKey(), attribute.getValue().toString() );
-			}
+			setAttribute( node, attribute.getKey(), attribute.getValue() );
+
 		}
 	}
 
