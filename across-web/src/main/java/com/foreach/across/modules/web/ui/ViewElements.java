@@ -29,7 +29,7 @@ import java.util.*;
  *
  * @author Arne Vandamme
  */
-public class ViewElements implements Iterable<ViewElement>
+public class ViewElements implements ViewElementCollection<ViewElement>
 {
 	private final LinkedList<ViewElement> elements = new LinkedList<>();
 

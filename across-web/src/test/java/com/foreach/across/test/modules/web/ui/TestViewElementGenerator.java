@@ -15,48 +15,208 @@
  */
 package com.foreach.across.test.modules.web.ui;
 
-import com.foreach.across.modules.web.ui.ViewElement;
-import com.foreach.across.modules.web.ui.ViewElementGenerator;
-import com.foreach.across.modules.web.ui.elements.TextViewElement;
+import com.foreach.across.modules.web.ui.ViewElementBuilder;
+import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.ViewElementSupport;
+import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-/**
- * POC test
- */
 public class TestViewElementGenerator
 {
-	// todo replace by final
+	private final List<String> data = Arrays.asList( "one", "two", "three" );
+
+	private ViewElementGenerator<String, Text> generator;
+
+	@Before
+	public void reset() {
+		generator = new ViewElementGenerator<>();
+		generator.setItems( data );
+	}
+
 	@Test
-	public void test() {
-		ViewElementGenerator generator = new ViewElementGenerator();
-		generator.setItems( Arrays.asList( (Object) "one", (Object) "two" ) );
-		generator.setCallback( new ViewElementGenerator.GeneratorCallback()
+	public void notEmpty() {
+		assertFalse( generator.isEmpty() );
+		assertEquals( 3, generator.size() );
+	}
+
+	@Test
+	public void empty() {
+		generator.setItems( Collections.<String>emptyList() );
+
+		assertTrue( generator.isEmpty() );
+		assertEquals( 0, generator.size() );
+	}
+
+	@Test
+	public void elementTemplateRepeatedGenerationWithoutCallback() {
+		Text template = new Text();
+		template.setText( "template" );
+
+		generator.setItemTemplate( template );
+
+		assertEquals(
+				Arrays.asList( "template", "template", "template" ),
+				generate()
+		);
+
+		assertEquals(
+				Arrays.asList( "template", "template", "template" ),
+				generate()
+		);
+	}
+
+	@Test
+	public void elementTemplateRepeatedGeneration() {
+		Text template = new Text();
+		template.setText( "template" );
+
+		generator.setItemTemplate( template );
+		generator.setCreationCallback( new ViewElementGenerator.CreationCallback<String, Text>()
 		{
 			@Override
-			public ViewElement create( Object item ) {
-				return new TextViewElement( (String) item );
+			public Text create( String item, Text template ) {
+				template.setText( item );
+				return template;
 			}
 		} );
 
-		Set<ViewElement> generated = new HashSet<>();
+		assertEquals(
+				Arrays.asList( "one", "two", "three" ),
+				generate()
+		);
 
-		for ( ViewElement element : generator ) {
-			generated.add( element );
+		assertEquals(
+				Arrays.asList( "one", "two", "three" ),
+				generate()
+		);
 
-			assertTrue( element instanceof TextViewElement );
+		generator.setCreationCallback( null );
+
+		assertEquals(
+				Arrays.asList( "three", "three", "three" ),
+				generate()
+		);
+	}
+
+	@Test
+	public void builderTemplateRepeatedGeneration() {
+		generator.setItemTemplate( new TextBuilder() );
+
+		assertEquals(
+				Arrays.asList( "1", "2", "3" ),
+				generate()
+		);
+
+		// Same results should be returned
+		assertEquals(
+				Arrays.asList( "1", "2", "3" ),
+				generate()
+		);
+	}
+
+	@Test
+	public void builderTemplateWithCallback() {
+		generator.setItemTemplate( new TextBuilder() );
+		generator.setCreationCallback( new ViewElementGenerator.CreationCallback<String, Text>()
+		{
+			@Override
+			public Text create( String item, Text template ) {
+				template.setText( template.getText() + "-" + item );
+				return template;
+			}
+		} );
+
+		assertEquals(
+				Arrays.asList( "1-one", "2-two", "3-three" ),
+				generate()
+		);
+
+		// Same results should be returned
+		assertEquals(
+				Arrays.asList( "1-one", "2-two", "3-three" ),
+				generate()
+		);
+	}
+
+	@Test
+	@SuppressWarnings("all")
+	public void noTemplateAndNoCallbackResultsInNullElements() {
+		assertEquals( Arrays.asList( null, null, null ), generate() );
+	}
+
+	private List<String> generate() {
+		List<String> texts = new ArrayList<>();
+
+		for ( Text textViewElement : generator ) {
+			if ( textViewElement == null ) {
+				texts.add( null );
+			}
+			else {
+				texts.add( textViewElement.getText() );
+			}
 		}
 
-		for ( ViewElement repeat : generator ) {
-			assertTrue( generated.contains( repeat ) );
+		return texts;
+	}
+
+	private static class Text extends ViewElementSupport
+	{
+		private String text;
+
+		public Text() {
+			super( "test-text" );
 		}
 
-		assertEquals( 2, generated.size() );
+		public String getText() {
+			return text;
+		}
+
+		public void setText( String text ) {
+			this.text = text;
+		}
+
+		@Override
+		public boolean equals( Object o ) {
+			if ( this == o ) {
+				return true;
+			}
+			if ( o == null || getClass() != o.getClass() ) {
+				return false;
+			}
+
+			Text text1 = (Text) o;
+
+			if ( text != null ? !text.equals( text1.text ) : text1.text != null ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			return text != null ? text.hashCode() : 0;
+		}
+	}
+
+	private static class TextBuilder implements ViewElementBuilder<Text>
+	{
+		private int count = 0;
+
+		@Override
+		public Text build( ViewElementBuilderContext builderContext ) {
+			Text t = new Text();
+			t.setText( "" + ++count );
+
+			return t;
+		}
 	}
 }
