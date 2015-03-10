@@ -178,7 +178,7 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 		}
 	}
 
-	public static final String TYPE = StandardViewElements.CONTAINER;
+	public static final String ELEMENT_TYPE = StandardViewElements.GENERATOR;
 
 	private List<T> items = Collections.emptyList();
 	private List<U> generated = Collections.emptyList();
@@ -189,7 +189,7 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 	private String name, customTemplate, elementType;
 
 	public ViewElementGenerator() {
-		setElementType( TYPE );
+		setElementType( ELEMENT_TYPE );
 	}
 
 	public ViewElementGenerator( String name ) {

@@ -20,7 +20,7 @@ import com.foreach.across.modules.web.ui.ViewElementSupport;
 
 public class TextViewElement extends ViewElementSupport
 {
-	public static final String TYPE = StandardViewElements.TEXT;
+	public static final String ELEMENT_TYPE = StandardViewElements.TEXT;
 
 	private String text;
 	boolean escapeXml = true;
@@ -39,13 +39,13 @@ public class TextViewElement extends ViewElementSupport
 	}
 
 	public TextViewElement( String text, boolean escapeXml ) {
-		super( TYPE );
+		super( ELEMENT_TYPE );
 		this.text = text;
 		this.escapeXml = escapeXml;
 	}
 
 	public TextViewElement( String name, String text, boolean escapeXml ) {
-		super( TYPE );
+		super( ELEMENT_TYPE );
 		this.text = text;
 		this.escapeXml = escapeXml;
 		setName( name );

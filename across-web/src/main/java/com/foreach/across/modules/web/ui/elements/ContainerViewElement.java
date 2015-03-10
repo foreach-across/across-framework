@@ -31,16 +31,16 @@ import com.foreach.across.modules.web.ui.ViewElements;
  */
 public class ContainerViewElement extends ViewElements implements ViewElement
 {
-	public static final String TYPE = StandardViewElements.CONTAINER;
+	public static final String ELEMENT_TYPE = StandardViewElements.CONTAINER;
 
 	private String name, customTemplate, elementType;
 
 	public ContainerViewElement() {
-		setElementType( TYPE );
+		setElementType( ELEMENT_TYPE );
 	}
 
 	public ContainerViewElement( String name ) {
-		this.name = name;
+		setName( name );
 	}
 
 	@Override

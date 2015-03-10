@@ -30,5 +30,7 @@ public interface ViewElementNodeFactory
 {
 	List<Node> buildNodes( ViewElement viewElement, Arguments arguments );
 
+	void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value );
+
 	void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes );
 }
