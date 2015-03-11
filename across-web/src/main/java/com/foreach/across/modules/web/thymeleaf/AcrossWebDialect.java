@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.resource.WebResourceUtils;
+import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IProcessingContext;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.dialect.IExpressionEnhancingDialect;
@@ -41,6 +42,7 @@ public class AcrossWebDialect extends AbstractDialect implements IExpressionEnha
 	public static final String PREFIX = "across";
 
 	public static final String UTILITY_WEBAPP = "webapp";
+	public static final String HTML_ID_STORE = "htmlIdStore";
 
 	@Override
 	public Map<String, Object> getAdditionalExpressionObjects( IProcessingContext processingContext ) {
@@ -51,6 +53,10 @@ public class AcrossWebDialect extends AbstractDialect implements IExpressionEnha
 
 		if ( pathResolver != null ) {
 			objects.put( UTILITY_WEBAPP, pathResolver );
+		}
+
+		if ( processingContext instanceof Arguments ) {
+			objects.put( HTML_ID_STORE, new HtmlIdStore( (Arguments) processingContext ) );
 		}
 
 		return objects;

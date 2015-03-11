@@ -8,3 +8,10 @@ prefixing path context
 special characters:
 - ! = suppress prefix
 - {adminWeb}/boe/test/
+
+viewelement
+viewelement builder
+thymeleaf view element node builder registry
+viewelements
+viewelementgenerator
+

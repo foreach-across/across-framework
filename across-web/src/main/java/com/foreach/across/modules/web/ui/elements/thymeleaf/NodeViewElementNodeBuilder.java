@@ -16,32 +16,16 @@
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
-import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilder;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Node;
 
-import java.util.Collections;
-import java.util.List;
-
-public class NodeViewElementNodeBuilder implements ViewElementNodeBuilder<NodeViewElement>
+public class NodeViewElementNodeBuilder extends NestableNodeBuilderSupport<NodeViewElement>
 {
 	@Override
-	public List<Node> buildNodes( NodeViewElement element,
+	protected Element createNode( NodeViewElement element,
 	                              Arguments arguments,
 	                              ViewElementNodeFactory viewElementNodeFactory ) {
-		Element node = new Element( element.getTagName() );
-
-		viewElementNodeFactory.setAttributes( node, element.getAttributes() );
-
-		for ( ViewElement child : element ) {
-			for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
-				node.addChild( childNode );
-			}
-		}
-
-		return Collections.singletonList( (Node) node );
+		return new Element( element.getTagName() );
 	}
 }

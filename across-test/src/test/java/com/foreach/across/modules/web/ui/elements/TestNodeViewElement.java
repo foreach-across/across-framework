@@ -60,4 +60,21 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 
 		renderAndExpect( node, "<div class='some-class'><p class='main-paragraph'>paragraph text</p></div>" );
 	}
+
+	@Test
+	public void idGeneration() {
+		NodeViewElement one = NodeViewElement.forTag( "div" );
+		one.setHtmlId( "one" );
+
+		NodeViewElement otherOne = NodeViewElement.forTag( "div" );
+		otherOne.setHtmlId( "one" );
+		one.add( otherOne );
+		one.add( otherOne );
+
+		renderAndExpect( one,
+		                 "<div id='one'>" +
+				                 "<div id='one1'></div>" +
+				                 "<div id='one1'></div>" +
+				                 "</div>" );
+	}
 }

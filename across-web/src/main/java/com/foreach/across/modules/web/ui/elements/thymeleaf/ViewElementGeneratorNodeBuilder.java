@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
+import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
@@ -36,10 +37,22 @@ public class ViewElementGeneratorNodeBuilder implements ViewElementNodeBuilder<V
 	                              ViewElementNodeFactory componentElementProcessor ) {
 		List<Node> list = new ArrayList<>();
 
-		for ( ViewElement child : container ) {
-			if ( child != null ) {
-				list.addAll( componentElementProcessor.buildNodes( child, arguments ) );
+		HtmlIdStore originalIdStore = HtmlIdStore.fetch( arguments );
+
+		try {
+			for ( ViewElement child : container ) {
+				if ( child != null ) {
+					if ( !container.isBuilderItemTemplate() ) {
+						HtmlIdStore.store( originalIdStore.createNew(), arguments );
+					}
+
+					list.addAll( componentElementProcessor.buildNodes( child, arguments ) );
+				}
 			}
+		}
+		finally {
+			// Put back the original id store
+			HtmlIdStore.store( originalIdStore, arguments );
 		}
 
 		return list;

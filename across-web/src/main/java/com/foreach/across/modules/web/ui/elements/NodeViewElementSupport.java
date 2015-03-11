@@ -27,10 +27,19 @@ import java.util.Map;
  */
 public abstract class NodeViewElementSupport extends ContainerViewElement
 {
+	private String htmlId;
 	private Map<String, Object> attributes = new HashMap<>();
 
 	protected NodeViewElementSupport( String elementType ) {
 		setElementType( elementType );
+	}
+
+	public String getHtmlId() {
+		return htmlId;
+	}
+
+	public void setHtmlId( String htmlId ) {
+		this.htmlId = htmlId;
 	}
 
 	public Map<String, Object> getAttributes() {
