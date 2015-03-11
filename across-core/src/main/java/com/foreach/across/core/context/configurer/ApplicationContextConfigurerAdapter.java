@@ -17,11 +17,11 @@
 package com.foreach.across.core.context.configurer;
 
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.core.env.PropertySources;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Adapter class that implements the ApplicationContextConfigurer interface.
@@ -98,10 +98,10 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 		if ( !Arrays.equals( postProcessors(), that.postProcessors() ) ) {
 			return false;
 		}
-		if ( !ObjectUtils.equals( providedBeans(), that.providedBeans() ) ) {
+		if ( !Objects.equals( providedBeans(), that.providedBeans() ) ) {
 			return false;
 		}
-		if ( !ObjectUtils.equals( propertySources(), that.propertySources() ) ) {
+		if ( !Objects.equals( propertySources(), that.propertySources() ) ) {
 			return false;
 		}
 

@@ -43,10 +43,12 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 			NodeViewElement row = NodeViewElement.forTag( "tr" );
 
 			NodeViewElement name = NodeViewElement.forTag( "td" );
+			name.setHtmlId( "name-cell" );
 			name.add( new TextViewElement( person.getName() ) );
 			row.add( name );
 
 			NodeViewElement email = NodeViewElement.forTag( "td" );
+			email.setHtmlId( "email-cell" );
 			email.add( new TextViewElement( person.getEmail() ) );
 			row.add( email );
 
@@ -56,19 +58,21 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 		renderAndExpect(
 				table,
 				"<table>" +
-						"<tr><td>John Doe</td><td>john@doe.com</td></tr>" +
-						"<tr><td>Jane Doe</td><td>jane@doe.com</td></tr>" +
+						"<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>" +
+						"<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>" +
 						"</table>"
 		);
 	}
 
 	@Test
-	public void templatedTableViewElement() {
+	public void viewElementTemplate() {
 		NodeViewElement rowTemplate = NodeViewElement.forTag( "tr" );
 		NodeViewElement name = NodeViewElement.forTag( "td" );
+		name.setHtmlId( "name-cell" );
 		name.add( new TextViewElement( "name", "" ) );
 		rowTemplate.add( name );
 		NodeViewElement email = NodeViewElement.forTag( "td" );
+		email.setHtmlId( "email-cell" );
 		email.add( new TextViewElement( "email", "" ) );
 		rowTemplate.add( email );
 
@@ -95,24 +99,25 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 		renderAndExpect(
 				table,
 				"<table>" +
-						"<tr><td>John Doe</td><td>john@doe.com</td></tr>" +
-						"<tr><td>Jane Doe</td><td>jane@doe.com</td></tr>" +
+						"<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>" +
+						"<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>" +
 						"</table>"
 		);
 	}
 
 	@Test
-	public void templatedBuilderTableViewElement() {
-
+	public void viewElementBuilderTemplate() {
 		ViewElementBuilder<NodeViewElement> builder = new ViewElementBuilder<NodeViewElement>()
 		{
 			@Override
 			public NodeViewElement build( ViewElementBuilderContext builderContext ) {
 				NodeViewElement rowTemplate = NodeViewElement.forTag( "tr" );
 				NodeViewElement name = NodeViewElement.forTag( "td" );
+				name.setHtmlId( "name-cell" );
 				name.add( new TextViewElement( "name", "" ) );
 				rowTemplate.add( name );
 				NodeViewElement email = NodeViewElement.forTag( "td" );
+				email.setHtmlId( "email-cell" );
 				email.add( new TextViewElement( "email", "" ) );
 				rowTemplate.add( email );
 
@@ -143,8 +148,45 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 		renderAndExpect(
 				table,
 				"<table>" +
-						"<tr><td>John Doe</td><td>john@doe.com</td></tr>" +
-						"<tr><td>Jane Doe</td><td>jane@doe.com</td></tr>" +
+						"<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>" +
+						"<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>" +
+						"</table>"
+		);
+	}
+
+	@Test
+	public void callbackOnly() {
+		NodeViewElement table = NodeViewElement.forTag( "table" );
+
+		ViewElementGenerator<Person, NodeViewElement> generator = new ViewElementGenerator<>();
+		generator.setItems( people );
+		generator.setCreationCallback( new ViewElementGenerator.CreationCallback<Person, NodeViewElement>()
+		{
+			@Override
+			public NodeViewElement create( Person person, NodeViewElement template ) {
+				NodeViewElement row = NodeViewElement.forTag( "tr" );
+
+				NodeViewElement name = NodeViewElement.forTag( "td" );
+				name.setHtmlId( "name-cell" );
+				name.add( new TextViewElement( person.getName() ) );
+				row.add( name );
+
+				NodeViewElement email = NodeViewElement.forTag( "td" );
+				email.setHtmlId( "email-cell" );
+				email.add( new TextViewElement( person.getEmail() ) );
+				row.add( email );
+
+				return row;
+			}
+		} );
+
+		table.add( generator );
+
+		renderAndExpect(
+				table,
+				"<table>" +
+						"<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>" +
+						"<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>" +
 						"</table>"
 		);
 	}
