@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: com.foreach.libs:common-concurrent:0.11-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-concurrent/0.11-SNAPSHOT/common-concurrent-0.11-20141215.091458-3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-concurrent/0.11-SNAPSHOT/common-concurrent-0.11-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-concurrent/0.11-SNAPSHOT/common-concurrent-0.11-20141215.091458-3-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-concurrent/0.11-SNAPSHOT/common-concurrent-0.11-SNAPSHOT-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-concurrent/0.11-SNAPSHOT/common-concurrent-0.11-20141215.091458-3-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-concurrent/0.11-SNAPSHOT/common-concurrent-0.11-SNAPSHOT-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

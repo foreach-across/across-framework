@@ -27,7 +27,7 @@
 		<across.version>1.1.0-SNAPSHOT</across.version>
 		<across.standard.modules.version>1.1.0-SNAPSHOT</across.standard.modules.version>
 		<spring.platform.version>1.1.1.RELEASE</spring.platform.version>
-		<foreach.common.version>0.11-SNAPSHOT</foreach.common.version>
+		<foreach.common.version>0.11</foreach.common.version>
 		<querydsl.version>3.5.1</querydsl.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

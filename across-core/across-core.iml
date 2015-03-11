@@ -35,7 +35,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:4.0.6.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-orm:4.0.6.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:4.0.6.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.foreach.libs:common-concurrent:0.11-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.libs:common-concurrent:0.11" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context:4.1.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:4.1.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
@@ -53,7 +53,7 @@
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.14" level="project" />
     <orderEntry type="library" name="Maven: com.mattbertolini:liquibase-slf4j:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP-java6:2.3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.javassist:javassist:3.19.0-GA" level="project" />
+    <orderEntry type="library" name="Maven: org.javassist:javassist:3.18.1-GA" level="project" />
     <orderEntry type="library" name="Maven: net.engio:mbassador:1.2.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: commons-pool:commons-pool:1.6" level="project" />
