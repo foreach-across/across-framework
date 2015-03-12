@@ -24,10 +24,7 @@ import com.foreach.across.core.installers.AcrossInstallerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
 
@@ -52,44 +49,55 @@ public class AcrossInstallerConfig
 	 */
 	@Bean
 	@Lazy
-	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
+	@DependsOn("acrossCoreSchemaInstaller")
 	public AcrossInstallerRepository installerRepository() {
-		DataSource dataSource = acrossDataSource();
+		DataSource installerDataSource = acrossInstallerDataSource();
 
-		if ( dataSource == null ) {
+		if ( installerDataSource == null ) {
 			throw new AcrossException(
 					"Unable to create the AcrossInstallerRepository because there is no DataSource configured.  " +
 							"A DataSource is required if there is at least one non-disabled installer."
 			);
 		}
 
-		return new AcrossInstallerRepository( acrossDataSource() );
+		return new AcrossInstallerRepository( installerDataSource );
 	}
 
 	@Bean
 	@Lazy
-	@DependsOn(AcrossContext.DATASOURCE)
+	@DependsOn(AcrossContext.INSTALLER_DATASOURCE)
 	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
-		DataSource dataSource = acrossDataSource();
+		DataSource installerDataSource = acrossInstallerDataSource();
 
-		if ( dataSource == null ) {
+		if ( installerDataSource == null ) {
 			throw new AcrossException(
 					"Unable to create the AcrossCoreSchemaInstaller because there is no DataSource configured.  " +
 							"A DataSource is required if there is at least one non-disabled installer."
 			);
 		}
 
-		return new AcrossCoreSchemaInstaller( dataSource, AcrossContextUtils.getBeanFactory( acrossContext ) );
+		return new AcrossCoreSchemaInstaller( installerDataSource, AcrossContextUtils.getBeanFactory( acrossContext ) );
 	}
 
-	@Bean(name = AcrossContext.DATASOURCE)
-	public DataSource acrossDataSource() {
-		DataSource dataSource = acrossContext.getDataSource();
+	@Bean(name = AcrossContext.INSTALLER_DATASOURCE)
+	@DependsOn(AcrossContext.DATASOURCE)
+	public DataSource acrossInstallerDataSource() {
+		DataSource installerDataSource = acrossContext.getInstallerDataSource();
 
-		if ( dataSource == null ) {
-			LOG.warn( "No Across data source specified - it will be impossible to run any installers." );
+		if ( installerDataSource == null ) {
+			installerDataSource = acrossDataSource();
 		}
 
-		return dataSource;
+		if ( installerDataSource == null ) {
+			LOG.warn( "No Across installer data source specified - it will be impossible to run any installers." );
+		}
+
+		return installerDataSource;
+	}
+
+	@Primary
+	@Bean(name = AcrossContext.DATASOURCE)
+	public DataSource acrossDataSource() {
+		return acrossContext.getDataSource();
 	}
 }

@@ -30,7 +30,6 @@ import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
-import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
@@ -41,6 +40,8 @@ import com.foreach.across.core.filters.NamedBeanFilter;
 import com.foreach.across.core.installers.AcrossBootstrapInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import net.engio.mbassy.bus.error.IPublicationErrorHandler;
+import net.engio.mbassy.bus.error.PublicationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,8 +49,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.HierarchicalMessageSource;
-import org.springframework.context.MessageSource;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.util.ClassUtils;
 
@@ -66,6 +65,7 @@ public class AcrossBootstrapper
 	private BootstrapApplicationContextFactory applicationContextFactory;
 
 	private final Stack<ConfigurableApplicationContext> createdApplicationContexts = new Stack<>();
+	private final List<Throwable> eventErrors = new ArrayList<>( 1 );
 
 	public AcrossBootstrapper( AcrossContext context ) {
 		this.context = context;
@@ -109,6 +109,11 @@ public class AcrossBootstrapper
 
 			BootstrapLockManager bootstrapLockManager = new BootstrapLockManager( contextInfo );
 
+			AcrossEventPublisher eventPublisher = rootContext.getBean( AcrossEventPublisher.class );
+			if ( context.isFailBootstrapOnEventPublicationErrors() ) {
+				eventPublisher.addErrorHandler( new BootstrapEventErrorHandler() );
+			}
+
 			try {
 				AcrossBootstrapInstallerRegistry installerRegistry =
 						new AcrossBootstrapInstallerRegistry( contextInfo.getBootstrapConfiguration(),
@@ -136,7 +141,7 @@ public class AcrossBootstrapper
 
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
 
-					context.publishEvent( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
+					eventPublisher.publish( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
 
 					// Run installers before bootstrapping this particular module
 					installerRegistry.runInstallersForModule( moduleInfo.getName(),
@@ -165,7 +170,7 @@ public class AcrossBootstrapper
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Bootstrapped );
 
 					// Send event that this module has bootstrapped
-					context.publishEvent( new AcrossModuleBootstrappedEvent( moduleInfo ) );
+					eventPublisher.publish( new AcrossModuleBootstrappedEvent( moduleInfo ) );
 
 					// Run installers after module itself has bootstrapped
 					installerRegistry.runInstallersForModule( moduleInfo.getName(),
@@ -179,8 +184,9 @@ public class AcrossBootstrapper
 						exposedBeanRegistry.addAll( configurableAcrossModuleInfo.getExposedBeanDefinitions() );
 					}
 
-					AcrossContextUtils.autoRegisterEventHandlers( child, rootContext.getBean(
-							AcrossEventPublisher.class ) );
+					AcrossContextUtils.autoRegisterEventHandlers( child, eventPublisher );
+
+					failOnEventErrors();
 				}
 
 				LOG.info( "Bootstrapping {} modules - finished", modulesInOrder.size() );
@@ -200,7 +206,9 @@ public class AcrossBootstrapper
 			}
 
 			// Bootstrap finished - publish the event
-			context.publishEvent( new AcrossContextBootstrappedEvent( contextInfo ) );
+			eventPublisher.publish( new AcrossContextBootstrappedEvent( contextInfo ) );
+
+			failOnEventErrors();
 
 			createdApplicationContexts.clear();
 		}
@@ -210,6 +218,12 @@ public class AcrossBootstrapper
 			destroyAllCreatedApplicationContexts();
 
 			throw new AcrossException( "Across bootstrap failed", e );
+		}
+	}
+
+	private void failOnEventErrors() {
+		if ( context.isFailBootstrapOnEventPublicationErrors() && !eventErrors.isEmpty() ) {
+			throw new RuntimeException( eventErrors.get( 0 ) );
 		}
 	}
 
@@ -512,5 +526,17 @@ public class AcrossBootstrapper
 		applicationContextFactory.loadApplicationContext( context, root );
 
 		return root;
+	}
+
+	class BootstrapEventErrorHandler implements IPublicationErrorHandler
+	{
+		@Override
+		public void handleError( PublicationError error ) {
+			if( eventErrors.isEmpty() ) {
+				eventErrors.add( error.getCause() );
+			} else {
+				eventErrors.set( 0, error.getCause() );
+			}
+		}
 	}
 }

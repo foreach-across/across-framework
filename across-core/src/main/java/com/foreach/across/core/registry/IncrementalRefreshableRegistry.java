@@ -17,7 +17,6 @@
 package com.foreach.across.core.registry;
 
 import com.foreach.across.core.annotations.Event;
-import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
@@ -58,11 +57,5 @@ public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 	@Event
 	void moduleBootstrapped( AcrossModuleBootstrappedEvent moduleBootstrapped ) {
 		refresh();
-	}
-
-	@PostRefresh
-	@Override
-	public void refresh() {
-		super.refresh();
 	}
 }

@@ -430,6 +430,10 @@ public class Menu implements Ordered
 		return !items.isEmpty();
 	}
 
+	public boolean isEmpty() {
+		return items.isEmpty();
+	}
+
 	public Menu addItem( String path ) {
 		return addItem( path, path );
 	}
@@ -437,6 +441,14 @@ public class Menu implements Ordered
 	public Menu addItem( String path, String title ) {
 		Menu item = new Menu( path );
 		item.setTitle( title );
+
+		return addItem( item );
+	}
+
+	public Menu addItem( String path, String title, String url ) {
+		Menu item = new Menu( path );
+		item.setTitle( title );
+		item.setUrl( url );
 
 		return addItem( item );
 	}

@@ -16,20 +16,41 @@
 
 package com.foreach.across.modules.web.context;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
- * Helper class for relative urls that need a prefix.
+ * Helper class for relative urls that need a prefix. Any path passed to this instance will be prefixed
+ * unless an exception is defined. Possible exceptions are:
+ * <ul>
+ * <li>path starts with <b>!</b>: only exclamation mark will be removed, no prefixing will be done (supress prefixing)</li>
+ * <li>path starts with <b>~</b>: will not be modified</li>
+ * <li>path contains <b>://</b>: considered absolute url - will not be modified</li>
+ * <li>path starts with <b>@prefixer:</b>: will be re-routed to the prefixer with that name if present</li>
+ * </ul>
+ * The helper also supports <b>redirect:</b> and <b>forward:</b> urls.
+ * <br />
+ * Optionally an additional map of named prefixers can be added {@link #setNamedPrefixMap(java.util.Map)}.  Urls containing
+ * one of these names in the correct format (eg: <b>@somePrefixer:/myPath</b>) will be prefixed by that prefixer
+ * instead of the current one.
  *
  * @see com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping
  */
-public class PrefixingPathContext
+public class PrefixingPathContext implements WebAppPathResolver
 {
+	/* Suppress prefixing character */
+	public static final String SUPPRESS = "!";
+
 	private static final String REDIRECT = "redirect:";
 	private static final String FORWARD = "forward:";
 
 	private final String prefix;
 	private final String[] ignoredPrefixes = new String[] { REDIRECT, FORWARD };
+
+	private Map<String, PrefixingPathContext> namedPrefixers = Collections.emptyMap();
 
 	public PrefixingPathContext( String prefix ) {
 		Assert.notNull( prefix );
@@ -43,21 +64,33 @@ public class PrefixingPathContext
 			}
 		}
 		else {
-			this.prefix = "";
+			this.prefix = StringUtils.EMPTY;
 		}
+	}
+
+	/**
+	 * Sets a collection of prefixing contexts with a name.  Any paths starting with {NAME} will
+	 * get re-routed to the named prefixer instead of handled by the current prefixing context.
+	 *
+	 * @param namedPrefixers Map of namedPrefixers, should not be null.
+	 */
+	public void setNamedPrefixMap( Map<String, PrefixingPathContext> namedPrefixers ) {
+		Assert.notNull( namedPrefixers );
+		this.namedPrefixers = namedPrefixers;
 	}
 
 	/**
 	 * @return Root of the prefixed context (no sub path).
 	 */
 	public String getRoot() {
-		return path( "" );
+		return path( StringUtils.EMPTY );
 	}
 
 	public String getPathPrefix() {
 		return prefix;
 	}
 
+	@Override
 	public String path( String path ) {
 		for ( String ignoredPrefix : ignoredPrefixes ) {
 			if ( path.startsWith( ignoredPrefix ) ) {
@@ -68,13 +101,27 @@ public class PrefixingPathContext
 		return prefix( path );
 	}
 
+	@Override
 	public String redirect( String path ) {
 		return REDIRECT + path( path.startsWith( REDIRECT ) ? path.substring( 9 ) : path );
 	}
 
 	private String prefix( String path ) {
-		if ( path.startsWith( "~" ) || path.contains( "://" ) ) {
+		if ( path.startsWith( SUPPRESS ) ) {
+			return path.substring( 1 );
+		}
+
+		if ( path.startsWith( "~" ) || path.startsWith( "//" ) || path.contains( "://" ) ) {
 			return path;
+		}
+
+		if ( !namedPrefixers.isEmpty() && path.startsWith( "@" ) ) {
+			for ( Map.Entry<String, PrefixingPathContext> prefixer : namedPrefixers.entrySet() ) {
+				String prefixerName = "@" + prefixer.getKey() + ":";
+				if ( path.startsWith( prefixerName ) ) {
+					return prefixer.getValue().prefix( path.replaceFirst( prefixerName, "" ) );
+				}
+			}
 		}
 
 		if ( path.startsWith( "/" ) ) {

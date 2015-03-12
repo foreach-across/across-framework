@@ -18,6 +18,7 @@ package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.AbstractAcrossEntity;
+import com.foreach.across.core.context.AcrossModuleEntity;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
@@ -33,12 +34,9 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-public abstract class AcrossModule extends AbstractAcrossEntity
+public abstract class AcrossModule extends AbstractAcrossEntity implements AcrossModuleEntity
 {
 	// The current module (owning the ApplicationContext) can always be referenced under this qualifier
 	public static final String CURRENT_MODULE = "across.currentModule";
@@ -47,10 +45,9 @@ public abstract class AcrossModule extends AbstractAcrossEntity
 
 	private BeanFilter exposeFilter = defaultExposeFilter();
 	private ExposedBeanDefinitionTransformer exposeTransformer = null;
-	private final Set<ApplicationContextConfigurer> applicationContextConfigurers =
-			new HashSet<>();
+	private final Set<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
 
-	private final Set<String> runtimeDependencies = new HashSet<String>();
+	private final Set<String> runtimeDependencies = new HashSet<>();
 
 	private boolean enabled = true;
 

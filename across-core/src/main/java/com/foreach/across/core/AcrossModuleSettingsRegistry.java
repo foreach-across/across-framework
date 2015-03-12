@@ -92,7 +92,7 @@ public class AcrossModuleSettingsRegistry extends EnumerablePropertySource<Map<S
 
 	@Override
 	public String[] getPropertyNames() {
-		return this.source.keySet().toArray( EMPTY_NAMES_ARRAY );
+		return this.source.keySet().toArray( new String[ source.size() ] );
 	}
 
 	public boolean isRequired( String key ) {

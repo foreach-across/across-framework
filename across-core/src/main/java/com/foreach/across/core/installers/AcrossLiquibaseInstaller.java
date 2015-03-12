@@ -44,7 +44,7 @@ public abstract class AcrossLiquibaseInstaller
 	private AcrossContextInfo acrossContext;
 
 	@Autowired
-	@Qualifier(AcrossContext.DATASOURCE)
+	@Qualifier(AcrossContext.INSTALLER_DATASOURCE)
 	private DataSource dataSource;
 
 	private String changelog;
@@ -74,6 +74,19 @@ public abstract class AcrossLiquibaseInstaller
 
 	protected void setSchemaConfiguration( SchemaConfiguration schemaConfiguration ) {
 		this.schemaConfiguration = schemaConfiguration;
+	}
+
+	/**
+	 * Override the dataSource this installer should use (defaults to the installer datasource otherwise).
+	 *
+	 * @param dataSource instance
+	 */
+	protected void setDataSource( DataSource dataSource ) {
+		this.dataSource = dataSource;
+	}
+
+	protected DataSource getDataSource() {
+		return dataSource;
 	}
 
 	@InstallerMethod

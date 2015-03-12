@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web.resource;
 
+import com.foreach.across.modules.web.context.WebAppPathResolver;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,8 @@ public class WebResourceUtils
 	 * Default key under which the registry is put in the request attributes
 	 */
 	public static final String REGISTRY_ATTRIBUTE_KEY = "webResourceRegistry";
+
+	public static final String PATH_RESOLVER_ATTRIBUTE_KEY = WebAppPathResolver.class.getName();
 
 	protected WebResourceUtils() {
 	}
@@ -40,5 +43,17 @@ public class WebResourceUtils
 
 	public static WebResourceRegistry getRegistry( HttpServletRequest request ) {
 		return (WebResourceRegistry) request.getAttribute( REGISTRY_ATTRIBUTE_KEY );
+	}
+
+	public static void storePathResolver( WebAppPathResolver pathResolver, HttpServletRequest request ) {
+			request.setAttribute( PATH_RESOLVER_ATTRIBUTE_KEY, pathResolver );
+		}
+
+	public static WebAppPathResolver getPathResolver( WebRequest request ) {
+		return (WebAppPathResolver) request.getAttribute( PATH_RESOLVER_ATTRIBUTE_KEY, WebRequest.SCOPE_REQUEST );
+	}
+
+	public static WebAppPathResolver getPathResolver( HttpServletRequest request ) {
+		return (WebAppPathResolver) request.getAttribute( PATH_RESOLVER_ATTRIBUTE_KEY );
 	}
 }

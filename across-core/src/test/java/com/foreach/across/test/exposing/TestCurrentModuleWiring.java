@@ -64,6 +64,10 @@ public class TestCurrentModuleWiring
 		AcrossContextInfo contextInfo = AcrossContextUtils.getContextInfo( acrossContext );
 		assertNotNull( contextInfo );
 
+		assertFalse( contextInfo.getApplicationContext()
+		                        .getBeansOfType( ModuleConfig.BeanWithCurrentModules.class )
+		                        .isEmpty() );
+
 		AcrossModuleInfo moduleOne = contextInfo.getModuleInfo( "ModuleOne" );
 		assertNotNull( moduleOne );
 		ModuleConfig.BeanWithCurrentModules beanWithCurrentModules = beanRegistry.getBeanFromModule( "ModuleOne",

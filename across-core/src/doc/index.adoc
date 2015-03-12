@@ -1,0 +1,37 @@
+[[across-core]]
+=== Across core
+
+sdfjqdshdjsk
+
+[discrete]
+==== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>across</groupId>
+			<artifactId>across-core</artifactId>
+			<version>{across-version}</version>
+		</dependency>
+	</dependencies>
+----
+
+==== Dependencies
+
+== Datasources and installers
+An AcrossContext supports the configuration of a DataSource instance.  The datasource will be available for all modules
+ as bean named acrossDataSource.  Additionally a second datasource can be configured that will be available as
+ the acrossInstallerDataSource.  If no separate installer datasource is specified, the default across datasource
+ will be used.
+
+ A valid default datasource is required for installers to run. It is not possible to configure only an installer
+ datasource as the distributed locking mechanism uses the default datasource.
+
+ The installer datasource can be wired anywhere, but will be the default datasource used for all
+ AcrossLiquibaseInstaller instances.  Its purpose is to provide a separate datasource with augmented permissions
+ to perform schema changes and installer tracking in the database.
+
+ For security purposes the installer datasource could be closed after the context has bootstrapped.  This is the
+ responsibilty of the application configuration and be aware that some functionality related to querying the
+ installer repository will not be available if the installer datasource goes offline.

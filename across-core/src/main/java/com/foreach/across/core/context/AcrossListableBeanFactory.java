@@ -22,6 +22,7 @@ import com.foreach.across.core.registry.IncrementalRefreshableRegistry;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TypeConverter;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -159,8 +160,11 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 					registry = new RefreshableRegistry<>( resolvableType, annotation.includeModuleInternals() );
 				}
 
+				String registryBeanName = RefreshableRegistry.class.getName() + "~" + UUID.randomUUID().toString();
+
 				autowireBean( registry );
-				registerSingleton( RefreshableRegistry.class.getName() + "~" + UUID.randomUUID().toString(), registry );
+				initializeBean( registry, registryBeanName );
+				registerSingleton( registryBeanName, registry );
 
 				return registry;
 			}
@@ -168,5 +172,13 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		}
 
 		return super.doResolveDependency( descriptor, beanName, autowiredBeanNames, typeConverter );
+	}
+
+	@Override
+	public void registerBeanDefinition( String beanName,
+	                                    BeanDefinition beanDefinition ) throws BeanDefinitionStoreException {
+		destroySingleton( beanName );
+
+		super.registerBeanDefinition( beanName, beanDefinition );
 	}
 }

@@ -99,6 +99,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 						AcrossWebConfig.class,
 						AcrossWebTemplateConfig.class,
 						AcrossWebDefaultMvcConfiguration.class,
+						ConversionServiceExposingInterceptorConfiguration.class,
 						MultipartResolverConfiguration.class
 				)
 		);

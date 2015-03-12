@@ -53,10 +53,12 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
+	public static final String INSTALLER_DATASOURCE = "acrossInstallerDataSource";
 
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContext.class );
 
 	private DataSource dataSource;
+	private DataSource installerDataSource;
 
 	// By default no installers are allowed
 	private InstallerSettings installerSettings = new InstallerSettings( InstallerAction.DISABLED );
@@ -71,6 +73,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private boolean isBootstrapped = false;
 	private final String id;
 	private ApplicationContext parentApplicationContext;
+	private boolean failBootstrapOnEventPublicationErrors = true;
 
 	/**
 	 * Constructs a new AcrossContext in its own ApplicationContext.
@@ -117,6 +120,14 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		this.dataSource = dataSource;
 	}
 
+	public DataSource getInstallerDataSource() {
+		return installerDataSource;
+	}
+
+	public void setInstallerDataSource( DataSource installerDataSource ) {
+		this.installerDataSource = installerDataSource;
+	}
+
 	public Collection<AcrossModule> getModules() {
 		return modules;
 	}
@@ -144,6 +155,20 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	public void setDisableNoOpCacheManager( boolean disableNoOpCacheManager ) {
 		this.disableNoOpCacheManager = disableNoOpCacheManager;
+	}
+
+	/**
+	 * Should the bootstrap fail if event publication errors occur during the bootstrapping.
+	 * Defaults to true as this is usually the wanted behavior.
+	 *
+	 * @param failBootstrapOnEventPublicationErrors true if bootstrap should fail on event handler errors
+	 */
+	public void setFailBootstrapOnEventPublicationErrors( boolean failBootstrapOnEventPublicationErrors ) {
+		this.failBootstrapOnEventPublicationErrors = failBootstrapOnEventPublicationErrors;
+	}
+
+	public boolean isFailBootstrapOnEventPublicationErrors() {
+		return failBootstrapOnEventPublicationErrors;
 	}
 
 	public void setModules( Collection<AcrossModule> modules ) {

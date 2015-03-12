@@ -29,6 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -126,6 +128,54 @@ public class TestAcrossCondition
 		assertNull( conditionalBean( moduleFour ) );
 	}
 
+	@Test
+	public void dontCreateIfBeanWithNameDoesNotExist() {
+		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( BeanWithNameExistsCondition.class ),
+		                                         ConfigurerScope.MODULES_ONLY );
+
+		context.addModule( moduleOne );
+
+		context.bootstrap();
+		assertNull( conditionalBean( moduleOne ) );
+	}
+
+	@Test
+	public void createIfBeanWithNameExists() {
+		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( ConversionServiceWithName.class ),
+		                                         ConfigurerScope.CONTEXT_ONLY );
+		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( BeanWithNameExistsCondition.class ),
+		                                         ConfigurerScope.MODULES_ONLY );
+
+		context.addModule( moduleOne );
+
+		context.bootstrap();
+		assertNotNull( conditionalBean( moduleOne ) );
+	}
+
+	@Test
+	public void dontCreateIfBeanOfTypeDoesNotExist() {
+		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( BeanOfTypeExistsCondition.class ),
+		                                         ConfigurerScope.MODULES_ONLY );
+
+		context.addModule( moduleOne );
+
+		context.bootstrap();
+		assertNull( conditionalBean( moduleOne ) );
+	}
+
+	@Test
+	public void createIfBeanOfTypeExists() {
+		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( ConversionServiceWithName.class ),
+		                                         ConfigurerScope.CONTEXT_ONLY );
+		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( BeanOfTypeExistsCondition.class ),
+		                                         ConfigurerScope.MODULES_ONLY );
+
+		context.addModule( moduleOne );
+
+		context.bootstrap();
+		assertNotNull( conditionalBean( moduleOne ) );
+	}
+
 	private Object conditionalBean( AcrossModule module ) {
 		try {
 			return AcrossContextUtils.getBeanFactory( module ).getBean( "conditionalBean" );
@@ -161,6 +211,35 @@ public class TestAcrossCondition
 	static class ConditionAndDependsConfig
 	{
 		@Bean
+		public Object conditionalBean() {
+			return "Bean created";
+		}
+	}
+
+	@Configuration
+	static class ConversionServiceWithName
+	{
+		@Bean
+		public ConversionService existingBeanName() {
+			return new DefaultConversionService();
+		}
+	}
+
+	@Configuration
+	static class BeanWithNameExistsCondition
+	{
+		@Bean
+		@AcrossCondition("hasBean('existingBeanName')")
+		public Object conditionalBean() {
+			return "Bean created";
+		}
+	}
+
+	@Configuration
+	static class BeanOfTypeExistsCondition
+	{
+		@Bean
+		@AcrossCondition("hasBeanOfType(T(org.springframework.core.convert.ConversionService))")
 		public Object conditionalBean() {
 			return "Bean created";
 		}

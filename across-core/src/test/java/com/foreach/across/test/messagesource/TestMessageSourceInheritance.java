@@ -131,7 +131,7 @@ public class TestMessageSourceInheritance
 	}
 
 	private String message( String key ) {
-		return messageSource.getMessage( key, new Object[0], Locale.getDefault() );
+		return messageSource.getMessage( key, new Object[0], Locale.US );
 	}
 
 	@Configuration

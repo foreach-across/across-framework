@@ -18,7 +18,7 @@ package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossModuleSettings;
-import com.foreach.across.core.context.AcrossEntity;
+import com.foreach.across.core.context.AcrossModuleEntity;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.Collection;
 import java.util.Map;
 
-public interface AcrossModuleInfo extends AcrossEntity
+public interface AcrossModuleInfo extends AcrossModuleEntity
 {
 	/**
 	 * @return The info object of the AcrossContext this module belongs to.

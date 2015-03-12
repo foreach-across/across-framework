@@ -77,6 +77,13 @@ public class AcrossConfig
 		return new AcrossCompositeCacheManager( acrossContext.isDisableNoOpCacheManager() );
 	}
 
+//	@Bean
+//	@Lazy
+//	@Primary
+//	public ConfigurableConversionService conversionService() {
+//		return new DefaultFormattingConversionService();
+//	}
+
 	@Bean
 	@Lazy
 	@Primary
@@ -97,8 +104,7 @@ public class AcrossConfig
 	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( DataSource acrossDataSource ) {
 		if ( acrossDataSource == null ) {
 			throw new AcrossException(
-					"Unable to create the DistributedLockRepository because there is no DataSource configured.  " +
-							"A DataSource is required to install the core schema."
+					"Unable to create the DistributedLockRepository because there is no DataSource configured."
 			);
 		}
 

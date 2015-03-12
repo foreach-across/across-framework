@@ -37,6 +37,8 @@ import java.util.Set;
 /**
  * Scans matching beans for RequestMapping annotations and (optionally) prefixes all mappings.
  * Allows for reloading (re-scanning) of mappings and re-initialization of the entire mapping handler mapping.
+ *
+ * <b>WARN: interceptors are only supported once.</b>
  */
 @AcrossEventHandler
 public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandlerMapping

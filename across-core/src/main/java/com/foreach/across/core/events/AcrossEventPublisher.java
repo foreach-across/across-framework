@@ -17,6 +17,7 @@
 package com.foreach.across.core.events;
 
 import net.engio.mbassy.bus.MessagePublication;
+import net.engio.mbassy.bus.error.IPublicationErrorHandler;
 import net.engio.mbassy.bus.publication.SyncAsyncPostCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,4 +48,6 @@ public interface AcrossEventPublisher
 	void shutdown();
 
 	boolean isListener( Object listener );
+
+	void addErrorHandler( IPublicationErrorHandler errorHandler );
 }

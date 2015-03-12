@@ -15,6 +15,7 @@
  */
 package com.foreach.across.core.development;
 
+import com.foreach.across.core.context.AcrossModuleEntity;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.slf4j.Logger;
@@ -116,6 +117,17 @@ public class AcrossDevelopmentMode
 	}
 
 	/**
+	 * Determines a physical location for any path in the resources folder of a module.
+	 *
+	 * @param module Module instance.
+	 * @param path   Relative path to resolve.
+	 * @return Physical path or null if it could not be resolved.
+	 */
+	public String getDevelopmentLocation( AcrossModuleEntity module, String path ) {
+		return getDevelopmentLocations( path ).get( module.getResourcesKey() );
+	}
+
+	/**
 	 * Determines the map of physical resource locations for module resources.
 	 * This method is different in that it simply resolves a physical directory
 	 * instead of an assumed module resource directory.  Stated differently: the
@@ -143,6 +155,17 @@ public class AcrossDevelopmentMode
 		}
 
 		return locations;
+	}
+
+	/**
+	 * Determines a physical location for a particular module resource.
+	 *
+	 * @param module Module instance.
+	 * @param path   Relative path to resolve.
+	 * @return Physical path or null if it could not be resolved.
+	 */
+	public String getDevelopmentLocationForResourcePath( AcrossModuleEntity module, String path ) {
+		return getDevelopmentLocationsForResourcePath( path ).get( module.getResourcesKey() );
 	}
 
 	/**

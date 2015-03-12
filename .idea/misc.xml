@@ -2,6 +2,14 @@
 <project version="4">
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="com.foreach.across.core.annotations.Event" />
+      <item index="1" class="java.lang.String" itemvalue="com.foreach.across.core.annotations.RefreshableCollection" />
+    </list>
+  </component>
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/demo-web" />
+    <file type="web" url="file://$PROJECT_DIR$/test-web" />
   </component>
   <component name="IdProvider" IDEtalkID="DB3B0B76923C4E8337D6E50B65FCF5BB" />
   <component name="JavadocGenerationManager">
