@@ -19,7 +19,7 @@
 
 	<groupId>across</groupId>
 	<artifactId>across</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -177,7 +177,7 @@
 	<scm>
 		<connection>scm:git:https://bitbucket.org/beforeach/across.git</connection>
 		<developerConnection>scm:git:https://bitbucket.org/beforeach/across.git</developerConnection>
-		<tag>across-1.0.5</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<dependencyManagement>
