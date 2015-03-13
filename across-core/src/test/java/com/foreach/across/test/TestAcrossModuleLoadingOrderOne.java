@@ -31,7 +31,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class TestAcrossModuleLoadingOrder
+public class TestAcrossModuleLoadingOrderOne
 {
 	private ModuleOne one = new ModuleOne();
 	private ModuleTwo two = new ModuleTwo();
@@ -97,7 +97,7 @@ public class TestAcrossModuleLoadingOrder
 		Collection<AcrossModule> added = list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
+		assertEquals( list( one, two, three, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class TestAcrossModuleLoadingOrder
 		Collection<AcrossModule> added = list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
+		assertEquals( list( one, two, three, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
 	}
 
 	@Test(expected = RuntimeException.class)
@@ -126,7 +126,7 @@ public class TestAcrossModuleLoadingOrder
 				list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three, infrastructureRequiringTwo );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, infrastructureRequiringTwo, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ),
+		assertEquals( list( two, infrastructureRequiringTwo, one, three, requiresTwoThreeAndOptionalOne, requiresTwo ),
 		              ordered );
 	}
 
@@ -147,7 +147,7 @@ public class TestAcrossModuleLoadingOrder
 		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder( added );
 		Collection<AcrossModule> ordered = moduleBootstrapOrderBuilder.getOrderedModules();
 
-		assertEquals( list( two, infrastructureRequiringTwo, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ),
+		assertEquals( list( two, infrastructureRequiringTwo, one, three, requiresTwoThreeAndOptionalOne, requiresTwo ),
 		              ordered );
 
 		Collection<AcrossModule> dependencies = moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( one );
@@ -160,7 +160,7 @@ public class TestAcrossModuleLoadingOrder
 		                                       one, requiresTwo, two, three, infrastructureRequiringTwo );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, infrastructureRequiringTwo, one, requiresTwo, three, postProcessor,
+		assertEquals( list( two, infrastructureRequiringTwo, three, requiresTwo, one, postProcessor,
 		                    postProcessorRequiringOther, postProcessorOptionalOther ), ordered );
 	}
 
@@ -183,7 +183,7 @@ public class TestAcrossModuleLoadingOrder
 				list( requiresTwoAndOptionalThreeTen, requiresOneAndOptionalTwoNine, one, two, three );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, three, requiresTwoAndOptionalThreeTen, one, requiresOneAndOptionalTwoNine ), ordered );
+		assertEquals( list( three, two, requiresTwoAndOptionalThreeTen, one, requiresOneAndOptionalTwoNine ), ordered );
 	}
 
 	@Test(expected = RuntimeException.class)
