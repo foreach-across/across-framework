@@ -140,6 +140,12 @@ public class ModuleBootstrapOrderBuilder
 			if ( earliestPossiblePosition < orderedModules.indexOf( moduleToMove ) ) {
 				orderedModules.add( earliestPossiblePosition, moduleToMove );
 				orderedModules.removeLastOccurrence( moduleToMove );
+
+				for ( AcrossModule other : new ArrayList<>( orderedModules ) ) {
+					if ( getAppliedOptionalDependencies( other ).contains( moduleToMove ) ) {
+						moveModuleAsHighAsPossible( moduleToMove, optionalsMoved, orderedModules );
+					}
+				}
 			}
 		}
 	}
