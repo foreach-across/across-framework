@@ -15,7 +15,7 @@
  */
 package com.foreach.across.modules.web.ui;
 
-public abstract class ViewElementSupport implements ViewElement
+public abstract class ViewElementSupport implements MutableViewElement
 {
 	private String name, customTemplate, elementType;
 
@@ -28,6 +28,7 @@ public abstract class ViewElementSupport implements ViewElement
 		return name;
 	}
 
+	@Override
 	public void setName( String name ) {
 		this.name = name;
 	}
@@ -37,6 +38,7 @@ public abstract class ViewElementSupport implements ViewElement
 		return customTemplate;
 	}
 
+	@Override
 	public void setCustomTemplate( String customTemplate ) {
 		this.customTemplate = customTemplate;
 	}
