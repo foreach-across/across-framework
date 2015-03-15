@@ -134,7 +134,7 @@ public class ModuleBootstrapOrderBuilder
 			}
 
 			// Find lowest required dependency
-			int earliestPossiblePosition = findEarliestPossiblePosition( moduleToMove, orderedModules );
+			int earliestPossiblePosition = findEarliestPossiblePosition( moduleToMove, optionalsMoved, orderedModules );
 
 			// Attempt to move the module
 			if ( earliestPossiblePosition < orderedModules.indexOf( moduleToMove ) ) {
@@ -150,7 +150,9 @@ public class ModuleBootstrapOrderBuilder
 		}
 	}
 
-	private int findEarliestPossiblePosition( AcrossModule moduleToMove, LinkedList<AcrossModule> orderedModules ) {
+	private int findEarliestPossiblePosition( AcrossModule moduleToMove,
+	                                          Set<AcrossModule> optionalsMoved,
+	                                          LinkedList<AcrossModule> orderedModules ) {
 		int index = -1;
 
 		// Find the required dependencies
@@ -168,12 +170,20 @@ public class ModuleBootstrapOrderBuilder
 
 			if ( getModuleRole( moduleToMove ) == getModuleRole( module ) ) {
 				if ( getRoleOrder( module ) < getRoleOrder( moduleToMove )
-						|| getOrderInRole( module ) < getOrderInRole( moduleToMove )) {
+						|| getOrderInRole( module ) < getOrderInRole( moduleToMove ) ) {
 					index = Math.max( i, index );
 				}
 			}
 			else {
 				index = Math.max( i, index );
+			}
+		}
+
+		// If any of the optionals of the current have already been moved,
+		// make sure we don't move in front of them either
+		for ( AcrossModule dependency : getAppliedOptionalDependencies( moduleToMove ) ) {
+			if ( optionalsMoved.contains( dependency ) ) {
+				index = Math.max( index, orderedModules.indexOf( dependency ) );
 			}
 		}
 

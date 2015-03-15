@@ -20,7 +20,6 @@ import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapOrderBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -43,12 +42,15 @@ public class TestAcrossModuleLoadingOrderTwo
 	private SecurityAclModule securityAcl = new SecurityAclModule();
 
 	@Test
-	@Ignore
-	public void autoAddedModuleIsOrderedCorrectly() {
-		Collection<AcrossModule> added = list( web, securityAcl, entity, jpa, test, adminWeb, bootstrapUiModule, security );
+	public void combinedDependencies() {
+		Collection<AcrossModule> added
+				= list( web, securityAcl, entity, jpa, test, adminWeb, bootstrapUiModule, security );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( jpa, securityAcl, web, bootstrapUiModule, adminWeb, entity, test, security ), ordered );
+		assertEquals(
+				list( jpa, securityAcl, web, bootstrapUiModule, adminWeb, entity, test, security ),
+				ordered
+		);
 	}
 
 	private Collection<AcrossModule> order( Collection<AcrossModule> list ) {
