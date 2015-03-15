@@ -15,8 +15,8 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
+import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.StandardViewElements;
-import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElements;
 
 /**
@@ -29,7 +29,7 @@ import com.foreach.across.modules.web.ui.ViewElements;
  *
  * @author Arne Vandamme
  */
-public class ContainerViewElement extends ViewElements implements ViewElement
+public class ContainerViewElement extends ViewElements implements MutableViewElement
 {
 	public static final String ELEMENT_TYPE = StandardViewElements.CONTAINER;
 
@@ -48,6 +48,7 @@ public class ContainerViewElement extends ViewElements implements ViewElement
 		return name;
 	}
 
+	@Override
 	public void setName( String name ) {
 		this.name = name;
 	}
@@ -57,6 +58,7 @@ public class ContainerViewElement extends ViewElements implements ViewElement
 		return customTemplate;
 	}
 
+	@Override
 	public void setCustomTemplate( String customTemplate ) {
 		this.customTemplate = customTemplate;
 	}

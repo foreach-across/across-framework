@@ -32,7 +32,7 @@ public abstract class ViewElementBuilderSupport<T extends ViewElement, SELF exte
 		return (SELF) this;
 	}
 
-	protected <V extends ViewElementSupport> V apply( V viewElement ) {
+	protected final <V extends MutableViewElement> V apply( V viewElement ) {
 		if ( name != null ) {
 			viewElement.setName( name );
 		}
