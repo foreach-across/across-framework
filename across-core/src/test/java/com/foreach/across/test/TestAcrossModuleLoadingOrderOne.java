@@ -183,7 +183,7 @@ public class TestAcrossModuleLoadingOrderOne
 				list( requiresTwoAndOptionalThreeTen, requiresOneAndOptionalTwoNine, one, two, three );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( three, two, requiresTwoAndOptionalThreeTen, one, requiresOneAndOptionalTwoNine ), ordered );
+		assertEquals( list( three, two, one, requiresTwoAndOptionalThreeTen, requiresOneAndOptionalTwoNine ), ordered );
 	}
 
 	@Test(expected = RuntimeException.class)
