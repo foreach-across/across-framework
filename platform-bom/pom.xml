@@ -20,12 +20,12 @@
 
 	<groupId>across</groupId>
 	<artifactId>platform-bom</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<packaging>pom</packaging>
 
 	<properties>
-		<across.version>1.1.0-SNAPSHOT</across.version>
-		<across.standard.modules.version>1.1.0-SNAPSHOT</across.standard.modules.version>
+		<across.version>1.1.0</across.version>
+		<across.standard.modules.version>1.1.0</across.standard.modules.version>
 		<spring.platform.version>1.1.1.RELEASE</spring.platform.version>
 		<foreach.common.version>0.11</foreach.common.version>
 		<querydsl.version>3.5.1</querydsl.version>
