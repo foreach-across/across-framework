@@ -19,7 +19,7 @@ import com.foreach.across.config.AcrossContextConfiguration;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
-import org.apache.commons.dbcp.BasicDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +66,9 @@ public class TestContextWithoutInstallerDataSource
 
 		@Bean
 		public DataSource acrossDataSource() {
-			BasicDataSource dataSource = new BasicDataSource();
+			HikariDataSource dataSource = new HikariDataSource();
 			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setUrl( "jdbc:hsqldb:mem:acrossTest" );
+			dataSource.setJdbcUrl( "jdbc:hsqldb:mem:acrossTest" );
 			dataSource.setUsername( "sa" );
 			dataSource.setPassword( "" );
 			return dataSource;

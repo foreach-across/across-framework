@@ -23,7 +23,7 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
 import com.foreach.across.core.installers.InstallerRunCondition;
-import org.apache.commons.dbcp.BasicDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,9 +90,9 @@ public class TestContextWithInstallerDataSource
 	{
 		@Bean(name = { "acrossDataSource", "mockDataSource" })
 		public DataSource acrossDataSource() {
-			BasicDataSource dataSource = new BasicDataSource();
+			HikariDataSource dataSource = new HikariDataSource();
 			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setUrl( "jdbc:hsqldb:mem:acrossTest" );
+			dataSource.setJdbcUrl( "jdbc:hsqldb:mem:acrossTest" );
 			dataSource.setUsername( "sa" );
 			dataSource.setPassword( "" );
 			return dataSource;
@@ -100,9 +100,9 @@ public class TestContextWithInstallerDataSource
 
 		@Bean
 		public DataSource acrossInstallerDataSource() {
-			BasicDataSource dataSource = new BasicDataSource();
+			HikariDataSource dataSource = new HikariDataSource();
 			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setUrl( "jdbc:hsqldb:mem:acrossTest" );
+			dataSource.setJdbcUrl( "jdbc:hsqldb:mem:acrossTest" );
 			dataSource.setUsername( "sa" );
 			dataSource.setPassword( "" );
 			return dataSource;
