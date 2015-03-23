@@ -19,13 +19,15 @@ package com.foreach.across.test.modules;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.TransactionManagementConfigurer;
+import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.hibernate1.Hibernate1Module;
 import com.foreach.across.test.modules.hibernate1.Product;
 import com.foreach.across.test.modules.hibernate1.ProductRepository;
 import com.foreach.across.test.modules.hibernate2.Hibernate2Module;
 import com.foreach.across.test.modules.hibernate2.User;
 import com.foreach.across.test.modules.hibernate2.UserRepository;
-import org.apache.commons.dbcp.BasicDataSource;
+import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.After;
@@ -153,13 +155,8 @@ public class TestTransactionalWithoutBaseModule
 	{
 		@Bean
 		public DataSource dataSource() throws Exception {
-			BasicDataSource dataSource = new BasicDataSource();
-			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setUrl( "jdbc:hsqldb:mem:acrosscore" );
-			dataSource.setUsername( "sa" );
-			dataSource.setPassword( "" );
-
-			return dataSource;
+			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrosscore", "sa",
+			                                      StringUtils.EMPTY );
 		}
 
 		@Bean

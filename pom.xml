@@ -23,7 +23,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<across.version>1.1.0</across.version>
+		<across.version>1.1.1-SNAPSHOT</across.version>
 		<spring.platform.version>1.1.1.RELEASE</spring.platform.version>
 		<foreach.common.version>0.11</foreach.common.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

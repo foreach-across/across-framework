@@ -20,8 +20,9 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.database.DatabaseInfo;
 import com.foreach.across.core.installers.InstallerAction;
+import com.foreach.across.database.support.HikariDataSourceHelper;
+import com.zaxxer.hikari.HikariDataSource;
 import liquibase.integration.spring.SpringLiquibase;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
@@ -46,7 +47,7 @@ public class AcrossTestContextConfiguration implements EnvironmentAware
 	@Bean
 	@SuppressWarnings("all")
 	public DataSource dataSource() {
-		BasicDataSource dataSource = new BasicDataSource();
+		HikariDataSource dataSource;
 
 		String dsName = System.getProperty( "acrossTest.datasource", null );
 
@@ -57,19 +58,17 @@ public class AcrossTestContextConfiguration implements EnvironmentAware
 		System.out.println( "Creating Across test datasource with profile: " + dsName );
 
 		if ( StringUtils.equals( "auto", dsName ) ) {
-			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setUrl( "jdbc:hsqldb:mem:/hsql-mem/across-test" );
-			dataSource.setUsername( "sa" );
-			dataSource.setPassword( "" );
+			dataSource = HikariDataSourceHelper.create(  "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:/hsql-mem/across-test", "sa", StringUtils.EMPTY );
 		}
 		else {
-			dataSource.setDriverClassName(
-					environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".driver" ) );
-			dataSource.setUrl( environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".url" ) );
-			dataSource.setUsername(
-					environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".username" ) );
-			dataSource.setPassword(
-					environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".password" ) );
+			dataSource = HikariDataSourceHelper.create( environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".driver" ),
+			                                            environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".url" ),
+			                                            environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".username" ),
+			                                            environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".password" ) );
+			if( dataSource.getJdbcUrl().startsWith( "jdbc:jtds:" ) ) {
+				// jtds is not JDBC 4.0 compliant
+				dataSource.setConnectionTestQuery( "select 1" );
+			}
 		}
 
 		DatabaseInfo databaseInfo = DatabaseInfo.retrieve( dataSource );
