@@ -20,6 +20,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.installers.InstallerAction;
+import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.TestContextEventListener;
 import com.foreach.across.test.modules.TestEvent;
 import com.foreach.across.test.modules.module1.*;
@@ -27,6 +28,7 @@ import com.foreach.across.test.modules.module2.ConstructedBeanModule2;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,13 +224,8 @@ public class TestAcrossContextBoot
 
 		@Bean
 		public DataSource acrossDataSource() throws Exception {
-			HikariDataSource dataSource = new HikariDataSource();
-			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setJdbcUrl( "jdbc:hsqldb:mem:acrossTest" );
-			dataSource.setUsername( "sa" );
-			dataSource.setPassword( "" );
-
-			return dataSource;
+			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
+			                                      StringUtils.EMPTY );
 		}
 
 		@Bean

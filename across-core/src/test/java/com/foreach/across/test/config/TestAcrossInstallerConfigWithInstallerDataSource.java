@@ -19,7 +19,9 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.config.AcrossInstallerConfig;
 import com.foreach.across.core.installers.AcrossCoreSchemaInstaller;
+import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,12 +71,9 @@ public class TestAcrossInstallerConfigWithInstallerDataSource
 
 		@Bean
 		public DataSource acrossInstallerDataSource() {
-			HikariDataSource dataSource = new HikariDataSource();
-			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setJdbcUrl( "jdbc:hsqldb:mem:acrossTest" );
-			dataSource.setUsername( "sa" );
-			dataSource.setPassword( "" );
-			return dataSource;
+			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
+			                                      StringUtils.EMPTY );
+
 		}
 
 		@Override

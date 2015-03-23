@@ -23,8 +23,10 @@ import com.foreach.across.core.transformers.BeanDefinitionTransformerComposite;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
 import com.foreach.across.core.transformers.BeanRenameTransformer;
 import com.foreach.across.core.transformers.PrimaryBeanTransformer;
+import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.exposing.*;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -100,13 +102,8 @@ public class TestExposeTransformer
 	{
 		@Bean
 		public DataSource acrossDataSource() throws Exception {
-			HikariDataSource dataSource = new HikariDataSource();
-			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setJdbcUrl( "jdbc:hsqldb:mem:acrossTest" );
-			dataSource.setUsername( "sa" );
-			dataSource.setPassword( "" );
-
-			return dataSource;
+			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
+			                                      StringUtils.EMPTY );
 		}
 
 		@Bean

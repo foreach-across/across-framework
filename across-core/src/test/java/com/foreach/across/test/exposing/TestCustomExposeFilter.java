@@ -21,9 +21,11 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.ClassBeanFilter;
 import com.foreach.across.core.installers.InstallerAction;
+import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.exposing.*;
 import com.foreach.across.test.modules.module1.SomeInterface;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -116,13 +118,8 @@ public class TestCustomExposeFilter
 	{
 		@Bean
 		public DataSource acrossDataSource() throws Exception {
-			HikariDataSource dataSource = new HikariDataSource();
-			dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-			dataSource.setJdbcUrl( "jdbc:hsqldb:mem:acrossTest" );
-			dataSource.setUsername( "sa" );
-			dataSource.setPassword( "" );
-
-			return dataSource;
+			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
+			                                      StringUtils.EMPTY );
 		}
 
 		@Bean

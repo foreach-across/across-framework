@@ -16,6 +16,7 @@
 package com.foreach.across.database.support;
 
 import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
@@ -79,4 +80,13 @@ public final class HikariDataSourceHelper
         }
         return properties;
     }
+
+	public static HikariDataSource create( String driverClassName, String jdbcUrl, String username, String password ) {
+		HikariDataSource dataSource = new HikariDataSource();
+		dataSource.setDriverClassName( driverClassName );
+		dataSource.setJdbcUrl( jdbcUrl );
+		dataSource.setUsername( username );
+		dataSource.setPassword( password );
+		return dataSource;
+	}
 }
