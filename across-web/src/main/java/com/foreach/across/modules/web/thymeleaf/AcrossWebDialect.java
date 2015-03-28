@@ -29,11 +29,12 @@ import java.util.Set;
 
 /**
  * Custom Thymeleaf dialect supporting AcrossWebModule setups.
- * <p/>
+ * <p>
  * Adds the following utility objects:
  * <ul>
  * <li><b>#webapp</b>: {@link com.foreach.across.modules.web.context.WebAppPathResolver} for the current context</li>
  * </ul>
+ * </p>
  *
  * @author Arne Vandamme
  */

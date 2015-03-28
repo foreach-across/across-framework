@@ -279,9 +279,9 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 	 * Deletes all entities attached to the revision, usually a draft revision.
 	 * This will only delete entities existing only in that revision.
 	 * Entities starting before or ending after will be left kept.
-	 * <p/>
+	 * <p>
 	 * This means that even after a delete, you could get results if you ask
-	 * for the revision number you just deleted.
+	 * for the revision number you just deleted.</p>
 	 */
 	@Transactional
 	public void deleteEntities( R revision ) {
@@ -292,9 +292,9 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 	 * Deletes all entities attached to the revision, usually a draft revision.
 	 * This will only delete entities existing only in that revision.
 	 * Entities starting before or ending after will be left kept.
-	 * <p/>
+	 * <p>
 	 * This means that even after a delete, you could get results if you ask
-	 * for the revision number you just deleted.
+	 * for the revision number you just deleted.</p>
 	 */
 	@Transactional
 	public void deleteEntities( U owner, int revisionNumber ) {

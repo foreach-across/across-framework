@@ -69,9 +69,9 @@ public class ViewElements implements ViewElementCollection<ViewElement>
 	 * Will move an element with a given name from its current position (anywhere in the collection) to the last
 	 * position of all children of the new parent.  The parent must be a
 	 * {@link com.foreach.across.modules.web.ui.ViewElements} instance.
-	 * <p/>
+	 * <p>
 	 * Moving will fail silently if either the element is not found, the parent is not found or the parent
-	 * is not of type {@link com.foreach.across.modules.web.ui.ViewElements}.
+	 * is not of type {@link com.foreach.across.modules.web.ui.ViewElements}.</p>
 	 *
 	 * @param elementToMove name of the element to move
 	 * @param newParent     name of the new parent element
@@ -96,9 +96,9 @@ public class ViewElements implements ViewElementCollection<ViewElement>
 	 * Will move an element with a given name from its current position (anywhere in the collection) to the first
 	 * position of all children of the new parent.  The parent must be a
 	 * {@link com.foreach.across.modules.web.ui.ViewElements} instance.
-	 * <p/>
+	 * <p>
 	 * Moving will fail silently if either the element is not found, the parent is not found or the parent
-	 * is not of type {@link com.foreach.across.modules.web.ui.ViewElements}.
+	 * is not of type {@link com.foreach.across.modules.web.ui.ViewElements}.</p>
 	 *
 	 * @param elementToMove name of the element to move
 	 * @param newParent     name of the new parent element
@@ -204,10 +204,10 @@ public class ViewElements implements ViewElementCollection<ViewElement>
 	/**
 	 * Searches for the group an element belongs to.  If the element is nowhere in the collection or
 	 * it is a direct child of this set, the parent will be null.
-	 * <p/>
+	 * <p>
 	 * This will only search top-down and not return any groups that are higher than the current set
 	 * (in case the current set is also owned by a
-	 * {@link com.foreach.across.modules.web.ui.ViewElements}.
+	 * {@link com.foreach.across.modules.web.ui.ViewElements}.</p>
 	 *
 	 * @param elementName name of the element
 	 * @return parent group element or null if direct child or element not found
@@ -241,8 +241,8 @@ public class ViewElements implements ViewElementCollection<ViewElement>
 	 * Attempts to sort all elements in this collection according to the order specified by the
 	 * element names passed in.  This will sort recursively, if element names are mentioned that
 	 * are part of a group, they will be sorted according to the order specified within that group.
-	 * <p/>
-	 * A group itself will only be moved in relation to its other siblings.
+	 * <p>
+	 * A group itself will only be moved in relation to its other siblings.</p>
 	 *
 	 * @param elementNames Collection of element names in order.
 	 */

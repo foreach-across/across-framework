@@ -31,9 +31,9 @@ import java.util.Map;
  * Creates a MultipartResolver for handling multipart requests.  Will use the
  * {@link org.springframework.web.multipart.support.MultipartFilter} if possible and fallback
  * to multipart resolving in the {@link org.springframework.web.servlet.DispatcherServlet}.
- * <p/>
+ * <p>
  * If Commons FileUpload is not present on the classpath, the standard servlet resolver will
- * be used.  This requires the web container to support multipart resolving.
+ * be used.  This requires the web container to support multipart resolving.</p>
  *
  * @see org.springframework.web.multipart.support.StandardServletMultipartResolver
  * @see org.springframework.web.multipart.commons.CommonsMultipartResolver

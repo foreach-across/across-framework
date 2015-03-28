@@ -95,8 +95,8 @@ public interface AcrossContextBeanRegistry
 	/**
 	 * Collect all beans of a given type that are visible inside this bean registry.
 	 * This includes beans from ancestors, but does not include module internal beans.
-	 * <p/>
-	 * All beans will be sorted according to the Order, module index and OrderInModule values.
+	 * <p>
+	 * All beans will be sorted according to the Order, module index and OrderInModule values.</p>
 	 *
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
@@ -110,8 +110,8 @@ public interface AcrossContextBeanRegistry
 	/**
 	 * Collect all beans of a given type that are visible inside this bean registry.
 	 * Depending on the second parameter, module internal beans will be included.
-	 * <p/>
-	 * All beans will be sorted according to the Order, module index and OrderInModule values.
+	 * <p>
+	 * All beans will be sorted according to the Order, module index and OrderInModule values.</p>
 	 *
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
@@ -125,8 +125,8 @@ public interface AcrossContextBeanRegistry
 	/**
 	 * Collect all beans of a given type that are visible inside this bean registry.
 	 * Depending on the second parameter, module internal beans will be included.
-	 * <p/>
-	 * All beans will be sorted according to the Order, module index and OrderInModule values.
+	 * <p>
+	 * All beans will be sorted according to the Order, module index and OrderInModule values.</p>
 	 *
 	 * This method allows looking for beans having specific generic parameters.
 	 *

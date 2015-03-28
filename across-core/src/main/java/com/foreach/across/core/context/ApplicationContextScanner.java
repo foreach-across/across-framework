@@ -35,8 +35,9 @@ public final class ApplicationContextScanner
 	 * Will find all beans in the ApplicationContext that have been created with the given annotation.
 	 * This includes both beans having the annotation directly, as beans created through a Configuration
 	 * class @Bean method where the annotation was present on the method definition.
-	 * <p/>
+	 * <p>
 	 * Note: only singleton or actually created beans will be returned.
+	 * </p>
 	 *
 	 * @param annotation Required annotation.
 	 * @return List of beans, never null.

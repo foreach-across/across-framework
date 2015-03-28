@@ -25,7 +25,6 @@ import java.util.Map;
  * <p>Special object map that represent a collection of beans: either singleton
  * or bean definitions (or a combination).  Used to configure a collection of beans
  * that should be registered in an ApplicationContext.</p>
- * <p/>
  * <p>Instance implementing BeanDefinition will be considered as bean definition, all
  * others will be considered as singletons.  Any instance extending SingletonBean can
  * register both a singleton and a BeanDefinition, and is the only way to try to register

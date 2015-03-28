@@ -34,11 +34,11 @@ import java.util.Collection;
  * Base class for configuration of a {@link com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping}
  * instance that supports customizing its configuration through one or more
  * {@link com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer} instances.
- * <p/>
- * Final configuration is done once after context bootstrap.
- * <p/>
+ * <p>Final configuration is done once after context bootstrap.</p>
+ * <p>
  * Implementations should override {@link #controllerHandlerMapping()} method, and annotate it correctly for the
  * bean to be created.  Usually this means adding @Bean(name="BEAN_NAME") and @Exposed.
+ * </p>
  *
  * @author Arne Vandamme
  */

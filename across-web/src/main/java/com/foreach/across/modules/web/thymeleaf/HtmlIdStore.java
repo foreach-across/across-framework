@@ -46,8 +46,8 @@ public class HtmlIdStore
 	 * Retrieve the generated id for a {@link com.foreach.across.modules.web.ui.ViewElement}.  If the instance
 	 * does not implement {@link com.foreach.across.modules.web.ui.elements.NodeViewElementSupport} null will be
 	 * returned.
-	 * <p/>
-	 * If an id is configured on the element, a unique id will be generated and stored for subsequent retrieval.
+	 * <p>
+	 * If an id is configured on the element, a unique id will be generated and stored for subsequent retrieval.</p>
 	 *
 	 * @param control element for which to retrieve the id
 	 * @return id or null if no id is available

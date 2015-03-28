@@ -20,9 +20,9 @@ package com.foreach.across.core.revision;
  * Interface for entities that are related to a specificy {@link com.foreach.across.core.revision.Revision}.
  * A revision is an abstract concept only identified by a revision number, it is not necessary an entity
  * in itself.
- * <p/>
+ * <p>
  * A RevisionBasedEntity conceptually exists between one or more revisions.  It has a revision where it starts
- * and a revision where it ends.
+ * and a revision where it ends.</p>
  *
  * @author Arne Vandamme
  */

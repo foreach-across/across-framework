@@ -23,9 +23,10 @@ import com.foreach.across.modules.web.ui.ViewElements;
  * Simplest implementation of {@link com.foreach.across.modules.web.ui.ViewElements} that also implements
  * {@link com.foreach.across.modules.web.ui.ViewElement}.  A container is a named
  * collection of elements that allows configuration of a custom template for rendering.
- * <p/>
+ * <p>
  * Unless a custom template is being used, a collection does not add additional output but simply renders
  * its children in order.
+ * </p>
  *
  * @author Arne Vandamme
  */
