@@ -40,8 +40,9 @@ import java.util.*;
 /**
  * Extends a {@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
  * with support for Exposed beans.
- * <p/>
+ * <p>
  * Exposed beans are fetched from the module context but are not managed by the bean factory.
+ * </p>
  */
 public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 {

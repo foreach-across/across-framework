@@ -27,9 +27,10 @@ import java.sql.SQLException;
 /**
  * Utility to quickly get some properties of a data source.
  * Uses the {@link java.sql.DatabaseMetaData} of the connection.
- * <p/>
+ * <p>
  * Meant primarily to determine the type of database the data source
  * represents, required to be able to handle cross-database issues differently.
+ * </p>
  *
  * @author Arne Vandamme
  */

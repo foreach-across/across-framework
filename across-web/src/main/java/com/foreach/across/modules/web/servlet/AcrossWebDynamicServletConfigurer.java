@@ -59,8 +59,8 @@ public abstract class AcrossWebDynamicServletConfigurer implements ServletContex
 	/**
 	 * Called when the ServletContext does not allow dynamic extension.  Probably because
 	 * the ApplicationContext was not started using an {@link com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer}.
-	 * <p/>
-	 * Usually means this configurer can not do its part and some feedback should be presented to the user.
+	 * <p>
+	 * Usually means this configurer can not do its part and some feedback should be presented to the user.</p>
 	 *
 	 * @param servletContext ServletContext that already is initialized.
 	 */

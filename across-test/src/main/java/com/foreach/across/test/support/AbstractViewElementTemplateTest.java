@@ -45,11 +45,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Base integration test class for testing {@link com.foreach.across.modules.web.ui.ViewElement}
  * rendering using Thymeleaf.  This bootstraps an {@link com.foreach.across.core.AcrossContext}
  * with web support and the {@link com.foreach.across.test.modules.webtest.WebTestModule} enabled.
- * <p/>
+ * <p>
  * Will generate the output by running through the entire view resolving/Thymeleaf template stack and
  * allows xml assertion to be used on the generated result, thus ignoring whitespace and attribute ordering.
- * <p/>
- * See the {@link #renderAndExpect(com.foreach.across.modules.web.ui.ViewElement, java.lang.String)} method.
+ * </p>
+ * <p>See the {@link #renderAndExpect(com.foreach.across.modules.web.ui.ViewElement, java.lang.String)} method.</p>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext

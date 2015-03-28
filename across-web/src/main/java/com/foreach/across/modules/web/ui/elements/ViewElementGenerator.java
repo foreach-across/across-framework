@@ -28,24 +28,22 @@ import java.util.*;
  * implementation is that the elements are only generated once they are requested using the {@link #iterator()},
  * whereas a normal {@link com.foreach.across.modules.web.ui.elements.ContainerViewElement} requires all members
  * to be set before hand.
- * <p/>
+ * <p>
  * Use this class if you want to configure a template in the form of either a
  * {@link com.foreach.across.modules.web.ui.ViewElement} or {@link com.foreach.across.modules.web.ui.ViewElementBuilder}
  * and provide a set of domain objects for which the template should be customized.  It is generally safer to use a
  * {@link com.foreach.across.modules.web.ui.ViewElementBuilder} as that will always create new
- * {@link com.foreach.across.modules.web.ui.ViewElement} instances instead of modifying the existing one.
+ * {@link com.foreach.across.modules.web.ui.ViewElement} instances instead of modifying the existing one.</p>
  * <p>
  * <strong>If a {@link com.foreach.across.modules.web.ui.ViewElement} is used as item template, the generator
  * is not thread-safe and the same element will be run and possibly modified through every iteration.</strong>
  * </p>
- * <p/>
- * Exactly one {@link com.foreach.across.modules.web.ui.ViewElement} will be generated for every domain object.  It is
+ * <p>Exactly one {@link com.foreach.across.modules.web.ui.ViewElement} will be generated for every domain object.  It is
  * allowed for the generated element to be null - which will cause it not be rendered.  However please be aware that
  * the item will still be present in the iterator and {@link #size()} and {@link #isEmpty()} calls will consider those
- * as valid elements.
- * <p/>
- * Like the {@link com.foreach.across.modules.web.ui.elements.ContainerViewElement}, a ViewElementGenerator does not
- * add any additional output, it only renders its children.
+ * as valid elements.</p>
+ * <p>Like the {@link com.foreach.across.modules.web.ui.elements.ContainerViewElement}, a ViewElementGenerator does not
+ * add any additional output, it only renders its children.</p>
  */
 public class ViewElementGenerator<T, U extends ViewElement> implements ViewElementCollection<U>, ViewElement
 {

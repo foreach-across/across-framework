@@ -30,9 +30,9 @@ import javax.annotation.PostConstruct;
  * Extension of {@link org.springframework.context.support.ReloadableResourceBundleMessageSource} that implements
  * the convention of Across resource bundle locations.  It assumes a message source for the current module is
  * being requested that is present in the conventional location (eg: resources/messages/MODULE_RESOURCES/).
- * <p/>
+ * <p>
  * If {@link com.foreach.across.core.development.AcrossDevelopmentMode} is active, messages will be configured
- * to be loaded from the physical path with a cacheRefresh of 1 second.
+ * to be loaded from the physical path with a cacheRefresh of 1 second.</p>
  *
  * @author Arne Vandamme
  */

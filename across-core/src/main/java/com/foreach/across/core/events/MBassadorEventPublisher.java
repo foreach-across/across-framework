@@ -29,7 +29,6 @@ import java.util.WeakHashMap;
  * <p>EventBus implementation for the AcrossContext.  Allows for publishing AcrossEvent
  * instances to all registered listeners.  Also provides the necessary functionality
  * to register and unregister listeners.</p>
- * <p/>
  * <p><strong>Note:</strong> JDK proxies are not supported, meaning the target object
  * of the proxy will be registered as event handler instead of the proxied bean.</p>
  */

@@ -338,8 +338,8 @@ public class PathBasedMenuBuilder
 		/**
 		 * Add prefix strings on which this menu item will match in case a RequestMenuSelector
 		 * is being used.  If the request starts with any of these prefixes, this menu item will be selected.
-		 * <p/>
-		 * These values only apply if the selector supports it, and currently only RequestMenuSelector does so.
+		 * <p>
+		 * These values only apply if the selector supports it, and currently only RequestMenuSelector does so.</p>
 		 *
 		 * @param matchers One or more prefix strings.
 		 * @see com.foreach.across.modules.web.menu.RequestMenuSelector

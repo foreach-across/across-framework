@@ -28,12 +28,13 @@ import javax.annotation.PostConstruct;
 /**
  * Takes care of actions that need to happen whenever the parent Spring ApplicationContext
  * of the AcrossContext is refreshed.
- * <p/>
+ * <p>
  * Actions include:
  * <ul>
  * <li>updating all @Refreshable components</li>
  * <li>scanning for and registering new @AcrossEventHandler beans</li>
  * </ul>
+ * </p>
  */
 public class SpringContextRefreshedEventListener implements ApplicationListener<ContextRefreshedEvent>
 {
