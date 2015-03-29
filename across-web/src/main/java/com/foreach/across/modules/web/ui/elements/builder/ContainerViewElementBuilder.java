@@ -6,12 +6,11 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupport<ContainerViewElement, ContainerViewElementBuilder>
 {
-	private final List<Object> children = new ArrayList<>();
+	private final List<ElementOrBuilder> children = new ArrayList<>();
 	private String[] sortElements;
 
 	@Override
@@ -25,12 +24,12 @@ public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupp
 	}
 
 	public ContainerViewElementBuilder add( ViewElement... viewElements ) {
-		Collections.addAll( children, viewElements );
+		children.addAll( ElementOrBuilder.wrap( viewElements ) );
 		return this;
 	}
 
 	public ContainerViewElementBuilder add( ViewElementBuilder... viewElements ) {
-		Collections.addAll( children, viewElements );
+		children.addAll( ElementOrBuilder.wrap( viewElements ) );
 		return this;
 	}
 
@@ -43,13 +42,8 @@ public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupp
 	public ContainerViewElement build( ViewElementBuilderContext builderContext ) {
 		ContainerViewElement container = new ContainerViewElement();
 
-		for ( Object child : children ) {
-			if ( child instanceof ViewElement ) {
-				container.add( (ViewElement) child );
-			}
-			else {
-				container.add( ( (ViewElementBuilder) child ).build( builderContext ) );
-			}
+		for ( ElementOrBuilder child : children ) {
+			container.add( child.get( builderContext ) );
 		}
 
 		if ( sortElements != null ) {

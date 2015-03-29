@@ -43,7 +43,7 @@ public abstract class NodeViewElementSupportBuilder<T extends NodeViewElementSup
 	}
 
 	@Override
-	protected final T apply( T viewElement, ViewElementBuilderContext builderContext ) {
+	protected T apply( T viewElement, ViewElementBuilderContext builderContext ) {
 		T element = super.apply( viewElement, builderContext );
 
 		if ( htmlId != null ) {
