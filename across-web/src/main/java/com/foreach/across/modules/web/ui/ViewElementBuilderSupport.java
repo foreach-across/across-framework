@@ -15,9 +15,64 @@
  */
 package com.foreach.across.modules.web.ui;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public abstract class ViewElementBuilderSupport<T extends ViewElement, SELF extends ViewElementBuilder>
 		implements ViewElementBuilder<T>
 {
+	/**
+	 * Encapsulates either a {@link ViewElement} or {@link ViewElementBuilder} for fetching within a
+	 * {@link ViewElementBuilderContext}.
+	 */
+	public static class ElementOrBuilder
+	{
+		private final Object elementOrBuilder;
+
+		protected ElementOrBuilder( Object elementOrBuilder ) {
+			this.elementOrBuilder = elementOrBuilder;
+		}
+
+		public ViewElement get( ViewElementBuilderContext builderContext ) {
+			if ( elementOrBuilder instanceof ViewElement ) {
+				return (ViewElement) elementOrBuilder;
+			}
+
+			if ( elementOrBuilder instanceof ViewElementBuilder ) {
+				return ( (ViewElementBuilder) elementOrBuilder ).build( builderContext );
+			}
+
+			return null;
+		}
+
+		public static ElementOrBuilder wrap( ViewElement viewElement ) {
+			return new ElementOrBuilder( viewElement );
+		}
+
+		public static ElementOrBuilder wrap( ViewElementBuilder builder ) {
+			return new ElementOrBuilder( builder );
+		}
+
+		public static Collection<ElementOrBuilder> wrap( ViewElement... viewElements ) {
+			List<ElementOrBuilder> wrapped = new ArrayList<>( viewElements.length );
+			for ( ViewElement viewElement : viewElements ) {
+				wrapped.add( new ElementOrBuilder( viewElement ) );
+			}
+
+			return wrapped;
+		}
+
+		public static Collection<ElementOrBuilder> wrap( ViewElementBuilder... viewElementBuilders ) {
+			List<ElementOrBuilder> wrapped = new ArrayList<>( viewElementBuilders.length );
+			for ( ViewElementBuilder builder : viewElementBuilders ) {
+				wrapped.add( new ElementOrBuilder( builder ) );
+			}
+
+			return wrapped;
+		}
+	}
+
 	protected String name, customTemplate;
 
 	@SuppressWarnings("unchecked")
