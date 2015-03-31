@@ -16,7 +16,7 @@
 
 <!--/* Navbar menu */-->
 <ul th:fragment="navbar (mainMenu)" class="nav navbar-nav">
-	<li th:each="menu : ${mainMenu.items}" th:if="${menu.hasItems() or menu.hasUrl()}"
+	<li th:each="menu : ${mainMenu.items}" th:if="${(menu.hasItems() or menu.hasUrl()) and !menu.disabled}"
 	    th:with="prevDivider=false,addDivider=false"
 	    th:class="${menu.hasItems()}? 'dropdown'" th:classappend="${menu.selected}? 'active'">
 		<a th:unless="${menu.hasItems()}" th:href="@{${menu.url}}" th:text="${menu.title}">main item</a>
@@ -45,7 +45,7 @@
 
 <!--/* Panels menu */-->
 <div th:fragment="panels (mainMenu)">
-	<div th:each="menu : ${mainMenu.items}" th:if="${menu.hasItems() or menu.hasUrl()}" class="panel panel-default">
+	<div th:each="menu : ${mainMenu.items}" th:if="${menu.hasItems() and !menu.disabled}" class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title" th:text="${menu.title}">Menu title</h3>
 		</div>
