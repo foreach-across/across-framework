@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -67,12 +68,12 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 	public void methodsShouldReturnBuilderInstance() throws Exception {
 		Class<?> c = builder.getClass();
 
-		Collection<String> methodExceptions = Arrays.asList( "build", "wait", "equals", "toString", "hashCode",
-		                                                     "getClass", "notify", "notifyAll" );
+		Collection<String> methodExceptions = Arrays.asList( "^build$", "^wait$", "^equals$", "^toString$", "^hashCode$",
+		                                                     "^notify$", "^notifyAll$", "^get.+", "^has.+" );
 		methodExceptions.addAll( nonBuilderReturningMethods() );
 
 		for ( Method method : c.getMethods() ) {
-			if ( !methodExceptions.contains( method.getName() ) ) {
+			if ( !isExceptionMethod( method.getName(), methodExceptions ) ) {
 				Method declared = c.getDeclaredMethod( method.getName(), method.getParameterTypes() );
 
 				assertEquals( "Method [" + method + "] does not return same builder type",
@@ -80,6 +81,16 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 				              declared.getReturnType() );
 			}
 		}
+	}
+
+	private boolean isExceptionMethod( String methodName, Collection<String> methodExceptions ) {
+
+		for ( String exception : methodExceptions ) {
+			if ( Pattern.matches( exception, methodName ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected abstract T createBuilder( ViewElementBuilderFactory builderFactory );

@@ -34,16 +34,21 @@ public abstract class ViewElementBuilderSupport<T extends ViewElement, SELF exte
 			this.elementOrBuilder = elementOrBuilder;
 		}
 
-		public ViewElement get( ViewElementBuilderContext builderContext ) {
-			if ( elementOrBuilder instanceof ViewElement ) {
-				return (ViewElement) elementOrBuilder;
-			}
+		@SuppressWarnings("unchecked")
+		public <V> V getSource() {
+			return (V) elementOrBuilder;
+		}
 
-			if ( elementOrBuilder instanceof ViewElementBuilder ) {
+		public boolean isBuilder() {
+			return elementOrBuilder instanceof ViewElementBuilder;
+		}
+
+		public ViewElement get( ViewElementBuilderContext builderContext ) {
+			if ( isBuilder() ) {
 				return ( (ViewElementBuilder) elementOrBuilder ).build( builderContext );
 			}
 
-			return null;
+			return (ViewElement) elementOrBuilder;
 		}
 
 		public static ElementOrBuilder wrap( ViewElement viewElement ) {
