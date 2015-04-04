@@ -3,6 +3,7 @@ package com.foreach.across.modules.web.ui.elements.builder;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.ViewElementPostProcessor;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 
 import java.util.ArrayList;
@@ -23,6 +24,11 @@ public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupp
 		return super.customTemplate( template );
 	}
 
+	@Override
+	public ContainerViewElementBuilder postProcessor( ViewElementPostProcessor<ContainerViewElement> postProcessor ) {
+		return super.postProcessor( postProcessor );
+	}
+
 	public ContainerViewElementBuilder add( ViewElement... viewElements ) {
 		children.addAll( ElementOrBuilder.wrap( viewElements ) );
 		return this;
@@ -39,7 +45,7 @@ public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupp
 	}
 
 	@Override
-	public ContainerViewElement build( ViewElementBuilderContext builderContext ) {
+	protected ContainerViewElement createElement( ViewElementBuilderContext builderContext ) {
 		ContainerViewElement container = new ContainerViewElement();
 
 		for ( ElementOrBuilder child : children ) {

@@ -21,6 +21,7 @@ import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElementSupport;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
@@ -87,6 +88,21 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 	protected void attribute( Element element, String attributeName, String value ) {
 		if ( value != null ) {
 			element.setAttribute( attributeName, value );
+		}
+	}
+
+	protected void attributeAppend( Element element, String attributeName, String value ) {
+		if ( value != null ) {
+			String attributeValue = element.getAttributeValue( attributeName );
+
+			if ( StringUtils.isNotBlank( attributeValue ) ) {
+				attributeValue += " " + value;
+			}
+			else {
+				attributeValue = value;
+			}
+
+			element.setAttribute( attributeName, attributeValue );
 		}
 	}
 

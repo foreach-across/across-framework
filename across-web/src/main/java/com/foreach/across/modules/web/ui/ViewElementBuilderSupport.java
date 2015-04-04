@@ -79,6 +79,7 @@ public abstract class ViewElementBuilderSupport<T extends ViewElement, SELF exte
 	}
 
 	protected String name, customTemplate;
+	private Collection<ViewElementPostProcessor<T>> postProcessors = new ArrayList<>();
 
 	@SuppressWarnings("unchecked")
 	public SELF name( String name ) {
@@ -92,12 +93,35 @@ public abstract class ViewElementBuilderSupport<T extends ViewElement, SELF exte
 		return (SELF) this;
 	}
 
+	@SuppressWarnings("unchecked")
+	public SELF postProcessor( ViewElementPostProcessor<T> postProcessor ) {
+		this.postProcessors.add( postProcessor );
+		return (SELF) this;
+	}
+
+	@Override
+	public final T build( ViewElementBuilderContext builderContext ) {
+		T element = createElement( builderContext );
+
+		return postProcess( builderContext, element );
+	}
+
+	protected abstract T createElement( ViewElementBuilderContext builderContext );
+
 	protected final <V extends MutableViewElement> V apply( V viewElement ) {
 		if ( name != null ) {
 			viewElement.setName( name );
 		}
 		if ( customTemplate != null ) {
 			viewElement.setCustomTemplate( customTemplate );
+		}
+
+		return viewElement;
+	}
+
+	protected final T postProcess( ViewElementBuilderContext builderContext, T viewElement ) {
+		for ( ViewElementPostProcessor<T> postProcessor : postProcessors ) {
+			postProcessor.postProcess( builderContext, viewElement );
 		}
 
 		return viewElement;

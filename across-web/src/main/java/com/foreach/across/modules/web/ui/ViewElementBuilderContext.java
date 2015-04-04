@@ -1,5 +1,7 @@
 package com.foreach.across.modules.web.ui;
 
-public class ViewElementBuilderContext
+import com.foreach.across.modules.web.ui.support.ReadableAttributes;
+
+public interface ViewElementBuilderContext extends ReadableAttributes
 {
 }

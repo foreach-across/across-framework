@@ -3,6 +3,7 @@ package com.foreach.across.modules.web.ui.elements.builder;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.ViewElementPostProcessor;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import org.springframework.util.Assert;
 
@@ -69,7 +70,12 @@ public class NodeViewElementBuilder extends NodeViewElementSupportBuilder<NodeVi
 	}
 
 	@Override
-	public NodeViewElement build( ViewElementBuilderContext builderContext ) {
+	public NodeViewElementBuilder postProcessor( ViewElementPostProcessor<NodeViewElement> postProcessor ) {
+		return super.postProcessor( postProcessor );
+	}
+
+	@Override
+	protected NodeViewElement createElement( ViewElementBuilderContext builderContext ) {
 		NodeViewElement element = new NodeViewElement();
 		element.setTagName( tagName );
 

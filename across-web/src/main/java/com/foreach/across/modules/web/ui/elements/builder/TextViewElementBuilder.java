@@ -17,6 +17,7 @@ package com.foreach.across.modules.web.ui.elements.builder;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
+import com.foreach.across.modules.web.ui.ViewElementPostProcessor;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 
 public class TextViewElementBuilder extends ViewElementBuilderSupport<TextViewElement, TextViewElementBuilder>
@@ -32,6 +33,11 @@ public class TextViewElementBuilder extends ViewElementBuilderSupport<TextViewEl
 	@Override
 	public TextViewElementBuilder customTemplate( String template ) {
 		return super.customTemplate( template );
+	}
+
+	@Override
+	public TextViewElementBuilder postProcessor( ViewElementPostProcessor<TextViewElement> postProcessor ) {
+		return super.postProcessor( postProcessor );
 	}
 
 	public TextViewElementBuilder content( String text ) {
@@ -61,7 +67,7 @@ public class TextViewElementBuilder extends ViewElementBuilderSupport<TextViewEl
 	}
 
 	@Override
-	public TextViewElement build( ViewElementBuilderContext builderContext ) {
+	protected TextViewElement createElement( ViewElementBuilderContext builderContext ) {
 		TextViewElement text = new TextViewElement();
 		if ( content != null ) {
 			text.setText( content );

@@ -15,13 +15,12 @@
  */
 package com.foreach.across.test.support;
 
-import com.foreach.across.modules.web.ui.ViewElement;
-import com.foreach.across.modules.web.ui.ViewElementBuilderFactory;
-import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
+import com.foreach.across.modules.web.ui.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +28,10 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Base unit test for {@link com.foreach.across.modules.web.ui.ViewElementBuilderSupport} implementations.  Mainly
@@ -45,10 +47,12 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 	protected U element;
 
 	protected ViewElementBuilderFactory builderFactory;
+	protected ViewElementBuilderContext builderContext;
 
 	@Before
 	public void reset() {
 		builderFactory = mock( ViewElementBuilderFactory.class );
+		builderContext = mock( ViewElementBuilderContext.class );
 
 		builder = createBuilder( builderFactory );
 		element = null;
@@ -65,15 +69,33 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
+	public void postProcessors() {
+		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
+		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
+		ViewElementPostProcessor three = mock( ViewElementPostProcessor.class );
+
+		assertSame( builder, builder.postProcessor( one ).postProcessor( two ).postProcessor( three ) );
+
+		build();
+
+		verify( one ).postProcess( eq( builderContext ), any( ViewElement.class ) );
+		verify( two ).postProcess( eq( builderContext ), any( ViewElement.class ) );
+		verify( three ).postProcess( eq( builderContext ), any( ViewElement.class ) );
+	}
+
+	@Test
 	public void methodsShouldReturnBuilderInstance() throws Exception {
 		Class<?> c = builder.getClass();
 
-		Collection<String> methodExceptions = Arrays.asList( "^build$", "^wait$", "^equals$", "^toString$", "^hashCode$",
-		                                                     "^notify$", "^notifyAll$", "^get.+", "^has.+" );
+		Collection<String> methodExceptions = Arrays.asList( "^build$", "^wait$", "^equals$", "^toString$",
+		                                                     "^hashCode$", "^notify$", "^notifyAll$", "^get[A-Z].+",
+		                                                     "^is[A-Z].+", "^has[A-Z].+" );
 		methodExceptions.addAll( nonBuilderReturningMethods() );
 
 		for ( Method method : c.getMethods() ) {
-			if ( !isExceptionMethod( method.getName(), methodExceptions ) ) {
+			if ( Modifier.isPublic( method.getModifiers() )
+					&& !isExceptionMethod( method.getName(), methodExceptions ) ) {
 				Method declared = c.getDeclaredMethod( method.getName(), method.getParameterTypes() );
 
 				assertEquals( "Method [" + method + "] does not return same builder type",
@@ -84,7 +106,6 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 	}
 
 	private boolean isExceptionMethod( String methodName, Collection<String> methodExceptions ) {
-
 		for ( String exception : methodExceptions ) {
 			if ( Pattern.matches( exception, methodName ) ) {
 				return true;
@@ -100,6 +121,6 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 	}
 
 	protected void build() {
-		element = builder.build( null );
+		element = builder.build( builderContext );
 	}
 }
