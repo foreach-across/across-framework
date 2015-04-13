@@ -53,7 +53,7 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 	 * @param <T> Data item that the callback supports.
 	 * @param <U> {@link com.foreach.across.modules.web.ui.ViewElement} type that will be generated
 	 */
-	public static interface CreationCallback<T, U extends ViewElement>
+	public interface CreationCallback<T, U extends ViewElement>
 	{
 		/**
 		 * Called when the initial {@link com.foreach.across.modules.web.ui.ViewElement} based on the item template

@@ -18,7 +18,7 @@ package com.foreach.across.modules.web.ui.elements;
 import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.ViewElementSupport;
 
-public class TextViewElement extends ViewElementSupport
+public class TextViewElement extends ViewElementSupport implements ConfigurableTextViewElement
 {
 	public static final String ELEMENT_TYPE = StandardViewElements.TEXT;
 
@@ -51,10 +51,12 @@ public class TextViewElement extends ViewElementSupport
 		setName( name );
 	}
 
+	@Override
 	public String getText() {
 		return text;
 	}
 
+	@Override
 	public void setText( String text ) {
 		this.text = text;
 	}
