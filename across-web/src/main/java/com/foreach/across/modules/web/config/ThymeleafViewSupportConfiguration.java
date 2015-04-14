@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
+import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
@@ -85,9 +86,13 @@ public class ThymeleafViewSupportConfiguration
 	public ViewElementNodeBuilderRegistry thymeleafViewElementProcessorRegistry() {
 		ViewElementNodeBuilderRegistry registry = new ViewElementNodeBuilderRegistry();
 		registry.registerNodeBuilder( TextViewElement.class, new TextViewElementNodeBuilder() );
+		registry.registerNodeBuilder( StandardViewElements.TEXT, new TextViewElementNodeBuilder() );
 		registry.registerNodeBuilder( ContainerViewElement.class, new ContainerViewElementNodeBuilder() );
+		registry.registerNodeBuilder( StandardViewElements.CONTAINER, new ContainerViewElementNodeBuilder() );
 		registry.registerNodeBuilder( ViewElementGenerator.class, new ViewElementGeneratorNodeBuilder() );
+		registry.registerNodeBuilder( StandardViewElements.GENERATOR, new ViewElementGeneratorNodeBuilder() );
 		registry.registerNodeBuilder( NodeViewElement.class, new NodeViewElementNodeBuilder() );
+		registry.registerNodeBuilder( StandardViewElements.NODE, new NodeViewElementNodeBuilder() );
 
 		return registry;
 	}

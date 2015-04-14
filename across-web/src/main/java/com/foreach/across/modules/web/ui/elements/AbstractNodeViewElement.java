@@ -15,34 +15,34 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
+import com.foreach.across.modules.web.ui.StandardViewElements;
+
 /**
- * Represents a generic node (html element).  Supports tag, set of attributes and child elements.
+ * Abstract base class for simple elements extending {@link NodeViewElementSupport} but not having
+ * a fixed/unmodifiable tagName.
  *
  * @author Arne Vandamme
  */
-public class NodeViewElement extends AbstractNodeViewElement
+public abstract class AbstractNodeViewElement extends NodeViewElementSupport
 {
-	public NodeViewElement() {
+	public static final String ELEMENT_TYPE = StandardViewElements.NODE;
+
+	private String tagName;
+
+	protected AbstractNodeViewElement() {
+		super( ELEMENT_TYPE );
 	}
 
-	public NodeViewElement( String name ) {
-		setName( name );
+	protected AbstractNodeViewElement( String tagName ) {
+		super( ELEMENT_TYPE );
+		setTagName( tagName );
 	}
 
-	public NodeViewElement( String name, String tag ) {
-		setName( name );
-		setTagName( tag );
+	public String getTagName() {
+		return tagName;
 	}
 
-	@Override
-	public void setTagName( String tagName ) {
-		super.setTagName( tagName );
-	}
-
-	public static NodeViewElement forTag( String tagName ) {
-		NodeViewElement node = new NodeViewElement();
-		node.setTagName( tagName );
-
-		return node;
+	protected void setTagName( String tagName ) {
+		this.tagName = tagName;
 	}
 }

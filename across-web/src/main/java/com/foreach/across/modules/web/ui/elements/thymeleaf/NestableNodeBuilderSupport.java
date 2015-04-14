@@ -56,7 +56,9 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 
 	}
 
-	protected abstract Element createNode( T control, Arguments arguments, ViewElementNodeFactory viewElementNodeFactory );
+	protected abstract Element createNode( T control,
+	                                       Arguments arguments,
+	                                       ViewElementNodeFactory viewElementNodeFactory );
 
 	/**
 	 * Adapter method, meant for subclass hierarchies.
@@ -109,6 +111,27 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 	protected void attribute( Element element, String attributeName, boolean condition ) {
 		if ( condition ) {
 			element.setAttribute( attributeName, attributeName );
+		}
+	}
+
+	/**
+	 * Will append the nodes generated for the child {@link ViewElement} as children to the root {@link Element} passed.
+	 * If the child element is null, nothing will be added but no exception will be thrown.
+	 *
+	 * @param element                to which to add generated child nodes
+	 * @param child                  viewelement for which nodes should be generated (can be null)
+	 * @param arguments              contextual arguments
+	 * @param viewElementNodeFactory root factory for generating the child nodes
+	 */
+	@SuppressWarnings( "unused" )
+	protected void addChild( Element element,
+	                         ViewElement child,
+	                         Arguments arguments,
+	                         ViewElementNodeFactory viewElementNodeFactory ) {
+		if ( child != null ) {
+			for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
+				element.addChild( childNode );
+			}
 		}
 	}
 }
