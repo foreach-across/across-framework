@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Pattern;
@@ -73,24 +73,24 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 	public void postProcessors() {
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
-		ViewElementPostProcessor three = mock( ViewElementPostProcessor.class );
 
-		assertSame( builder, builder.postProcessor( one ).postProcessor( two ).postProcessor( three ) );
+		assertSame( builder, builder.postProcessor( one )
+		                            .postProcessor( two ) );
 
 		build();
 
 		verify( one ).postProcess( eq( builderContext ), any( ViewElement.class ) );
 		verify( two ).postProcess( eq( builderContext ), any( ViewElement.class ) );
-		verify( three ).postProcess( eq( builderContext ), any( ViewElement.class ) );
 	}
 
 	@Test
 	public void methodsShouldReturnBuilderInstance() throws Exception {
 		Class<?> c = builder.getClass();
 
-		Collection<String> methodExceptions = Arrays.asList( "^build$", "^wait$", "^equals$", "^toString$",
-		                                                     "^hashCode$", "^notify$", "^notifyAll$", "^get[A-Z].+",
-		                                                     "^is[A-Z].+", "^has[A-Z].+" );
+		Collection<String> methodExceptions = new ArrayList<>();
+		Collections.addAll( methodExceptions, "^build$", "^wait$", "^equals$", "^toString$",
+		                    "^hashCode$", "^notify$", "^notifyAll$", "^get[A-Z].+",
+		                    "^is[A-Z].+", "^has[A-Z].+" );
 		methodExceptions.addAll( nonBuilderReturningMethods() );
 
 		for ( Method method : c.getMethods() ) {

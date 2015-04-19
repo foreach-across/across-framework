@@ -15,10 +15,13 @@
  */
 package com.foreach.across.modules.web.ui;
 
+import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.TextViewElementBuilder;
 
 public interface ViewElementBuilderFactory
 {
+	ContainerViewElementBuilder container();
+
 	TextViewElementBuilder text();
 
 	TextViewElementBuilder text( String text );

@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.ui.elements.thymeleaf;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.dom.Text;
@@ -32,9 +33,8 @@ public class TextViewElementNodeBuilder implements ViewElementNodeBuilder<TextVi
 	public List<Node> buildNodes( TextViewElement viewElement,
 	                              Arguments arguments,
 	                              ViewElementNodeFactory componentElementProcessor ) {
-		String html = viewElement.isEscapeXml()
-				? HtmlEscape.escapeHtml4Xml( viewElement.getText() )
-				: viewElement.getText();
+		String content = StringUtils.defaultString( viewElement.getText() );
+		String html = viewElement.isEscapeXml() ? HtmlEscape.escapeHtml4Xml( content ) : content;
 
 		Text text = new Text( html, null, null, true );
 

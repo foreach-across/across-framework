@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.ui;
 
+import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.TextViewElementBuilder;
 
 /**
@@ -23,6 +24,11 @@ import com.foreach.across.modules.web.ui.elements.builder.TextViewElementBuilder
  */
 public class StandardViewElementBuilderFactory implements ViewElementBuilderFactory
 {
+	@Override
+	public ContainerViewElementBuilder container() {
+		return new ContainerViewElementBuilder();
+	}
+
 	@Override
 	public TextViewElementBuilder text() {
 		return new TextViewElementBuilder();
