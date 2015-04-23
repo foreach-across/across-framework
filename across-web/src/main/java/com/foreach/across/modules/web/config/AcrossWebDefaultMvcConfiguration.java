@@ -133,7 +133,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	private ServletContext servletContext;
 
-	private FormattingConversionService existingConversionService;
+	@Autowired(required = false)
+	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
+	private FormattingConversionService mvcConversionService;
 
 	private ConfigurableWebBindingInitializer initializer;
 
@@ -153,12 +155,19 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		Assert.notNull( servletContext, "servletContext should be autowired and cannot be null" );
 		Assert.notNull( acrossContext );
 
-		Collection<FormattingConversionService> existing =
-				beanRegistry.getBeansOfType( FormattingConversionService.class );
-
-		if ( !existing.isEmpty() ) {
-			existingConversionService = existing.iterator().next();
+		if ( mvcConversionService == null ) {
+			mvcConversionService = mvcConversionService();
 		}
+	}
+
+	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
+	@Exposed
+	@AcrossCondition("not hasBean('" + AcrossWebModule.CONVERSION_SERVICE_BEAN + "')")
+	public FormattingConversionService mvcConversionService() {
+		LOG.info(
+				"No ConversionService named {} found in Across context - creating and exposing a FormattingConversionService bean",
+				AcrossWebModule.CONVERSION_SERVICE_BEAN );
+		return new DefaultFormattingConversionService();
 	}
 
 	/**
@@ -170,7 +179,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>();
 		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
 		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<HandlerMethodReturnValueHandler>();
-		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<HandlerExceptionResolver>();
+		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
 		ContentNegotiationConfigurer contentNegotiationConfigurer = new ContentNegotiationConfigurer( servletContext );
@@ -178,7 +187,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		ResourceHandlerRegistry resourceHandlerRegistry =
 				new ResourceHandlerRegistry( applicationContext, servletContext );
-		FormattingConversionService conversionService = mvcConversionService();
 
 		for ( WebMvcConfigurer configurer : webMvcConfigurers ) {
 			configurer.addArgumentResolvers( argumentResolvers );
@@ -187,7 +195,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			configurer.addInterceptors( interceptorRegistry );
 			configurer.configureContentNegotiation( contentNegotiationConfigurer );
 			configurer.addResourceHandlers( resourceHandlerRegistry );
-			configurer.addFormatters( conversionService );
+			configurer.addFormatters( mvcConversionService );
 			configurer.configureHandlerExceptionResolvers( exceptionResolvers );
 		}
 
@@ -310,17 +318,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Bean
 	@Exposed
 	public CompositeUriComponentsContributor mvcUriComponentsContributor() {
-		return new CompositeUriComponentsContributor( mvcConversionService() );
-	}
-
-	@Bean
-	@Exposed
-	public FormattingConversionService mvcConversionService() {
-		if ( existingConversionService != null ) {
-			return existingConversionService;
-		}
-
-		return new DefaultFormattingConversionService();
+		return new CompositeUriComponentsContributor( mvcConversionService );
 	}
 
 	/**
@@ -330,7 +328,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	private ConfigurableWebBindingInitializer getConfigurableWebBindingInitializer() {
 		if ( initializer == null ) {
 			initializer = new ConfigurableWebBindingInitializer();
-			initializer.setConversionService( mvcConversionService() );
+			initializer.setConversionService( mvcConversionService );
 			initializer.setValidator( mvcValidator() );
 		}
 

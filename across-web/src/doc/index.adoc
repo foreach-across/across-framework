@@ -3,6 +3,29 @@
 
 artifact
 
+=== AcrossWebModule and ConversionService
+AcrossWebModule requires a `FormattingConversionService` bean named *mvcConversionService* to be present.
+If there is none, one will be created and exposed.  If you want to manage the `ConversionService` yourself, simply create
+ a `FormattingConversionService` with the right name in the parent context.
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Configuration
+public class ManualConversionServiceConfiguration
+{
+	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
+	public FormattingConversionService mvcConversionService() {
+	    return new FormattingConversionService();
+	}
+}
+----
+
+The *mvcConversionService* will be passed to all `WebMvcConfigurer` instances in order to add formatters.  It is also
+the default `ConversionService` attached to the `WebDataBinder`.
+
+---
+
 link builders:
 prefixing path context
 special characters:

@@ -35,6 +35,12 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 {
 	public static final String NAME = "AcrossWebModule";
 
+	/**
+	 * Name of the {@link org.springframework.format.support.FormattingConversionService} bean that web will
+	 * used by default.
+	 */
+	public static final String CONVERSION_SERVICE_BEAN = "mvcConversionService";
+
 	// AcrossWebModule is the special case providing root resources
 	public static final String RESOURCES = "";
 

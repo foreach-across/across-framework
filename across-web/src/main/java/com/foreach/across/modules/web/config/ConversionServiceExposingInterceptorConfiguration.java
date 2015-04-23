@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.annotations.OrderInModule;
+import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ import org.springframework.web.servlet.handler.ConversionServiceExposingIntercep
 public class ConversionServiceExposingInterceptorConfiguration extends PrefixingHandlerMappingConfigurerAdapter
 {
 	@Autowired
-	@Qualifier("mvcConversionService")
+	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	private ConversionService mvcConversionService;
 
 	@Override
