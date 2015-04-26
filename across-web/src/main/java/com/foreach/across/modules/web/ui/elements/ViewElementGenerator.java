@@ -15,10 +15,7 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
-import com.foreach.across.modules.web.ui.StandardViewElements;
-import com.foreach.across.modules.web.ui.ViewElement;
-import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.web.ui.ViewElementCollection;
+import com.foreach.across.modules.web.ui.*;
 
 import java.util.*;
 
@@ -45,7 +42,7 @@ import java.util.*;
  * <p>Like the {@link com.foreach.across.modules.web.ui.elements.ContainerViewElement}, a ViewElementGenerator does not
  * add any additional output, it only renders its children.</p>
  */
-public class ViewElementGenerator<T, U extends ViewElement> implements ViewElementCollection<U>, ViewElement
+public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implements ViewElementCollection<VIEW_ELEMENT>, MutableViewElement
 {
 	/**
 	 * Callback interface for customizing the generated {@link com.foreach.across.modules.web.ui.ViewElement}.
@@ -59,23 +56,23 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 		 * Called when the initial {@link com.foreach.across.modules.web.ui.ViewElement} based on the item template
 		 * has been generated, allowing customization.
 		 *
-		 * @param item     Data item for which the view element is generated.
+		 * @param item     Data item and stats for which the view element is generated.
 		 * @param template Generated view element based on the template, can be null if no template.
 		 * @return ViewElement that should be used.
 		 */
-		U create( T item, U template );
+		U create( IteratorItemStats<T> item, U template );
 	}
 
-	private class SingleGenerationIterator implements Iterator<U>
+	private class SingleGenerationIterator implements Iterator<VIEW_ELEMENT>
 	{
 		private int position = 0;
-		private List<T> items;
-		private List<U> generated;
-		private CreationCallback<T, U> callback;
+		private List<ITEM> items;
+		private List<VIEW_ELEMENT> generated;
+		private CreationCallback<ITEM, VIEW_ELEMENT> callback;
 
-		public SingleGenerationIterator( List<T> items,
-		                                 List<U> generated,
-		                                 CreationCallback<T, U> callback ) {
+		public SingleGenerationIterator( List<ITEM> items,
+		                                 List<VIEW_ELEMENT> generated,
+		                                 CreationCallback<ITEM, VIEW_ELEMENT> callback ) {
 			this.items = items;
 			this.generated = generated;
 			this.callback = callback;
@@ -87,9 +84,25 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 		}
 
 		@Override
-		public U next() {
+		public VIEW_ELEMENT next() {
 			if ( generated.size() <= position ) {
-				generated.add( callback.create( items.get( position ), null ) );
+				ITEM item = items.get( position );
+
+				IteratorItemStats<ITEM> itemStats = new IteratorItemStatsImpl<>( item, position,
+				                                                                 position < items.size() );
+				IteratorViewElementBuilderContext<ITEM> ctx = new IteratorViewElementBuilderContext<>( itemStats );
+				if ( itemBuilderContext != null ) {
+					ctx.setParentContext( itemBuilderContext );
+				}
+
+				ViewElementBuilder<VIEW_ELEMENT> builder = getItemTemplateAsBuilder();
+				VIEW_ELEMENT element = builder.build( ctx );
+
+				if ( callback != null ) {
+					element = callback.create( itemStats, element );
+				}
+
+				generated.add( element );
 			}
 
 			return generated.get( position++ );
@@ -105,13 +118,13 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 	 * Will not store the generated instances.  Used when the template is the same ViewElement that gets modified
 	 * on every iteration.
 	 */
-	private class RepeatedGenerationIterator implements Iterator<U>
+	private class RepeatedGenerationIterator implements Iterator<VIEW_ELEMENT>
 	{
 		private int position = 0;
-		private List<T> items;
-		private CreationCallback<T, U> callback;
+		private List<ITEM> items;
+		private CreationCallback<ITEM, VIEW_ELEMENT> callback;
 
-		public RepeatedGenerationIterator( List<T> items, CreationCallback<T, U> callback ) {
+		public RepeatedGenerationIterator( List<ITEM> items, CreationCallback<ITEM, VIEW_ELEMENT> callback ) {
 			this.items = items;
 			this.callback = callback;
 		}
@@ -122,8 +135,12 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 		}
 
 		@Override
-		public U next() {
-			return callback.create( items.get( position++ ), null );
+		public VIEW_ELEMENT next() {
+			IteratorItemStats<ITEM> itemStats = new IteratorItemStatsImpl<>( items.get( position ), position,
+			                                                                 position++ < items.size() );
+
+			return callback != null
+					? callback.create( itemStats, getItemTemplateAsElement() ) : getItemTemplateAsElement();
 		}
 
 		@Override
@@ -132,57 +149,14 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 		}
 	}
 
-	private class ViewElementTemplateCallback implements CreationCallback<T, U>
-	{
-		private final U template;
-		private final CreationCallback<T, U> callback;
-
-		@SuppressWarnings("unchecked")
-		public ViewElementTemplateCallback( U template, CreationCallback<T, U> callback ) {
-			this.template = template;
-			this.callback = callback;
-		}
-
-		@Override
-		public U create( T item, U original ) {
-			if ( callback != null ) {
-				return callback.create( item, template );
-			}
-
-			return template;
-		}
-	}
-
-	private class ViewElementBuilderTemplateCallback implements CreationCallback<T, U>
-	{
-		private final ViewElementBuilder<U> template;
-		private final CreationCallback<T, U> callback;
-
-		@SuppressWarnings("unchecked")
-		public ViewElementBuilderTemplateCallback( ViewElementBuilder<U> template, CreationCallback<T, U> callback ) {
-			this.template = template;
-			this.callback = callback;
-		}
-
-		@Override
-		public U create( T item, U original ) {
-			U created = template.build( null );
-
-			if ( callback != null ) {
-				return callback.create( item, created );
-			}
-
-			return created;
-		}
-	}
-
 	public static final String ELEMENT_TYPE = StandardViewElements.GENERATOR;
 
-	private List<T> items = Collections.emptyList();
-	private List<U> generated = Collections.emptyList();
-	private CreationCallback<T, U> callback;
+	private List<ITEM> items = Collections.emptyList();
+	private List<VIEW_ELEMENT> generated = Collections.emptyList();
+	private CreationCallback<ITEM, VIEW_ELEMENT> callback;
 
 	private Object itemTemplate;
+	private ViewElementBuilderContext itemBuilderContext;
 
 	private String name, customTemplate, elementType;
 
@@ -194,33 +168,48 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 		this.name = name;
 	}
 
-	public void setItems( Collection<T> items ) {
+	public void setItems( Collection<ITEM> items ) {
 		this.items = new ArrayList<>( items );
 		generated = new ArrayList<>( items.size() );
 	}
 
-	public void setItemTemplate( U element ) {
+	public void setItemTemplate( VIEW_ELEMENT element ) {
 		this.itemTemplate = element;
 	}
 
-	public void setItemTemplate( ViewElementBuilder<U> builder ) {
+	public void setItemTemplate( ViewElementBuilder<VIEW_ELEMENT> builder ) {
 		this.itemTemplate = builder;
+	}
+
+	/**
+	 * Set the {@link ViewElementBuilderContext} that should be used when generating the {@link ViewElement} using
+	 * a {@link ViewElementBuilder} as item template.  This context will serve as the parent context for the
+	 * {@link IteratorViewElementBuilderContext} that will be passed to the item template builder.
+	 *
+	 * @param itemBuilderContext that contains the attributes that should be available to the builder
+	 */
+	public void setItemBuilderContext( ViewElementBuilderContext itemBuilderContext ) {
+		this.itemBuilderContext = itemBuilderContext;
+	}
+
+	public ViewElementBuilderContext getItemBuilderContext() {
+		return itemBuilderContext;
 	}
 
 	/**
 	 * @return itemTemplate if it is a {@link com.foreach.across.modules.web.ui.ViewElement}, null otherwise
 	 */
 	@SuppressWarnings("unchecked")
-	public U getItemTemplateAsElement() {
-		return (U) itemTemplate;
+	public VIEW_ELEMENT getItemTemplateAsElement() {
+		return (VIEW_ELEMENT) itemTemplate;
 	}
 
 	/**
 	 * @return itemTemplate if it is a {@link com.foreach.across.modules.web.ui.ViewElementBuilder}, null otherwise
 	 */
 	@SuppressWarnings("unchecked")
-	public ViewElementBuilder<U> getItemTemplateAsBuilder() {
-		return (ViewElementBuilder<U>) itemTemplate;
+	public ViewElementBuilder<VIEW_ELEMENT> getItemTemplateAsBuilder() {
+		return (ViewElementBuilder<VIEW_ELEMENT>) itemTemplate;
 	}
 
 	/**
@@ -264,8 +253,12 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 	 *
 	 * @param callback implementation
 	 */
-	public void setCreationCallback( CreationCallback<T, U> callback ) {
+	public void setCreationCallback( CreationCallback<ITEM, VIEW_ELEMENT> callback ) {
 		this.callback = callback;
+	}
+
+	public CreationCallback<ITEM, VIEW_ELEMENT> getCreationCallback() {
+		return callback;
 	}
 
 	@Override
@@ -279,15 +272,11 @@ public class ViewElementGenerator<T, U extends ViewElement> implements ViewEleme
 	}
 
 	@Override
-	public Iterator<U> iterator() {
+	public Iterator<VIEW_ELEMENT> iterator() {
 		if ( isBuilderItemTemplate() ) {
-			return new SingleGenerationIterator(
-					items, generated, new ViewElementBuilderTemplateCallback( getItemTemplateAsBuilder(), callback )
-			);
+			return new SingleGenerationIterator( items, generated, callback );
 		}
 
-		return new RepeatedGenerationIterator(
-				items, new ViewElementTemplateCallback( getItemTemplateAsElement(), callback )
-		);
+		return new RepeatedGenerationIterator( items, callback );
 	}
 }

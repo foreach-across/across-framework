@@ -38,11 +38,13 @@ public abstract class ContainerViewElementBuilderSupport<T extends ContainerView
 		T container = super.apply( viewElement );
 
 		for ( Object child : children ) {
-			if ( child instanceof ViewElement ) {
-				container.add( (ViewElement) child );
-			}
-			else {
-				container.add( ( (ViewElementBuilder) child ).build( builderContext ) );
+			if ( child != null ) {
+				if ( child instanceof ViewElement ) {
+					container.add( (ViewElement) child );
+				}
+				else {
+					container.add( ( (ViewElementBuilder) child ).build( builderContext ) );
+				}
 			}
 		}
 

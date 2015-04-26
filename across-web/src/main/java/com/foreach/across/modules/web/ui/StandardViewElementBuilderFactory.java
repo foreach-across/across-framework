@@ -17,6 +17,7 @@ package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.TextViewElementBuilder;
+import com.foreach.across.modules.web.ui.elements.builder.ViewElementGeneratorBuilder;
 
 /**
  * Standard implementation of {@link com.foreach.across.modules.web.ui.ViewElementBuilderFactory} that supports
@@ -27,6 +28,12 @@ public class StandardViewElementBuilderFactory implements ViewElementBuilderFact
 	@Override
 	public ContainerViewElementBuilder container() {
 		return new ContainerViewElementBuilder();
+	}
+
+	@Override
+	public <ITEM, VIEW_ELEMENT extends ViewElement> ViewElementGeneratorBuilder<ITEM, VIEW_ELEMENT> generator(
+			Class<ITEM> itemClass, Class<VIEW_ELEMENT> viewElementClass ) {
+		return new ViewElementGeneratorBuilder<>();
 	}
 
 	@Override

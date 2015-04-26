@@ -15,6 +15,7 @@
  */
 package com.foreach.across.test.modules.web.ui;
 
+import com.foreach.across.modules.web.ui.IteratorItemStats;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementSupport;
@@ -82,8 +83,8 @@ public class TestViewElementGenerator
 		generator.setCreationCallback( new ViewElementGenerator.CreationCallback<String, Text>()
 		{
 			@Override
-			public Text create( String item, Text template ) {
-				template.setText( item );
+			public Text create( IteratorItemStats<String> item, Text template ) {
+				template.setText( item.getItem() );
 				return template;
 			}
 		} );
@@ -128,8 +129,8 @@ public class TestViewElementGenerator
 		generator.setCreationCallback( new ViewElementGenerator.CreationCallback<String, Text>()
 		{
 			@Override
-			public Text create( String item, Text template ) {
-				template.setText( template.getText() + "-" + item );
+			public Text create( IteratorItemStats<String> itemStats, Text template ) {
+				template.setText( template.getText() + "-" + itemStats.getItem() );
 				return template;
 			}
 		} );

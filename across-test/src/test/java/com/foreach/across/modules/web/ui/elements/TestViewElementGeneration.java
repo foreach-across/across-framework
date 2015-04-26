@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
+import com.foreach.across.modules.web.ui.IteratorItemStats;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
@@ -85,7 +86,9 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 				new ViewElementGenerator.CreationCallback<Person, NodeViewElement>()
 				{
 					@Override
-					public NodeViewElement create( Person item, NodeViewElement template ) {
+					public NodeViewElement create( IteratorItemStats<Person> itemStats,
+					                               NodeViewElement template ) {
+						Person item = itemStats.getItem();
 						template.<TextViewElement>get( "name" ).setText( item.getName() );
 						template.<TextViewElement>get( "email" ).setText( item.getEmail() );
 
@@ -134,9 +137,10 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 				new ViewElementGenerator.CreationCallback<Person, NodeViewElement>()
 				{
 					@Override
-					public NodeViewElement create( Person item, NodeViewElement template ) {
-						template.<TextViewElement>get( "name" ).setText( item.getName() );
-						template.<TextViewElement>get( "email" ).setText( item.getEmail() );
+					public NodeViewElement create( IteratorItemStats<Person> itemStats,
+					                               NodeViewElement template ) {
+						template.<TextViewElement>get( "name" ).setText( itemStats.getItem().getName() );
+						template.<TextViewElement>get( "email" ).setText( itemStats.getItem().getEmail() );
 
 						return template;
 					}
@@ -163,7 +167,8 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 		generator.setCreationCallback( new ViewElementGenerator.CreationCallback<Person, NodeViewElement>()
 		{
 			@Override
-			public NodeViewElement create( Person person, NodeViewElement template ) {
+			public NodeViewElement create( IteratorItemStats<Person> itemStats, NodeViewElement template ) {
+				Person person = itemStats.getItem();
 				NodeViewElement row = NodeViewElement.forTag( "tr" );
 
 				NodeViewElement name = NodeViewElement.forTag( "td" );
