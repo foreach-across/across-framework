@@ -205,6 +205,16 @@
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-mybatis</artifactId>
+				<version>${foreach.common.version</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>text-synchronizer</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
 				<artifactId>common-test</artifactId>
 				<version>${foreach.common.version}</version>
 				<exclusions>
