@@ -29,6 +29,19 @@ import java.util.Map;
 public interface ExposedBeanDefinitionTransformer
 {
 	/**
+	 * Simple transformer that removes all ExposedBeanDefinitions, ensuring that no beans will be exposed.
+	 * Use this instance on the {@link com.foreach.across.core.AcrossContext} to disable exposing to the parent
+	 * ApplicationContext.
+	 */
+	ExposedBeanDefinitionTransformer REMOVE_ALL = new ExposedBeanDefinitionTransformer()
+	{
+		@Override
+		public void transformBeanDefinitions( Map<String, ExposedBeanDefinition> beanDefinitions ) {
+			beanDefinitions.clear();
+		}
+	};
+
+	/**
 	 * Modify the collection of ExposedBeanDefinitions.
 	 *
 	 * @param beanDefinitions Map of exposed bean definitions.

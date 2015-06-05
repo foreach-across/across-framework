@@ -27,6 +27,7 @@ import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.installers.InstallerSettings;
+import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,8 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private final String id;
 	private ApplicationContext parentApplicationContext;
 	private boolean failBootstrapOnEventPublicationErrors = true;
+
+	private ExposedBeanDefinitionTransformer exposeTransformer = null;
 
 	/**
 	 * Constructs a new AcrossContext in its own ApplicationContext.
@@ -267,6 +270,23 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 */
 	public void addApplicationContextConfigurer( ApplicationContextConfigurer configurer, ConfigurerScope scope ) {
 		applicationContextConfigurers.put( configurer, scope );
+	}
+
+	/**
+	 * @return The transformer that will be applied to all exposed beans before copying them to the parent context.
+	 */
+	public ExposedBeanDefinitionTransformer getExposeTransformer() {
+		return exposeTransformer;
+	}
+
+	/**
+	 * Sets the transformer that will be applied to all exposed beans before actually copying them
+	 * to the parent context.
+	 *
+	 * @param exposeTransformer The transformer that should be applies to all exposed beans.
+	 */
+	public void setExposeTransformer( ExposedBeanDefinitionTransformer exposeTransformer ) {
+		this.exposeTransformer = exposeTransformer;
 	}
 
 	/**

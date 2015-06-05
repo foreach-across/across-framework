@@ -113,6 +113,10 @@ public abstract class AbstractExposedBeanRegistry
 		}
 	}
 
+	public boolean isEmpty() {
+		return exposedDefinitions.isEmpty();
+	}
+
 	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry registry ) {
 		for ( Map.Entry<String, ExposedBeanDefinition> definition : exposedDefinitions.entrySet() ) {
 			LOG.debug( "Exposing bean {}: {}", definition.getKey(), definition.getValue().getBeanClassName() );

@@ -17,6 +17,7 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
@@ -100,6 +101,10 @@ public class ModuleBootstrapConfig
 
 	public void setApplicationContextConfigurers( Set<ApplicationContextConfigurer> applicationContextConfigurers ) {
 		this.applicationContextConfigurers = applicationContextConfigurers;
+	}
+
+	public void addApplicationContextConfigurer( Class<?>... annotatedClasses ) {
+		addApplicationContextConfigurer( new AnnotatedClassConfigurer( annotatedClasses ) );
 	}
 
 	public void addApplicationContextConfigurer( ApplicationContextConfigurer... configurers ) {

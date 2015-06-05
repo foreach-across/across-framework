@@ -53,7 +53,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		moduleName = original.moduleName;
 		originalBeanName = original.originalBeanName;
 		fullyQualifiedBeanName = original.fullyQualifiedBeanName;
-		preferredBeanName = original.fullyQualifiedBeanName;
+		preferredBeanName = original.preferredBeanName;
 		aliases.addAll( original.aliases );
 	}
 
@@ -103,7 +103,6 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 	                              Class<?> beanClass ) {
 		this( contextBeanRegistry, moduleName, originalBeanName, beanClass );
 
-		// todo: required?
 		setPrimary( original.isPrimary() );
 		setDescription( original.getDescription() );
 		setRole( original.getRole() );

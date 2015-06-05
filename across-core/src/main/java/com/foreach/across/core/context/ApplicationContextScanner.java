@@ -21,7 +21,7 @@ import com.foreach.across.core.filters.BeanFilter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.Assert;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -48,17 +48,22 @@ public final class ApplicationContextScanner
 	}
 
 	public static Map<String, Object> findSingletonsMatching( ApplicationContext context, BeanFilter filter ) {
-		Map<String, Object> beanMap = new HashMap<String, Object>();
-		ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) context;
+		Assert.isInstanceOf( ConfigurableListableBeanFactory.class, context.getAutowireCapableBeanFactory() );
 
-		ConfigurableListableBeanFactory beanFactory = ctx.getBeanFactory();
+		return findSingletonsMatching( (ConfigurableListableBeanFactory) context.getAutowireCapableBeanFactory(),
+		                               filter );
+	}
+
+	public static Map<String, Object> findSingletonsMatching( ConfigurableListableBeanFactory beanFactory,
+	                                                          BeanFilter filter ) {
+		Map<String, Object> beanMap = new HashMap<String, Object>();
 
 		List<String> definitions = Arrays.asList( beanFactory.getBeanDefinitionNames() );
 
 		for ( String singletonName : beanFactory.getSingletonNames() ) {
 			BeanDefinition definition =
 					definitions.contains( singletonName ) ? beanFactory.getBeanDefinition( singletonName ) : null;
-			Object bean = ctx.getBeanFactory().getSingleton( singletonName );
+			Object bean = beanFactory.getSingleton( singletonName );
 
 			if ( filter.apply( beanFactory, singletonName, bean, definition ) ) {
 				beanMap.put( singletonName, bean );
@@ -70,13 +75,18 @@ public final class ApplicationContextScanner
 
 	public static Map<String, BeanDefinition> findBeanDefinitionsMatching( ApplicationContext context,
 	                                                                       BeanFilter filter ) {
+		Assert.isInstanceOf( ConfigurableListableBeanFactory.class, context.getAutowireCapableBeanFactory() );
+
+		return findBeanDefinitionsMatching( (ConfigurableListableBeanFactory) context.getAutowireCapableBeanFactory(),
+		                                    filter );
+	}
+
+	public static Map<String, BeanDefinition> findBeanDefinitionsMatching( ConfigurableListableBeanFactory beanFactory,
+	                                                                       BeanFilter filter ) {
 		Map<String, BeanDefinition> definitionMap = new HashMap<String, BeanDefinition>();
-		ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) context;
 
-		ConfigurableListableBeanFactory beanFactory = ctx.getBeanFactory();
-
-		for ( String defName : ctx.getBeanDefinitionNames() ) {
-			BeanDefinition def = ctx.getBeanFactory().getMergedBeanDefinition( defName );
+		for ( String defName : beanFactory.getBeanDefinitionNames() ) {
+			BeanDefinition def = beanFactory.getMergedBeanDefinition( defName );
 			Object bean = beanFactory.getSingleton( defName );
 
 			if ( filter.apply( beanFactory, defName, bean, def ) ) {

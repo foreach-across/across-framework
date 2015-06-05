@@ -18,6 +18,7 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
@@ -71,16 +72,15 @@ public class AcrossConfig
 
 	@Bean
 	@Lazy
-	// TODO currently this does not work, but we hardcoded it in the AcrossBootstrapper
-	//@Exposed
+	@Exposed
 	public AcrossCompositeCacheManager cacheManager( AcrossContext acrossContext ) {
 		return new AcrossCompositeCacheManager( acrossContext.isDisableNoOpCacheManager() );
 	}
 
 //	@Bean
-//	@Lazy
 //	@Primary
-//	public ConfigurableConversionService conversionService() {
+//	@Exposed
+//	public DefaultFormattingConversionService conversionService() {
 //		return new DefaultFormattingConversionService();
 //	}
 
