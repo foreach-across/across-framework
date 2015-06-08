@@ -28,6 +28,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.convert.ConversionService;
 
 import static org.junit.Assert.*;
 
@@ -60,11 +61,11 @@ public class TestAcrossContextExposedFilters
 		context.bootstrap();
 
 		assertTrue( parent.containsBean( "cacheManager" ) );
-		//assertTrue( parent.containsBean( "conversionService" ) );
+		assertTrue( parent.containsBean( "conversionService" ) );
 
 		assertNotNull( parent.getBean( AcrossContextInfo.class ) );
 		assertNotNull( parent.getBean( "cacheManager", CacheManager.class ) );
-		//assertNotNull( parent.getBean( "conversionService", ConversionService.class ) );
+		assertNotNull( parent.getBean( "conversionService", ConversionService.class ) );
 	}
 
 	@Test
@@ -76,15 +77,15 @@ public class TestAcrossContextExposedFilters
 		assertFalse( parent.containsBean( "conversionService" ) );
 
 		assertNotNull( parent.getBean( "acrossCacheManager", CacheManager.class ) );
-//		assertNotNull( parent.getBean( "acrossConversionService", ConversionService.class ) );
+		assertNotNull( parent.getBean( "acrossConversionService", ConversionService.class ) );
 
 		ApplicationContext across = AcrossContextUtils.getApplicationContext( context );
 		assertTrue( across.containsBean( "cacheManager" ) );
-//		assertTrue( across.containsBean( "conversionService" ) );
+		assertTrue( across.containsBean( "conversionService" ) );
 
 		assertNotNull( across.getBean( AcrossContextInfo.class ) );
 		assertNotNull( across.getBean( "cacheManager", CacheManager.class ) );
-//		assertNotNull( across.getBean( "conversionService", ConversionService.class ) );
+		assertNotNull( across.getBean( "conversionService", ConversionService.class ) );
 	}
 
 	@Test
@@ -95,16 +96,16 @@ public class TestAcrossContextExposedFilters
 		context.bootstrap();
 
 		assertFalse( parent.containsBean( "cacheManager" ) );
-//		assertFalse( parent.containsBean( "conversionService" ) );
+		assertFalse( parent.containsBean( "conversionService" ) );
 		assertEquals( initialBeanCount, BeanFactoryUtils.countBeansIncludingAncestors( parent ) );
 
 		ApplicationContext across = AcrossContextUtils.getApplicationContext( context );
 		assertTrue( across.containsBean( "cacheManager" ) );
-//		assertTrue( across.containsBean( "conversionService" ) );
+		assertTrue( across.containsBean( "conversionService" ) );
 
 		assertNotNull( across.getBean( AcrossContextInfo.class ) );
 		assertNotNull( across.getBean( "cacheManager", CacheManager.class ) );
-//		assertNotNull( across.getBean( "conversionService", ConversionService.class ) );
+		assertNotNull( across.getBean( "conversionService", ConversionService.class ) );
 	}
 
 	@Test

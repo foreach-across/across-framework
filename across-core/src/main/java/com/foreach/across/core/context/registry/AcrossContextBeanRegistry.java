@@ -41,12 +41,29 @@ public interface AcrossContextBeanRegistry
 	String getFactoryName();
 
 	/**
+	 * Check if a bean is registered under the given name in the AcrossContext.
+	 *
+	 * @param beanName Name of the bean definition.
+	 * @return Instance.
+	 */
+	boolean containsBean( String beanName );
+
+	/**
 	 * Get a bean registered under the given name in the AcrossContext.
 	 *
 	 * @param beanName Name of the bean definition.
 	 * @return Instance.
 	 */
 	Object getBean( String beanName );
+
+	/**
+	 * Get a bean registered under the given name in the AcrossContext.
+	 *
+	 * @param beanName     Name of the bean definition.
+	 * @param requiredType of the bean
+	 * @return Instance.
+	 */
+	<T> T getBean( String beanName, Class<T> requiredType );
 
 	/**
 	 * Determine the type for the bean registered under the given name in the AcrossContext.

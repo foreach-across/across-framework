@@ -18,10 +18,12 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
+import com.foreach.across.core.convert.StringToDateConverter;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.MBassadorEventPublisher;
@@ -30,11 +32,15 @@ import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepositoryImpl;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockConfiguration;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.format.support.DefaultFormattingConversionService;
 
 import javax.sql.DataSource;
 
@@ -44,6 +50,8 @@ import javax.sql.DataSource;
 @Configuration
 public class AcrossConfig
 {
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossConfig.class );
+
 	@Bean
 	public AcrossEventPublisher eventPublisher() {
 		return new MBassadorEventPublisher();
@@ -77,12 +85,27 @@ public class AcrossConfig
 		return new AcrossCompositeCacheManager( acrossContext.isDisableNoOpCacheManager() );
 	}
 
-//	@Bean
-//	@Primary
-//	@Exposed
-//	public DefaultFormattingConversionService conversionService() {
-//		return new DefaultFormattingConversionService();
-//	}
+	/**
+	 * A default ConversionService gets created if no other is provided through the parent context.
+	 */
+	@Bean(name = ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
+	@Exposed
+	@AcrossCondition("not hasBean('" + ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME + "', T(org.springframework.core.convert.ConversionService))")
+	public DefaultFormattingConversionService conversionService() {
+		LOG.info( "Creating a default ConversionService as no valid bean '{}' is present",
+		          ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
+
+		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
+		conversionService.addConverter( defaultDateConverter() );
+
+		return conversionService;
+
+	}
+
+	@Bean
+	public StringToDateConverter defaultDateConverter() {
+		return new StringToDateConverter();
+	}
 
 	@Bean
 	@Lazy

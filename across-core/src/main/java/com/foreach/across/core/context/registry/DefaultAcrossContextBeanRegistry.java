@@ -50,8 +50,18 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	}
 
 	@Override
+	public boolean containsBean( String beanName ) {
+		return contextInfo.getApplicationContext().containsBean( beanName );
+	}
+
+	@Override
 	public Object getBean( String beanName ) {
 		return contextInfo.getApplicationContext().getBean( beanName );
+	}
+
+	@Override
+	public <T> T getBean( String beanName, Class<T> requiredType ) {
+		return contextInfo.getApplicationContext().getBean( beanName, requiredType );
 	}
 
 	@Override

@@ -23,6 +23,7 @@ import com.foreach.across.core.context.support.MessageSourceBuilder;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
@@ -87,5 +88,20 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 		new MessageSourceBuilder( getBeanFactory() ).build( getInternalParentMessageSource() );
 
 		super.initMessageSource();
+	}
+
+	@Override
+	protected void registerBeanPostProcessors( ConfigurableListableBeanFactory beanFactory ) {
+		ConfigurableEnvironment environment = getEnvironment();
+
+		// Set the conversion service on the environment as well
+		if ( beanFactory.containsBean( CONVERSION_SERVICE_BEAN_NAME )
+				&& beanFactory.isTypeMatch( CONVERSION_SERVICE_BEAN_NAME, ConfigurableConversionService.class ) ) {
+			environment.setConversionService(
+					beanFactory.getBean( CONVERSION_SERVICE_BEAN_NAME, ConfigurableConversionService.class )
+			);
+		}
+
+		super.registerBeanPostProcessors( beanFactory );
 	}
 }

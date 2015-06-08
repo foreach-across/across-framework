@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.support.DefaultFormattingConversionService;
@@ -162,11 +163,22 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	@Exposed
-	@AcrossCondition("not hasBean('" + AcrossWebModule.CONVERSION_SERVICE_BEAN + "')")
+	@AcrossCondition("not hasBean('" + AcrossWebModule.CONVERSION_SERVICE_BEAN + "', T(org.springframework.format.support.FormattingConversionService))")
 	public FormattingConversionService mvcConversionService() {
+		if ( beanRegistry.containsBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME )
+				&& FormattingConversionService.class.isAssignableFrom(
+				beanRegistry.getBeanType( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME ) )
+				) {
+			LOG.info( "Using the default ConversionService as {}", AcrossWebModule.CONVERSION_SERVICE_BEAN );
+			return beanRegistry.getBean(
+					ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME, FormattingConversionService.class
+			);
+		}
+
 		LOG.info(
-				"No ConversionService named {} found in Across context - creating and exposing a FormattingConversionService bean",
+				"No ConversionService named {} found in Across context - creating and exposing a new FormattingConversionService bean",
 				AcrossWebModule.CONVERSION_SERVICE_BEAN );
+
 		return new DefaultFormattingConversionService();
 	}
 

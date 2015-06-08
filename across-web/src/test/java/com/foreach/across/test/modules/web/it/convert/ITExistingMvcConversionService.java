@@ -23,6 +23,7 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,17 +35,18 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.text.ParseException;
 import java.util.Locale;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
  * If ConversionService named mvcConversionService already exists, that one will be used instead.
+ * The context ConversionService will be unmodified.
  *
  * @author Arne Vandamme
  */
@@ -70,7 +72,12 @@ public class ITExistingMvcConversionService
 	private static final FormattingConversionService CONVERSION_SERVICE = mock( FormattingConversionService.class );
 
 	@Autowired
-	private FormattingConversionService conversionService;
+	@Qualifier(ConfigurableWebApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
+	private ConversionService conversionService;
+
+	@Autowired
+	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
+	private FormattingConversionService mvcConversionService;
 
 	@Autowired
 	private AcrossContextInfo contextInfo;
@@ -78,14 +85,17 @@ public class ITExistingMvcConversionService
 	@Test
 	public void mvcConversionServiceWasNotCreatedInWebModule() {
 		assertNotNull( conversionService );
-		assertSame( CONVERSION_SERVICE, conversionService );
+		assertNotNull( mvcConversionService );
+		assertNotSame( conversionService, mvcConversionService );
+		assertSame( CONVERSION_SERVICE, mvcConversionService );
 
 		ApplicationContext ctx = contextInfo.getModuleInfo( AcrossWebModule.NAME ).getApplicationContext();
 
-		ConversionService mvcConversionService = ctx.getBean( "mvcConversionService", ConversionService.class );
-		assertSame( conversionService, mvcConversionService );
+		ConversionService mvcConversionServiceFromModule = ctx.getBean( AcrossWebModule.CONVERSION_SERVICE_BEAN,
+		                                                                ConversionService.class );
+		assertSame( mvcConversionService, mvcConversionServiceFromModule );
 
-		verify( conversionService ).addFormatter( FORMATTER );
+		verify( mvcConversionService ).addFormatter( FORMATTER );
 
 	}
 

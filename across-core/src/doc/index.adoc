@@ -149,3 +149,20 @@ NOTE: Unless a specific order is given either through the interface or annotatio
 This way you can still force beans to be ordered behind beans without an explicit order.
 
 WARNING: The current version of Across does not apply the module order hierarchy to event handlers. If event handlers need an order, it should be defined explicitly and you cannot rely that event handlers from other modules you depend on will have been executed before you. This is an important work in progress for one of the next versions of Across.
+
+=== AcrossContext and ConversionService
+An AcrossContext requires a valid `ConversionService` bean named *conversionService* to be present.  If there is none,
+a `DefaultFormattingConversionService` will be created and exposed.  If you want to manage the `ConversionService` yourself,
+simply create a `ConversionService` with the right name in the parent `ApplicationContext`.
+
+The default *conversionService* will also be attached to the `ApplicationContext` environment of every module.  This
+means property fetching using `Environment.getProperty()` methods will perform type conversion using the `ConversionService`
+(eg. useful for date property parsing).
+
+.Date conversion
+Apart from the `ConversionService` itself, an `AcrossContext` creates a default `StringToDateConverter` bean named *defaultDateConverter*.
+This converter supports converting a string to a corresponding date in many common date patterns.  The `StringToDateConverter` assumes a
+fixed locale that can be configured (default: `US`).
+
+WARNING: If you manage the `ConversionService` outside of the `AcrossContext` the default `StringToDateConverter` will not
+be registered either.

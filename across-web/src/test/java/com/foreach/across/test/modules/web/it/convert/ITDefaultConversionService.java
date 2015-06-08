@@ -20,12 +20,16 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.context.StandardAcrossServletEnvironment;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -36,6 +40,7 @@ import static org.junit.Assert.assertSame;
 
 /**
  * AcrossWebModule creates a ConversionService called mvcConversionService.
+ * By default this ConversionService is the same as the parent.
  *
  * @author Arne Vandamme
  */
@@ -46,7 +51,12 @@ import static org.junit.Assert.assertSame;
 public class ITDefaultConversionService
 {
 	@Autowired(required = false)
+	@Qualifier(ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
 	private ConversionService conversionService;
+
+	@Autowired(required = false)
+	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
+	private ConversionService mvcConversionService;
 
 	@Autowired
 	private AcrossContextInfo contextInfo;
@@ -54,11 +64,27 @@ public class ITDefaultConversionService
 	@Test
 	public void mvcConversionServiceExistsAndIsExposed() {
 		assertNotNull( conversionService );
+		assertNotNull( mvcConversionService );
+		assertSame( conversionService, mvcConversionService );
 
 		ApplicationContext ctx = contextInfo.getModuleInfo( AcrossWebModule.NAME ).getApplicationContext();
 
 		ConversionService mvcConversionService = ctx.getBean( "mvcConversionService", ConversionService.class );
 		assertSame( conversionService, mvcConversionService );
+	}
+
+	@Test
+	public void defaultConversionServiceShouldBeAttachedToContextAndAcrossWebModule() {
+		ConfigurableEnvironment contextEnvironment =
+				(ConfigurableEnvironment) contextInfo.getApplicationContext().getEnvironment();
+		assertSame( conversionService, contextEnvironment.getConversionService() );
+
+		StandardAcrossServletEnvironment moduleEnvironment = (StandardAcrossServletEnvironment) contextInfo
+				.getModuleInfo( AcrossWebModule.NAME )
+				.getApplicationContext()
+				.getEnvironment();
+
+		assertSame( conversionService, moduleEnvironment.getConversionService() );
 	}
 
 	@EnableAcrossContext

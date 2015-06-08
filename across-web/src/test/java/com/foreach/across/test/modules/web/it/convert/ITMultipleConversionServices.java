@@ -23,7 +23,9 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
@@ -43,7 +45,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * If ConversionService named mvcConversionService already exists, that one will be used instead.
+ * If a third, wrongly named, ConversionService is present, it will be ignored.
  *
  * @author Arne Vandamme
  */
@@ -69,9 +71,15 @@ public class ITMultipleConversionServices
 	private static final FormattingConversionService CONVERSION_SERVICE = mock( FormattingConversionService.class );
 
 	@Autowired
+	@Qualifier("otherConversionService")
 	private FormattingConversionService otherConversionService;
 
 	@Autowired
+	@Qualifier(ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
+	private FormattingConversionService conversionService;
+
+	@Autowired
+	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	private FormattingConversionService mvcConversionService;
 
 	@Autowired
@@ -80,8 +88,10 @@ public class ITMultipleConversionServices
 	@Test
 	public void mvcConversionServiceWasCreatedInWebModule() {
 		assertNotNull( otherConversionService );
+		assertNotNull( conversionService );
 		assertNotNull( mvcConversionService );
 		assertNotSame( otherConversionService, mvcConversionService );
+		assertSame( conversionService, mvcConversionService );
 
 		ApplicationContext ctx = contextInfo.getModuleInfo( AcrossWebModule.NAME ).getApplicationContext();
 
