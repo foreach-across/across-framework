@@ -99,7 +99,6 @@ public class AcrossConfig
 		conversionService.addConverter( defaultDateConverter() );
 
 		return conversionService;
-
 	}
 
 	@Bean

@@ -22,6 +22,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.*;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.convert.StringToDateConverter;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
@@ -179,7 +180,10 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 				"No ConversionService named {} found in Across context - creating and exposing a new FormattingConversionService bean",
 				AcrossWebModule.CONVERSION_SERVICE_BEAN );
 
-		return new DefaultFormattingConversionService();
+		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
+		conversionService.addConverter( new StringToDateConverter() );
+
+		return conversionService;
 	}
 
 	/**
