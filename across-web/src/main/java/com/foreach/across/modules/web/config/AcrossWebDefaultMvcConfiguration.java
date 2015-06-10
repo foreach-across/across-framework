@@ -31,7 +31,6 @@ import com.foreach.across.modules.web.mvc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -417,16 +416,14 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			if ( ClassUtils.isPresent( "javax.validation.Validator", getClass().getClassLoader() ) ) {
 				Class<?> clazz;
 				try {
-					String className = "org.springframework.validation.beanvalidation.LocalValidatorFactoryBean";
+					String className = "org.springframework.validation.beanvalidation.OptionalValidatorFactoryBean";
 					clazz = ClassUtils.forName( className, WebMvcConfigurationSupport.class.getClassLoader() );
 				}
-				catch ( ClassNotFoundException e ) {
+				catch ( ClassNotFoundException | LinkageError e ) {
 					throw new BeanInitializationException( "Could not find default validator", e );
 				}
-				catch ( LinkageError e ) {
-					throw new BeanInitializationException( "Could not find default validator", e );
-				}
-				validator = (Validator) BeanUtils.instantiate( clazz );
+
+				validator = (Validator) applicationContext.getAutowireCapableBeanFactory().createBean( clazz );
 			}
 			else {
 				validator = new Validator()
