@@ -44,7 +44,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	// AcrossWebModule is the special case providing root resources
 	public static final String RESOURCES = "";
 
-	private String viewsResourcePath;
+	private String viewsResourcePath = "/across/resources";
 	private AcrossWebViewSupport[] supportedViews =
 			new AcrossWebViewSupport[] { AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF };
 
