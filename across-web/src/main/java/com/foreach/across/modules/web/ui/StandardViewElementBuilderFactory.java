@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
+import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.TextViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.ViewElementGeneratorBuilder;
 
@@ -54,5 +55,15 @@ public class StandardViewElementBuilderFactory implements ViewElementBuilderFact
 	@Override
 	public TextViewElementBuilder html( String html ) {
 		return new TextViewElementBuilder().html( html );
+	}
+
+	@Override
+	public NodeViewElementBuilder node() {
+		return new NodeViewElementBuilder();
+	}
+
+	@Override
+	public NodeViewElementBuilder node( String tagName ) {
+		return new NodeViewElementBuilder().tagName( tagName );
 	}
 }

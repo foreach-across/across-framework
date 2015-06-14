@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
+import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.TextViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.ViewElementGeneratorBuilder;
 
@@ -34,4 +35,8 @@ public interface ViewElementBuilderFactory
 	TextViewElementBuilder html();
 
 	TextViewElementBuilder html( String html );
+
+	NodeViewElementBuilder node();
+
+	NodeViewElementBuilder node( String tagName );
 }

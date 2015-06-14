@@ -15,6 +15,8 @@
  */
 package com.foreach.across.modules.web.ui;
 
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -59,9 +61,10 @@ public abstract class ViewElementBuilderSupport<T extends ViewElement, SELF exte
 			return new ElementOrBuilder( builder );
 		}
 
-		public static Collection<ElementOrBuilder> wrap( ViewElement... viewElements ) {
-			List<ElementOrBuilder> wrapped = new ArrayList<>( viewElements.length );
-			for ( ViewElement viewElement : viewElements ) {
+		public static Collection<ElementOrBuilder> wrap( Iterable<?> viewElements ) {
+			List<ElementOrBuilder> wrapped = new ArrayList<>();
+			for ( Object viewElement : viewElements ) {
+				Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder );
 				wrapped.add( new ElementOrBuilder( viewElement ) );
 			}
 

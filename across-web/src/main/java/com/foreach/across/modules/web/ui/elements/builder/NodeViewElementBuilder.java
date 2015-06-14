@@ -55,6 +55,11 @@ public class NodeViewElementBuilder extends NodeViewElementSupportBuilder<NodeVi
 	}
 
 	@Override
+	public NodeViewElementBuilder addAll( Iterable<?> viewElements ) {
+		return super.addAll( viewElements );
+	}
+
+	@Override
 	public NodeViewElementBuilder sort( String... elementNames ) {
 		return super.sort( elementNames );
 	}

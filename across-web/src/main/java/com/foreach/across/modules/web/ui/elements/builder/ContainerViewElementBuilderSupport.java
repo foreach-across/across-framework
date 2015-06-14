@@ -5,6 +5,7 @@ import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +26,15 @@ public abstract class ContainerViewElementBuilderSupport<T extends ContainerView
 	@SuppressWarnings("unchecked")
 	public SELF add( ViewElementBuilder... viewElements ) {
 		Collections.addAll( children, viewElements );
+		return (SELF) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public SELF addAll( Iterable<?> viewElements ) {
+		for ( Object viewElement : viewElements ) {
+			Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder );
+			children.add( viewElement );
+		}
 		return (SELF) this;
 	}
 

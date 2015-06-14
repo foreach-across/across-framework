@@ -7,6 +7,7 @@ import com.foreach.across.modules.web.ui.ViewElementPostProcessor;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupport<ContainerViewElement, ContainerViewElementBuilder>
@@ -29,16 +30,25 @@ public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupp
 		return super.postProcessor( postProcessor );
 	}
 
+	@Override
 	public ContainerViewElementBuilder add( ViewElement... viewElements ) {
-		children.addAll( ElementOrBuilder.wrap( viewElements ) );
+		children.addAll( ElementOrBuilder.wrap( Arrays.asList( viewElements ) ) );
 		return this;
 	}
 
+	@Override
 	public ContainerViewElementBuilder add( ViewElementBuilder... viewElements ) {
 		children.addAll( ElementOrBuilder.wrap( viewElements ) );
 		return this;
 	}
 
+	@Override
+	public ContainerViewElementBuilder addAll( Iterable<?> viewElements ) {
+		children.addAll( ElementOrBuilder.wrap( viewElements ) );
+		return this;
+	}
+
+	@Override
 	public ContainerViewElementBuilder sort( String... elementNames ) {
 		this.sortElements = elementNames;
 		return this;
