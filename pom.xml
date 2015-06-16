@@ -26,6 +26,7 @@
 		<spring.version>4.0.9.RELEASE</spring.version>
 		<foreach.common.version>0.11</foreach.common.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 	</properties>
 
 	<repositories>
