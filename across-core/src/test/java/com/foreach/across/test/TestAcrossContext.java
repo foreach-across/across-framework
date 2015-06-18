@@ -44,25 +44,24 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void moduleWithTheSameNameIsNotAllowedWhenBootstrapping() {
+	public void moduleWithTheSameNameCannotBeAdded() {
 		AcrossContext context = new AcrossContext();
 		context.setInstallerAction( InstallerAction.DISABLED );
 
 		TestModule1 module = new TestModule1();
 		context.addModule( module );
 		context.addModule( new TestModule2() );
-		context.addModule( new ExposingModule( module.getName() ) );
 
 		boolean failed = false;
 
 		try {
-			context.bootstrap();
+			context.addModule( new ExposingModule( module.getName() ) );
 		}
 		catch ( RuntimeException re ) {
 			failed = true;
 		}
 
-		assertTrue( "Bootstrapping modules with the same name should not be possible", failed );
+		assertTrue( "Configuring modules with the same name should not be possible", failed );
 	}
 
 	@Test

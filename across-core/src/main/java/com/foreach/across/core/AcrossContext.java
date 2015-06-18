@@ -183,7 +183,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	public void addModule( AcrossModule module ) {
 		if ( modules.contains( module ) ) {
 			throw new AcrossException(
-					"Not allowed to add the same module instance to a single AcrossContext: " + module );
+					"Not allowed to add two modules with the same name to a single AcrossContext: " + module );
 		}
 
 		if ( module.getContext() != null ) {
