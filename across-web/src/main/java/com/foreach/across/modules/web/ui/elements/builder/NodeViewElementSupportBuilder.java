@@ -26,7 +26,7 @@ public abstract class NodeViewElementSupportBuilder<T extends NodeViewElementSup
 
 	@SuppressWarnings("unchecked")
 	public SELF attributes( Map<String, Object> attributes ) {
-		attributes.putAll( attributes );
+		this.attributes.putAll( attributes );
 		return (SELF) this;
 	}
 
