@@ -52,6 +52,8 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 			}
 		}
 
+		node = postProcess( node, viewElement, arguments, viewElementNodeFactory );
+
 		return Collections.singletonList( (Node) node );
 
 	}
@@ -64,6 +66,16 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 	 * Adapter method, meant for subclass hierarchies.
 	 */
 	protected void applyProperties( T control, Arguments arguments, Element node ) {
+	}
+
+	/**
+	 * Adapter method allowing modifying the element (eg wrapping it) after it has been built.
+	 */
+	protected Element postProcess( Element element,
+	                               T control,
+	                               Arguments arguments,
+	                               ViewElementNodeFactory viewElementNodeFactory ) {
+		return element;
 	}
 
 	protected void text( Element element, String text ) {
@@ -123,7 +135,7 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 	 * @param arguments              contextual arguments
 	 * @param viewElementNodeFactory root factory for generating the child nodes
 	 */
-	@SuppressWarnings( "unused" )
+	@SuppressWarnings("unused")
 	protected void addChild( Element element,
 	                         ViewElement child,
 	                         Arguments arguments,
