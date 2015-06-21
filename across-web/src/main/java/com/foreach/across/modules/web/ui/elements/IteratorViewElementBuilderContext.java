@@ -17,12 +17,9 @@ package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.ui.IteratorItemStats;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.support.AttributeSupport;
+import com.foreach.across.modules.web.ui.ViewElementBuilderContextImpl;
 import com.foreach.across.modules.web.ui.support.WritableAttributes;
 import org.springframework.util.Assert;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Wrapping {@link ViewElementBuilderContext} that is used by a {@link ViewElementGenerator} and provides
@@ -34,10 +31,9 @@ import java.util.Map;
  *
  * @author Arne Vandamme
  */
-public class IteratorViewElementBuilderContext<ITEM> extends AttributeSupport
+public class IteratorViewElementBuilderContext<ITEM> extends ViewElementBuilderContextImpl
 		implements ViewElementBuilderContext, WritableAttributes, IteratorItemStats<ITEM>
 {
-	private ViewElementBuilderContext parentContext;
 	private IteratorItemStats<ITEM> itemStats;
 
 	public IteratorViewElementBuilderContext( IteratorItemStats<ITEM> itemStats ) {
@@ -97,7 +93,7 @@ public class IteratorViewElementBuilderContext<ITEM> extends AttributeSupport
 	 * @return parent context that attributes are inherited from
 	 */
 	public ViewElementBuilderContext getParentContext() {
-		return parentContext;
+		return (ViewElementBuilderContext) getParent();
 	}
 
 	/**
@@ -107,71 +103,6 @@ public class IteratorViewElementBuilderContext<ITEM> extends AttributeSupport
 	 * @param parentContext to inherit the attributes from
 	 */
 	public void setParentContext( ViewElementBuilderContext parentContext ) {
-		this.parentContext = parentContext;
-	}
-
-	@Override
-	public <Y, V extends Y> V getAttribute( Class<Y> attributeType ) {
-		if ( parentContext != null ) {
-			if ( super.hasAttribute( attributeType ) ) {
-				return super.getAttribute( attributeType );
-			}
-			else {
-				return parentContext.getAttribute( attributeType );
-			}
-		}
-
-		return super.getAttribute( attributeType );
-	}
-
-	@Override
-	public <Y> Y getAttribute( String attributeName ) {
-		if ( parentContext != null ) {
-			if ( super.hasAttribute( attributeName ) ) {
-				return super.getAttribute( attributeName );
-			}
-			else {
-				return parentContext.getAttribute( attributeName );
-			}
-		}
-
-		return super.getAttribute( attributeName );
-	}
-
-	@Override
-	public <Y> Y getAttribute( String attributeName, Class<Y> attributeType ) {
-		if ( parentContext != null ) {
-			if ( super.hasAttribute( attributeName ) ) {
-				return super.getAttribute( attributeName, attributeType );
-			}
-			else {
-				return parentContext.getAttribute( attributeName, attributeType );
-			}
-		}
-
-		return super.getAttribute( attributeName, attributeType );
-	}
-
-	@Override
-	public boolean hasAttribute( Class<?> attributeType ) {
-		return super.hasAttribute( attributeType )
-				|| ( parentContext != null && parentContext.hasAttribute( attributeType ) );
-	}
-
-	@Override
-	public boolean hasAttribute( String attributeName ) {
-		return super.hasAttribute( attributeName )
-				|| ( parentContext != null && parentContext.hasAttribute( attributeName ) );
-	}
-
-	@Override
-	public Map<Object, Object> getAttributes() {
-		Map<Object, Object> merged = new HashMap<>();
-		if ( parentContext != null ) {
-			merged.putAll( parentContext.getAttributes() );
-		}
-		merged.putAll( super.getAttributes() );
-
-		return merged;
+		setParent( parentContext );
 	}
 }

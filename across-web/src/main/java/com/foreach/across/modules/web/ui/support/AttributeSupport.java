@@ -23,7 +23,15 @@ import java.util.Map;
 
 public abstract class AttributeSupport implements ReadableAttributes, WritableAttributes
 {
-	private final Map<Object, Object> attributes = new HashMap<>();
+	private final Map<Object, Object> attributes;
+
+	public AttributeSupport() {
+		this( new HashMap<>() );
+	}
+
+	protected AttributeSupport( Map<Object, Object> backingMap ) {
+		this.attributes = backingMap;
+	}
 
 	public <Y> void addAttribute( Class<Y> attributeType, Y attributeValue ) {
 		Assert.notNull( attributeType );
