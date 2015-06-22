@@ -15,22 +15,37 @@
  */
 package com.foreach.across.modules.web.ui;
 
-import com.foreach.across.modules.web.ui.support.AttributeSupport;
-import com.foreach.across.modules.web.ui.support.AttributesMapWrapper;
-import com.foreach.across.modules.web.ui.support.ReadableAttributes;
+import com.foreach.across.core.support.AttributeSupport;
+import com.foreach.across.core.support.ReadableAttributes;
 import org.springframework.ui.Model;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Standard implementation of a {@link ViewElementBuilderContext} that allows a parent set of {@link ReadableAttributes}
- * to be provided.  Attributes set on the builder context directly will hide the same attributes in the parent.
+ * <p>Standard implementation of a {@link ViewElementBuilderContext} that optionally allows a parent set of attributes
+ * to be provided.  Attributes from the parent will be visible in the context, but attributes set on the builder
+ * context directly will hide the same attributes from the parent.  Hiding with a non-null value is possible, but
+ * removing attributes entirely from the parent is not.</p>
+ * <p>For example when creating a new context based on a {@link Model}, all attributes from the model will be
+ * available on the context.  Additional attributes can be added to the context only and will not be available in the
+ * original Model.  Changes to the model should propagate to the model (depending on the model implementation).</p>
+ * <p>Custom implementations can override {@link #setParent(ReadableAttributes)} to allow the parent to be set
+ * after construction.</p>
  *
  * @author Arne Vandamme
+ * @see com.foreach.across.modules.web.ui.elements.IteratorViewElementBuilderContext
  */
 public class ViewElementBuilderContextImpl extends AttributeSupport implements ViewElementBuilderContext
 {
+	private static class AttributesMapWrapper extends AttributeSupport
+	{
+		public AttributesMapWrapper( Map<String, Object> backingMap ) {
+			super( backingMap );
+		}
+	}
+
 	private ReadableAttributes parent;
 
 	public ViewElementBuilderContextImpl() {
@@ -40,7 +55,7 @@ public class ViewElementBuilderContextImpl extends AttributeSupport implements V
 		this( parent.asMap() );
 	}
 
-	public ViewElementBuilderContextImpl( Map parent ) {
+	public ViewElementBuilderContextImpl( Map<String, Object> parent ) {
 		this( new AttributesMapWrapper( parent ) );
 	}
 
@@ -71,7 +86,7 @@ public class ViewElementBuilderContextImpl extends AttributeSupport implements V
 	}
 
 	@Override
-	public <Y> Y getAttribute( String attributeName ) {
+	public Object getAttribute( String attributeName ) {
 		if ( parent != null ) {
 			if ( super.hasAttribute( attributeName ) ) {
 				return super.getAttribute( attributeName );
@@ -111,13 +126,22 @@ public class ViewElementBuilderContextImpl extends AttributeSupport implements V
 	}
 
 	@Override
-	public Map<Object, Object> getAttributes() {
-		Map<Object, Object> merged = new HashMap<>();
+	public Map<String, Object> attributeMap() {
+		Map<String, Object> merged = new HashMap<>();
 		if ( parent != null ) {
-			merged.putAll( parent.getAttributes() );
+			merged.putAll( parent.attributeMap() );
 		}
-		merged.putAll( super.getAttributes() );
+		merged.putAll( super.attributeMap() );
 
 		return merged;
+	}
+
+	@Override
+	public String[] attributeNames() {
+		Map<String, Object> map = attributeMap();
+		String[] names = map.keySet().toArray( new String[map.size()] );
+		Arrays.sort( names );
+
+		return names;
 	}
 }

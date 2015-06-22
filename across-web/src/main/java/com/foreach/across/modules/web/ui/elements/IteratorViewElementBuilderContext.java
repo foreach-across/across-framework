@@ -18,7 +18,6 @@ package com.foreach.across.modules.web.ui.elements;
 import com.foreach.across.modules.web.ui.IteratorItemStats;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContextImpl;
-import com.foreach.across.modules.web.ui.support.WritableAttributes;
 import org.springframework.util.Assert;
 
 /**
@@ -26,13 +25,12 @@ import org.springframework.util.Assert;
  * access to the item being generated and the possible iteration context.
  * <p/>
  * This context optionally takes a parent context.  All attributes from the parent context will be inherited
- * and can be masked or replaced in the iterator context.  Note that it is impossible to remove attributes from the
- * parent context, only to replace them by null values.
+ * and can be masked or replaced in the iterator context.
  *
  * @author Arne Vandamme
  */
 public class IteratorViewElementBuilderContext<ITEM> extends ViewElementBuilderContextImpl
-		implements ViewElementBuilderContext, WritableAttributes, IteratorItemStats<ITEM>
+		implements ViewElementBuilderContext, IteratorItemStats<ITEM>
 {
 	private IteratorItemStats<ITEM> itemStats;
 
