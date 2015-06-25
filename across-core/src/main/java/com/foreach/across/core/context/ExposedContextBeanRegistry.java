@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 {
-	private static final AnnotationBeanFilter EXPOSED_FILTER = new AnnotationBeanFilter( true, Exposed.class );
+	private static final AnnotationBeanFilter EXPOSED_FILTER = new AnnotationBeanFilter( true, true, Exposed.class );
 
 	private final ConfigurableListableBeanFactory beanFactory;
 
