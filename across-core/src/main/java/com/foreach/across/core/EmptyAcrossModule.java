@@ -16,6 +16,10 @@
 
 package com.foreach.across.core;
 
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+
+import java.util.Set;
+
 /**
  * Default empty AcrossModule with a configurable name. This module does not do anything by default,
  * but can be used to inject in an AcrossContext to satisfy dependencies.
@@ -42,5 +46,10 @@ public final class EmptyAcrossModule extends AcrossModule
 	@Override
 	public String getDescription() {
 		return "Standard empty module implementation - configurable by name to allow for faking dependencies.";
+	}
+
+	@Override
+	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+		// No context configurers should be loaded by default
 	}
 }

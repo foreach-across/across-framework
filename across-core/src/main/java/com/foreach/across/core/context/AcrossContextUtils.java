@@ -71,7 +71,7 @@ public final class AcrossContextUtils
 	public static void autoRegisterEventHandlers( ApplicationContext applicationContext,
 	                                              AcrossEventPublisher publisher ) {
 		BeanFilter eventHandlerFilter =
-				new BeanFilterComposite( new AnnotationBeanFilter( true, AcrossEventHandler.class ),
+				new BeanFilterComposite( new AnnotationBeanFilter( true, true, AcrossEventHandler.class ),
 				                         new AnnotationBeanFilter( Controller.class ) );
 		Collection<Object> handlers =
 				ApplicationContextScanner.findSingletonsMatching( applicationContext, eventHandlerFilter ).values();

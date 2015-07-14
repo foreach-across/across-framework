@@ -16,7 +16,9 @@
 
 package com.foreach.across.core.context;
 
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -31,6 +33,8 @@ import java.util.Map;
  */
 public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 {
+	private static final AnnotationBeanFilter EXPOSED_FILTER = new AnnotationBeanFilter( true, true, Exposed.class );
+
 	private final ConfigurableListableBeanFactory beanFactory;
 
 	public ExposedContextBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry,
@@ -39,6 +43,12 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 		super( contextBeanRegistry, null, transformer );
 
 		this.beanFactory = beanFactory;
+
+		Map<String, Object> beans = ApplicationContextScanner.findSingletonsMatching( beanFactory, EXPOSED_FILTER );
+		Map<String, BeanDefinition> definitions =
+				ApplicationContextScanner.findBeanDefinitionsMatching( beanFactory, EXPOSED_FILTER );
+
+		addBeans( definitions, beans );
 	}
 
 	public void addAll( Map<String, ExposedBeanDefinition> exposedBeanDefinitions ) {

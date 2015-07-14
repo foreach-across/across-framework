@@ -270,6 +270,23 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	@SuppressWarnings("unchecked")
 	public static BeanFilter defaultExposeFilter() {
 		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class ),
-		                                new AnnotationBeanFilter( true, Exposed.class ) );
+		                                new AnnotationBeanFilter( true, true, Exposed.class ) );
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || !( o instanceof AcrossModule ) ) {
+			return false;
+		}
+		AcrossModule that = (AcrossModule) o;
+		return Objects.equals( getName(), that.getName() );
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( getName() );
 	}
 }

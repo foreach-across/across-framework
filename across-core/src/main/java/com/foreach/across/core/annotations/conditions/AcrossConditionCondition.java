@@ -116,6 +116,13 @@ public class AcrossConditionCondition implements Condition
 		}
 
 		/**
+		 * Can this module find a bean with the given name and of the given type in the context.
+		 */
+		public boolean hasBean( String beanName, Class beanType ) {
+			return getBeanFactory().containsBean( beanName ) && getBeanFactory().isTypeMatch( beanName, beanType );
+		}
+
+		/**
 		 * Can this module pick up a bean of the given type from the context.
 		 */
 		public boolean hasBeanOfType( Class beanType ) {

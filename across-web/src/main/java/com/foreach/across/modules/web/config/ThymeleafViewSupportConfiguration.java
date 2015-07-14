@@ -103,6 +103,7 @@ public class ThymeleafViewSupportConfiguration
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
 		resolver.setTemplateEngine( springTemplateEngine() );
 		resolver.setOrder( 1 );
+		resolver.setCharacterEncoding( "UTF-8" );
 		resolver.setViewNames( new String[] {
 				"th/*",
 				ThymeleafViewResolver.REDIRECT_URL_PREFIX + "*",

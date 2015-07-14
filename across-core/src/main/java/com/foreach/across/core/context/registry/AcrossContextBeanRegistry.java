@@ -19,6 +19,7 @@ package com.foreach.across.core.context.registry;
 import org.springframework.core.ResolvableType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides access to all BeanFactories present in an AcrossContext.
@@ -40,12 +41,29 @@ public interface AcrossContextBeanRegistry
 	String getFactoryName();
 
 	/**
+	 * Check if a bean is registered under the given name in the AcrossContext.
+	 *
+	 * @param beanName Name of the bean definition.
+	 * @return Instance.
+	 */
+	boolean containsBean( String beanName );
+
+	/**
 	 * Get a bean registered under the given name in the AcrossContext.
 	 *
 	 * @param beanName Name of the bean definition.
 	 * @return Instance.
 	 */
 	Object getBean( String beanName );
+
+	/**
+	 * Get a bean registered under the given name in the AcrossContext.
+	 *
+	 * @param beanName     Name of the bean definition.
+	 * @param requiredType of the bean
+	 * @return Instance.
+	 */
+	<T> T getBean( String beanName, Class<T> requiredType );
 
 	/**
 	 * Determine the type for the bean registered under the given name in the AcrossContext.
@@ -93,10 +111,9 @@ public interface AcrossContextBeanRegistry
 	<T> T getBeanOfTypeFromModule( String moduleName, Class<T> requiredType );
 
 	/**
-	 * Collect all beans of a given type that are visible inside this bean registry.
-	 * This includes beans from ancestors, but does not include module internal beans.
-	 * <p>
-	 * All beans will be sorted according to the Order, module index and OrderInModule values.</p>
+	 * <p>Collect all beans of a given type that are visible inside this bean registry.
+	 * This includes beans from ancestors, but does not include module internal beans.</p>
+	 * <p>All beans will be sorted according to the Order, module index and OrderInModule values.</p>
 	 *
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
@@ -108,10 +125,24 @@ public interface AcrossContextBeanRegistry
 	<T> List<T> getBeansOfType( Class<T> beanClass );
 
 	/**
-	 * Collect all beans of a given type that are visible inside this bean registry.
-	 * Depending on the second parameter, module internal beans will be included.
-	 * <p>
-	 * All beans will be sorted according to the Order, module index and OrderInModule values.</p>
+	 * <p>Collect all beans of a given type that are visible inside this bean registry.
+	 * This includes beans from ancestors, but does not include module internal beans.</p>
+	 * <p>All beans will be sorted according to the Order, module index and OrderInModule values.</p>
+	 * <p>Beans will be returned as a Map where the key is the bean name.</p>
+	 *
+	 * @param beanClass Type of bean to look for.
+	 * @param <T>       Specific bean type.
+	 * @return Map of bean instances with their bean name and/or module information.
+	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see com.foreach.across.core.OrderedInModule
+	 * @see org.springframework.core.Ordered
+	 */
+	<T> Map<String, T> getBeansOfTypeAsMap( Class<T> beanClass );
+
+	/**
+	 * <p>Collect all beans of a given type that are visible inside this bean registry.
+	 * Depending on the second parameter, module internal beans will be included.</p>
+	 * <p>All beans will be sorted according to the Order, module index and OrderInModule values.</p>
 	 *
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
@@ -123,19 +154,56 @@ public interface AcrossContextBeanRegistry
 	<T> List<T> getBeansOfType( Class<T> beanClass, boolean includeModuleInternals );
 
 	/**
-	 * Collect all beans of a given type that are visible inside this bean registry.
-	 * Depending on the second parameter, module internal beans will be included.
+	 * <p>Collect all beans of a given type that are visible inside this bean registry.
+	 * Depending on the second parameter, module internal beans will be included.</p>
+	 * <p>All beans will be sorted according to the Order, module index and OrderInModule values.</p>
 	 * <p>
-	 * All beans will be sorted according to the Order, module index and OrderInModule values.</p>
+	 * Beans will be returned as a Map where the key is the bean name if module internals are not included
+	 * or the bean is from a parent context.  If module internals are included, the bean name will be prefixed
+	 * with module name.
+	 * </p>
 	 *
-	 * This method allows looking for beans having specific generic parameters.
+	 * @param beanClass Type of bean to look for.
+	 * @param <T>       Specific bean type.
+	 * @return Map of bean instances with their bean name and/or module information.
+	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see com.foreach.across.core.OrderedInModule
+	 * @see org.springframework.core.Ordered
+	 */
+	<T> Map<String, T> getBeansOfTypeAsMap( Class<T> beanClass, boolean includeModuleInternals );
+
+	/**
+	 * <p>Collect all beans of a given type that are visible inside this bean registry.
+	 * Depending on the second parameter, module internal beans will be included.</p>
+	 * <p>All beans will be sorted according to the Order, module index and OrderInModule values.</p>
+	 * <p>This method allows looking for beans having specific generic parameters.</p>
 	 *
 	 * @param resolvableType Type of bean to look for.
-	 * @param <T>       Specific bean type.
+	 * @param <T>            Specific bean type.
 	 * @return List of bean instances.
 	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
 	<T> List<T> getBeansOfType( ResolvableType resolvableType, boolean includeModuleInternals );
+
+	/**
+	 * <p>Collect all beans of a given type that are visible inside this bean registry.
+	 * Depending on the second parameter, module internal beans will be included.</p>
+	 * <p>All beans will be sorted according to the Order, module index and OrderInModule values.</p>
+	 * <p>This method allows looking for beans having specific generic parameters.</p>
+	 * <p>
+	 * Beans will be returned as a Map where the key is the bean name if module internals are not included
+	 * or the bean is from a parent context.  If module internals are included, the bean name will be prefixed
+	 * with module name.
+	 * </p>
+	 *
+	 * @param resolvableType Type of bean to look for.
+	 * @param <T>            Specific bean type.
+	 * @return Map of bean instances with their bean name and/or module information.
+	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see com.foreach.across.core.OrderedInModule
+	 * @see org.springframework.core.Ordered
+	 */
+	<T> Map<String, T> getBeansOfTypeAsMap( ResolvableType resolvableType, boolean includeModuleInternals );
 }

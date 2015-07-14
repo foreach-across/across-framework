@@ -22,6 +22,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.*;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.convert.StringToDateConverter;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
@@ -30,12 +31,12 @@ import com.foreach.across.modules.web.mvc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.support.DefaultFormattingConversionService;
@@ -133,7 +134,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	private ServletContext servletContext;
 
-	private FormattingConversionService existingConversionService;
+	@Autowired(required = false)
+	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
+	private FormattingConversionService mvcConversionService;
 
 	private ConfigurableWebBindingInitializer initializer;
 
@@ -153,12 +156,33 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		Assert.notNull( servletContext, "servletContext should be autowired and cannot be null" );
 		Assert.notNull( acrossContext );
 
-		Collection<FormattingConversionService> existing =
-				beanRegistry.getBeansOfType( FormattingConversionService.class );
-
-		if ( !existing.isEmpty() ) {
-			existingConversionService = existing.iterator().next();
+		if ( mvcConversionService == null ) {
+			mvcConversionService = mvcConversionService();
 		}
+	}
+
+	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
+	@Exposed
+	@AcrossCondition("not hasBean('" + AcrossWebModule.CONVERSION_SERVICE_BEAN + "', T(org.springframework.format.support.FormattingConversionService))")
+	public FormattingConversionService mvcConversionService() {
+		if ( beanRegistry.containsBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME )
+				&& FormattingConversionService.class.isAssignableFrom(
+				beanRegistry.getBeanType( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME ) )
+				) {
+			LOG.info( "Using the default ConversionService as {}", AcrossWebModule.CONVERSION_SERVICE_BEAN );
+			return beanRegistry.getBean(
+					ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME, FormattingConversionService.class
+			);
+		}
+
+		LOG.info(
+				"No ConversionService named {} found in Across context - creating and exposing a new FormattingConversionService bean",
+				AcrossWebModule.CONVERSION_SERVICE_BEAN );
+
+		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
+		conversionService.addConverter( new StringToDateConverter() );
+
+		return conversionService;
 	}
 
 	/**
@@ -170,7 +194,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>();
 		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
 		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<HandlerMethodReturnValueHandler>();
-		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<HandlerExceptionResolver>();
+		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
 		ContentNegotiationConfigurer contentNegotiationConfigurer = new ContentNegotiationConfigurer( servletContext );
@@ -178,7 +202,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		ResourceHandlerRegistry resourceHandlerRegistry =
 				new ResourceHandlerRegistry( applicationContext, servletContext );
-		FormattingConversionService conversionService = mvcConversionService();
 
 		for ( WebMvcConfigurer configurer : webMvcConfigurers ) {
 			configurer.addArgumentResolvers( argumentResolvers );
@@ -187,7 +210,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			configurer.addInterceptors( interceptorRegistry );
 			configurer.configureContentNegotiation( contentNegotiationConfigurer );
 			configurer.addResourceHandlers( resourceHandlerRegistry );
-			configurer.addFormatters( conversionService );
+			configurer.addFormatters( mvcConversionService );
 			configurer.configureHandlerExceptionResolvers( exceptionResolvers );
 		}
 
@@ -310,17 +333,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Bean
 	@Exposed
 	public CompositeUriComponentsContributor mvcUriComponentsContributor() {
-		return new CompositeUriComponentsContributor( mvcConversionService() );
-	}
-
-	@Bean
-	@Exposed
-	public FormattingConversionService mvcConversionService() {
-		if ( existingConversionService != null ) {
-			return existingConversionService;
-		}
-
-		return new DefaultFormattingConversionService();
+		return new CompositeUriComponentsContributor( mvcConversionService );
 	}
 
 	/**
@@ -330,7 +343,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	private ConfigurableWebBindingInitializer getConfigurableWebBindingInitializer() {
 		if ( initializer == null ) {
 			initializer = new ConfigurableWebBindingInitializer();
-			initializer.setConversionService( mvcConversionService() );
+			initializer.setConversionService( mvcConversionService );
 			initializer.setValidator( mvcValidator() );
 		}
 
@@ -403,16 +416,14 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			if ( ClassUtils.isPresent( "javax.validation.Validator", getClass().getClassLoader() ) ) {
 				Class<?> clazz;
 				try {
-					String className = "org.springframework.validation.beanvalidation.LocalValidatorFactoryBean";
+					String className = "org.springframework.validation.beanvalidation.OptionalValidatorFactoryBean";
 					clazz = ClassUtils.forName( className, WebMvcConfigurationSupport.class.getClassLoader() );
 				}
-				catch ( ClassNotFoundException e ) {
+				catch ( ClassNotFoundException | LinkageError e ) {
 					throw new BeanInitializationException( "Could not find default validator", e );
 				}
-				catch ( LinkageError e ) {
-					throw new BeanInitializationException( "Could not find default validator", e );
-				}
-				validator = (Validator) BeanUtils.instantiate( clazz );
+
+				validator = (Validator) applicationContext.getAutowireCapableBeanFactory().createBean( clazz );
 			}
 			else {
 				validator = new Validator()

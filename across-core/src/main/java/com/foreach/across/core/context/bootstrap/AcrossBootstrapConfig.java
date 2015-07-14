@@ -21,6 +21,7 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
+import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -36,6 +37,8 @@ public class AcrossBootstrapConfig
 	private final Collection<ModuleBootstrapConfig> modules;
 
 	private InstallerSettings installerSettings;
+
+	private ExposedBeanDefinitionTransformer exposeTransformer;
 
 	public AcrossBootstrapConfig( AcrossContext context, Collection<ModuleBootstrapConfig> modules ) {
 		this.context = context;
@@ -88,6 +91,14 @@ public class AcrossBootstrapConfig
 		}
 
 		return null;
+	}
+
+	public ExposedBeanDefinitionTransformer getExposeTransformer() {
+		return exposeTransformer;
+	}
+
+	public void setExposeTransformer( ExposedBeanDefinitionTransformer exposeTransformer ) {
+		this.exposeTransformer = exposeTransformer;
 	}
 
 	/**

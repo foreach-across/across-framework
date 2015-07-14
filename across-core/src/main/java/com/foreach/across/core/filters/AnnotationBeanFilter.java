@@ -17,6 +17,7 @@
 package com.foreach.across.core.filters;
 
 import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -36,6 +37,7 @@ import java.lang.reflect.Method;
 public class AnnotationBeanFilter implements BeanFilter
 {
 	private boolean matchIfBeanFactoryApplies = false;
+	private boolean useRecursiveSearch = false;
 	private Class<? extends Annotation>[] annotations;
 
 	public AnnotationBeanFilter( Class<? extends Annotation>... annotations ) {
@@ -43,10 +45,13 @@ public class AnnotationBeanFilter implements BeanFilter
 		this.annotations = annotations.clone();
 	}
 
-	public AnnotationBeanFilter( boolean matchIfBeanFactoryApplies, Class<? extends Annotation>... annotations ) {
+	public AnnotationBeanFilter( boolean matchIfBeanFactoryApplies,
+	                             boolean useRecursiveSearch,
+	                             Class<? extends Annotation>... annotations ) {
 		Assert.notNull( annotations );
 
 		this.matchIfBeanFactoryApplies = matchIfBeanFactoryApplies;
+		this.useRecursiveSearch = useRecursiveSearch;
 		this.annotations = annotations.clone();
 	}
 
@@ -75,9 +80,23 @@ public class AnnotationBeanFilter implements BeanFilter
 	                      Object bean,
 	                      BeanDefinition definition ) {
 		if ( bean != null ) {
-			Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( bean ) );
-			for ( Class<? extends Annotation> annotation : annotations ) {
-				if ( AnnotationUtils.getAnnotation( beanClass, annotation ) != null ) {
+			Class targetClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( bean ) );
+
+			if ( useRecursiveSearch ) {
+				if ( hasAnnotation( bean.getClass() ) ) {
+					return true;
+				}
+			}
+
+			if ( hasAnnotation( targetClass ) ) {
+				return true;
+			}
+
+			if ( bean instanceof FactoryBean ) {
+				// in case of a factory bean, check it as well
+				targetClass = ( (FactoryBean) bean ).getObjectType();
+
+				if ( hasAnnotation( targetClass ) ) {
 					return true;
 				}
 			}
@@ -149,6 +168,25 @@ public class AnnotationBeanFilter implements BeanFilter
 					return apply( beanFactory, targetHolder.getBeanName(), targetBean,
 					              targetHolder.getBeanDefinition() );
 				}
+			}
+		}
+
+		return false;
+	}
+
+	private boolean hasAnnotation( Class beanClass ) {
+		for ( Class<? extends Annotation> annotation : annotations ) {
+			Annotation found;
+
+			if ( useRecursiveSearch ) {
+				found = AnnotationUtils.findAnnotation( beanClass, annotation );
+			}
+			else {
+				found = AnnotationUtils.getAnnotation( beanClass, annotation );
+			}
+
+			if ( found != null ) {
+				return true;
 			}
 		}
 

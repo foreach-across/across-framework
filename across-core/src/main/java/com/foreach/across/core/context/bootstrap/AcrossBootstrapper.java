@@ -128,12 +128,10 @@ public class AcrossBootstrapper
 				ExposedContextBeanRegistry exposedBeanRegistry = new ExposedContextBeanRegistry(
 						AcrossContextUtils.getBeanRegistry( contextInfo ),
 						rootContext.getBeanFactory(),
-						null
+						contextInfo.getBootstrapConfiguration().getExposeTransformer()
 				);
 
-				// TODO add global hook to expose beans from the root context
 				exposedBeanRegistry.add( AcrossContextInfo.BEAN );
-				exposedBeanRegistry.add( "cacheManager" );
 
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo =
@@ -255,40 +253,44 @@ public class AcrossBootstrapper
 
 	private void pushExposedBeansToParent( ExposedContextBeanRegistry exposedContextBeanRegistry,
 	                                       ApplicationContext applicationContext ) {
-		ConfigurableApplicationContext currentApplicationContext =
-				(ConfigurableApplicationContext) applicationContext;
-		ConfigurableListableBeanFactory currentBeanFactory = currentApplicationContext.getBeanFactory();
+		if ( !exposedContextBeanRegistry.isEmpty() ) {
+			ConfigurableApplicationContext currentApplicationContext =
+					(ConfigurableApplicationContext) applicationContext;
+			ConfigurableListableBeanFactory currentBeanFactory = currentApplicationContext.getBeanFactory();
 
-		ConfigurableListableBeanFactory beanFactory = currentBeanFactory;
+			ConfigurableListableBeanFactory beanFactory = currentBeanFactory;
 
-		// If the direct parent does not handle exposed beans, check if another context already introduced
-		// a supporting context higher up
-		if ( !( beanFactory instanceof AcrossListableBeanFactory ) && currentApplicationContext.getParent() != null ) {
-			ApplicationContext parent = currentApplicationContext.getParent();
+			// If the direct parent does not handle exposed beans, check if another context already introduced
+			// a supporting context higher up
+			if ( !( beanFactory instanceof AcrossListableBeanFactory ) && currentApplicationContext
+					.getParent() != null ) {
+				ApplicationContext parent = currentApplicationContext.getParent();
 
-			if ( parent instanceof ConfigurableApplicationContext ) {
-				beanFactory = ( (ConfigurableApplicationContext) parent ).getBeanFactory();
+				if ( parent instanceof ConfigurableApplicationContext ) {
+					beanFactory = ( (ConfigurableApplicationContext) parent ).getBeanFactory();
+				}
 			}
+
+			// Make sure the parent can handle exposed beans - if not, introduce a supporting BeanFactory in the hierarchy
+			if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
+				AbstractApplicationContext parentApplicationContext =
+						applicationContextFactory.createApplicationContext();
+				parentApplicationContext.refresh();
+				parentApplicationContext.start();
+
+				ConfigurableListableBeanFactory parentBeanFactory = parentApplicationContext.getBeanFactory();
+
+				parentBeanFactory.setParentBeanFactory( currentBeanFactory.getParentBeanFactory() );
+				parentApplicationContext.setParent( currentApplicationContext.getParent() );
+
+				currentApplicationContext.setParent( parentApplicationContext );
+				currentBeanFactory.setParentBeanFactory( parentBeanFactory );
+
+				beanFactory = parentApplicationContext.getBeanFactory();
+			}
+
+			exposedContextBeanRegistry.copyTo( beanFactory );
 		}
-
-		// Make sure the parent can handle exposed beans - if not, introduce a supporting BeanFactory in the hierarchy
-		if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
-			AbstractApplicationContext parentApplicationContext = applicationContextFactory.createApplicationContext();
-			parentApplicationContext.refresh();
-			parentApplicationContext.start();
-
-			ConfigurableListableBeanFactory parentBeanFactory = parentApplicationContext.getBeanFactory();
-
-			parentBeanFactory.setParentBeanFactory( currentBeanFactory.getParentBeanFactory() );
-			parentApplicationContext.setParent( currentApplicationContext.getParent() );
-
-			currentApplicationContext.setParent( parentApplicationContext );
-			currentBeanFactory.setParentBeanFactory( parentBeanFactory );
-
-			beanFactory = parentApplicationContext.getBeanFactory();
-		}
-
-		exposedContextBeanRegistry.copyTo( beanFactory );
 	}
 
 	private void exposeBeans( ConfigurableAcrossModuleInfo acrossModuleInfo,
@@ -445,6 +447,8 @@ public class AcrossBootstrapper
 
 		AcrossBootstrapConfig contextConfig = new AcrossBootstrapConfig( contextInfo.getContext(),
 		                                                                 configs );
+		contextConfig.setExposeTransformer( contextInfo.getContext().getExposeTransformer() );
+
 		contextInfo.setBootstrapConfiguration( contextConfig );
 	}
 

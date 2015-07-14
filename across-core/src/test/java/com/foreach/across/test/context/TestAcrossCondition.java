@@ -29,8 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
+
+import java.util.TreeMap;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -141,7 +141,7 @@ public class TestAcrossCondition
 
 	@Test
 	public void createIfBeanWithNameExists() {
-		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( ConversionServiceWithName.class ),
+		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( TreeMapWithName.class ),
 		                                         ConfigurerScope.CONTEXT_ONLY );
 		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( BeanWithNameExistsCondition.class ),
 		                                         ConfigurerScope.MODULES_ONLY );
@@ -165,7 +165,7 @@ public class TestAcrossCondition
 
 	@Test
 	public void createIfBeanOfTypeExists() {
-		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( ConversionServiceWithName.class ),
+		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( TreeMapWithName.class ),
 		                                         ConfigurerScope.CONTEXT_ONLY );
 		context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( BeanOfTypeExistsCondition.class ),
 		                                         ConfigurerScope.MODULES_ONLY );
@@ -217,11 +217,11 @@ public class TestAcrossCondition
 	}
 
 	@Configuration
-	static class ConversionServiceWithName
+	static class TreeMapWithName
 	{
 		@Bean
-		public ConversionService existingBeanName() {
-			return new DefaultConversionService();
+		public TreeMap existingBeanName() {
+			return new TreeMap();
 		}
 	}
 
@@ -239,7 +239,7 @@ public class TestAcrossCondition
 	static class BeanOfTypeExistsCondition
 	{
 		@Bean
-		@AcrossCondition("hasBeanOfType(T(org.springframework.core.convert.ConversionService))")
+		@AcrossCondition("hasBeanOfType(T(java.util.TreeMap))")
 		public Object conditionalBean() {
 			return "Bean created";
 		}

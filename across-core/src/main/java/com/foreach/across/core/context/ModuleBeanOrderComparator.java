@@ -44,7 +44,7 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 	 * If no order specified, the default is less than lowest priority so it would be
 	 * possible to define beans that need to come after all module beans.
 	 */
-	private static final int DEFAUL_GLOBAL_ORDER = Ordered.LOWEST_PRECEDENCE - 1000;
+	public static final int DEFAULT_ORDER_IF_UNSPECIFIED = OrderedInModule.DEFAULT_ORDER;
 
 	private Map<Object, Integer> moduleIndexMap = new HashMap<>();
 	private Map<Object, Integer> orderMap = new HashMap<>();
@@ -68,7 +68,7 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 				return order.value();
 			}
 		}
-		return DEFAUL_GLOBAL_ORDER;
+		return DEFAULT_ORDER_IF_UNSPECIFIED;
 	}
 
 	private int lookupOrderInModule( Object bean ) {
@@ -83,7 +83,7 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 				return order.value();
 			}
 		}
-		return Ordered.LOWEST_PRECEDENCE;
+		return OrderedInModule.DEFAULT_ORDER;
 	}
 
 	@Override
