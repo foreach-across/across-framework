@@ -91,25 +91,21 @@ import java.util.*;
 @AcrossEventHandler
 public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware, ServletContextAware
 {
-	private static boolean romePresent =
-			ClassUtils.isPresent( "com.rometools.rome.feed.WireFeed",
-			                      WebMvcConfigurationSupport.class.getClassLoader() );
-
 	private static final boolean jaxb2Present =
 			ClassUtils.isPresent( "javax.xml.bind.Binder", WebMvcConfigurationSupport.class.getClassLoader() );
-
 	private static final boolean jackson2Present =
 			ClassUtils.isPresent( "com.fasterxml.jackson.databind.ObjectMapper",
 			                      WebMvcConfigurationSupport.class.getClassLoader() ) &&
 					ClassUtils.isPresent( "com.fasterxml.jackson.core.JsonGenerator",
 					                      WebMvcConfigurationSupport.class.getClassLoader() );
-
 	private static final boolean jackson2XmlPresent =
 			ClassUtils.isPresent( "com.fasterxml.jackson.dataformat.xml.XmlMapper",
 			                      WebMvcConfigurationSupport.class.getClassLoader() );
-
 	private static final boolean gsonPresent =
 			ClassUtils.isPresent( "com.google.gson.Gson", WebMvcConfigurationSupport.class.getClassLoader() );
+	private static final boolean romePresent =
+			ClassUtils.isPresent( "com.rometools.rome.feed.WireFeed",
+			                      WebMvcConfigurationSupport.class.getClassLoader() );
 
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebDefaultMvcConfiguration.class );
 
@@ -165,14 +161,14 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Exposed
 	@AcrossCondition("not hasBean('" + AcrossWebModule.CONVERSION_SERVICE_BEAN + "', T(org.springframework.format.support.FormattingConversionService))")
 	public FormattingConversionService mvcConversionService() {
-		if ( beanRegistry.containsBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME )
-				&& FormattingConversionService.class.isAssignableFrom(
-				beanRegistry.getBeanType( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME ) )
-				) {
-			LOG.info( "Using the default ConversionService as {}", AcrossWebModule.CONVERSION_SERVICE_BEAN );
-			return beanRegistry.getBean(
-					ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME, FormattingConversionService.class
-			);
+		if ( beanRegistry.containsBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME ) ) {
+			Object conversionService
+					= beanRegistry.getBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
+
+			if ( conversionService instanceof FormattingConversionService ) {
+				LOG.info( "Using the default ConversionService as {}", AcrossWebModule.CONVERSION_SERVICE_BEAN );
+				return (FormattingConversionService) conversionService;
+			}
 		}
 
 		LOG.info(
