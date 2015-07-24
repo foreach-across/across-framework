@@ -21,6 +21,7 @@ import com.foreach.across.core.annotations.Internal;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.context.support.AcrossModuleMessageSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,12 @@ public class TestMessageSourceInheritance
 
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
+
+	@Test
+	public void messageFromAdditionalMessageSource() {
+		assertEquals( "size must be between {min} and {max}",
+		              message( "javax.validation.constraints.Size.message" ) );
+	}
 
 	@Test
 	public void lowestModuleAppliesInModules() {
@@ -165,11 +172,9 @@ public class TestMessageSourceInheritance
 	protected static class MessageModule extends AcrossModule
 	{
 		private final String name;
-		private final boolean internal;
 
 		private MessageModule( String name, boolean internal ) {
 			this.name = name;
-			this.internal = internal;
 
 			if ( internal ) {
 				addApplicationContextConfigurer( InternalModuleConfig.class );
@@ -216,8 +221,11 @@ public class TestMessageSourceInheritance
 
 		@Bean
 		public MessageSource messageSource() {
-			ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-			source.setBasename( "com.foreach.across.test.messagesource." + module.getName() );
+			AcrossModuleMessageSource source = new AcrossModuleMessageSource();
+			source.setBasenames(
+					"classpath:/org/hibernate/validator/ValidationMessages",
+					"classpath:/com/foreach/across/test/messagesource/" + module.getName()
+			);
 
 			return source;
 		}
