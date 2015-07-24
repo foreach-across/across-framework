@@ -27,12 +27,16 @@ import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
 
 /**
- * Extension of {@link org.springframework.context.support.ReloadableResourceBundleMessageSource} that implements
+ * <p>Extension of {@link org.springframework.context.support.ReloadableResourceBundleMessageSource} that implements
  * the convention of Across resource bundle locations.  It assumes a message source for the current module is
- * being requested that is present in the conventional location (eg: resources/messages/MODULE_RESOURCES/).
+ * being requested that is present in the conventional location (eg: resources/messages/MODULE_RESOURCES/).</p>
  * <p>
  * If {@link com.foreach.across.core.development.AcrossDevelopmentMode} is active, messages will be configured
- * to be loaded from the physical path with a cacheRefresh of 1 second.</p>
+ * to be loaded from the physical path with a cacheRefresh of 1 second.  If no basename is configured, a default
+ * resource of {@code classpath:/messages/MODULE_RESOURCES/MODULE_NAME} will be added.  If multiple basenames
+ * are configured and development mode is active, all basenames of the form {@code classpath:/messages/MODULE_RESOURCE/}
+ * will be replaced with the physical path if it exists.
+ * </p>
  *
  * @author Arne Vandamme
  */
