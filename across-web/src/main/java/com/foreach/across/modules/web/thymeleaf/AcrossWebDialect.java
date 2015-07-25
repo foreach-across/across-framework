@@ -66,6 +66,7 @@ public class AcrossWebDialect extends AbstractDialect implements IExpressionEnha
 	@Override
 	public Set<IProcessor> getProcessors() {
 		Set<IProcessor> processors = new HashSet<>();
+		processors.add( new ProcessableAttrProcessor() );
 		processors.add( new ViewElementElementProcessor() );
 
 		return processors;

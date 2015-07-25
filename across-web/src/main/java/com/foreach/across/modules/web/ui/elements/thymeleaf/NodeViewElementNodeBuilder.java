@@ -27,7 +27,7 @@ public class NodeViewElementNodeBuilder extends NestableNodeBuilderSupport<Abstr
 	protected Element createNode( AbstractNodeViewElement element,
 	                              Arguments arguments,
 	                              ViewElementNodeFactory viewElementNodeFactory ) {
-		Element node = new Element( element.getTagName() );
+		Element node = createElement( element.getTagName() );
 
 		if ( element instanceof ConfigurableTextViewElement ) {
 			text( node, ( (ConfigurableTextViewElement) element ).getText() );

@@ -77,4 +77,11 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 		                 "<ol><li>one</li><li>two, three<ul><li>four</li><li>five</li></ul></li></ol>" );
 	}
 
+	@Test
+	public void customTemplateChild() {
+		ContainerViewElement container = new ContainerViewElement();
+		container.add( new TemplateViewElement( CUSTOM_TEMPLATE ) );
+
+		renderAndExpect( container, CUSTOM_TEMPLATE_OUTPUT );
+	}
 }

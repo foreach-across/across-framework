@@ -21,22 +21,41 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collections;
+import java.util.Map;
+
 @Exposed
 @Controller
 public class RenderViewElementController
 {
 	public static final String PATH = "/renderViewElement";
 
+	private Callback callback;
 	private ViewElement element;
 
 	public void setElement( ViewElement element ) {
 		this.element = element;
 	}
 
+	public void setCallback( Callback callback ) {
+		this.callback = callback;
+	}
+
 	@RequestMapping(PATH)
 	public String render( ModelMap model ) {
+		if ( callback != null ) {
+			callback.prepareModel( model );
+		}
+
+		Map<String, String> controllerAttributes = Collections.singletonMap( "name", "RenderViewElementController" );
+
+		model.put( "controllerAttributes", controllerAttributes );
 		model.put( "element", element );
 
 		return "th/WebTestModule/renderViewElement";
+	}
+
+	public interface Callback {
+		void prepareModel( ModelMap model );
 	}
 }

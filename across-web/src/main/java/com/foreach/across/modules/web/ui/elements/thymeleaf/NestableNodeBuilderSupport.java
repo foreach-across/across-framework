@@ -17,6 +17,7 @@ package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
 import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
+import com.foreach.across.modules.web.thymeleaf.ProcessableAttrProcessor;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElementSupport;
@@ -39,6 +40,7 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 	@Override
 	public List<Node> buildNodes( T viewElement, Arguments arguments, ViewElementNodeFactory viewElementNodeFactory ) {
 		Element node = createNode( viewElement, arguments, viewElementNodeFactory );
+		ProcessableAttrProcessor.makeProcessable( node );
 
 		attribute( node, "id", retrieveHtmlId( arguments, viewElement ) );
 
@@ -55,7 +57,6 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 		node = postProcess( node, viewElement, arguments, viewElementNodeFactory );
 
 		return Collections.singletonList( (Node) node );
-
 	}
 
 	protected abstract Element createNode( T control,
@@ -75,6 +76,19 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 	                               T control,
 	                               Arguments arguments,
 	                               ViewElementNodeFactory viewElementNodeFactory ) {
+		return element;
+	}
+
+	/**
+	 * Create a new {@link Element} that is processable and has the given tag name.
+	 *
+	 * @param tagName value
+	 * @return Element that is processable
+	 */
+	protected Element createElement( String tagName ) {
+		Element element = new Element( tagName );
+		ProcessableAttrProcessor.makeProcessable( element );
+
 		return element;
 	}
 

@@ -106,6 +106,21 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 						"<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>" +
 						"</table>"
 		);
+
+		email.setCustomTemplate( CUSTOM_TEMPLATE );
+
+		renderAndExpect(
+				table,
+				"<table>" +
+						"<tr><td id='name-cell'>John Doe</td>" + CUSTOM_TEMPLATE_OUTPUT + "</tr>" +
+						"<tr><td id='name-cell1'>Jane Doe</td>" + CUSTOM_TEMPLATE_OUTPUT + "</tr>" +
+						"</table>"
+		);
+
+		renderAndExpect( generator,
+		                 "<tr><td id='name-cell'>John Doe</td>" + CUSTOM_TEMPLATE_OUTPUT + "</tr>" +
+				                 "<tr><td id='name-cell1'>Jane Doe</td>" + CUSTOM_TEMPLATE_OUTPUT + "</tr>"
+		);
 	}
 
 	@Test

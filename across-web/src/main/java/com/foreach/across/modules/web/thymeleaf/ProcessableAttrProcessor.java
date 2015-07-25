@@ -1,0 +1,48 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.foreach.across.modules.web.thymeleaf;
+
+import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.attr.AbstractNoOpAttrProcessor;
+
+/**
+ * Dummy processor that can flag an element as requiring processing.
+ *
+ * @author Arne Vandamme
+ */
+public class ProcessableAttrProcessor extends AbstractNoOpAttrProcessor
+{
+	public static final String ATTRIBUTE = "processable";
+
+	public ProcessableAttrProcessor() {
+		super( ATTRIBUTE );
+	}
+
+	@Override
+	public int getPrecedence() {
+		return Integer.MAX_VALUE;
+	}
+
+	/**
+	 * Make a certain {@link Element} processable.  Useful to trigger processing when children might
+	 * contain precomputed nodes.
+	 *
+	 * @param node element to make processable
+	 */
+	public static void makeProcessable( Element node ) {
+		node.setAttribute( AcrossWebDialect.PREFIX + ":" + ATTRIBUTE, "true" );
+	}
+}

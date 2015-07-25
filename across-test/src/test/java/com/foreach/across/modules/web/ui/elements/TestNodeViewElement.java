@@ -77,4 +77,12 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 				                 "<div id='one1'></div>" +
 				                 "</div>" );
 	}
+
+	@Test
+	public void customTemplateChild() {
+		NodeViewElement node = NodeViewElement.forTag( "div" );
+		node.add( new TemplateViewElement( CUSTOM_TEMPLATE ) );
+
+		renderAndExpect( node, "<div>" + CUSTOM_TEMPLATE_OUTPUT + "</div>" );
+	}
 }

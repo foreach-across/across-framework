@@ -23,8 +23,6 @@ import com.foreach.across.test.modules.webtest.WebTestModule;
 import com.foreach.across.test.modules.webtest.controllers.RenderViewElementController;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -57,7 +55,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = AbstractViewElementTemplateTest.Config.class)
 public abstract class AbstractViewElementTemplateTest
 {
-	private final Logger LOG = LoggerFactory.getLogger( getClass() );
+	/**
+	 * Constants pointing to a custom template in across test library, along with
+	 * the expected output if the template is being used.
+	 */
+	public static final String CUSTOM_TEMPLATE = "th/WebTestModule/customTemplate";
+	public static final String CUSTOM_TEMPLATE_OUTPUT = "Hello from RenderViewElementController.";
 
 	@Autowired
 	private WebApplicationContext wac;
@@ -66,10 +69,25 @@ public abstract class AbstractViewElementTemplateTest
 	private RenderViewElementController renderController;
 
 	private MockMvc mockMvc;
+	private RenderViewElementController.Callback callback;
 
 	@Before
 	public void initMvc() {
 		mockMvc = MockMvcBuilders.webAppContextSetup( wac ).build();
+	}
+
+	/**
+	 * <p>Set the callback method to be called before rendering the view element.
+	 * If set this way, the callback will be used for every test method.  See
+	 * {@link #renderAndExpect(ViewElement, RenderViewElementController.Callback, String)} to execute a
+	 * callback a single time only.
+	 * </p>
+	 * <p>Set to {@code null} to remove the callback.</p>
+	 *
+	 * @param callback to be executed before rendering
+	 */
+	protected void setCallback( RenderViewElementController.Callback callback ) {
+		this.callback = callback;
 	}
 
 	/**
@@ -80,7 +98,22 @@ public abstract class AbstractViewElementTemplateTest
 	 * @param expectedContent xml body that should be generated
 	 */
 	public void renderAndExpect( ViewElement viewElement, final String expectedContent ) {
+		renderAndExpect( viewElement, callback, expectedContent );
+	}
+
+	/**
+	 * Renders a single {@link com.foreach.across.modules.web.ui.ViewElement} by dispatching it to the
+	 * render controller.  Verifies the generated content by using xml comparison.
+	 *
+	 * @param viewElement     element to render
+	 * @param callback        to be executed before rendering
+	 * @param expectedContent xml body that should be generated
+	 */
+	public void renderAndExpect( ViewElement viewElement,
+	                             RenderViewElementController.Callback callback,
+	                             final String expectedContent ) {
 		renderController.setElement( viewElement );
+		renderController.setCallback( callback );
 
 		final String expectedXml =
 				"<?xml version=\"1.0\"?><root xmlns:across='http://across.foreach.be'>" + expectedContent + "</root>";
@@ -96,8 +129,8 @@ public abstract class AbstractViewElementTemplateTest
 					       try {
 						       new XmlExpectationsHelper().assertXmlEqual( expectedXml, receivedXml );
 					       }
-					       catch ( AssertionError ae ) {
-						       throw new AssertionError( "Unexpected content:\n" + receivedXml, ae );
+					       catch ( Exception e ) {
+						       throw new AssertionError( "Unexpected content:\n" + receivedXml, e );
 					       }
 				       }
 			       } );

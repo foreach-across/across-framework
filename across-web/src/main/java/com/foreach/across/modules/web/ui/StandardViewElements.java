@@ -2,6 +2,7 @@ package com.foreach.across.modules.web.ui;
 
 public interface StandardViewElements
 {
+	String TEMPLATE = "template";
 	String CONTAINER = "container";
 	String GENERATOR = "generator";
 
