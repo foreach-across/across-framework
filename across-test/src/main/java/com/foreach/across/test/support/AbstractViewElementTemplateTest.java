@@ -129,15 +129,12 @@ public abstract class AbstractViewElementTemplateTest
 					       try {
 						       new XmlExpectationsHelper().assertXmlEqual( expectedXml, receivedXml );
 					       }
-					       catch ( Exception e ) {
+					       catch ( AssertionError | Exception e ) {
 						       throw new AssertionError( "Unexpected content:\n" + receivedXml, e );
 					       }
 				       }
 			       } );
 
-		}
-		catch ( AssertionError ae ) {
-			throw ae;
 		}
 		catch ( Exception e ) {
 			throw new RuntimeException( e );
