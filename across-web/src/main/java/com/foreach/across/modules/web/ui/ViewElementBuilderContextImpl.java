@@ -15,12 +15,11 @@
  */
 package com.foreach.across.modules.web.ui;
 
+import com.foreach.across.core.support.AttributeOverridingSupport;
 import com.foreach.across.core.support.AttributeSupport;
 import com.foreach.across.core.support.ReadableAttributes;
 import org.springframework.ui.Model;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,17 +36,8 @@ import java.util.Map;
  * @author Arne Vandamme
  * @see com.foreach.across.modules.web.ui.elements.IteratorViewElementBuilderContext
  */
-public class ViewElementBuilderContextImpl extends AttributeSupport implements ViewElementBuilderContext
+public class ViewElementBuilderContextImpl extends AttributeOverridingSupport implements ViewElementBuilderContext
 {
-	private static class AttributesMapWrapper extends AttributeSupport
-	{
-		public AttributesMapWrapper( Map<String, Object> backingMap ) {
-			super( backingMap );
-		}
-	}
-
-	private ReadableAttributes parent;
-
 	public ViewElementBuilderContextImpl() {
 	}
 
@@ -63,85 +53,10 @@ public class ViewElementBuilderContextImpl extends AttributeSupport implements V
 		setParent( parent );
 	}
 
-	protected void setParent( ReadableAttributes parent ) {
-		this.parent = parent;
-	}
-
-	protected ReadableAttributes getParent() {
-		return parent;
-	}
-
-	@Override
-	public <Y, V extends Y> V getAttribute( Class<Y> attributeType ) {
-		if ( parent != null ) {
-			if ( super.hasAttribute( attributeType ) ) {
-				return super.getAttribute( attributeType );
-			}
-			else {
-				return parent.getAttribute( attributeType );
-			}
+	private static class AttributesMapWrapper extends AttributeSupport
+	{
+		public AttributesMapWrapper( Map<String, Object> backingMap ) {
+			super( backingMap );
 		}
-
-		return super.getAttribute( attributeType );
-	}
-
-	@Override
-	public Object getAttribute( String attributeName ) {
-		if ( parent != null ) {
-			if ( super.hasAttribute( attributeName ) ) {
-				return super.getAttribute( attributeName );
-			}
-			else {
-				return parent.getAttribute( attributeName );
-			}
-		}
-
-		return super.getAttribute( attributeName );
-	}
-
-	@Override
-	public <Y> Y getAttribute( String attributeName, Class<Y> attributeType ) {
-		if ( parent != null ) {
-			if ( super.hasAttribute( attributeName ) ) {
-				return super.getAttribute( attributeName, attributeType );
-			}
-			else {
-				return parent.getAttribute( attributeName, attributeType );
-			}
-		}
-
-		return super.getAttribute( attributeName, attributeType );
-	}
-
-	@Override
-	public boolean hasAttribute( Class<?> attributeType ) {
-		return super.hasAttribute( attributeType )
-				|| ( parent != null && parent.hasAttribute( attributeType ) );
-	}
-
-	@Override
-	public boolean hasAttribute( String attributeName ) {
-		return super.hasAttribute( attributeName )
-				|| ( parent != null && parent.hasAttribute( attributeName ) );
-	}
-
-	@Override
-	public Map<String, Object> attributeMap() {
-		Map<String, Object> merged = new HashMap<>();
-		if ( parent != null ) {
-			merged.putAll( parent.attributeMap() );
-		}
-		merged.putAll( super.attributeMap() );
-
-		return merged;
-	}
-
-	@Override
-	public String[] attributeNames() {
-		Map<String, Object> map = attributeMap();
-		String[] names = map.keySet().toArray( new String[map.size()] );
-		Arrays.sort( names );
-
-		return names;
 	}
 }

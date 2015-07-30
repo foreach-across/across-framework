@@ -78,7 +78,7 @@ public interface ReadableAttributes
 	/**
 	 * Return a {@link Map} view of all attributes.
 	 *
-	 * @return map containing all attributes
+	 * @return map containing all attributes, usually not modifiable
 	 */
 	Map<String, Object> attributeMap();
 }

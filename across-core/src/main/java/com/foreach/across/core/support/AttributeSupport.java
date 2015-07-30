@@ -24,7 +24,10 @@ import java.util.Map;
 
 /**
  * Support class for {@link WritableAttributes}, providing a base implementation of all methods.
- * To be extended by subclasses.
+ * To be extended by subclasses.  See {@link AttributeOverridingSupport} for a base implementation that
+ * supports overriding attributes from a parent.
+ *
+ * @see AttributeOverridingSupport
  */
 public abstract class AttributeSupport implements WritableAttributes
 {
