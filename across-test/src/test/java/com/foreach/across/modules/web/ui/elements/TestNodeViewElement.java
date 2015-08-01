@@ -18,6 +18,9 @@ package com.foreach.across.modules.web.ui.elements;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class TestNodeViewElement extends AbstractViewElementTemplateTest
 {
 	@Test
@@ -84,5 +87,33 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 		node.add( new TemplateViewElement( CUSTOM_TEMPLATE ) );
 
 		renderAndExpect( node, "<div>" + CUSTOM_TEMPLATE_OUTPUT + "</div>" );
+	}
+
+	@Test
+	public void cssClassAttributes() {
+		NodeViewElement node = NodeViewElement.forTag( "div" );
+		node.addCssClass( "test", "one" );
+
+		renderAndExpect( node, "<div class='test one' />" );
+
+		assertTrue( node.hasCssClass( "test" ) );
+		assertTrue( node.hasCssClass( "one" ) );
+		assertFalse( node.hasCssClass( "other" ) );
+
+		node.removeCssClass( "one" );
+
+		assertTrue( node.hasCssClass( "test" ) );
+		assertFalse( node.hasCssClass( "one" ) );
+		renderAndExpect( node, "<div class='test' />" );
+
+		node.addCssClass( "other" );
+		assertTrue( node.hasCssClass( "test" ) );
+		assertTrue( node.hasCssClass( "other" ) );
+		renderAndExpect( node, "<div class='test other' />" );
+
+		node.addCssClass( "other" );
+		assertTrue( node.hasCssClass( "test" ) );
+		assertTrue( node.hasCssClass( "other" ) );
+		renderAndExpect( node, "<div class='test other' />" );
 	}
 }
