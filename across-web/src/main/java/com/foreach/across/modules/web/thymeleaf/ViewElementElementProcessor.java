@@ -82,11 +82,31 @@ public class ViewElementElementProcessor
 
 	@Override
 	public void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value ) {
-		if ( value == null ) {
-			node.removeAttribute( attributeName );
+		if ( !"class".equals( attributeName ) ) {
+			if ( value == null ) {
+				node.removeAttribute( attributeName );
+			}
+			else {
+				node.setAttribute( attributeName, serialize( value ) );
+			}
 		}
 		else {
-			node.setAttribute( attributeName, serialize( value ) );
+			attributeAppend( node, attributeName, Objects.toString( value ) );
+		}
+	}
+
+	private void attributeAppend( NestableAttributeHolderNode element, String attributeName, String value ) {
+		if ( value != null ) {
+			String attributeValue = element.getAttributeValue( attributeName );
+
+			if ( StringUtils.isNotBlank( attributeValue ) ) {
+				attributeValue += " " + value;
+			}
+			else {
+				attributeValue = value;
+			}
+
+			element.setAttribute( attributeName, attributeValue );
 		}
 	}
 
@@ -107,7 +127,6 @@ public class ViewElementElementProcessor
 	public void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes ) {
 		for ( Map.Entry<String, Object> attribute : attributes.entrySet() ) {
 			setAttribute( node, attribute.getKey(), attribute.getValue() );
-
 		}
 	}
 
