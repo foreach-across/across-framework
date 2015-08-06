@@ -38,17 +38,17 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 	@Test
 	public void manualTableViewElement() {
-		NodeViewElement table = NodeViewElement.forTag( "table" );
+		NodeViewElement table = new NodeViewElement( "table" );
 
 		for ( Person person : people ) {
-			NodeViewElement row = NodeViewElement.forTag( "tr" );
+			NodeViewElement row = new NodeViewElement( "tr" );
 
-			NodeViewElement name = NodeViewElement.forTag( "td" );
+			NodeViewElement name = new NodeViewElement( "td" );
 			name.setHtmlId( "name-cell" );
 			name.add( new TextViewElement( person.getName() ) );
 			row.add( name );
 
-			NodeViewElement email = NodeViewElement.forTag( "td" );
+			NodeViewElement email = new NodeViewElement( "td" );
 			email.setHtmlId( "email-cell" );
 			email.add( new TextViewElement( person.getEmail() ) );
 			row.add( email );
@@ -67,17 +67,17 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 	@Test
 	public void viewElementTemplate() {
-		NodeViewElement rowTemplate = NodeViewElement.forTag( "tr" );
-		NodeViewElement name = NodeViewElement.forTag( "td" );
+		NodeViewElement rowTemplate = new NodeViewElement( "tr" );
+		NodeViewElement name = new NodeViewElement( "td" );
 		name.setHtmlId( "name-cell" );
 		name.add( new TextViewElement( "name", "" ) );
 		rowTemplate.add( name );
-		NodeViewElement email = NodeViewElement.forTag( "td" );
+		NodeViewElement email = new NodeViewElement( "td" );
 		email.setHtmlId( "email-cell" );
 		email.add( new TextViewElement( "email", "" ) );
 		rowTemplate.add( email );
 
-		NodeViewElement table = NodeViewElement.forTag( "table" );
+		NodeViewElement table = new NodeViewElement( "table" );
 
 		ViewElementGenerator<Person, NodeViewElement> generator = new ViewElementGenerator<>();
 		generator.setItemTemplate( rowTemplate );
@@ -129,12 +129,12 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 		{
 			@Override
 			public NodeViewElement build( ViewElementBuilderContext builderContext ) {
-				NodeViewElement rowTemplate = NodeViewElement.forTag( "tr" );
-				NodeViewElement name = NodeViewElement.forTag( "td" );
+				NodeViewElement rowTemplate = new NodeViewElement( "tr" );
+				NodeViewElement name = new NodeViewElement( "td" );
 				name.setHtmlId( "name-cell" );
 				name.add( new TextViewElement( "name", "" ) );
 				rowTemplate.add( name );
-				NodeViewElement email = NodeViewElement.forTag( "td" );
+				NodeViewElement email = new NodeViewElement( "td" );
 				email.setHtmlId( "email-cell" );
 				email.add( new TextViewElement( "email", "" ) );
 				rowTemplate.add( email );
@@ -143,7 +143,7 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 			}
 		};
 
-		NodeViewElement table = NodeViewElement.forTag( "table" );
+		NodeViewElement table = new NodeViewElement( "table" );
 
 		ViewElementGenerator<Person, NodeViewElement> generator = new ViewElementGenerator<>();
 		generator.setItemTemplate( builder );
@@ -175,7 +175,7 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 	@Test
 	public void callbackOnly() {
-		NodeViewElement table = NodeViewElement.forTag( "table" );
+		NodeViewElement table = new NodeViewElement( "table" );
 
 		ViewElementGenerator<Person, NodeViewElement> generator = new ViewElementGenerator<>();
 		generator.setItems( people );
@@ -184,14 +184,14 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 			@Override
 			public NodeViewElement create( IteratorItemStats<Person> itemStats, NodeViewElement template ) {
 				Person person = itemStats.getItem();
-				NodeViewElement row = NodeViewElement.forTag( "tr" );
+				NodeViewElement row = new NodeViewElement( "tr" );
 
-				NodeViewElement name = NodeViewElement.forTag( "td" );
+				NodeViewElement name = new NodeViewElement( "td" );
 				name.setHtmlId( "name-cell" );
 				name.add( new TextViewElement( person.getName() ) );
 				row.add( name );
 
-				NodeViewElement email = NodeViewElement.forTag( "td" );
+				NodeViewElement email = new NodeViewElement( "td" );
 				email.setHtmlId( "email-cell" );
 				email.add( new TextViewElement( person.getEmail() ) );
 				row.add( email );

@@ -19,7 +19,7 @@ import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilder;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Node;
 
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @author Arne Vandamme
  */
-public class ViewElementGeneratorNodeBuilder implements ViewElementNodeBuilder<ViewElementGenerator<?, ?>>
+public class ViewElementGeneratorThymeleafBuilder implements ViewElementThymeleafBuilder<ViewElementGenerator<?, ?>>
 {
 	@Override
 	public List<Node> buildNodes( ViewElementGenerator<?, ?> container,

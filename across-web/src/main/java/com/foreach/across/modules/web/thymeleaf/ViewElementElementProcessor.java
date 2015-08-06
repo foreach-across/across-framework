@@ -15,11 +15,14 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.ViewElement;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilder;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.ClassUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.NestableAttributeHolderNode;
@@ -35,6 +38,7 @@ import org.thymeleaf.standard.fragment.StandardFragmentProcessor;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
@@ -45,6 +49,8 @@ public class ViewElementElementProcessor
 	public static final String ELEMENT_NAME = "view";
 
 	private static final String ATTRIBUTE_ITEM = "element";
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	public ViewElementElementProcessor() {
 		super( ELEMENT_NAME );
@@ -64,7 +70,7 @@ public class ViewElementElementProcessor
 			return renderCustomTemplate( viewElement, arguments );
 		}
 		else {
-			ViewElementNodeBuilder processor = findElementProcessor( viewElement, arguments );
+			ViewElementThymeleafBuilder processor = findElementProcessor( viewElement, arguments );
 
 			if ( processor != null ) {
 				return processor.buildNodes( viewElement, arguments, this );
@@ -80,7 +86,20 @@ public class ViewElementElementProcessor
 			node.removeAttribute( attributeName );
 		}
 		else {
-			node.setAttribute( attributeName, value.toString() );
+			node.setAttribute( attributeName, serialize( value ) );
+		}
+	}
+
+	private String serialize( Object value ) {
+		if ( value instanceof String || ClassUtils.isPrimitiveOrWrapper( value.getClass() ) ) {
+			return Objects.toString( value );
+		}
+
+		try {
+			return objectMapper.writeValueAsString( value );
+		}
+		catch ( JsonProcessingException jpe ) {
+			throw new RuntimeException( jpe );
 		}
 	}
 
@@ -92,7 +111,7 @@ public class ViewElementElementProcessor
 		}
 	}
 
-	private ViewElementNodeBuilder findElementProcessor( ViewElement viewElement, Arguments arguments ) {
+	private ViewElementThymeleafBuilder findElementProcessor( ViewElement viewElement, Arguments arguments ) {
 		ApplicationContext appCtx = ( (SpringWebContext) arguments.getContext() ).getApplicationContext();
 		ViewElementNodeBuilderRegistry registry = appCtx.getBean( ViewElementNodeBuilderRegistry.class );
 

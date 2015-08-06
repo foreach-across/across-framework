@@ -34,7 +34,7 @@ import java.util.Map;
  * after construction.</p>
  *
  * @author Arne Vandamme
- * @see com.foreach.across.modules.web.ui.elements.IteratorViewElementBuilderContext
+ * @see IteratorViewElementBuilderContext
  */
 public class ViewElementBuilderContextImpl extends AttributeOverridingSupport implements ViewElementBuilderContext
 {

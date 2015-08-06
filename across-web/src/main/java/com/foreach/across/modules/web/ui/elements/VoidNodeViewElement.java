@@ -16,18 +16,19 @@
 package com.foreach.across.modules.web.ui.elements;
 
 /**
- * Represents a generic node (html element).  Supports tag, set of attributes and child elements.
+ * A void node is a node that has attributes but contains no children.
  *
  * @author Arne Vandamme
+ * @see NodeViewElement
  */
-public class NodeViewElement extends AbstractNodeViewElement
+public class VoidNodeViewElement extends AbstractVoidNodeViewElement
 {
-	public NodeViewElement( String name, String tagName ) {
+	public VoidNodeViewElement( String name, String tagName ) {
 		this( tagName );
 		setName( name );
 	}
 
-	public NodeViewElement( String tagName ) {
+	public VoidNodeViewElement( String tagName ) {
 		super( tagName );
 	}
 

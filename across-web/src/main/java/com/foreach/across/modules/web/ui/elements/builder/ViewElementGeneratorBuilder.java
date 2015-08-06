@@ -82,7 +82,7 @@ public class ViewElementGeneratorBuilder<ITEM, VIEW_ELEMENT extends ViewElement>
 	@Override
 	protected ViewElementGenerator<ITEM, VIEW_ELEMENT> createElement( ViewElementBuilderContext builderContext ) {
 		ViewElementGenerator<ITEM, VIEW_ELEMENT> generator = new ViewElementGenerator<>();
-		apply( generator );
+		apply( generator, builderContext );
 
 		if ( itemBuilder != null ) {
 			generator.setItemTemplate( itemBuilder );

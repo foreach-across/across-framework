@@ -36,7 +36,5 @@ public interface ViewElementBuilderFactory
 
 	TextViewElementBuilder html( String html );
 
-	NodeViewElementBuilder node();
-
 	NodeViewElementBuilder node( String tagName );
 }

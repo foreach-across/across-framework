@@ -16,36 +16,24 @@
 package com.foreach.across.modules.web.ui.elements.builder;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilderFactory;
-import com.foreach.across.modules.web.ui.elements.NodeViewElement;
-import com.foreach.across.modules.web.ui.elements.TextViewElement;
+import com.foreach.across.modules.web.ui.elements.VoidNodeViewElement;
 import com.foreach.across.test.support.AbstractViewElementBuilderTest;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<NodeViewElementBuilder, NodeViewElement>
+public class TestVoidNodeViewElementBuilder extends AbstractViewElementBuilderTest<VoidNodeViewElementBuilder, VoidNodeViewElement>
 {
 	@Override
-	protected NodeViewElementBuilder createBuilder( ViewElementBuilderFactory factory ) {
-		return new NodeViewElementBuilder( "div" );
+	protected VoidNodeViewElementBuilder createBuilder( ViewElementBuilderFactory factory ) {
+		return new VoidNodeViewElementBuilder( "hr" );
 	}
 
 	@Test
-	public void defaults() {
-		build();
-
-		assertTrue( element.isEmpty() );
-	}
-
-	@Test
-	public void addElements() {
-		TextViewElement textOne = new TextViewElement( "textOne", "text 1" );
-
-		builder.tagName( "a" ).attribute( "href", "somelink" ).removeAttribute( "class" ).add( textOne );
+	public void setAttributes() {
+		builder.tagName( "a" ).attribute( "href", "somelink" ).removeAttribute( "class" );
 
 		build();
-
-		assertEquals( 1, element.size() );
 
 		assertEquals( "a", element.getTagName() );
 		assertEquals( "somelink", element.getAttribute( "href" ) );

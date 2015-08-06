@@ -1,13 +1,20 @@
 package com.foreach.across.modules.web.ui.elements.builder;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.elements.NodeViewElementSupport;
+import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
+import com.foreach.across.modules.web.ui.elements.support.CssClassAttributeUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class NodeViewElementSupportBuilder<T extends NodeViewElementSupport, SELF extends NodeViewElementSupportBuilder<T, SELF>>
+/**
+ * A base builder for a {@link AbstractNodeViewElement}.
+ *
+ * @see AbstractVoidNodeViewElementBuilder
+ */
+public abstract class AbstractNodeViewElementBuilder<T extends AbstractNodeViewElement, SELF extends AbstractNodeViewElementBuilder<T, SELF>>
 		extends ContainerViewElementBuilderSupport<T, SELF>
+		implements HtmlViewElementBuilder<T, SELF>
 {
 	private String htmlId;
 	private Map<String, Object> attributes = new HashMap<>();
@@ -15,6 +22,18 @@ public abstract class NodeViewElementSupportBuilder<T extends NodeViewElementSup
 	@SuppressWarnings("unchecked")
 	public SELF htmlId( String htmlId ) {
 		this.htmlId = htmlId;
+		return (SELF) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public SELF css( String... cssClasses ) {
+		CssClassAttributeUtils.addCssClass( attributes, cssClasses );
+		return (SELF) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public SELF removeCss( String... cssClasses ) {
+		CssClassAttributeUtils.removeCssClass( attributes, cssClasses );
 		return (SELF) this;
 	}
 
@@ -43,9 +62,7 @@ public abstract class NodeViewElementSupportBuilder<T extends NodeViewElementSup
 	}
 
 	@Override
-	protected T apply( T viewElement, ViewElementBuilderContext builderContext ) {
-		T element = super.apply( viewElement, builderContext );
-
+	protected T apply( T element, ViewElementBuilderContext builderContext ) {
 		if ( htmlId != null ) {
 			element.setHtmlId( htmlId );
 		}
@@ -54,6 +71,6 @@ public abstract class NodeViewElementSupportBuilder<T extends NodeViewElementSup
 			element.setAttribute( attribute.getKey(), attribute.getValue() );
 		}
 
-		return element;
+		return super.apply( element, builderContext );
 	}
 }

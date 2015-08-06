@@ -13,16 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.ui.thymeleaf;
+package com.foreach.across.modules.web.ui.elements.builder;
 
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
-import com.foreach.across.modules.web.ui.ViewElement;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Node;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 
-import java.util.List;
+import java.util.Map;
 
-public interface ViewElementNodeBuilder<T extends ViewElement>
+/**
+ * @author Arne Vandamme
+ */
+public interface HtmlViewElementBuilder<T extends HtmlViewElement, SELF extends HtmlViewElementBuilder<T, SELF>>
 {
-	List<Node> buildNodes( T viewElement, Arguments arguments, ViewElementNodeFactory viewElementNodeFactory );
+	SELF htmlId( String htmlId );
+
+	SELF css( String... cssClasses );
+
+	SELF removeCss( String... cssClasses );
+
+	SELF attribute( String name, Object value );
+
+	SELF attributes( Map<String, Object> attributes );
+
+	SELF removeAttribute( String name );
+
+	SELF clearAttributes();
 }

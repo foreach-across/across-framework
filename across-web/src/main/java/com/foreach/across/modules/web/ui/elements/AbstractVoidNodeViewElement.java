@@ -15,34 +15,61 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.foreach.across.modules.web.ui.StandardViewElements;
+import com.foreach.across.modules.web.ui.ViewElementSupport;
+import com.foreach.across.modules.web.ui.elements.support.CssClassAttributeUtils;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Base class for a node element that supports child nodes and attributes.  One of the attributes is
- * the html class and has several shortcut methods.
+ * Base class for a single configurable node that supports attributes but no child nodes.
  *
  * @author Arne Vandamme
+ * @see VoidNodeViewElement
+ * @see AbstractNodeViewElement
  */
-public abstract class NodeViewElementSupport extends ContainerViewElement
+public abstract class AbstractVoidNodeViewElement extends ViewElementSupport implements HtmlViewElement
 {
-	private String htmlId;
 	private Map<String, Object> attributes = new HashMap<>();
 
-	protected NodeViewElementSupport( String elementType ) {
-		setElementType( elementType );
+	private String tagName, htmlId;
+
+	protected AbstractVoidNodeViewElement( String tagName ) {
+		super( StandardViewElements.NODE );
+		setTagName( tagName );
 	}
 
+	public String getTagName() {
+		return tagName;
+	}
+
+	protected void setTagName( String tagName ) {
+		Assert.notNull( tagName );
+		this.tagName = tagName;
+	}
+
+	@Override
 	public String getHtmlId() {
 		return htmlId;
 	}
 
+	@Override
 	public void setHtmlId( String htmlId ) {
 		this.htmlId = htmlId;
+	}
+
+	public void addCssClass( String... cssClass ) {
+		CssClassAttributeUtils.addCssClass( attributes, cssClass );
+	}
+
+	public boolean hasCssClass( String cssClass ) {
+		return CssClassAttributeUtils.hasCssClass( attributes, cssClass );
+	}
+
+	public void removeCssClass( String... cssClass ) {
+		CssClassAttributeUtils.removeCssClass( attributes, cssClass );
 	}
 
 	public Map<String, Object> getAttributes() {
@@ -66,52 +93,20 @@ public abstract class NodeViewElementSupport extends ContainerViewElement
 		attributes.remove( attributeName );
 	}
 
+	@Override
 	public Object getAttribute( String attributeName ) {
 		return attributes.get( attributeName );
 	}
 
-	public void addCssClass( String... cssClass ) {
-		setAttribute(
-				"class",
-				StringUtils.join(
-						ArrayUtils.addAll( ArrayUtils.removeElements( cssClasses(), cssClass ), cssClass ), " "
-				)
-		);
-	}
-
-	public boolean hasCssClass( String cssClass ) {
-		return ArrayUtils.contains( cssClasses(), cssClass );
-	}
-
-	public void removeCssClass( String... cssClass ) {
-		setAttribute( "class", StringUtils.join( ArrayUtils.removeElements( cssClasses(), cssClass ) ) );
-	}
-
-	private String[] cssClasses() {
-		String css = StringUtils.defaultString( getAttribute( "class", String.class ) );
-		return StringUtils.split( css, " " );
-	}
-
-	/**
-	 * Get the attribute value if it is of the expected type.  If the attribute is of a different type,
-	 * it will not be returned.
-	 *
-	 * @param attributeName name of the attribute
-	 * @param expectedType  for the attribute
-	 * @param <V>           type
-	 * @return attribute value or {@code null} if not available or not of the expected type
-	 */
+	@Override
 	public <V> V getAttribute( String attributeName, Class<V> expectedType ) {
-		return returnIfType( getAttribute( attributeName ), expectedType );
+		return returnIfType( attributes.get( attributeName ), expectedType );
 	}
 
 	public boolean hasAttribute( String attributeName ) {
 		return attributes.containsKey( attributeName );
 	}
 
-	/**
-	 * Helper that returns the value only if it is of the expected type.  Else {@code null} is returned.
-	 */
 	@SuppressWarnings("unchecked")
 	protected <V> V returnIfType( Object value, Class<V> elementType ) {
 		return elementType.isInstance( value ) ? (V) value : null;

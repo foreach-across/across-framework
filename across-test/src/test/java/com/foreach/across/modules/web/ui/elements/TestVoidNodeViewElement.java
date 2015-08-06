@@ -25,37 +25,32 @@ import java.util.Map;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TestNodeViewElement extends AbstractViewElementTemplateTest
+/**
+ * @author Arne Vandamme
+ */
+public class TestVoidNodeViewElement extends AbstractViewElementTemplateTest
 {
 	@Test
-	public void simpleNodeWithoutContentOrAttributes() {
-		NodeViewElement node = new NodeViewElement( "div" );
+	public void simpleNodeWithoutAttributes() {
+		VoidNodeViewElement node = new VoidNodeViewElement( "hr" );
+		renderAndExpect( node, "<hr />" );
 
-		renderAndExpect( node, "<div></div>" );
+		node.setTagName( "input" );
+		renderAndExpect( node, "<input />" );
 	}
 
 	@Test
-	public void nodeWithChildren() {
-		NodeViewElement node = new NodeViewElement( "ul" );
-		node.add( new NodeViewElement( "li" ) );
-		node.add( new TextViewElement( "child text" ) );
-		node.add( new NodeViewElement( "li" ) );
-
-		renderAndExpect( node, "<ul><li></li>child text<li></li></ul>" );
-	}
-
-	@Test
-	public void nodeWithAttributes() {
-		NodeViewElement node = new NodeViewElement( "div" );
+	public void nodeWithSimpleAttributes() {
+		VoidNodeViewElement node = new VoidNodeViewElement( "hr" );
 		node.setAttribute( "class", "test-class test" );
 		node.setAttribute( "data-something", "1236" );
 
-		renderAndExpect( node, "<div class='test-class test' data-something='1236'></div>" );
+		renderAndExpect( node, "<hr class='test-class test' data-something='1236' />" );
 	}
 
 	@Test
 	public void attributeManagement() {
-		NodeViewElement node = new NodeViewElement( "div" );
+		VoidNodeViewElement node = new VoidNodeViewElement( "hr" );
 		node.addAttributes( Collections.singletonMap( "one", "1" ) );
 		node.addAttributes( Collections.singletonMap( "two", 2 ) );
 		node.removeAttribute( "bla" );
@@ -63,13 +58,13 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 		assertTrue( node.hasAttribute( "one" ) );
 		assertTrue( node.hasAttribute( "two" ) );
 
-		renderAndExpect( node, "<div one='1' two='2' />" );
+		renderAndExpect( node, "<hr one='1' two='2' />" );
 
 		node.removeAttribute( "one" );
 		assertFalse( node.hasAttribute( "one" ) );
 		assertTrue( node.hasAttribute( "two" ) );
 
-		renderAndExpect( node, "<div two='2' />" );
+		renderAndExpect( node, "<hr two='2' />" );
 	}
 
 	@Test
@@ -77,15 +72,15 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 		Map<String, Object> json = new LinkedHashMap<>();
 		json.put( "name", "myname for you" );
 		json.put( "age", 34 );
-		json.put( "nested", new TestVoidNodeViewElement.Attr( "inside", 666 ) );
+		json.put( "nested", new Attr( "inside", 666 ) );
 
-		NodeViewElement node = new NodeViewElement( "div" );
+		VoidNodeViewElement node = new VoidNodeViewElement( "hr" );
 		node.setAttribute( "data-json", json );
-		node.setAttribute( "data-extra", new TestVoidNodeViewElement.Attr( "extra", 123456789L ) );
+		node.setAttribute( "data-extra", new Attr( "extra", 123456789L ) );
 
 		renderAndExpect(
 				node,
-				"<div " +
+				"<hr " +
 						"data-json='{\"name\":\"myname for you\",\"age\":34,\"nested\":{\"name\":\"inside\",\"time\":666}}' " +
 						"data-extra='{\"name\":\"extra\",\"time\":123456789}' " +
 						"/>"
@@ -93,50 +88,35 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 	}
 
 	@Test
-	public void nestedNodesWithAttributes() {
-		NodeViewElement node = new NodeViewElement( "div" );
-		node.setAttribute( "class", "some-class" );
-
-		NodeViewElement paragraph = new NodeViewElement( "p" );
-		paragraph.setAttribute( "class", "main-paragraph" );
-		paragraph.add( new TextViewElement( "paragraph text" ) );
-
-		node.add( paragraph );
-
-		renderAndExpect( node, "<div class='some-class'><p class='main-paragraph'>paragraph text</p></div>" );
-	}
-
-	@Test
 	public void idGeneration() {
-		NodeViewElement one = new NodeViewElement( "div" );
+		VoidNodeViewElement one = new VoidNodeViewElement( "hr" );
 		one.setHtmlId( "one" );
 
-		NodeViewElement otherOne = new NodeViewElement( "div" );
+		VoidNodeViewElement otherOne = new VoidNodeViewElement( "hr" );
 		otherOne.setHtmlId( "one" );
-		one.add( otherOne );
-		one.add( otherOne );
 
-		renderAndExpect( one,
-		                 "<div id='one'>" +
-				                 "<div id='one1'></div>" +
-				                 "<div id='one1'></div>" +
-				                 "</div>" );
+		ContainerViewElement list = new ContainerViewElement();
+		list.add( one );
+		list.add( otherOne );
+
+		renderAndExpect( list,
+		                 "<hr id='one' /><hr id='one1' />" );
 	}
 
 	@Test
 	public void customTemplateChild() {
-		NodeViewElement node = new NodeViewElement( "div" );
-		node.add( new TemplateViewElement( CUSTOM_TEMPLATE ) );
+		VoidNodeViewElement node = new VoidNodeViewElement( "hr" );
+		node.setCustomTemplate( CUSTOM_TEMPLATE );
 
-		renderAndExpect( node, "<div>" + CUSTOM_TEMPLATE_OUTPUT + "</div>" );
+		renderAndExpect( node, CUSTOM_TEMPLATE_OUTPUT );
 	}
 
 	@Test
 	public void cssClassAttributes() {
-		NodeViewElement node = new NodeViewElement( "div" );
+		VoidNodeViewElement node = new VoidNodeViewElement( "hr" );
 		node.addCssClass( "test", "one" );
 
-		renderAndExpect( node, "<div class='test one' />" );
+		renderAndExpect( node, "<hr class='test one' />" );
 
 		assertTrue( node.hasCssClass( "test" ) );
 		assertTrue( node.hasCssClass( "one" ) );
@@ -146,16 +126,35 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 
 		assertTrue( node.hasCssClass( "test" ) );
 		assertFalse( node.hasCssClass( "one" ) );
-		renderAndExpect( node, "<div class='test' />" );
+		renderAndExpect( node, "<hr class='test' />" );
 
 		node.addCssClass( "other" );
 		assertTrue( node.hasCssClass( "test" ) );
 		assertTrue( node.hasCssClass( "other" ) );
-		renderAndExpect( node, "<div class='test other' />" );
+		renderAndExpect( node, "<hr class='test other' />" );
 
 		node.addCssClass( "other" );
 		assertTrue( node.hasCssClass( "test" ) );
 		assertTrue( node.hasCssClass( "other" ) );
-		renderAndExpect( node, "<div class='test other' />" );
+		renderAndExpect( node, "<hr class='test other' />" );
+	}
+
+	public static class Attr
+	{
+		private String name;
+		private long time;
+
+		public Attr( String name, long time ) {
+			this.name = name;
+			this.time = time;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public long getTime() {
+			return time;
+		}
 	}
 }

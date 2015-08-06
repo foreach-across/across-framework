@@ -13,30 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.ui.elements.thymeleaf;
+package com.foreach.across.modules.web.ui.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
-import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilder;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Node;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerViewElementNodeBuilder implements ViewElementNodeBuilder<ContainerViewElement>
+public interface ViewElementThymeleafBuilder<T extends ViewElement>
 {
-	@Override
-	public List<Node> buildNodes( ContainerViewElement container,
-	                              Arguments arguments,
-	                              ViewElementNodeFactory componentElementProcessor ) {
-		List<Node> list = new ArrayList<>();
-
-		for ( ViewElement child : container ) {
-			list.addAll( componentElementProcessor.buildNodes( child, arguments ) );
-		}
-
-		return list;
-	}
+	List<Node> buildNodes( T viewElement, Arguments arguments, ViewElementNodeFactory viewElementNodeFactory );
 }

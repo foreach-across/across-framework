@@ -58,12 +58,7 @@ public class StandardViewElementBuilderFactory implements ViewElementBuilderFact
 	}
 
 	@Override
-	public NodeViewElementBuilder node() {
-		return new NodeViewElementBuilder();
-	}
-
-	@Override
 	public NodeViewElementBuilder node( String tagName ) {
-		return new NodeViewElementBuilder().tagName( tagName );
+		return new NodeViewElementBuilder( tagName ).tagName( tagName );
 	}
 }

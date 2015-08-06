@@ -20,8 +20,9 @@ import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.thymeleaf.ProcessableAttrProcessor;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
-import com.foreach.across.modules.web.ui.elements.NodeViewElementSupport;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilder;
+import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -32,10 +33,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Supports implementations of {@link com.foreach.across.modules.web.ui.elements.AbstractVoidNodeViewElement}
+ * and {@link AbstractNodeViewElement}.
+ *
  * @author Arne Vandamme
  */
-public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSupport>
-		implements ViewElementNodeBuilder<T>
+public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
+		implements ViewElementThymeleafBuilder<T>
 {
 	@Override
 	public List<Node> buildNodes( T viewElement, Arguments arguments, ViewElementNodeFactory viewElementNodeFactory ) {
@@ -48,9 +52,11 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 
 		viewElementNodeFactory.setAttributes( node, viewElement.getAttributes() );
 
-		for ( ViewElement child : viewElement ) {
-			for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
-				node.addChild( childNode );
+		if ( viewElement instanceof AbstractNodeViewElement ) {
+			for ( ViewElement child : (AbstractNodeViewElement) viewElement ) {
+				for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
+					node.addChild( childNode );
+				}
 			}
 		}
 
@@ -98,7 +104,7 @@ public abstract class NestableNodeBuilderSupport<T extends NodeViewElementSuppor
 		}
 	}
 
-	protected String retrieveHtmlId( Arguments arguments, ViewElement control ) {
+	protected String retrieveHtmlId( Arguments arguments, HtmlViewElement control ) {
 		HtmlIdStore idStore = (HtmlIdStore) arguments.getExpressionObjects().get( AcrossWebDialect.HTML_ID_STORE );
 
 		return idStore.retrieveHtmlId( control );

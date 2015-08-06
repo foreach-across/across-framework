@@ -44,8 +44,9 @@ public abstract class ContainerViewElementBuilderSupport<T extends ContainerView
 		return (SELF) this;
 	}
 
+	@Override
 	protected T apply( T viewElement, ViewElementBuilderContext builderContext ) {
-		T container = super.apply( viewElement );
+		T container = super.apply( viewElement, builderContext );
 
 		for ( Object child : children ) {
 			if ( child != null ) {

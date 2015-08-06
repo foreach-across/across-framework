@@ -16,25 +16,27 @@
 package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.ui.StandardViewElements;
+import com.foreach.across.modules.web.ui.elements.support.CssClassAttributeUtils;
+import org.springframework.util.Assert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Abstract base class for simple elements extending {@link NodeViewElementSupport} but not having
- * a fixed/unmodifiable tagName.
+ * Base class for a {@link HtmlViewElement} that supports child nodes.
  *
  * @author Arne Vandamme
+ * @see NodeViewElement
+ * @see AbstractVoidNodeViewElement
  */
-public abstract class AbstractNodeViewElement extends NodeViewElementSupport
+public abstract class AbstractNodeViewElement extends ContainerViewElement implements HtmlViewElement
 {
-	public static final String ELEMENT_TYPE = StandardViewElements.NODE;
+	private Map<String, Object> attributes = new HashMap<>();
 
-	private String tagName;
-
-	protected AbstractNodeViewElement() {
-		super( ELEMENT_TYPE );
-	}
+	private String tagName, htmlId;
 
 	protected AbstractNodeViewElement( String tagName ) {
-		super( ELEMENT_TYPE );
+		setElementType( StandardViewElements.NODE );
 		setTagName( tagName );
 	}
 
@@ -43,6 +45,69 @@ public abstract class AbstractNodeViewElement extends NodeViewElementSupport
 	}
 
 	protected void setTagName( String tagName ) {
+		Assert.notNull( tagName );
 		this.tagName = tagName;
+	}
+
+	@Override
+	public String getHtmlId() {
+		return htmlId;
+	}
+
+	@Override
+	public void setHtmlId( String htmlId ) {
+		this.htmlId = htmlId;
+	}
+
+	public void addCssClass( String... cssClass ) {
+		CssClassAttributeUtils.addCssClass( attributes, cssClass );
+	}
+
+	public boolean hasCssClass( String cssClass ) {
+		return CssClassAttributeUtils.hasCssClass( attributes, cssClass );
+	}
+
+	public void removeCssClass( String... cssClass ) {
+		CssClassAttributeUtils.removeCssClass( attributes, cssClass );
+	}
+
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes( Map<String, Object> attributes ) {
+		Assert.notNull( attributes );
+		this.attributes = attributes;
+	}
+
+	public void setAttribute( String attributeName, Object attributeValue ) {
+		attributes.put( attributeName, attributeValue );
+	}
+
+	public void addAttributes( Map<String, Object> attributes ) {
+		this.attributes.putAll( attributes );
+	}
+
+	public void removeAttribute( String attributeName ) {
+		attributes.remove( attributeName );
+	}
+
+	@Override
+	public Object getAttribute( String attributeName ) {
+		return attributes.get( attributeName );
+	}
+
+	@Override
+	public <V> V getAttribute( String attributeName, Class<V> expectedType ) {
+		return returnIfType( attributes.get( attributeName ), expectedType );
+	}
+
+	public boolean hasAttribute( String attributeName ) {
+		return attributes.containsKey( attributeName );
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <V> V returnIfType( Object value, Class<V> elementType ) {
+		return elementType.isInstance( value ) ? (V) value : null;
 	}
 }

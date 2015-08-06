@@ -3,7 +3,6 @@ package com.foreach.across.modules.web.ui.elements.builder;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.ViewElementPostProcessor;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 
 import java.util.ArrayList;
@@ -14,21 +13,6 @@ public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupp
 {
 	private final List<ElementOrBuilder> children = new ArrayList<>();
 	private String[] sortElements;
-
-	@Override
-	public ContainerViewElementBuilder name( String name ) {
-		return super.name( name );
-	}
-
-	@Override
-	public ContainerViewElementBuilder customTemplate( String template ) {
-		return super.customTemplate( template );
-	}
-
-	@Override
-	public ContainerViewElementBuilder postProcessor( ViewElementPostProcessor<ContainerViewElement> postProcessor ) {
-		return super.postProcessor( postProcessor );
-	}
 
 	@Override
 	public ContainerViewElementBuilder add( ViewElement... viewElements ) {
@@ -66,6 +50,6 @@ public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupp
 			container.sort( sortElements );
 		}
 
-		return apply( container );
+		return apply( container, builderContext );
 	}
 }

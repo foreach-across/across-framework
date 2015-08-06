@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.ui.elements;
+package com.foreach.across.modules.web.ui;
 
-import com.foreach.across.modules.web.ui.IteratorItemStats;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContextImpl;
+import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
 import org.springframework.util.Assert;
 
 /**
  * Wrapping {@link ViewElementBuilderContext} that is used by a {@link ViewElementGenerator} and provides
  * access to the item being generated and the possible iteration context.
- * <p/>
+ * <p>
  * This context optionally takes a parent context.  All attributes from the parent context will be inherited
  * and can be masked or replaced in the iterator context.
  *

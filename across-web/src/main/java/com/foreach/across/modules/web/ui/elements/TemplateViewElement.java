@@ -15,8 +15,8 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
-import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.StandardViewElements;
+import com.foreach.across.modules.web.ui.ViewElementSupport;
 
 /**
  * A {@link com.foreach.across.modules.web.ui.ViewElement} that simply renders as a custom template.
@@ -24,45 +24,26 @@ import com.foreach.across.modules.web.ui.StandardViewElements;
  *
  * @author Arne Vandamme
  */
-public class TemplateViewElement implements MutableViewElement
+public class TemplateViewElement extends ViewElementSupport
 {
 	public static final String ELEMENT_TYPE = StandardViewElements.TEMPLATE;
 
-	private String name, customTemplate, elementType = ELEMENT_TYPE;
-
-	public TemplateViewElement() {
+	public TemplateViewElement( String name, String customTemplate ) {
+		this( customTemplate );
+		setName( name );
 	}
 
 	public TemplateViewElement( String customTemplate ) {
-		this.customTemplate = customTemplate;
+		this();
+		setCustomTemplate( customTemplate );
+	}
+
+	public TemplateViewElement() {
+		super( ELEMENT_TYPE );
 	}
 
 	@Override
-	public String getElementType() {
-		return elementType;
-	}
-
 	public void setElementType( String elementType ) {
-		this.elementType = elementType;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName( String name ) {
-		this.name = name;
-	}
-
-	@Override
-	public String getCustomTemplate() {
-		return customTemplate;
-	}
-
-	@Override
-	public void setCustomTemplate( String customTemplate ) {
-		this.customTemplate = customTemplate;
+		super.setElementType( elementType );
 	}
 }

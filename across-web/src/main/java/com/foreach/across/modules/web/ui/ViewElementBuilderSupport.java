@@ -21,66 +21,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class ViewElementBuilderSupport<T extends ViewElement, SELF extends ViewElementBuilder<T>>
+public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SELF extends ViewElementBuilder<T>>
 		implements ViewElementBuilder<T>
 {
-	/**
-	 * Encapsulates either a {@link ViewElement} or {@link ViewElementBuilder} for fetching within a
-	 * {@link ViewElementBuilderContext}.
-	 */
-	public static class ElementOrBuilder
-	{
-		private final Object elementOrBuilder;
-
-		protected ElementOrBuilder( Object elementOrBuilder ) {
-			this.elementOrBuilder = elementOrBuilder;
-		}
-
-		@SuppressWarnings("unchecked")
-		public <V> V getSource() {
-			return (V) elementOrBuilder;
-		}
-
-		public boolean isBuilder() {
-			return elementOrBuilder instanceof ViewElementBuilder;
-		}
-
-		public ViewElement get( ViewElementBuilderContext builderContext ) {
-			if ( isBuilder() ) {
-				return ( (ViewElementBuilder) elementOrBuilder ).build( builderContext );
-			}
-
-			return (ViewElement) elementOrBuilder;
-		}
-
-		public static ElementOrBuilder wrap( ViewElement viewElement ) {
-			return new ElementOrBuilder( viewElement );
-		}
-
-		public static ElementOrBuilder wrap( ViewElementBuilder builder ) {
-			return new ElementOrBuilder( builder );
-		}
-
-		public static Collection<ElementOrBuilder> wrap( Iterable<?> viewElements ) {
-			List<ElementOrBuilder> wrapped = new ArrayList<>();
-			for ( Object viewElement : viewElements ) {
-				Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder );
-				wrapped.add( new ElementOrBuilder( viewElement ) );
-			}
-
-			return wrapped;
-		}
-
-		public static Collection<ElementOrBuilder> wrap( ViewElementBuilder... viewElementBuilders ) {
-			List<ElementOrBuilder> wrapped = new ArrayList<>( viewElementBuilders.length );
-			for ( ViewElementBuilder builder : viewElementBuilders ) {
-				wrapped.add( new ElementOrBuilder( builder ) );
-			}
-
-			return wrapped;
-		}
-	}
-
 	protected String name, customTemplate;
 	private Collection<ViewElementPostProcessor<T>> postProcessors = new ArrayList<>();
 
@@ -111,7 +54,7 @@ public abstract class ViewElementBuilderSupport<T extends ViewElement, SELF exte
 
 	protected abstract T createElement( ViewElementBuilderContext builderContext );
 
-	protected final <V extends MutableViewElement> V apply( V viewElement ) {
+	protected T apply( T viewElement, ViewElementBuilderContext builderContext ) {
 		if ( name != null ) {
 			viewElement.setName( name );
 		}
@@ -128,5 +71,62 @@ public abstract class ViewElementBuilderSupport<T extends ViewElement, SELF exte
 		}
 
 		return viewElement;
+	}
+
+	/**
+	 * Encapsulates either a {@link ViewElement} or {@link ViewElementBuilder} for fetching within a
+	 * {@link ViewElementBuilderContext}.
+	 */
+	public static class ElementOrBuilder
+	{
+		private final Object elementOrBuilder;
+
+		protected ElementOrBuilder( Object elementOrBuilder ) {
+			this.elementOrBuilder = elementOrBuilder;
+		}
+
+		public static ElementOrBuilder wrap( ViewElement viewElement ) {
+			return new ElementOrBuilder( viewElement );
+		}
+
+		public static ElementOrBuilder wrap( ViewElementBuilder builder ) {
+			return new ElementOrBuilder( builder );
+		}
+
+		public static Collection<ElementOrBuilder> wrap( Iterable<?> viewElements ) {
+			List<ElementOrBuilder> wrapped = new ArrayList<>();
+			for ( Object viewElement : viewElements ) {
+				Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder );
+				wrapped.add( new ElementOrBuilder( viewElement ) );
+			}
+
+			return wrapped;
+		}
+
+		public static Collection<ElementOrBuilder> wrap( ViewElementBuilder... viewElementBuilders ) {
+			List<ElementOrBuilder> wrapped = new ArrayList<>( viewElementBuilders.length );
+			for ( ViewElementBuilder builder : viewElementBuilders ) {
+				wrapped.add( new ElementOrBuilder( builder ) );
+			}
+
+			return wrapped;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <V> V getSource() {
+			return (V) elementOrBuilder;
+		}
+
+		public boolean isBuilder() {
+			return elementOrBuilder instanceof ViewElementBuilder;
+		}
+
+		public ViewElement get( ViewElementBuilderContext builderContext ) {
+			if ( isBuilder() ) {
+				return ( (ViewElementBuilder) elementOrBuilder ).build( builderContext );
+			}
+
+			return (ViewElement) elementOrBuilder;
+		}
 	}
 }

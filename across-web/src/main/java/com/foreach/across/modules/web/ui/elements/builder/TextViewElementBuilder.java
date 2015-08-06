@@ -17,28 +17,12 @@ package com.foreach.across.modules.web.ui.elements.builder;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
-import com.foreach.across.modules.web.ui.ViewElementPostProcessor;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 
 public class TextViewElementBuilder extends ViewElementBuilderSupport<TextViewElement, TextViewElementBuilder>
 {
 	private String content;
 	private Boolean escapeXml;
-
-	@Override
-	public TextViewElementBuilder name( String name ) {
-		return super.name( name );
-	}
-
-	@Override
-	public TextViewElementBuilder customTemplate( String template ) {
-		return super.customTemplate( template );
-	}
-
-	@Override
-	public TextViewElementBuilder postProcessor( ViewElementPostProcessor<TextViewElement> postProcessor ) {
-		return super.postProcessor( postProcessor );
-	}
 
 	public TextViewElementBuilder content( String text ) {
 		content = text;
@@ -76,6 +60,6 @@ public class TextViewElementBuilder extends ViewElementBuilderSupport<TextViewEl
 			text.setEscapeXml( escapeXml );
 		}
 
-		return apply( text );
+		return apply( text, builderContext );
 	}
 }

@@ -31,6 +31,7 @@ import java.util.*;
  */
 public class ViewElements implements ViewElementCollection<ViewElement>
 {
+
 	private final LinkedList<ViewElement> elements = new LinkedList<>();
 
 	/**

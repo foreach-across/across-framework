@@ -16,28 +16,27 @@
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
-import com.foreach.across.modules.web.ui.elements.TextViewElement;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilder;
-import org.apache.commons.lang3.StringUtils;
+import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Node;
-import org.thymeleaf.dom.Text;
-import org.unbescape.html.HtmlEscape;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-public class TextViewElementNodeBuilder implements ViewElementNodeBuilder<TextViewElement>
+public class ContainerViewElementThymeleafBuilder implements ViewElementThymeleafBuilder<ContainerViewElement>
 {
 	@Override
-	public List<Node> buildNodes( TextViewElement viewElement,
+	public List<Node> buildNodes( ContainerViewElement container,
 	                              Arguments arguments,
 	                              ViewElementNodeFactory componentElementProcessor ) {
-		String content = StringUtils.defaultString( viewElement.getText() );
-		String html = viewElement.isEscapeXml() ? HtmlEscape.escapeHtml4Xml( content ) : content;
+		List<Node> list = new ArrayList<>();
 
-		Text text = new Text( html, null, null, true );
+		for ( ViewElement child : container ) {
+			list.addAll( componentElementProcessor.buildNodes( child, arguments ) );
+		}
 
-		return Collections.singletonList( (Node) text );
+		return list;
 	}
 }

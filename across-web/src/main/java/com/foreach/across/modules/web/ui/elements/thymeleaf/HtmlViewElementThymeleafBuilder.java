@@ -16,15 +16,15 @@
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
-import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
 import com.foreach.across.modules.web.ui.elements.ConfigurableTextViewElement;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
-public class NodeViewElementNodeBuilder extends NestableNodeBuilderSupport<AbstractNodeViewElement>
+public class HtmlViewElementThymeleafBuilder extends HtmlViewElementThymeleafSupport<HtmlViewElement>
 {
 	@Override
-	protected Element createNode( AbstractNodeViewElement element,
+	protected Element createNode( HtmlViewElement element,
 	                              Arguments arguments,
 	                              ViewElementNodeFactory viewElementNodeFactory ) {
 		Element node = createElement( element.getTagName() );

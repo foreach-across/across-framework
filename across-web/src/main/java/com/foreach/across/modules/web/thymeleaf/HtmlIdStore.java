@@ -16,14 +16,14 @@
 package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
-import com.foreach.across.modules.web.ui.elements.NodeViewElementSupport;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import org.thymeleaf.Arguments;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Helper that keeps track of the generated html ids for {@link com.foreach.across.modules.web.ui.elements.NodeViewElementSupport}
+ * Helper that keeps track of the generated html ids for {@link com.foreach.across.modules.web.ui.elements.HtmlViewElement}
  * instance (simple nodes).  This ensures that other elements (eg. labels) can retrieve the render time generated id.
  *
  * @author Arne Vandamme
@@ -42,9 +42,17 @@ public class HtmlIdStore
 		this.generatedIds = generatedIds;
 	}
 
+	public static HtmlIdStore fetch( Arguments arguments ) {
+		return (HtmlIdStore) arguments.getExpressionObjects().get( AcrossWebDialect.HTML_ID_STORE );
+	}
+
+	public static void store( HtmlIdStore idStore, Arguments arguments ) {
+		arguments.getExpressionObjects().put( AcrossWebDialect.HTML_ID_STORE, idStore );
+	}
+
 	/**
 	 * Retrieve the generated id for a {@link com.foreach.across.modules.web.ui.ViewElement}.  If the instance
-	 * does not implement {@link com.foreach.across.modules.web.ui.elements.NodeViewElementSupport} null will be
+	 * does not implement {@link com.foreach.across.modules.web.ui.elements.HtmlViewElement} null will be
 	 * returned.
 	 * <p>
 	 * If an id is configured on the element, a unique id will be generated and stored for subsequent retrieval.</p>
@@ -55,11 +63,11 @@ public class HtmlIdStore
 	public String retrieveHtmlId( ViewElement control ) {
 		String htmlId = null;
 
-		if ( control instanceof NodeViewElementSupport ) {
+		if ( control instanceof HtmlViewElement ) {
 			htmlId = generatedIds.get( control );
 
 			if ( htmlId == null ) {
-				htmlId = ( (NodeViewElementSupport) control ).getHtmlId();
+				htmlId = ( (HtmlViewElement) control ).getHtmlId();
 
 				if ( htmlId != null ) {
 					int idCount = arguments.getAndIncrementIDSeq( htmlId );
@@ -84,13 +92,5 @@ public class HtmlIdStore
 	 */
 	public HtmlIdStore createNew() {
 		return new HtmlIdStore( arguments, new HashMap<>( generatedIds ) );
-	}
-
-	public static HtmlIdStore fetch( Arguments arguments ) {
-		return (HtmlIdStore) arguments.getExpressionObjects().get( AcrossWebDialect.HTML_ID_STORE );
-	}
-
-	public static void store( HtmlIdStore idStore, Arguments arguments ) {
-		arguments.getExpressionObjects().put( AcrossWebDialect.HTML_ID_STORE, idStore );
 	}
 }

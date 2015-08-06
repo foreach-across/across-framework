@@ -18,12 +18,14 @@ package com.foreach.across.modules.web.ui.elements;
 import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.ViewElementSupport;
 
+/**
+ * A simple text item.
+ */
 public class TextViewElement extends ViewElementSupport implements ConfigurableTextViewElement
 {
 	public static final String ELEMENT_TYPE = StandardViewElements.TEXT;
-
-	private String text;
 	boolean escapeXml = true;
+	private String text;
 
 	public TextViewElement() {
 		this( null, true );

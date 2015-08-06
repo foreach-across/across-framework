@@ -25,10 +25,10 @@ import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
-import com.foreach.across.modules.web.ui.elements.thymeleaf.ContainerViewElementNodeBuilder;
-import com.foreach.across.modules.web.ui.elements.thymeleaf.NodeViewElementNodeBuilder;
-import com.foreach.across.modules.web.ui.elements.thymeleaf.TextViewElementNodeBuilder;
-import com.foreach.across.modules.web.ui.elements.thymeleaf.ViewElementGeneratorNodeBuilder;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.ContainerViewElementThymeleafBuilder;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.HtmlViewElementThymeleafBuilder;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.TextViewElementThymeleafBuilder;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.ViewElementGeneratorThymeleafBuilder;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,14 +85,14 @@ public class ThymeleafViewSupportConfiguration
 	@Exposed
 	public ViewElementNodeBuilderRegistry thymeleafViewElementProcessorRegistry() {
 		ViewElementNodeBuilderRegistry registry = new ViewElementNodeBuilderRegistry();
-		registry.registerNodeBuilder( TextViewElement.class, new TextViewElementNodeBuilder() );
-		registry.registerNodeBuilder( StandardViewElements.TEXT, new TextViewElementNodeBuilder() );
-		registry.registerNodeBuilder( ContainerViewElement.class, new ContainerViewElementNodeBuilder() );
-		registry.registerNodeBuilder( StandardViewElements.CONTAINER, new ContainerViewElementNodeBuilder() );
-		registry.registerNodeBuilder( ViewElementGenerator.class, new ViewElementGeneratorNodeBuilder() );
-		registry.registerNodeBuilder( StandardViewElements.GENERATOR, new ViewElementGeneratorNodeBuilder() );
-		registry.registerNodeBuilder( NodeViewElement.class, new NodeViewElementNodeBuilder() );
-		registry.registerNodeBuilder( StandardViewElements.NODE, new NodeViewElementNodeBuilder() );
+		registry.registerNodeBuilder( TextViewElement.class, new TextViewElementThymeleafBuilder() );
+		registry.registerNodeBuilder( StandardViewElements.TEXT, new TextViewElementThymeleafBuilder() );
+		registry.registerNodeBuilder( ContainerViewElement.class, new ContainerViewElementThymeleafBuilder() );
+		registry.registerNodeBuilder( StandardViewElements.CONTAINER, new ContainerViewElementThymeleafBuilder() );
+		registry.registerNodeBuilder( ViewElementGenerator.class, new ViewElementGeneratorThymeleafBuilder() );
+		registry.registerNodeBuilder( StandardViewElements.GENERATOR, new ViewElementGeneratorThymeleafBuilder() );
+		registry.registerNodeBuilder( NodeViewElement.class, new HtmlViewElementThymeleafBuilder() );
+		registry.registerNodeBuilder( StandardViewElements.NODE, new HtmlViewElementThymeleafBuilder() );
 
 		return registry;
 	}
