@@ -55,6 +55,7 @@ public class AcrossModuleMessageSource extends ReloadableResourceBundleMessageSo
 
 	public AcrossModuleMessageSource() {
 		setUseCodeAsDefaultMessage( true );
+		setDefaultEncoding( "UTF-8" );
 	}
 
 	@PostConstruct
