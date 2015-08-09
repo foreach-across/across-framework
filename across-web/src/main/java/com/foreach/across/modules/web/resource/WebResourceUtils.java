@@ -17,6 +17,8 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.context.WebAppPathResolver;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +39,15 @@ public class WebResourceUtils
 		request.setAttribute( REGISTRY_ATTRIBUTE_KEY, registry );
 	}
 
-	public static WebResourceRegistry getRegistry( WebRequest request ) {
+	/**
+	 * @return the {@link WebResourceRegistry} for the request bound to the current thread
+	 */
+	public static WebResourceRegistry currentRegistry() {
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		return requestAttributes != null ? getRegistry( requestAttributes ) : null;
+	}
+
+	public static WebResourceRegistry getRegistry( RequestAttributes request ) {
 		return (WebResourceRegistry) request.getAttribute( REGISTRY_ATTRIBUTE_KEY, WebRequest.SCOPE_REQUEST );
 	}
 
@@ -46,10 +56,18 @@ public class WebResourceUtils
 	}
 
 	public static void storePathResolver( WebAppPathResolver pathResolver, HttpServletRequest request ) {
-			request.setAttribute( PATH_RESOLVER_ATTRIBUTE_KEY, pathResolver );
-		}
+		request.setAttribute( PATH_RESOLVER_ATTRIBUTE_KEY, pathResolver );
+	}
 
-	public static WebAppPathResolver getPathResolver( WebRequest request ) {
+	/**
+	 * @return the {@link WebAppPathResolver} for the request bound to the current thread
+	 */
+	public static WebAppPathResolver currentPathResolver() {
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		return requestAttributes != null ? getPathResolver( requestAttributes ) : null;
+	}
+
+	public static WebAppPathResolver getPathResolver( RequestAttributes request ) {
 		return (WebAppPathResolver) request.getAttribute( PATH_RESOLVER_ATTRIBUTE_KEY, WebRequest.SCOPE_REQUEST );
 	}
 

@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.ui;
 import com.foreach.across.core.support.AttributeOverridingSupport;
 import com.foreach.across.core.support.AttributeSupport;
 import com.foreach.across.core.support.ReadableAttributes;
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import org.springframework.ui.Model;
 
 import java.util.Map;
@@ -51,6 +52,24 @@ public class ViewElementBuilderContextImpl extends AttributeOverridingSupport im
 
 	public ViewElementBuilderContextImpl( ReadableAttributes parent ) {
 		setParent( parent );
+	}
+
+	/**
+	 * <p>Set the {@link WebResourceRegistry} for this builder context.  Builders can register additional resources if
+	 * required for the view elements they generate.  For example a datepicker control could register additional
+	 * javascript.</p>
+	 * <p>This method is an alias to calling {@link #setAttribute(Class, Object)} with {@code WebResourceRegistry.class}
+	 * as attribute name, and the instance as value.  The explicit method indicates that this attribute is not
+	 * required but is expected.</p>
+	 *
+	 * @param webResourceRegistry instance
+	 */
+	public void setWebResourceRegistry( WebResourceRegistry webResourceRegistry ) {
+		setAttribute( WebResourceRegistry.class, webResourceRegistry );
+	}
+
+	public WebResourceRegistry getWebResourceRegistry() {
+		return getAttribute( WebResourceRegistry.class );
 	}
 
 	private static class AttributesMapWrapper extends AttributeSupport
