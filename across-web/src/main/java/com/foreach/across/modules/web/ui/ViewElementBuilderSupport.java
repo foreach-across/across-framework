@@ -66,8 +66,18 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 	}
 
 	protected final T postProcess( ViewElementBuilderContext builderContext, T viewElement ) {
+		boolean defaultPostProcessorPresent = false;
+
 		for ( ViewElementPostProcessor<T> postProcessor : postProcessors ) {
+			if ( postProcessor == DefaultViewElementPostProcessor.INSTANCE ) {
+				defaultPostProcessorPresent = true;
+			}
+
 			postProcessor.postProcess( builderContext, viewElement );
+		}
+
+		if ( !defaultPostProcessorPresent ) {
+			DefaultViewElementPostProcessor.INSTANCE.postProcess( builderContext, viewElement );
 		}
 
 		return viewElement;
