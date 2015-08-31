@@ -18,6 +18,7 @@ package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.AcrossVersionInfo;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ExposedContextBeanRegistry;
@@ -171,5 +172,10 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 		return exposedBeanRegistry != null
 				? exposedBeanRegistry.getExposedDefinitions()
 				: Collections.<String, ExposedBeanDefinition>emptyMap();
+	}
+
+	@Override
+	public AcrossVersionInfo getVersionInfo() {
+		return context.getVersionInfo();
 	}
 }

@@ -104,6 +104,11 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		return id;
 	}
 
+	@Override
+	public AcrossVersionInfo getVersionInfo() {
+		return AcrossVersionInfo.load( AcrossContext.class );
+	}
+
 	public void setParentApplicationContext( ApplicationContext parentApplicationContext ) {
 		this.parentApplicationContext = parentApplicationContext;
 	}

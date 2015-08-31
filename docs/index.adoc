@@ -162,7 +162,7 @@ All Across related artifacts - both release and snapshot versions - can be fetch
     </repositories>
 ----
 
-include::across-core/src/doc/index.adoc[]
-include::across-web/src/doc/index.adoc[]
-include::across-test/src/doc/index.adoc[]
+include::../across-core/src/doc/index.adoc[]
+include::../across-web/src/doc/index.adoc[]
+include::../across-test/src/doc/index.adoc[]
 
