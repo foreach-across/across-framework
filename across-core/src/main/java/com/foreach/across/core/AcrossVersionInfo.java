@@ -161,7 +161,8 @@ public class AcrossVersionInfo
 
 					if ( buildTime != null ) {
 						try {
-							versionInfo.buildTime = DateUtils.parseDate( buildTime, "yyyyMMdd-HHmm" );
+							versionInfo.buildTime = DateUtils.parseDate( buildTime, "yyyyMMdd-HHmm",
+							                                             "yyyy-MM-dd'T'HH:mm:ss'Z'" );
 						}
 						catch ( ParseException pe ) {
 							LOG.error(
