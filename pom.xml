@@ -28,7 +28,7 @@
 		<spring.platform.version>1.0.5.RELEASE</spring.platform.version>
 		<foreach.common.version>0.12</foreach.common.version>
 		<querydsl.version>3.5.1</querydsl.version>
-		<hikaricp.version>2.3.5</hikaricp.version>
+		<hikaricp.version>2.3.9</hikaricp.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 	</properties>
 
