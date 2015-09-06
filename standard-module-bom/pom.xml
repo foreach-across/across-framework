@@ -274,9 +274,8 @@
 					<groupId>org.asciidoctor</groupId>
 					<artifactId>asciidoctor-maven-plugin</artifactId>
 					<version>1.5.0</version>
-					<inherited>false</inherited>
 					<configuration>
-						<sourceDirectory>docs</sourceDirectory>
+						<sourceDirectory>${project.basedir}/src/doc</sourceDirectory>
 						<sourceDocumentName>index.adoc</sourceDocumentName>
 						<outputDirectory>${project.reporting.outputDirectory}/${project.version}/reference
 						</outputDirectory>
