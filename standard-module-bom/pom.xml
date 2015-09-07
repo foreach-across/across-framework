@@ -270,27 +270,7 @@
 						</dependency>
 					</dependencies>
 				</plugin>
-				<plugin>
-					<groupId>org.asciidoctor</groupId>
-					<artifactId>asciidoctor-maven-plugin</artifactId>
-					<version>1.5.0</version>
-					<configuration>
-						<sourceDirectory>${project.basedir}/src/doc</sourceDirectory>
-						<sourceDocumentName>index.adoc</sourceDocumentName>
-						<outputDirectory>${project.reporting.outputDirectory}/${project.version}/reference
-						</outputDirectory>
-						<backend>html</backend>
-					</configuration>
-					<executions>
-						<execution>
-							<id>output-html</id>
-							<phase>prepare-package</phase>
-							<goals>
-								<goal>process-asciidoc</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
+
 			</plugins>
 		</pluginManagement>
 	</build>
