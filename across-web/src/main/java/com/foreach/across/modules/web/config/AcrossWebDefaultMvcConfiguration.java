@@ -136,7 +136,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	private FormattingConversionService mvcConversionService;
 
-	@Autowired
+	@Autowired(required = false)
 	private WebTemplateInterceptor webTemplateInterceptor;
 
 	private ConfigurableWebBindingInitializer initializer;
@@ -502,7 +502,14 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	private void addDefaultHandlerExceptionResolvers( List<HandlerExceptionResolver> exceptionResolvers,
 	                                                  ContentNegotiationManager contentNegotiationManager,
 	                                                  List<HttpMessageConverter<?>> messageConverters ) {
-		ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new LayoutingExceptionHandlerExceptionResolver( webTemplateInterceptor );
+		ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver;
+		if ( webTemplateInterceptor != null ) {
+			exceptionHandlerExceptionResolver =
+					new LayoutingExceptionHandlerExceptionResolver( webTemplateInterceptor );
+
+		} else {
+			exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
+		}
 		exceptionHandlerExceptionResolver.setApplicationContext( this.applicationContext );
 		exceptionHandlerExceptionResolver.setContentNegotiationManager( contentNegotiationManager );
 		if ( !messageConverters.isEmpty() ) {
