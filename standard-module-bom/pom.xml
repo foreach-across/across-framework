@@ -88,6 +88,12 @@
 				<artifactId>hibernate-validator</artifactId>
 				<!-- Version 5.x.x has issues on Jboss with javax.validation.api 1.1.0 -->
 				<version>4.3.2.Final</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.el</groupId>
+						<artifactId>javax.el-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
