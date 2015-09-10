@@ -289,4 +289,9 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	public int hashCode() {
 		return Objects.hash( getName() );
 	}
+
+	@Override
+	public AcrossVersionInfo getVersionInfo() {
+		return AcrossVersionInfo.load( getClass() );
+	}
 }

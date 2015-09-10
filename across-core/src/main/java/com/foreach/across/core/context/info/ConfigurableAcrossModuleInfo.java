@@ -18,6 +18,7 @@ package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossModuleSettings;
+import com.foreach.across.core.AcrossVersionInfo;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
@@ -173,5 +174,10 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	@Override
 	public ApplicationContext getApplicationContext() {
 		return AcrossContextUtils.getApplicationContext( module );
+	}
+
+	@Override
+	public AcrossVersionInfo getVersionInfo() {
+		return module.getVersionInfo();
 	}
 }

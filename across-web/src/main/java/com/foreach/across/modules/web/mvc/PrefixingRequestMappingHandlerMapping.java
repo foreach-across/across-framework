@@ -22,22 +22,25 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import org.springframework.aop.ClassFilter;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.HandlerMethodSelector;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.mvc.condition.*;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Scans matching beans for RequestMapping annotations and (optionally) prefixes all mappings.
  * Allows for reloading (re-scanning) of mappings and re-initialization of the entire mapping handler mapping.
- *
+ * <p>
  * <b>WARN: interceptors are only supported once.</b>
  */
 @AcrossEventHandler
@@ -84,6 +87,17 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 	public void reload() {
 		initApplicationContext();
+	}
+
+	@Override
+	protected void detectMappedInterceptors( List<MappedInterceptor> mappedInterceptors ) {
+		for ( MappedInterceptor mappedInterceptor : BeanFactoryUtils.beansOfTypeIncludingAncestors(
+				getApplicationContext(), MappedInterceptor.class, true, false ).values() ) {
+
+			if ( !mappedInterceptors.contains( mappedInterceptor ) ) {
+				mappedInterceptors.add( mappedInterceptor );
+			}
+		}
 	}
 
 	/**
