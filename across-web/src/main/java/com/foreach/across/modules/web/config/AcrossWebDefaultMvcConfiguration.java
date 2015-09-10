@@ -28,6 +28,8 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.*;
+import com.foreach.across.modules.web.template.LayoutingExceptionHandlerExceptionResolver;
+import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
@@ -133,6 +135,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Autowired(required = false)
 	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	private FormattingConversionService mvcConversionService;
+
+	@Autowired
+	private WebTemplateInterceptor webTemplateInterceptor;
 
 	private ConfigurableWebBindingInitializer initializer;
 
@@ -497,7 +502,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	private void addDefaultHandlerExceptionResolvers( List<HandlerExceptionResolver> exceptionResolvers,
 	                                                  ContentNegotiationManager contentNegotiationManager,
 	                                                  List<HttpMessageConverter<?>> messageConverters ) {
-		ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
+		ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new LayoutingExceptionHandlerExceptionResolver( webTemplateInterceptor );
 		exceptionHandlerExceptionResolver.setApplicationContext( this.applicationContext );
 		exceptionHandlerExceptionResolver.setContentNegotiationManager( contentNegotiationManager );
 		if ( !messageConverters.isEmpty() ) {
