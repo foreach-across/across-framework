@@ -138,6 +138,23 @@
 				<artifactId>across-web</artifactId>
 				<version>${across.version}</version>
 			</dependency>
+
+			<!-- Old Across dependencies - to be removed before release -->
+			<dependency>
+				<groupId>across</groupId>
+				<artifactId>across-core</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across</groupId>
+				<artifactId>across-test</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across</groupId>
+				<artifactId>across-web</artifactId>
+				<version>${across.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
