@@ -16,9 +16,15 @@
 
 package com.foreach.across.core.context;
 
+import com.foreach.across.core.AcrossVersionInfo;
+
 /**
  * Marker interface.
  */
 public interface AcrossEntity
 {
+	/**
+	 * @return the version information attached to this entity (if resolvable).
+	 */
+	AcrossVersionInfo getVersionInfo();
 }

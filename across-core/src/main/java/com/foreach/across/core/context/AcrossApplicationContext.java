@@ -86,16 +86,16 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 
 	@Override
 	protected void registerBeanPostProcessors( ConfigurableListableBeanFactory beanFactory ) {
-		ConfigurableEnvironment environment = getEnvironment();
+		super.registerBeanPostProcessors( beanFactory );
 
 		// Set the conversion service on the environment as well
+		ConfigurableEnvironment environment = getEnvironment();
+
 		if ( beanFactory.containsBean( CONVERSION_SERVICE_BEAN_NAME )
 				&& beanFactory.isTypeMatch( CONVERSION_SERVICE_BEAN_NAME, ConfigurableConversionService.class ) ) {
 			environment.setConversionService(
 					beanFactory.getBean( CONVERSION_SERVICE_BEAN_NAME, ConfigurableConversionService.class )
 			);
 		}
-
-		super.registerBeanPostProcessors( beanFactory );
 	}
 }

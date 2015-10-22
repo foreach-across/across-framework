@@ -24,10 +24,12 @@
 	<packaging>jar</packaging>
 
 	<parent>
-		<groupId>across</groupId>
-		<artifactId>across</artifactId>
+		<groupId>com.foreach.across</groupId>
+		<artifactId>across-base</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
+
+	<name>${project.groupId}:${project.artifactId}</name>
 
 	<dependencies>
 		<dependency>
@@ -39,7 +41,7 @@
 			<artifactId>thymeleaf-spring4</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>across</groupId>
+			<groupId>com.foreach.across</groupId>
 			<artifactId>across-core</artifactId>
 			<version>1.2.0-SNAPSHOT</version>
 		</dependency>
