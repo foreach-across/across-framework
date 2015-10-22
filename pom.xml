@@ -18,10 +18,34 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>across</groupId>
-	<artifactId>across</artifactId>
+	<groupId>com.foreach.across</groupId>
+	<artifactId>across-base</artifactId>
 	<version>1.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>
+		Across is a Java framework that aims to facilitate module based development for Java (web) applications.
+		It builds heavily on Spring framework and allows defining a module consisting of a number of classes and
+		configuration files. Every module defines its own Spring application context and can share one or more beans
+		with other modules.
+	</description>
+	<url>https://foreach.atlassian.net/wiki/display/AX</url>
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Arne Vandamme</name>
+			<email>arne@foreach.be</email>
+			<organization>Foreach</organization>
+			<organizationUrl>http://www.foreach.be</organizationUrl>
+		</developer>
+	</developers>
 
 	<properties>
 		<across.version>1.1.1-SNAPSHOT</across.version>
@@ -193,18 +217,6 @@
 		<module>across-test</module>
 	</modules>
 
-	<distributionManagement>
-		<repository>
-			<id>foreach-nexus</id>
-			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>foreach-nexus</id>
-			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
 	<scm>
 		<connection>scm:git:https://bitbucket.org/beforeach/across.git</connection>
 		<developerConnection>scm:git:https://bitbucket.org/beforeach/across.git</developerConnection>
@@ -382,5 +394,56 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>sonatype</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>sonatype</id>
+					<name>Sonatype snapshots</name>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+				</snapshotRepository>
+				<repository>
+					<id>sonatype</id>
+					<name>Sonatype release staging</name>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>foreach</id>
+			<distributionManagement>
+				<repository>
+					<id>foreach-nexus</id>
+					<name>Foreach nexus</name>
+					<url>http://repository.foreach.be/nexus/content/repositories/releases</url>
+				</repository>
+				<snapshotRepository>
+					<id>foreach-nexus</id>
+					<name>Foreach nexus</name>
+					<url>http://repository.foreach.be/nexus/content/repositories/snapshots</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 
 </project>
