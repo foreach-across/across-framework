@@ -36,6 +36,21 @@
 		</license>
 	</licenses>
 
+	<developers>
+		<developer>
+			<name>Arne Vandamme</name>
+			<email>arne at foreach.be</email>
+			<organization>Foreach</organization>
+			<organizationUrl>http://www.foreach.be</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:https://bitbucket.org/beforeach/across.git</connection>
+		<developerConnection>scm:git:https://bitbucket.org/beforeach/across.git</developerConnection>
+		<url>https://bitbucket.org/beforeach/across</url>
+	</scm>
+
 	<properties>
 		<across.version>1.1.1-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
