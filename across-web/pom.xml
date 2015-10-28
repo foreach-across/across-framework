@@ -19,13 +19,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>across-web</artifactId>
-	<version>1.0.6-SNAPSHOT</version>
+	<version>1.0.6.RELEASE</version>
 	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>across-base</artifactId>
-		<version>1.0.6-SNAPSHOT</version>
+		<version>1.0.6.RELEASE</version>
 	</parent>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>com.foreach.across</groupId>
 			<artifactId>across-core</artifactId>
-			<version>1.0.6-SNAPSHOT</version>
+			<version>1.0.6.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

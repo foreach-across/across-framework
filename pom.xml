@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>1.0.6-SNAPSHOT</version>
+	<version>1.0.6.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -219,7 +219,7 @@
 	<scm>
 		<connection>scm:git:https://bitbucket.org/beforeach/across.git</connection>
 		<developerConnection>scm:git:https://bitbucket.org/beforeach/across.git</developerConnection>
-		<tag>HEAD</tag>
+		<url>https://bitbucket.org/beforeach/across</url>
 	</scm>
 
 	<dependencyManagement>
