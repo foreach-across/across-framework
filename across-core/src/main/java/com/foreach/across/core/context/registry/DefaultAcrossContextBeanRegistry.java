@@ -16,7 +16,6 @@
 
 package com.foreach.across.core.context.registry;
 
-import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
@@ -30,10 +29,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegistry
 {
@@ -102,15 +98,35 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	}
 
 	@Override
+	public <T> Map<String, T> getBeansOfTypeAsMap( Class<T> beanClass ) {
+		return getBeansOfTypeAsMap( beanClass, false );
+	}
+
+	@Override
 	public <T> List<T> getBeansOfType( Class<T> beanClass, boolean includeModuleInternals ) {
 		return getBeansOfType( ResolvableType.forClass( beanClass ), includeModuleInternals );
 	}
 
 	@Override
+	public <T> Map<String, T> getBeansOfTypeAsMap( Class<T> beanClass, boolean includeModuleInternals ) {
+		return getBeansOfTypeAsMap( ResolvableType.forClass( beanClass ), includeModuleInternals );
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> List<T> getBeansOfType( ResolvableType resolvableType, boolean includeModuleInternals ) {
+		return new ArrayList<>(
+				(Collection<T>) getBeansOfTypeAsMap( resolvableType, includeModuleInternals ).values()
+		);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> Map<String, T> getBeansOfTypeAsMap( ResolvableType resolvableType, boolean includeModuleInternals ) {
 		Set<T> beans = new LinkedHashSet<>();
 		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
+
+		Map<T, String> beanNames = new HashMap<>();
 
 		DependencyDescriptor dd = new ResolvableTypeDescriptor( resolvableType );
 		ResolvableTypeAutowireCandidateResolver resolver = new ResolvableTypeAutowireCandidateResolver();
@@ -124,7 +140,9 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 			if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
 				Object bean = beanFactory.getBean( beanName );
 				comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
+
 				beans.add( (T) bean );
+				beanNames.put( (T) bean, beanName );
 			}
 		}
 
@@ -139,7 +157,9 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
 							Object bean = beanFactory.getBean( beanName );
 							comparator.register( bean, module.getIndex() );
+
 							beans.add( (T) bean );
+							beanNames.put( (T) bean, module.getName() + ":" + beanName );
 						}
 					}
 				}
@@ -149,7 +169,12 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		List<T> beanList = new ArrayList<>( beans );
 		comparator.sort( beanList );
 
-		return beanList;
+		LinkedHashMap<String, T> beansMap = new LinkedHashMap<>();
+		for ( T bean : beanList ) {
+			beansMap.put( beanNames.get( bean ), bean );
+		}
+
+		return beansMap;
 	}
 
 	private AcrossListableBeanFactory beanFactory( ApplicationContext applicationContext ) {

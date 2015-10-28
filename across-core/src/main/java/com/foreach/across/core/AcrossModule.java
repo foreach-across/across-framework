@@ -272,4 +272,9 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class ),
 		                                new AnnotationBeanFilter( true, Exposed.class ) );
 	}
+
+	@Override
+	public AcrossVersionInfo getVersionInfo() {
+		return AcrossVersionInfo.load( getClass() );
+	}
 }

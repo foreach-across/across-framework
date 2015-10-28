@@ -2,7 +2,7 @@
 Arne Vandamme
 :toc:
 :sectanchors:
-:across-version: 1.0.5
+:across-version: 1.0.6
 :spring-version: 4.0.9.RELEASE
 :spring-url: http://projects.spring.io/spring-framework/
 :spring-data-url: http://projects.spring.io/spring-data/
@@ -162,7 +162,7 @@ All Across related artifacts - both release and snapshot versions - can be fetch
     </repositories>
 ----
 
-include::across-core/src/doc/index.adoc[]
-include::across-web/src/doc/index.adoc[]
-include::across-test/src/doc/index.adoc[]
+include::../across-core/src/doc/index.adoc[]
+include::../across-web/src/doc/index.adoc[]
+include::../across-test/src/doc/index.adoc[]
 

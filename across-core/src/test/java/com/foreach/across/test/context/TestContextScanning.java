@@ -34,10 +34,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.ResolvableType;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -62,6 +59,16 @@ public class TestContextScanning
 		assertEquals( "ModuleTwo", beans.get( 1 ).getModule() );
 		assertEquals( "ModuleThree", beans.get( 2 ).getModule() );
 
+		Map<String, MyBeanConfig> beansWithName = registry.getBeansOfTypeAsMap( MyBeanConfig.class );
+		assertTrue( beansWithName.isEmpty() );
+
+		beansWithName = registry.getBeansOfTypeAsMap( MyBeanConfig.class, true );
+		assertEquals( 3, beansWithName.size() );
+
+		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:testContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:testContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:testContextScanning.MyBeanConfig" ).getModule() );
+
 		context.shutdown();
 	}
 
@@ -75,8 +82,10 @@ public class TestContextScanning
 
 		AcrossContextBeanRegistry registry = AcrossContextUtils.getBeanRegistry( context );
 		List<GenericBean> beans = registry.getBeansOfType( GenericBean.class, true );
+		Map<String, GenericBean> beansWithName = registry.getBeansOfTypeAsMap( GenericBean.class, true );
 
 		assertEquals( 6, beans.size() );
+		assertEquals( 6, beansWithName.size() );
 
 		ResolvableType listType = ResolvableType.forClassWithGenerics( List.class, Integer.class );
 		ResolvableType type = ResolvableType.forClassWithGenerics( GenericBean.class,
@@ -85,10 +94,17 @@ public class TestContextScanning
 		);
 
 		beans = registry.getBeansOfType( type, true );
+		beansWithName = registry.getBeansOfTypeAsMap( type, true );
+
 		assertEquals( 3, beans.size() );
 		assertEquals( "longWithIntegerList", beans.get( 0 ).getName() );
 		assertEquals( "longWithIntegerList", beans.get( 1 ).getName() );
 		assertEquals( "longWithIntegerList", beans.get( 2 ).getName() );
+
+		assertEquals( 3, beansWithName.size() );
+		assertEquals( "longWithIntegerList", beansWithName.get( "ModuleOne:longWithIntegerList" ).getName() );
+		assertEquals( "longWithIntegerList", beansWithName.get( "ModuleTwo:longWithIntegerList" ).getName() );
+		assertEquals( "longWithIntegerList", beansWithName.get( "ModuleThree:longWithIntegerList" ).getName() );
 
 		listType = ResolvableType.forClassWithGenerics( List.class, Date.class );
 		type = ResolvableType.forClassWithGenerics( GenericBean.class,
@@ -97,10 +113,17 @@ public class TestContextScanning
 		);
 
 		beans = registry.getBeansOfType( type, true );
+		beansWithName = registry.getBeansOfTypeAsMap( type, true );
+
 		assertEquals( 3, beans.size() );
 		assertEquals( "stringWithDateList", beans.get( 0 ).getName() );
 		assertEquals( "stringWithDateList", beans.get( 1 ).getName() );
 		assertEquals( "stringWithDateList", beans.get( 2 ).getName() );
+
+		assertEquals( 3, beansWithName.size() );
+		assertEquals( "stringWithDateList", beansWithName.get( "ModuleOne:stringWithDateList" ).getName() );
+		assertEquals( "stringWithDateList", beansWithName.get( "ModuleTwo:stringWithDateList" ).getName() );
+		assertEquals( "stringWithDateList", beansWithName.get( "ModuleThree:stringWithDateList" ).getName() );
 	}
 
 	@Test
@@ -154,11 +177,17 @@ public class TestContextScanning
 
 		AcrossContextBeanRegistry registry = AcrossContextUtils.getBeanRegistry( context );
 		List<MyBeanConfig> beans = registry.getBeansOfType( MyBeanConfig.class, true );
+		Map<String, MyBeanConfig> beansWithName = registry.getBeansOfTypeAsMap( MyBeanConfig.class, true );
 		assertEquals( 3, beans.size() );
+		assertEquals( 3, beansWithName.size() );
 
 		assertEquals( "ModuleThree", beans.get( 0 ).getModule() );
 		assertEquals( "ModuleOne", beans.get( 1 ).getModule() );
 		assertEquals( "ModuleTwo", beans.get( 2 ).getModule() );
+
+		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:testContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:testContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:testContextScanning.MyBeanConfig" ).getModule() );
 
 		context.shutdown();
 	}
@@ -166,7 +195,7 @@ public class TestContextScanning
 	@Test
 	public void beansFromTheParentContextArePositionedBeforeTheModuleBeans() {
 		GenericApplicationContext applicationContext = new GenericApplicationContext();
-		applicationContext.getBeanFactory().registerSingleton( "", new MyFixedBeanConfig() );
+		applicationContext.getBeanFactory().registerSingleton( "fixed-config", new MyFixedBeanConfig() );
 		applicationContext.refresh();
 
 		AcrossContext context = new AcrossContext( applicationContext );
@@ -186,12 +215,32 @@ public class TestContextScanning
 
 		AcrossContextBeanRegistry registry = AcrossContextUtils.getBeanRegistry( context );
 		List<MyBeanConfig> beans = registry.getBeansOfType( MyBeanConfig.class, true );
+		Map<String, MyBeanConfig> beansWithName = registry.getBeansOfTypeAsMap( MyBeanConfig.class, true );
 		assertEquals( 4, beans.size() );
+		assertEquals( 4, beansWithName.size() );
 
 		assertEquals( "ApplicationContext", beans.get( 0 ).getModule() );
 		assertEquals( "ModuleThree", beans.get( 1 ).getModule() );
 		assertEquals( "ModuleTwo", beans.get( 2 ).getModule() );
 		assertEquals( "ModuleOne", beans.get( 3 ).getModule() );
+
+		assertEquals( "ApplicationContext", beansWithName.get( "fixed-config" ).getModule() );
+		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:testContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:testContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:testContextScanning.MyBeanConfig" ).getModule() );
+
+		List<String> namesInOrder = new ArrayList<>();
+
+		for ( Map.Entry<String, MyBeanConfig> entry : beansWithName.entrySet() ) {
+			namesInOrder.add( entry.getKey() );
+		}
+
+		assertEquals( Arrays.asList( "fixed-config",
+		                             "ModuleThree:testContextScanning.MyBeanConfig",
+		                             "ModuleTwo:testContextScanning.MyBeanConfig",
+		                             "ModuleOne:testContextScanning.MyBeanConfig" ),
+		              namesInOrder
+		);
 
 		context.shutdown();
 		applicationContext.destroy();
