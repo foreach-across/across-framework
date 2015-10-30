@@ -84,6 +84,10 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 		if ( processor != null ) {
 			processor.applyTemplate( request, response, handler, modelAndView );
 		}
+		boolean containsPartialParameter = request.getParametermap().containsKey( PARTIAL_PARAMETER );
+		if ( containsPartialParameter ) {
+			modelAndView.setViewName( modelAndView.getViewName() + "::" + request.getParameter( PARTIAL_PARAMETER ) );
+		}
 	}
 
 	private String determineTemplateName( Object handler ) {
