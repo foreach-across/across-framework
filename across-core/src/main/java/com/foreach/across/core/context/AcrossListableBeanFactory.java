@@ -138,9 +138,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 			AnnotatedElement annotatedElement =
 					descriptor.getField() != null ? descriptor.getField() : descriptor.getMethodParameter().getMethod();
 
-			if( annotatedElement == null ) {
-				return super.doResolveDependency( descriptor, beanName, autowiredBeanNames, typeConverter );
-			} else {
+			if( annotatedElement != null ) {
 				RefreshableCollection annotation = AnnotationUtils.getAnnotation( annotatedElement,
 				                                                                  RefreshableCollection.class );
 
