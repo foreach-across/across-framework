@@ -138,36 +138,41 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 			AnnotatedElement annotatedElement =
 					descriptor.getField() != null ? descriptor.getField() : descriptor.getMethodParameter().getMethod();
 
-			RefreshableCollection annotation = AnnotationUtils.getAnnotation( annotatedElement,
-			                                                                  RefreshableCollection.class );
+			if( annotatedElement == null ) {
+				return super.doResolveDependency( descriptor, beanName, autowiredBeanNames, typeConverter );
+			} else {
+				RefreshableCollection annotation = AnnotationUtils.getAnnotation( annotatedElement,
+				                                                                  RefreshableCollection.class );
 
-			if ( annotation != null ) {
-				ResolvableType resolvableType = descriptor.getResolvableType();
+				if ( annotation != null ) {
+					ResolvableType resolvableType = descriptor.getResolvableType();
 
-				if ( resolvableType.hasGenerics() ) {
-					resolvableType = resolvableType.getNested( 2 );
+					if ( resolvableType.hasGenerics() ) {
+						resolvableType = resolvableType.getNested( 2 );
+					}
+					else {
+						resolvableType = ResolvableType.forClass( Object.class );
+					}
+
+					RefreshableRegistry<?> registry;
+					if ( annotation.incremental() ) {
+						registry = new IncrementalRefreshableRegistry<>( resolvableType,
+						                                                 annotation.includeModuleInternals() );
+					}
+					else {
+						registry = new RefreshableRegistry<>( resolvableType, annotation.includeModuleInternals() );
+					}
+
+					String registryBeanName = RefreshableRegistry.class.getName() + "~" + UUID.randomUUID().toString();
+
+					autowireBean( registry );
+					initializeBean( registry, registryBeanName );
+					registerSingleton( registryBeanName, registry );
+
+					return registry;
 				}
-				else {
-					resolvableType = ResolvableType.forClass( Object.class );
-				}
-
-				RefreshableRegistry<?> registry;
-				if ( annotation.incremental() ) {
-					registry = new IncrementalRefreshableRegistry<>( resolvableType,
-					                                                 annotation.includeModuleInternals() );
-				}
-				else {
-					registry = new RefreshableRegistry<>( resolvableType, annotation.includeModuleInternals() );
-				}
-
-				String registryBeanName = RefreshableRegistry.class.getName() + "~" + UUID.randomUUID().toString();
-
-				autowireBean( registry );
-				initializeBean( registry, registryBeanName );
-				registerSingleton( registryBeanName, registry );
-
-				return registry;
 			}
+
 
 		}
 
