@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.1.1.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -41,14 +41,14 @@
 	<developers>
 		<developer>
 			<name>Arne Vandamme</name>
-			<email>arne@foreach.be</email>
+			<email>arne at foreach.be</email>
 			<organization>Foreach</organization>
 			<organizationUrl>http://www.foreach.be</organizationUrl>
 		</developer>
 	</developers>
 
 	<properties>
-		<across.version>1.1.1-SNAPSHOT</across.version>
+		<across.version>1.1.1.RELEASE</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.platform.version>1.1.1.RELEASE</spring.platform.version>
 		<foreach.common.version>0.12</foreach.common.version>
