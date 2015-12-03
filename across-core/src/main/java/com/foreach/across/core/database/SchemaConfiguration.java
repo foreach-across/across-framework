@@ -30,11 +30,25 @@ import java.util.Map;
  */
 public class SchemaConfiguration
 {
+	private String defaultSchema = "";
 	private Collection<SchemaObject> tables;
 	private Map<String, String> properties = new HashMap<>();
 
 	public SchemaConfiguration( Collection<SchemaObject> tables ) {
 		this.tables = Collections.unmodifiableCollection( tables );
+	}
+
+	/**
+	 * Configures the default schema to be used
+	 *
+	 * @param defaultSchema
+	 */
+	public void setDefaultSchema( String defaultSchema ) {
+		this.defaultSchema = defaultSchema;
+	}
+
+	public String getDefaultSchema() {
+		return defaultSchema;
 	}
 
 	public Collection<SchemaObject> getTables() {

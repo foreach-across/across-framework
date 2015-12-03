@@ -134,10 +134,9 @@ public abstract class AcrossLiquibaseInstaller
 	/**
 	 * Sets the default Schema that will be used during the liquibase update
 	 * <p/>
-	 * This will override the globally configured default schema
+	 * This will override the defaultSchema configured in {@link SchemaConfiguration#getDefaultSchema()}
 	 *
-	 * @param defaultSchema The default db schame name
-	 * @see
+	 * @param defaultSchema The default db schema name
 	 */
 	protected void setDefaultSchema( String defaultSchema ) {
 		liquibaseConfiguration.setDefaultSchema( defaultSchema );
@@ -274,7 +273,14 @@ public abstract class AcrossLiquibaseInstaller
 
 		liquibase.setChangeLogParameters( buildParameters( schemaConfiguration ) );
 		liquibase.setChangeLog( liquibase.getChangeLog() );
-		liquibase.setDefaultSchema( liquibaseConfiguration.getDefaultSchema() );
+
+		if ( StringUtils.isNotEmpty( liquibaseConfiguration.getDefaultSchema() ) ) {
+			liquibase.setDefaultSchema( liquibaseConfiguration.getDefaultSchema() );
+		}
+		else if ( schemaConfiguration != null ) {
+			liquibase.setDefaultSchema( schemaConfiguration.getDefaultSchema() );
+		}
+
 		liquibase.setContexts( liquibaseConfiguration.getContexts() );
 		liquibase.setDropFirst( liquibaseConfiguration.isDropFirst() );
 		liquibase.setShouldRun( shouldRun );
