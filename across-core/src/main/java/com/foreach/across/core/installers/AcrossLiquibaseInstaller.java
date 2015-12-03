@@ -103,6 +103,9 @@ public abstract class AcrossLiquibaseInstaller
 	/**
 	 * Sets the {@link SchemaConfiguration} that will be used to construct the {@link liquibase.changelog.ChangeLogParameters}
 	 *
+	 * if no defaultSchema is configured via {@link AcrossLiquibaseInstaller#setDefaultSchema(String)}
+	 * the defaultSchema from {@link SchemaConfiguration#getDefaultSchema()} will be used instead
+	 *
 	 * @param schemaConfiguration
 	 */
 	protected void setSchemaConfiguration( SchemaConfiguration schemaConfiguration ) {
