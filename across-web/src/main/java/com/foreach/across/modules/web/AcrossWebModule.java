@@ -26,6 +26,8 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.web.config.*;
 import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
+import com.foreach.across.modules.web.config.resourceurls.ResourceUrlProviderExposingInterceptorConfiguration;
+import com.foreach.across.modules.web.config.resourceurls.ResourceUrlEncodingFilterConfiguration;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -106,7 +108,9 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 						AcrossWebTemplateConfig.class,
 						AcrossWebDefaultMvcConfiguration.class,
 						ConversionServiceExposingInterceptorConfiguration.class,
-						MultipartResolverConfiguration.class
+						MultipartResolverConfiguration.class,
+						ResourceUrlEncodingFilterConfiguration.class,
+						ResourceUrlProviderExposingInterceptorConfiguration.class
 				)
 		);
 		contextConfigurers.add(

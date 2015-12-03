@@ -41,6 +41,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
@@ -69,6 +70,7 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerExceptionResolverComposite;
@@ -77,6 +79,8 @@ import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
 import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
+import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -138,6 +142,12 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	@Autowired(required = false)
 	private WebTemplateInterceptor webTemplateInterceptor;
+
+	@Autowired(required=false)
+	private ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor;
+
+	@Autowired(required = false)
+	private ResourceUrlProvider resourceUrlProvider;
 
 	private ConfigurableWebBindingInitializer initializer;
 
@@ -254,8 +264,16 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		// Update the resource handler mapping
 		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
+		if( resourceUrlProviderExposingInterceptor != null && resourceUrlProvider != null ) {
+			resourceHandlerMapping.setInterceptors(new HandlerInterceptor[] {resourceUrlProviderExposingInterceptor});
+		}
 		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );
 		resourceHandlerMapping.initApplicationContext();
+
+//		// Detect the handler mappings
+		if( resourceUrlProvider != null ) {
+			resourceUrlProvider.onApplicationEvent( new ContextRefreshedEvent( applicationContext ) );
+		}
 
 		// Handler exception resolver
 		if ( exceptionResolvers.isEmpty() ) {
