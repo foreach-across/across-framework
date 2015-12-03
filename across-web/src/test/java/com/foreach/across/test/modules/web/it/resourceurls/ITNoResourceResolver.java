@@ -1,4 +1,4 @@
-package com.foreach.across.test.modules.web.it.multipart;
+package com.foreach.across.test.modules.web.it.resourceurls;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
@@ -8,6 +8,7 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -18,26 +19,35 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = ITResourcesResolver.Config.class)
-public class ITResourcesResolver
+@ContextConfiguration(classes = ITNoResourceResolver.Config.class)
+public class ITNoResourceResolver
 {
 	@Autowired
 	private AcrossContextInfo contextInfo;
 
 	@Test
-	public void resourceUrlResolverConfigurationShouldBeCreated() {
+	public void resourceUrlResolverConfigurationShouldNotBeCreated() {
 		ApplicationContext ctx = contextInfo.getModuleInfo( AcrossWebModule.NAME ).getApplicationContext();
 
-		ResourceUrlProvider resourceUrlProvider = ctx.getBean( ResourceUrlProvider.class );
-		assertNotNull( resourceUrlProvider );
+		try {
+			ResourceUrlProvider resourceUrlProvider = ctx.getBean( ResourceUrlProvider.class );
+			assertNull( resourceUrlProvider );
+		} catch ( NoSuchBeanDefinitionException e ) {
+			assertTrue( true );
+		}
 
-		ResourceUrlProviderExposingInterceptor interceptor = ctx.getBean( ResourceUrlProviderExposingInterceptor.class );
-		assertNotNull( interceptor );
+		try {
+			ResourceUrlProviderExposingInterceptor interceptor = ctx.getBean( ResourceUrlProviderExposingInterceptor.class );
+			assertNull( interceptor );
+		} catch ( NoSuchBeanDefinitionException e ) {
+			assertTrue( true );
+		}
 	}
 
 	@EnableAcrossContext
@@ -47,7 +57,7 @@ public class ITResourcesResolver
 		@Override
 		public void configure( AcrossContext context ) {
 			AcrossWebModule webModule = new AcrossWebModule();
-			webModule.setProperty( AcrossWebModuleSettings.RESOURCE_URLS_AUTO_CONFIGURE, true );
+			webModule.setProperty( AcrossWebModuleSettings.RESOURCE_URLS_AUTO_CONFIGURE, false );
 
 			context.addModule( webModule );
 		}
