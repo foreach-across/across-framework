@@ -26,16 +26,6 @@ import java.util.Map;
 public class AcrossWebModuleSettings extends AcrossModuleSettings
 {
 	/**
-	 * Prefix for JSP view resolver path.
-	 */
-	public static final String JSP_VIEW_PREFIX = "acrossWeb.jsp.prefix";
-
-	/**
-	 * Suffix for JSP view resolver path.
-	 */
-	public static final String JSP_VIEW_SUFFIX = "acrossWeb.jsp.suffix";
-
-	/**
 	 * True if a default WebTemplateRegistry should be created with support
 	 * for WebTemplateProcessors.
 	 */
@@ -58,6 +48,7 @@ public class AcrossWebModuleSettings extends AcrossModuleSettings
 	@Override
 	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
 		registry.register( TEMPLATES_ENABLED, Boolean.class, true );
+		registry.register( TEMPLATES_AUTO_REGISTER, Boolean.class, true );
 
 		registry.register( MULTIPART_AUTO_CONFIGURE, Boolean.class, true, "Auto configure a multipart resolver." );
 		registry.register( MULTIPART_SETTINGS, MultipartConfigElement.class,
@@ -65,7 +56,6 @@ public class AcrossWebModuleSettings extends AcrossModuleSettings
 
 		registry.register( RESOURCE_URLS_AUTO_CONFIGURE, Boolean.class, true, "Auto configure a resource url resolver and relevant filters/interceptors." );
 
-		registry.register( TEMPLATES_AUTO_REGISTER, Boolean.class, true );
 		registry.register( DEVELOPMENT_VIEWS, Map.class, Collections.<String, String>emptyMap(),
 		                   "Map of physical locations for views resources." );
 	}
@@ -77,11 +67,6 @@ public class AcrossWebModuleSettings extends AcrossModuleSettings
 	public boolean isAutoConfigureRecourceUrls() {
 		return getProperty( RESOURCE_URLS_AUTO_CONFIGURE, Boolean.class );
 	}
-
-	/*
-	public String getMultipartResolverBeanName() {
-	}
-	*/
 
 	public boolean isTemplatesEnabled() {
 		return getProperty( TEMPLATES_ENABLED, Boolean.class );
