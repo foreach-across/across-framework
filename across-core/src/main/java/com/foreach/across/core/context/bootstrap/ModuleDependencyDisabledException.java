@@ -24,7 +24,7 @@ public class ModuleDependencyDisabledException extends AcrossException
 
 	public ModuleDependencyDisabledException( String moduleName, String dependencyName ) {
 		super( "Unable to bootstrap AcrossContext as module " + moduleName + " requires module " + dependencyName
-				       + ".  Module " + dependencyName + " is not present in the context." );
+				       + ".  Module " + dependencyName + " is present but is not enabled." );
 
 		this.moduleName = moduleName;
 		this.dependencyName = dependencyName;

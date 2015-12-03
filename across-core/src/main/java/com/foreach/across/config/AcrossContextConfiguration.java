@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * <p>Creates an AcrossContext bean and will apply all AcrossContextConfigurer instances
@@ -42,8 +43,8 @@ public class AcrossContextConfiguration
 	@Qualifier(AcrossContext.INSTALLER_DATASOURCE)
 	private DataSource installerDataSource;
 
-	@Autowired
-	private Collection<AcrossContextConfigurer> configurers;
+	@Autowired(required = false)
+	private Collection<AcrossContextConfigurer> configurers = Collections.emptyList();
 
 	@SuppressWarnings("all")
 	@Bean

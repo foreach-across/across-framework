@@ -326,8 +326,9 @@ public class AcrossBootstrapper
 
 	private ConfigurableAcrossContextInfo buildContextAndModuleInfo() {
 		ConfigurableAcrossContextInfo contextInfo = new ConfigurableAcrossContextInfo( context );
-		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder =
-				new ModuleBootstrapOrderBuilder( context.getModules() );
+		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
+		moduleBootstrapOrderBuilder.setDependencyResolver( context.getModuleDependencyResolver() );
+		moduleBootstrapOrderBuilder.setSourceModules( context.getModules() );
 
 		Collection<AcrossModuleInfo> configured = new LinkedList<>();
 

@@ -2,7 +2,7 @@
 Arne Vandamme
 :toc:
 :sectanchors:
-:across-version: 1.1.1.RELEASE
+:across-version: 1.1.2-SNAPSHOT
 :spring-version: 4.1.4.RELEASE
 :foreach-common-version: 0.12
 :spring-url: http://projects.spring.io/spring-framework/
@@ -140,7 +140,7 @@ A <<Across platform BOM,platform BOM>> is also provided to aid in managing depen
 
 .Most common dependency versions that almost all modules rely on
 |===
-| Java | 1.7
+| Java | 1.8
 | Java Servlet API _(if applicable)_ | 3.0.1
 | Spring framework | {spring-version}
 |===

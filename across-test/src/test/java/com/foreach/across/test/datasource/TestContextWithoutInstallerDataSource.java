@@ -15,12 +15,9 @@
  */
 package com.foreach.across.test.datasource;
 
-import com.foreach.across.config.AcrossContextConfiguration;
-import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.database.support.HikariDataSourceHelper;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,22 +56,12 @@ public class TestContextWithoutInstallerDataSource
 
 	@Configuration
 	@EnableAcrossContext
-	static class Config implements AcrossContextConfigurer
+	static class Config
 	{
-		@Bean
-		public AcrossContextConfiguration acrossContextConfiguration() {
-			return new AcrossContextConfiguration();
-		}
-
 		@Bean
 		public DataSource acrossDataSource() {
 			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
 			                                      StringUtils.EMPTY );
-		}
-
-		@Override
-		public void configure( AcrossContext context ) {
-
 		}
 	}
 }

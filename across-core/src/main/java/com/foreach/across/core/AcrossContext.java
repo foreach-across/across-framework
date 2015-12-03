@@ -18,6 +18,7 @@ package com.foreach.across.core;
 
 import com.foreach.across.core.context.AbstractAcrossEntity;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
@@ -76,6 +77,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private boolean failBootstrapOnEventPublicationErrors = true;
 
 	private ExposedBeanDefinitionTransformer exposeTransformer = null;
+	private ModuleDependencyResolver moduleDependencyResolver = null;
 
 	/**
 	 * Constructs a new AcrossContext in its own ApplicationContext.
@@ -292,6 +294,23 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 */
 	public void setExposeTransformer( ExposedBeanDefinitionTransformer exposeTransformer ) {
 		this.exposeTransformer = exposeTransformer;
+	}
+
+	/**
+	 * Sets the instance to be used for resolving the module dependencies.  If none is configured all
+	 * modules will have to be added explicitly.
+	 *
+	 * @param moduleDependencyResolver instance
+	 */
+	public void setModuleDependencyResolver( ModuleDependencyResolver moduleDependencyResolver ) {
+		this.moduleDependencyResolver = moduleDependencyResolver;
+	}
+
+	/**
+	 * @return The instance that is being used for resolving the module dependencies.
+	 */
+	public ModuleDependencyResolver getModuleDependencyResolver() {
+		return moduleDependencyResolver;
 	}
 
 	/**
