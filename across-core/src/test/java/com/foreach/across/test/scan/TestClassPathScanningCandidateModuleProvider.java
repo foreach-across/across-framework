@@ -21,6 +21,7 @@ import com.foreach.across.test.scan.packageOne.ExtendedValidModule;
 import com.foreach.across.test.scan.packageOne.ValidModule;
 import com.foreach.across.test.scan.packageTwo.OtherValidModule;
 import com.foreach.across.test.scan.packageTwo.ReplacementValidModule;
+import com.foreach.across.test.scan.packageTwo.YetAnotherValidModule;
 import org.junit.Test;
 
 import java.util.Map;
@@ -70,10 +71,11 @@ public class TestClassPathScanningCandidateModuleProvider
 		);
 
 		assertNotNull( candidates );
-		assertEquals( 3, candidates.size() );
+		assertEquals( 4, candidates.size() );
 
 		assertTrue( candidates.containsKey( ExtendedValidModule.NAME ) );
 		assertTrue( candidates.containsKey( OtherValidModule.NAME ) );
+		assertTrue( candidates.containsKey( YetAnotherValidModule.NAME ) );
 
 		// module should be the version of packageTwo
 		Supplier<AcrossModule> supplier = candidates.get( ValidModule.NAME );
@@ -90,10 +92,11 @@ public class TestClassPathScanningCandidateModuleProvider
 		);
 
 		assertNotNull( candidates );
-		assertEquals( 3, candidates.size() );
+		assertEquals( 4, candidates.size() );
 
 		assertTrue( candidates.containsKey( ExtendedValidModule.NAME ) );
 		assertTrue( candidates.containsKey( OtherValidModule.NAME ) );
+		assertTrue( candidates.containsKey( YetAnotherValidModule.NAME ) );
 
 		// module should be the version of packageOne
 		Supplier<AcrossModule> supplier = candidates.get( ValidModule.NAME );

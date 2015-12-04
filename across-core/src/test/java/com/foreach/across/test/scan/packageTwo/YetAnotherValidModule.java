@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.scan.packageOne;
+package com.foreach.across.test.scan.packageTwo;
 
-import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.test.scan.packageTwo.OtherValidModule;
+import com.foreach.across.core.AcrossModule;
 
 /**
  * @author Arne Vandamme
  */
-@AcrossDepends(optional = OtherValidModule.NAME)
-public class ExtendedValidModule extends ValidModule
+public class YetAnotherValidModule extends AcrossModule
 {
-	public static final String NAME = "ExtendedValidModule";
+	public static final String NAME = "YetAnotherValidModule";
 
 	@Override
 	public String getName() {
 		return NAME;
+	}
+
+	@Override
+	public String getDescription() {
+		return null;
 	}
 }

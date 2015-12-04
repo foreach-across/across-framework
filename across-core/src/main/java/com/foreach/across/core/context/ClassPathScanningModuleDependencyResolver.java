@@ -17,9 +17,7 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.AcrossModule;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -30,18 +28,16 @@ import java.util.function.Supplier;
  */
 public class ClassPathScanningModuleDependencyResolver implements ModuleDependencyResolver
 {
-	private ClassPathScanningCandidateModuleProvider candidateModuleProvider
-			= new ClassPathScanningCandidateModuleProvider();
-
 	private boolean resolveRequired = true;
 	private boolean resolveOptional = false;
+	private Set<String> excludedModules = new HashSet<>();
 	private Map<String, Supplier<AcrossModule>> candidates = Collections.emptyMap();
 
 	/**
 	 * @param basePackages that should be scanned
 	 */
 	public void setBasePackages( String... basePackages ) {
-		candidates = candidateModuleProvider.findCandidateModules( basePackages );
+		candidates = new ClassPathScanningCandidateModuleProvider().findCandidateModules( basePackages );
 	}
 
 	/**
@@ -49,6 +45,14 @@ public class ClassPathScanningModuleDependencyResolver implements ModuleDependen
 	 */
 	public void setResolveRequired( boolean resolveRequired ) {
 		this.resolveRequired = resolveRequired;
+	}
+
+	/**
+	 * @param moduleNames list of module names that should never be resolved
+	 */
+	public void setExcludedModules( Collection<String> moduleNames ) {
+		excludedModules.clear();
+		excludedModules.addAll( moduleNames );
 	}
 
 	/**
@@ -68,9 +72,11 @@ public class ClassPathScanningModuleDependencyResolver implements ModuleDependen
 
 	@Override
 	public Optional<AcrossModule> resolveModule( String moduleName, boolean requiredModule ) {
-		if ( requiredModule && isResolveRequired() || !requiredModule && isResolveOptional() ) {
-			if ( candidates.containsKey( moduleName ) ) {
-				return Optional.ofNullable( candidates.get( moduleName ).get() );
+		if ( !excludedModules.contains( moduleName ) ) {
+			if ( requiredModule && isResolveRequired() || !requiredModule && isResolveOptional() ) {
+				if ( candidates.containsKey( moduleName ) ) {
+					return Optional.ofNullable( candidates.get( moduleName ).get() );
+				}
 			}
 		}
 

@@ -16,8 +16,11 @@
 package com.foreach.across.test.scan;
 
 import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
+import com.foreach.across.test.scan.packageOne.ExtendedValidModule;
 import com.foreach.across.test.scan.packageOne.ValidModule;
 import org.junit.Test;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -75,5 +78,19 @@ public class TestClassPathScanningModuleDependencyResolver
 
 		assertTrue( resolver.resolveModule( ValidModule.NAME, true ).isPresent() );
 		assertTrue( resolver.resolveModule( ValidModule.NAME, false ).isPresent() );
+	}
+
+	@Test
+	public void excludeModules() {
+		ClassPathScanningModuleDependencyResolver resolver = new ClassPathScanningModuleDependencyResolver();
+		resolver.setBasePackages( "com.foreach.across.test.scan.packageOne" );
+		resolver.setResolveOptional( true );
+		resolver.setResolveRequired( true );
+		resolver.setExcludedModules( Collections.singleton( ValidModule.NAME ) );
+
+		assertTrue( resolver.resolveModule( ExtendedValidModule.NAME, true ).isPresent() );
+		assertTrue( resolver.resolveModule( ExtendedValidModule.NAME, false ).isPresent() );
+		assertFalse( resolver.resolveModule( ValidModule.NAME, true ).isPresent() );
+		assertFalse( resolver.resolveModule( ValidModule.NAME, false ).isPresent() );
 	}
 }

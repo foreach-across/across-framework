@@ -67,7 +67,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
 			new LinkedHashMap<>();
 
-	private List<AcrossModule> modules = new LinkedList<>();
+	private Map<String, AcrossModule> modules = new LinkedHashMap<>();
 
 	private boolean developmentMode;
 	private boolean disableNoOpCacheManager = false;
@@ -138,7 +138,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	}
 
 	public Collection<AcrossModule> getModules() {
-		return modules;
+		return modules.values();
 	}
 
 	public boolean isDevelopmentMode() {
@@ -181,17 +181,13 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	}
 
 	public void setModules( Collection<AcrossModule> modules ) {
-		modules.clear();
-		for ( AcrossModule module : modules ) {
-			addModule( module );
-		}
+		this.modules.clear();
+		modules.forEach( this::addModule );
 	}
 
 	public void addModule( AcrossModule module ) {
-		if ( modules.contains( module ) ) {
-			throw new AcrossException(
-					"Not allowed to add two modules with the same name to a single AcrossContext: " + module );
-		}
+		Assert.notNull( module );
+		Assert.notNull( module.getName(), "An AcrossModule must have a valid unique name." );
 
 		if ( module.getContext() != null ) {
 			throw new AcrossException( "Module is already attached to another AcrossContext: " + module );
@@ -202,22 +198,38 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 					"Adding a module to an already bootstrapped AcrossContext is currently not supported." );
 		}
 
-		modules.add( module );
+		modules.put( module.getName(), module );
 		module.setContext( this );
 	}
 
 	/**
-	 * Gets the module with the given name (or fully qualified class name) if present on the context.
-	 * Only the first module matching the name will be returned.
+	 * Gets the module with the given name if present on the context.
 	 *
-	 * @param name Name or fully qualified class name of the module.
-	 * @return AcrossModule or null if not present.
+	 * @param name Name of the module.
+	 * @return AcrossModule or {@code null} if not present.
 	 */
 	public AcrossModule getModule( String name ) {
-		for ( AcrossModule module : modules ) {
-			if ( StringUtils.equals( module.getName(), name ) || StringUtils.equals( module.getClass().getName(),
-			                                                                         name ) ) {
+		for ( AcrossModule module : modules.values() ) {
+			if ( StringUtils.equals( module.getName(), name ) ) {
 				return module;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets the module with the given name if present on the context.  Requires the module to be of the specific type,
+	 * if this is not the case a {@link ClassCastException} will be thrown.
+	 *
+	 * @param name       Name of the module
+	 * @param moduleType Required module type
+	 * @return AcrossModule or {@code null} if not present
+	 */
+	public <U extends AcrossModule> U getModule( String name, Class<U> moduleType ) {
+		for ( AcrossModule module : modules.values() ) {
+			if ( StringUtils.equals( module.getName(), name ) ) {
+				return moduleType.cast( module );
 			}
 		}
 
