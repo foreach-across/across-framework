@@ -130,6 +130,7 @@
 				<configuration>
 					<sourceDirectory>docs</sourceDirectory>
 					<sourceDocumentName>index.adoc</sourceDocumentName>
+					<doctype>book</doctype>
 					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
 					<backend>html</backend>
 				</configuration>

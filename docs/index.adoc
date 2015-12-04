@@ -1,18 +1,14 @@
 = Across framework
 Arne Vandamme
-:toc:
+:toc: left
 :sectanchors:
 :across-version: 1.1.2-SNAPSHOT
-:spring-version: 4.1.4.RELEASE
-:foreach-common-version: 0.12
 :spring-url: http://projects.spring.io/spring-framework/
 :spring-data-url: http://projects.spring.io/spring-data/
 :spring-batch-url: http://projects.spring.io/spring-batch/
 :spring-security-url: http://projects.spring.io/spring-security/
-:spring-platform-deps: http://docs.spring.io/platform/docs/1.1.1.RELEASE/reference/htmlsingle/#appendix-dependency-versions
 
 :numbered!:
-
 [abstract]
 == Across in a nutshell
 Across is a Java framework that aims to facilitate module based development for Java (web) applications.
@@ -26,16 +22,23 @@ make them depend on each other.  A module will most often be a separate jar, but
 The general principle is that every Across module can depend on others, but is responsible for its own installation and
 start-up procedures.  To this end, a module can define its own installers.
 
+== What's new in this version?
+=== 1.1.2-SNAPSHOT
+tbd
+EnableAcrossContext extended with attributes - scanning
+
+=== 1.1.1.RELEASE
+Initial public release available on http://search.maven.org/[Maven central].
+
+:numbered:
+= I. About Across
+
 == Before you begin
 To understand what Across is and how it works you should have good knowledge of Java web development as well as
 link:{spring-url}[Spring framework and Spring Web MVC].  At the very least you should be familiar with the concepts of dependency
 injection (auto-wiring), the `ApplicationContext` and `JavaConfig` configuration style.
 
-:numbered:
-
-== About Across
-
-=== Modular development
+== Modular development
 Across framework aims to facilitate module based development of your Java applications.  An application would simply
  consist of a collection of modules, where each module brings a set of functionality to the table.  Modules are somewhat
  _knowledgeable_, they _know_ about the application/set-up they are running in and can make decisions based on that
@@ -52,6 +55,7 @@ For modules to be able to do this they have to speak a common language.  In soft
 
 Across framework gives developers an easy way to create, configure and reuse _smart_ modules.
 
+[discrete]s
 === The difference between libraries and modules
 The terms _libraries_ and _modules_ are sometimes used interchangeably in the software development landscape.  The exact
  meaning depends on the context.  When talking about Across we identify the following difference between the two:
@@ -96,6 +100,7 @@ There are standard modules that provide you with the set-up for an administrativ
 Across framework provides only a ground layer, the real win is in re-using well-defined modules that have already
 been built.  The standard modules projects aims to do exactly that: bring some best of breed modules to the open source Across landscape.
 
+[discrete]
 === Across and Spring framework
 {spring-url}[Spring framework] is a de facto industry standard for building Java (web) applications.  It was a logical
  choice to use it as the foundation for Across.  Across extends or even customizes some aspects of Spring, but still supports
@@ -104,6 +109,7 @@ been built.  The standard modules projects aims to do exactly that: bring some b
 <<across-core>> and <<across-web>> build on top of the common Spring framework, while other <<across-standard-modules,standard modules>> integrate different
 Spring libraries like {spring-data-url}[Spring Data], {spring-batch-url}[Spring Batch] or {spring-security-url}[Spring security].
 
+[discrete]
 === Across and OSGi
 While Across talks about modules just like OSGi does and some similarity between the basic concepts can be found,
  there is currently no relation between the two.  Across modules are not OSGi and the current development does not
@@ -116,16 +122,33 @@ Integrating Across applications in the OSGi landscape is on the long-term roadma
 At the heart of Across are a couple of concepts you should understand.  The terms related tot these concepts are used
 throughout all Across documentation, consider them part of the Across http://en.wikipedia.org/wiki/Domain-specific_language[DSL].
 
+[discrete]
 === context
+
+[discrete]
 === modules
+
+[discrete]
 === dependencies
+
+[discrete]
 === bootstrap
+
+[discrete]
 === installers
+
+[discrete]
 === exposing
+
+[discrete]
 === events
+
+[discrete]
 === refreshing
 
 == Across framework artifacts
+
+[discrete]
 === Overview
 Across framework itself consists of 3 artifacts: `across-core`, `across-web` and `across-test`.
 
@@ -133,10 +156,10 @@ across-core:: Supports the configuration of an Across context and provides all n
 across-web:: Provides an `AcrossModule` that supports configuration of a web application using Across with the Spring `DispatcherServlet` as the most common scenario.
 across-test:: Supports integration testing of your Across modules, both web and non-web related.  Builds on top of `spring-test`.
 
+[discrete]
 === Common dependencies
 Across is directly tied to Spring framework and all artifacts come with a set of curated dependencies.
 Applications built on top of Across should either manage the dependencies manually by fixing the versions or let the modules pull in the required dependencies transitively.
-A <<Across platform BOM,platform BOM>> is also provided to aid in managing dependencies.
 
 .Most common dependency versions that almost all modules rely on
 |===
@@ -145,6 +168,7 @@ A <<Across platform BOM,platform BOM>> is also provided to aid in managing depen
 | Spring framework | {spring-version}
 |===
 
+[discrete]
 === Repository
 All Across related artifacts - both release and snapshot versions - can be fetched from the Foreach Nexus repository.  This also includes the set of <<across-standard-modules>>.
 
@@ -159,99 +183,6 @@ All Across related artifacts - both release and snapshot versions - can be fetch
         </repository>
     </repositories>
 ----
-
-== Across platform BOM
-Across also provides a so called *bill of material* POM that provides the curated list of Across related dependencies,
-including all standard modules.  Using this BOM pom is advised as it helps you to avoid
-dependency conflicts and gives you the confidence that the dependency versions work together correctly.
-
-Using the BOM can be done by including it in the `dependencyManagement` section of your Maven build file.  Dependencies
-known in the platform BOM do not need a version element to be specified.  If a version is omitted, the version from the BOM
-will be used.
-
-[source,xml,indent=0]
-[subs="verbatim,quotes,attributes"]
-----
-<!-- Include the platform BOM with scope import -->
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>across</groupId>
-            <artifactId>platform-bom</artifactId>
-            <version>{across-version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
-
-<!-- Specific dependencies do not need a version -->
-<dependencies>
-    <dependency>
-        <groupId>across</groupId>
-        <artifactId>across-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>across-standard-modules</groupId>
-        <artifactId>debug-web</artifactId>
-    </dependency>
-</dependencies>
-----
-
-=== Dependency versions
-The Across platform BOM extends the Spring platform BOM, the base list of dependencies can be found in the
-{spring-platform-deps}[Spring platform documentation].
-Additionally Across platform BOM defines and overrides the following dependencies:
-
-|===
-
-| Group | Artifact | Version
-| org.liquibase | liquibase.core | 3.1.0
-| com.mattbertolini | liquibase-slf4j | 1.2.1
-| org.apache.commons | commons-collections4 | 4.0
-| net.engio | mbassador | 1.2.0
-
-| com.mysema.querydsl | querydsl-core | 3.5.1
-| com.mysema.querydsl | querydsl-apt | 3.5.1
-| com.mysema.querydsl | querydsl-jpa | 3.5.1
-
-| org.hibernate | hibernate-core | 4.2.14.Final
-| org.hibernate | hibernate-entitymanager | 4.2.14.Final
-| org.hibernate | hibernate-validator | 4.3.2.Final
-| org.jboss.logging | jboss-logging | 3.1.3.GA
-
-| javax.validator | validation-api | 1.0.0.GA
-| cglib | cglib | 3.1
-
-| mysql | mysql-connector-java | 5.1.31
-| com.oracle | ojdbc6 | 11.2.0
-| net.sourceforge.jtds | jtds | 1.3.1
-| com.zaxxer | HikariCP-java6 | 2.3.5
-
-| com.foreach.libs | common-concurrent | {foreach-common-version}
-| com.foreach.libs | common-spring | {foreach-common-version}
-| com.foreach.libs | common-web | {foreach-common-version}
-| com.foreach.libs | common-test | {foreach-common-version}
-
-| across | across-core | {across-version}
-| across | across-web | {across-version}
-| across | across-test | {across-version}
-| across-standard-modules | across-hibernate | {across-version}
-| across-standard-modules | across-ehcache | {across-version}
-| across-standard-modules | debug-web | {across-version}
-| across-standard-modules | admin-web | {across-version}
-| across-standard-modules | spring-security | {across-version}
-| across-standard-modules | spring-security-acl | {across-version}
-| across-standard-modules | oauth2-module | {across-version}
-| across-standard-modules | properties-module | {across-version}
-| across-standard-modules | entity-module | {across-version}
-| across-standard-modules | user-module | {across-version}
-| across-standard-modules | application-info | {across-version}
-| across-standard-modules | logging-module | {across-version}
-| across-standard-modules | filemanager | {across-version}
-| across-standard-modules | spring-batch | {across-version}
-
-|===
 
 include::../across-core/src/doc/index.adoc[]
 include::../across-web/src/doc/index.adoc[]

@@ -1,5 +1,5 @@
 [[across-core]]
-== Across core
+= II. Across core
 
 [discrete]
 === Artifact
