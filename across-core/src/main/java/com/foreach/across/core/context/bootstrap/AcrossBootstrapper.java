@@ -205,6 +205,8 @@ public class AcrossBootstrapper
 				bootstrapLockManager.ensureUnlocked();
 			}
 
+			contextInfo.setBootstrapped( true );
+
 			// Bootstrap finished - publish the event
 			eventPublisher.publish( new AcrossContextBootstrappedEvent( contextInfo ) );
 
