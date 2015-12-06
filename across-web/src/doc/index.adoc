@@ -1,5 +1,5 @@
 [[across-web]]
-= III. Across web
+= III. Across Web
 
 artifact
 
@@ -53,8 +53,6 @@ If both JSP and Thymeleaf support are enabled, you can easily use both view type
 </html>
 ----
 
-
-
 ---
 
 link builders:
@@ -62,3 +60,10 @@ prefixing path context
 special characters:
 - ! = suppress prefix
 - {adminWeb}/boe/test/
+
+Extending modules should just define a WebMvcConfigurer component or configuration (does not need to be exposed).
+To avoid the default configuration: extend AcrossWebModule and override default context configurers.
+If you want to add a custom validator/message codes resolver: add it as bean to the AcrossWebModule before bootstrap.
+Working with templates
+Building menus
+Multipart resolving
