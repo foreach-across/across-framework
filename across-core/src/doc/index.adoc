@@ -19,14 +19,87 @@ Across Core is the main dependency that is required for bootstrapping an `Across
 
 == Configuring an AcrossContext
 
+[[enableacrosscontext]]
 === @EnableAcrossContext
 Usually your application will consist of a single `AcrossContext` that is configured in the main Spring `ApplicationContext`.
 You can enable the automatic creation of an `AcrossContext` by putting the `@EnableAcrossContext` on any `@Configuration` class.
-This will initialize a new `AcrossContext` with the main `ApplicationContext` as parent, look for a default datasource bean named
-`acrossDataSource` and then delegate context configuration to all `AcrossContextConfigurer` beans it can find in the `ApplicationContext` before bootstrapping.
+This will initialize a new `AcrossContext` with the main `ApplicationContext` as parent, look for a <<across-datasource,default datasource bean>> named *acrossDataSource* and then configure modules based on the `@EnableAcrossContext` attribute values.
 
-The `AcrossContext` will be configured with sensible defaults but all settings can be overridden in any `AcrossContextConfigurer`.
+==== AcrossContext autoconfiguration
+By default autoconfiguration of the `AcrossContext` will be enabled.
+This implies that all `AcrossModule` beans from the parent `ApplicationContext` will be configured, along with any modules specified by name on `@EnableAcrossContext`.
 
+When autoconfiguration is enabled, packages will be scanned to find valid module classes.
+Unless packages are configured manually using the *modulePackages* attribute, the _com.foreach.across.modules_ package along with the package of the declaring `@Configuration` class will be scanned.
+Scanning for modules in itself does not add any modules to the `AcrossContext`.
+It simply maps all modules that could be autoconfigured on their unique name.
+For a module to be autoconfigurable it should adhere to certain conventions, see the section on <<creating-an-acrossmodule,creating an Across module>> for more details.
+
+NOTE: The module scanning packages and settings can be controlled through attributes on `@EnableAcrossContext`.
+
+WARNING: A module name should be unique.
+If you have more than one module with the same name, the last module scanned will take precedence.
+
+.Minimal example of using @EnableAcrossContext
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+/**
+ * Minimal configuration that will attempt to resolve module MyCustomModule:
+ * - in the standard modules package (com.foreach.across.modules)
+ * - in the package that AppConfiguration belongs to
+ *
+ * If found, MyCustomModule and its required dependencies will be added to the AcrossContext.
+ * If not found, AcrossContext bootstrapping will fail.
+ */
+@Configuration
+@EnableAcrossContext( "MyCustomModule" )
+public class AppConfiguration
+{
+}
+----
+
+If you want to customize the module configuration or a module is not autoconfigurable, you can add it as a bean in the parent `ApplicationContext` instead.
+
+.Example adding a module as a bean
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+/**
+ * AcrossWebModule is added to the AcrossContext by name.
+ *
+ * MyCustomModule is added as a bean in the ApplicationContext.
+ * Because the bean implements AcrossModule, it will also be added to the AcrossContext.
+ *
+ * All required dependencies of either module will also be added if they can be found through scanning.
+ */
+@Configuration
+@EnableAcrossContext( AcrossWebModule.NAME )
+public class AppConfiguration
+{
+    @Bean
+    public MyCustomModule myCustomModule() {
+        return new MyCustomModule();
+    }
+}
+----
+
+As the previous example shows, you can safely combine beans and named module configuration.
+Modules are configured in a certain order:
+
+. Modules defined by name on `@EnableAcrossContext`
+. Module beans detected in the `ApplicationContext`
+. Modules added through <<acrosscontextconfigurer,`AcrossContextConfigurer` instances>>
+. Missing module dependencies resolved during bootstrap
+
+If a module with the same name gets added more than once, the last version added will always win.
+
+[[acrosscontextconfigurer]]
+==== Customizing the AcrossContext
+After initial configuration but before bootstrapping, the configured `AcrossContext` will be delegated to all `AcrossContextConfigurer` beans it can find in the `ApplicationContext`.
+This allows for changing any settings before the actual bootstrap happens.
+
+.Example customizing an AcrossContext
 [source,java,indent=0]
 [subs="verbatim,quotes,attributes"]
 ----
@@ -56,7 +129,7 @@ public class WebConfiguration implements AcrossContextConfigurer
 
 [discrete]
 === Manual configuration
-An `AcrossContext` can be configured manually and is started using the `bootstrap()` method, and stopped using `shutdown()`.
+An `AcrossContext` can be also configured manually and is started using the `bootstrap()` method, and stopped using `shutdown()`.
 These methods take care of the Spring `ApplicationContext` lifecycle of all modules configured in the context.
 
 [source,java,indent=0]
@@ -234,7 +307,8 @@ public class SomeBeanInModule {
 }
 ----
 
-== Across data sources
+[[across-datasource]]
+== Across datasource
 An AcrossContext supports the configuration of a DataSource instance.
 The datasource will be available for all modules as bean named *acrossDataSource*.
 Additionally a second datasource can be configured that will be available as the *acrossInstallerDataSource*.
@@ -470,9 +544,52 @@ tbd
 
 == Developing modules
 
+[[creating-an-acrossmodule]]
 === Creating an AcrossModule
+Creating a new Across module is done by extending `AcrossModule` and providing a valid name and description.
+An `AcrossModule` is in essence a configuration class.
+It uniquely identifies the module and holds all configuration parameters required to bootstrap the module.
+It also allows you to alter settings of how beans should be shared with other modules.
 
-name, resources key, message sources
+A module name should be unique and as a best practice also be available as a public static final *NAME* field on the `AcrossModule` implementation.
+
+.Minimal AcrossModule
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+public class ValidModule extends AcrossModule
+{
+	public static final String NAME = "ValidModule";
+
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
+	@Override
+	public String getDescription() {
+		return "ValidModule exposes some valid beans.";
+	}
+}
+----
+
+.Making an AcrossModule autoconfigurable
+For an Across module to be autoconfigurable it must adhere to the following conventions:
+
+* the module name must be available in the public static final *NAME* field
+* the module must have public constructor without any parameters
+
+.Definining beans
+Upon bootstrap a module will create its own `ApplicationContext` with the `AcrossContext` as parent.
+The beans created in the module `ApplicationContext` are configured using `ApplicationContextConfigurer` instances.
+
+By default a scan for `@Configuration` classes will happen on the *config* package below the package of the `AcrossModule` implementation.
+If you want more explicit control, you can override the `registerDefaultApplicationContextConfigurers()` method.
+
+.Module resources
+Most modules will also define one or more resources in a location determined on the _resources key_ of the module.
+By default the resources key or a module is the same as the module name.
+You can change this by overriding the `getResourcesKey()` method.
 
 === Module settings
 

@@ -24,8 +24,9 @@ start-up procedures.  To this end, a module can define its own installers.
 
 == What's new in this version?
 === 1.1.2-SNAPSHOT
-tbd
-EnableAcrossContext extended with attributes - scanning
+*Across Core*
+
+* <<enableacrosscontext>> annotation now supports auto configuration of an `AcrossContext`
 
 === 1.1.1.RELEASE
 Initial public release available on http://search.maven.org/[Maven central].
