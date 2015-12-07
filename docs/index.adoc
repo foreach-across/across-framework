@@ -26,7 +26,7 @@ start-up procedures.  To this end, a module can define its own installers.
 === 1.1.2-SNAPSHOT
 *Across Core*
 
-* <<enableacrosscontext>> annotation now supports auto configuration of an `AcrossContext`
+* <<enableacrosscontext>> annotation now supports autoconfiguration of an `AcrossContext`
 
 === 1.1.1.RELEASE
 Initial public release available on http://search.maven.org/[Maven central].
