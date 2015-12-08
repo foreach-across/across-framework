@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
@@ -137,14 +138,14 @@ public class AcrossVersionInfo
 			String className = c.getSimpleName() + ".class";
 			String classPath = c.getResource( className ).toString();
 
-			if ( classPath.startsWith( "jar" ) ) {
-				String manifestPath
-						= classPath.substring( 0, classPath.lastIndexOf( "!" ) + 1 ) + "/META-INF/MANIFEST.MF";
+			if ( classPath.contains( ".jar" ) ) {
+				String packageSuffix = c.getName().replace( ".", "/" );
+				String manifestPath = classPath.replace( "/" + packageSuffix + ".class", "/META-INF/MANIFEST.MF" );
 
 				LOG.trace( "Loading manifest: {}", manifestPath );
 
-				try {
-					Manifest manifest = new Manifest( new URL( manifestPath ).openStream() );
+				try( InputStream is = new URL( manifestPath ).openStream() ) {
+					Manifest manifest = new Manifest( is );
 					Attributes attr = manifest.getMainAttributes();
 
 					versionInfo = new AcrossVersionInfo();
