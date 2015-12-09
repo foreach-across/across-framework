@@ -205,6 +205,8 @@ public class AcrossBootstrapper
 				bootstrapLockManager.ensureUnlocked();
 			}
 
+			contextInfo.setBootstrapped( true );
+
 			// Bootstrap finished - publish the event
 			eventPublisher.publish( new AcrossContextBootstrappedEvent( contextInfo ) );
 
@@ -326,8 +328,9 @@ public class AcrossBootstrapper
 
 	private ConfigurableAcrossContextInfo buildContextAndModuleInfo() {
 		ConfigurableAcrossContextInfo contextInfo = new ConfigurableAcrossContextInfo( context );
-		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder =
-				new ModuleBootstrapOrderBuilder( context.getModules() );
+		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
+		moduleBootstrapOrderBuilder.setDependencyResolver( context.getModuleDependencyResolver() );
+		moduleBootstrapOrderBuilder.setSourceModules( context.getModules() );
 
 		Collection<AcrossModuleInfo> configured = new LinkedList<>();
 

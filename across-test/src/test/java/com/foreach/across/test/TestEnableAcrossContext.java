@@ -13,55 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.datasource;
+package com.foreach.across.test;
 
 import com.foreach.across.config.EnableAcrossContext;
-import com.foreach.across.core.AcrossContext;
-import com.foreach.across.database.support.HikariDataSourceHelper;
-import org.apache.commons.lang3.StringUtils;
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.modules.web.AcrossWebModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
-import javax.sql.DataSource;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 /**
- * @author Andy Somers
+ * @author Arne Vandamme
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestContextWithoutInstallerDataSource.Config.class)
-public class TestContextWithoutInstallerDataSource
+@WebAppConfiguration
+@ContextConfiguration(classes = TestEnableAcrossContext.Config.class)
+public class TestEnableAcrossContext
 {
 	@Autowired
-	private AcrossContext acrossContext;
+	private AcrossContextInfo contextInfo;
 
 	@Test
-	public void contextWithoutInstallerDataSourceSetsDefaultDataSourceAsInstallerDataSourceOnConfig() {
-		DataSource dataSource = acrossContext.getDataSource();
-		DataSource installerDataSource = acrossContext.getInstallerDataSource();
-
-		assertNotNull( dataSource );
-		assertNotNull( installerDataSource );
-		assertSame( dataSource, installerDataSource );
+	public void acrossWebModuleShouldBeScannedByDefault() {
+		assertTrue( contextInfo.hasModule( AcrossWebModule.NAME ) );
 	}
 
 	@Configuration
-	@EnableAcrossContext
+	@EnableAcrossContext("AcrossWebModule")
 	static class Config
 	{
-		@Bean
-		public DataSource acrossDataSource() {
-			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
-			                                      StringUtils.EMPTY );
-		}
 	}
 }
