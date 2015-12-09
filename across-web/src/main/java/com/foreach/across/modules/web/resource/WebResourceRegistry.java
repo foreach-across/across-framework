@@ -17,7 +17,6 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.core.AcrossException;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -136,7 +135,7 @@ public class WebResourceRegistry
 				}
 
 				// A resource without key but the same data will always match
-				if ( !resource.hasKey() && ObjectUtils.equals( data, resource.getData() ) ) {
+				if ( !resource.hasKey() && Objects.equals( data, resource.getData() ) ) {
 					matchOnData = resource;
 				}
 			}
@@ -155,7 +154,7 @@ public class WebResourceRegistry
 		Iterator<WebResource> iterator = resources.iterator();
 
 		while ( iterator.hasNext() ) {
-			if ( ObjectUtils.equals( data, iterator.next().getData() ) ) {
+			if ( Objects.equals( data, iterator.next().getData() ) ) {
 				iterator.remove();
 			}
 		}
@@ -172,7 +171,7 @@ public class WebResourceRegistry
 
 		while ( iterator.hasNext() ) {
 			WebResource resource = iterator.next();
-			if ( StringUtils.equals( type, resource.getType() ) && ObjectUtils.equals( data, resource.getData() ) ) {
+			if ( StringUtils.equals( type, resource.getType() ) && Objects.equals( data, resource.getData() ) ) {
 				iterator.remove();
 			}
 		}

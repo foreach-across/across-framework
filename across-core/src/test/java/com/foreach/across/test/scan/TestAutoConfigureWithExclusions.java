@@ -13,55 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.datasource;
+package com.foreach.across.test.scan;
 
 import com.foreach.across.config.EnableAcrossContext;
-import com.foreach.across.core.AcrossContext;
-import com.foreach.across.database.support.HikariDataSourceHelper;
-import org.apache.commons.lang3.StringUtils;
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.test.scan.packageOne.ExtendedValidModule;
+import com.foreach.across.test.scan.packageTwo.OtherValidModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.sql.DataSource;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
- * @author Andy Somers
+ * @author Arne Vandamme
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestContextWithoutInstallerDataSource.Config.class)
-public class TestContextWithoutInstallerDataSource
+@ContextConfiguration(classes = TestAutoConfigureWithExclusions.Config.class)
+public class TestAutoConfigureWithExclusions
 {
 	@Autowired
-	private AcrossContext acrossContext;
+	private AcrossContextInfo contextInfo;
 
 	@Test
-	public void contextWithoutInstallerDataSourceSetsDefaultDataSourceAsInstallerDataSourceOnConfig() {
-		DataSource dataSource = acrossContext.getDataSource();
-		DataSource installerDataSource = acrossContext.getInstallerDataSource();
+	public void moduleIsAdded() {
+		assertTrue( contextInfo.hasModule( ExtendedValidModule.NAME ) );
+	}
 
-		assertNotNull( dataSource );
-		assertNotNull( installerDataSource );
-		assertSame( dataSource, installerDataSource );
+	@Test
+	public void optionalDependencyIsNotAddedBecauseExcluded() {
+		assertFalse( contextInfo.hasModule( OtherValidModule.NAME ) );
 	}
 
 	@Configuration
-	@EnableAcrossContext
+	@EnableAcrossContext(
+			modules = ExtendedValidModule.NAME,
+			excludeFromScanning = OtherValidModule.NAME,
+			scanForOptionalModules = true
+	)
 	static class Config
 	{
-		@Bean
-		public DataSource acrossDataSource() {
-			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
-			                                      StringUtils.EMPTY );
-		}
 	}
 }

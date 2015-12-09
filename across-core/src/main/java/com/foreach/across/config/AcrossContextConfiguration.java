@@ -16,15 +16,22 @@
 package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
+import com.foreach.across.core.context.ModuleDependencyResolver;
+import com.foreach.across.core.context.support.ModuleSetBuilder;
 import com.foreach.across.core.installers.InstallerAction;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportAware;
+import org.springframework.core.type.AnnotationMetadata;
 
 import javax.sql.DataSource;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * <p>Creates an AcrossContext bean and will apply all AcrossContextConfigurer instances
@@ -32,8 +39,12 @@ import java.util.Collection;
  * <p>A DataSource bean names acrossDataSource is required.</p>
  */
 @Configuration
-public class AcrossContextConfiguration
+public class AcrossContextConfiguration implements ImportAware
 {
+	public static final String STANDARD_MODULES_PACKAGE = "com.foreach.across.modules";
+
+	static final String ANNOTATION_TYPE = EnableAcrossContext.class.getName();
+
 	@Autowired(required = false)
 	@Qualifier(AcrossContext.DATASOURCE)
 	private DataSource dataSource;
@@ -42,13 +53,21 @@ public class AcrossContextConfiguration
 	@Qualifier(AcrossContext.INSTALLER_DATASOURCE)
 	private DataSource installerDataSource;
 
-	@Autowired
-	private Collection<AcrossContextConfigurer> configurers;
+	@Autowired(required = false)
+	private Collection<AcrossContextConfigurer> configurers = Collections.emptyList();
+
+	private AnnotationMetadata importMetadata;
+
+	@Override
+	public void setImportMetadata( AnnotationMetadata importMetadata ) {
+		this.importMetadata = importMetadata;
+	}
 
 	@SuppressWarnings("all")
 	@Bean
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
-		AcrossContext context = new AcrossContext( applicationContext );
+		AcrossContext context
+				= createAcrossContext( applicationContext, importMetadata.getAnnotationAttributes( ANNOTATION_TYPE ) );
 
 		// Set installer datasource
 		DataSource ds = dataSourceForInstallers();
@@ -75,6 +94,87 @@ public class AcrossContextConfiguration
 		context.bootstrap();
 
 		return context;
+	}
+
+	private AcrossContext createAcrossContext( ConfigurableApplicationContext applicationContext,
+	                                           Map<String, Object> configuration ) {
+		AcrossContext acrossContext = new AcrossContext( applicationContext );
+
+		if ( configuration != null && Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
+			ModuleSetBuilder moduleSetBuilder = new ModuleSetBuilder();
+
+			ModuleDependencyResolver dependencyResolver = moduleDependencyResolver( configuration );
+			moduleSetBuilder.setDependencyResolver( dependencyResolver );
+			acrossContext.setModuleDependencyResolver( dependencyResolver );
+
+			modulesToConfigure( configuration ).forEach( moduleSetBuilder::addModule );
+
+			BeanFactoryUtils
+					.beansOfTypeIncludingAncestors( applicationContext, AcrossModule.class )
+					.values()
+					.forEach( moduleSetBuilder::addModule );
+
+			acrossContext.setModules( moduleSetBuilder.build().getModules() );
+		}
+
+		return acrossContext;
+	}
+
+	private Collection<String> modulesToConfigure( Map<String, Object> configuration ) {
+		String[] valueModuleNames = (String[]) configuration.get( "value" );
+		String[] moduleNames = (String[]) configuration.get( "modules" );
+
+		Set<String> modules = new LinkedHashSet<>();
+		modules.addAll( Arrays.asList( valueModuleNames ) );
+		modules.addAll( Arrays.asList( moduleNames ) );
+
+		return modules;
+	}
+
+	private ModuleDependencyResolver moduleDependencyResolver( Map<String, Object> configuration ) {
+		ClassPathScanningModuleDependencyResolver moduleDependencyResolver
+				= new ClassPathScanningModuleDependencyResolver();
+
+		if ( configuration != null ) {
+			moduleDependencyResolver.setResolveRequired(
+					Boolean.TRUE.equals( configuration.get( "scanForRequiredModules" ) )
+			);
+			moduleDependencyResolver.setResolveOptional(
+					Boolean.TRUE.equals( configuration.get( "scanForOptionalModules" ) )
+			);
+			moduleDependencyResolver.setExcludedModules(
+					Arrays.asList( (String[]) configuration.get( "excludeFromScanning" ) )
+			);
+			moduleDependencyResolver.setBasePackages( determineModulePackages( configuration ) );
+		}
+
+		return moduleDependencyResolver;
+	}
+
+	private String[] determineModulePackages( Map<String, Object> configuration ) {
+		Set<String> modulePackageSet = new LinkedHashSet<>();
+
+		String[] modulePackages = (String[]) configuration.get( "modulePackages" );
+		Collections.addAll( modulePackageSet, modulePackages );
+
+		Class<?>[] modulePackageClasses = (Class<?>[]) configuration.get( "modulePackageClasses" );
+
+		for ( Class<?> modulePackageClass : modulePackageClasses ) {
+			modulePackageSet.add( modulePackageClass.getPackage().getName() );
+		}
+
+		if ( modulePackageSet.isEmpty() ) {
+			modulePackageSet.add( STANDARD_MODULES_PACKAGE );
+
+			try {
+				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
+				modulePackageSet.add( importingClass.getPackage().getName() );
+			}
+			catch ( ClassNotFoundException ignore ) {
+			}
+		}
+
+		return modulePackageSet.toArray( new String[modulePackageSet.size()] );
 	}
 
 	private DataSource dataSourceForInstallers() {
