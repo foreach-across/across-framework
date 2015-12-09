@@ -78,4 +78,12 @@ public @interface EnableAcrossContext
 	 * package of the importing class will be used.
 	 */
 	String[] modulePackages() default {};
+
+	/**
+	 * Type-safe alternative to {@link #modulePackages()} for specifying the packages to scan for modules.
+	 * The package of each class specified will be scanned.
+	 * <p>Consider creating a special no-op marker class or interface in each package
+	 * that serves no purpose other than being referenced by this attribute.</p>
+	 */
+	Class<?>[] modulePackageClasses() default {};
 }

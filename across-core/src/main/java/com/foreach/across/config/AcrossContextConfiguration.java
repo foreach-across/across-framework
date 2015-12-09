@@ -152,21 +152,29 @@ public class AcrossContextConfiguration implements ImportAware
 	}
 
 	private String[] determineModulePackages( Map<String, Object> configuration ) {
-		if ( configuration.containsKey( "modulePackages" ) ) {
-			String[] modulePackages = (String[]) configuration.get( "modulePackages" );
+		Set<String> modulePackageSet = new LinkedHashSet<>();
 
-			if ( modulePackages != null && modulePackages.length > 0 ) {
-				return modulePackages;
+		String[] modulePackages = (String[]) configuration.get( "modulePackages" );
+		Collections.addAll( modulePackageSet, modulePackages );
+
+		Class<?>[] modulePackageClasses = (Class<?>[]) configuration.get( "modulePackageClasses" );
+
+		for ( Class<?> modulePackageClass : modulePackageClasses ) {
+			modulePackageSet.add( modulePackageClass.getPackage().getName() );
+		}
+
+		if ( modulePackageSet.isEmpty() ) {
+			modulePackageSet.add( STANDARD_MODULES_PACKAGE );
+
+			try {
+				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
+				modulePackageSet.add( importingClass.getPackage().getName() );
+			}
+			catch ( ClassNotFoundException ignore ) {
 			}
 		}
 
-		try {
-			Class<?> importingClass = Class.forName( importMetadata.getClassName() );
-			return new String[] { STANDARD_MODULES_PACKAGE, importingClass.getPackage().getName() };
-		}
-		catch ( ClassNotFoundException ignore ) {
-			return new String[] { STANDARD_MODULES_PACKAGE };
-		}
+		return modulePackageSet.toArray( new String[modulePackageSet.size()] );
 	}
 
 	private DataSource dataSourceForInstallers() {

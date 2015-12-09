@@ -18,6 +18,7 @@ package com.foreach.across.test.scan;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.test.scan.packageOne.ExtendedValidModule;
+import com.foreach.across.test.scan.packageThree.ThirdValidModule;
 import com.foreach.across.test.scan.packageTwo.OtherValidModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,8 +43,9 @@ public class TestAutoConfigureWithPackageScan
 	private AcrossContextInfo contextInfo;
 
 	@Test
-	public void moduleIsAdded() {
+	public void modulesAreAdded() {
 		assertTrue( contextInfo.hasModule( ExtendedValidModule.NAME ) );
+		assertTrue( contextInfo.hasModule( ThirdValidModule.NAME ) );
 	}
 
 	@Test
@@ -53,9 +55,10 @@ public class TestAutoConfigureWithPackageScan
 
 	@Configuration
 	@EnableAcrossContext(
-			modules = ExtendedValidModule.NAME,
+			modules = { ExtendedValidModule.NAME, ThirdValidModule.NAME },
 			scanForOptionalModules = true,
-			modulePackages = "com.foreach.across.test.scan.packageOne"
+			modulePackages = "com.foreach.across.test.scan.packageOne",
+			modulePackageClasses = ThirdValidModule.class
 	)
 	static class Config
 	{

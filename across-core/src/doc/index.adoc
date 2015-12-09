@@ -30,7 +30,7 @@ By default autoconfiguration of the `AcrossContext` will be enabled.
 This implies that all `AcrossModule` beans from the parent `ApplicationContext` will be configured, along with any modules specified by name on `@EnableAcrossContext`.
 
 When autoconfiguration is enabled, packages will be scanned to find valid module classes.
-Unless packages are configured manually using the *modulePackages* attribute, the _com.foreach.across.modules_ package along with the package of the declaring `@Configuration` class will be scanned.
+Unless packages are configured manually using the *modulePackages* or *modulePackageClasses* attributes, the _com.foreach.across.modules_ package along with the package of the declaring `@Configuration` class will be scanned.
 Scanning for modules in itself does not add any modules to the `AcrossContext`.
 It simply maps all modules that could be autoconfigured on their unique name.
 For a module to be autoconfigurable it should adhere to certain conventions, see the section on <<creating-an-acrossmodule,creating an Across module>> for more details.
