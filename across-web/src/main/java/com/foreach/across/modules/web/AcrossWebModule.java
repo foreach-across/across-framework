@@ -26,8 +26,8 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.web.config.*;
 import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
-import com.foreach.across.modules.web.config.resourceurls.ResourceUrlProviderExposingInterceptorConfiguration;
 import com.foreach.across.modules.web.config.resourceurls.ResourceUrlEncodingFilterConfiguration;
+import com.foreach.across.modules.web.config.resourceurls.ResourceUrlProviderExposingInterceptorConfiguration;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -35,6 +35,8 @@ import java.util.Set;
 
 public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 {
+	public static final String DEFAULT_VIEWS_RESOURCES_PATH = "/across/resources";
+
 	public static final String NAME = "AcrossWebModule";
 
 	/**
@@ -46,7 +48,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	// AcrossWebModule is the special case providing root resources
 	public static final String RESOURCES = "";
 
-	private String viewsResourcePath = "/across/resources";
+	private String viewsResourcePath = DEFAULT_VIEWS_RESOURCES_PATH;
 	private AcrossWebViewSupport[] supportedViews =
 			new AcrossWebViewSupport[] { AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF };
 
