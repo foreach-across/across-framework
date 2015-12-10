@@ -22,8 +22,11 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import org.springframework.aop.ClassFilter;
+import org.springframework.beans.BeanInstantiationException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -34,8 +37,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Scans matching beans for RequestMapping annotations and (optionally) prefixes all mappings.
@@ -175,11 +177,31 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 			                                                   new ParamsRequestCondition(),
 			                                                   new HeadersRequestCondition(),
 			                                                   new ConsumesRequestCondition(),
-			                                                   new ProducesRequestCondition(), null );
+			                                                   new ProducesRequestCondition(),
+			                                                   getCustomMethodCondition( method ) );
 
 			info = other.combine( info );
 		}
 
 		return info;
 	}
+
+	@Override
+	protected RequestCondition<?> getCustomMethodCondition( Method method ) {
+		CustomCondition methodAnnotation = AnnotationUtils.findAnnotation( method, CustomCondition.class );
+		if( methodAnnotation != null ) {
+			Class<? extends CustomConditionMatcher>[] conditions = methodAnnotation.conditions();
+			Collection<CustomConditionMatcher> instances = new ArrayList<>();
+			for( Class<? extends CustomConditionMatcher> condition : conditions ) {
+				try {
+					instances.add( BeanUtils.instantiateClass( condition ) );
+				}
+				catch ( BeanInstantiationException ignore ) {
+				}
+			}
+			return new CustomConditions( instances );
+		}
+		return super.getCustomMethodCondition( method );
+	}
+
 }
