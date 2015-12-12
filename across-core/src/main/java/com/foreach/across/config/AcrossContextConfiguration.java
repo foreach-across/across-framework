@@ -168,7 +168,14 @@ public class AcrossContextConfiguration implements ImportAware
 
 			try {
 				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
-				modulePackageSet.add( importingClass.getPackage().getName() );
+				Package importingClassPackage = importingClass.getPackage();
+
+				if ( importingClassPackage != null ) {
+					modulePackageSet.add( importingClass.getPackage().getName() );
+				}
+				else {
+					modulePackageSet.add( "modules" );
+				}
 			}
 			catch ( ClassNotFoundException ignore ) {
 			}

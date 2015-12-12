@@ -31,11 +31,15 @@ This implies that all `AcrossModule` beans from the parent `ApplicationContext` 
 
 When autoconfiguration is enabled, packages will be scanned to find valid module classes.
 Unless packages are configured manually using the *modulePackages* or *modulePackageClasses* attributes, the _com.foreach.across.modules_ package along with the package of the declaring `@Configuration` class will be scanned.
+
+WARNING: If you use `@EnableAcrossContext` on a top-level class (no package specified), package _modules_ and _com.foreach.across.modules_ will be used for default scanning.
+
 Scanning for modules in itself does not add any modules to the `AcrossContext`.
 It simply maps all modules that could be autoconfigured on their unique name.
 For a module to be autoconfigurable it should adhere to certain conventions, see the section on <<creating-an-acrossmodule,creating an Across module>> for more details.
 
 NOTE: The module scanning packages and settings can be controlled through attributes on `@EnableAcrossContext`.
+
 
 WARNING: A module name should be unique.
 If you have more than one module with the same name, the last module scanned will take precedence.
