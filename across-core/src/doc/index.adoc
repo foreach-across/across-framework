@@ -40,7 +40,6 @@ For a module to be autoconfigurable it should adhere to certain conventions, see
 
 NOTE: The module scanning packages and settings can be controlled through attributes on `@EnableAcrossContext`.
 
-
 WARNING: A module name should be unique.
 If you have more than one module with the same name, the last module scanned will take precedence.
 
@@ -150,6 +149,12 @@ context.bootstrap();
 // Stop the context
 context.shutdown();
 ----
+
+== Module configuration
+Apart from module settings, an application can also define a number of `<<moduleconfiguration,@ModuleConfiguration>>` classes to be added to the bootstrapping modules.
+When using the `@EnableAcrossContext`, the packages to scan for these can be set using attributes, but by default the sub-packages *config* and *extensions* of the importing class will be used.
+
+Alternatively the packages to scan can be controlled via the `moduleConfigurationScanPackages` property on `AcrossContext`.
 
 == Across Bootstrap order
 
@@ -643,10 +648,44 @@ infrastructure modules
 
 === Bootstrap interaction
 
-==== prepareForBootstrap
+[[moduleconfiguration]]
+==== @ModuleConfiguration
+Any module can provide a number of classes annotated with `@ModuleConfiguration`.
+These classes are just like classes annotated with `@Configuration`, except they will not be added to the `ApplicationContext` of the current module, but to the ones of the modules specified in the annotation attributes.
+
+`@ModuleConfiguration` serves as a replacement for `@Configuration`.
+All other bean related annotations like conditionals should also work on `@ModuleConfiguration` classes.
+Keep in mind however that the actual creation of the beans (and evaluation of conditionals) will happen in the `ApplicationContext` to which the configuration is added, and not necessarily the one of the module defining the class.
+
+.Example of using @ModuleConfiguration
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@ModuleConfiguration(SpringSecurityModule.NAME)
+public class SecurityConfiguration
+{
+	@Autowired
+	public void configureGlobal( AuthenticationManagerBuilder auth ) throws Exception {
+		auth.inMemoryAuthentication()
+		    .withUser( "admin" ).password( "admin" )
+		    .authorities( new NamedGrantedAuthority( "access administration" ) );
+	}
+}
+----
+
+WARNING: When not specifying any module on a `@ModuleConfiguration`, the configuration will be added to all modules, including the module defining the class.
+
+.Scanning for `@ModuleConfiguration` classes
+By default the sub-packages *config* and *extensions* of an `AcrossModule` will be scanned to detect classes annotated with `@ModuleConfiguration`.
+A module can configure these packages by overriding the `getModuleConfigurationScanPackages()` method.
 
 ==== Subscribe to events
-A third approach for customizing module configuration is implementing prepareForBootstrap() on the AcrossModule.  This is the last point in time were any module can modify the bootstrap configuration of any other module (adding configurers, modifying expose filter etc).
+
+==== prepareForBootstrap
+A third approach for customizing module configuration is implementing prepareForBootstrap() on the AcrossModule.
+This is the last point in time were any module can modify the bootstrap configuration of any other module (adding configurers, modifying expose filter etc).
+
+todo: ModuleConfigurationSet
 
 .Example of a prepareForBootstrap
 [source,java,indent=0]

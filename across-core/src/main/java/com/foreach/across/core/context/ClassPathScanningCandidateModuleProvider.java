@@ -48,8 +48,8 @@ public class ClassPathScanningCandidateModuleProvider
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ClassPathScanningCandidateModuleProvider.class );
 
-	static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
-	static final String MODULE_CLASS = AcrossModule.class.getName();
+	private static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
+	private static final String MODULE_CLASS = AcrossModule.class.getName();
 
 	private final ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 	private final MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(

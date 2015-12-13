@@ -35,7 +35,8 @@ import java.util.*;
 
 /**
  * <p>Creates an AcrossContext bean and will apply all AcrossContextConfigurer instances
- * before bootstrapping.  The configuration of the context is delegated to the configurers.</p>
+ * before bootstrapping.  Depending on the settings imported from {@link EnableAcrossContext},
+ * modules will be auto-configured and further configuration of the context delegated to the configurer beans.</p>
  * <p>A DataSource bean names acrossDataSource is required.</p>
  */
 @Configuration
@@ -117,6 +118,8 @@ public class AcrossContextConfiguration implements ImportAware
 			acrossContext.setModules( moduleSetBuilder.build().getModules() );
 		}
 
+		acrossContext.setModuleConfigurationScanPackages( determineModuleConfigurationPackages( configuration ) );
+
 		return acrossContext;
 	}
 
@@ -149,6 +152,39 @@ public class AcrossContextConfiguration implements ImportAware
 		}
 
 		return moduleDependencyResolver;
+	}
+
+	private String[] determineModuleConfigurationPackages( Map<String, Object> configuration ) {
+		Set<String> configurationPackageSet = new LinkedHashSet<>();
+
+		String[] configurationPackages = (String[]) configuration.get( "moduleConfigurationPackages" );
+		Collections.addAll( configurationPackageSet, configurationPackages );
+
+		Class<?>[] configurationPackageClasses = (Class<?>[]) configuration.get( "moduleConfigurationPackageClasses" );
+
+		for ( Class<?> modulePackageClass : configurationPackageClasses ) {
+			configurationPackageSet.add( modulePackageClass.getPackage().getName() );
+		}
+
+		if ( configurationPackageSet.isEmpty() ) {
+			try {
+				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
+				Package importingClassPackage = importingClass.getPackage();
+
+				String base = "";
+
+				if ( importingClassPackage != null ) {
+					base = importingClass.getPackage().getName();
+				}
+
+				configurationPackageSet.add( base + ".config" );
+				configurationPackageSet.add( base + ".extensions" );
+			}
+			catch ( ClassNotFoundException ignore ) {
+			}
+		}
+
+		return configurationPackageSet.toArray( new String[configurationPackageSet.size()] );
 	}
 
 	private String[] determineModulePackages( Map<String, Object> configuration ) {

@@ -16,6 +16,7 @@
 
 package com.foreach.across.core;
 
+import com.foreach.across.core.annotations.ModuleConfiguration;
 import com.foreach.across.core.context.AbstractAcrossEntity;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ModuleDependencyResolver;
@@ -78,6 +79,8 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	private ExposedBeanDefinitionTransformer exposeTransformer = null;
 	private ModuleDependencyResolver moduleDependencyResolver = null;
+
+	private String[] moduleConfigurationScanPackages = new String[0];
 
 	/**
 	 * Constructs a new AcrossContext in its own ApplicationContext.
@@ -323,6 +326,20 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 */
 	public ModuleDependencyResolver getModuleDependencyResolver() {
 		return moduleDependencyResolver;
+	}
+
+	/**
+	 * @return Packages that will be scanned for {@link ModuleConfiguration} classes
+	 */
+	public String[] getModuleConfigurationScanPackages() {
+		return moduleConfigurationScanPackages;
+	}
+
+	/**
+	 * @param moduleConfigurationScanPackages packages that should be scanned for {@link ModuleConfiguration} classes
+	 */
+	public void setModuleConfigurationScanPackages( String... moduleConfigurationScanPackages ) {
+		this.moduleConfigurationScanPackages = moduleConfigurationScanPackages;
 	}
 
 	/**

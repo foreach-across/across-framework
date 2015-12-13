@@ -55,6 +55,12 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	}
 
 	@Override
+	public boolean moduleContainsLocalBean( String moduleName, String beanName ) {
+		return contextInfo.getConfigurableModuleInfo( moduleName ).getApplicationContext().containsLocalBean(
+				beanName );
+	}
+
+	@Override
 	public Object getBean( String beanName ) {
 		return contextInfo.getApplicationContext().getBean( beanName );
 	}

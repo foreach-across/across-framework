@@ -20,6 +20,7 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.test.scan.packageOne.ExtendedValidModule;
 import com.foreach.across.test.scan.packageOne.ValidModule;
 import com.foreach.across.test.scan.packageTwo.OtherValidModule;
@@ -47,6 +48,9 @@ public class TestEnableAcrossContextDefaults
 	private AcrossContextInfo contextInfo;
 
 	@Autowired
+	private AcrossContextBeanRegistry beanRegistry;
+
+	@Autowired
 	private ExtendedValidModule extendedValidModule;
 
 	@Test
@@ -71,6 +75,14 @@ public class TestEnableAcrossContextDefaults
 		assertTrue( contextInfo.hasModule( YetAnotherValidModule.NAME ) );
 	}
 
+	@Test
+	public void beanFourAndFiveShouldHaveBeenCreated() {
+		assertTrue( beanRegistry.moduleContainsLocalBean( ValidModule.NAME, "beanFour" ) );
+		assertTrue( beanRegistry.moduleContainsLocalBean( ValidModule.NAME, "beanFive" ) );
+		assertTrue( beanRegistry.moduleContainsLocalBean( YetAnotherValidModule.NAME, "beanFour" ) );
+		assertTrue( beanRegistry.moduleContainsLocalBean( YetAnotherValidModule.NAME, "beanFive" ) );
+	}
+
 	@Configuration
 	@EnableAcrossContext({ "ExtendedValidModule", "ValidModule", "YetAnotherValidModule" })
 	static class Config implements AcrossContextConfigurer
@@ -84,6 +96,13 @@ public class TestEnableAcrossContextDefaults
 		public void configure( AcrossContext context ) {
 			// Replace module
 			context.addModule( new EmptyAcrossModule( ValidModule.NAME ) );
+
+			// Verify configuration scan packages set
+			assertArrayEquals(
+					new String[] { "com.foreach.across.test.scan.config",
+					               "com.foreach.across.test.scan.extensions" },
+					context.getModuleConfigurationScanPackages()
+			);
 		}
 	}
 }

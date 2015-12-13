@@ -17,7 +17,7 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
+import com.foreach.across.core.context.ModuleConfigurationSet;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
@@ -35,13 +35,17 @@ public class AcrossBootstrapConfig
 {
 	private final AcrossContext context;
 	private final Collection<ModuleBootstrapConfig> modules;
+	private final ModuleConfigurationSet moduleConfigurationSet;
 
 	private InstallerSettings installerSettings;
 
 	private ExposedBeanDefinitionTransformer exposeTransformer;
 
-	public AcrossBootstrapConfig( AcrossContext context, Collection<ModuleBootstrapConfig> modules ) {
+	public AcrossBootstrapConfig( AcrossContext context,
+	                              Collection<ModuleBootstrapConfig> modules,
+	                              ModuleConfigurationSet moduleConfigurationSet ) {
 		this.context = context;
+		this.moduleConfigurationSet = moduleConfigurationSet;
 		setInstallerSettings( context.getInstallerSettings() );
 
 		// Modifying the module collection itself is no longer allowed in bootstrap phase
@@ -60,6 +64,13 @@ public class AcrossBootstrapConfig
 	 */
 	public Collection<ModuleBootstrapConfig> getModules() {
 		return modules;
+	}
+
+	/**
+	 * @return Set of additional configurations that will be added to modules.
+	 */
+	public ModuleConfigurationSet getModuleConfigurationSet() {
+		return moduleConfigurationSet;
 	}
 
 	public InstallerSettings getInstallerSettings() {
@@ -112,7 +123,10 @@ public class AcrossBootstrapConfig
 	 * @return True if the module was present.
 	 */
 	public boolean extendModule( String moduleName, Class... configurationClasses ) {
-		return extendModule( moduleName, new AnnotatedClassConfigurer( configurationClasses ) );
+		for ( Class configurationClass : configurationClasses ) {
+			moduleConfigurationSet.register( configurationClass, moduleName );
+		}
+		return hasModule( moduleName );
 	}
 
 	/**
@@ -124,7 +138,9 @@ public class AcrossBootstrapConfig
 	 * @param moduleName  Unique name of the module in the context.
 	 * @param configurers Configurers to add to the bootstrap.
 	 * @return True if the module was present.
+	 * @deprecated use {@link #extendModule(String, Class[])} instead
 	 */
+	@Deprecated
 	public boolean extendModule( String moduleName, ApplicationContextConfigurer... configurers ) {
 		if ( hasModule( moduleName ) ) {
 			getModule( moduleName ).addApplicationContextConfigurer( configurers );
