@@ -106,7 +106,7 @@ public class AcrossBootstrapper
 
 			createdApplicationContexts.push( rootContext );
 
-			createBootstrapConfiguration( contextInfo );
+			AcrossBootstrapConfig contextBoostrapConfig = createBootstrapConfiguration( contextInfo );
 			prepareForBootstrap( contextInfo );
 
 			BootstrapLockManager bootstrapLockManager = new BootstrapLockManager( contextInfo );
@@ -115,6 +115,8 @@ public class AcrossBootstrapper
 			if ( context.isFailBootstrapOnEventPublicationErrors() ) {
 				eventPublisher.addErrorHandler( new BootstrapEventErrorHandler() );
 			}
+
+			ModuleConfigurationSet moduleConfigurationSet = contextBoostrapConfig.getModuleConfigurationSet();
 
 			try {
 				AcrossBootstrapInstallerRegistry installerRegistry =
@@ -137,6 +139,12 @@ public class AcrossBootstrapper
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo =
 							(ConfigurableAcrossModuleInfo) moduleInfo;
 					ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
+
+					// Add scanned (or edited) module configurations
+					config.addApplicationContextConfigurer(
+							moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName() )
+					);
+
 					LOG.debug( "Bootstrapping {} module", config.getModuleName() );
 
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
@@ -404,7 +412,7 @@ public class AcrossBootstrapper
 	/**
 	 * Builds the bootstrap configuration entities.
 	 */
-	private void createBootstrapConfiguration( ConfigurableAcrossContextInfo contextInfo ) {
+	private AcrossBootstrapConfig createBootstrapConfiguration( ConfigurableAcrossContextInfo contextInfo ) {
 		List<ModuleBootstrapConfig> configs = new LinkedList<>();
 
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
@@ -448,11 +456,31 @@ public class AcrossBootstrapper
 			( (ConfigurableAcrossModuleInfo) moduleInfo ).setBootstrapConfiguration( config );
 		}
 
-		AcrossBootstrapConfig contextConfig = new AcrossBootstrapConfig( contextInfo.getContext(),
-		                                                                 configs );
+		AcrossBootstrapConfig contextConfig = new AcrossBootstrapConfig(
+				contextInfo.getContext(), configs, buildModuleConfigurationSet( contextInfo )
+		);
 		contextConfig.setExposeTransformer( contextInfo.getContext().getExposeTransformer() );
 
 		contextInfo.setBootstrapConfiguration( contextConfig );
+
+		return contextConfig;
+	}
+
+	private ModuleConfigurationSet buildModuleConfigurationSet( AcrossContextInfo contextInfo ) {
+		Set<String> basePackages = new LinkedHashSet<>();
+
+		contextInfo.getModules()
+		           .stream()
+		           .filter( AcrossModuleInfo::isEnabled )
+		           .forEach( acrossModuleInfo -> Collections.addAll(
+				                     basePackages, acrossModuleInfo.getModule().getModuleConfigurationScanPackages()
+		                     )
+		           );
+
+		Collections.addAll( basePackages, contextInfo.getContext().getModuleConfigurationScanPackages() );
+
+		return new ClassPathScanningModuleConfigurationProvider()
+				.scan( basePackages.toArray( new String[basePackages.size()] ) );
 	}
 
 	private void checkBootstrapIsPossible() {

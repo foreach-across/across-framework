@@ -25,8 +25,8 @@ import org.springframework.context.annotation.Import;
 import java.lang.annotation.*;
 
 /**
- * Using this annotation on a Configuration class will automatically create an AcrossContext
- * that delegates its configuration to separate AcrossContextConfigurers.
+ * Using this annotation on a {@link org.springframework.context.annotation.Configuration} class
+ * will automatically create an {@link AcrossContext} using the settings from this annotation.
  *
  * @see AcrossContextConfiguration
  */
@@ -86,4 +86,20 @@ public @interface EnableAcrossContext
 	 * that serves no purpose other than being referenced by this attribute.</p>
 	 */
 	Class<?>[] modulePackageClasses() default {};
+
+	/**
+	 * Set of packages that should be scanned for {@link com.foreach.across.core.annotations.ModuleConfiguration}
+	 * classes.  If empty the sub-packages <strong>config</strong> and <strong>extensions</strong> of the importing
+	 * class will be used.
+	 */
+	String[] moduleConfigurationPackages() default {};
+
+	/**
+	 * Type-safe alternative to {@link #moduleConfigurationPackages()} for specifying the packages to scan for
+	 * {@link com.foreach.across.core.annotations.ModuleConfiguration} classes.
+	 * The package of each class specified will be scanned.
+	 * <p>Consider creating a special no-op marker class or interface in each package
+	 * that serves no purpose other than being referenced by this attribute.</p>
+	 */
+	Class<?>[] moduleConfigurationPackageClasses() default {};
 }
