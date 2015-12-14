@@ -73,6 +73,9 @@ public class ITAsyncSupported extends AbstractWebIntegrationTest
 		String response = get( "/deferredResult?msg=" + message );
 		assertEquals( "deferred:" + message, response );
 
+		//Add a delay so deferred result processing would be completed
+		Thread.sleep( 100 );
+
 		verify( spyTaskExecutor, never() ).submit( any( Runnable.class ) );
 		verify( callableProcessingInterceptor, never() ).afterCompletion( any(), any() );
 		verify( deferredResultProcessingInterceptor ).afterCompletion( any(), any() );
@@ -99,6 +102,7 @@ public class ITAsyncSupported extends AbstractWebIntegrationTest
 
 		@Override
 		public void configureAsyncSupport( AsyncSupportConfigurer configurer ) {
+			configurer.setDefaultTimeout( 1000 );
 			configurer.setTaskExecutor( spyTaskExecutor() );
 			configurer.registerCallableInterceptors( callableProcessingInterceptor() );
 			configurer.registerDeferredResultInterceptors( deferredResultProcessingInterceptor() );
