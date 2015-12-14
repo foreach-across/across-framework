@@ -222,7 +222,7 @@ public class AcrossBootstrapper
 
 			createdApplicationContexts.clear();
 		}
-		catch ( Exception e ) {
+		catch ( RuntimeException e ) {
 			LOG.debug( "Exception during bootstrapping, destroying all created ApplicationContext instances" );
 
 			destroyAllCreatedApplicationContexts();

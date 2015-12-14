@@ -332,7 +332,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 * @return Packages that will be scanned for {@link ModuleConfiguration} classes
 	 */
 	public String[] getModuleConfigurationScanPackages() {
-		return moduleConfigurationScanPackages;
+		return moduleConfigurationScanPackages.clone();
 	}
 
 	/**

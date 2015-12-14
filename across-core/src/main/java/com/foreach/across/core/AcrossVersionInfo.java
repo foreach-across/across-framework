@@ -56,12 +56,14 @@ public class AcrossVersionInfo
 	private AcrossVersionInfo() {
 	}
 
+	@SuppressWarnings("all")
 	public AcrossVersionInfo( Date buildTime, String version, String projectName ) {
 		this.buildTime = buildTime;
 		this.version = version;
 		this.projectName = projectName;
 	}
 
+	@SuppressWarnings("all")
 	public AcrossVersionInfo( Manifest manifest, Date buildTime, String version, String projectName ) {
 		this.manifest = manifest;
 		this.buildTime = buildTime;
@@ -74,6 +76,7 @@ public class AcrossVersionInfo
 		return manifest;
 	}
 
+	@SuppressWarnings( "all" )
 	public Date getBuildTime() {
 		return buildTime;
 	}
@@ -144,7 +147,7 @@ public class AcrossVersionInfo
 
 				LOG.trace( "Loading manifest: {}", manifestPath );
 
-				try( InputStream is = new URL( manifestPath ).openStream() ) {
+				try (InputStream is = new URL( manifestPath ).openStream()) {
 					Manifest manifest = new Manifest( is );
 					Attributes attr = manifest.getMainAttributes();
 

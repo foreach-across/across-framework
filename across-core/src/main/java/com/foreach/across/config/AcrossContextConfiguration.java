@@ -101,24 +101,28 @@ public class AcrossContextConfiguration implements ImportAware
 	                                           Map<String, Object> configuration ) {
 		AcrossContext acrossContext = new AcrossContext( applicationContext );
 
-		if ( configuration != null && Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
-			ModuleSetBuilder moduleSetBuilder = new ModuleSetBuilder();
+		if ( configuration != null ) {
+			if ( Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
+				ModuleSetBuilder moduleSetBuilder = new ModuleSetBuilder();
 
-			ModuleDependencyResolver dependencyResolver = moduleDependencyResolver( configuration );
-			moduleSetBuilder.setDependencyResolver( dependencyResolver );
-			acrossContext.setModuleDependencyResolver( dependencyResolver );
+				ModuleDependencyResolver dependencyResolver = moduleDependencyResolver( configuration );
+				moduleSetBuilder.setDependencyResolver( dependencyResolver );
+				acrossContext.setModuleDependencyResolver( dependencyResolver );
 
-			modulesToConfigure( configuration ).forEach( moduleSetBuilder::addModule );
+				modulesToConfigure( configuration ).forEach( moduleSetBuilder::addModule );
 
-			BeanFactoryUtils
-					.beansOfTypeIncludingAncestors( applicationContext, AcrossModule.class )
-					.values()
-					.forEach( moduleSetBuilder::addModule );
+				BeanFactoryUtils
+						.beansOfTypeIncludingAncestors( applicationContext, AcrossModule.class )
+						.values()
+						.forEach( moduleSetBuilder::addModule );
 
-			acrossContext.setModules( moduleSetBuilder.build().getModules() );
+				acrossContext.setModules( moduleSetBuilder.build().getModules() );
+
+				acrossContext.setModuleConfigurationScanPackages(
+						determineModuleConfigurationPackages( configuration )
+				);
+			}
 		}
-
-		acrossContext.setModuleConfigurationScanPackages( determineModuleConfigurationPackages( configuration ) );
 
 		return acrossContext;
 	}

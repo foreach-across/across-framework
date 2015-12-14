@@ -55,7 +55,6 @@ public class ITAsyncSupported extends AbstractWebIntegrationTest
 		reset( callableProcessingInterceptor, deferredResultProcessingInterceptor, spyTaskExecutor );
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void callableShouldWork() throws Exception {
 		String message = UUID.randomUUID().toString();
