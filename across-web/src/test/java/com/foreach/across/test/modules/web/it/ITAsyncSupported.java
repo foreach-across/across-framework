@@ -78,11 +78,6 @@ public class ITAsyncSupported extends AbstractWebIntegrationTest
 		verify( deferredResultProcessingInterceptor ).afterCompletion( any(), any() );
 	}
 
-	@Test
-	public void taskExecutorShouldBeSet() {
-
-	}
-
 	@Configuration
 	@EnableAcrossContext(AsyncModule.NAME)
 	protected static class Config extends WebMvcConfigurerAdapter
@@ -104,7 +99,6 @@ public class ITAsyncSupported extends AbstractWebIntegrationTest
 
 		@Override
 		public void configureAsyncSupport( AsyncSupportConfigurer configurer ) {
-			configurer.setDefaultTimeout( 10 );
 			configurer.setTaskExecutor( spyTaskExecutor() );
 			configurer.registerCallableInterceptors( callableProcessingInterceptor() );
 			configurer.registerDeferredResultInterceptors( deferredResultProcessingInterceptor() );
