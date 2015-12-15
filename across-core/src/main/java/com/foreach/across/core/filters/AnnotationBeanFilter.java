@@ -56,7 +56,7 @@ public class AnnotationBeanFilter implements BeanFilter
 	}
 
 	public Class<? extends Annotation>[] getAnnotations() {
-		return annotations;
+		return annotations.clone();
 	}
 
 	public void setAnnotations( Class<? extends Annotation>[] annotations ) {
@@ -144,7 +144,7 @@ public class AnnotationBeanFilter implements BeanFilter
 						}
 					}
 				}
-				catch ( Exception e ) { /* Ignore any exceptions */ }
+				catch ( Exception ignore ) { /* Ignore any exceptions */ }
 			}
 			else if ( bean == null && definition.getBeanClassName() != null ) {
 				try {
@@ -156,7 +156,7 @@ public class AnnotationBeanFilter implements BeanFilter
 						}
 					}
 				}
-				catch ( Exception e ) { /* Ignore any exceptions */ }
+				catch ( Exception ignore ) { /* Ignore any exceptions */ }
 			}
 
 			// Still possible that we are dealing with a ScopedProxyFactoryBean, in which case we need to check the target

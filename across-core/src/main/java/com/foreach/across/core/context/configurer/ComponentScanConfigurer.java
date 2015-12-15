@@ -43,6 +43,6 @@ public class ComponentScanConfigurer extends ApplicationContextConfigurerAdapter
 	 */
 	@Override
 	public String[] componentScanPackages() {
-		return packages;
+		return packages.clone();
 	}
 }

@@ -39,6 +39,6 @@ public class PostProcessorConfigurer extends ApplicationContextConfigurerAdapter
 	 */
 	@Override
 	public BeanFactoryPostProcessor[] postProcessors() {
-		return postProcessors;
+		return postProcessors.clone();
 	}
 }

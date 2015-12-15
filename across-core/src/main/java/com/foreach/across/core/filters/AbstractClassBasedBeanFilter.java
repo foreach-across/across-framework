@@ -81,7 +81,7 @@ public abstract class AbstractClassBasedBeanFilter<T> implements BeanFilter
 						}
 					}
 				}
-				catch ( Exception e ) { /* Ignore any exceptions */ }
+				catch ( Exception ignore ) { /* Ignore any exceptions */ }
 			}
 			else {
 				for ( T allowed : allowedItems ) {

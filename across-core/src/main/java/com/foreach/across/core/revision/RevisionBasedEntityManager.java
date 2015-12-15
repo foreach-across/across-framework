@@ -30,7 +30,6 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 {
 	protected static final class RevisionPair<T>
 	{
-		private Object id;
 		private T draft, nonDraft;
 	}
 
@@ -379,8 +378,6 @@ public abstract class RevisionBasedEntityManager<T extends RevisionBasedEntity<T
 
 			if ( pair == null ) {
 				pair = new RevisionPair<>();
-				pair.id = id;
-
 				map.put( id, pair );
 			}
 
