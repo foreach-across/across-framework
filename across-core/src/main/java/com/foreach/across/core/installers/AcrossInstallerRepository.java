@@ -24,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.DigestUtils;
 
 import javax.sql.DataSource;
+import java.nio.charset.Charset;
 import java.util.Date;
 
 public class AcrossInstallerRepository
@@ -87,7 +88,7 @@ public class AcrossInstallerRepository
 
 	private String determineId( String name ) {
 		if ( StringUtils.length( name ) > 120 ) {
-			return DigestUtils.md5DigestAsHex( name.getBytes() );
+			return DigestUtils.md5DigestAsHex( name.getBytes( Charset.forName( "UTF-8" ) ) );
 		}
 
 		return name;
