@@ -224,6 +224,19 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	}
 
 	/**
+	 * The collection of packages that should be scanned for module configurations.
+	 * Defaults to the "config" and "extension" packages relative to the package of the implementing class.
+	 *
+	 * @return Array of package names.
+	 */
+	public String[] getModuleConfigurationScanPackages() {
+		return new String[] {
+				getClass().getPackage().getName() + ".config",
+				getClass().getPackage().getName() + ".extensions"
+		};
+	}
+
+	/**
 	 * An AcrossModule name should not contain any whitespace and should only be ASCII characters.
 	 *
 	 * @return Name of this module.  Should be unique within a configured AcrossContext.

@@ -21,6 +21,7 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -52,9 +53,15 @@ public class AcrossDependsCondition implements Condition
 		String[] required = (String[]) attributes.get( "required" );
 		String[] optional = (String[]) attributes.get( "optional" );
 
-		AcrossContextInfo acrossContext = context.getBeanFactory().getBean( AcrossContextInfo.class );
+		try {
+			AcrossContextInfo acrossContext = context.getBeanFactory().getBean( AcrossContextInfo.class );
 
-		return applies( acrossContext.getBootstrapConfiguration(), required, optional );
+			return applies( acrossContext.getBootstrapConfiguration(), required, optional );
+		}
+		catch ( NoSuchBeanDefinitionException nsbe ) {
+			LOG.warn( "Use of AcrossDepends outside of an AcrossContext - condition will always evaluate to true" );
+			return true;
+		}
 	}
 
 	/**

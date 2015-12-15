@@ -16,7 +16,7 @@
   -->
 
 <configuration>
-	<include resource="logback-across-views.th.test.xml"/>
+	<include resource="logback-across-test.xml"/>
 
 	<logger name="com.foreach.across.it" level="debug" />
 	<logger name="com.foreach.across.test" level="debug" />

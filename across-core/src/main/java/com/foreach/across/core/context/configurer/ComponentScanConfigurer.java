@@ -18,6 +18,7 @@ package com.foreach.across.core.context.configurer;
 
 /**
  * Simple implementation for specifying packages an ApplicationContext should scan.
+ * Packages can be specified as {@code String} or by providing a {@code Class} in that package.
  */
 public class ComponentScanConfigurer extends ApplicationContextConfigurerAdapter
 {
@@ -27,6 +28,14 @@ public class ComponentScanConfigurer extends ApplicationContextConfigurerAdapter
 		this.packages = packages;
 	}
 
+	public ComponentScanConfigurer( Class<?>... packageClasses ) {
+		this.packages = new String[packageClasses.length];
+
+		for ( int i = 0; i < packageClasses.length; i++ ) {
+			packages[i] = packageClasses[i].getPackage().getName();
+		}
+	}
+
 	/**
 	 * Return a set of packages that should be scanned for additional components.
 	 *
@@ -34,6 +43,6 @@ public class ComponentScanConfigurer extends ApplicationContextConfigurerAdapter
 	 */
 	@Override
 	public String[] componentScanPackages() {
-		return packages;
+		return packages.clone();
 	}
 }
