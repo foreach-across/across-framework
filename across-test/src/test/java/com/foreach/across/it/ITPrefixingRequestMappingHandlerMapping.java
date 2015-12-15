@@ -38,6 +38,7 @@ import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.annotation.DirtiesContext;
@@ -48,6 +49,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,7 +86,7 @@ public class ITPrefixingRequestMappingHandlerMapping
 	/**
 	 * This check makes sure we have directPathMatches in {@link org.springframework.web.servlet.handler.AbstractHandlerMethodMapping#lookupHandlerMethod(String, HttpServletRequest)}
 	 */
-	private void validateUrlMap( AcrossTestContext ctx, String... expectedPaths ) {
+	private void validateUrlMap( AcrossTestContext ctx, String... expectedPaths ) throws Exception {
 		RequestMappingHandlerMapping requestMappingHandlerMapping =
 				(RequestMappingHandlerMapping) ctx.beanRegistry().getBean( "prefixingRequestMappingHandlerMapping" );
 		assertNotNull( requestMappingHandlerMapping );
@@ -96,7 +98,12 @@ public class ITPrefixingRequestMappingHandlerMapping
 
 			LinkedList<?> mappings = (LinkedList<?>) urlMap.get( expectedPath );
 			assertNotNull( "Could not find url " + expectedPath + " in urlMap", mappings );
+			HttpServletRequest request = new MockHttpServletRequest( "GET", expectedPath );
+			HandlerExecutionChain chain = requestMappingHandlerMapping.getHandler( request );
+			assertNotNull( chain );
+			assertNotNull( chain.getHandler() );
 		}
+
 	}
 
 	@Configuration
