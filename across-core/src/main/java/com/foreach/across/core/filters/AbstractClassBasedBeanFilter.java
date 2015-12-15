@@ -42,6 +42,7 @@ public abstract class AbstractClassBasedBeanFilter<T> implements BeanFilter
 		this.allowedItems = allowedItems;
 	}
 
+	@SuppressWarnings({ "findbugs:DE_MIGHT_IGNORE", "squid:S00108" })
 	public boolean apply( ConfigurableListableBeanFactory beanFactory,
 	                      String beanName,
 	                      Object bean,

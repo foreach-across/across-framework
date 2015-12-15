@@ -43,10 +43,11 @@ public class AnnotatedMethodFilter implements BeanFilter
 	 * Checks if a bean or its corresponding BeanDefinition match the filter.
 	 *
 	 * @param beanFactory BeanFactory that owns the bean and definition.
-	 * @param beanName
+	 * @param beanName    Name of the bean to check
 	 * @param bean        Bean instance to check (can be null).
 	 * @param definition  BeanDefinition corresponding to this bean (can be null).   @return True if the bean and bean definition match.
 	 */
+	@SuppressWarnings({ "findbugs:DE_MIGHT_IGNORE", "squid:S00108" })
 	public boolean apply( ConfigurableListableBeanFactory beanFactory,
 	                      String beanName,
 	                      Object bean,
@@ -73,7 +74,7 @@ public class AnnotatedMethodFilter implements BeanFilter
 						}
 					}
 				}
-				catch ( Exception ignore ) { /* Ignore any exceptions */ }
+				catch ( ClassNotFoundException ignore ) { /* Ignore any exceptions */ }
 			}
 
 			// Still possible that we are dealing with a ScopedProxyFactoryBean, in which case we need to check the target

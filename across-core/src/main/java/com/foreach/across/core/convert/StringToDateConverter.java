@@ -35,7 +35,7 @@ import java.util.Locale;
  */
 public class StringToDateConverter implements Converter<String, Date>
 {
-	protected static final String[] DEFAULT_PATTERNS = {
+	static final String[] DEFAULT_PATTERNS = {
 			"yyyy-MM-dd",
 			"yyyy-MM-dd HH:mm",
 			"yyyy-MM-dd HH:mm:ss",
