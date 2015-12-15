@@ -33,6 +33,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -49,6 +50,8 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	private final ClassFilter handlerMatcher;
 
 	private ApplicationContext contextBeingScanned;
+
+	private final Set<Object> scannedHandlers = new HashSet<>();
 
 	public PrefixingRequestMappingHandlerMapping( ClassFilter handlerMatcher ) {
 		this.prefixPath = null;
@@ -103,7 +106,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	/**
 	 * Scan a particular ApplicationContext for instances.
 	 *
-	 * @param context that should be scanned
+	 * @param context          that should be scanned
 	 * @param includeAncestors should controllers from the parent application context be detected
 	 */
 	public synchronized void scan( ApplicationContext context, boolean includeAncestors ) {
@@ -122,7 +125,8 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 				: context.getBeanNamesForType( Object.class );
 
 		for ( String beanName : beanNames ) {
-			if ( isHandler( context.getType( beanName ) ) ) {
+			if ( isHandler( context.getType( beanName ) ) && !scannedHandlers.contains( beanName ) ) {
+				scannedHandlers.add( beanName );
 				detectHandlerMethods( context, beanName );
 			}
 		}
