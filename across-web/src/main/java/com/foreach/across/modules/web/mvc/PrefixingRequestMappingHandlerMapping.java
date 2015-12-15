@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -59,7 +60,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	}
 
 	public PrefixingRequestMappingHandlerMapping( String prefixPath, ClassFilter handlerMatcher ) {
-		this.prefixPath = prefixPath;
+		this.prefixPath = prefixPath.endsWith( "/" ) ? StringUtils.stripEnd( prefixPath, "/" ) : prefixPath;
 		this.handlerMatcher = handlerMatcher;
 	}
 
