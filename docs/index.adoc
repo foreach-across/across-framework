@@ -23,6 +23,11 @@ The general principle is that every Across module can depend on others, but is r
 start-up procedures.  To this end, a module can define its own installers.
 
 == What's new in this version?
+=== 1.2.0-SNAPSHOT
+*Across Web*
+
+* <<customrequestcondition>> annotation provides a way to retrict a `@RequestMapping` by matching any value of `HttpServletRequest`
+
 === 1.1.2-SNAPSHOT
 *Across Core*
 

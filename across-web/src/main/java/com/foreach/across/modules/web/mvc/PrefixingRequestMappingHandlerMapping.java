@@ -195,18 +195,14 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 	@Override
 	protected RequestCondition<?> getCustomMethodCondition( Method method ) {
-		CustomCondition methodAnnotation = AnnotationUtils.findAnnotation( method, CustomCondition.class );
+		CustomRequestCondition methodAnnotation = AnnotationUtils.findAnnotation( method, CustomRequestCondition.class );
 		if( methodAnnotation != null ) {
-			Class<? extends CustomConditionMatcher>[] conditions = methodAnnotation.conditions();
-			Collection<CustomConditionMatcher> instances = new ArrayList<>();
-			for( Class<? extends CustomConditionMatcher> condition : conditions ) {
-				try {
-					instances.add( BeanUtils.instantiateClass( condition ) );
-				}
-				catch ( BeanInstantiationException ignore ) {
-				}
+			Class<? extends CustomRequestConditionMatcher>[] conditions = methodAnnotation.conditions();
+			Collection<CustomRequestConditionMatcher> instances = new ArrayList<>();
+			for( Class<? extends CustomRequestConditionMatcher> condition : conditions ) {
+				instances.add( BeanUtils.instantiateClass( condition ) );
 			}
-			return new CustomConditions( instances );
+			return new CustomRequestConditions( instances );
 		}
 		return super.getCustomMethodCondition( method );
 	}

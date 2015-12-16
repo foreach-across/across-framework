@@ -17,7 +17,7 @@ package com.foreach.across.modules.web.mvc;
 
 import javax.servlet.http.HttpServletRequest;
 
-public interface CustomConditionMatcher
+public interface CustomRequestConditionMatcher
 {
 	boolean matches( HttpServletRequest request );
 }

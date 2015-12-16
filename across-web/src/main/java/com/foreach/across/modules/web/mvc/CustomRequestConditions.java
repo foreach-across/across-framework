@@ -15,7 +15,10 @@
  */
 package com.foreach.across.modules.web.mvc;
 
+import org.springframework.web.servlet.mvc.condition.AbstractRequestCondition;
+import org.springframework.web.servlet.mvc.condition.CompositeRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
+import org.springframework.web.servlet.mvc.condition.RequestConditionHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -23,33 +26,43 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-final class CustomConditions implements RequestCondition<CustomConditions>
+final class CustomRequestConditions extends AbstractRequestCondition<CustomRequestConditions>
 {
-	private final Set<CustomConditionMatcher> classes;
+	private final Set<CustomRequestConditionMatcher> classes;
 
-	public CustomConditions( Collection<CustomConditionMatcher> instances ) {
+	public CustomRequestConditions( Collection<CustomRequestConditionMatcher> instances ) {
 		classes = new LinkedHashSet<>( instances );
 	}
 
 	@Override
-	public CustomConditions combine( CustomConditions other ) {
-		Set<CustomConditionMatcher> set = new LinkedHashSet<>( this.classes );
+	public CustomRequestConditions combine( CustomRequestConditions other ) {
+		Set<CustomRequestConditionMatcher> set = new LinkedHashSet<>( this.classes );
 		set.addAll( other.classes );
-		return new CustomConditions( set );
+		return new CustomRequestConditions( set );
 	}
 
 	@Override
-	public CustomConditions getMatchingCondition( HttpServletRequest request ) {
-		for ( CustomConditionMatcher clazz : classes ) {
+	public CustomRequestConditions getMatchingCondition( HttpServletRequest request ) {
+		for ( CustomRequestConditionMatcher clazz : classes ) {
 			if ( clazz.matches( request ) ) {
-				return new CustomConditions( Collections.singleton( clazz ) );
+				return new CustomRequestConditions( Collections.singleton( clazz ) );
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public int compareTo( CustomConditions other, HttpServletRequest request ) {
+	public int compareTo( CustomRequestConditions other, HttpServletRequest request ) {
 		return ( other.classes.size() - this.classes.size() );
+	}
+
+	@Override
+	protected Collection<?> getContent() {
+		return classes;
+	}
+
+	@Override
+	protected String getToStringInfix() {
+		return " && ";
 	}
 }

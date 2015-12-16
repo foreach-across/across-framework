@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface CustomCondition
+public @interface CustomRequestCondition
 {
-	Class<? extends CustomConditionMatcher>[] conditions() default {};
+	Class<? extends CustomRequestConditionMatcher>[] conditions() default {};
 }
