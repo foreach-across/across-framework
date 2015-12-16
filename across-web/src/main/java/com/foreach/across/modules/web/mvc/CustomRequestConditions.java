@@ -63,6 +63,6 @@ final class CustomRequestConditions extends AbstractRequestCondition<CustomReque
 
 	@Override
 	protected String getToStringInfix() {
-		return " && ";
+		return " || ";
 	}
 }
