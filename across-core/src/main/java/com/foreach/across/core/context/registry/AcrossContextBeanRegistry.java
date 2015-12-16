@@ -44,9 +44,18 @@ public interface AcrossContextBeanRegistry
 	 * Check if a bean is registered under the given name in the AcrossContext.
 	 *
 	 * @param beanName Name of the bean definition.
-	 * @return Instance.
+	 * @return True if bean registered.
 	 */
 	boolean containsBean( String beanName );
+
+	/**
+	 * Check if a bean is registered under the given name, directly in a module.
+	 *
+	 * @param moduleName Name of the module.
+	 * @param beanName   Name of the bean definition.
+	 * @return True if bean registered.
+	 */
+	boolean moduleContainsLocalBean( String moduleName, String beanName );
 
 	/**
 	 * Get a bean registered under the given name in the AcrossContext.

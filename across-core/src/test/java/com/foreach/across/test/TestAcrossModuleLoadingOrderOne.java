@@ -144,7 +144,8 @@ public class TestAcrossModuleLoadingOrderOne
 				list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three, infrastructureRequiringTwo );
 		infrastructureRequiringTwo.setEnabled( false );
 
-		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder( added );
+		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
+		moduleBootstrapOrderBuilder.setSourceModules( added );
 		Collection<AcrossModule> ordered = moduleBootstrapOrderBuilder.getOrderedModules();
 
 		assertEquals( list( two, infrastructureRequiringTwo, one, three, requiresTwoThreeAndOptionalOne, requiresTwo ),
@@ -233,7 +234,9 @@ public class TestAcrossModuleLoadingOrderOne
 	}
 
 	private Collection<AcrossModule> order( Collection<AcrossModule> list ) {
-		return new ModuleBootstrapOrderBuilder( list ).getOrderedModules();
+		ModuleBootstrapOrderBuilder bootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
+		bootstrapOrderBuilder.setSourceModules( list );
+		return bootstrapOrderBuilder.getOrderedModules();
 	}
 
 	private Collection<AcrossModule> list( AcrossModule... modules ) {

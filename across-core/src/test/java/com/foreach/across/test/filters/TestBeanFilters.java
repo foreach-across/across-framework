@@ -225,7 +225,7 @@ public class TestBeanFilters
 		}
 	}
 
-	public static interface Marker
+	public interface Marker
 	{
 
 	}

@@ -35,6 +35,6 @@ public class AnnotatedClassConfigurer extends ApplicationContextConfigurerAdapte
 	 */
 	@Override
 	public Class[] annotatedClasses() {
-		return annotatedClasses;
+		return annotatedClasses.clone();
 	}
 }

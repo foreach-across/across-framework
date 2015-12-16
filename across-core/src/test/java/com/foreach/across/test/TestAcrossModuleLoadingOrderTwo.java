@@ -54,7 +54,9 @@ public class TestAcrossModuleLoadingOrderTwo
 	}
 
 	private Collection<AcrossModule> order( Collection<AcrossModule> list ) {
-		return new ModuleBootstrapOrderBuilder( list ).getOrderedModules();
+		ModuleBootstrapOrderBuilder bootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
+		bootstrapOrderBuilder.setSourceModules( list );
+		return bootstrapOrderBuilder.getOrderedModules();
 	}
 
 	private Collection<AcrossModule> list( AcrossModule... modules ) {

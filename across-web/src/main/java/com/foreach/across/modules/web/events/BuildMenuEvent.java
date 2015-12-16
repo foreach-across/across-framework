@@ -61,7 +61,7 @@ public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent, Paramet
 
 	@Override
 	public final ResolvableType[] getEventGenericTypes() {
-		return genericTypes;
+		return genericTypes.clone();
 	}
 
 	public PathBasedMenuBuilder builder() {

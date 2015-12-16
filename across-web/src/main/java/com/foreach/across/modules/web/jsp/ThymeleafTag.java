@@ -29,7 +29,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.ProcessingContext;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.exceptions.ConfigurationException;
-import org.thymeleaf.fragment.ChainedFragmentSpec;
 import org.thymeleaf.fragment.IFragmentSpec;
 import org.thymeleaf.spring4.context.SpringWebContext;
 import org.thymeleaf.spring4.dialect.SpringStandardDialect;
@@ -61,6 +60,7 @@ import java.util.Map;
  * @author Arne Vandamme
  * @see org.thymeleaf.spring4.view.ThymeleafView
  */
+@SuppressWarnings( "all" )
 public class ThymeleafTag extends BodyTagSupport
 {
 	private String template;
@@ -153,23 +153,9 @@ public class ThymeleafTag extends BodyTagSupport
 		}
 
 		IFragmentSpec templateFragmentSpec = null;
-		IFragmentSpec viewFragmentSpec = null;
-		if ( viewFragmentSpec != null ) {
-			if ( templateFragmentSpec == null ) {
-				templateFragmentSpec = viewFragmentSpec;
-			}
-			else {
-				templateFragmentSpec =
-						new ChainedFragmentSpec( viewFragmentSpec, templateFragmentSpec );
-			}
-		}
+
 		if ( nameFragmentSpec != null ) {
-			if ( templateFragmentSpec == null ) {
-				templateFragmentSpec = nameFragmentSpec;
-			}
-			else {
-				templateFragmentSpec = new ChainedFragmentSpec( nameFragmentSpec, templateFragmentSpec );
-			}
+			templateFragmentSpec = nameFragmentSpec;
 		}
 
 		viewTemplateEngine.process( templateName, context, templateFragmentSpec, writer );

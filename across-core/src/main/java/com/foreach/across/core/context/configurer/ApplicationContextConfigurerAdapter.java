@@ -110,17 +110,7 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 
 	@Override
 	public int hashCode() {
-		Object providedBeans = providedBeans();
-		String[] componentScanPackages = componentScanPackages();
-		Class<?>[] annotatedClasses = annotatedClasses();
-		BeanFactoryPostProcessor[] postProcessors = postProcessors();
-		PropertySources propertySources = propertySources();
-
-		int result = annotatedClasses != null ? Arrays.hashCode( annotatedClasses ) : 0;
-		result = 31 * result + ( componentScanPackages != null ? Arrays.hashCode( componentScanPackages ) : 0 );
-		result = 31 * result + ( postProcessors != null ? Arrays.hashCode( postProcessors ) : 0 );
-		result = 31 * result + ( providedBeans != null ? providedBeans.hashCode() : 0 );
-		result = 31 * result + ( propertySources != null ? propertySources.hashCode() : 0 );
-		return result;
+		return Objects.hash( annotatedClasses(), componentScanPackages(), postProcessors(), providedBeans(),
+		                     propertySources() );
 	}
 }

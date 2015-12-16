@@ -17,9 +17,11 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
+import com.foreach.across.core.context.ModuleDependencyResolver;
+import com.foreach.across.core.context.support.ModuleSet;
+import com.foreach.across.core.context.support.ModuleSetBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -37,21 +39,35 @@ public class ModuleBootstrapOrderBuilder
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ModuleBootstrapOrderBuilder.class );
 
-	private final List<AcrossModule> source;
+	private List<AcrossModule> sourceModules = Collections.emptyList();
+	private ModuleDependencyResolver dependencyResolver;
 
 	private LinkedList<AcrossModule> orderedModules;
 
-	private Map<String, AcrossModule> modulesById = new HashMap<>();
+	private Map<String, AcrossModule> modulesById;
 	private Map<AcrossModule, Collection<AcrossModule>> appliedRequiredDependencies = new HashMap<>();
 	private Map<AcrossModule, Collection<AcrossModule>> appliedOptionalDependencies = new HashMap<>();
 	private Map<AcrossModule, Collection<AcrossModule>> configuredRequiredDependencies = new HashMap<>();
 	private Map<AcrossModule, Collection<AcrossModule>> configuredOptionalDependencies = new HashMap<>();
-	private Map<AcrossModule, AcrossModuleRole> moduleRoles = new HashMap<>();
 
-	public ModuleBootstrapOrderBuilder( Collection<AcrossModule> source ) {
-		this.source = new ArrayList<>( source );
+	private ModuleSet moduleSet;
 
+	/**
+	 * @param sourceModules list of modules preloaded
+	 */
+	public void setSourceModules( Collection<AcrossModule> sourceModules ) {
+		this.sourceModules = new ArrayList<>( sourceModules );
 		orderModules();
+	}
+
+	/**
+	 * @param dependencyResolver to use for resolving unsatisfied module dependencies
+	 */
+	public void setDependencyResolver( ModuleDependencyResolver dependencyResolver ) {
+		this.dependencyResolver = dependencyResolver;
+		if ( !sourceModules.isEmpty() ) {
+			orderModules();
+		}
 	}
 
 	public Collection<AcrossModule> getOrderedModules() {
@@ -75,18 +91,23 @@ public class ModuleBootstrapOrderBuilder
 	}
 
 	public AcrossModuleRole getModuleRole( AcrossModule module ) {
-		return moduleRoles.get( module );
+		return moduleSet.getModuleRole( module );
 	}
 
 	private void orderModules() {
-		buildModuleMetaData();
+		ModuleSetBuilder moduleSetBuilder = new ModuleSetBuilder();
+		moduleSetBuilder.setDependencyResolver( dependencyResolver );
+		sourceModules.forEach( moduleSetBuilder::addModule );
+
+		moduleSet = moduleSetBuilder.build();
+		modulesById = moduleSet.getModuleMap();
 
 		orderedModules = new LinkedList<>();
 
-		List<AcrossModule> orderedByRole = applyRoleOrder( this.source );
+		List<AcrossModule> orderedByRole = applyRoleOrder( moduleSet.getModules() );
 
 		for ( AcrossModule module : orderedByRole ) {
-			buildDependencies( module );
+			verifyDependencies( module );
 		}
 
 		applyEnabledInfrastructureModules();
@@ -106,7 +127,7 @@ public class ModuleBootstrapOrderBuilder
 
 	private void optimizeOptionals( List<AcrossModule> orderedByRole, LinkedList<AcrossModule> orderedModules ) {
 		List<AcrossModule> optionalsToMove = new ArrayList<>();
-
+		
 		for ( AcrossModule module : orderedByRole ) {
 			optionalsToMove.addAll( getAppliedOptionalDependencies( module ) );
 		}
@@ -190,14 +211,6 @@ public class ModuleBootstrapOrderBuilder
 		return index + 1;
 	}
 
-	private void buildModuleMetaData() {
-		for ( AcrossModule module : source ) {
-			modulesById.put( module.getName(), module );
-			modulesById.put( module.getClass().getName(), module );
-			determineRole( module );
-		}
-	}
-
 	private List<AcrossModule> applyRoleOrder( final List<AcrossModule> source ) {
 		List<AcrossModule> ordered = new ArrayList<>( source );
 
@@ -250,57 +263,54 @@ public class ModuleBootstrapOrderBuilder
 	}
 
 	private void applyEnabledInfrastructureModules() {
-		for ( Map.Entry<AcrossModule, AcrossModuleRole> moduleRole : moduleRoles.entrySet() ) {
-			if ( moduleRole.getValue() == AcrossModuleRole.INFRASTRUCTURE ) {
-				AcrossModule infrastructure = moduleRole.getKey();
-
-				if ( infrastructure.isEnabled() ) {
-					// Infrastructure modules are added as required dependencies to all non-infrastructure modules
-					// Indirect dependencies
-					for ( Map.Entry<AcrossModule, AcrossModuleRole> targetModuleRole : moduleRoles.entrySet() ) {
-						AcrossModule target = targetModuleRole.getKey();
-
-						if ( targetModuleRole.getValue() != AcrossModuleRole.INFRASTRUCTURE
-								&& !appliedRequiredDependencies.get( infrastructure ).contains( target ) ) {
-							appliedRequiredDependencies.get( targetModuleRole.getKey() ).add( moduleRole.getKey() );
-						}
+		modulesById.values().forEach(
+				module -> {
+					AcrossModuleRole role = moduleSet.getModuleRole( module );
+					if ( role == AcrossModuleRole.INFRASTRUCTURE && module.isEnabled() ) {
+						// Infrastructure modules are added as required dependencies to all non-infrastructure modules
+						modulesById.values().forEach(
+								targetModule -> {
+									if ( moduleSet.getModuleRole( targetModule ) != AcrossModuleRole.INFRASTRUCTURE
+											&& !appliedRequiredDependencies.get( module ).contains( targetModule ) ) {
+										appliedRequiredDependencies.get( targetModule ).add( module );
+									}
+								}
+						);
 					}
 				}
-			}
-		}
+		);
 	}
 
 	private void applyEnabledPostProcessorModules() {
-		// Post processor modules have all non post-processor enabled modules as required dependencies
-		for ( Map.Entry<AcrossModule, AcrossModuleRole> moduleRole : moduleRoles.entrySet() ) {
-			if ( moduleRole.getValue() == AcrossModuleRole.POSTPROCESSOR ) {
-				AcrossModule postProcessor = moduleRole.getKey();
+		modulesById.values().forEach(
+				module -> {
+					AcrossModuleRole role = moduleSet.getModuleRole( module );
+					if ( role == AcrossModuleRole.POSTPROCESSOR && module.isEnabled() ) {
+						// Post processor modules have all non post-processor enabled modules as required dependencies
+						modulesById.values().forEach(
+								target -> {
+									if ( moduleSet.getModuleRole( target ) != AcrossModuleRole.POSTPROCESSOR ) {
+										if ( appliedRequiredDependencies.get( target ).contains( module ) ) {
+											LOG.debug(
+													"Ignoring {} as required dependency for {} since the former is a postprocessor module",
+													module.getName(), target.getName() );
+											appliedRequiredDependencies.get( target ).remove( module );
+										}
+										if ( appliedOptionalDependencies.get( target ).contains( module ) ) {
+											LOG.debug(
+													"Ignoring {} as optional dependency for {} since the former is a postprocessor module",
+													module.getName(), target.getName() );
+											appliedOptionalDependencies.get( target ).remove( module );
+										}
 
-				if ( postProcessor.isEnabled() ) {
-					for ( Map.Entry<AcrossModule, AcrossModuleRole> targetModuleRole : moduleRoles.entrySet() ) {
-						AcrossModule target = targetModuleRole.getKey();
-
-						if ( targetModuleRole.getValue() != AcrossModuleRole.POSTPROCESSOR ) {
-							if ( appliedRequiredDependencies.get( target ).contains( postProcessor ) ) {
-								LOG.debug(
-										"Ignoring {} as required dependency for {} since the former is a postprocessor module",
-										postProcessor.getName(), target.getName() );
-								appliedRequiredDependencies.get( target ).remove( postProcessor );
-							}
-							if ( appliedOptionalDependencies.get( target ).contains( postProcessor ) ) {
-								LOG.debug(
-										"Ignoring {} as optional dependency for {} since the former is a postprocessor module",
-										postProcessor.getName(), target.getName() );
-								appliedOptionalDependencies.get( target ).remove( postProcessor );
-							}
-
-							// Add the target as a required dependency for the post-processor
-							appliedRequiredDependencies.get( postProcessor ).add( target );
-						}
+										// Add the target as a required dependency for the post-processor
+										appliedRequiredDependencies.get( module ).add( target );
+									}
+								}
+						);
 					}
 				}
-			}
-		}
+		);
 	}
 
 	private void verifyModuleList( LinkedList<AcrossModule> ordered ) {
@@ -330,35 +340,22 @@ public class ModuleBootstrapOrderBuilder
 		}
 	}
 
-	private void buildDependencies( AcrossModule module ) {
-		Annotation depends = AnnotationUtils.getAnnotation( module.getClass(), AcrossDepends.class );
-
+	private void verifyDependencies( AcrossModule module ) {
 		Set<AcrossModule> requiredByModule = new TreeSet<>( new Comparator<AcrossModule>()
 		{
 			public int compare( AcrossModule left, AcrossModule right ) {
-				return Integer.valueOf( source.indexOf( left ) ).compareTo( source.indexOf( right ) );
+				return Integer.valueOf( sourceModules.indexOf( left ) ).compareTo( sourceModules.indexOf( right ) );
 			}
 		} );
 		Set<AcrossModule> optionalForModule = new TreeSet<>( new Comparator<AcrossModule>()
 		{
 			public int compare( AcrossModule left, AcrossModule right ) {
-				return Integer.valueOf( source.indexOf( left ) ).compareTo( source.indexOf( right ) );
+				return Integer.valueOf( sourceModules.indexOf( left ) ).compareTo( sourceModules.indexOf( right ) );
 			}
 		} );
 
-		Set<String> definedRequired = new LinkedHashSet<>();
-		Set<String> definedOptional = new LinkedHashSet<>();
-
-		if ( depends != null ) {
-			Map<String, Object> attributes = AnnotationUtils.getAnnotationAttributes( depends );
-			String[] required = (String[]) attributes.get( "required" );
-			String[] optional = (String[]) attributes.get( "optional" );
-
-			definedRequired.addAll( Arrays.asList( required ) );
-			definedOptional.addAll( Arrays.asList( optional ) );
-		}
-
-		definedRequired.addAll( module.getRuntimeDependencies() );
+		Collection<String> definedRequired = moduleSet.getRequiredDependencies( module );
+		Collection<String> definedOptional = moduleSet.getOptionalDependencies( module );
 
 		for ( String requiredModule : definedRequired ) {
 			if ( !modulesById.containsKey( requiredModule ) ) {
@@ -386,18 +383,6 @@ public class ModuleBootstrapOrderBuilder
 
 		configuredRequiredDependencies.put( module, new ArrayList<>( requiredByModule ) );
 		configuredOptionalDependencies.put( module, new ArrayList<>( optionalForModule ) );
-	}
-
-	private void determineRole( AcrossModule module ) {
-		Annotation role = AnnotationUtils.getAnnotation( module.getClass(), AcrossRole.class );
-
-		if ( role != null ) {
-			moduleRoles.put( module,
-			                 (AcrossModuleRole) AnnotationUtils.getAnnotationAttributes( role ).get( "value" ) );
-		}
-		else {
-			moduleRoles.put( module, AcrossModuleRole.APPLICATION );
-		}
 	}
 
 	private int getRoleOrder( AcrossModule module ) {

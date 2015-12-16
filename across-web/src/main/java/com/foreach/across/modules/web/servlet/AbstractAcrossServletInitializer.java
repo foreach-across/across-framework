@@ -54,6 +54,7 @@ public abstract class AbstractAcrossServletInitializer extends AbstractDispatche
 		extendServletContext( servletContext );
 	}
 
+	@SuppressWarnings( "all" )
 	@Override
 	protected void registerContextLoaderListener( ServletContext servletContext ) {
 		WebApplicationContext rootAppContext = createRootApplicationContext();
