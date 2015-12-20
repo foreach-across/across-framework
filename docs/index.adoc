@@ -28,6 +28,7 @@ start-up procedures.  To this end, a module can define its own installers.
 
 * <<enableacrosscontext>> annotation now supports autoconfiguration of an `AcrossContext`
 * <<moduleconfiguration>> annotation provides a no-hassle way to declare annotated classes that need to be added to a specific module
+* both `AcrossModule` and `ModuleBootstrapConfig` now have shortcut `expose()` methods that make it easier to expose additional beans
 
 *Across Web*
 
