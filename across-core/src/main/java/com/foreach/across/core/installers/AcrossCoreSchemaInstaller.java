@@ -48,6 +48,6 @@ public class AcrossCoreSchemaInstaller
 		liquibase.setDataSource( dataSource );
 
 		beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
-		beanFactory.initializeBean( liquibase, "" );
+		beanFactory.initializeBean( liquibase, "(inner bean)#springLiquibase" );
 	}
 }
