@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import javax.sql.DataSource;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,39 +55,38 @@ public abstract class AcrossLiquibaseInstaller
 	private DataSource dataSource;
 
 	private SchemaConfiguration schemaConfiguration;
-	private boolean shouldRun = true;
-	private Path rollbackFile;
-	private SpringLiquibase liquibaseConfiguration = new SpringLiquibase();
+	private String defaultSchema;
+	private String changeLog;
 
 	/**
 	 * Creates an {@link AcrossLiquibaseInstaller} which will use the changelog file which corresponds to this installers full class name
 	 * to perform the liquibase update
 	 * <p/>
-	 * eg. if this constructor is used to create an instance of the class my.example.LiquibaseInstaller
-	 * the changelog file at {resourceRoot}/my/example/LiquibaseInstaller.xml will be used to preform the liquibase update
+	 * eg if this constructor is used to create an instance of the class {@code my.example.LiquibaseInstaller}
+	 * the changelog file at {@code {resourceRoot}/my/example/LiquibaseInstaller.xml} will be used to preform the liquibase update
 	 */
 	protected AcrossLiquibaseInstaller() {
-		liquibaseConfiguration.setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );
+		setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );
 	}
 
 	/**
 	 * Creates an {@link AcrossLiquibaseInstaller} which will use the changelog file which corresponds to this installers full class name
 	 * to perform the liquibase update
 	 * and will construct the {@link liquibase.changelog.ChangeLogParameters} based on the given {@link SchemaConfiguration}
-	 * <p />
-	 * eg. if this constructor is used to create an instance of the class my.example.LiquibaseInstaller
-	 * the changelog file at {resourceRoot}/my/example/LiquibaseInstaller.xml will be used to preform the update
+	 * <p/>
+	 * eg if this constructor is used to create an instance of the class {@code my.example.LiquibaseInstaller }
+	 * the changelog file at {@code {resourceRoot}/my/example/LiquibaseInstaller.xml} will be used to preform the update
 	 */
 	protected AcrossLiquibaseInstaller( SchemaConfiguration schemaConfiguration ) {
 		this();
-		this.schemaConfiguration = schemaConfiguration;
+		setSchemaConfiguration( schemaConfiguration );
 	}
 
 	/**
 	 * Creates an {@link AcrossLiquibaseInstaller} which will use the given changelog file to perform the liquibase update
 	 */
 	protected AcrossLiquibaseInstaller( String changelog ) {
-		liquibaseConfiguration.setChangeLog( changelog );
+		setChangeLog( changelog );
 	}
 
 	/**
@@ -96,17 +94,19 @@ public abstract class AcrossLiquibaseInstaller
 	 * and will construct the {@link liquibase.changelog.ChangeLogParameters} based on the given {@link SchemaConfiguration}
 	 */
 	protected AcrossLiquibaseInstaller( String changelog, SchemaConfiguration schemaConfiguration ) {
-		liquibaseConfiguration.setChangeLog( changelog );
-		this.schemaConfiguration = schemaConfiguration;
+		setChangeLog( changelog );
+		setSchemaConfiguration( schemaConfiguration );
 	}
 
 	/**
 	 * Sets the {@link SchemaConfiguration} that will be used to construct the {@link liquibase.changelog.ChangeLogParameters}
-	 *
+	 * <p/>
 	 * if no defaultSchema is configured via {@link AcrossLiquibaseInstaller#setDefaultSchema(String)}
 	 * the defaultSchema from {@link SchemaConfiguration#getDefaultSchema()} will be used instead
 	 *
-	 * @param schemaConfiguration
+	 * @param schemaConfiguration the {@link SchemaConfiguration} to be set
+	 *
+	 * @see liquibase.integration.spring.SpringLiquibase#setChangeLogParameters(Map)
 	 */
 	protected void setSchemaConfiguration( SchemaConfiguration schemaConfiguration ) {
 		this.schemaConfiguration = schemaConfiguration;
@@ -122,16 +122,18 @@ public abstract class AcrossLiquibaseInstaller
 	/**
 	 * Sets a Spring Resource that is able to resolve to a file or classpath resource.
 	 * An example might be <code>classpath:db-changelog.xml</code>.
+	 *
+	 * @see liquibase.integration.spring.SpringLiquibase#setChangeLog(String)
 	 */
-	protected void setChangelog( String changelog ) {
-		liquibaseConfiguration.setChangeLog( changelog );
+	public void setChangeLog( String changelog ) {
+		this.changeLog = changelog;
 	}
 
 	/**
 	 * @return a Resource that is able to resolve to a file or classpath resource.
 	 */
 	protected String getChangelog() {
-		return liquibaseConfiguration.getChangeLog();
+		return changeLog;
 	}
 
 	/**
@@ -140,110 +142,25 @@ public abstract class AcrossLiquibaseInstaller
 	 * This will override the defaultSchema configured in {@link SchemaConfiguration#getDefaultSchema()}
 	 *
 	 * @param defaultSchema The default db schema name
+	 * @see liquibase.integration.spring.SpringLiquibase#setDefaultSchema(String)
 	 */
 	protected void setDefaultSchema( String defaultSchema ) {
-		liquibaseConfiguration.setDefaultSchema( defaultSchema );
+		this.defaultSchema = defaultSchema;
 	}
 
 	/**
-	 * @return The db shame name that will be used as default schema during the liquibase update
+	 * @return The db schema name that will be used as default schema during the liquibase update
 	 */
 	protected String getDefaultSchema() {
-		return liquibaseConfiguration.getDefaultSchema();
-	}
-
-	/**
-	 * Sets the contexts string that will be used to construct the {@link liquibase.Contexts} object
-	 *
-	 * @param contexts
-	 */
-	protected void setContexts( String contexts ) {
-		liquibaseConfiguration.setContexts( contexts );
-	}
-
-	/**
-	 * @return the contexts string that will be used to construct the {@link liquibase.Contexts} object
-	 */
-	protected String getContexts() {
-		return liquibaseConfiguration.getContexts();
-	}
-
-	/**
-	 * Sets the dropFirst property
-	 * if this property is set to true, liquibase will first drop all database objects owned by the current user, before updating
-	 * if this property is set to false, liquibase will not drop all database objects owned by the current user, before updating
-	 *
-	 * @param dropFirst
-	 */
-	protected void setDropFirst( boolean dropFirst ) {
-		liquibaseConfiguration.setDropFirst( dropFirst );
-	}
-
-	/**
-	 * @return the dropFirst property
-	 */
-	protected boolean isDropFirst() {
-		return liquibaseConfiguration.isDropFirst();
-	}
-
-	/**
-	 * Sets the shouldRun property
-	 * if this property is set to true, the liquibase update will run on installation
-	 * if this property is set to false, the liquibase update will not run on installation
-	 *
-	 * @param shouldRun
-	 */
-	protected void setShouldRun( boolean shouldRun ) {
-		this.shouldRun = shouldRun;
-	}
-
-	/**
-	 * @return the shouldRun property
-	 */
-	protected boolean isShouldRun() {
-		return shouldRun;
-	}
-
-	/**
-	 * Ignores classpath prefix during changeset comparison.
-	 * This is particularly useful if Liquibase is run in different ways.
-	 *
-	 * @param ignoreClasspathPrefix
-	 * @see {@link SpringLiquibase#setIgnoreClasspathPrefix(boolean)}
-	 */
-	protected void setIgnoreClasspathPrefix( boolean ignoreClasspathPrefix ) {
-		liquibaseConfiguration.setIgnoreClasspathPrefix( ignoreClasspathPrefix );
-	}
-
-	/**
-	 * @return the ignoreClassPathPrefix property
-	 */
-	protected boolean isIgnoreClasspathPrefix() {
-		return liquibaseConfiguration.isIgnoreClasspathPrefix();
-	}
-
-	/**
-	 * Sets the file where liquibase will write the rollback SQL to updating
-	 * <p/>
-	 * No rollback sql will be generated if the rollbackFile is null
-	 *
-	 * @param rollbackFile
-	 */
-	protected void setRollbackFile( Path rollbackFile ) {
-		this.rollbackFile = rollbackFile;
-	}
-
-	/**
-	 * @return the file where liquibase will write the rollback sql to
-	 */
-	protected Path getRollbackFile() {
-		return rollbackFile;
+		return defaultSchema;
 	}
 
 	/**
 	 * Override the dataSource this installer should use (defaults to the installer datasource otherwise).
 	 *
-	 * @param dataSource instance
+	 * @param dataSource the {@link javax.sql.DataSource} instance to be set
+	 *
+	 * @see liquibase.integration.spring.SpringLiquibase#setDataSource(DataSource)
 	 */
 	protected void setDataSource( DataSource dataSource ) {
 		this.dataSource = dataSource;
@@ -265,38 +182,41 @@ public abstract class AcrossLiquibaseInstaller
 	public void install() {
 		AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext.getContext() );
 
-		SpringLiquibase liquibase = buildSpringLiquibase();
+		SpringLiquibase springLiquibase = new SpringLiquibase();
+		SpringLiquibase liquibase = configureSpringLiquibase( springLiquibase );
 
 		beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
 		beanFactory.initializeBean( liquibase, "" );
 	}
 
-	private SpringLiquibase buildSpringLiquibase() {
-		SpringLiquibase liquibase = new SpringLiquibase();
+	/**
+	 * This method configures the {@link SpringLiquibase} object before running the liquibase installer.
+	 * <p/>
+	 * This implementation will set the {@link SpringLiquibase} objects changelogparameters, changelog, default schema and data source
+	 * based on this {@link AcrossLiquibaseInstaller}s configuration
+	 * <p/>
+	 * This method can be overwritten if you need to perform some extra configuration on the {@link SpringLiquibase} object
+	 *
+	 * @param springLiquibase
+	 * @return The configured @link SpringLiquibase} object
+	 */
+	public SpringLiquibase configureSpringLiquibase( SpringLiquibase springLiquibase ) {
+		springLiquibase.setChangeLogParameters( buildParameters( getSchemaConfiguration() ) );
+		springLiquibase.setChangeLog( getChangelog() );
 
-		liquibase.setChangeLogParameters( buildParameters( schemaConfiguration ) );
-		liquibase.setChangeLog( liquibase.getChangeLog() );
-
-		if ( StringUtils.isNotEmpty( liquibaseConfiguration.getDefaultSchema() ) ) {
-			liquibase.setDefaultSchema( liquibaseConfiguration.getDefaultSchema() );
+		if ( StringUtils.isNotEmpty( getDefaultSchema() ) ) {
+			springLiquibase.setDefaultSchema( getDefaultSchema() );
 		}
-		else if ( schemaConfiguration != null ) {
-			liquibase.setDefaultSchema( schemaConfiguration.getDefaultSchema() );
+		else if ( getSchemaConfiguration() != null ) {
+			springLiquibase.setDefaultSchema( getSchemaConfiguration().getDefaultSchema() );
 		}
 
-		liquibase.setContexts( liquibaseConfiguration.getContexts() );
-		liquibase.setDropFirst( liquibaseConfiguration.isDropFirst() );
-		liquibase.setShouldRun( shouldRun );
-		liquibase.setDataSource( dataSource );
+		springLiquibase.setDataSource( getDataSource() );
 
-		if ( rollbackFile != null ) {
-			liquibase.setRollbackFile( rollbackFile.toFile() );
-		}
-
-		return liquibase;
+		return springLiquibase;
 	}
 
-	private Map<String, String> buildParameters( SchemaConfiguration schemaConfiguration ) {
+	protected Map<String, String> buildParameters( SchemaConfiguration schemaConfiguration ) {
 		if ( schemaConfiguration == null ) {
 			return Collections.emptyMap();
 		}
