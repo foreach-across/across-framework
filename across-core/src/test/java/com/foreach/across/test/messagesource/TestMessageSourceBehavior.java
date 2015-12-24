@@ -43,14 +43,13 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests messagesource behavior in case the parent ApplicationContext does not
- * define a MessageSource itself.
+ * Tests messagesource behavior in modules combined with ApplicationContext level messagesources.
  *
  * @author Arne Vandamme
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestMessageSourceInheritance.Config.class)
-public class TestMessageSourceInheritance
+@ContextConfiguration(classes = TestMessageSourceBehavior.Config.class)
+public class TestMessageSourceBehavior
 {
 	@Autowired
 	private MessageSource messageSource;
@@ -115,6 +114,15 @@ public class TestMessageSourceInheritance
 		assertEquals( "module4", contextNameDuringBootstrap( "module4" ) );
 	}
 
+	@Test
+	public void defaultMessageSourcesShouldBeLoaded() {
+		assertEquals( "module5", message( "module5.value" ) );
+		assertEquals( "module5", message( "module5.default.value" ) );
+		assertEquals( "module6", message( "module6.value" ) );
+		assertEquals( "module6", message( "module6.message.value" ) );
+		assertEquals( "module6", message( "module6.more.value" ) );
+	}
+
 	private String contextName( String module ) {
 		return beanRegistry.getBeanOfTypeFromModule( module, ModuleConfig.class ).getMessage( "context.name" );
 	}
@@ -133,8 +141,8 @@ public class TestMessageSourceInheritance
 	}
 
 	private String moduleNameDuringBootstrap( String module ) {
-		return beanRegistry.getBeanOfTypeFromModule( module, ModuleConfig.class ).getMessageDuringBootstrap(
-				"module.name" );
+		return beanRegistry.getBeanOfTypeFromModule( module, ModuleConfig.class )
+		                   .getMessageDuringBootstrap( "module.name" );
 	}
 
 	private String message( String key ) {
@@ -158,10 +166,13 @@ public class TestMessageSourceInheritance
 		@Bean
 		public AcrossContext acrossContext() {
 			AcrossContext ctx = new AcrossContext( parent );
-			ctx.addModule( new MessageModule( "module1", false ) );
-			ctx.addModule( new MessageModule( "module2", false ) );
-			ctx.addModule( new MessageModule( "module3", false ) );
-			ctx.addModule( new MessageModule( "module4", true ) );
+			ctx.addModule( new ConfiguredMessageModule( "module1", false ) );
+			ctx.addModule( new ConfiguredMessageModule( "module2", false ) );
+			ctx.addModule( new ConfiguredMessageModule( "module3", false ) );
+			ctx.addModule( new ConfiguredMessageModule( "module4", true ) );
+			ctx.addModule( new DefaultMessageModule( "module5" ) );
+			ctx.addModule( new DefaultMessageModule( "module6" ) );
+			ctx.addModule( new DefaultMessageModule( "noMessageSourceModule7" ) );
 
 			ctx.bootstrap();
 
@@ -169,11 +180,11 @@ public class TestMessageSourceInheritance
 		}
 	}
 
-	protected static class MessageModule extends AcrossModule
+	protected static class ConfiguredMessageModule extends AcrossModule
 	{
 		private final String name;
 
-		private MessageModule( String name, boolean internal ) {
+		private ConfiguredMessageModule( String name, boolean internal ) {
 			this.name = name;
 
 			if ( internal ) {
@@ -191,12 +202,31 @@ public class TestMessageSourceInheritance
 
 		@Override
 		public String getDescription() {
-			return name;
+			return "Module with manually defined message source bean.";
 		}
 
 		@Override
 		protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 
+		}
+	}
+
+	protected static class DefaultMessageModule extends AcrossModule
+	{
+		private final String name;
+
+		public DefaultMessageModule( String name ) {
+			this.name = name;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String getDescription() {
+			return "Module without any explicit message source configuration will scan for default messages.";
 		}
 	}
 

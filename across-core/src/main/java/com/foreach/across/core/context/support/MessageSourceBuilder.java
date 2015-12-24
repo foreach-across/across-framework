@@ -15,6 +15,7 @@
  */
 package com.foreach.across.core.context.support;
 
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Internal;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import org.slf4j.Logger;
@@ -22,9 +23,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.core.type.MethodMetadata;
+
+import java.util.Optional;
 
 /**
  * Takes care of building the MessageSourceHierarchy associated with an AcrossModule
@@ -85,7 +89,29 @@ public class MessageSourceBuilder
 			return true;
 		}
 
+		return createDefaultMessageSource();
+	}
+
+	private boolean createDefaultMessageSource() {
+		Optional<String> moduleName = moduleNameForBeanFactory();
+
+		if ( moduleName.isPresent() ) {
+			GenericBeanDefinition rootBeanDefinition = new GenericBeanDefinition();
+			rootBeanDefinition.setBeanClass( AcrossModuleMessageSource.class );
+
+			registry.registerBeanDefinition( BEAN_NAME, rootBeanDefinition );
+
+			return true;
+		}
+
 		return false;
+	}
+
+	private Optional<String> moduleNameForBeanFactory() {
+		return beanFactory.getBeansOfType( AcrossModule.class )
+		                  .keySet().stream()
+		                  .filter( beanName -> beanFactory.getBeanDefinition( beanName ).isPrimary() )
+		                  .findFirst();
 	}
 
 	public static HierarchicalMessageSource findHighestAvailableMessageSource( MessageSource current ) {
