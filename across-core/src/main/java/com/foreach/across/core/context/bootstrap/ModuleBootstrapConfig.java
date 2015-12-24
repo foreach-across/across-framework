@@ -20,7 +20,6 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
-import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 
@@ -83,8 +82,33 @@ public class ModuleBootstrapConfig
 			System.arraycopy( exposeFilters, 0, members, 1, exposeFilters.length );
 		}
 
-		BeanFilterComposite composite = new BeanFilterComposite( members );
-		setExposeFilter( composite );
+		setExposeFilter( BeanFilter.composite( members ) );
+	}
+
+	/**
+	 * Expose beans matching any of the classes.  If the class is an annotation, beans having the annotation
+	 * will be matched, otherwise beans assignable to the target class will match.
+	 *
+	 * @param classOrAnnotations to match
+	 */
+	public void expose( Class<?>... classOrAnnotations ) {
+		setExposeFilter( BeanFilter.composite(
+				getExposeFilter(),
+				BeanFilter.instances( classOrAnnotations ),
+				BeanFilter.annotations( classOrAnnotations )
+		) );
+	}
+
+	/**
+	 * Exposed all beans with the given names.
+	 *
+	 * @param beanNames that need to be exposed
+	 */
+	public void expose( String... beanNames ) {
+		setExposeFilter( BeanFilter.composite(
+				getExposeFilter(),
+				BeanFilter.beanNames( beanNames )
+		) );
 	}
 
 	public ExposedBeanDefinitionTransformer getExposeTransformer() {

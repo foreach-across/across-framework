@@ -102,6 +102,32 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	}
 
 	/**
+	 * Expose beans matching any of the classes.  If the class is an annotation, beans having the annotation
+	 * will be matched, otherwise beans assignable to the target class will match.
+	 *
+	 * @param classOrAnnotations to match
+	 */
+	public void expose( Class<?>... classOrAnnotations ) {
+		setExposeFilter( BeanFilter.composite(
+				getExposeFilter(),
+				BeanFilter.instances( classOrAnnotations ),
+				BeanFilter.annotations( classOrAnnotations )
+		) );
+	}
+
+	/**
+	 * Exposed all beans with the given names.
+	 *
+	 * @param beanNames that need to be exposed
+	 */
+	public void expose( String... beanNames ) {
+		setExposeFilter( BeanFilter.composite(
+				getExposeFilter(),
+				BeanFilter.beanNames( beanNames )
+		) );
+	}
+
+	/**
 	 * @return The transformer that will be applied to all exposed beans before copying them to the parent context.
 	 */
 	public ExposedBeanDefinitionTransformer getExposeTransformer() {
