@@ -23,6 +23,7 @@ import com.foreach.across.test.modules.web.it.modules.testResources.TestResource
 import org.junit.Test;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertTrue;
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = ITDefaultResourceVersioning.Config.class)
+@TestPropertySource(properties = "build.number=95247852")
 public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 {
 	@Test
@@ -49,9 +51,8 @@ public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 	public void thymeleafShouldReplaceResourceUrls() {
 		String output = get( "/testResources" );
 		assertNotNull( output );
-		// todo: needs to be modified to match on modified url, and following the url should lead to a result
-		assertTrue( output.contains( "parent css: /across/resources/css/testResources/parent.css" ) );
-		assertTrue( output.contains( "javascript: /across/resources/js/testResources/javascript.js" ) );
+		assertTrue( output.contains( "parent css: /across/resources/css/95247852/testResources/parent.css" ) );
+		assertTrue( output.contains( "javascript: /across/resources/js/95247852/testResources/javascript.js" ) );
 	}
 
 	@Configuration

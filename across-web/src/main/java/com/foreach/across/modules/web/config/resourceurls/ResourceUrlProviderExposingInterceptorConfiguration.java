@@ -17,7 +17,6 @@ package com.foreach.across.modules.web.config.resourceurls;
 
 import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.OrderInModule;
-import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +31,7 @@ public class ResourceUrlProviderExposingInterceptorConfiguration extends Prefixi
 {
 	@Override
 	public boolean supports( String mapperName ) {
-		return AcrossWebModule.NAME.equals( mapperName );
+		return true;
 	}
 
 	@Override

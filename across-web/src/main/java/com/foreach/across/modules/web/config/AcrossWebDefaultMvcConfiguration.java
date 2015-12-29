@@ -212,7 +212,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		contentNegotiationConfigurer.mediaTypes( getDefaultMediaTypes() );
 
 		ResourceHandlerRegistry resourceHandlerRegistry =
-				new ResourceHandlerRegistry( applicationContext, servletContext );
+				new ResourceHandlerRegistry( applicationContext, servletContext, currentModuleInfo );
 
 		for ( WebMvcConfigurer configurer : webMvcConfigurers ) {
 			configurer.addArgumentResolvers( argumentResolvers );

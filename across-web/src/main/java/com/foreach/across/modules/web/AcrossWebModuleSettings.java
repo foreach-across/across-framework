@@ -42,6 +42,7 @@ public class AcrossWebModuleSettings extends AcrossModuleSettings
 	public static final String MULTIPART_SETTINGS = "acrossWeb.multipart.settings";
 
 	public static final String RESOURCE_URLS_AUTO_CONFIGURE = "acrossWeb.resource.autoconfigure";
+	public static final String RESOURCES_VERSION = "acrossWeb.resources.version";
 
 	public static final String DEVELOPMENT_VIEWS = "acrossWeb.development.views";
 
@@ -55,6 +56,7 @@ public class AcrossWebModuleSettings extends AcrossModuleSettings
 		                   null, "MultipartConfigElement holding the multipart upload settings." );
 
 		registry.register( RESOURCE_URLS_AUTO_CONFIGURE, Boolean.class, true, "Auto configure a resource url resolver and relevant filters/interceptors." );
+		registry.register( RESOURCES_VERSION, String.class, null, "The version to use for the FixedVersionResolver" );
 
 		registry.register( DEVELOPMENT_VIEWS, Map.class, Collections.<String, String>emptyMap(),
 		                   "Map of physical locations for views resources." );
