@@ -192,7 +192,7 @@ public abstract class AcrossLiquibaseInstaller
 	/**
 	 * This method configures the {@link SpringLiquibase} object before running the liquibase installer.
 	 * <p/>
-	 * This implementation will set the {@link SpringLiquibase} objects changelogparameters, changelog, default schema and data source
+	 * This implementation will set the {@link SpringLiquibase} objects changelogParameters, changelog, default schema and data source
 	 * based on this {@link AcrossLiquibaseInstaller}s configuration
 	 * <p/>
 	 * This method can be overwritten if you need to perform some extra configuration on the {@link SpringLiquibase} object

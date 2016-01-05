@@ -21,15 +21,20 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
+import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.BootstrapLockManager;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.database.SchemaConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -38,6 +43,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * Builds the list of all installers in a configured AcrossContext.
@@ -103,6 +109,10 @@ public class AcrossBootstrapInstallerRegistry
 
 					if ( shouldCheckRunCondition( action ) ) {
 						if ( shouldPerformAction( action, moduleConfig.getModule(), installerClass, metadata ) ) {
+							if ( shouldPerformSchemaConfiguration( instance ) ) {
+								LOG.trace( "Performing schema configuration for installer {}.", installerClass );
+								performSchemaConfiguration( instance, moduleConfig.getModule() );
+							}
 							performInstallerAction( action, moduleConfig.getModule(), instance, metadata );
 						}
 						else {
@@ -214,6 +224,19 @@ public class AcrossBootstrapInstallerRegistry
 		return false;
 	}
 
+	private boolean shouldPerformSchemaConfiguration( Object installer ) {
+		return installer instanceof AcrossLiquibaseInstaller;
+	}
+
+	private void performSchemaConfiguration( Object installer, AcrossModule module ) {
+		SchemaConfiguration schemaConfiguration = determineSchemaConfiguration( module );
+
+		if ( schemaConfiguration != null && installer instanceof AcrossLiquibaseInstaller ) {
+			AcrossLiquibaseInstaller liquibaseInstaller = (AcrossLiquibaseInstaller) installer;
+			liquibaseInstaller.setSchemaConfiguration( schemaConfiguration );
+		}
+	}
+
 	private AcrossInstallerRepository getInstallerRepository() {
 		if ( installerRepository == null ) {
 			installerRepository = AcrossContextUtils
@@ -272,6 +295,59 @@ public class AcrossBootstrapInstallerRegistry
 		catch ( InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException ie ) {
 			throw new AcrossException( "Could not create installer instance: " + installerOrClass, ie );
 		}
+	}
+
+	private SchemaConfiguration determineSchemaConfiguration( AcrossModule module ) {
+		ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( contextConfig.getContext() );
+
+		SchemaConfiguration defaultSchemaConfiguration = null;
+		SchemaConfiguration moduleSchemaConfiguration = null;
+
+		Map<String, SchemaConfiguration> schemaConfigurations = beanFactory.getBeansOfType( SchemaConfiguration.class );
+
+		for ( Map.Entry<String, SchemaConfiguration> schemaConfigurationEntry : schemaConfigurations.entrySet() ) {
+			String schemaConfigModule = getModuleAnnotationValue( schemaConfigurationEntry.getKey(), beanFactory );
+
+			if ( StringUtils.isBlank( schemaConfigModule ) && defaultSchemaConfiguration == null ) {
+				defaultSchemaConfiguration = schemaConfigurationEntry.getValue();
+			}
+			else if ( StringUtils.equals( schemaConfigModule,
+			                              module.getName() ) && moduleSchemaConfiguration == null ) {
+				moduleSchemaConfiguration = schemaConfigurationEntry.getValue();
+			}
+		}
+
+		return moduleSchemaConfiguration != null ? moduleSchemaConfiguration : defaultSchemaConfiguration;
+	}
+
+	private String getModuleAnnotationValue( String beanName, ConfigurableListableBeanFactory beanFactory ) {
+		String moduleAnnotationValue = null;
+
+		// First look for the module annotation on the factory method
+		BeanDefinition beanDefinition = beanFactory.getBeanDefinition( beanName );
+		if ( beanDefinition instanceof AnnotatedBeanDefinition ) {
+			AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
+			Map<String, Object> moduleAnnotationAttributes =
+					annotatedBeanDefinition.getFactoryMethodMetadata().getAnnotationAttributes(
+							Module.class.getName() );
+			for ( Map.Entry<String, Object> attributeEntry : moduleAnnotationAttributes.entrySet() ) {
+				if ( StringUtils.equals( attributeEntry.getKey(), "value" ) ) {
+					String moduleName = attributeEntry.getValue().toString();
+					if ( StringUtils.isNotBlank( moduleName ) ) {
+						moduleAnnotationValue = moduleName;
+						break;
+					}
+				}
+			}
+		}
+
+		// If nothing is found then look for the module annotation on the bean class
+		Module moduleConfig = beanFactory.findAnnotationOnBean( beanName, Module.class );
+		if ( moduleConfig != null && StringUtils.isBlank( moduleAnnotationValue ) ) {
+			moduleAnnotationValue = moduleConfig.value();
+		}
+
+		return moduleAnnotationValue;
 	}
 
 	private boolean areDependenciesMet( Class<?> installerClass ) {

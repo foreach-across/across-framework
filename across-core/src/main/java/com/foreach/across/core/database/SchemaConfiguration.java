@@ -34,6 +34,10 @@ public class SchemaConfiguration
 	private Collection<SchemaObject> tables;
 	private Map<String, String> properties = new HashMap<>();
 
+	public SchemaConfiguration() {
+		//default contructor
+	}
+
 	public SchemaConfiguration( Collection<SchemaObject> tables ) {
 		this.tables = Collections.unmodifiableCollection( tables );
 	}

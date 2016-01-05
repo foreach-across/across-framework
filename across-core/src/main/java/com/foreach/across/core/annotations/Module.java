@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 /**
  * Qualifier that can be used to wire the AcrossModule or AcrossModuleInfo instance.
  */
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE })
+@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Qualifier
 public @interface Module
