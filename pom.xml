@@ -53,7 +53,7 @@
 		<spring.platform.version>1.1.1.RELEASE</spring.platform.version>
 		<foreach.common.version>0.12</foreach.common.version>
 		<querydsl.version>3.5.1</querydsl.version>
-		<hikaricp.version>2.3.9</hikaricp.version>
+		<hikaricp.version>2.4.3</hikaricp.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 	</properties>
 
@@ -294,7 +294,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.zaxxer</groupId>
-				<artifactId>HikariCP-java6</artifactId>
+				<artifactId>HikariCP</artifactId>
 				<version>${hikaricp.version}</version>
 			</dependency>
 			<dependency>
