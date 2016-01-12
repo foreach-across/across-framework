@@ -1,0 +1,1 @@
+create schema TEST_SCHEMA AUTHORIZATION DBA;
