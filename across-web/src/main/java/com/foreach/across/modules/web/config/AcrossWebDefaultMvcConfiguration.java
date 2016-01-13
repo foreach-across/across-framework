@@ -42,6 +42,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
@@ -67,10 +68,13 @@ import org.springframework.validation.Validator;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
 import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.context.request.async.CallableProcessingInterceptor;
+import org.springframework.web.context.request.async.DeferredResultProcessingInterceptor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerExceptionResolverComposite;
@@ -214,6 +218,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		ResourceHandlerRegistry resourceHandlerRegistry =
 				new ResourceHandlerRegistry( applicationContext, servletContext, currentModuleInfo );
 
+		DelayedAsyncSupportConfigurer asyncSupportConfigurer = new DelayedAsyncSupportConfigurer();
+
 		for ( WebMvcConfigurer configurer : webMvcConfigurers ) {
 			configurer.addArgumentResolvers( argumentResolvers );
 			configurer.addReturnValueHandlers( returnValueHandlers );
@@ -223,6 +229,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			configurer.addResourceHandlers( resourceHandlerRegistry );
 			configurer.addFormatters( mvcConversionService );
 			configurer.configureHandlerExceptionResolvers( exceptionResolvers );
+			configurer.configureAsyncSupport( asyncSupportConfigurer );
 		}
 
 		for ( PrefixingHandlerMappingConfigurer configurer : prefixingHandlerMappingConfigurers ) {
@@ -252,6 +259,16 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		}
 		adapter.setCustomArgumentResolvers( argumentResolvers );
 		adapter.setCustomReturnValueHandlers( returnValueHandlers );
+
+		// Async support
+		if ( asyncSupportConfigurer.getTaskExecutor() != null ) {
+			adapter.setTaskExecutor( asyncSupportConfigurer.getTaskExecutor() );
+		}
+		if ( asyncSupportConfigurer.getTimeout() != null ) {
+			adapter.setAsyncRequestTimeout( asyncSupportConfigurer.getTimeout() );
+		}
+		adapter.setCallableInterceptors( asyncSupportConfigurer.getCallableInterceptors() );
+		adapter.setDeferredResultInterceptors( asyncSupportConfigurer.getDeferredResultInterceptors() );
 
 		adapter.reload();
 
@@ -487,19 +504,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	public ReloadableRequestMappingHandlerAdapter requestMappingHandlerAdapter() {
 		ReloadableRequestMappingHandlerAdapter adapter = new ReloadableRequestMappingHandlerAdapter();
 		adapter.setWebBindingInitializer( getConfigurableWebBindingInitializer() );
-
-//		AsyncSupportConfigurer configurer = new AsyncSupportConfigurer();
-//		configureAsyncSupport(configurer);
-//
-//		if (configurer.getTaskExecutor() != null) {
-//			adapter.setTaskExecutor(configurer.getTaskExecutor());
-//		}
-//		if (configurer.getTimeout() != null) {
-//			adapter.setAsyncRequestTimeout(configurer.getTimeout());
-//		}
-//		adapter.setCallableInterceptors(configurer.getCallableInterceptors());
-//		adapter.setDeferredResultInterceptors(configurer.getDeferredResultInterceptors());
-
 		return adapter;
 	}
 
@@ -525,7 +529,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			exceptionHandlerExceptionResolver =
 					new LayoutingExceptionHandlerExceptionResolver( webTemplateInterceptor );
 
-		} else {
+		}
+		else {
 			exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
 		}
 		exceptionHandlerExceptionResolver.setApplicationContext( this.applicationContext );
@@ -538,5 +543,31 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		exceptionResolvers.add( exceptionHandlerExceptionResolver );
 		exceptionResolvers.add( new ResponseStatusExceptionResolver() );
 		exceptionResolvers.add( new DefaultHandlerExceptionResolver() );
+	}
+
+	/**
+	 * Inherited in order to expose properties.
+	 */
+	final static class DelayedAsyncSupportConfigurer extends AsyncSupportConfigurer
+	{
+		@Override
+		protected AsyncTaskExecutor getTaskExecutor() {
+			return super.getTaskExecutor();
+		}
+
+		@Override
+		protected Long getTimeout() {
+			return super.getTimeout();
+		}
+
+		@Override
+		protected List<CallableProcessingInterceptor> getCallableInterceptors() {
+			return super.getCallableInterceptors();
+		}
+
+		@Override
+		protected List<DeferredResultProcessingInterceptor> getDeferredResultInterceptors() {
+			return super.getDeferredResultInterceptors();
+		}
 	}
 }

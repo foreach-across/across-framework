@@ -35,7 +35,8 @@ import java.util.*;
 
 /**
  * <p>Creates an AcrossContext bean and will apply all AcrossContextConfigurer instances
- * before bootstrapping.  The configuration of the context is delegated to the configurers.</p>
+ * before bootstrapping.  Depending on the settings imported from {@link EnableAcrossContext},
+ * modules will be auto-configured and further configuration of the context delegated to the configurer beans.</p>
  * <p>A DataSource bean names acrossDataSource is required.</p>
  */
 @Configuration
@@ -100,21 +101,27 @@ public class AcrossContextConfiguration implements ImportAware
 	                                           Map<String, Object> configuration ) {
 		AcrossContext acrossContext = new AcrossContext( applicationContext );
 
-		if ( configuration != null && Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
-			ModuleSetBuilder moduleSetBuilder = new ModuleSetBuilder();
+		if ( configuration != null ) {
+			if ( Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
+				ModuleSetBuilder moduleSetBuilder = new ModuleSetBuilder();
 
-			ModuleDependencyResolver dependencyResolver = moduleDependencyResolver( configuration );
-			moduleSetBuilder.setDependencyResolver( dependencyResolver );
-			acrossContext.setModuleDependencyResolver( dependencyResolver );
+				ModuleDependencyResolver dependencyResolver = moduleDependencyResolver( configuration );
+				moduleSetBuilder.setDependencyResolver( dependencyResolver );
+				acrossContext.setModuleDependencyResolver( dependencyResolver );
 
-			modulesToConfigure( configuration ).forEach( moduleSetBuilder::addModule );
+				modulesToConfigure( configuration ).forEach( moduleSetBuilder::addModule );
 
-			BeanFactoryUtils
-					.beansOfTypeIncludingAncestors( applicationContext, AcrossModule.class )
-					.values()
-					.forEach( moduleSetBuilder::addModule );
+				BeanFactoryUtils
+						.beansOfTypeIncludingAncestors( applicationContext, AcrossModule.class )
+						.values()
+						.forEach( moduleSetBuilder::addModule );
 
-			acrossContext.setModules( moduleSetBuilder.build().getModules() );
+				acrossContext.setModules( moduleSetBuilder.build().getModules() );
+
+				acrossContext.setModuleConfigurationScanPackages(
+						determineModuleConfigurationPackages( configuration )
+				);
+			}
 		}
 
 		return acrossContext;
@@ -151,6 +158,39 @@ public class AcrossContextConfiguration implements ImportAware
 		return moduleDependencyResolver;
 	}
 
+	private String[] determineModuleConfigurationPackages( Map<String, Object> configuration ) {
+		Set<String> configurationPackageSet = new LinkedHashSet<>();
+
+		String[] configurationPackages = (String[]) configuration.get( "moduleConfigurationPackages" );
+		Collections.addAll( configurationPackageSet, configurationPackages );
+
+		Class<?>[] configurationPackageClasses = (Class<?>[]) configuration.get( "moduleConfigurationPackageClasses" );
+
+		for ( Class<?> modulePackageClass : configurationPackageClasses ) {
+			configurationPackageSet.add( modulePackageClass.getPackage().getName() );
+		}
+
+		if ( configurationPackageSet.isEmpty() ) {
+			try {
+				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
+				Package importingClassPackage = importingClass.getPackage();
+
+				String base = "";
+
+				if ( importingClassPackage != null ) {
+					base = importingClass.getPackage().getName();
+				}
+
+				configurationPackageSet.add( base + ".config" );
+				configurationPackageSet.add( base + ".extensions" );
+			}
+			catch ( ClassNotFoundException ignore ) {
+			}
+		}
+
+		return configurationPackageSet.toArray( new String[configurationPackageSet.size()] );
+	}
+
 	private String[] determineModulePackages( Map<String, Object> configuration ) {
 		Set<String> modulePackageSet = new LinkedHashSet<>();
 
@@ -168,7 +208,14 @@ public class AcrossContextConfiguration implements ImportAware
 
 			try {
 				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
-				modulePackageSet.add( importingClass.getPackage().getName() );
+				Package importingClassPackage = importingClass.getPackage();
+
+				if ( importingClassPackage != null ) {
+					modulePackageSet.add( importingClass.getPackage().getName() );
+				}
+				else {
+					modulePackageSet.add( "modules" );
+				}
 			}
 			catch ( ClassNotFoundException ignore ) {
 			}

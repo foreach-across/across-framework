@@ -76,7 +76,7 @@ public class AcrossInstallerConfig
 			);
 		}
 
-		return new AcrossCoreSchemaInstaller( installerDataSource, AcrossContextUtils.getBeanFactory( acrossContext ) );
+		return new AcrossCoreSchemaInstaller( installerDataSource, AcrossContextUtils.getApplicationContext( acrossContext ) );
 	}
 
 	@Bean(name = AcrossContext.INSTALLER_DATASOURCE)

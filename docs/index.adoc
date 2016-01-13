@@ -27,6 +27,13 @@ start-up procedures.  To this end, a module can define its own installers.
 *Across Core*
 
 * <<enableacrosscontext>> annotation now supports autoconfiguration of an `AcrossContext`
+* <<moduleconfiguration>> annotation provides a no-hassle way to declare annotated classes that need to be added to a specific module
+* message sources are now <<auto-detecting-message-sources,auto-detected>> if they follow the conventions
+* both `AcrossModule` and `ModuleBootstrapConfig` now have shortcut `expose()` methods that make it easier to expose additional beans
+
+*Across Web*
+
+* async configuration can now correctly be set through `WebMvcConfigurer#configureAsyncSupport(AsyncSupportConfigurer)`
 
 === 1.1.1.RELEASE
 Initial public release available on http://search.maven.org/[Maven central].

@@ -79,7 +79,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	 * @return The collection of view resolvers that will be created upon bootstrap.
 	 */
 	public AcrossWebViewSupport[] getSupportedViews() {
-		return supportedViews;
+		return supportedViews.clone();
 	}
 
 	@Override
