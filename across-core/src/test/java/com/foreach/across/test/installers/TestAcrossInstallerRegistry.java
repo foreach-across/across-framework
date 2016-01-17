@@ -19,25 +19,25 @@ package com.foreach.across.test.installers;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
+import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.bootstrap.AnnotationConfigBootstrapApplicationContextFactory;
+import com.foreach.across.core.context.bootstrap.BootstrapApplicationContextFactory;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.*;
 import com.foreach.across.test.modules.installer.installers.*;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.support.AbstractApplicationContext;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -51,23 +51,27 @@ public class TestAcrossInstallerRegistry
 	private AcrossModule module;
 
 	private InstallerSettings contextSettings;
-	private AcrossListableBeanFactory beanFactory;
 
 	@Before
 	public void setup() {
 		installerRepository = mock( AcrossInstallerRepository.class );
 
-		beanFactory = mock( AcrossListableBeanFactory.class );
+		BootstrapApplicationContextFactory applicationContextFactory
+				= new AnnotationConfigBootstrapApplicationContextFactory();
 
 		AcrossContextBeanRegistry beanRegistry = mock( AcrossContextBeanRegistry.class );
 		when( beanRegistry.getBeanOfType( AcrossInstallerRepository.class ) ).thenReturn( installerRepository );
 
-		AbstractApplicationContext applicationContext = mock( AbstractApplicationContext.class );
-		when( applicationContext.getBean( AcrossContextBeanRegistry.class ) ).thenReturn( beanRegistry );
+		AcrossApplicationContext applicationContext = new AcrossApplicationContext();
+		applicationContext.refresh();
+		applicationContext.start();
+		applicationContext.getBeanFactory().registerSingleton( "someBean", "beforeContextBootstrap" );
+		applicationContext.getBeanFactory().registerSingleton( "acrossContextBeanRegistry", beanRegistry );
 
 		AcrossApplicationContextHolder acrossApplicationContextHolder = mock( AcrossApplicationContextHolder.class );
 		when( acrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
-		when( acrossApplicationContextHolder.getBeanFactory() ).thenReturn( beanFactory );
+		when( acrossApplicationContextHolder.getBeanFactory() ).thenReturn(
+				(AcrossListableBeanFactory) applicationContext.getBeanFactory() );
 
 		AcrossContext acrossContext = mock( AcrossContext.class );
 		when( acrossContext.hasApplicationContext() ).thenReturn( true );
@@ -85,8 +89,11 @@ public class TestAcrossInstallerRegistry
 		when( contextConfig.getModule( anyString() ) ).thenReturn( moduleConfig );
 		when( contextConfig.getInstallerSettings() ).thenReturn( contextSettings );
 
-		registry = new AcrossBootstrapInstallerRegistry( contextConfig, null );
+		registry = new AcrossBootstrapInstallerRegistry( contextConfig, null, applicationContextFactory );
+	}
 
+	@After
+	public void clean() {
 		TestInstaller.reset();
 	}
 
@@ -137,7 +144,7 @@ public class TestAcrossInstallerRegistry
 
 		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
 
-		verify( beanFactory, never() ).autowireBeanProperties( anyObject(), anyInt(), anyBoolean() );
+		assertTrue( TestInstaller.WIRED_VALUES.isEmpty() );
 
 		assertExecuted();
 	}
@@ -150,14 +157,31 @@ public class TestAcrossInstallerRegistry
 
 		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
 
-		verify( beanFactory )
-				.autowireBeanProperties(
-						any( AlwaysRunBeforeContextBootstrapInstaller.class ),
-						anyInt(),
-						anyBoolean()
-				);
+		assertExecuted( AlwaysRunBeforeContextBootstrapInstaller.class );
+		assertEquals(
+				"beforeContextBootstrap",
+				TestInstaller.WIRED_VALUES.get( AlwaysRunBeforeContextBootstrapInstaller.class )
+		);
+	}
+
+	@Test
+	public void installerContextConfigurationTrumpsParentContext() {
+		installers( AlwaysRunBeforeContextBootstrapInstaller.class );
+
+		Set<ApplicationContextConfigurer> configurers = Collections.singleton(
+				new ProvidedBeansConfigurer( Collections.singletonMap( "someBean", "fromInstallerContext" ) )
+		);
+		when( moduleConfig.getInstallerContextConfigurers() ).thenReturn( configurers );
+
+		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
+
+		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
 
 		assertExecuted( AlwaysRunBeforeContextBootstrapInstaller.class );
+		assertEquals(
+				"fromInstallerContext",
+				TestInstaller.WIRED_VALUES.get( AlwaysRunBeforeContextBootstrapInstaller.class )
+		);
 	}
 
 	@Test
@@ -165,26 +189,67 @@ public class TestAcrossInstallerRegistry
 		installers( AlwaysRunBeforeContextBootstrapInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		AcrossListableBeanFactory moduleBeanFactory = mock( AcrossListableBeanFactory.class );
+//		Set<ApplicationContextConfigurer> configurers = Collections.singleton(
+//				new ProvidedBeansConfigurer( Collections.singletonMap( "someBean", "moduleBootstrap" ) )
+//		);
+//		when( moduleConfig.getInstallerContextConfigurers() ).thenReturn( configurers );
+//
+//		moduleConfig.getApplicationContextConfigurers()
+
+		AcrossApplicationContext applicationContext = new AcrossApplicationContext();
+		applicationContext.refresh();
+		applicationContext.start();
+		applicationContext.getBeanFactory().registerSingleton( "someBean", "fromModuleContext" );
 
 		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
 				AcrossApplicationContextHolder.class );
-		when( moduleAcrossApplicationContextHolder.getBeanFactory() ).thenReturn( moduleBeanFactory );
+		when( moduleAcrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
+		when( moduleAcrossApplicationContextHolder.getBeanFactory() )
+				.thenReturn( (AcrossListableBeanFactory) applicationContext.getBeanFactory() );
 
 		when( module.hasApplicationContext() ).thenReturn( true );
 		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
 
 		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
 
-		verify( beanFactory, never() ).autowireBeanProperties( anyObject(), anyInt(), anyBoolean() );
-		verify( moduleBeanFactory )
-				.autowireBeanProperties(
-						any( AlwaysRunBeforeContextBootstrapInstaller.class ),
-						anyInt(),
-						anyBoolean()
-				);
+		assertExecuted( AlwaysRunBeforeContextBootstrapInstaller.class );
+		assertEquals(
+				"fromModuleContext",
+				TestInstaller.WIRED_VALUES.get( AlwaysRunBeforeContextBootstrapInstaller.class )
+		);
+	}
+
+	@Test
+	public void installerContextConfigurationTrumpsModuleContext() {
+		installers( AlwaysRunBeforeContextBootstrapInstaller.class );
+		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
+
+		Set<ApplicationContextConfigurer> configurers = Collections.singleton(
+				new ProvidedBeansConfigurer( Collections.singletonMap( "someBean", "fromInstallerContext" ) )
+		);
+		when( moduleConfig.getInstallerContextConfigurers() ).thenReturn( configurers );
+
+		AcrossApplicationContext applicationContext = new AcrossApplicationContext();
+		applicationContext.refresh();
+		applicationContext.start();
+		applicationContext.getBeanFactory().registerSingleton( "someBean", "fromModuleContext" );
+
+		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
+				AcrossApplicationContextHolder.class );
+		when( moduleAcrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
+		when( moduleAcrossApplicationContextHolder.getBeanFactory() )
+				.thenReturn( (AcrossListableBeanFactory) applicationContext.getBeanFactory() );
+
+		when( module.hasApplicationContext() ).thenReturn( true );
+		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
+
+		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
 
 		assertExecuted( AlwaysRunBeforeContextBootstrapInstaller.class );
+		assertEquals(
+				"fromInstallerContext",
+				TestInstaller.WIRED_VALUES.get( AlwaysRunBeforeContextBootstrapInstaller.class )
+		);
 	}
 
 	@Test
@@ -437,7 +502,5 @@ public class TestAcrossInstallerRegistry
 
 	private void assertExecuted( Class... installerClasses ) {
 		assertArrayEquals( installerClasses, TestInstaller.executed() );
-
-		TestInstaller.reset();
 	}
 }

@@ -46,6 +46,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	private BeanFilter exposeFilter = defaultExposeFilter();
 	private ExposedBeanDefinitionTransformer exposeTransformer = null;
 	private final Set<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
+	private final Set<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
 
 	private final Set<String> runtimeDependencies = new HashSet<>();
 
@@ -55,6 +56,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 
 	public AcrossModule() {
 		registerDefaultApplicationContextConfigurers( applicationContextConfigurers );
+		registerDefaultInstallerContextConfigurers( installerContextConfigurers );
 	}
 
 	public AcrossContext getContext() {
@@ -197,8 +199,21 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 		contextConfigurers.add( new ComponentScanConfigurer( getClass().getPackage().getName() + ".config" ) );
 	}
 
+	/**
+	 * Register the default {@link ApplicationContextConfigurer} to be added to the global installer
+	 * {@link org.springframework.context.ApplicationContext} for this module.
+	 *
+	 * @param installerContextConfigurers Set of existing configurers to add to.
+	 */
+	protected void registerDefaultInstallerContextConfigurers( Set<ApplicationContextConfigurer> installerContextConfigurers ) {
+	}
+
 	public Set<ApplicationContextConfigurer> getApplicationContextConfigurers() {
 		return applicationContextConfigurers;
+	}
+
+	public Set<ApplicationContextConfigurer> getInstallerContextConfigurers() {
+		return installerContextConfigurers;
 	}
 
 	/**
@@ -213,10 +228,28 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	/**
 	 * <p>Add an ApplicationContextConfigurer to be loaded when the module bootstraps.</p>
 	 *
-	 * @param configurer Configurer instance.
+	 * @param configurers Configurer instance.
 	 */
-	public void addApplicationContextConfigurer( ApplicationContextConfigurer configurer ) {
-		applicationContextConfigurers.add( configurer );
+	public void addApplicationContextConfigurer( ApplicationContextConfigurer... configurers ) {
+		Collections.addAll( applicationContextConfigurers, configurers );
+	}
+
+	/**
+	 * <p>Add one or more annotated classes to the module installer ApplicationContext.</p>
+	 *
+	 * @param annotatedClasses Configuration classes.
+	 */
+	public void addInstallerContextConfigurer( Class... annotatedClasses ) {
+		addInstallerContextConfigurer( new AnnotatedClassConfigurer( annotatedClasses ) );
+	}
+
+	/**
+	 * <p>Add an ApplicationContextConfigurer to configure the module installer ApplicationContext.</p>
+	 *
+	 * @param configurers Configurer instances.
+	 */
+	public void addInstallerContextConfigurer( ApplicationContextConfigurer... configurers ) {
+		Collections.addAll( installerContextConfigurers, configurers );
 	}
 
 	/**
@@ -227,6 +260,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	@Override
 	public void addPropertySources( PropertySources propertySources ) {
 		addApplicationContextConfigurer( new PropertySourcesConfigurer( propertySources ) );
+		addInstallerContextConfigurer( new PropertySourcesConfigurer( propertySources ) );
 	}
 
 	/**
@@ -236,6 +270,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	 */
 	public void addPropertySources( PropertySource<?>... propertySources ) {
 		addApplicationContextConfigurer( new PropertySourcesConfigurer( propertySources ) );
+		addInstallerContextConfigurer( new PropertySourcesConfigurer( propertySources ) );
 	}
 
 	/**

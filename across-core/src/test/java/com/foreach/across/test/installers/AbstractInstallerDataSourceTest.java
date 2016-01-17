@@ -18,7 +18,6 @@ package com.foreach.across.test.installers;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,14 +37,19 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestMultipleDataSources.Config.class)
-public class TestMultipleDataSources
+@ContextConfiguration(classes = AbstractInstallerDataSourceTest.Config.class)
+public abstract class AbstractInstallerDataSourceTest
 {
-	private JdbcTemplate core;
+	private JdbcTemplate core, data;
 
 	@Autowired
-	private void setAcrossDataSource( EmbeddedDatabase acrossDataSource ){
+	private void setAcrossDataSource( EmbeddedDatabase acrossDataSource ) {
 		core = new JdbcTemplate( acrossDataSource );
+	}
+
+	@Autowired
+	private void setDataDataSource( EmbeddedDatabase dataDataSource ) {
+		data = new JdbcTemplate( dataDataSource );
 	}
 
 	@Test
@@ -55,7 +57,7 @@ public class TestMultipleDataSources
 		assertEquals(
 				Integer.valueOf( 1 ),
 				core.queryForObject(
-						"SELECT count(*) FROM PUBLIC.across_locks WHERE lock_id = 'across:bootstrap' AND holds = 0",
+						"SELECT count(*) FROM " + coreSchema() + ".across_locks WHERE lock_id = 'across:bootstrap' AND holds = 0",
 						Integer.class
 				)
 		);
@@ -64,18 +66,29 @@ public class TestMultipleDataSources
 	@Test
 	public void installerRecordShouldBeCreated() {
 		assertEquals(
-			Integer.valueOf( 1 ),
-		    core.queryForObject(
-				    "SELECT count(*) FROM acrossmodules WHERE installer_id = '" + MyInstaller.class.getName() + "'",
-		        Integer.class
-		    )
+				Integer.valueOf( 1 ),
+				core.queryForObject(
+						"SELECT count(*) FROM " + coreSchema() + ".acrossmodules WHERE installer_id = '"
+								+ MyInstaller.class.getName() + "'",
+						Integer.class
+				)
 		);
 	}
 
 	@Test
 	public void installerTableShouldBeCreatedInRightDataSource() {
-
+		assertEquals(
+				Integer.valueOf( 1 ),
+				data.queryForObject(
+						"SELECT count(*) FROM " + dataSchema() + ".my_installer WHERE name = 'test'",
+						Integer.class
+				)
+		);
 	}
+
+	protected abstract String coreSchema();
+
+	protected abstract String dataSchema();
 
 	@Configuration
 	@EnableAcrossContext
@@ -84,15 +97,6 @@ public class TestMultipleDataSources
 		@Bean
 		public InstallerModule installerModule() {
 			return new InstallerModule();
-		}
-
-		@Bean
-		public EmbeddedDatabase acrossDataSource() {
-			return new EmbeddedDatabaseBuilder()
-					.setType( EmbeddedDatabaseType.HSQL )
-					.setName( "core" )
-					.addScript( "scripts/hsqldb-schema.sql" )
-					.build();
 		}
 	}
 
@@ -117,9 +121,8 @@ public class TestMultipleDataSources
 	@Installer(description = "Creates a simple table in the datasource.", version = 1)
 	static class MyInstaller extends AcrossLiquibaseInstaller
 	{
-		@InstallerMethod
-		public void install() {
-
+		public MyInstaller() {
+			super( "classpath:/liquibase/my-installer.xml" );
 		}
 	}
 }

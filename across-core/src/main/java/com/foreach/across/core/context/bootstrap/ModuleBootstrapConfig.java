@@ -38,6 +38,7 @@ public class ModuleBootstrapConfig
 	private BeanFilter exposeFilter;
 	private ExposedBeanDefinitionTransformer exposeTransformer;
 	private Set<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
+	private Set<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
 	private Collection<Object> installers = new LinkedList<>();
 	private InstallerSettings installerSettings;
 
@@ -137,6 +138,26 @@ public class ModuleBootstrapConfig
 
 	public void addApplicationContextConfigurers( Collection<ApplicationContextConfigurer> configurers ) {
 		applicationContextConfigurers.addAll( configurers );
+	}
+
+	public Set<ApplicationContextConfigurer> getInstallerContextConfigurers() {
+		return installerContextConfigurers;
+	}
+
+	public void setInstallerContextConfigurers( Set<ApplicationContextConfigurer> installerContextConfigurers ) {
+		this.installerContextConfigurers = installerContextConfigurers;
+	}
+
+	public void addInstallerContextConfigurer( Class<?>... annotatedClasses ) {
+		addInstallerContextConfigurer( new AnnotatedClassConfigurer( annotatedClasses ) );
+	}
+
+	public void addInstallerContextConfigurer( ApplicationContextConfigurer... configurers ) {
+		addInstallerContextConfigurers( Arrays.asList( configurers ) );
+	}
+
+	public void addInstallerContextConfigurers( Collection<ApplicationContextConfigurer> configurers ) {
+		installerContextConfigurers.addAll( configurers );
 	}
 
 	public InstallerSettings getInstallerSettings() {
