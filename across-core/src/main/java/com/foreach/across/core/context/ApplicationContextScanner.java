@@ -34,7 +34,7 @@ public final class ApplicationContextScanner
 	/**
 	 * <p>Will find all beans in the ApplicationContext that have been created with the given annotation.
 	 * Will search recursively for the annotation, a match will occur if the bean implements an interface
-	 * having the annotation or was created through a Configurationclass @Bean method where the annotation
+	 * having the annotation or was created through a Configuration class @Bean method where the annotation
 	 * was present on the method definition.</p>
 	 * <p>Note: only singleton or actually created beans will be returned.</p>
 	 *

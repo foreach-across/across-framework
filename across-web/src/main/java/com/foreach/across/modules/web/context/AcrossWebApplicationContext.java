@@ -36,7 +36,13 @@ import java.util.Map;
  */
 public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationContext implements AcrossConfigurableApplicationContext
 {
+	private boolean installerMode = false;
 	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
+
+	@Override
+	public void setInstallerMode( boolean installerMode ) {
+		this.installerMode = installerMode;
+	}
 
 	@Override
 	protected DefaultListableBeanFactory createBeanFactory() {
@@ -85,7 +91,9 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 
 	@Override
 	protected void initMessageSource() {
-		new MessageSourceBuilder( getBeanFactory() ).build( getInternalParentMessageSource() );
+		if ( !installerMode ) {
+			new MessageSourceBuilder( getBeanFactory() ).build( getInternalParentMessageSource() );
+		}
 
 		super.initMessageSource();
 	}

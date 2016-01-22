@@ -102,7 +102,7 @@ public class AcrossBootstrapper
 			runModuleBootstrapperCustomizations( modulesInOrder );
 
 			AcrossApplicationContextHolder root = createRootContext( contextInfo );
-			AbstractApplicationContext rootContext = root.getApplicationContext();
+			AcrossConfigurableApplicationContext rootContext = root.getApplicationContext();
 
 			createdApplicationContexts.push( rootContext );
 
@@ -120,8 +120,11 @@ public class AcrossBootstrapper
 
 			try {
 				AcrossBootstrapInstallerRegistry installerRegistry =
-						new AcrossBootstrapInstallerRegistry( contextInfo.getBootstrapConfiguration(),
-						                                      bootstrapLockManager );
+						new AcrossBootstrapInstallerRegistry(
+								contextInfo.getBootstrapConfiguration(),
+								bootstrapLockManager,
+								applicationContextFactory
+						);
 
 				// Run installers that don't need anything bootstrapped
 				installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
@@ -156,7 +159,7 @@ public class AcrossBootstrapper
 					                                          InstallerPhase.BeforeModuleBootstrap );
 
 					// Create the module context
-					AbstractApplicationContext child =
+					AcrossConfigurableApplicationContext child =
 							applicationContextFactory.createApplicationContext( context, config, root );
 
 					AcrossApplicationContextHolder moduleApplicationContext = new AcrossApplicationContextHolder( child,
@@ -208,6 +211,9 @@ public class AcrossBootstrapper
 
 				// Bootstrapping done, run installers that require context bootstrap finished
 				installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
+
+				// Destroy the installer contexts
+				installerRegistry.destroy();
 			}
 			finally {
 				bootstrapLockManager.ensureUnlocked();
@@ -283,7 +289,7 @@ public class AcrossBootstrapper
 
 			// Make sure the parent can handle exposed beans - if not, introduce a supporting BeanFactory in the hierarchy
 			if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
-				AbstractApplicationContext parentApplicationContext =
+				AcrossConfigurableApplicationContext parentApplicationContext =
 						applicationContextFactory.createApplicationContext();
 				parentApplicationContext.refresh();
 				parentApplicationContext.start();
@@ -306,7 +312,7 @@ public class AcrossBootstrapper
 	private void exposeBeans( ConfigurableAcrossModuleInfo acrossModuleInfo,
 	                          BeanFilter exposeFilter,
 	                          ExposedBeanDefinitionTransformer exposeTransformer,
-	                          AbstractApplicationContext parentContext ) {
+	                          AcrossConfigurableApplicationContext parentContext ) {
 		BeanFilter exposeFilterToApply = exposeFilter;
 
 		AcrossListableBeanFactory moduleBeanFactory = AcrossContextUtils.getBeanFactory(
@@ -448,8 +454,13 @@ public class AcrossBootstrapper
 			);
 
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
-			config.addApplicationContextConfigurers( AcrossContextUtils.getConfigurersToApply( context,
-			                                                                                   module ) );
+			config.addApplicationContextConfigurers( AcrossContextUtils.getApplicationContextConfigurers( context,
+			                                                                                              module ) );
+
+			// create installer application context
+			config.addInstallerContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
+			config.addInstallerContextConfigurers( contextInfo.getContext().getInstallerContextConfigurers() );
+			config.addInstallerContextConfigurers( AcrossContextUtils.getInstallerContextConfigurers( module ) );
 
 			configs.add( config );
 
@@ -509,7 +520,7 @@ public class AcrossBootstrapper
 	}
 
 	private AcrossApplicationContextHolder createRootContext( ConfigurableAcrossContextInfo contextInfo ) {
-		AbstractApplicationContext rootApplicationContext =
+		AcrossConfigurableApplicationContext rootApplicationContext =
 				applicationContextFactory.createApplicationContext( context,
 				                                                    context.getParentApplicationContext() );
 

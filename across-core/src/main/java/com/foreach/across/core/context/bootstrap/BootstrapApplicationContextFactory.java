@@ -18,8 +18,11 @@ package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
+
+import java.util.Collection;
 
 /**
  * In charge of creating the ApplicationContext and loading all the beans.
@@ -29,9 +32,9 @@ public interface BootstrapApplicationContextFactory
 	/**
 	 * Create a new ApplicationContext instance that support Across context behavior.
 	 *
-	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
+	 * @return Spring ApplicationContext instance implementing AcrossConfigurableApplicationContext.
 	 */
-	AbstractApplicationContext createApplicationContext();
+	AcrossConfigurableApplicationContext createApplicationContext();
 
 	/**
 	 * Create the Spring ApplicationContext for the root of the AcrossContext.
@@ -40,10 +43,10 @@ public interface BootstrapApplicationContextFactory
 	 *
 	 * @param across                   AcrossContext being created.
 	 * @param parentApplicationContext Parent ApplicationContext, can be null.
-	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
+	 * @return Spring ApplicationContext instance implementing AcrossConfigurableApplicationContext.
 	 */
-	AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                     ApplicationContext parentApplicationContext );
+	AcrossConfigurableApplicationContext createApplicationContext( AcrossContext across,
+	                                                               ApplicationContext parentApplicationContext );
 
 	/**
 	 * Create the Spring ApplicationContext for a particular AcrossModule.
@@ -51,11 +54,11 @@ public interface BootstrapApplicationContextFactory
 	 * @param across                AcrossContext being loaded.
 	 * @param moduleBootstrapConfig Bootstrap configuration of the AcrossModule being created.
 	 * @param parentContext         Contains the parent context.
-	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
+	 * @return Spring ApplicationContext instance implementing AcrossConfigurableApplicationContext.
 	 */
-	AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                     ModuleBootstrapConfig moduleBootstrapConfig,
-	                                                     AcrossApplicationContextHolder parentContext );
+	AcrossConfigurableApplicationContext createApplicationContext( AcrossContext across,
+	                                                               ModuleBootstrapConfig moduleBootstrapConfig,
+	                                                               AcrossApplicationContextHolder parentContext );
 
 	/**
 	 * Loads beans and definitions in the root ApplicationContext.
@@ -75,4 +78,13 @@ public interface BootstrapApplicationContextFactory
 	void loadApplicationContext( AcrossContext across,
 	                             ModuleBootstrapConfig moduleBootstrapConfig,
 	                             AcrossApplicationContextHolder context );
+
+	/**
+	 * Loads a set of configurers into an {@link ApplicationContext}.
+	 *
+	 * @param context     Configurable application context
+	 * @param configurers Configurers to apply
+	 */
+	void loadApplicationContext( AcrossConfigurableApplicationContext context,
+	                             Collection<ApplicationContextConfigurer> configurers );
 }

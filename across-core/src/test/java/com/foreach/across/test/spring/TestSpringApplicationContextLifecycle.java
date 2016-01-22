@@ -19,6 +19,7 @@ package com.foreach.across.test.spring;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.sql.DataSource;
 
@@ -102,7 +102,8 @@ public class TestSpringApplicationContextLifecycle
 
 		across.bootstrap();
 
-		AbstractApplicationContext acrossApplicationContext = AcrossContextUtils.getApplicationContext( across );
+		AcrossConfigurableApplicationContext acrossApplicationContext = AcrossContextUtils.getApplicationContext(
+				across );
 		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.getBeanFactory( across );
 		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.getBeanFactory( moduleOne );
 		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.getBeanFactory( moduleTwo );
@@ -140,7 +141,8 @@ public class TestSpringApplicationContextLifecycle
 
 		across.bootstrap();
 
-		AbstractApplicationContext acrossApplicationContext = AcrossContextUtils.getApplicationContext( across );
+		AcrossConfigurableApplicationContext acrossApplicationContext = AcrossContextUtils.getApplicationContext(
+				across );
 		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.getBeanFactory( across );
 		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.getBeanFactory( moduleOne );
 		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.getBeanFactory( moduleTwo );
@@ -184,7 +186,8 @@ public class TestSpringApplicationContextLifecycle
 
 		across.bootstrap();
 
-		AbstractApplicationContext acrossApplicationContext = AcrossContextUtils.getApplicationContext( across );
+		AcrossConfigurableApplicationContext acrossApplicationContext
+				= AcrossContextUtils.getApplicationContext( across );
 		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.getBeanFactory( across );
 		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.getBeanFactory( moduleOne );
 		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.getBeanFactory( moduleTwo );
