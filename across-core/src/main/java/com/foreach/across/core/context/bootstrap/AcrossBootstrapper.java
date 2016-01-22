@@ -459,6 +459,7 @@ public class AcrossBootstrapper
 
 			// create installer application context
 			config.addInstallerContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
+			config.addInstallerContextConfigurers( contextInfo.getContext().getInstallerContextConfigurers() );
 			config.addInstallerContextConfigurers( AcrossContextUtils.getInstallerContextConfigurers( module ) );
 
 			configs.add( config );

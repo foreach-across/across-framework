@@ -824,12 +824,54 @@ If no separate installer datasource is specified, the default across datasource 
 IMPORTANT: A valid default datasource is always required for installers to run.
 It is not possible to configure only an installer datasource as the distributed locking mechanism uses the default datasource.
 
-The installer datasource can be wired anywhere, but will be the default datasource used for all `AcrossLiquibaseInstaller instances.
-Its purpose is to provide a separate datasource with augmented permissions to perform schema changes and installer tracking in the database.
+The installer datasource is the default datasource used for all `AcrossLiquibaseInstaller` instances.
 
-For security purposes the installer datasource could be closed after the context has bootstrapped.
-This is the responsibilty of the application configuration and be aware that some functionality related to querying the installer repository will not be available if the installer datasource goes offline.
+=== Installer ApplicationContext
+If installers need to be run for a module, a specific `ApplicationContext` is created in which the installers will be wired as beans.
+This `ApplicationContext` can exist before the actual module `ApplicationContext` does.
+However, all beans from the parent Across context and the module context - when created - are available in installers.
 
+Installer contexts are temporary, once the Across context has bootstrapped they are closed.
+Configuration and other annotated classes can be added to the installer context by using `ApplicationContextConfigurer` implementations, either on the `AcrossContext` or on an `AcrossModule`.
+
+.Example using different datasource inside the modules
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Configuration
+class Config implements AcrossContextConfigurer
+{
+    /**
+     * Installer tracking will be done on this datasource.
+     */
+    @Bean
+    public EmbeddedDatabase acrossDataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .setType( EmbeddedDatabaseType.HSQL )
+                .setName( "core" )
+                .build();
+    }
+
+    @Bean
+    public EmbeddedDatabase moduleDataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .setType( EmbeddedDatabaseType.HSQL )
+                .setName( "data" )
+                .build();
+    }
+
+    @Override
+    public void configure( AcrossContext context ) {
+        ProvidedBeansMap beans = new ProvidedBeansMap();
+        beans.put( AcrossContext.DATASOURCE, new PrimarySingletonBean( moduleDataSource() ) );
+        beans.put( AcrossContext.INSTALLER_DATASOURCE, moduleDataSource() );
+
+        context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( beans ),
+                                                 ConfigurerScope.MODULES_ONLY );
+        context.addInstallerContextConfigurer( new ProvidedBeansConfigurer( beans ) );
+    }
+}
+----
 
 === Module version information
 Across modules have version information attached in the form of an `AcrossVersionInfo` property.

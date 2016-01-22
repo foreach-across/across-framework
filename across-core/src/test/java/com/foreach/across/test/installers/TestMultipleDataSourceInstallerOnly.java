@@ -33,8 +33,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestMultipleDataSourceAndDefaultSchema.Config.class)
-public class TestMultipleDataSourceAndDefaultSchema extends AbstractInstallerDataSourceTest
+@ContextConfiguration(classes = TestMultipleDataSourceInstallerOnly.Config.class)
+public class TestMultipleDataSourceInstallerOnly extends AbstractInstallerDataSourceTest
 {
 	@Override
 	protected String coreSchema() {
@@ -49,7 +49,7 @@ public class TestMultipleDataSourceAndDefaultSchema extends AbstractInstallerDat
 	@Configuration
 	static class Config implements AcrossContextConfigurer
 	{
-		@Bean
+		@Bean(name = { "acrossDataSource", MODULE_DS, MODULE_INSTALLER_DS })
 		public EmbeddedDatabase acrossDataSource() {
 			return new EmbeddedDatabaseBuilder()
 					.setType( EmbeddedDatabaseType.HSQL )

@@ -15,6 +15,12 @@
  */
 package com.foreach.across.test.installers;
 
+import com.foreach.across.config.AcrossContextConfigurer;
+import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.beans.PrimarySingletonBean;
+import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import com.foreach.across.core.context.configurer.ConfigurerScope;
+import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,8 +36,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestSingleDataSourceAndDefaultSchema.Config.class)
-public class TestSingleDataSourceAndDefaultSchema extends AbstractInstallerDataSourceTest
+@ContextConfiguration(classes = TestMultipleDataSourceModuleOverride.Config.class)
+public class TestMultipleDataSourceModuleOverride extends AbstractInstallerDataSourceTest
 {
 	@Override
 	protected String coreSchema() {
@@ -44,15 +50,33 @@ public class TestSingleDataSourceAndDefaultSchema extends AbstractInstallerDataS
 	}
 
 	@Configuration
-	static class Config
+	static class Config implements AcrossContextConfigurer
 	{
-		@Bean(name = { "acrossDataSource", "dataDataSource", MODULE_DS, MODULE_INSTALLER_DS })
+		@Bean(name = { "acrossDataSource" })
 		public EmbeddedDatabase acrossDataSource() {
 			return new EmbeddedDatabaseBuilder()
 					.setType( EmbeddedDatabaseType.HSQL )
 					.setName( "core" )
-					.addScript( "liquibase/hsqldb-create-test_schema.sql" )
 					.build();
+		}
+
+		@Bean(name = { "dataDataSource", MODULE_DS, MODULE_INSTALLER_DS })
+		public EmbeddedDatabase dataDataSource() {
+			return new EmbeddedDatabaseBuilder()
+					.setType( EmbeddedDatabaseType.HSQL )
+					.setName( "data" )
+					.build();
+		}
+
+		@Override
+		public void configure( AcrossContext context ) {
+			ProvidedBeansMap beans = new ProvidedBeansMap();
+			beans.put( AcrossContext.DATASOURCE, new PrimarySingletonBean( dataDataSource() ) );
+			beans.put( AcrossContext.INSTALLER_DATASOURCE, dataDataSource() );
+
+			context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( beans ),
+			                                         ConfigurerScope.MODULES_ONLY );
+			context.addInstallerContextConfigurer( new ProvidedBeansConfigurer( beans ) );
 		}
 	}
 }

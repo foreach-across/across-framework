@@ -17,7 +17,10 @@ package com.foreach.across.test.installers;
 
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.Installer;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +33,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.sql.DataSource;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 /**
  * @author Arne Vandamme
@@ -40,7 +47,16 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = AbstractInstallerDataSourceTest.Config.class)
 public abstract class AbstractInstallerDataSourceTest
 {
+	protected static final String MODULE_DS = "expectedModuleDataSource";
+	protected static final String MODULE_INSTALLER_DS = "expectedModuleInstallerDataSource";
+
 	private JdbcTemplate core, data;
+
+	@Autowired
+	private DataSource expectedModuleDataSource, expectedModuleInstallerDataSource;
+
+	@Autowired
+	private InstallerModuleBean installerModuleBean;
 
 	@Autowired
 	private void setAcrossDataSource( EmbeddedDatabase acrossDataSource ) {
@@ -86,6 +102,12 @@ public abstract class AbstractInstallerDataSourceTest
 		);
 	}
 
+	@Test
+	public void verifyDataSources() {
+		assertSame( expectedModuleDataSource, installerModuleBean.acrossDataSource );
+		assertSame( expectedModuleInstallerDataSource, installerModuleBean.installerDataSource );
+	}
+
 	protected abstract String coreSchema();
 
 	protected abstract String dataSchema();
@@ -115,6 +137,24 @@ public abstract class AbstractInstallerDataSourceTest
 		@Override
 		public Object[] getInstallers() {
 			return new Object[] { MyInstaller.class };
+		}
+
+		@Override
+		protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+			contextConfigurers.add( new AnnotatedClassConfigurer( InstallerModuleBean.class ) );
+		}
+	}
+
+	@Exposed
+	static class InstallerModuleBean
+	{
+		public final DataSource acrossDataSource;
+		public final DataSource installerDataSource;
+
+		@Autowired
+		public InstallerModuleBean( DataSource acrossDataSource, DataSource installerDataSource ) {
+			this.acrossDataSource = acrossDataSource;
+			this.installerDataSource = installerDataSource;
 		}
 	}
 
