@@ -19,7 +19,6 @@ package com.foreach.across.core.annotations.conditions;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.annotations.AcrossCondition;
-import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -94,18 +93,23 @@ public class AcrossConditionCondition implements Condition
 
 		// Provided for SPEL property
 		public AcrossModule getCurrentModule() {
-			AcrossModuleInfo moduleInfo = getBeanFactory().getBean( AcrossContextInfo.class )
-			                                              .getModuleBeingBootstrapped();
 
-			return moduleInfo != null ? moduleInfo.getModule() : null;
+			return getBeanFactory().getBean( AcrossModule.class );
+//			AcrossModuleInfo moduleInfo = getBeanFactory().getBean( AcrossModuleInfo ).getBean(
+//					AcrossContextInfo.class )
+//			                                              .getModuleBeingBootstrapped();
+//
+//			return moduleInfo != null ? moduleInfo.getModule() : null;
 
 		}
 
 		public AcrossModuleSettings getSettings() {
+			return getBeanFactory().getBean( AcrossModuleInfo.class ).getSettings();
+			/*
 			AcrossModuleInfo moduleInfo = getBeanFactory().getBean( AcrossContextInfo.class )
 			                                              .getModuleBeingBootstrapped();
 
-			return moduleInfo != null ? moduleInfo.getSettings() : null;
+			return moduleInfo != null ? moduleInfo.getSettings() : null;*/
 		}
 
 		/**

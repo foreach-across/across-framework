@@ -72,8 +72,6 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	 */
 	@Override
 	protected void prepareBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
-		super.prepareBeanFactory( beanFactory );
-
 		for ( ProvidedBeansMap providedBeans : providedBeansMaps ) {
 			for ( Map.Entry<String, BeanDefinition> definition : providedBeans.getBeanDefinitions().entrySet() ) {
 				registerBeanDefinition( definition.getKey(), definition.getValue() );
@@ -82,6 +80,8 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 				beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}
+
+		super.prepareBeanFactory( beanFactory );
 	}
 
 	@Override
