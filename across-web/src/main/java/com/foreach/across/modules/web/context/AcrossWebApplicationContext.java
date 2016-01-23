@@ -33,6 +33,9 @@ import java.util.Map;
 
 /**
  * WebApplicationContext that allows a set of preregistered singletons to be passed in.
+ * Differs from {@link com.foreach.across.core.context.AcrossApplicationContext} in when beans and definitions are
+ * loaded, this context requires {@link #refresh()} to be called to load new bean definitions whereas
+ * {@link com.foreach.across.core.context.AcrossApplicationContext} adds beans immediately.
  */
 public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationContext implements AcrossConfigurableApplicationContext
 {
@@ -67,26 +70,18 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 		}
 	}
 
-	/**
-	 * Configure the factory's standard context characteristics,
-	 * such as the context's ClassLoader and post-processors.
-	 *
-	 * @param beanFactory the BeanFactory to configure
-	 */
 	@Override
-	protected void prepareBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
-		super.prepareBeanFactory( beanFactory );
-
-		DefaultListableBeanFactory listableBeanFactory = (DefaultListableBeanFactory) beanFactory;
-
+	protected void loadBeanDefinitions( DefaultListableBeanFactory beanFactory ) {
 		for ( ProvidedBeansMap providedBeans : providedBeansMaps ) {
 			for ( Map.Entry<String, BeanDefinition> definition : providedBeans.getBeanDefinitions().entrySet() ) {
-				listableBeanFactory.registerBeanDefinition( definition.getKey(), definition.getValue() );
+				beanFactory.registerBeanDefinition( definition.getKey(), definition.getValue() );
 			}
 			for ( Map.Entry<String, Object> singleton : providedBeans.getSingletons().entrySet() ) {
-				listableBeanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
+				beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}
+
+		super.loadBeanDefinitions( beanFactory );
 	}
 
 	@Override
