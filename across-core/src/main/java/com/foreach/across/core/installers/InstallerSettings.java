@@ -18,10 +18,7 @@ package com.foreach.across.core.installers;
 
 import org.springframework.util.Assert;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class representing the installer settings for a configured AcrossContext.
@@ -98,49 +95,30 @@ public class InstallerSettings
 		}
 	}
 
-	public void setActionForInstallers( InstallerAction action, String... installers ) {
-		setActionForInstallers( action, Arrays.asList( installers ) );
-	}
-
-	public void setActionForInstallers( InstallerAction action, Class... installerClasses ) {
-		setActionForInstallers( action, Arrays.asList( installerClasses ) );
-	}
-
-	public void setActionForInstallers( InstallerAction action, Object... installers ) {
-		setActionForInstallers( action, Arrays.asList( installers ) );
-	}
-
 	/**
-	 * Sets the action to apply to the a collection of installers.
-	 *
-	 * @param action     Action to apply to these installers.
-	 * @param installers Installer name (String), type (Class) or instance.
+	 * Set the installer action for the names of the installer (usually the fully qualified class name).
 	 */
-	public void setActionForInstallers( InstallerAction action, Collection installers ) {
-		for ( Object installer : installers ) {
-			Assert.notNull( installer, "Installer should not be null." );
+	public void setActionForInstallers( InstallerAction action, String... installerNames ) {
+		for ( String installerName : installerNames ) {
+			installerActions.put( installerName, action );
+		}
+	}
 
-			if ( installer instanceof String ) {
-				installerActions.put( (String) installer, action );
-			}
-			else if ( installer instanceof Class ) {
-				installerActions.put( ( (Class) installer ).getCanonicalName(), action );
-			}
-			else {
-				installerActions.put( installer.getClass().getCanonicalName(), action );
-			}
+	public void setActionForInstallers( InstallerAction action, Class<?>... installerClasses ) {
+		for ( Class<?> installerClass : installerClasses ) {
+			installerActions.put( InstallerMetaData.forClass( installerClass ).getName(), action );
 		}
 	}
 
 	/**
 	 * Checks if the installer should be run according to the settings.
 	 *
-	 * @param installerGroup Installer group the installer belongs to.
-	 * @param installer      Installer instance.
+	 * @param moduleName        Module trying to execute the installer.
+	 * @param installerMetaData Installer metadata.
 	 * @return Action that should be performed according to the settings.
 	 */
-	public InstallerAction shouldRun( String installerGroup, Object installer ) {
-		if ( installer == null ) {
+	public InstallerAction shouldRun( String moduleName, InstallerMetaData installerMetaData ) {
+		if ( installerMetaData == null ) {
 			return InstallerAction.SKIP;
 		}
 
@@ -151,16 +129,18 @@ public class InstallerSettings
 		InstallerAction action = null;
 
 		if ( priorityActionResolver != null ) {
-			action = priorityActionResolver.resolve( installerGroup, installer );
+			Optional<InstallerAction> resolved = priorityActionResolver.resolve( moduleName, installerMetaData );
+
+			if ( resolved.isPresent() ) {
+				action = resolved.get();
+			}
 		}
 
 		if ( action == null ) {
-			String installerId = installer.getClass().getCanonicalName();
-
-			action = installerActions.get( installerId );
+			action = installerActions.get( installerMetaData.getName() );
 
 			if ( action == null ) {
-				action = groupActions.get( installerGroup );
+				action = groupActions.get( installerMetaData.getGroup() );
 			}
 
 			if ( action == null ) {

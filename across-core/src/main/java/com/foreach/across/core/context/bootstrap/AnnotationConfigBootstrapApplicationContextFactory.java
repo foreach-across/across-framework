@@ -39,6 +39,14 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 		return new AcrossApplicationContext();
 	}
 
+	@Override
+	public AcrossConfigurableApplicationContext createInstallerContext() {
+		AcrossApplicationContext installerContext = new AcrossApplicationContext();
+		installerContext.setInstallerMode( true );
+
+		return installerContext;
+	}
+
 	/**
 	 * Create the Spring ApplicationContext for the root of the AcrossContext.
 	 * Optionally a parent ApplicationContext can be specified and a map of singletons that are guaranteed

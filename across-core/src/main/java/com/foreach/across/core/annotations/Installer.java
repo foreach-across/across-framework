@@ -30,6 +30,15 @@ import java.lang.annotation.*;
 public @interface Installer
 {
 	/**
+	 * Optional name of the installer.  If the name is empty, the fully qualified class name of the installer
+	 * will be used instead.  Manually providing a name allows for greater flexibility with renaming or moving
+	 * the actual installer class.
+	 *
+	 * @return Name of the installer or empty string if the class name should be used.
+	 */
+	String name() default "";
+
+	/**
 	 * @return Descriptive text of what will be installed.
 	 */
 	String description();

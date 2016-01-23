@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -93,23 +94,21 @@ public class AcrossConditionCondition implements Condition
 
 		// Provided for SPEL property
 		public AcrossModule getCurrentModule() {
-
-			return getBeanFactory().getBean( AcrossModule.class );
-//			AcrossModuleInfo moduleInfo = getBeanFactory().getBean( AcrossModuleInfo ).getBean(
-//					AcrossContextInfo.class )
-//			                                              .getModuleBeingBootstrapped();
-//
-//			return moduleInfo != null ? moduleInfo.getModule() : null;
-
+			try {
+				return getBeanFactory().getBean( AcrossModule.class );
+			}
+			catch ( NoSuchBeanDefinitionException nsbe ) {
+				return null;
+			}
 		}
 
 		public AcrossModuleSettings getSettings() {
-			return getBeanFactory().getBean( AcrossModuleInfo.class ).getSettings();
-			/*
-			AcrossModuleInfo moduleInfo = getBeanFactory().getBean( AcrossContextInfo.class )
-			                                              .getModuleBeingBootstrapped();
-
-			return moduleInfo != null ? moduleInfo.getSettings() : null;*/
+			try {
+				return getBeanFactory().getBean( AcrossModuleInfo.class ).getSettings();
+			}
+			catch ( NoSuchBeanDefinitionException nsbe ) {
+				return null;
+			}
 		}
 
 		/**
