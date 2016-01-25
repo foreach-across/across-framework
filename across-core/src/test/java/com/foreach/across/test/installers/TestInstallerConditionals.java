@@ -22,9 +22,14 @@ import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
+import com.foreach.across.core.installers.InstallerPhase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -37,6 +42,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.HashMap;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -44,9 +52,9 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestInstallerConditions.Config.class)
+@ContextConfiguration(classes = TestInstallerConditionals.Config.class)
 @TestPropertySource(properties = { "spring.profiles.active=dev", "active.value=true" })
-public class TestInstallerConditions
+public class TestInstallerConditionals
 {
 	private JdbcTemplate core;
 
@@ -65,6 +73,9 @@ public class TestInstallerConditions
 		assertNotInstalled( InvalidConditionInstaller.class );
 		assertInstalled( ValidConditionInstaller.class );
 		assertInstalled( OtherValidConditionInstaller.class );
+		assertInstalled( ExpressionInstaller.class );
+		assertNotInstalled( InvalidBeanConditionInstaller.class );
+		assertInstalled( ValidBeanConditionInstaller.class );
 	}
 
 	private void assertInstalled( Class<?> installerClass ) {
@@ -129,8 +140,14 @@ public class TestInstallerConditions
 			return new Object[] {
 					NoConditionInstaller.class, BadProfileInstaller.class, ActiveProfileInstaller.class,
 					ModuleMissingInstaller.class, ModulePresentInstaller.class, InvalidConditionInstaller.class,
-					ValidConditionInstaller.class, OtherValidConditionInstaller.class
+					ValidConditionInstaller.class, OtherValidConditionInstaller.class, ExpressionInstaller.class,
+					InvalidBeanConditionInstaller.class, ValidBeanConditionInstaller.class
 			};
+		}
+
+		@Override
+		protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> applicationContextConfigurers ) {
+			applicationContextConfigurers.add( new SingletonBeanConfigurer( "myBean", new HashMap<>() ) );
 		}
 	}
 
@@ -185,6 +202,24 @@ public class TestInstallerConditions
 	@AcrossCondition("currentModule.name == 'InstallerConditionsModule'")
 	@Installer(description = "Should be registered as condition evaluates to true.")
 	static class OtherValidConditionInstaller extends BaseInstaller
+	{
+	}
+
+	@ConditionalOnExpression("@'across.currentModule'.name == 'InstallerConditionsModule'")
+	@Installer(description = "Should be registered as condition evaluates to true.")
+	static class ExpressionInstaller extends BaseInstaller
+	{
+	}
+
+	@ConditionalOnBean(name = "myBean")
+	@Installer(description = "Registered as bean is available once module is bootstrapped.", phase = InstallerPhase.AfterModuleBootstrap)
+	static class ValidBeanConditionInstaller extends BaseInstaller
+	{
+	}
+
+	@ConditionalOnBean(name = "myBean")
+	@Installer(description = "Not registered as bean is not available before context.")
+	static class InvalidBeanConditionInstaller extends BaseInstaller
 	{
 	}
 }

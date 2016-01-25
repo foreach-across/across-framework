@@ -119,6 +119,10 @@ public class TestInstallerMetaData
 		@InstallerMethod
 		public void abstractInstallerMethod() {
 		}
+
+		@InstallerMethod
+		public void methodOne(){
+		}
 	}
 
 	@InstallerGroup("someGroup")
@@ -157,6 +161,7 @@ public class TestInstallerMetaData
 		protected void methodTwo() {
 		}
 
+		@Override
 		@InstallerMethod
 		@Order(1)
 		public void methodOne() {
