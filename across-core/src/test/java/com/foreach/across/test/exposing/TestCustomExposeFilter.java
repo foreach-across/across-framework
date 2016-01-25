@@ -24,7 +24,6 @@ import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.exposing.*;
 import com.foreach.across.test.modules.module1.SomeInterface;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,6 +76,9 @@ public class TestCustomExposeFilter
 	@Autowired(required = false)
 	private SomeInterface someInterface;
 
+	@Autowired(required = false)
+	private LazyExposedBean lazyExposedBean;
+
 	@Test
 	public void serviceIsFromServiceModule() {
 		assertNotNull( myService );
@@ -111,6 +113,11 @@ public class TestCustomExposeFilter
 	@Test
 	public void interfaceFromFactoryBeanIsAvailable() {
 		assertNotNull( someInterface );
+	}
+
+	@Test
+	public void lazyExposedBeanIsExposedByBeanName() {
+		assertNotNull( lazyExposedBean );
 	}
 
 	@Configuration
@@ -148,7 +155,9 @@ public class TestCustomExposeFilter
 		@Bean
 		public ExposingModule controllerModule() {
 			ExposingModule module = new ExposingModule( "controller" );
-			module.setExposeFilter( new AnnotationBeanFilter( Controller.class ) );
+			module.setExposeFilter( null );
+			module.expose( Controller.class );
+			module.expose( "lazyExposedBean" );
 
 			return module;
 		}
@@ -156,7 +165,8 @@ public class TestCustomExposeFilter
 		@Bean
 		public ExposingModule mybeanModule() {
 			ExposingModule module = new ExposingModule( "mybean" );
-			module.setExposeFilter( new ClassBeanFilter( MyBean.class, SomeInterface.class ) );
+			module.setExposeFilter( new ClassBeanFilter( MyBean.class ) );
+			module.expose( SomeInterface.class );
 
 			return module;
 		}

@@ -42,4 +42,16 @@ public interface AcrossConfigurableApplicationContext extends ConfigurableApplic
 	void refresh();
 
 	void start();
+
+	void setDisplayName( String displayName );
+
+	/**
+	 * Configure the context for installer mode.  Can only be done before context has started.
+	 * This will configure a context with limited functionality.
+	 *
+	 * @param installerMode true if installer mode enabled
+	 */
+	void setInstallerMode( boolean installerMode );
+
+	void destroy();
 }

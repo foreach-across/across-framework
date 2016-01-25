@@ -18,24 +18,35 @@ package com.foreach.across.core.context.support;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.util.StringUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
- * <p>Extension of {@link org.springframework.context.support.ReloadableResourceBundleMessageSource} that implements
- * the convention of Across resource bundle locations.  It assumes a message source for the current module is
- * being requested that is present in the conventional location (eg: resources/messages/MODULE_RESOURCES/).</p>
+ * <p>Extension of {@link org.springframework.context.support.ReloadableResourceBundleMessageSource}.
+ * If no {@link #baseNames} are specified, this implementation will configure a message source for the
+ * Across conventional resource bundle locations:
+ * <ul>
+ * <li>resources/messages/MODULE_RESOURCES/MODULE_NAME.properties</li>
+ * <li>resources/messages/MODULE_RESOURCES/default.properties</li>
+ * <li>resources/messages/MODULE_RESOURCES/default/*.properties</li>
+ * </ul></p>
  * <p>
  * If {@link com.foreach.across.core.development.AcrossDevelopmentMode} is active, messages will be configured
- * to be loaded from the physical path with a cacheRefresh of 1 second.  If no basename is configured, a default
- * resource of {@code classpath:/messages/MODULE_RESOURCES/MODULE_NAME} will be added.  If multiple basenames
- * are configured and development mode is active, all basenames of the form {@code classpath:/messages/MODULE_RESOURCE/}
- * will be replaced with the physical path if it exists.
+ * to be loaded from the physical path with a cacheRefresh of 1 second.  In that case all basenames
+ * of the form {@code classpath:/messages/MODULE_RESOURCE/} will be replaced with the physical path if it exists.
  * </p>
  *
  * @author Arne Vandamme
@@ -63,9 +74,7 @@ public class AcrossModuleMessageSource extends ReloadableResourceBundleMessageSo
 		String basePath = "classpath:/messages/" + currentModule.getResourcesKey();
 
 		if ( baseNames == null || baseNames.length == 0 ) {
-			String defaultResourceBundle = basePath + "/" + currentModule.getName();
-			LOG.trace( "Registering default message source {}", defaultResourceBundle );
-			setBasename( defaultResourceBundle );
+			registerDefaultMessageSources();
 		}
 
 		if ( developmentMode.isActive() ) {
@@ -86,6 +95,47 @@ public class AcrossModuleMessageSource extends ReloadableResourceBundleMessageSo
 				setBasenames( replaced );
 			}
 		}
+	}
+
+	private void registerDefaultMessageSources() {
+		Set<String> baseNames = new TreeSet<>();
+
+		// initial default
+		String basePath = "/messages/" + currentModule.getResourcesKey();
+		baseNames.add( ResourcePatternResolver.CLASSPATH_URL_PREFIX + basePath + "/" + currentModule.getName() );
+		baseNames.add( ResourcePatternResolver.CLASSPATH_URL_PREFIX + basePath + "/default" );
+
+		// additional defaults
+		ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+		String additionalDefaultSources = basePath + "/default/";
+
+		String resourcesSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
+				ClassUtils.convertClassNameToResourcePath( additionalDefaultSources ) + "*.properties";
+
+		try {
+			Resource[] resources = resourcePatternResolver.getResources( resourcesSearchPath );
+
+			for ( Resource resource : resources ) {
+				String fileName = resource.getFilename();
+				String baseName = StringUtils.contains( fileName, "_" )
+						? StringUtils.substringBefore( fileName, "_" )
+						: StringUtils.substringBeforeLast( fileName, "." );
+
+				baseNames.add( ResourceLoader.CLASSPATH_URL_PREFIX + additionalDefaultSources + baseName );
+			}
+		}
+		catch ( IOException ioe ) {
+			LOG.warn( "Unable to read message resources", ioe );
+		}
+
+		if ( LOG.isTraceEnabled() ) {
+			baseNames.forEach(
+					baseName -> LOG.trace( "Registering default message source for module {}: {}",
+					                       currentModule.getName(), baseName )
+			);
+		}
+
+		setBasenames( baseNames.toArray( new String[baseNames.size()] ) );
 	}
 
 	@Override

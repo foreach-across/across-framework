@@ -16,27 +16,25 @@
 
 package com.foreach.across.core.context;
 
-import org.springframework.context.support.AbstractApplicationContext;
-
 /**
  * Holds the Spring ApplicationContext information for the AcrossContext or an AcrossModule.
  */
 public class AcrossApplicationContextHolder
 {
-	private final AbstractApplicationContext applicationContext;
+	private final AcrossConfigurableApplicationContext applicationContext;
 	private final AcrossApplicationContextHolder parent;
 
-	public AcrossApplicationContextHolder( AbstractApplicationContext applicationContext ) {
+	public AcrossApplicationContextHolder( AcrossConfigurableApplicationContext applicationContext ) {
 		this( applicationContext, null );
 	}
 
-	public AcrossApplicationContextHolder( AbstractApplicationContext applicationContext,
+	public AcrossApplicationContextHolder( AcrossConfigurableApplicationContext applicationContext,
 	                                       AcrossApplicationContextHolder parent ) {
 		this.applicationContext = applicationContext;
 		this.parent = parent;
 	}
 
-	public AbstractApplicationContext getApplicationContext() {
+	public AcrossConfigurableApplicationContext getApplicationContext() {
 		return applicationContext;
 	}
 

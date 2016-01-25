@@ -44,7 +44,6 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.stereotype.Controller;
@@ -137,7 +136,7 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return ApplicationContext defined in the holder or null if none.
 	 */
-	public static AbstractApplicationContext getApplicationContext( AcrossEntity contextOrModule ) {
+	public static AcrossConfigurableApplicationContext getApplicationContext( AcrossEntity contextOrModule ) {
 		if ( contextOrModule instanceof AcrossModuleInfo ) {
 			return getApplicationContext( ( (AcrossModuleInfo) contextOrModule ).getModule() );
 		}
@@ -231,7 +230,7 @@ public final class AcrossContextUtils
 	 * @param context AcrossContext instance.
 	 * @return Merges set of ApplicationContextConfigurers.
 	 */
-	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context ) {
+	public static Collection<ApplicationContextConfigurer> getApplicationContextConfigurers( AcrossContext context ) {
 		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<>();
 		configurers.add( new AnnotatedClassConfigurer( AcrossConfig.class ) );
 
@@ -263,8 +262,9 @@ public final class AcrossContextUtils
 	 * @param module  AcrossModule instance.
 	 * @return Merged set of ApplicationContextConfigurers.
 	 */
-	public static Collection<ApplicationContextConfigurer> getConfigurersToApply( AcrossContext context,
-	                                                                              AcrossModule module ) {
+	public static Collection<ApplicationContextConfigurer> getApplicationContextConfigurers(
+			AcrossContext context, AcrossModule module
+	) {
 		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<>();
 
 		// First add configurers defined on the context
@@ -283,7 +283,33 @@ public final class AcrossContextUtils
 
 		if ( !moduleProperties.isEmpty() ) {
 			configurers.add( new PropertySourcesConfigurer(
-					new PropertiesPropertySource( module.getName(), moduleProperties ) ) );
+					new PropertiesPropertySource( module.getName(), moduleProperties )
+			) );
+		}
+
+		return configurers;
+	}
+
+	/**
+	 * Will list all ApplicationContextConfigurers to be added to an installer context for the module, along
+	 * with all properties that should be registered.
+	 *
+	 * @param module AcrossModule instance.
+	 * @return Merged set of ApplicationContextConfigurers.
+	 */
+	public static Collection<ApplicationContextConfigurer> getInstallerContextConfigurers( AcrossModule module ) {
+		Set<ApplicationContextConfigurer> configurers = new LinkedHashSet<>();
+
+		// Add module defined configurers
+		configurers.addAll( module.getInstallerContextConfigurers() );
+
+		// Finally add properties set on the module
+		Properties moduleProperties = module.getProperties();
+
+		if ( !moduleProperties.isEmpty() ) {
+			configurers.add( new PropertySourcesConfigurer(
+					new PropertiesPropertySource( module.getName(), moduleProperties )
+			) );
 		}
 
 		return configurers;

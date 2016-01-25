@@ -35,6 +35,8 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 {
 	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
 
+	private boolean installerMode = false;
+
 	public AcrossApplicationContext() {
 		super( new AcrossListableBeanFactory() );
 	}
@@ -42,6 +44,11 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	@Override
 	protected ConfigurableEnvironment createEnvironment() {
 		return new StandardAcrossEnvironment();
+	}
+
+	@Override
+	public void setInstallerMode( boolean installerMode ) {
+		this.installerMode = true;
 	}
 
 	/**
@@ -79,7 +86,9 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 
 	@Override
 	protected void initMessageSource() {
-		new MessageSourceBuilder( getBeanFactory() ).build( getInternalParentMessageSource() );
+		if ( !installerMode ) {
+			new MessageSourceBuilder( getBeanFactory() ).build( getInternalParentMessageSource() );
+		}
 
 		super.initMessageSource();
 	}

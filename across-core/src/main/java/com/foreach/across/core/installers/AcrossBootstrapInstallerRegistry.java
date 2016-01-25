@@ -23,8 +23,10 @@ import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.bootstrap.BootstrapApplicationContextFactory;
 import com.foreach.across.core.context.bootstrap.BootstrapLockManager;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.slf4j.Logger;
@@ -38,6 +40,8 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Builds the list of all installers in a configured AcrossContext.
@@ -49,13 +53,18 @@ public class AcrossBootstrapInstallerRegistry
 
 	private final BootstrapLockManager bootstrapLockManager;
 	private final AcrossBootstrapConfig contextConfig;
+	private final BootstrapApplicationContextFactory applicationContextFactory;
+
+	private final Map<AcrossModule, AcrossConfigurableApplicationContext> installerContexts = new HashMap<>();
 
 	private AcrossInstallerRepository installerRepository;
 
 	public AcrossBootstrapInstallerRegistry( AcrossBootstrapConfig contextConfig,
-	                                         BootstrapLockManager bootstrapLockManager ) {
+	                                         BootstrapLockManager bootstrapLockManager,
+	                                         BootstrapApplicationContextFactory applicationContextFactory ) {
 		this.bootstrapLockManager = bootstrapLockManager;
 		this.contextConfig = contextConfig;
+		this.applicationContextFactory = applicationContextFactory;
 	}
 
 	/**
@@ -279,15 +288,48 @@ public class AcrossBootstrapInstallerRegistry
 	}
 
 	private ConfigurableListableBeanFactory getBeanFactoryForInstallerWiring( AcrossModule module ) {
+		boolean created = false;
+
+		if ( !installerContexts.containsKey( module ) ) {
+			AcrossConfigurableApplicationContext context = applicationContextFactory.createApplicationContext();
+			context.setInstallerMode( true );
+			context.setDisplayName( "Installer context: " + module.getName() );
+			installerContexts.put( module, context );
+
+			created = true;
+		}
+
+		AcrossConfigurableApplicationContext installerContext = installerContexts.get( module );
+
 		AcrossApplicationContextHolder moduleContext =
 				AcrossContextUtils.getAcrossApplicationContextHolder( module );
 
+		// Ensure the installer ApplicationContext has the right parent
 		if ( moduleContext == null ) {
-			// If module context not yet available, use the root context
-			return AcrossContextUtils.getBeanFactory( contextConfig.getContext() );
+			installerContext.setParent( AcrossContextUtils.getApplicationContext( contextConfig.getContext() ) );
 		}
 		else {
-			return moduleContext.getBeanFactory();
+			installerContext.setParent( AcrossContextUtils.getApplicationContext( module ) );
 		}
+
+		if ( created ) {
+			applicationContextFactory.loadApplicationContext(
+					installerContext, contextConfig.getModule( module.getName() ).getInstallerContextConfigurers()
+			);
+		}
+
+		return installerContext.getBeanFactory();
+	}
+
+	/**
+	 * Destroy the installer registry, this will destroy all created installer application context instances.
+	 */
+	public void destroy() {
+		installerContexts.values()
+		                 .forEach( c -> {
+			                 c.stop();
+			                 c.close();
+		                 } );
+		installerContexts.clear();
 	}
 }
