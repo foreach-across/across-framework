@@ -22,8 +22,6 @@ import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.annotations.Module;
-import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
-import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.installers.InstallerPhase;
@@ -40,7 +38,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -131,11 +131,6 @@ public class TestInstallerPhases
 					AfterModuleBootstrapInstaller.class,
 					AfterContextBootstrapInstaller.class
 			};
-		}
-
-		@Override
-		protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> applicationContextConfigurers ) {
-			applicationContextConfigurers.add( new SingletonBeanConfigurer( "myBean", new HashMap<>() ) );
 		}
 	}
 

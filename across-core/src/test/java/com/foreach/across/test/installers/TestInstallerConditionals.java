@@ -42,10 +42,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -56,6 +58,8 @@ import static org.junit.Assert.assertEquals;
 @TestPropertySource(properties = { "spring.profiles.active=dev", "active.value=true" })
 public class TestInstallerConditionals
 {
+	private static Set<Class<?>> createdInstallerBeans = new HashSet<>();
+
 	private JdbcTemplate core;
 
 	@Autowired
@@ -87,6 +91,7 @@ public class TestInstallerConditionals
 						Integer.class
 				)
 		);
+		assertTrue( createdInstallerBeans.contains( installerClass ) );
 	}
 
 	private void assertNotInstalled( Class<?> installerClass ) {
@@ -98,6 +103,7 @@ public class TestInstallerConditionals
 						Integer.class
 				)
 		);
+		assertFalse( createdInstallerBeans.contains( installerClass ) );
 	}
 
 	@Configuration
@@ -153,6 +159,11 @@ public class TestInstallerConditionals
 
 	static abstract class BaseInstaller
 	{
+		@PostConstruct
+		public void registerBeanCreation() {
+			createdInstallerBeans.add( getClass() );
+		}
+
 		@InstallerMethod
 		public void install() {
 		}
