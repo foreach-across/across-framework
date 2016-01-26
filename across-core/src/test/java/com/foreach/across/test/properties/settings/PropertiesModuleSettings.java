@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package com.foreach.across.core.context;
+package com.foreach.across.test.properties.settings;
 
 import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.AcrossModuleSettingsRegistry;
 
 /**
- * Generic implementation of AcrossModuleSettings.
- *
  * @author Arne Vandamme
- * @see com.foreach.across.core.AcrossModuleSettings
  */
-@Deprecated
-public class GenericAcrossModuleSettings extends AcrossModuleSettings
+public class PropertiesModuleSettings extends AcrossModuleSettings
 {
 	@Override
 	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
-
+		registry.register( "moduleSourceValue", String.class, "defaultModuleSourceValue" );
+		registry.register( "moduleDirectValue", String.class, "defaultModuleDirectValue" );
+		registry.register( "contextValue", String.class, "defaultContextValue" );
+		registry.register( "defaultOnlyValue", String.class, "default" );
 	}
 }

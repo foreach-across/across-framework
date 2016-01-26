@@ -133,5 +133,14 @@ public class AcrossConditionCondition implements Condition
 			                        .isEmpty();
 		}
 
+		@Override
+		public boolean equals( Object other ) {
+			return other instanceof CurrentModuleBeanExpressionContext && super.equals( other );
+		}
+
+		@Override
+		public int hashCode() {
+			return super.hashCode();
+		}
 	}
 }

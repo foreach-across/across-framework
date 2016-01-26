@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.foreach.across.test.properties.boot;
 
-package com.foreach.across.test.modules.properties;
-
-import com.foreach.across.core.AcrossModuleSettings;
-import com.foreach.across.core.AcrossModuleSettingsRegistry;
+import com.foreach.across.core.AcrossModule;
 
 /**
  * @author Arne Vandamme
  */
-public class PropertiesModuleSettings extends AcrossModuleSettings
+public class SpringBootPropertiesModule extends AcrossModule
 {
 	@Override
-	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
-		registry.register( "moduleSourceValue", String.class, "defaultModuleSourceValue" );
-		registry.register( "moduleDirectValue", String.class, "defaultModuleDirectValue" );
-		registry.register( "contextValue", String.class, "defaultContextValue" );
-		registry.register( "defaultOnlyValue", String.class, "default" );
+	public String getName() {
+		return "SpringBootPropertiesModule";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Spring Boot style settings.";
 	}
 }

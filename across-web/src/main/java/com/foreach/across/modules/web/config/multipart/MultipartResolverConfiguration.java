@@ -1,6 +1,5 @@
 package com.foreach.across.modules.web.config.multipart;
 
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.PathResource;
 import org.springframework.util.Assert;
@@ -39,7 +39,7 @@ import java.util.Map;
  * @see org.springframework.web.multipart.commons.CommonsMultipartResolver
  */
 @Configuration
-@AcrossCondition("settings.autoConfigureMultipartResolver")
+@ConditionalOnExpression("@acrossWebModuleSettings.multipart.autoConfigure")
 public class MultipartResolverConfiguration extends AcrossWebDynamicServletConfigurer
 {
 	public static final String FILTER_NAME = "multipartFilter";

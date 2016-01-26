@@ -26,7 +26,9 @@ import org.springframework.core.env.PropertyResolver;
  * and informative description.  This class provides an easy interface to query the configured settings.
  *
  * @author Arne Vandamme
+ * @deprecated obsolete - favour the use of {@link org.springframework.boot.context.properties.ConfigurationProperties} instead
  */
+@Deprecated
 public abstract class AcrossModuleSettings implements EnvironmentAware, PropertyResolver
 {
 	private Environment environment;

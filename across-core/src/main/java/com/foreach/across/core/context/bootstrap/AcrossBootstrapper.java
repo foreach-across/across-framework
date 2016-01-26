@@ -445,13 +445,23 @@ public class AcrossBootstrapper
 					                                                        AcrossModule.CURRENT_MODULE )
 			                        )
 			);
-			providedSingletons.put( AcrossModule.CURRENT_MODULE + "Settings",
-			                        new PrimarySingletonBean(
-					                        moduleInfo.getSettings(),
-					                        new AutowireCandidateQualifier( Module.class.getName(),
-					                                                        AcrossModule.CURRENT_MODULE )
-			                        )
-			);
+//			providedSingletons.put( AcrossModule.CURRENT_MODULE + "Settings",
+//			                        new PrimarySingletonBean(
+//					                        moduleInfo.getSettings(),
+//					                        new AutowireCandidateQualifier( Module.class.getName(),
+//					                                                        AcrossModule.CURRENT_MODULE )
+//			                        )
+//			);
+
+			String settingsClassName = ClassUtils.getUserClass( module.getClass() ).getName() + "Settings";
+
+			try {
+				Class settingsClass = Class.forName( settingsClassName );
+
+				config.addApplicationContextConfigurer( settingsClass );
+			}
+			catch ( ClassNotFoundException e ) {
+			}
 
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
 			config.addApplicationContextConfigurers(
@@ -558,12 +568,13 @@ public class AcrossBootstrapper
 					                                                   moduleInfo.getName() )
 			                   )
 			);
+			/*
 			providedBeans.put( "across.moduleSettings." + moduleInfo.getName(),
 			                   new SingletonBean(
 					                   moduleInfo.getSettings(),
 					                   new AutowireCandidateQualifier( Module.class.getName(),
 					                                                   moduleInfo.getName() )
-			                   ) );
+			                   ) );*/
 		}
 
 		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),

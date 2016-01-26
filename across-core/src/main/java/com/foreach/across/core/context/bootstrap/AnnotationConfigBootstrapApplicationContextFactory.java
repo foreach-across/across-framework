@@ -17,6 +17,7 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.config.CommonModuleConfiguration;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
@@ -127,6 +128,8 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	public void loadApplicationContext( AcrossConfigurableApplicationContext context,
 	                                    Collection<ApplicationContextConfigurer> configurers ) {
 		ConfigurableEnvironment environment = context.getEnvironment();
+
+		context.register( CommonModuleConfiguration.class );
 
 		for ( ApplicationContextConfigurer configurer : configurers ) {
 			// First register property sources

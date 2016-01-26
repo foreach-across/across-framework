@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.config;
 
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.annotations.PostRefresh;
@@ -31,6 +30,7 @@ import com.foreach.across.modules.web.template.WebTemplateRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,7 +40,7 @@ import java.util.Collection;
  * Configures web template support with automatic registration of named web templates.
  */
 @Configuration
-@AcrossCondition("settings.templatesEnabled")
+@ConditionalOnExpression("@acrossWebModuleSettings.templatesEnabled")
 @OrderInModule(2)
 public class AcrossWebTemplateConfig extends PrefixingHandlerMappingConfigurerAdapter
 {

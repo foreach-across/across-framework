@@ -13,23 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.foreach.across.test.properties.boot.config;
 
-package com.foreach.across.core.context;
-
-import com.foreach.across.core.AcrossModuleSettings;
-import com.foreach.across.core.AcrossModuleSettingsRegistry;
+import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.test.properties.boot.SpringBootPropertiesModuleSettings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
- * Generic implementation of AcrossModuleSettings.
- *
  * @author Arne Vandamme
- * @see com.foreach.across.core.AcrossModuleSettings
  */
-@Deprecated
-public class GenericAcrossModuleSettings extends AcrossModuleSettings
+@Component
+@Exposed
+public class BeanWithProps
 {
-	@Override
-	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
+	@Autowired
+	private SpringBootPropertiesModuleSettings settings;
 
+	public String getDirectValue() {
+		return settings.getDirectValue();
+	}
+
+	public String getYamlOne() {
+		return settings.getYaml().getOne();
+	}
+
+	public String getYamlTwo() {
+		return settings.getYaml().getTwo();
 	}
 }

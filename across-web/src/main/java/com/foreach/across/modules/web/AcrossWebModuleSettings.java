@@ -18,11 +18,13 @@ package com.foreach.across.modules.web;
 
 import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.AcrossModuleSettingsRegistry;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import javax.servlet.MultipartConfigElement;
 import java.util.Collections;
 import java.util.Map;
 
+@ConfigurationProperties(prefix = "acrossWebModule")
 public class AcrossWebModuleSettings extends AcrossModuleSettings
 {
 	/**
@@ -47,11 +49,36 @@ public class AcrossWebModuleSettings extends AcrossModuleSettings
 	 */
 	public static final String TEMPLATES_AUTO_REGISTER = "acrossWeb.templates.autoregister";
 
-	public static final String MULTIPART_AUTO_CONFIGURE = "acrossWeb.multipart.autoconfigure";
+	public static final String MULTIPART_AUTO_CONFIGURE = "acrossWebModule.multipart.auto-configure";
 
 	public static final String MULTIPART_SETTINGS = "acrossWeb.multipart.settings";
 
 	public static final String DEVELOPMENT_VIEWS = "acrossWeb.development.views";
+
+	private final Multipart multipart = new Multipart();
+
+	public Multipart getMultipart() {
+		return multipart;
+	}
+
+	/**
+	 * Multipart support configuration settings.
+	 */
+	public static class Multipart
+	{
+		/**
+		 * Auto configure a multipart resolver.
+		 */
+		private boolean autoConfigure = true;
+
+		public boolean isAutoConfigure() {
+			return autoConfigure;
+		}
+
+		public void setAutoConfigure( boolean autoConfigure ) {
+			this.autoConfigure = autoConfigure;
+		}
+	}
 
 	@Override
 	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
