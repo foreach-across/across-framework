@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "across.development.active",
+      "type": "java.lang.Boolean",
+      "description": "Should development mode be active.",
+      "defaultValue": false
+    }
+  ]
+}

@@ -526,8 +526,16 @@ WARNING: The current version of Across does not apply the module order hierarchy
 If event handlers need an order, it should be defined explicitly and you cannot rely that event handlers from other modules you depend on will have been executed before you.
 This is an important work in progress for one of the next versions of Across.
 
+[[development-mode]]
 == Development mode
-tbd
+The AcrossContext can have development mode enabled through the *developmentMode* property.
+Modules can use development mode to configure different services (or services differently).
+An example is auto-reloading and no caching of the message sources if development mode is active.
+
+Apart from setting the *developmentMode* property on `AcrossContext`, development mode can be activated the following way:
+
+. property *across.development.active* is _true_
+. Spring profile *dev* is active
 
 == Default beans
 === AcrossContextInfo
@@ -551,6 +559,7 @@ WARNING: If you manage the `ConversionService` outside of the `AcrossContext` th
 tbd
 
 === AcrossDevelopmentMode
+Utility bean that can be used to verify if <<development-mode,development mode>> is active, and to get development locations for resources files.
 
 == Developing modules
 
