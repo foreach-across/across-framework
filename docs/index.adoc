@@ -35,6 +35,7 @@ start-up procedures.  To this end, a module can define its own installers.
 ** installers now support `@Conditional` annotations for building more complex conditions
 ** installers should only be specified as class names in `getInstallers()`, the use of instances is deprecated
 ** `InstallerSettings` has been refactored (breaking change) to use `InstallerMetaData` instead
+* development mode can be set through the property *across.development.active* and is active by default if a Spring profile called *dev* is active
 
 *Across Web*
 
