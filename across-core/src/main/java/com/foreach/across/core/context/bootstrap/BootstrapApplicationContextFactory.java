@@ -37,6 +37,14 @@ public interface BootstrapApplicationContextFactory
 	AcrossConfigurableApplicationContext createApplicationContext();
 
 	/**
+	 * Create a new {@link ApplicationContext} for running installers, it should support immediate registration
+	 * of bean definitions and singletons (eg {@link com.foreach.across.core.context.AcrossApplicationContext}).
+	 *
+	 * @return Spring ApplicationContext instance implementing AcrossConfigurableApplicationContext.
+	 */
+	AcrossConfigurableApplicationContext createInstallerContext();
+
+	/**
 	 * Create the Spring ApplicationContext for the root of the AcrossContext.
 	 * Optionally a parent ApplicationContext can be specified and a map of singletons that are guaranteed
 	 * to be available when the ApplicationContext has been created.

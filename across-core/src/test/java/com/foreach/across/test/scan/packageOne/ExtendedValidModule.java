@@ -17,12 +17,10 @@ package com.foreach.across.test.scan.packageOne;
 
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.test.scan.packageTwo.OtherValidModule;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Arne Vandamme
  */
-@Configuration
 @AcrossDepends(optional = OtherValidModule.NAME)
 public class ExtendedValidModule extends ValidModule
 {

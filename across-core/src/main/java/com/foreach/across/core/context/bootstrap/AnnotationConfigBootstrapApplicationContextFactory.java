@@ -23,6 +23,7 @@ import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
@@ -37,6 +38,15 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	@Override
 	public AcrossConfigurableApplicationContext createApplicationContext() {
 		return new AcrossApplicationContext();
+	}
+
+	@Override
+	public AcrossConfigurableApplicationContext createInstallerContext() {
+		AcrossApplicationContext installerContext = new AcrossApplicationContext();
+		installerContext.setInstallerMode( true );
+		installerContext.register( PropertyPlaceholderSupportConfigurer.Config.class );
+
+		return installerContext;
 	}
 
 	/**

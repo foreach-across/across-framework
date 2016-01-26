@@ -209,6 +209,8 @@ public class AcrossBootstrapper
 				// Refresh beans
 				AcrossContextUtils.refreshBeans( context );
 
+				contextInfo.setBootstrapped( true );
+
 				// Bootstrapping done, run installers that require context bootstrap finished
 				installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
 
@@ -218,8 +220,6 @@ public class AcrossBootstrapper
 			finally {
 				bootstrapLockManager.ensureUnlocked();
 			}
-
-			contextInfo.setBootstrapped( true );
 
 			// Bootstrap finished - publish the event
 			eventPublisher.publish( new AcrossContextBootstrappedEvent( contextInfo ) );
@@ -454,8 +454,9 @@ public class AcrossBootstrapper
 			);
 
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
-			config.addApplicationContextConfigurers( AcrossContextUtils.getApplicationContextConfigurers( context,
-			                                                                                              module ) );
+			config.addApplicationContextConfigurers(
+					AcrossContextUtils.getApplicationContextConfigurers( context, module )
+			);
 
 			// create installer application context
 			config.addInstallerContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
