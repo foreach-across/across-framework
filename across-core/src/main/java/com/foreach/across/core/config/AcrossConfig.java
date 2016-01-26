@@ -21,6 +21,7 @@ import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.convert.StringToDateConverter;
@@ -53,8 +54,17 @@ public class AcrossConfig
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossConfig.class );
 
 	@Bean
-	public AcrossEventPublisher eventPublisher() {
-		return new MBassadorEventPublisher();
+	public AcrossEventPublisher eventPublisher( ApplicationContext applicationContext ) {
+		MBassadorEventPublisher eventPublisher = new MBassadorEventPublisher();
+
+		ApplicationContext toScan = applicationContext;
+		do {
+			AcrossContextUtils.autoRegisterEventHandlers( toScan, eventPublisher );
+			toScan = toScan.getParent();
+		}
+		while ( toScan != null );
+
+		return eventPublisher;
 	}
 
 	@Bean
