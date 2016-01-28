@@ -1,0 +1,85 @@
+/*
+ * Copyright 2014 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.foreach.across.core.context.installers;
+
+import com.foreach.across.core.installers.InstallerMetaData;
+import org.springframework.util.Assert;
+
+import java.util.*;
+
+/**
+ * Merges support for manually added installers with installers scanned from packages.
+ *
+ * @author Arne Vandamme
+ */
+public class InstallerSetBuilder
+{
+	private final Set<Object> candidates = new LinkedHashSet<>();
+	private final Set<String> installerNames = new HashSet<>();
+
+	/**
+	 * Add one or more installers either as instance or class.
+	 *
+	 * @param installerOrClass installer instance of class
+	 */
+	public void add( Object... installerOrClass ) {
+		for ( Object candidate : installerOrClass ) {
+			validateAndAddCandidate( candidate );
+		}
+	}
+
+	/**
+	 * Scan one or more packages for installers.
+	 *
+	 * @param basePackages to scan
+	 */
+	public void scan( String... basePackages ) {
+		new ClassPathScanningInstallerProvider().scan( basePackages ).forEach( this::validateAndAddCandidate );
+	}
+
+	/**
+	 * @return list of unique installers
+	 */
+	public Object[] build() {
+		List<Object> installers = new ArrayList<>();
+		installers.addAll( candidates );
+
+		return installers.toArray();
+	}
+
+	private void validateAndAddCandidate( Object candidate ) {
+		Assert.notNull( candidate );
+
+		if ( !candidates.contains( candidate ) ) {
+			Class<?> installerClass = candidate.getClass();
+
+			if ( candidate instanceof Class ) {
+				installerClass = (Class<?>) candidate;
+			}
+
+			InstallerMetaData metaData = InstallerMetaData.forClass( installerClass );
+
+			if ( installerNames.contains( metaData.getName() ) ) {
+				throw new IllegalArgumentException(
+						"Another installer was already registered with name: " + metaData.getName() );
+			}
+
+			installerNames.add( metaData.getName() );
+
+			candidates.add( candidate );
+		}
+	}
+}
