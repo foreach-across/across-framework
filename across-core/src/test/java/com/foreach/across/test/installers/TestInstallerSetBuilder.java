@@ -23,13 +23,6 @@ import com.foreach.across.test.installers.scan.installers.InstallerTwo;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertArrayEquals;
 
 /**
@@ -50,13 +43,37 @@ public class TestInstallerSetBuilder
 	}
 
 	@Test
-	public void manualInstallers() {
+	public void manualInstallersWithoutOrder() {
 		ManualOne one = new ManualOne();
 
 		builder.add( one, ManualTwo.class );
 		builder.add( ManualThree.class );
 
 		assertInstallers( one, ManualTwo.class, ManualThree.class );
+	}
+
+	@Test
+	public void manualInstallersWithOrder() {
+		InstallerOne installerOne = new InstallerOne();
+
+		builder.add( installerOne );
+		builder.add( InstallerThree.class, InstallerTwo.class );
+
+		assertInstallers( InstallerTwo.class, installerOne, InstallerThree.class );
+	}
+
+	@Test
+	public void mixedOrderingOnManualInstallers() {
+		ManualOne one = new ManualOne();
+		InstallerOne installerOne = new InstallerOne();
+
+		builder.add( one );
+		builder.add( installerOne );
+		builder.add( InstallerThree.class, InstallerTwo.class );
+		builder.add( ManualTwo.class );
+
+		assertInstallers( one, ManualTwo.class,
+		                  InstallerTwo.class, installerOne, InstallerThree.class );
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -79,13 +96,7 @@ public class TestInstallerSetBuilder
 		builder.scan( "com.foreach.across.test.installers.scan.installers",
 		              "com.foreach.across.test.installers.examples" );
 
-		Set<Object> installers = new HashSet<>();
-		Collections.addAll( installers, builder.build() );
-
-		assertThat(
-				installers,
-				is( new HashSet<>( Arrays.asList( InstallerOne.class, InstallerTwo.class, InstallerThree.class ) ) )
-		);
+		assertInstallers( InstallerTwo.class, InstallerOne.class, InstallerThree.class );
 	}
 
 	@Test
@@ -97,15 +108,7 @@ public class TestInstallerSetBuilder
 		builder.add( one );
 		builder.scan( "com.foreach.across.test.installers.examples" );
 
-		Set<Object> installers = new HashSet<>();
-		Collections.addAll( installers, builder.build() );
-
-		assertThat(
-				installers,
-				is( new HashSet<>( Arrays.asList(
-						one, ManualTwo.class, InstallerOne.class, InstallerTwo.class, InstallerThree.class
-				) ) )
-		);
+		assertInstallers( ManualTwo.class, one, InstallerTwo.class, InstallerOne.class, InstallerThree.class );
 	}
 
 	@Test(expected = IllegalArgumentException.class)

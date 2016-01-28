@@ -17,10 +17,13 @@ package com.foreach.across.test.installers.examples;
 
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.test.modules.installer.installers.TestInstaller;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 
 /**
  * @author Arne Vandamme
  */
+@Order(Ordered.LOWEST_PRECEDENCE)
 @Installer(description = "different package installer", name = "installerThree")
 public class InstallerThree extends TestInstaller
 {

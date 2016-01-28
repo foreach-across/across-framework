@@ -27,8 +27,8 @@ import org.junit.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Arne Vandamme
@@ -43,13 +43,13 @@ public class TestModuleInstallers
 	@Test
 	public void scannedInstallers() {
 		execute( new InstallerScanModule( false ) );
-		assertInstalled( InstallerOne.class, InstallerTwo.class );
+		assertInstalled( InstallerTwo.class, InstallerOne.class );
 	}
 
 	@Test
 	public void manualAndScannedInstallers() {
 		execute( new InstallerScanModule( true ) );
-		assertInstalled( InstallerOne.class, InstallerTwo.class, InstallerThree.class );
+		assertInstalled( InstallerTwo.class, InstallerOne.class, InstallerThree.class );
 	}
 
 	@Test
@@ -61,10 +61,7 @@ public class TestModuleInstallers
 	}
 
 	private void assertInstalled( Class<?>... installers ) {
-		assertEquals( installers.length, TestInstaller.EXECUTED.size() );
-		for ( Class<?> installer : installers ) {
-			assertTrue( TestInstaller.EXECUTED.contains( installer ) );
-		}
+		assertArrayEquals( installers, TestInstaller.executed() );
 	}
 
 	private void execute( InstallerScanModule module ) {

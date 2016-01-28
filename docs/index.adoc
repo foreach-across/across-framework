@@ -32,6 +32,8 @@ start-up procedures.  To this end, a module can define its own installers.
 * both `AcrossModule` and `ModuleBootstrapConfig` now have shortcut `expose()` methods that make it easier to expose additional beans
 * several changes and improvements were made to installers:
 ** installers are now created in their own configurable <<installer-applicationcontext,installer `ApplicationContext`>>
+** installers are detected automatically through classpath scanning (defaults to *installers* package of a module)
+** installers are ordered based on the presence of an `@Order` annotation
 ** installers now support `@Conditional` annotations for building more complex conditions
 ** installers should only be specified as class names in `getInstallers()`, the use of instances is deprecated
 ** `InstallerSettings` has been refactored (breaking change) to use `InstallerMetaData` instead

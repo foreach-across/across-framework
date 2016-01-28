@@ -17,10 +17,12 @@ package com.foreach.across.test.installers.scan.installers;
 
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.test.modules.installer.installers.TestInstaller;
+import org.springframework.core.annotation.Order;
 
 /**
  * @author Arne Vandamme
  */
+@Order(2)
 @Installer(description = "one")
 public class InstallerOne extends TestInstaller
 {

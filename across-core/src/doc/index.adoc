@@ -914,7 +914,10 @@ If all conditions are fulfilled, installers will be executed in a predetermined 
 
 . in <<installer-bootstrap-phases,bootstrap phase>> order
 . in <<across-bootstrap-order,module bootstrap order>>
-. in installer order (according to `@Order` annotations on the installer class or the order returned in `getInstallers()`)
+. in installer order (according to `@Order` annotations on the installer class)
+
+WARNING: Installers without an `@Order` annotation behave as if they have an order index of *0*.
+In that case the installer registration order will be used as a fallback, with installers specified through `getInstallers()` having a higher precedence.
 
 [[installer-datasource]]
 ==== Datasources and installers
@@ -981,7 +984,6 @@ class Config implements AcrossContextConfigurer
 ----
 
 NOTE: The installer context has no web support as it is a direct implementation of `AcrossApplicationContext` but does not implement `WebApplicationContext`.
-
 
 [[installer-conditionals]]
 Installers are registered as bean definitions in the installer `ApplicationContext`.

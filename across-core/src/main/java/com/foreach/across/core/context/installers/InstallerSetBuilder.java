@@ -16,6 +16,8 @@
 package com.foreach.across.core.context.installers;
 
 import com.foreach.across.core.installers.InstallerMetaData;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.OrderUtils;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -56,6 +58,29 @@ public class InstallerSetBuilder
 	public Object[] build() {
 		List<Object> installers = new ArrayList<>();
 		installers.addAll( candidates );
+
+		final Map<Object, Integer> registrationOrderMap = new HashMap<>();
+		int ix = 0;
+		for ( Object installer : candidates ) {
+			registrationOrderMap.put( installer, ix++ );
+		}
+
+		Collections.sort( installers, ( left, right ) -> {
+			Class<?> leftType = left instanceof Class ? (Class<?>) left : left.getClass();
+			Class<?> rightType = right instanceof Class ? (Class<?>) right : right.getClass();
+
+			int leftOrder = OrderUtils.getOrder( leftType, 0 );
+			int rightOrder = OrderUtils.getOrder( rightType, 0 );
+
+			int comparison = Integer.compare( leftOrder, rightOrder );
+
+			if ( comparison == 0 ) {
+				return Integer.compare( registrationOrderMap.getOrDefault( left, Ordered.LOWEST_PRECEDENCE ),
+				                        registrationOrderMap.getOrDefault( right, Ordered.LOWEST_PRECEDENCE ) );
+			}
+
+			return comparison;
+		} );
 
 		return installers.toArray();
 	}
