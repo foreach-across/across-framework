@@ -127,28 +127,46 @@ public class AcrossBootstrapInstallerRegistry
 		AcrossInstallerRepository repository = getInstallerRepository();
 
 		boolean installed = false;
+		boolean registerOnly = false;
 
 		if ( action != InstallerAction.REGISTER ) {
 			Optional<Object> installer
 					= prepareInstaller( module, installerMetaData.getInstallerClass(), installerInstance );
 
 			if ( installer.isPresent() ) {
-				LOG.info( "Executing installer {} for module {}", installerMetaData.getName(), module.getName() );
+				Object target = installer.get();
 
-				for ( Method method : installerMetaData.getInstallerMethods() ) {
-					try {
-						method.setAccessible( true );
-						method.invoke( installer.get() );
+				if ( action == InstallerAction.EXECUTE && target instanceof InstallerActionResolver ) {
+					Optional<InstallerAction> newAction = ( (InstallerActionResolver) target )
+							.resolve( module.getName(), installerMetaData );
 
-						installed = true;
-					}
-					catch ( Exception e ) {
-						throw new AcrossException( e );
+					if ( newAction.isPresent() && InstallerAction.EXECUTE != newAction.get() ) {
+						LOG.info( "Resolved bean installer action, change from {} to {}", action, newAction.get() );
+						action = newAction.get();
 					}
 				}
 
-				if ( !installed ) {
-					LOG.warn( "No @InstallerMethod methods were found for {}", installerMetaData.getName() );
+				if ( action == InstallerAction.EXECUTE || action == InstallerAction.FORCE ) {
+					LOG.info( "Executing installer {} for module {}", installerMetaData.getName(), module.getName() );
+
+					for ( Method method : installerMetaData.getInstallerMethods() ) {
+						try {
+							method.setAccessible( true );
+							method.invoke( target );
+
+							installed = true;
+						}
+						catch ( Exception e ) {
+							throw new AcrossException( e );
+						}
+					}
+
+					if ( !installed ) {
+						LOG.warn( "No @InstallerMethod methods were found for {}", installerMetaData.getName() );
+					}
+				}
+				else if ( action == InstallerAction.REGISTER ) {
+					registerOnly = true;
 				}
 
 				LOG.trace( "Finished execution of installer {} for module {}", installer.getClass(), module.getName() );
@@ -158,6 +176,10 @@ public class AcrossBootstrapInstallerRegistry
 			}
 		}
 		else {
+			registerOnly = true;
+		}
+
+		if ( registerOnly ) {
 			// Register the installer version
 			LOG.info(
 					"Only performing registration of installer {} - version {} for module {}",

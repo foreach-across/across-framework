@@ -1016,6 +1016,10 @@ public class LiquibaseInstaller extends AcrossLiquibaseInstaller
 For advanced configuration, both `AcrossContext` and `AcrossModule` allow `InstallerSettings` to be set.
 `InstallerSettings` can be used to set the action (eg. force executed, skip) to be performed for one or more installers
 or installer groups.
+
+`InstallerSettings` accepts an `InstallerActionResolver` for determining install action at runtime.
+Alternatively an installer can implement `InstallerActionResolver` that will be used in a second stage only if the original action is `EXECUTE`.
+
 Please refer to the javadoc for more information.
 
 === Module version information

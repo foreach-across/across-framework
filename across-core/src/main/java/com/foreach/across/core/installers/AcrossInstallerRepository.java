@@ -43,10 +43,10 @@ public class AcrossInstallerRepository
 		jdbcTemplate = new JdbcTemplate( installDatasource );
 	}
 
-	public int getInstalledVersion( AcrossModule module, InstallerMetaData installerMetaData) {
+	public int getInstalledVersion( AcrossModule module, InstallerMetaData installerMetaData ) {
 		try {
 			return jdbcTemplate.queryForObject( SQL_SELECT_VERSION, Integer.class, determineId( module.getName() ),
-			                                    determineInstallerId( installerMetaData.getInstallerClass() ) );
+			                                    determineInstallerId( installerMetaData ) );
 		}
 		catch ( EmptyResultDataAccessException erdae ) {
 			return -1;
@@ -57,14 +57,12 @@ public class AcrossInstallerRepository
 		if ( getInstalledVersion( module, installerMetaData ) != -1 ) {
 			jdbcTemplate.update( SQL_UPDATE_VERSION, installerMetaData.getVersion(),
 			                     StringUtils.abbreviate( installerMetaData.getDescription(), 500 ), new Date(),
-			                     determineId( module.getName() ), determineInstallerId(
-					installerMetaData.getInstallerClass() ) );
+			                     determineId( module.getName() ), determineInstallerId( installerMetaData ) );
 		}
 		else {
-			jdbcTemplate.update( SQL_INSERT_VERSION, determineModuleName( module.getName() ), determineId(
-					                     module.getName() ),
-			                     determineInstallerName( installerMetaData.getInstallerClass() ), determineInstallerId(
-							installerMetaData.getInstallerClass() ),
+			jdbcTemplate.update( SQL_INSERT_VERSION, determineModuleName( module.getName() ),
+			                     determineId( module.getName() ),
+			                     determineInstallerName( installerMetaData ), determineInstallerId( installerMetaData ),
 			                     installerMetaData.getVersion(), new Date(), StringUtils.abbreviate(
 							installerMetaData.getDescription(), 500 ) );
 		}
@@ -74,18 +72,18 @@ public class AcrossInstallerRepository
 		return StringUtils.substring( name, 0, 250 );
 	}
 
-	private String determineInstallerName( Class<?> installerClass ) {
-		String className = installerClass.getName();
+	private String determineInstallerName( InstallerMetaData installerMetaData ) {
+		String className = installerMetaData.getName();
 
 		if ( StringUtils.length( className ) > 250 ) {
-			return StringUtils.substring( installerClass.getSimpleName(), 0, 250 );
+			return StringUtils.substring( installerMetaData.getName(), 0, 250 );
 		}
 
 		return className;
 	}
 
-	private String determineInstallerId( Class<?> installerClass ) {
-		return determineId( installerClass.getName() );
+	private String determineInstallerId( InstallerMetaData installerMetaData ) {
+		return determineId( installerMetaData.getName() );
 	}
 
 	private String determineId( String name ) {
