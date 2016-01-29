@@ -200,7 +200,7 @@ public abstract class AcrossLiquibaseInstaller
 	 * @param springLiquibase
 	 * @return The configured @link SpringLiquibase} object
 	 */
-	public SpringLiquibase configureSpringLiquibase( SpringLiquibase springLiquibase ) {
+	protected SpringLiquibase configureSpringLiquibase( SpringLiquibase springLiquibase ) {
 		springLiquibase.setChangeLogParameters( buildParameters( getSchemaConfiguration() ) );
 		springLiquibase.setChangeLog( getChangelog() );
 
