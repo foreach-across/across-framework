@@ -1002,6 +1002,77 @@ public class LiquibaseInstaller extends AcrossLiquibaseInstaller
 }
 ----
 
+===== SchemaConfiguration
+Before installation, an `AcrossLiquibaseInstaller` will try to detect a `SchemaConfiguration` class, which it will use to configure it's default schema.
+`SchemaConfiguration` beans can be annotated with the `Module` annotation. If it is not annotated with a `Module` annotation that `SchemaConfiguration` bean
+will be considered the default `SchemaConfiguration`.
+
+An `AcrossLiquibaseInstaller` will try to find a `SchemaConfiguration` for it's own module first, failing that it will fall back to the default `SchemaConfiguration`.
+If no default or module `SchemaConfiguration` is found, the installer will continue without setting it's default schema.
+
+IMPORTANT: The Configuration class that defines the `SchemaConfiguration` beans should be added by an `AcrossContextConfigurer` by using a `ComponentScanConfigurer`.
+Other configurers such as `ProvidedBeansConfigurer` will erase the annotations from the `SchemaConfiguration` bean's factory method.
+
+.Example of a configuration class defining some `SchemaConfiguration` beans
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+package my.package;
+
+@Configuration
+public class SchemaConfig implements AcrossContextConfigurer
+{
+
+    /**
+     * AcrossLiquibaseInstaller in the QuotationModule will automatically pick up this SchemaConfiguration.
+     * Liquibase scripts will run with 'MY_QUOTATIONS' as their default schema.
+     */
+     @Bean
+     @Module( "QuotationModule" )
+     public SchemaConfiguration userSchemaConfiguration() {
+        return new SchemaConfiguration( "MY_QUOTATIONS" );
+     }
+
+     /**
+      * This is the default SchemaConfiguration.
+      * AcrossLiquibaseInstaller in other module will pick up this SchemaConfiguration.
+      */
+     @Bean
+     @Module
+     public SchemaConfiguration defaultSchemaConfiguration() {
+        return new SchemaConfiguration( "MY_SCHEMA" );
+     }
+
+     @Override
+     public void configure( AcrossContext context ) {
+         context.addApplicationContextConfigurer( new ComponentScanConfigurer( "my.package.SchemaConfig" ) );
+     }
+
+}
+----
+
+The `SchemaConfiguration` bean's default schema can be overwritten by manually. You will need to extend `AcrossLiquibaseInstaller` and set the default schema
+using the `AcrossLiquibaseInstaller`.`setDefaultSchema` method.
+
+.Example schema configuration Using `AcrossLiquibaseInstaller`.`setDefaultSchema`
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+package my.package;
+
+/**
+ * Liquibase script of this installer will run with 'IM_SPECIAL' as default schema.
+ * Regardless of any defined SchemaConfiguration
+ */
+@Installer(description = "Liquibase installer", runCondition = InstallerRunCondition.AlwaysRun)
+public class SpecialSchemaInstaller extends AcrossLiquibaseInstaller
+{
+    public SpecialSchemaInstaller() {
+        setDefaultSchema( "IM_SPECIAL" );
+    }
+}
+----
+
 [[installer-settings]]
 ==== InstallerSettings
 For advanced configuration, both `AcrossContext` and `AcrossModule` allow `InstallerSettings` to be set.
