@@ -50,7 +50,7 @@
 	<properties>
 		<across.version>1.1.2-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>1.1.1.RELEASE</spring.platform.version>
+		<spring.platform.version>1.1.5.RELEASE</spring.platform.version>
 		<foreach.common.version>0.12</foreach.common.version>
 		<querydsl.version>3.5.1</querydsl.version>
 		<hikaricp.version>2.3.9</hikaricp.version>
@@ -77,8 +77,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -130,6 +130,7 @@
 				<configuration>
 					<sourceDirectory>docs</sourceDirectory>
 					<sourceDocumentName>index.adoc</sourceDocumentName>
+					<doctype>book</doctype>
 					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
 					<backend>html</backend>
 				</configuration>
@@ -207,6 +208,11 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco-maven-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>2.6</version>
 			</plugin>
 		</plugins>
 	</build>

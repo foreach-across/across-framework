@@ -18,9 +18,9 @@ package com.foreach.across.modules.web.mvc;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Event;
-import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +34,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -51,13 +52,15 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 	private ApplicationContext contextBeingScanned;
 
+	private final Set<Object> scannedHandlers = new HashSet<>();
+
 	public PrefixingRequestMappingHandlerMapping( ClassFilter handlerMatcher ) {
 		this.prefixPath = null;
 		this.handlerMatcher = handlerMatcher;
 	}
 
 	public PrefixingRequestMappingHandlerMapping( String prefixPath, ClassFilter handlerMatcher ) {
-		this.prefixPath = prefixPath;
+		this.prefixPath = prefixPath.endsWith( "/" ) ? StringUtils.stripEnd( prefixPath, "/" ) : prefixPath;
 		this.handlerMatcher = handlerMatcher;
 	}
 
@@ -81,8 +84,9 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	@Event
 	protected void rescan( AcrossContextBootstrappedEvent event ) {
 		for ( AcrossModuleInfo moduleInfo : event.getModules() ) {
-			scan( AcrossContextUtils.getApplicationContext( moduleInfo.getModule() ) );
+			scan( moduleInfo.getApplicationContext(), false );
 		}
+		scan( event.getContext().getApplicationContext(), true );
 	}
 
 	public void reload() {
@@ -103,9 +107,10 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	/**
 	 * Scan a particular ApplicationContext for instances.
 	 *
-	 * @param context
+	 * @param context          that should be scanned
+	 * @param includeAncestors should controllers from the parent application context be detected
 	 */
-	public synchronized void scan( ApplicationContext context ) {
+	public synchronized void scan( ApplicationContext context, boolean includeAncestors ) {
 		if ( context == null ) {
 			return;
 		}
@@ -116,10 +121,13 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 			logger.debug( "Looking for request mappings in application context: " + context );
 		}
 
-		String[] beanNames = context.getBeanNamesForType( Object.class );
+		String[] beanNames = includeAncestors
+				? BeanFactoryUtils.beanNamesIncludingAncestors( context )
+				: context.getBeanNamesForType( Object.class );
 
 		for ( String beanName : beanNames ) {
-			if ( isHandler( context.getType( beanName ) ) ) {
+			if ( isHandler( context.getType( beanName ) ) && !scannedHandlers.contains( beanName ) ) {
+				scannedHandlers.add( beanName );
 				detectHandlerMethods( context, beanName );
 			}
 		}

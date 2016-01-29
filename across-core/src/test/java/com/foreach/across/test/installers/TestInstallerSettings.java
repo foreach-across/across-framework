@@ -16,19 +16,20 @@
 
 package com.foreach.across.test.installers;
 
+import com.foreach.across.core.annotations.Installer;
+import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.installers.InstallerActionResolver;
+import com.foreach.across.core.installers.InstallerMetaData;
 import com.foreach.across.core.installers.InstallerSettings;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,10 +47,13 @@ public class TestInstallerSettings
 		for ( InstallerAction defaultAction : InstallerAction.values() ) {
 			settings.setDefaultAction( defaultAction );
 
-			InstallerAction action = settings.shouldRun( "group", "test" );
+			InstallerAction action = settings.shouldRun( "module", installer( "test", "group" ) );
 			assertEquals( defaultAction, action );
 
-			action = settings.shouldRun( RandomStringUtils.random( 10 ), RandomStringUtils.random( 50 ) );
+			action = settings.shouldRun(
+					RandomStringUtils.random( 10 ),
+					installer( RandomStringUtils.random( 50 ), RandomStringUtils.random( 10 ) )
+			);
 			assertEquals( defaultAction, action );
 		}
 	}
@@ -64,34 +68,25 @@ public class TestInstallerSettings
 			settings.setDefaultAction( defaultAction );
 
 			// Set actions for known installers
-			settings.setActionForInstallers( InstallerAction.EXECUTE, "java.util.Date",
-			                                 "java.lang.Throwable" );
-			settings.setActionForInstallers( InstallerAction.SKIP, new Integer( 5 ), new Long( 6 ) );
-			settings.setActionForInstallers( InstallerAction.FORCE, BigDecimal.class, BigInteger.class );
-			settings.setActionForInstallers( InstallerAction.REGISTER, Arrays.asList( String.class,
-			                                                                          Short.class ) );
-			settings.setActionForInstallers( InstallerAction.DISABLED, "java.lang.Exception" );
+			settings.setActionForInstallers( InstallerAction.EXECUTE, "one", "two" );
+			settings.setActionForInstallers( InstallerAction.FORCE, InstallerOne.class );
+			settings.setActionForInstallers( InstallerAction.REGISTER, InstallerTwo.class );
+			settings.setActionForInstallers( InstallerAction.DISABLED, "three" );
+			settings.setActionForInstallers( InstallerAction.SKIP, "four", "five" );
 
 			// Fetch actions for known installers
-			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( RandomStringUtils.random( 10 ),
-			                                                           new Date() ) );
-			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( RandomStringUtils.random( 10 ),
-			                                                           new Throwable() ) );
-			assertEquals( InstallerAction.SKIP, settings.shouldRun( RandomStringUtils.random( 10 ), 7 ) );
-			assertEquals( InstallerAction.SKIP, settings.shouldRun( RandomStringUtils.random( 10 ), 60L ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( RandomStringUtils.random( 10 ),
-			                                                         new BigDecimal( 0 ) ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( RandomStringUtils.random( 10 ),
-			                                                         new BigInteger( "0" ) ) );
-			assertEquals( InstallerAction.REGISTER, settings.shouldRun( RandomStringUtils.random( 10 ),
-			                                                            "test" ) );
-			assertEquals( InstallerAction.REGISTER, settings.shouldRun( RandomStringUtils.random( 10 ),
-			                                                            new Short( "1" ) ) );
-			assertEquals( InstallerAction.DISABLED, settings.shouldRun( RandomStringUtils.random( 10 ),
-			                                                            new Exception() ) );
+			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( rnd(), installer( "one" ) ) );
+			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( rnd(), installer( "two" ) ) );
+			assertEquals( InstallerAction.FORCE,
+			              settings.shouldRun( rnd(), installer( InstallerOne.class.getName() ) ) );
+
+			assertEquals( InstallerAction.REGISTER,
+			              settings.shouldRun( rnd(), installer( InstallerTwo.class.getName() ) ) );
+			assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( "three" ) ) );
+			assertEquals( InstallerAction.SKIP, settings.shouldRun( rnd(), installer( "five" ) ) );
 
 			//  Unknown installer should always return the default action
-			assertEquals( defaultAction, settings.shouldRun( RandomStringUtils.random( 10 ), new Object() ) );
+			assertEquals( defaultAction, settings.shouldRun( rnd(), installer( rnd() ) ) );
 		}
 	}
 
@@ -108,40 +103,37 @@ public class TestInstallerSettings
 			settings.setActionForInstallerGroups( InstallerAction.EXECUTE, "executeOne", "executeTwo" );
 			settings.setActionForInstallerGroups( InstallerAction.SKIP, "skipOne", "skipTwo" );
 			settings.setActionForInstallerGroups( InstallerAction.FORCE, "force" );
-			settings.setActionForInstallerGroups( InstallerAction.REGISTER, Arrays.asList( "registerOne",
-			                                                                               "registerTwo" ) );
+			settings.setActionForInstallerGroups( InstallerAction.REGISTER, "registerOne", "registerTwo" );
 			settings.setActionForInstallerGroups( InstallerAction.DISABLED, "disabled" );
 
 			// Set action for specific installer
-			settings.setActionForInstallers( InstallerAction.FORCE, "java.lang.String" );
+			settings.setActionForInstallers( InstallerAction.FORCE, InstallerOne.class.getName() );
 
 			// Fetch actions for known installers
-			Object groupRule = new Object();
-			String installerRule = "installerRule";
+			String name = InstallerOne.class.getName();
 
-			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( "executeOne", groupRule ) );
-			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( "executeTwo", groupRule ) );
-			assertEquals( InstallerAction.SKIP, settings.shouldRun( "skipOne", groupRule ) );
-			assertEquals( InstallerAction.SKIP, settings.shouldRun( "skipTwo", groupRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "force", groupRule ) );
-			assertEquals( InstallerAction.REGISTER, settings.shouldRun( "registerOne", groupRule ) );
-			assertEquals( InstallerAction.REGISTER, settings.shouldRun( "registerTwo", groupRule ) );
-			assertEquals( InstallerAction.DISABLED, settings.shouldRun( "disabled", groupRule ) );
+			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( rnd(), installer( rnd(), "executeOne" ) ) );
+			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( rnd(), installer( rnd(), "executeTwo" ) ) );
+			assertEquals( InstallerAction.SKIP, settings.shouldRun( rnd(), installer( rnd(), "skipOne" ) ) );
+			assertEquals( InstallerAction.SKIP, settings.shouldRun( rnd(), installer( rnd(), "skipTwo" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( rnd(), "force" ) ) );
+			assertEquals( InstallerAction.REGISTER, settings.shouldRun( rnd(), installer( rnd(), "registerOne" ) ) );
+			assertEquals( InstallerAction.REGISTER, settings.shouldRun( rnd(), installer( rnd(), "registerTwo" ) ) );
+			assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "disabled" ) ) );
 
 			// Installer rule should win
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "executeOne", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "executeTwo", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "skipOne", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "skipTwo", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "force", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "registerOne", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "registerTwo", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "disabled", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( RandomStringUtils.random( 4 ),
-			                                                         installerRule ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "executeOne" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "executeTwo" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "skipOne" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "skipTwo" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "force" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "registerOne" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "registerTwo" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "disabled" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, rnd() ) ) );
 
 			// Unknown group should always return the default action
-			assertEquals( defaultAction, settings.shouldRun( RandomStringUtils.random( 4 ), groupRule ) );
+			assertEquals( defaultAction, settings.shouldRun( rnd(), installer( rnd(), rnd() ) ) );
 		}
 	}
 
@@ -161,48 +153,53 @@ public class TestInstallerSettings
 			settings.setActionForInstallerGroups( InstallerAction.EXECUTE, "executeOne", "executeTwo" );
 			settings.setActionForInstallerGroups( InstallerAction.SKIP, "skipOne", "skipTwo" );
 			settings.setActionForInstallerGroups( InstallerAction.FORCE, "force" );
-			settings.setActionForInstallerGroups( InstallerAction.REGISTER, Arrays.asList( "registerOne",
-			                                                                               "registerTwo" ) );
+			settings.setActionForInstallerGroups( InstallerAction.REGISTER, "registerOne", "registerTwo" );
 			settings.setActionForInstallerGroups( InstallerAction.DISABLED, "disabled" );
 
 			// Set action for specific installer
-			settings.setActionForInstallers( InstallerAction.FORCE, "java.lang.String" );
+			settings.setActionForInstallers( InstallerAction.FORCE, InstallerOne.class.getName() );
 
 			// Fetch actions for known installers
-			Object groupRule = new Object();
-			String installerRule = "installerRule";
+			String name = InstallerOne.class.getName();
 
 			// In these cases the priority resolver should decide
-			when( priorityResolver.resolve( "skipOne", groupRule ) ).thenReturn( InstallerAction.REGISTER );
-			when( priorityResolver.resolve( "registerOne", groupRule ) ).thenReturn( InstallerAction.SKIP );
-			when( priorityResolver.resolve( "disabled", installerRule ) ).thenReturn( InstallerAction.EXECUTE );
+			when( priorityResolver.resolve( anyString(), any( InstallerMetaData.class ) ) )
+					.thenReturn( Optional.empty() );
+			when( priorityResolver.resolve( anyString(), eq( installer( "one", "skipOne" ) ) ) )
+					.thenReturn( Optional.of( InstallerAction.REGISTER ) );
+			when( priorityResolver.resolve( anyString(), eq( installer( "two", "registerOne" ) ) ) )
+					.thenReturn( Optional.of( InstallerAction.SKIP ) );
+			when( priorityResolver.resolve( anyString(), eq( installer( "three", "disabled" ) ) ) )
+					.thenReturn( Optional.of( InstallerAction.EXECUTE ) );
 
 			// Priority resolver action
-			assertEquals( InstallerAction.REGISTER, settings.shouldRun( "skipOne", groupRule ) );
-			assertEquals( InstallerAction.SKIP, settings.shouldRun( "registerOne", groupRule ) );
-			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( "disabled", installerRule ) );
+			assertEquals( InstallerAction.REGISTER, settings.shouldRun( rnd(), installer( "one", "skipOne" ) ) );
+			assertEquals( InstallerAction.SKIP, settings.shouldRun( rnd(), installer( "two", "registerOne" ) ) );
+			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( rnd(), installer( "three", "disabled" ) ) );
 
 			// Group actions
-			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( "executeOne", groupRule ) );
-			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( "executeTwo", groupRule ) );
-			assertEquals( InstallerAction.SKIP, settings.shouldRun( "skipTwo", groupRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "force", groupRule ) );
-			assertEquals( InstallerAction.REGISTER, settings.shouldRun( "registerTwo", groupRule ) );
-			assertEquals( InstallerAction.DISABLED, settings.shouldRun( "disabled", groupRule ) );
+			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( rnd(), installer( rnd(), "executeOne" ) ) );
+			assertEquals( InstallerAction.EXECUTE, settings.shouldRun( rnd(), installer( rnd(), "executeTwo" ) ) );
+			assertEquals( InstallerAction.SKIP, settings.shouldRun( rnd(), installer( rnd(), "skipOne" ) ) );
+			assertEquals( InstallerAction.SKIP, settings.shouldRun( rnd(), installer( rnd(), "skipTwo" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( rnd(), "force" ) ) );
+			assertEquals( InstallerAction.REGISTER, settings.shouldRun( rnd(), installer( rnd(), "registerOne" ) ) );
+			assertEquals( InstallerAction.REGISTER, settings.shouldRun( rnd(), installer( rnd(), "registerTwo" ) ) );
+			assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "disabled" ) ) );
 
 			// Installer rule should win
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "executeOne", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "executeTwo", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "skipOne", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "skipTwo", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "force", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "registerOne", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( "registerTwo", installerRule ) );
-			assertEquals( InstallerAction.FORCE, settings.shouldRun( RandomStringUtils.random( 4 ),
-			                                                         installerRule ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "executeOne" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "executeTwo" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "skipOne" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "skipTwo" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "force" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "registerOne" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "registerTwo" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, "disabled" ) ) );
+			assertEquals( InstallerAction.FORCE, settings.shouldRun( rnd(), installer( name, rnd() ) ) );
 
 			// Unknown group should always return the default action
-			assertEquals( defaultAction, settings.shouldRun( RandomStringUtils.random( 4 ), groupRule ) );
+			assertEquals( defaultAction, settings.shouldRun( rnd(), installer( rnd(), rnd() ) ) );
 		}
 	}
 
@@ -217,48 +214,97 @@ public class TestInstallerSettings
 		settings.setActionForInstallerGroups( InstallerAction.EXECUTE, "executeOne", "executeTwo" );
 		settings.setActionForInstallerGroups( InstallerAction.SKIP, "skipOne", "skipTwo" );
 		settings.setActionForInstallerGroups( InstallerAction.FORCE, "force" );
-		settings.setActionForInstallerGroups( InstallerAction.REGISTER, Arrays.asList( "registerOne",
-		                                                                               "registerTwo" ) );
+		settings.setActionForInstallerGroups( InstallerAction.REGISTER, "registerOne", "registerTwo" );
 		settings.setActionForInstallerGroups( InstallerAction.DISABLED, "disabled" );
 
 		// Set action for specific installer
-		settings.setActionForInstallers( InstallerAction.FORCE, "java.lang.String" );
+		settings.setActionForInstallers( InstallerAction.FORCE, InstallerOne.class.getName() );
 
 		// Fetch actions for known installers
-		Object groupRule = new Object();
-		String installerRule = "installerRule";
+		String name = InstallerOne.class.getName();
 
 		// In these cases the priority resolver should decide
-		when( priorityResolver.resolve( "skipOne", groupRule ) ).thenReturn( InstallerAction.REGISTER );
-		when( priorityResolver.resolve( "registerOne", groupRule ) ).thenReturn( InstallerAction.SKIP );
-		when( priorityResolver.resolve( "disabled", installerRule ) ).thenReturn( InstallerAction.EXECUTE );
+		when( priorityResolver.resolve( anyString(), any( InstallerMetaData.class ) ) )
+				.thenReturn( Optional.empty() );
+		when( priorityResolver.resolve( anyString(), eq( installer( "one", "skipOne" ) ) ) )
+				.thenReturn( Optional.of( InstallerAction.REGISTER ) );
+		when( priorityResolver.resolve( anyString(), eq( installer( "two", "registerOne" ) ) ) )
+				.thenReturn( Optional.of( InstallerAction.SKIP ) );
+		when( priorityResolver.resolve( anyString(), eq( installer( "three", "disabled" ) ) ) )
+				.thenReturn( Optional.of( InstallerAction.EXECUTE ) );
 
-		// No matter it should always return DISABLED
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "skipOne", groupRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "registerOne", groupRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "disabled", installerRule ) );
+		// Priority resolver action
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( "one", "skipOne" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( "two", "registerOne" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( "three", "disabled" ) ) );
 
 		// Group actions
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "executeOne", groupRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "executeTwo", groupRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "skipTwo", groupRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "force", groupRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "registerTwo", groupRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "disabled", groupRule ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "executeOne" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "executeTwo" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "skipOne" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "skipTwo" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "force" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "registerOne" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "registerTwo" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), "disabled" ) ) );
 
 		// Installer rule should win
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "executeOne", installerRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "executeTwo", installerRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "skipOne", installerRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "skipTwo", installerRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "force", installerRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "registerOne", installerRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( "registerTwo", installerRule ) );
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( RandomStringUtils.random( 4 ),
-		                                                            installerRule ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( name, "executeOne" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( name, "executeTwo" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( name, "skipOne" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( name, "skipTwo" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( name, "force" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( name, "registerOne" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( name, "registerTwo" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( name, "disabled" ) ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( name, rnd() ) ) );
 
 		// Unknown group should always return the default action
-		assertEquals( InstallerAction.DISABLED, settings.shouldRun( RandomStringUtils.random( 4 ), groupRule ) );
+		assertEquals( InstallerAction.DISABLED, settings.shouldRun( rnd(), installer( rnd(), rnd() ) ) );
 	}
 
+	private String rnd() {
+		return RandomStringUtils.random( 10 );
+	}
+
+	private InstallerMetaData installer( String installerName ) {
+		return installer( installerName, "" );
+	}
+
+	private InstallerMetaData installer( String installerName, String group ) {
+		ConfigurableMetaData metaData = new ConfigurableMetaData();
+		metaData.setName( installerName );
+		metaData.setGroup( group );
+
+		return metaData;
+	}
+
+	protected static class ConfigurableMetaData extends InstallerMetaData
+	{
+		@Override
+		protected void setName( String name ) {
+			super.setName( name );
+		}
+
+		@Override
+		protected void setGroup( String group ) {
+			super.setGroup( group );
+		}
+	}
+
+	@Installer(description = "one")
+	private static class InstallerOne
+	{
+		@InstallerMethod
+		public void install() {
+		}
+	}
+
+	@Installer(description = "does something")
+	private static class InstallerTwo
+	{
+		@InstallerMethod
+		public void install() {
+		}
+	}
 }

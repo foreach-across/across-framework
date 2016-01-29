@@ -17,13 +17,13 @@
 package com.foreach.across.core.installers;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.Installer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.DigestUtils;
 
 import javax.sql.DataSource;
+import java.nio.charset.Charset;
 import java.util.Date;
 
 public class AcrossInstallerRepository
@@ -43,27 +43,30 @@ public class AcrossInstallerRepository
 		jdbcTemplate = new JdbcTemplate( installDatasource );
 	}
 
-	public int getInstalledVersion( AcrossModule module, Class<?> installerClass ) {
+	public int getInstalledVersion( AcrossModule module, InstallerMetaData installerMetaData) {
 		try {
 			return jdbcTemplate.queryForObject( SQL_SELECT_VERSION, Integer.class, determineId( module.getName() ),
-			                                    determineInstallerId( installerClass ) );
+			                                    determineInstallerId( installerMetaData.getInstallerClass() ) );
 		}
 		catch ( EmptyResultDataAccessException erdae ) {
 			return -1;
 		}
 	}
 
-	public void setInstalled( AcrossModule module, Installer config, Class<?> installerClass ) {
-		if ( getInstalledVersion( module, installerClass ) != -1 ) {
-			jdbcTemplate.update( SQL_UPDATE_VERSION, config.version(), StringUtils.abbreviate( config.description(),
-			                                                                                   500 ), new Date(),
-			                     determineId( module.getName() ), determineInstallerId( installerClass ) );
+	public void setInstalled( AcrossModule module, InstallerMetaData installerMetaData ) {
+		if ( getInstalledVersion( module, installerMetaData ) != -1 ) {
+			jdbcTemplate.update( SQL_UPDATE_VERSION, installerMetaData.getVersion(),
+			                     StringUtils.abbreviate( installerMetaData.getDescription(), 500 ), new Date(),
+			                     determineId( module.getName() ), determineInstallerId(
+					installerMetaData.getInstallerClass() ) );
 		}
 		else {
 			jdbcTemplate.update( SQL_INSERT_VERSION, determineModuleName( module.getName() ), determineId(
 					                     module.getName() ),
-			                     determineInstallerName( installerClass ), determineInstallerId( installerClass ),
-			                     config.version(), new Date(), StringUtils.abbreviate( config.description(), 500 ) );
+			                     determineInstallerName( installerMetaData.getInstallerClass() ), determineInstallerId(
+							installerMetaData.getInstallerClass() ),
+			                     installerMetaData.getVersion(), new Date(), StringUtils.abbreviate(
+							installerMetaData.getDescription(), 500 ) );
 		}
 	}
 
@@ -87,7 +90,7 @@ public class AcrossInstallerRepository
 
 	private String determineId( String name ) {
 		if ( StringUtils.length( name ) > 120 ) {
-			return DigestUtils.md5DigestAsHex( name.getBytes() );
+			return DigestUtils.md5DigestAsHex( name.getBytes( Charset.forName( "UTF-8" ) ) );
 		}
 
 		return name;

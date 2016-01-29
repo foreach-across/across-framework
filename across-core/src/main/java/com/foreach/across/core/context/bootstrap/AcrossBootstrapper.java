@@ -102,11 +102,11 @@ public class AcrossBootstrapper
 			runModuleBootstrapperCustomizations( modulesInOrder );
 
 			AcrossApplicationContextHolder root = createRootContext( contextInfo );
-			AbstractApplicationContext rootContext = root.getApplicationContext();
+			AcrossConfigurableApplicationContext rootContext = root.getApplicationContext();
 
 			createdApplicationContexts.push( rootContext );
 
-			createBootstrapConfiguration( contextInfo );
+			AcrossBootstrapConfig contextBoostrapConfig = createBootstrapConfiguration( contextInfo );
 			prepareForBootstrap( contextInfo );
 
 			BootstrapLockManager bootstrapLockManager = new BootstrapLockManager( contextInfo );
@@ -116,10 +116,15 @@ public class AcrossBootstrapper
 				eventPublisher.addErrorHandler( new BootstrapEventErrorHandler() );
 			}
 
+			ModuleConfigurationSet moduleConfigurationSet = contextBoostrapConfig.getModuleConfigurationSet();
+
 			try {
 				AcrossBootstrapInstallerRegistry installerRegistry =
-						new AcrossBootstrapInstallerRegistry( contextInfo.getBootstrapConfiguration(),
-						                                      bootstrapLockManager );
+						new AcrossBootstrapInstallerRegistry(
+								contextInfo.getBootstrapConfiguration(),
+								bootstrapLockManager,
+								applicationContextFactory
+						);
 
 				// Run installers that don't need anything bootstrapped
 				installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
@@ -137,6 +142,12 @@ public class AcrossBootstrapper
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo =
 							(ConfigurableAcrossModuleInfo) moduleInfo;
 					ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
+
+					// Add scanned (or edited) module configurations
+					config.addApplicationContextConfigurer(
+							moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName() )
+					);
+
 					LOG.debug( "Bootstrapping {} module", config.getModuleName() );
 
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
@@ -148,7 +159,7 @@ public class AcrossBootstrapper
 					                                          InstallerPhase.BeforeModuleBootstrap );
 
 					// Create the module context
-					AbstractApplicationContext child =
+					AcrossConfigurableApplicationContext child =
 							applicationContextFactory.createApplicationContext( context, config, root );
 
 					AcrossApplicationContextHolder moduleApplicationContext = new AcrossApplicationContextHolder( child,
@@ -198,8 +209,13 @@ public class AcrossBootstrapper
 				// Refresh beans
 				AcrossContextUtils.refreshBeans( context );
 
+				contextInfo.setBootstrapped( true );
+
 				// Bootstrapping done, run installers that require context bootstrap finished
 				installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
+
+				// Destroy the installer contexts
+				installerRegistry.destroy();
 			}
 			finally {
 				bootstrapLockManager.ensureUnlocked();
@@ -212,7 +228,7 @@ public class AcrossBootstrapper
 
 			createdApplicationContexts.clear();
 		}
-		catch ( Exception e ) {
+		catch ( RuntimeException e ) {
 			LOG.debug( "Exception during bootstrapping, destroying all created ApplicationContext instances" );
 
 			destroyAllCreatedApplicationContexts();
@@ -273,7 +289,7 @@ public class AcrossBootstrapper
 
 			// Make sure the parent can handle exposed beans - if not, introduce a supporting BeanFactory in the hierarchy
 			if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
-				AbstractApplicationContext parentApplicationContext =
+				AcrossConfigurableApplicationContext parentApplicationContext =
 						applicationContextFactory.createApplicationContext();
 				parentApplicationContext.refresh();
 				parentApplicationContext.start();
@@ -296,7 +312,7 @@ public class AcrossBootstrapper
 	private void exposeBeans( ConfigurableAcrossModuleInfo acrossModuleInfo,
 	                          BeanFilter exposeFilter,
 	                          ExposedBeanDefinitionTransformer exposeTransformer,
-	                          AbstractApplicationContext parentContext ) {
+	                          AcrossConfigurableApplicationContext parentContext ) {
 		BeanFilter exposeFilterToApply = exposeFilter;
 
 		AcrossListableBeanFactory moduleBeanFactory = AcrossContextUtils.getBeanFactory(
@@ -326,8 +342,9 @@ public class AcrossBootstrapper
 
 	private ConfigurableAcrossContextInfo buildContextAndModuleInfo() {
 		ConfigurableAcrossContextInfo contextInfo = new ConfigurableAcrossContextInfo( context );
-		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder =
-				new ModuleBootstrapOrderBuilder( context.getModules() );
+		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
+		moduleBootstrapOrderBuilder.setDependencyResolver( context.getModuleDependencyResolver() );
+		moduleBootstrapOrderBuilder.setSourceModules( context.getModules() );
 
 		Collection<AcrossModuleInfo> configured = new LinkedList<>();
 
@@ -401,7 +418,7 @@ public class AcrossBootstrapper
 	/**
 	 * Builds the bootstrap configuration entities.
 	 */
-	private void createBootstrapConfiguration( ConfigurableAcrossContextInfo contextInfo ) {
+	private AcrossBootstrapConfig createBootstrapConfiguration( ConfigurableAcrossContextInfo contextInfo ) {
 		List<ModuleBootstrapConfig> configs = new LinkedList<>();
 
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
@@ -437,19 +454,45 @@ public class AcrossBootstrapper
 			);
 
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
-			config.addApplicationContextConfigurers( AcrossContextUtils.getConfigurersToApply( context,
-			                                                                                   module ) );
+			config.addApplicationContextConfigurers(
+					AcrossContextUtils.getApplicationContextConfigurers( context, module )
+			);
+
+			// create installer application context
+			config.addInstallerContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
+			config.addInstallerContextConfigurers( contextInfo.getContext().getInstallerContextConfigurers() );
+			config.addInstallerContextConfigurers( AcrossContextUtils.getInstallerContextConfigurers( module ) );
 
 			configs.add( config );
 
 			( (ConfigurableAcrossModuleInfo) moduleInfo ).setBootstrapConfiguration( config );
 		}
 
-		AcrossBootstrapConfig contextConfig = new AcrossBootstrapConfig( contextInfo.getContext(),
-		                                                                 configs );
+		AcrossBootstrapConfig contextConfig = new AcrossBootstrapConfig(
+				contextInfo.getContext(), configs, buildModuleConfigurationSet( contextInfo )
+		);
 		contextConfig.setExposeTransformer( contextInfo.getContext().getExposeTransformer() );
 
 		contextInfo.setBootstrapConfiguration( contextConfig );
+
+		return contextConfig;
+	}
+
+	private ModuleConfigurationSet buildModuleConfigurationSet( AcrossContextInfo contextInfo ) {
+		Set<String> basePackages = new LinkedHashSet<>();
+
+		contextInfo.getModules()
+		           .stream()
+		           .filter( AcrossModuleInfo::isEnabled )
+		           .forEach( acrossModuleInfo -> Collections.addAll(
+				                     basePackages, acrossModuleInfo.getModule().getModuleConfigurationScanPackages()
+		                     )
+		           );
+
+		Collections.addAll( basePackages, contextInfo.getContext().getModuleConfigurationScanPackages() );
+
+		return new ClassPathScanningModuleConfigurationProvider()
+				.scan( basePackages.toArray( new String[basePackages.size()] ) );
 	}
 
 	private void checkBootstrapIsPossible() {
@@ -478,7 +521,7 @@ public class AcrossBootstrapper
 	}
 
 	private AcrossApplicationContextHolder createRootContext( ConfigurableAcrossContextInfo contextInfo ) {
-		AbstractApplicationContext rootApplicationContext =
+		AcrossConfigurableApplicationContext rootApplicationContext =
 				applicationContextFactory.createApplicationContext( context,
 				                                                    context.getParentApplicationContext() );
 

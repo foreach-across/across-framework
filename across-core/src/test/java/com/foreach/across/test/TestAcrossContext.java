@@ -40,28 +40,32 @@ public class TestAcrossContext
 		assertNull( context.getModule( "not present" ) );
 		assertSame( module, context.getModule( module.getName() ) );
 		assertSame( other, context.getModule( "my module" ) );
-		assertSame( other, context.getModule( "com.foreach.across.test.modules.exposing.ExposingModule" ) );
 	}
 
 	@Test
-	public void moduleWithTheSameNameCannotBeAdded() {
-		AcrossContext context = new AcrossContext();
-		context.setInstallerAction( InstallerAction.DISABLED );
-
+	public void getValidTypedModuleByName() {
 		TestModule1 module = new TestModule1();
+		ExposingModule other = new ExposingModule( "my module" );
+
+		AcrossContext context = new AcrossContext();
 		context.addModule( module );
-		context.addModule( new TestModule2() );
+		context.addModule( other );
 
-		boolean failed = false;
+		ExposingModule fetched = context.getModule( "my module", ExposingModule.class );
+		assertNotNull( fetched );
+		assertSame( other, fetched );
+	}
 
-		try {
-			context.addModule( new ExposingModule( module.getName() ) );
-		}
-		catch ( RuntimeException re ) {
-			failed = true;
-		}
+	@Test(expected = ClassCastException.class)
+	public void getInvalidTypedModuleByName() {
+		TestModule1 module = new TestModule1();
+		ExposingModule other = new ExposingModule( "my module" );
 
-		assertTrue( "Configuring modules with the same name should not be possible", failed );
+		AcrossContext context = new AcrossContext();
+		context.addModule( module );
+		context.addModule( other );
+
+		context.getModule( "my module", TestModule1.class );
 	}
 
 	@Test

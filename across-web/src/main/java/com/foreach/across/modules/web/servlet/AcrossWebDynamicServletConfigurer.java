@@ -37,7 +37,7 @@ public abstract class AcrossWebDynamicServletConfigurer implements ServletContex
 		Object loader = servletContext.getAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER );
 
 		try {
-			if ( loader instanceof AbstractAcrossServletInitializer ) {
+			if ( loader != null ) {
 				dynamicConfigurationAllowed( servletContext );
 			}
 			else {

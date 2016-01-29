@@ -7,10 +7,6 @@
       <item index="1" class="java.lang.String" itemvalue="com.foreach.across.core.annotations.RefreshableCollection" />
     </list>
   </component>
-  <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$/demo-web" />
-    <file type="web" url="file://$PROJECT_DIR$/test-web" />
-  </component>
   <component name="IdProvider" IDEtalkID="DB3B0B76923C4E8337D6E50B65FCF5BB" />
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
@@ -49,7 +45,7 @@
   <component name="ProjectResources">
     <resource url="http://www.thymeleaf.org" location="$MAVEN_REPOSITORY$/org/thymeleaf/thymeleaf/2.1.2.RELEASE/thymeleaf-2.1.2.RELEASE.jar!/org/thymeleaf/dtd/standard/xhtml5-legacy-wildcard.dtd" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/target" />
   </component>
 </project>

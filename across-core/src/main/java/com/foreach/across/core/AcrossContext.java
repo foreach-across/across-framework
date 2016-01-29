@@ -16,8 +16,11 @@
 
 package com.foreach.across.core;
 
+import com.foreach.across.core.annotations.ModuleConfiguration;
 import com.foreach.across.core.context.AbstractAcrossEntity;
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
@@ -33,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.util.Assert;
@@ -65,8 +67,9 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
 			new LinkedHashMap<>();
+	private List<ApplicationContextConfigurer> installerContextConfigurers = new ArrayList<>();
 
-	private List<AcrossModule> modules = new LinkedList<>();
+	private Map<String, AcrossModule> modules = new LinkedHashMap<>();
 
 	private boolean developmentMode;
 	private boolean disableNoOpCacheManager = false;
@@ -76,6 +79,9 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private boolean failBootstrapOnEventPublicationErrors = true;
 
 	private ExposedBeanDefinitionTransformer exposeTransformer = null;
+	private ModuleDependencyResolver moduleDependencyResolver = null;
+
+	private String[] moduleConfigurationScanPackages = new String[0];
 
 	/**
 	 * Constructs a new AcrossContext in its own ApplicationContext.
@@ -136,7 +142,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	}
 
 	public Collection<AcrossModule> getModules() {
-		return modules;
+		return modules.values();
 	}
 
 	public boolean isDevelopmentMode() {
@@ -179,17 +185,13 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	}
 
 	public void setModules( Collection<AcrossModule> modules ) {
-		modules.clear();
-		for ( AcrossModule module : modules ) {
-			addModule( module );
-		}
+		this.modules.clear();
+		modules.forEach( this::addModule );
 	}
 
 	public void addModule( AcrossModule module ) {
-		if ( modules.contains( module ) ) {
-			throw new AcrossException(
-					"Not allowed to add two modules with the same name to a single AcrossContext: " + module );
-		}
+		Assert.notNull( module );
+		Assert.notNull( module.getName(), "An AcrossModule must have a valid unique name." );
 
 		if ( module.getContext() != null ) {
 			throw new AcrossException( "Module is already attached to another AcrossContext: " + module );
@@ -200,22 +202,38 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 					"Adding a module to an already bootstrapped AcrossContext is currently not supported." );
 		}
 
-		modules.add( module );
+		modules.put( module.getName(), module );
 		module.setContext( this );
 	}
 
 	/**
-	 * Gets the module with the given name (or fully qualified class name) if present on the context.
-	 * Only the first module matching the name will be returned.
+	 * Gets the module with the given name if present on the context.
 	 *
-	 * @param name Name or fully qualified class name of the module.
-	 * @return AcrossModule or null if not present.
+	 * @param name Name of the module.
+	 * @return AcrossModule or {@code null} if not present.
 	 */
 	public AcrossModule getModule( String name ) {
-		for ( AcrossModule module : modules ) {
-			if ( StringUtils.equals( module.getName(), name ) || StringUtils.equals( module.getClass().getName(),
-			                                                                         name ) ) {
+		for ( AcrossModule module : modules.values() ) {
+			if ( StringUtils.equals( module.getName(), name ) ) {
 				return module;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets the module with the given name if present on the context.  Requires the module to be of the specific type,
+	 * if this is not the case a {@link ClassCastException} will be thrown.
+	 *
+	 * @param name       Name of the module
+	 * @param moduleType Required module type
+	 * @return AcrossModule or {@code null} if not present
+	 */
+	public <U extends AcrossModule> U getModule( String name, Class<U> moduleType ) {
+		for ( AcrossModule module : modules.values() ) {
+			if ( StringUtils.equals( module.getName(), name ) ) {
+				return moduleType.cast( module );
 			}
 		}
 
@@ -278,6 +296,20 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	}
 
 	/**
+	 * <p>Add an ApplicationContextConfigurer to the installer context of every module.</p>
+	 *
+	 * @param configurer Configurer instance.
+	 * @see com.foreach.across.core.context.configurer.ConfigurerScope
+	 */
+	public void addInstallerContextConfigurer( ApplicationContextConfigurer configurer ) {
+		installerContextConfigurers.add( configurer );
+	}
+
+	public List<ApplicationContextConfigurer> getInstallerContextConfigurers() {
+		return installerContextConfigurers;
+	}
+
+	/**
 	 * @return The transformer that will be applied to all exposed beans before copying them to the parent context.
 	 */
 	public ExposedBeanDefinitionTransformer getExposeTransformer() {
@@ -292,6 +324,37 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 */
 	public void setExposeTransformer( ExposedBeanDefinitionTransformer exposeTransformer ) {
 		this.exposeTransformer = exposeTransformer;
+	}
+
+	/**
+	 * Sets the instance to be used for resolving the module dependencies.  If none is configured all
+	 * modules will have to be added explicitly.
+	 *
+	 * @param moduleDependencyResolver instance
+	 */
+	public void setModuleDependencyResolver( ModuleDependencyResolver moduleDependencyResolver ) {
+		this.moduleDependencyResolver = moduleDependencyResolver;
+	}
+
+	/**
+	 * @return The instance that is being used for resolving the module dependencies.
+	 */
+	public ModuleDependencyResolver getModuleDependencyResolver() {
+		return moduleDependencyResolver;
+	}
+
+	/**
+	 * @return Packages that will be scanned for {@link ModuleConfiguration} classes
+	 */
+	public String[] getModuleConfigurationScanPackages() {
+		return moduleConfigurationScanPackages.clone();
+	}
+
+	/**
+	 * @param moduleConfigurationScanPackages packages that should be scanned for {@link ModuleConfiguration} classes
+	 */
+	public void setModuleConfigurationScanPackages( String... moduleConfigurationScanPackages ) {
+		this.moduleConfigurationScanPackages = moduleConfigurationScanPackages;
 	}
 
 	/**
@@ -349,7 +412,8 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 			for ( AcrossModuleInfo moduleInfo : reverseList ) {
 				if ( moduleInfo.isBootstrapped() ) {
 					AcrossModule module = moduleInfo.getModule();
-					AbstractApplicationContext applicationContext = AcrossContextUtils.getApplicationContext( module );
+					AcrossConfigurableApplicationContext applicationContext = AcrossContextUtils.getApplicationContext(
+							module );
 
 					if ( applicationContext != null ) {
 						LOG.debug( "Destroying ApplicationContext for module {}", module.getName() );

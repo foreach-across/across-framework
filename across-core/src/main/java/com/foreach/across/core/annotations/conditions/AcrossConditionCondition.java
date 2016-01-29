@@ -19,13 +19,13 @@ package com.foreach.across.core.annotations.conditions;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.annotations.AcrossCondition;
-import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -94,18 +94,21 @@ public class AcrossConditionCondition implements Condition
 
 		// Provided for SPEL property
 		public AcrossModule getCurrentModule() {
-			AcrossModuleInfo moduleInfo = getBeanFactory().getBean( AcrossContextInfo.class )
-			                                              .getModuleBeingBootstrapped();
-
-			return moduleInfo != null ? moduleInfo.getModule() : null;
-
+			try {
+				return getBeanFactory().getBean( AcrossModule.class );
+			}
+			catch ( NoSuchBeanDefinitionException nsbe ) {
+				return null;
+			}
 		}
 
 		public AcrossModuleSettings getSettings() {
-			AcrossModuleInfo moduleInfo = getBeanFactory().getBean( AcrossContextInfo.class )
-			                                              .getModuleBeingBootstrapped();
-
-			return moduleInfo != null ? moduleInfo.getSettings() : null;
+			try {
+				return getBeanFactory().getBean( AcrossModuleInfo.class ).getSettings();
+			}
+			catch ( NoSuchBeanDefinitionException nsbe ) {
+				return null;
+			}
 		}
 
 		/**

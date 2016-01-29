@@ -27,6 +27,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -154,5 +155,28 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 	public void removeAlias( String alias ) {
 		aliases.remove( alias );
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
+		if ( !super.equals( o ) ) {
+			return false;
+		}
+		ExposedBeanDefinition that = (ExposedBeanDefinition) o;
+		return Objects.equals( contextId, that.contextId ) &&
+				Objects.equals( moduleName, that.moduleName ) &&
+				Objects.equals( fullyQualifiedBeanName, that.fullyQualifiedBeanName ) &&
+				Objects.equals( originalBeanName, that.originalBeanName );
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( super.hashCode(), contextId, moduleName, fullyQualifiedBeanName, originalBeanName );
 	}
 }

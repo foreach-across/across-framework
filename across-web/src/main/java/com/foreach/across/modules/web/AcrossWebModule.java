@@ -33,6 +33,8 @@ import java.util.Set;
 
 public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 {
+	public static final String DEFAULT_VIEWS_RESOURCES_PATH = "/across/resources";
+
 	public static final String NAME = "AcrossWebModule";
 
 	/**
@@ -44,7 +46,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	// AcrossWebModule is the special case providing root resources
 	public static final String RESOURCES = "";
 
-	private String viewsResourcePath = "/across/resources";
+	private String viewsResourcePath = DEFAULT_VIEWS_RESOURCES_PATH;
 	private AcrossWebViewSupport[] supportedViews =
 			new AcrossWebViewSupport[] { AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF };
 
@@ -75,7 +77,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	 * @return The collection of view resolvers that will be created upon bootstrap.
 	 */
 	public AcrossWebViewSupport[] getSupportedViews() {
-		return supportedViews;
+		return supportedViews.clone();
 	}
 
 	@Override

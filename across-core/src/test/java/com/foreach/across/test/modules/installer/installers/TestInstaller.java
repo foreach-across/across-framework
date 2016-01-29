@@ -17,13 +17,22 @@
 package com.foreach.across.test.modules.installer.installers;
 
 import com.foreach.across.core.annotations.InstallerMethod;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class TestInstaller
 {
 	public static List<Class<?>> EXECUTED = new LinkedList<>();
+	public static Map<Class<?>, String> WIRED_VALUES = new HashMap<>();
+
+	@Autowired(required = false)
+	public void setSomeBean( String someBean ) {
+		WIRED_VALUES.put( getClass(), someBean );
+	}
 
 	@InstallerMethod
 	public void run() {
@@ -36,5 +45,6 @@ public abstract class TestInstaller
 
 	public static void reset() {
 		EXECUTED.clear();
+		WIRED_VALUES.clear();
 	}
 }

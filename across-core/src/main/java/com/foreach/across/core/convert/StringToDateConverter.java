@@ -18,6 +18,7 @@ package com.foreach.across.core.convert;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.util.Assert;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -27,14 +28,14 @@ import java.util.Locale;
  * Default converter that tries a long list of default patterns for parsing a String back to a Date
  * for a fixed (default: US) locale. This converter is registered by default when the AcrossContext creates a
  * {@link org.springframework.core.convert.ConversionService}.
- * <p/>
+ * <p>
  * A blank string is considered to be a null date but will not result in a conversion exception.
  *
  * @author Arne Vandamme
  */
 public class StringToDateConverter implements Converter<String, Date>
 {
-	public static final String[] DEFAULT_PATTERNS = {
+	static final String[] DEFAULT_PATTERNS = {
 			"yyyy-MM-dd",
 			"yyyy-MM-dd HH:mm",
 			"yyyy-MM-dd HH:mm:ss",
@@ -76,12 +77,12 @@ public class StringToDateConverter implements Converter<String, Date>
 	private Locale locale;
 
 	public StringToDateConverter() {
-		this( Locale.US, DEFAULT_PATTERNS );
+		this( Locale.US, defaultPatterns() );
 	}
 
 	public StringToDateConverter( Locale locale, String[] patterns ) {
 		this.locale = locale;
-		this.patterns = patterns;
+		setPatterns( patterns );
 	}
 
 	public void setLocale( Locale locale ) {
@@ -89,7 +90,8 @@ public class StringToDateConverter implements Converter<String, Date>
 	}
 
 	public void setPatterns( String[] patterns ) {
-		this.patterns = patterns;
+		Assert.notNull( patterns );
+		this.patterns = patterns.clone();
 	}
 
 	@Override
@@ -104,5 +106,12 @@ public class StringToDateConverter implements Converter<String, Date>
 		catch ( ParseException pe ) {
 			throw new RuntimeException( pe );
 		}
+	}
+
+	/**
+	 * @return the set of default patterns used for a {@link StringToDateConverter}
+	 */
+	public static String[] defaultPatterns() {
+		return DEFAULT_PATTERNS.clone();
 	}
 }
