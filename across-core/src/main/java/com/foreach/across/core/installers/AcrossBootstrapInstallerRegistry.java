@@ -18,11 +18,7 @@ package com.foreach.across.core.installers;
 
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.core.annotations.InstallerGroup;
-import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.annotations.Module;
-import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
@@ -34,11 +30,12 @@ import com.foreach.across.core.database.SchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
