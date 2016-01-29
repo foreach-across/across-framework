@@ -17,10 +17,14 @@
 package com.foreach.across.core.installers;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
+import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
+import com.foreach.across.core.context.support.ModuleBeanSelectorUtils;
 import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.core.database.SchemaObject;
 import liquibase.integration.spring.SpringLiquibase;
@@ -30,11 +34,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This class is the base for Installers which run liquibase update on installation
@@ -49,6 +55,10 @@ public abstract class AcrossLiquibaseInstaller
 
 	@Autowired
 	private AcrossContextInfo acrossContext;
+
+	@Autowired
+	@Module(AcrossModule.CURRENT_MODULE)
+	private AcrossModuleInfo moduleInfo;
 
 	@Autowired
 	@Qualifier(AcrossContext.INSTALLER_DATASOURCE)
@@ -105,7 +115,6 @@ public abstract class AcrossLiquibaseInstaller
 	 * the defaultSchema from {@link SchemaConfiguration#getDefaultSchema()} will be used instead
 	 *
 	 * @param schemaConfiguration the {@link SchemaConfiguration} to be set
-	 *
 	 * @see liquibase.integration.spring.SpringLiquibase#setChangeLogParameters(Map)
 	 */
 	protected void setSchemaConfiguration( SchemaConfiguration schemaConfiguration ) {
@@ -159,7 +168,6 @@ public abstract class AcrossLiquibaseInstaller
 	 * Override the dataSource this installer should use (defaults to the installer datasource otherwise).
 	 *
 	 * @param dataSource the {@link javax.sql.DataSource} instance to be set
-	 *
 	 * @see liquibase.integration.spring.SpringLiquibase#setDataSource(DataSource)
 	 */
 	protected void setDataSource( DataSource dataSource ) {
@@ -171,6 +179,15 @@ public abstract class AcrossLiquibaseInstaller
 	 */
 	protected DataSource getDataSource() {
 		return dataSource;
+	}
+
+	@Autowired
+	protected void setBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
+		if ( schemaConfiguration == null ) {
+			Optional<SchemaConfiguration> schemaConfigurationOptional = ModuleBeanSelectorUtils
+					.selectBeanForModule( SchemaConfiguration.class, moduleInfo.getName(), beanFactory );
+			schemaConfigurationOptional.ifPresent( this::setSchemaConfiguration );
+		}
 	}
 
 	/**
