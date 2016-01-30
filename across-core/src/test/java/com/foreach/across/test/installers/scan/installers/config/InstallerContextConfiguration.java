@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.foreach.across.test.installers.scan.installers.config;
 
-package com.foreach.across.core.database;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
- * Interface indicating a module defines a (modifiable) SchemaConfiguration.
- *
- * @deprecated Since Across 1.1.2 {@link SchemaConfiguration} is defined as beans.
+ * @author Arne Vandamme
  */
-@Deprecated
-public interface HasSchemaConfiguration
+@Configuration
+public class InstallerContextConfiguration
 {
-	SchemaConfiguration getSchemaConfiguration();
+	@Lazy
+	@Bean
+	public String someBean() {
+		return "fromInstallerContext";
+	}
 }

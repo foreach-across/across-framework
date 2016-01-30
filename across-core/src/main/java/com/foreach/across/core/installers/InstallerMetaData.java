@@ -159,13 +159,14 @@ public class InstallerMetaData
 		Class<?> actual = ClassUtils.getUserClass( installerClass );
 
 		if ( actual.isInterface() || Modifier.isAbstract( actual.getModifiers() ) ) {
-			throw new IllegalArgumentException( "@Installer annotated class must be a concrete implementation." );
+			throw new IllegalArgumentException(
+					"@Installer annotated class must be a concrete implementation: " + installerClass );
 		}
 
 		Installer metadata = AnnotationUtils.getAnnotation( actual, Installer.class );
 
 		if ( metadata == null ) {
-			throw new IllegalArgumentException( "@Installer annotation missing on class" );
+			throw new IllegalArgumentException( "@Installer annotation missing on class: " + installerClass );
 		}
 
 		InstallerMetaData profile = new InstallerMetaData();

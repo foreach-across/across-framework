@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.foreach.across.core.database;
+package com.foreach.across.test.installers.scan.installers;
 
 /**
- * Interface indicating a module defines a (modifiable) SchemaConfiguration.
- *
- * @deprecated Since Across 1.1.2 {@link SchemaConfiguration} is defined as beans.
+ * @author Arne Vandamme
  */
-@Deprecated
-public interface HasSchemaConfiguration
+public class NotAnInstaller
 {
-	SchemaConfiguration getSchemaConfiguration();
 }

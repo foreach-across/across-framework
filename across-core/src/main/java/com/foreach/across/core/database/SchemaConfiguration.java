@@ -16,13 +16,9 @@
 
 package com.foreach.across.core.database;
 
-import com.foreach.across.core.AcrossException;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class encapsulating general database properties to be used when creating/updating the schema.
@@ -30,15 +26,36 @@ import java.util.Map;
  */
 public class SchemaConfiguration
 {
-	private Collection<SchemaObject> tables;
+	private String defaultSchema = "";
+	private Collection<SchemaObject> tables = new ArrayList<>();
 	private Map<String, String> properties = new HashMap<>();
 
+	public SchemaConfiguration() {
+	}
+
+	public SchemaConfiguration( String defaultSchema ) {
+		this.defaultSchema = defaultSchema;
+	}
+
 	public SchemaConfiguration( Collection<SchemaObject> tables ) {
-		this.tables = Collections.unmodifiableCollection( tables );
+		this.tables = new ArrayList<>( tables );
+	}
+
+	/**
+	 * Configures the default schema to be used
+	 *
+	 * @param defaultSchema
+	 */
+	public void setDefaultSchema( String defaultSchema ) {
+		this.defaultSchema = defaultSchema;
+	}
+
+	public String getDefaultSchema() {
+		return defaultSchema;
 	}
 
 	public Collection<SchemaObject> getTables() {
-		return tables;
+		return Collections.unmodifiableCollection( tables );
 	}
 
 	public void renameTable( String original, String name ) {
@@ -51,7 +68,10 @@ public class SchemaConfiguration
 		}
 
 		if ( !found ) {
-			throw new AcrossException( "Could not find any defined table with name " + original );
+			SchemaObject object = new SchemaObject( StringUtils.lowerCase( "table." + original ), original );
+			object.setCurrentName( name );
+
+			tables.add( object );
 		}
 	}
 
@@ -62,7 +82,7 @@ public class SchemaConfiguration
 			}
 		}
 
-		throw new AcrossException( "Could not find any defined table with name " + original );
+		return original;
 	}
 
 	public Map<String, String> getProperties() {

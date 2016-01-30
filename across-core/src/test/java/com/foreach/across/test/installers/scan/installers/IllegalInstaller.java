@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.core.context;
+package com.foreach.across.test.installers.scan.installers;
+
+import com.foreach.across.core.annotations.Installer;
 
 /**
- * Helper for auto-configuration of an {@link com.foreach.across.core.AcrossContext}.  This implementations adds
- * all {@link com.foreach.across.core.AcrossModule} beans that are present in the parent
- * {@link org.springframework.context.ApplicationContext} and will attempt to satisfy all their dependencies using
- * class-path scanning.
- *
  * @author Arne Vandamme
  */
-public class AcrossContextAutoConfigurator
+@Installer(description = "illegal")
+public abstract class IllegalInstaller
 {
 }

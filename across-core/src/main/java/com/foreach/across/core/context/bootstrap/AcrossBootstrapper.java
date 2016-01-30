@@ -28,6 +28,7 @@ import com.foreach.across.core.context.beans.SingletonBean;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
+import com.foreach.across.core.context.installers.InstallerSetBuilder;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
@@ -427,7 +428,7 @@ public class AcrossBootstrapper
 			config.setExposeFilter( module.getExposeFilter() );
 			config.setExposeTransformer( module.getExposeTransformer() );
 			config.setInstallerSettings( module.getInstallerSettings() );
-			config.getInstallers().addAll( Arrays.asList( module.getInstallers() ) );
+			config.getInstallers().addAll( buildInstallerSet( module ) );
 
 			// Provide the current module beans
 			Map<String, Object> providedSingletons = new HashMap<>();
@@ -486,6 +487,14 @@ public class AcrossBootstrapper
 		contextInfo.setBootstrapConfiguration( contextConfig );
 
 		return contextConfig;
+	}
+
+	private Collection<Object> buildInstallerSet( AcrossModule module ) {
+		InstallerSetBuilder installerSetBuilder = new InstallerSetBuilder();
+		installerSetBuilder.add( module.getInstallers() );
+		installerSetBuilder.scan( module.getInstallerScanPackages() );
+
+		return Arrays.asList( installerSetBuilder.build() );
 	}
 
 	private ModuleConfigurationSet buildModuleConfigurationSet( AcrossContextInfo contextInfo ) {

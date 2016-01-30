@@ -21,6 +21,7 @@ import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.convert.StringToDateConverter;
@@ -32,6 +33,7 @@ import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepositoryImpl;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockConfiguration;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockManager;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -53,8 +55,17 @@ public class AcrossConfig
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossConfig.class );
 
 	@Bean
-	public AcrossEventPublisher eventPublisher() {
-		return new MBassadorEventPublisher();
+	public AcrossEventPublisher eventPublisher( ApplicationContext applicationContext ) {
+		MBassadorEventPublisher eventPublisher = new MBassadorEventPublisher();
+
+		ApplicationContext toScan = applicationContext;
+		do {
+			AcrossContextUtils.autoRegisterEventHandlers( toScan, eventPublisher );
+			toScan = toScan.getParent();
+		}
+		while ( toScan != null );
+
+		return eventPublisher;
 	}
 
 	@Bean
@@ -130,11 +141,27 @@ public class AcrossConfig
 			);
 		}
 
-		return new SqlBasedDistributedLockManager( acrossDataSource, sqlBasedDistributedLockConfiguration() );
+		return new SqlBasedDistributedLockManager(
+				acrossDataSource,
+				sqlBasedDistributedLockConfiguration( schemaConfigurationHolder() )
+		);
 	}
 
 	@Bean
-	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration() {
-		return new SqlBasedDistributedLockConfiguration( "across_locks" );
+	@Lazy
+	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration(
+			CoreSchemaConfigurationHolder schemaConfigurationHolder ) {
+		String tablePrefix = "";
+		String defaultSchema = schemaConfigurationHolder.getDefaultSchema();
+		if ( !StringUtils.isBlank( defaultSchema ) ) {
+			tablePrefix = defaultSchema + ".";
+		}
+		return new SqlBasedDistributedLockConfiguration( tablePrefix + "across_locks" );
+	}
+
+	@Bean
+	@Lazy
+	public CoreSchemaConfigurationHolder schemaConfigurationHolder() {
+		return new CoreSchemaConfigurationHolder();
 	}
 }

@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.foreach.across.test.installers.scan.installers;
 
-package com.foreach.across.core.database;
+import com.foreach.across.core.annotations.Installer;
+import com.foreach.across.test.modules.installer.installers.TestInstaller;
+import org.springframework.core.annotation.Order;
 
 /**
- * Interface indicating a module defines a (modifiable) SchemaConfiguration.
- *
- * @deprecated Since Across 1.1.2 {@link SchemaConfiguration} is defined as beans.
+ * @author Arne Vandamme
  */
-@Deprecated
-public interface HasSchemaConfiguration
+@Order(1)
+@Installer(description = "two")
+public class InstallerTwo extends TestInstaller
 {
-	SchemaConfiguration getSchemaConfiguration();
 }
