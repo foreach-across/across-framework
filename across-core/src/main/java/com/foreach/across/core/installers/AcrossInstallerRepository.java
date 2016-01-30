@@ -13,87 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.foreach.across.core.installers;
 
-import com.foreach.across.core.AcrossModule;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.util.DigestUtils;
-
-import javax.sql.DataSource;
-import java.nio.charset.Charset;
-import java.util.Date;
-
-public class AcrossInstallerRepository
+/**
+ * Central repository interface for managing the installer execution tracking records.
+ *
+ * @author Arne Vandamme
+ */
+public interface AcrossInstallerRepository
 {
-	private static final String SQL_SELECT_VERSION =
-			"select version from ACROSSMODULES where module_id = ? and installer_id = ?";
-	private static final String SQL_UPDATE_VERSION =
-			"update ACROSSMODULES set version = ?, description = ?, created = ? " +
-					"where module_id = ? and installer_id = ?";
-	private static final String SQL_INSERT_VERSION =
-			"insert into ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) " +
-					"VALUES (?, ?, ?, ?, ?, ?, ?)";
+	/**
+	 * Rename an installer globally.  This will change the installer name for every module.
+	 *
+	 * @param oldInstallerName to be renamed
+	 * @param newInstallerName new name to use
+	 * @return number of installers updated
+	 */
+	int renameInstaller( String oldInstallerName, String newInstallerName );
 
-	private final JdbcTemplate jdbcTemplate;
+	/**
+	 * Rename an installer for a particular module.  If other modules have an installer with the
+	 * same name, they will be untouched.
+	 *
+	 * @param oldInstallerName to be renamed
+	 * @param newInstallerName new name to use
+	 * @param moduleName       module for which to rename the installer
+	 * @return {@code true} if installer was registered and has been renamed
+	 */
+	boolean renameInstallerForModule( String oldInstallerName, String newInstallerName, String moduleName );
 
-	public AcrossInstallerRepository( DataSource installDatasource ) {
-		jdbcTemplate = new JdbcTemplate( installDatasource );
-	}
+	/**
+	 * Get the installed version of a particular installer.  If the installer has not yet been registered
+	 * (never executed), {@code -1} will be returned.
+	 *
+	 * @param moduleName    name of the module
+	 * @param installerName name of the installer
+	 * @return version or -1 if not found
+	 */
+	int getInstalledVersion( String moduleName, String installerName );
 
-	public int getInstalledVersion( AcrossModule module, InstallerMetaData installerMetaData) {
-		try {
-			return jdbcTemplate.queryForObject( SQL_SELECT_VERSION, Integer.class, determineId( module.getName() ),
-			                                    determineInstallerId( installerMetaData.getInstallerClass() ) );
-		}
-		catch ( EmptyResultDataAccessException erdae ) {
-			return -1;
-		}
-	}
-
-	public void setInstalled( AcrossModule module, InstallerMetaData installerMetaData ) {
-		if ( getInstalledVersion( module, installerMetaData ) != -1 ) {
-			jdbcTemplate.update( SQL_UPDATE_VERSION, installerMetaData.getVersion(),
-			                     StringUtils.abbreviate( installerMetaData.getDescription(), 500 ), new Date(),
-			                     determineId( module.getName() ), determineInstallerId(
-					installerMetaData.getInstallerClass() ) );
-		}
-		else {
-			jdbcTemplate.update( SQL_INSERT_VERSION, determineModuleName( module.getName() ), determineId(
-					                     module.getName() ),
-			                     determineInstallerName( installerMetaData.getInstallerClass() ), determineInstallerId(
-							installerMetaData.getInstallerClass() ),
-			                     installerMetaData.getVersion(), new Date(), StringUtils.abbreviate(
-							installerMetaData.getDescription(), 500 ) );
-		}
-	}
-
-	private String determineModuleName( String name ) {
-		return StringUtils.substring( name, 0, 250 );
-	}
-
-	private String determineInstallerName( Class<?> installerClass ) {
-		String className = installerClass.getName();
-
-		if ( StringUtils.length( className ) > 250 ) {
-			return StringUtils.substring( installerClass.getSimpleName(), 0, 250 );
-		}
-
-		return className;
-	}
-
-	private String determineInstallerId( Class<?> installerClass ) {
-		return determineId( installerClass.getName() );
-	}
-
-	private String determineId( String name ) {
-		if ( StringUtils.length( name ) > 120 ) {
-			return DigestUtils.md5DigestAsHex( name.getBytes( Charset.forName( "UTF-8" ) ) );
-		}
-
-		return name;
-	}
-
+	/**
+	 * Registers the installer metadata for a particular module.  This effectively registers the installer
+	 * as having been executed.  If there was already an installe record, it will be updated.
+	 *
+	 * @param moduleName        name of the module
+	 * @param installerMetaData metadata of the installer to register
+	 */
+	void setInstalled( String moduleName, InstallerMetaData installerMetaData );
 }
