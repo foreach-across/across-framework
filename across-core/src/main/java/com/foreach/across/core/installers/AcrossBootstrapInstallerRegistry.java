@@ -192,7 +192,7 @@ public class AcrossBootstrapInstallerRegistry
 		}
 
 		if ( installed ) {
-			repository.setInstalled( module, installerMetaData );
+			repository.setInstalled( module.getName(), installerMetaData );
 		}
 	}
 
@@ -247,7 +247,7 @@ public class AcrossBootstrapInstallerRegistry
 				           installerMetaData.getInstallerClass() );
 				return true;
 			case VersionDifferent:
-				int installedVersion = repository.getInstalledVersion( module, installerMetaData );
+				int installedVersion = repository.getInstalledVersion( module.getName(), installerMetaData.getName() );
 				if ( installerMetaData.getVersion() > installedVersion ) {
 					LOG.debug( "Performing action {} for installer {} because version {} is higher than installed {}",
 					           action, installerMetaData.getInstallerClass(), installerMetaData.getVersion(),
