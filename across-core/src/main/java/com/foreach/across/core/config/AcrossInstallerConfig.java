@@ -21,6 +21,7 @@ import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.installers.AcrossCoreSchemaInstaller;
 import com.foreach.across.core.installers.AcrossInstallerRepository;
+import com.foreach.across.core.installers.AcrossInstallerRepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class AcrossInstallerConfig
 			);
 		}
 
-		return new AcrossInstallerRepository( installerDataSource );
+		return new AcrossInstallerRepositoryImpl( installerDataSource );
 	}
 
 	@Bean
@@ -76,7 +77,8 @@ public class AcrossInstallerConfig
 			);
 		}
 
-		return new AcrossCoreSchemaInstaller( installerDataSource, AcrossContextUtils.getApplicationContext( acrossContext ) );
+		return new AcrossCoreSchemaInstaller( installerDataSource, AcrossContextUtils.getApplicationContext(
+				acrossContext ) );
 	}
 
 	@Bean(name = AcrossContext.INSTALLER_DATASOURCE)

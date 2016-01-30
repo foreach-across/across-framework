@@ -851,7 +851,12 @@ Only relevant if the run condition is `VersionDifferent`.
 
 |===
 
-Installers are specified by overriding the `getInstallers()` method of an `AcrossModule`.
+==== Installer detection
+By default installers are detected from the classpath by scanning the *installers* package relative to the package of the `AcrossModule`.
+Changing the packages to scan for installers can be done by overriding the `getInstallerScanPackages()` method on `AcrossModule`.
+
+NOTE:  If you manually want to specify a list of installers, you can do so by overriding the `getInstallers()` method.
+Though still possible for compatibility reasons, installers should be specified with their `Class`.
 
 ==== Installer tracking and synchronization
 The execution of installers is tracked using the `AcrossInstallerRepository`.
@@ -862,6 +867,9 @@ This is done through the `DistributedLockRepository` that is created in the core
 A lock will be taken on the datasource as soon as a single installer wishes to execute, and will only be released once bootstrapping is fully done.
 
 Because of tracking and synchronization, a <<installer-datasource,datasource>> is required in order to execute installers.
+
+NOTE: The `AcrossInstallerRepository` can be wired as a bean in installers.
+This can be helpful in migration trajectories for example to rename installers.
 
 [[installer-bootstrap-phases]]
 ==== Bootstrap phases
@@ -909,7 +917,10 @@ If all conditions are fulfilled, installers will be executed in a predetermined 
 
 . in <<installer-bootstrap-phases,bootstrap phase>> order
 . in <<across-bootstrap-order,module bootstrap order>>
-. in installer order (according to `@Order` annotations on the installer class or the order returned in `getInstallers()`)
+. in installer order (according to `@Order` annotations on the installer class)
+
+WARNING: Installers without an `@Order` annotation behave as if they have an order index of *0*.
+In that case the installer registration order will be used as a fallback, with installers specified through `getInstallers()` having a higher precedence.
 
 [[installer-datasource]]
 ==== Datasources and installers
@@ -933,6 +944,8 @@ However, all beans from the parent Across context and the module context - when 
 
 Installer contexts are temporary, once the Across context has bootstrapped they are closed.
 Configuration and other annotated classes can be added to the installer context by using `ApplicationContextConfigurer` implementations, either on the `AcrossContext` or on an `AcrossModule`.
+
+By default, the package *installers.config* relative to the module package will be scanned for beans to be added to the installer `ApplicationContext`.
 
 .Example using different datasource inside the modules
 [source,java,indent=0]
@@ -975,7 +988,6 @@ class Config implements AcrossContextConfigurer
 
 NOTE: The installer context has no web support as it is a direct implementation of `AcrossApplicationContext` but does not implement `WebApplicationContext`.
 
-
 [[installer-conditionals]]
 Installers are registered as bean definitions in the installer `ApplicationContext`.
 You can use any Spring `@Conditional` annotations to suppress installer execution, even if the run conditions are fulfilled.
@@ -1007,6 +1019,10 @@ public class LiquibaseInstaller extends AcrossLiquibaseInstaller
 For advanced configuration, both `AcrossContext` and `AcrossModule` allow `InstallerSettings` to be set.
 `InstallerSettings` can be used to set the action (eg. force executed, skip) to be performed for one or more installers
 or installer groups.
+
+`InstallerSettings` accepts an `InstallerActionResolver` for determining install action at runtime.
+Alternatively an installer can implement `InstallerActionResolver` that will be used in a second stage only if the original action is `EXECUTE`.
+
 Please refer to the javadoc for more information.
 
 === Module version information
