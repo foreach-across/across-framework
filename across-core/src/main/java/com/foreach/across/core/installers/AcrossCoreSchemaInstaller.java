@@ -35,9 +35,15 @@ public class AcrossCoreSchemaInstaller
 	private final DataSource dataSource;
 	private final ApplicationContext applicationContext;
 
+	private String defaultSchema;
+
 	public AcrossCoreSchemaInstaller( DataSource dataSource, ApplicationContext applicationContext ) {
 		this.dataSource = dataSource;
 		this.applicationContext = applicationContext;
+	}
+
+	public void setDefaultSchema( String defaultSchema ) {
+		this.defaultSchema = defaultSchema;
 	}
 
 	@PostConstruct
@@ -48,6 +54,11 @@ public class AcrossCoreSchemaInstaller
 		liquibase.setChangeLog( "classpath:" + getClass().getName().replace( '.', '/' ) + ".xml" );
 		liquibase.setDataSource( dataSource );
 		liquibase.setResourceLoader( applicationContext );
+
+		if ( defaultSchema != null ) {
+			liquibase.setDefaultSchema( defaultSchema );
+		}
+
 		liquibase.afterPropertiesSet();
 	}
 }

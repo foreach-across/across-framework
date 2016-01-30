@@ -28,28 +28,38 @@ import java.util.Date;
 public class AcrossInstallerRepositoryImpl implements AcrossInstallerRepository
 {
 	private static final String SQL_SELECT_VERSION =
-			"select version from ACROSSMODULES where module_id = ? and installer_id = ?";
+			"select version from {schema}ACROSSMODULES where module_id = ? and installer_id = ?";
 	private static final String SQL_UPDATE_VERSION =
-			"update ACROSSMODULES set version = ?, description = ?, created = ? " +
+			"update {schema}ACROSSMODULES set version = ?, description = ?, created = ? " +
 					"where module_id = ? and installer_id = ?";
 	private static final String SQL_INSERT_VERSION =
-			"insert into ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) " +
+			"insert into {schema}ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?)";
 	private static final String SQL_RENAME_INSTALLER_FOR_MODULE =
-			"update ACROSSMODULES set installer = ?, installer_id = ? where module_id = ? and installer_id = ?";
+			"update {schema}ACROSSMODULES set installer = ?, installer_id = ? where module_id = ? and installer_id = ?";
 	private static final String SQL_RENAME_INSTALLER =
-			"update ACROSSMODULES set installer = ?, installer_id = ? where installer_id = ?";
+			"update {schema}ACROSSMODULES set installer = ?, installer_id = ? where installer_id = ?";
 
 	private final JdbcTemplate jdbcTemplate;
+	private String schemaPrefix = "";
 
 	public AcrossInstallerRepositoryImpl( DataSource installDatasource ) {
 		jdbcTemplate = new JdbcTemplate( installDatasource );
 	}
 
+	public void setSchema( String schema ) {
+		if ( StringUtils.isBlank( schema ) ) {
+			schemaPrefix = "";
+		}
+		else {
+			schemaPrefix = schema + ".";
+		}
+	}
+
 	@Override
 	public int renameInstaller( String oldInstallerName, String newInstallerName ) {
 		return jdbcTemplate.update(
-				SQL_RENAME_INSTALLER,
+				applySchema( SQL_RENAME_INSTALLER ),
 				newInstallerName,
 				determineInstallerId( newInstallerName ),
 				determineInstallerId( oldInstallerName )
@@ -59,7 +69,7 @@ public class AcrossInstallerRepositoryImpl implements AcrossInstallerRepository
 	@Override
 	public boolean renameInstallerForModule( String oldInstallerName, String newInstallerName, String moduleName ) {
 		return jdbcTemplate.update(
-				SQL_RENAME_INSTALLER_FOR_MODULE,
+				applySchema( SQL_RENAME_INSTALLER_FOR_MODULE ),
 				newInstallerName,
 				determineInstallerId( newInstallerName ),
 				determineId( moduleName ),
@@ -71,7 +81,7 @@ public class AcrossInstallerRepositoryImpl implements AcrossInstallerRepository
 	public int getInstalledVersion( String moduleName, String installerName ) {
 		try {
 			return jdbcTemplate.queryForObject(
-					SQL_SELECT_VERSION,
+					applySchema( SQL_SELECT_VERSION ),
 					Integer.class,
 					determineId( moduleName ),
 					determineInstallerId( installerName )
@@ -86,7 +96,7 @@ public class AcrossInstallerRepositoryImpl implements AcrossInstallerRepository
 	public void setInstalled( String moduleName, InstallerMetaData installerMetaData ) {
 		if ( getInstalledVersion( moduleName, installerMetaData.getName() ) != -1 ) {
 			jdbcTemplate.update(
-					SQL_UPDATE_VERSION,
+					applySchema( SQL_UPDATE_VERSION ),
 					installerMetaData.getVersion(),
 					StringUtils.abbreviate( installerMetaData.getDescription(), 500 ),
 					new Date(),
@@ -96,7 +106,7 @@ public class AcrossInstallerRepositoryImpl implements AcrossInstallerRepository
 		}
 		else {
 			jdbcTemplate.update(
-					SQL_INSERT_VERSION,
+					applySchema( SQL_INSERT_VERSION ),
 					determineModuleName( moduleName ),
 					determineId( moduleName ),
 					determineInstallerName( installerMetaData ),
@@ -132,5 +142,9 @@ public class AcrossInstallerRepositoryImpl implements AcrossInstallerRepository
 		}
 
 		return name;
+	}
+
+	private String applySchema( String sql ) {
+		return StringUtils.replace( sql, "{schema}", schemaPrefix );
 	}
 }
