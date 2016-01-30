@@ -1,5 +1,5 @@
 = Across framework
-Arne Vandamme
+Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :toc: left
 :sectanchors:
 :across-version: 1.1.2-SNAPSHOT
@@ -180,7 +180,7 @@ across-test:: Supports integration testing of your Across modules, both web and 
 Across is directly tied to Spring framework and all artifacts come with a set of curated dependencies.
 Applications built on top of Across should either manage the dependencies manually by fixing the versions or let the modules pull in the required dependencies transitively.
 
-.Most common dependency versions that almost all modules rely on
+.Most common dependency versions that almost all modules rely on:
 |===
 | Java | 1.8
 | Java Servlet API _(if applicable)_ | 3.0.1

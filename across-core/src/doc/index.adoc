@@ -1015,15 +1015,15 @@ public class LiquibaseInstaller extends AcrossLiquibaseInstaller
 ----
 
 ===== SchemaConfiguration
-Before installation, an `AcrossLiquibaseInstaller` will try to detect a `SchemaConfiguration` class, which it will use to configure it's default schema.
-`SchemaConfiguration` beans can be annotated with the `Module` annotation. If it is not annotated with a `Module` annotation that `SchemaConfiguration` bean
-will be considered the default `SchemaConfiguration`.
+An `AcrossLiquibaseInstaller` will use a `SchemaConfiguration` bean to configure its default schema and pass configuration properties.
+A `SchemaConfiguration` for the current module will be looked up first, if none is found a default bean will be used if it exists.
 
-An `AcrossLiquibaseInstaller` will try to find a `SchemaConfiguration` for it's own module first, failing that it will fall back to the default `SchemaConfiguration`.
-If no default or module `SchemaConfiguration` is found, the installer will continue without setting it's default schema.
+The default `SchemaConfiguration` is a bean without any `@Module` annotations.
+The presence of a `@Module` annotation marks that `SchemaConfiguration` as applying only for that particular module.
 
-IMPORTANT: The Configuration class that defines the `SchemaConfiguration` beans should be added by an `AcrossContextConfigurer` by using a `ComponentScanConfigurer`.
-Other configurers such as `ProvidedBeansConfigurer` will erase the annotations from the `SchemaConfiguration` bean's factory method.
+If no default or module `SchemaConfiguration` is found, the installer will continue without setting a default schema.
+
+WARNING: Adding `SchemaConfiguration` beans to a context directly via a `ProvidedBeansConfigurer` erases the visibility of bean declaration annotations.
 
 .Example of a configuration class defining some `SchemaConfiguration` beans
 [source,java,indent=0]
@@ -1031,10 +1031,10 @@ Other configurers such as `ProvidedBeansConfigurer` will erase the annotations f
 ----
 package my.package;
 
+@EnableAcrossContext
 @Configuration
-public class SchemaConfig implements AcrossContextConfigurer
+public class SchemaConfig
 {
-
     /**
      * AcrossLiquibaseInstaller in the QuotationModule will automatically pick up this SchemaConfiguration.
      * Liquibase scripts will run with 'MY_QUOTATIONS' as their default schema.
@@ -1050,23 +1050,17 @@ public class SchemaConfig implements AcrossContextConfigurer
       * AcrossLiquibaseInstaller in other module will pick up this SchemaConfiguration.
       */
      @Bean
-     @Module
      public SchemaConfiguration defaultSchemaConfiguration() {
         return new SchemaConfiguration( "MY_SCHEMA" );
      }
-
-     @Override
-     public void configure( AcrossContext context ) {
-         context.addApplicationContextConfigurer( new ComponentScanConfigurer( "my.package.SchemaConfig" ) );
-     }
-
 }
 ----
 
-The `SchemaConfiguration` bean's default schema can be overwritten by manually. You will need to extend `AcrossLiquibaseInstaller` and set the default schema
-using the `AcrossLiquibaseInstaller`.`setDefaultSchema` method.
+.Fixing a default schema
+Alternatively the `SchemaConfiguration` bean schema can be ignored and a default schema fixed on the `AcrossLiquibaseInstaller`.
+This is done in the installer implementation through the `setDefaultSchema()` method.
 
-.Example schema configuration Using `AcrossLiquibaseInstaller`.`setDefaultSchema`
+.Example fixed schema configuration using `AcrossLiquibaseInstaller#setDefaultSchema`
 [source,java,indent=0]
 [subs="verbatim,quotes,attributes"]
 ----
@@ -1074,7 +1068,7 @@ package my.package;
 
 /**
  * Liquibase script of this installer will run with 'IM_SPECIAL' as default schema.
- * Regardless of any defined SchemaConfiguration
+ * Regardless of any defined SchemaConfiguration.
  */
 @Installer(description = "Liquibase installer", runCondition = InstallerRunCondition.AlwaysRun)
 public class SpecialSchemaInstaller extends AcrossLiquibaseInstaller
@@ -1088,8 +1082,7 @@ public class SpecialSchemaInstaller extends AcrossLiquibaseInstaller
 [[installer-settings]]
 ==== InstallerSettings
 For advanced configuration, both `AcrossContext` and `AcrossModule` allow `InstallerSettings` to be set.
-`InstallerSettings` can be used to set the action (eg. force executed, skip) to be performed for one or more installers
-or installer groups.
+`InstallerSettings` can be used to set the action (eg. force executed, skip) to be performed for one or more installers or installer groups.
 
 `InstallerSettings` accepts an `InstallerActionResolver` for determining install action at runtime.
 Alternatively an installer can implement `InstallerActionResolver` that will be used in a second stage only if the original action is `EXECUTE`.
