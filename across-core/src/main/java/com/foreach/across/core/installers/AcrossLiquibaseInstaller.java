@@ -21,20 +21,19 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.annotations.Module;
-import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.support.ModuleBeanSelectorUtils;
 import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.core.database.SchemaObject;
+import liquibase.exception.LiquibaseException;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 
 import javax.sql.DataSource;
 import java.util.Collections;
@@ -54,7 +53,7 @@ public abstract class AcrossLiquibaseInstaller
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossLiquibaseInstaller.class );
 
 	@Autowired
-	private AcrossContextInfo acrossContext;
+	private ApplicationContext applicationContext;
 
 	@Autowired
 	@Module(AcrossModule.CURRENT_MODULE)
@@ -71,7 +70,7 @@ public abstract class AcrossLiquibaseInstaller
 	/**
 	 * Creates an {@link AcrossLiquibaseInstaller} which will use the changelog file which corresponds to this installers full class name
 	 * to perform the liquibase update
-	 * <p/>
+	 * <p>
 	 * eg if this constructor is used to create an instance of the class {@code my.example.LiquibaseInstaller}
 	 * the changelog file at {@code {resourceRoot}/my/example/LiquibaseInstaller.xml} will be used to preform the liquibase update
 	 */
@@ -83,7 +82,7 @@ public abstract class AcrossLiquibaseInstaller
 	 * Creates an {@link AcrossLiquibaseInstaller} which will use the changelog file which corresponds to this installers full class name
 	 * to perform the liquibase update
 	 * and will construct the {@link liquibase.changelog.ChangeLogParameters} based on the given {@link SchemaConfiguration}
-	 * <p/>
+	 * <p>
 	 * eg if this constructor is used to create an instance of the class {@code my.example.LiquibaseInstaller }
 	 * the changelog file at {@code {resourceRoot}/my/example/LiquibaseInstaller.xml} will be used to preform the update
 	 */
@@ -110,7 +109,7 @@ public abstract class AcrossLiquibaseInstaller
 
 	/**
 	 * Sets the {@link SchemaConfiguration} that will be used to construct the {@link liquibase.changelog.ChangeLogParameters}
-	 * <p/>
+	 * <p>
 	 * if no defaultSchema is configured via {@link AcrossLiquibaseInstaller#setDefaultSchema(String)}
 	 * the defaultSchema from {@link SchemaConfiguration#getDefaultSchema()} will be used instead
 	 *
@@ -147,7 +146,7 @@ public abstract class AcrossLiquibaseInstaller
 
 	/**
 	 * Sets the default Schema that will be used during the liquibase update
-	 * <p/>
+	 * <p>
 	 * This will override the defaultSchema configured in {@link SchemaConfiguration#getDefaultSchema()}
 	 *
 	 * @param defaultSchema The default db schema name
@@ -192,32 +191,32 @@ public abstract class AcrossLiquibaseInstaller
 
 	/**
 	 * This is this {@link AcrossLiquibaseInstaller}s {@link InstallerMethod}
-	 * <p/>
+	 * <p>
 	 * It will create a {@link SpringLiquibase} instance based on this {@link AcrossLiquibaseInstaller}s configuration and run a liquibase update
 	 */
 	@InstallerMethod
-	public void install() {
-		AutowireCapableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( acrossContext.getContext() );
+	public void install() throws LiquibaseException {
+		SpringLiquibase liquibase = createSpringLiquibase();
 
-		SpringLiquibase springLiquibase = new SpringLiquibase();
-		SpringLiquibase liquibase = configureSpringLiquibase( springLiquibase );
+		if ( liquibase.getResourceLoader() == null ) {
+			liquibase.setResourceLoader( applicationContext );
+		}
 
-		beanFactory.autowireBeanProperties( liquibase, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
-		beanFactory.initializeBean( liquibase, "" );
+		liquibase.afterPropertiesSet();
 	}
 
 	/**
 	 * This method configures the {@link SpringLiquibase} object before running the liquibase installer.
-	 * <p/>
-	 * This implementation will set the {@link SpringLiquibase} objects changelogParameters, changelog, default schema and data source
-	 * based on this {@link AcrossLiquibaseInstaller}s configuration
-	 * <p/>
-	 * This method can be overwritten if you need to perform some extra configuration on the {@link SpringLiquibase} object
+	 * <p>
+	 * This implementation will set the {@link SpringLiquibase} objects changelogParameters, changelog,
+	 * default schema and data source based on this {@link AcrossLiquibaseInstaller} configuration.
+	 * <p>
+	 * Extensible if you need to perform some extra configuration on the {@link SpringLiquibase} object.
 	 *
-	 * @param springLiquibase
-	 * @return The configured @link SpringLiquibase} object
+	 * @return The configured @link SpringLiquibase} object - before {@link SpringLiquibase#afterPropertiesSet()}
 	 */
-	protected SpringLiquibase configureSpringLiquibase( SpringLiquibase springLiquibase ) {
+	protected SpringLiquibase createSpringLiquibase() {
+		SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setChangeLogParameters( buildParameters( getSchemaConfiguration() ) );
 		springLiquibase.setChangeLog( getChangelog() );
 

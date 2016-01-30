@@ -28,19 +28,17 @@ import java.util.Set;
 
 public class ModuleBeanSelectorUtils
 {
-
 	/**
-	 * Utility method that will find a bean of given type in the provided beanFactory.
+	 * Utility method that will find the most appropriate bean of given type for a module.
 	 * This method will try to find a bean annotated with the {@link Module} annotation with the provided moduleName as value.
-	 * <p/>
+	 * <p>
 	 * If no bean annotated with a {@link Module} annotation with moduleName as value was found,
-	 * this method will default to a bean of the given type <em>without</em> a {@link Module} annotation
+	 * this method will default to a bean of the given type <em>without</em> a {@link Module} annotation.
 	 *
 	 * @param type        The {@link Class} of the required type of the requested bean
 	 * @param moduleName  The required value of the {@link Module} annotation for the requested bean
 	 * @param beanFactory The beanFactory which will be used to find the requested bean
-	 * @return Either an {@link Optional} filled with the requested bean
-	 * Or an {@link Optional#empty()} in case no bean was found
+	 * @return {@link Optional} filled with the requested bean if found
 	 */
 	public static <T> Optional<T> selectBeanForModule( Class<T> type,
 	                                                   String moduleName,
