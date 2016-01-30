@@ -86,7 +86,7 @@ public class AcrossBootstrapInstallerRegistry
 		LOG.trace( "Running {} installers for module {}", phase.name(), moduleConfig.getModuleName() );
 
 		for ( Object installerOrClass : moduleConfig.getInstallers() ) {
-			Assert.notNull( installerOrClass, "Installer (class) instance should never be null." );
+			Assert.notNull( installerOrClass, "Installer instance should never be null." );
 
 			Class<?> installerClass = determineInstallerClass( installerOrClass );
 			Optional<Object> installerInstance = determineInstallerInstance( installerOrClass );

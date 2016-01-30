@@ -18,7 +18,10 @@ package com.foreach.across.core.database;
 
 /**
  * Interface indicating a module defines a (modifiable) SchemaConfiguration.
+ *
+ * @deprecated Since Across 1.1.2 {@link SchemaConfiguration} is defined as beans.
  */
+@Deprecated
 public interface HasSchemaConfiguration
 {
 	SchemaConfiguration getSchemaConfiguration();

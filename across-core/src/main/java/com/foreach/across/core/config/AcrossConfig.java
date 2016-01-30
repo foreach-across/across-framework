@@ -33,6 +33,7 @@ import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepositoryImpl;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockConfiguration;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockManager;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -140,11 +141,27 @@ public class AcrossConfig
 			);
 		}
 
-		return new SqlBasedDistributedLockManager( acrossDataSource, sqlBasedDistributedLockConfiguration() );
+		return new SqlBasedDistributedLockManager(
+				acrossDataSource,
+				sqlBasedDistributedLockConfiguration( schemaConfigurationHolder() )
+		);
 	}
 
 	@Bean
-	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration() {
-		return new SqlBasedDistributedLockConfiguration( "across_locks" );
+	@Lazy
+	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration(
+			CoreSchemaConfigurationHolder schemaConfigurationHolder ) {
+		String tablePrefix = "";
+		String defaultSchema = schemaConfigurationHolder.getDefaultSchema();
+		if ( !StringUtils.isBlank( defaultSchema ) ) {
+			tablePrefix = defaultSchema + ".";
+		}
+		return new SqlBasedDistributedLockConfiguration( tablePrefix + "across_locks" );
+	}
+
+	@Bean
+	@Lazy
+	public CoreSchemaConfigurationHolder schemaConfigurationHolder() {
+		return new CoreSchemaConfigurationHolder();
 	}
 }
