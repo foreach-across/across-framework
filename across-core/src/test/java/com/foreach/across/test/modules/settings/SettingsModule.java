@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.foreach.across.test;
+package com.foreach.across.test.modules.settings;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.modules.web.AcrossWebModule;
 
 /**
  * @author Arne Vandamme
  */
-public class TestAcrossWebModuleConventions extends AbstractAcrossModuleConventionsTest
+public class SettingsModule extends AcrossModule
 {
 	@Override
-	protected AcrossModule createModule() {
-		return new AcrossWebModule();
+	public String getName() {
+		return "SettingsModule";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Module implementing AcrossModuleSettings";
 	}
 }

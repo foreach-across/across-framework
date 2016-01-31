@@ -109,7 +109,11 @@ public abstract class AbstractAcrossModuleConventionsTest
 			}
 		}
 		else {
-			assertNull( "Test declares module does not have settings but class was found", settingsClass );
+			if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
+				assertNull(
+						"Test declares module does not have settings but AcrossModuleSettings implementation was found",
+						settingsClass );
+			}
 		}
 	}
 
@@ -124,8 +128,13 @@ public abstract class AbstractAcrossModuleConventionsTest
 
 	/**
 	 * @return True if settings file should be tested.
+	 * @deprecated use of {@link AcrossModuleSettings} is deprecated in
+	 * favor of {@link org.springframework.boot.context.properties.ConfigurationProperties}
 	 */
-	protected abstract boolean hasSettings();
+	@Deprecated
+	protected boolean hasSettings() {
+		return false;
+	}
 
 	protected abstract AcrossModule createModule();
 }

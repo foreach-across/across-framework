@@ -18,7 +18,6 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.context.AcrossContextUtils;
@@ -36,6 +35,7 @@ import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockMa
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.HierarchicalMessageSource;
@@ -101,7 +101,7 @@ public class AcrossConfig
 	 */
 	@Bean(name = ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
 	@Exposed
-	@AcrossCondition("not hasBean('" + ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME + "', T(org.springframework.core.convert.ConversionService))")
+	@ConditionalOnMissingBean(name = ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
 	public DefaultFormattingConversionService conversionService() {
 		LOG.info( "Creating a default ConversionService as no valid bean '{}' is present",
 		          ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );

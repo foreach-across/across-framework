@@ -13,30 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.foreach.across.test.modules.settings.config;
 
-package com.foreach.across.modules.web.config;
-
+import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.annotations.Module;
+import com.foreach.across.test.modules.settings.SettingsModuleSettings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import java.util.Date;
 
 /**
- * Creates a JSP/JSTL view resolver.
+ * @author Arne Vandamme
  */
 @Configuration
-@ConditionalOnProperty(value = "acrossWebModule.views.jsp")
-public class JstlViewSupportConfiguration
+@Exposed
+@AcrossCondition("settings.active")
+public class SettingsConfig
 {
+	@Autowired
+	@Module(AcrossModule.CURRENT_MODULE)
+	private SettingsModuleSettings settings;
+
+	public boolean isActive() {
+		return settings.isActive();
+	}
+
+	public int getIndex() {
+		return settings.getIndex();
+	}
+
+	public Date getDate() {
+		return settings.getDate();
+	}
+
 	@Bean
-	@Exposed
-	public ViewResolver jstlViewResolver() {
-		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-		resolver.setPrefix( "/WEB-INF/jsp/" );
-		resolver.setSuffix( ".jsp" );
-		resolver.setOrder( 2 );
-		return resolver;
+	@ConditionalOnProperty("settings.active")
+	public String someBean() {
+		return "someBean";
 	}
 }

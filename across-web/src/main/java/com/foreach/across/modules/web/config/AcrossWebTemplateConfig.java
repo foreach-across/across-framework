@@ -30,7 +30,7 @@ import com.foreach.across.modules.web.template.WebTemplateRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,7 +40,7 @@ import java.util.Collection;
  * Configures web template support with automatic registration of named web templates.
  */
 @Configuration
-@ConditionalOnExpression("@acrossWebModuleSettings.templatesEnabled")
+@ConditionalOnProperty(value = "acrossWebModule.templates.enabled", matchIfMissing = true)
 @OrderInModule(2)
 public class AcrossWebTemplateConfig extends PrefixingHandlerMappingConfigurerAdapter
 {
@@ -75,7 +75,7 @@ public class AcrossWebTemplateConfig extends PrefixingHandlerMappingConfigurerAd
 
 	@PostRefresh
 	public void registerNamedWebTemplateProcessors() {
-		if ( settings.isAutoRegisterTemplates() ) {
+		if ( settings.getTemplates().isAutoRegister() ) {
 			LOG.info( "Scanning modules for NamedWebTemplateProcessor instances" );
 
 			Collection<NamedWebTemplateProcessor> namedProcessors = beanRegistry.getBeansOfType(
