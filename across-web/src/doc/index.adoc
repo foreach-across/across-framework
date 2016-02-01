@@ -1,7 +1,60 @@
 [[across-web]]
 = III. Across Web
 
-artifact
+== General information
+
+=== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across</groupId>
+			<artifactId>across-web</artifactId>
+			<version>{across-version}</version>
+		</dependency>
+	</dependencies>
+----
+
+[[across-web-module-settings]]
+=== Module settings
+
+All properties start with the *acrossWebModule.* prefix.
+
+|===
+|Property |Type |Description |Default
+
+|views.resources
+|`String`
+|Relative path for serving all static resources.
+|/across/resources
+
+|views.thymeleaf
+|`Boolean`
+|Should Thymeleaf view support be enabled.
+|_true_
+
+|views.jsp
+|`Boolean`
+|Should JSP/JSTL view support be enabled.
+|_false_
+
+|templates.enabled
+|`Boolean`
+|Should support for <<web-templates,web templates>> be enabled.
+|_true_
+
+|templates.auto-register
+|`Boolean`
+|If <<web-templates,web templates>> are enabled, should named templates be autodetected.
+|_true_
+
+|multipart.auto-configure
+|`Boolean`
+|Should a multipart resolver be configured automatically.
+|_true_
+
+|===
 
 === AcrossWebModule and ConversionService
 AcrossWebModule requires a `FormattingConversionService` bean named *mvcConversionService* to be present.
@@ -53,7 +106,9 @@ If both JSP and Thymeleaf support are enabled, you can easily use both view type
 </html>
 ----
 
----
+[[web-templates]]
+=== Templates
+Named web templates + autodetection
 
 link builders:
 prefixing path context
@@ -66,4 +121,5 @@ To avoid the default configuration: extend AcrossWebModule and override default 
 If you want to add a custom validator/message codes resolver: add it as bean to the AcrossWebModule before bootstrap.
 Working with templates
 Building menus
-Multipart resolving
+Multipart resolving/multipart configuration
+

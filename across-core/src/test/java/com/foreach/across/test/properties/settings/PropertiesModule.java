@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.test.modules.properties;
+package com.foreach.across.test.properties.settings;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;

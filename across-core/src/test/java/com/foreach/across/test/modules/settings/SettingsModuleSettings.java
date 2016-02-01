@@ -13,23 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.foreach.across.core.context;
+package com.foreach.across.test.modules.settings;
 
 import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.AcrossModuleSettingsRegistry;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.Date;
 
 /**
- * Generic implementation of AcrossModuleSettings.
- *
  * @author Arne Vandamme
- * @see com.foreach.across.core.AcrossModuleSettings
  */
-@Deprecated
-public class GenericAcrossModuleSettings extends AcrossModuleSettings
+@ConfigurationProperties("settings")
+public class SettingsModuleSettings extends AcrossModuleSettings
 {
+	private int index;
+	private Date date;
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex( int index ) {
+		this.index = index;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate( Date date ) {
+		this.date = date;
+	}
+
 	@Override
 	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
+	}
 
+	public boolean isActive() {
+		return getRequiredProperty( "settings.active", Boolean.class );
 	}
 }

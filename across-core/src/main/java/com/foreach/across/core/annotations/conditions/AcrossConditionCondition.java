@@ -19,7 +19,6 @@ package com.foreach.across.core.annotations.conditions;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.annotations.AcrossCondition;
-import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +29,7 @@ import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.Scope;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.expression.StandardBeanExpressionResolver;
@@ -71,7 +71,8 @@ public class AcrossConditionCondition implements Condition
 		}
 
 		BeanExpressionResolver resolver = beanFactory.getBeanExpressionResolver();
-		BeanExpressionContext expressionContext = new CurrentModuleBeanExpressionContext( beanFactory, null );
+		BeanExpressionContext expressionContext = new CurrentModuleBeanExpressionContext( beanFactory, null,
+		                                                                                  environment );
 
 		if ( resolver == null ) {
 			resolver = new StandardBeanExpressionResolver();
@@ -88,8 +89,14 @@ public class AcrossConditionCondition implements Condition
 
 	private static final class CurrentModuleBeanExpressionContext extends BeanExpressionContext
 	{
-		private CurrentModuleBeanExpressionContext( ConfigurableListableBeanFactory beanFactory, Scope scope ) {
+		private final Environment environment;
+
+		private CurrentModuleBeanExpressionContext( ConfigurableListableBeanFactory beanFactory,
+		                                            Scope scope,
+		                                            Environment environment ) {
 			super( beanFactory, scope );
+
+			this.environment = environment;
 		}
 
 		// Provided for SPEL property
@@ -102,36 +109,69 @@ public class AcrossConditionCondition implements Condition
 			}
 		}
 
+		@Deprecated
 		public AcrossModuleSettings getSettings() {
 			try {
-				return getBeanFactory().getBean( AcrossModuleInfo.class ).getSettings();
+				LOG.warn(
+						"The use of @AcrossCondition('settings') is deprecated - functionality will be removed in the future." );
+				BeanDefinitionRegistry registry = (BeanDefinitionRegistry) getBeanFactory();
+
+				ConfigurableListableBeanFactory beanFactory = (ConfigurableListableBeanFactory) getBeanFactory();
+				String[] beanNames = beanFactory.getBeanNamesForType( AcrossModuleSettings.class );
+
+				if ( beanNames.length == 1 ) {
+					AcrossModuleSettings settings
+							= (AcrossModuleSettings) beanFactory.createBean( beanFactory.getType( beanNames[0] ) );
+					settings.setEnvironment( environment );
+
+					return settings;
+				}
 			}
-			catch ( NoSuchBeanDefinitionException nsbe ) {
-				return null;
+			catch ( NoSuchBeanDefinitionException ignore ) {
 			}
+
+			return null;
 		}
 
 		/**
 		 * Can this module find a bean with the given name in the context.
+		 *
+		 * @deprecated use {@link org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean} instead
 		 */
+		@Deprecated
 		public boolean hasBean( String beanName ) {
 			return getBeanFactory().containsBean( beanName );
 		}
 
 		/**
 		 * Can this module find a bean with the given name and of the given type in the context.
+		 *
+		 * @deprecated use {@link org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean} instead
 		 */
+		@Deprecated
 		public boolean hasBean( String beanName, Class beanType ) {
 			return getBeanFactory().containsBean( beanName ) && getBeanFactory().isTypeMatch( beanName, beanType );
 		}
 
 		/**
 		 * Can this module pick up a bean of the given type from the context.
+		 *
+		 * @deprecated use {@link org.springframework.boot.autoconfigure.condition.ConditionalOnBean} instead
 		 */
+		@Deprecated
 		public boolean hasBeanOfType( Class beanType ) {
 			return !BeanFactoryUtils.beansOfTypeIncludingAncestors( (ListableBeanFactory) getBeanFactory(), beanType )
 			                        .isEmpty();
 		}
 
+		@Override
+		public boolean equals( Object other ) {
+			return other instanceof CurrentModuleBeanExpressionContext && super.equals( other );
+		}
+
+		@Override
+		public int hashCode() {
+			return super.hashCode();
+		}
 	}
 }

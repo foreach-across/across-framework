@@ -13,19 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.foreach.across.test.properties.boot.config;
 
-package com.foreach.across.test;
-
-import com.foreach.across.core.AcrossModule;
-import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.test.properties.boot.SpringBootPropertiesModuleSettings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Arne Vandamme
  */
-public class TestAcrossWebModuleConventions extends AbstractAcrossModuleConventionsTest
+@Component
+@Exposed
+public class BeanWithProps
 {
-	@Override
-	protected AcrossModule createModule() {
-		return new AcrossWebModule();
+	@Autowired
+	private SpringBootPropertiesModuleSettings settings;
+
+	public String getDirectValue() {
+		return settings.getDirectValue();
+	}
+
+	public String getYamlOne() {
+		return settings.getYaml().getOne();
+	}
+
+	public String getYamlTwo() {
+		return settings.getYaml().getTwo();
 	}
 }

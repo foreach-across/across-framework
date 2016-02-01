@@ -17,10 +17,8 @@
 package com.foreach.across.modules.web;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.bootstrap.BootstrapAdapter;
-import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
@@ -46,21 +44,15 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	// AcrossWebModule is the special case providing root resources
 	public static final String RESOURCES = "";
 
-	private String viewsResourcePath = DEFAULT_VIEWS_RESOURCES_PATH;
-	private AcrossWebViewSupport[] supportedViews =
-			new AcrossWebViewSupport[] { AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF };
-
-	public String getViewsResourcePath() {
-		return viewsResourcePath;
-	}
-
 	/**
 	 * Set the base url path that will be used to access views.
 	 *
 	 * @param viewsResourcePath Url path prefix for views resources.
+	 * @deprecated set via properties instead
 	 */
+	@Deprecated
 	public void setViewsResourcePath( String viewsResourcePath ) {
-		this.viewsResourcePath = viewsResourcePath;
+		setProperty( AcrossWebModuleSettings.VIEWS_RESOURCES_PATH, viewsResourcePath );
 	}
 
 	/**
@@ -68,16 +60,13 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	 * By default both JSP and Thymeleaf are created.
 	 *
 	 * @param viewSupport View engine that should be configured.
+	 * @deprecated set via properties instead
 	 */
+	@Deprecated
 	public void setSupportViews( AcrossWebViewSupport... viewSupport ) {
-		this.supportedViews = viewSupport;
-	}
-
-	/**
-	 * @return The collection of view resolvers that will be created upon bootstrap.
-	 */
-	public AcrossWebViewSupport[] getSupportedViews() {
-		return supportedViews.clone();
+		setProperty( "acrossWebModule.views.thymeleaf",
+		             ArrayUtils.contains( viewSupport, AcrossWebViewSupport.THYMELEAF ) );
+		setProperty( "acrossWebModule.views.jsp", ArrayUtils.contains( viewSupport, AcrossWebViewSupport.JSP ) );
 	}
 
 	@Override
@@ -108,7 +97,9 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 						AcrossWebTemplateConfig.class,
 						AcrossWebDefaultMvcConfiguration.class,
 						ConversionServiceExposingInterceptorConfiguration.class,
-						MultipartResolverConfiguration.class
+						MultipartResolverConfiguration.class,
+						JstlViewSupportConfiguration.class,
+				        ThymeleafViewSupportConfiguration.class
 				)
 		);
 		contextConfigurers.add(
@@ -123,18 +114,5 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	 */
 	public void customizeBootstrapper( AcrossBootstrapper bootstrapper ) {
 		bootstrapper.setApplicationContextFactory( new WebBootstrapApplicationContextFactory() );
-	}
-
-	@Override
-	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
-	                                 AcrossBootstrapConfig contextConfig ) {
-		if ( ArrayUtils.contains( supportedViews, AcrossWebViewSupport.JSP ) ) {
-			currentModule.addApplicationContextConfigurer(
-					new AnnotatedClassConfigurer( JstlViewSupportConfiguration.class ) );
-		}
-		if ( ArrayUtils.contains( supportedViews, AcrossWebViewSupport.THYMELEAF ) ) {
-			currentModule.addApplicationContextConfigurer(
-					new AnnotatedClassConfigurer( ThymeleafViewSupportConfiguration.class ) );
-		}
 	}
 }

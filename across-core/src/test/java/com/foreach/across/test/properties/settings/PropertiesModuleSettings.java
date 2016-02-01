@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package com.foreach.across.test;
+package com.foreach.across.test.properties.settings;
 
-import com.foreach.across.core.AcrossModule;
-import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.core.AcrossModuleSettings;
+import com.foreach.across.core.AcrossModuleSettingsRegistry;
 
 /**
  * @author Arne Vandamme
  */
-public class TestAcrossWebModuleConventions extends AbstractAcrossModuleConventionsTest
+public class PropertiesModuleSettings extends AcrossModuleSettings
 {
 	@Override
-	protected AcrossModule createModule() {
-		return new AcrossWebModule();
+	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
+		registry.register( "moduleSourceValue", String.class, "defaultModuleSourceValue" );
+		registry.register( "moduleDirectValue", String.class, "defaultModuleDirectValue" );
+		registry.register( "contextValue", String.class, "defaultContextValue" );
+		registry.register( "defaultOnlyValue", String.class, "default" );
 	}
 }
