@@ -46,7 +46,7 @@ public class ResourceHandlerRegistry extends org.springframework.web.servlet.con
 	private void setVersion( ApplicationContext applicationContext, AcrossModuleInfo currentModuleInfo ) {
 		version = applicationContext.getEnvironment().getProperty( AcrossWebModuleSettings.RESOURCES_VERSION );
 		autoConfigure = applicationContext.getEnvironment().getProperty(
-				AcrossWebModuleSettings.RESOURCE_URLS_AUTO_CONFIGURE, Boolean.class );
+				AcrossWebModuleSettings.RESOURCE_URLS_AUTO_CONFIGURE, Boolean.class, true );
 		if ( StringUtils.isEmpty( version ) ) {
 			version = applicationContext.getEnvironment().getProperty( "build.number" );
 			if ( StringUtils.isEmpty( version ) ) {

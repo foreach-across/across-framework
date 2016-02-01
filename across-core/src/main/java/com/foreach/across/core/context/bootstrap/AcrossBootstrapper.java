@@ -541,13 +541,6 @@ public class AcrossBootstrapper
 					                                                   moduleInfo.getName() )
 			                   )
 			);
-			/*
-			providedBeans.put( "across.moduleSettings." + moduleInfo.getName(),
-			                   new SingletonBean(
-					                   moduleInfo.getSettings(),
-					                   new AutowireCandidateQualifier( Module.class.getName(),
-					                                                   moduleInfo.getName() )
-			                   ) );*/
 		}
 
 		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),

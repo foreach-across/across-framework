@@ -15,10 +15,10 @@
  */
 package com.foreach.across.modules.web.config.resourceurls;
 
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
@@ -29,7 +29,7 @@ import javax.servlet.ServletException;
 import java.util.EnumSet;
 
 @Configuration
-@AcrossCondition("settings.autoConfigureRecourceUrls")
+@ConditionalOnProperty(value = "acrossWebModule.resources.configure-versioning", matchIfMissing = true)
 public class ResourceUrlEncodingFilterConfiguration extends AcrossWebDynamicServletConfigurer
 {
 	public static final String FILTER_NAME = "ResourceUrlEncodingFilter";
@@ -38,7 +38,8 @@ public class ResourceUrlEncodingFilterConfiguration extends AcrossWebDynamicServ
 
 	@Override
 	protected void dynamicConfigurationAllowed( ServletContext servletContext ) throws ServletException {
-		FilterRegistration.Dynamic resourceUrlEncodingFilter = servletContext.addFilter( FILTER_NAME, new ResourceUrlEncodingFilter() );
+		FilterRegistration.Dynamic resourceUrlEncodingFilter = servletContext.addFilter( FILTER_NAME,
+		                                                                                 new ResourceUrlEncodingFilter() );
 		resourceUrlEncodingFilter.addMappingForUrlPatterns( EnumSet.of(
 				                                                    DispatcherType.REQUEST,
 				                                                    DispatcherType.ERROR,

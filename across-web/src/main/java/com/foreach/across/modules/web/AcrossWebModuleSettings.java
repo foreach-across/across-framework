@@ -31,8 +31,11 @@ public class AcrossWebModuleSettings
 	public static final String MULTIPART_AUTO_CONFIGURE = "acrossWebModule.multipart.auto-configure";
 	public static final String MULTIPART_SETTINGS = "acrossWebModule.multipart.settings";
 
-	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.views.resources";
 	public static final String DEVELOPMENT_VIEWS = "acrossWebModule.developmentViews";
+
+	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.resources.path";
+	public static final String RESOURCE_URLS_AUTO_CONFIGURE = "acrossWebModule.resources.configure-versioning";
+	public static final String RESOURCES_VERSION = "acrossWebModule.resources.fixed-version";
 
 	/**
 	 * Multipart support configuration settings.
@@ -50,6 +53,11 @@ public class AcrossWebModuleSettings
 	private final Views views = new Views();
 
 	/**
+	 * Resources configuration.
+	 */
+	private final Resources resources = new Resources();
+
+	/**
 	 * Map of physical locations for views resources.
 	 */
 	private Map<String, String> developmentViews = Collections.emptyMap();
@@ -62,30 +70,16 @@ public class AcrossWebModuleSettings
 		return templates;
 	}
 
+	public Resources getResources() {
+		return resources;
+	}
+
 	public Views getViews() {
 		return views;
 	}
-	public static final String RESOURCE_URLS_AUTO_CONFIGURE = "acrossWeb.resource.autoconfigure";
-	public static final String RESOURCES_VERSION = "acrossWeb.resources.version";
-
-	public static final String DEVELOPMENT_VIEWS = "acrossWeb.development.views";
 
 	public Map<String, String> getDevelopmentViews() {
 		return developmentViews;
-	@Override
-	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
-		registry.register( TEMPLATES_ENABLED, Boolean.class, true );
-		registry.register( TEMPLATES_AUTO_REGISTER, Boolean.class, true );
-
-		registry.register( MULTIPART_AUTO_CONFIGURE, Boolean.class, true, "Auto configure a multipart resolver." );
-		registry.register( MULTIPART_SETTINGS, MultipartConfigElement.class,
-		                   null, "MultipartConfigElement holding the multipart upload settings." );
-
-		registry.register( RESOURCE_URLS_AUTO_CONFIGURE, Boolean.class, true, "Auto configure a resource url resolver and relevant filters/interceptors." );
-		registry.register( RESOURCES_VERSION, String.class, null, "The version to use for the FixedVersionResolver" );
-
-		registry.register( DEVELOPMENT_VIEWS, Map.class, Collections.<String, String>emptyMap(),
-		                   "Map of physical locations for views resources." );
 	}
 
 	public void setDevelopmentViews( Map<String, String> developmentViews ) {
@@ -119,8 +113,6 @@ public class AcrossWebModuleSettings
 		public void setSettings( MultipartConfigElement settings ) {
 			this.settings = settings;
 		}
-	public boolean isAutoConfigureRecourceUrls() {
-		return getProperty( RESOURCE_URLS_AUTO_CONFIGURE, Boolean.class );
 	}
 
 	public static class Templates
@@ -154,13 +146,50 @@ public class AcrossWebModuleSettings
 		}
 	}
 
-	public static class Views
+	public static class Resources
 	{
 		/**
 		 * Relative path for serving all static resources.
 		 */
-		private String resources = AcrossWebModule.DEFAULT_VIEWS_RESOURCES_PATH;
+		private String path = AcrossWebModule.DEFAULT_VIEWS_RESOURCES_PATH;
 
+		/**
+		 * Auto configure a resource url resolver and relevant filters/interceptors.
+		 */
+		private boolean configureVersioning;
+
+		/**
+		 * The version to use for the {@link org.springframework.web.servlet.resource.FixedVersionStrategy}.
+		 */
+		private String fixedVersion;
+
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath( String path ) {
+			this.path = path;
+		}
+
+		public boolean isConfigureVersioning() {
+			return configureVersioning;
+		}
+
+		public void setConfigureVersioning( boolean configureVersioning ) {
+			this.configureVersioning = configureVersioning;
+		}
+
+		public String getFixedVersion() {
+			return fixedVersion;
+		}
+
+		public void setFixedVersion( String fixedVersion ) {
+			this.fixedVersion = fixedVersion;
+		}
+	}
+
+	public static class Views
+	{
 		/**
 		 * Should thymeleaf view support be enabled.
 		 */
@@ -170,14 +199,6 @@ public class AcrossWebModuleSettings
 		 * Should jsp view support be enabled.
 		 */
 		private boolean jsp = false;
-
-		public String getResources() {
-			return resources;
-		}
-
-		public void setResources( String resources ) {
-			this.resources = resources;
-		}
 
 		public boolean isThymeleaf() {
 			return thymeleaf;

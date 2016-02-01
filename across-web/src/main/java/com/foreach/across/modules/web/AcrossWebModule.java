@@ -101,7 +101,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 						ConversionServiceExposingInterceptorConfiguration.class,
 						MultipartResolverConfiguration.class,
 						JstlViewSupportConfiguration.class,
-				        ThymeleafViewSupportConfiguration.class
+						ThymeleafViewSupportConfiguration.class,
 						ResourceUrlEncodingFilterConfiguration.class,
 						ResourceUrlProviderExposingInterceptorConfiguration.class
 				)

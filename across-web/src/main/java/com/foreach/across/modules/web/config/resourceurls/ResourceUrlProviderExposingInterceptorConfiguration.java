@@ -15,10 +15,10 @@
  */
 package com.foreach.across.modules.web.config.resourceurls;
 
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
@@ -26,7 +26,7 @@ import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInter
 
 @Configuration
 @OrderInModule(4)
-@AcrossCondition("settings.autoConfigureRecourceUrls")
+@ConditionalOnProperty(value = "acrossWebModule.resources.configure-versioning", matchIfMissing = true)
 public class ResourceUrlProviderExposingInterceptorConfiguration extends PrefixingHandlerMappingConfigurerAdapter
 {
 	@Override

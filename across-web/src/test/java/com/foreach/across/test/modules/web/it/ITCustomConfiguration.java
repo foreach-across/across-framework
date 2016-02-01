@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = ITCustomConfiguration.Config.class)
-@TestPropertySource(properties = { "acrossWebModule.views.resources=/static",
+@TestPropertySource(properties = { "acrossWebModule.resources.path=/static",
                                    "acrossWebModule.views.thymeleaf=false" })
 public class ITCustomConfiguration extends AbstractWebIntegrationTest
 {
