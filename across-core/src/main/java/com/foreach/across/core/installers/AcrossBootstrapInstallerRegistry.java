@@ -18,26 +18,24 @@ package com.foreach.across.core.installers;
 
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.core.annotations.InstallerGroup;
-import com.foreach.across.core.annotations.InstallerMethod;
-import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.bootstrap.BootstrapApplicationContextFactory;
 import com.foreach.across.core.context.bootstrap.BootstrapLockManager;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Builds the list of all installers in a configured AcrossContext.
@@ -49,13 +47,18 @@ public class AcrossBootstrapInstallerRegistry
 
 	private final BootstrapLockManager bootstrapLockManager;
 	private final AcrossBootstrapConfig contextConfig;
+	private final BootstrapApplicationContextFactory applicationContextFactory;
+
+	private final Map<AcrossModule, AcrossConfigurableApplicationContext> installerContexts = new HashMap<>();
 
 	private AcrossInstallerRepository installerRepository;
 
 	public AcrossBootstrapInstallerRegistry( AcrossBootstrapConfig contextConfig,
-	                                         BootstrapLockManager bootstrapLockManager ) {
+	                                         BootstrapLockManager bootstrapLockManager,
+	                                         BootstrapApplicationContextFactory applicationContextFactory ) {
 		this.bootstrapLockManager = bootstrapLockManager;
 		this.contextConfig = contextConfig;
+		this.applicationContextFactory = applicationContextFactory;
 	}
 
 	/**
@@ -82,45 +85,35 @@ public class AcrossBootstrapInstallerRegistry
 	private void runInstallers( ModuleBootstrapConfig moduleConfig, InstallerPhase phase ) {
 		LOG.trace( "Running {} installers for module {}", phase.name(), moduleConfig.getModuleName() );
 
-		for ( Object installer : moduleConfig.getInstallers() ) {
-			Assert.notNull( installer, "Installer instance should never be null." );
+		for ( Object installerOrClass : moduleConfig.getInstallers() ) {
+			Assert.notNull( installerOrClass, "Installer instance should never be null." );
 
-			Class<?> installerClass = determineInstallerClass( installer );
-			Installer metadata = installerClass.getAnnotation( Installer.class );
+			Class<?> installerClass = determineInstallerClass( installerOrClass );
+			Optional<Object> installerInstance = determineInstallerInstance( installerOrClass );
 
-			if ( metadata == null ) {
-				throw new AcrossException( "Installer " + installer.getClass() + " should have @Installer annotation" );
-			}
+			InstallerMetaData metadata = InstallerMetaData.forClass( installerClass );
 
-			if ( metadata.phase() == phase ) {
-				if ( areDependenciesMet( installerClass ) ) {
-					LOG.trace( "Dependencies for installer {} are met.", installerClass );
+			if ( metadata.getInstallerPhase() == phase ) {
+				// Create installer instance if necessary
+				InstallerAction action = determineInstallerAction( metadata, moduleConfig );
+				LOG.trace( "Determined action {} for installer {}.", action, metadata.getName() );
 
-					// Create installer instance if necessary
-					Object instance = determineInstallerInstance( installer );
-					InstallerAction action = determineInstallerAction( instance, moduleConfig );
-					LOG.trace( "Determined action {} for installer {}.", action, installerClass );
-
-					if ( shouldCheckRunCondition( action ) ) {
-						if ( shouldPerformAction( action, moduleConfig.getModule(), installerClass, metadata ) ) {
-							performInstallerAction( action, moduleConfig.getModule(), instance, metadata );
-						}
-						else {
-							LOG.debug( "Skipping installer {} because action {} should not be performed.",
-							           action, installerClass );
-						}
+				if ( shouldCheckRunCondition( action ) ) {
+					if ( shouldPerformAction( action, moduleConfig.getModule(), metadata ) ) {
+						performInstallerAction( action, moduleConfig.getModule(), metadata, installerInstance );
 					}
 					else {
-						LOG.debug( "Skipping installer {} because action is {}", installerClass, action );
+						LOG.debug( "Skipping installer {} because action {} should not be performed.",
+						           metadata.getName(), action );
 					}
 				}
 				else {
-					LOG.debug( "Skipping installer {} because dependencies are not met.", installerClass );
+					LOG.debug( "Skipping installer {} because action is {}", metadata.getName(), action );
 				}
 			}
 			else {
-				LOG.trace( "Ignoring installer {} because it is defined for phase {}", installerClass,
-				           metadata.phase().name() );
+				LOG.trace( "Ignoring installer {} because it is defined for phase {}", metadata.getName(),
+				           metadata.getInstallerPhase().name() );
 			}
 		}
 
@@ -129,53 +122,108 @@ public class AcrossBootstrapInstallerRegistry
 
 	private void performInstallerAction( InstallerAction action,
 	                                     AcrossModule module,
-	                                     Object installer,
-	                                     Installer metadata ) {
+	                                     InstallerMetaData installerMetaData,
+	                                     Optional<Object> installerInstance ) {
 		AcrossInstallerRepository repository = getInstallerRepository();
 
-		if ( action != InstallerAction.REGISTER ) {
-			LOG.info( "Executing installer {} for module {}", installer.getClass(), module.getName() );
+		boolean installed = false;
+		boolean registerOnly = false;
 
-			ConfigurableListableBeanFactory beanFactory = getBeanFactoryForInstallerWiring( module );
+		if ( action != InstallerAction.REGISTER ) {
+			Optional<Object> installer
+					= prepareInstaller( module, installerMetaData.getInstallerClass(), installerInstance );
+
+			if ( installer.isPresent() ) {
+				Object target = installer.get();
+
+				if ( action == InstallerAction.EXECUTE && target instanceof InstallerActionResolver ) {
+					Optional<InstallerAction> newAction = ( (InstallerActionResolver) target )
+							.resolve( module.getName(), installerMetaData );
+
+					if ( newAction.isPresent() && InstallerAction.EXECUTE != newAction.get() ) {
+						LOG.info( "Resolved bean installer action, change from {} to {}", action, newAction.get() );
+						action = newAction.get();
+					}
+				}
+
+				if ( action == InstallerAction.EXECUTE || action == InstallerAction.FORCE ) {
+					LOG.info( "Executing installer {} for module {}", installerMetaData.getName(), module.getName() );
+
+					for ( Method method : installerMetaData.getInstallerMethods() ) {
+						try {
+							method.setAccessible( true );
+							method.invoke( target );
+
+							installed = true;
+						}
+						catch ( Exception e ) {
+							throw new AcrossException( e );
+						}
+					}
+
+					if ( !installed ) {
+						LOG.warn( "No @InstallerMethod methods were found for {}", installerMetaData.getName() );
+					}
+				}
+				else if ( action == InstallerAction.REGISTER ) {
+					registerOnly = true;
+				}
+
+				LOG.trace( "Finished execution of installer {} for module {}", installer.getClass(), module.getName() );
+			}
+			else {
+				LOG.debug( "Skipping installer {} - instance could not be retrieved (dependencies not met)" );
+			}
+		}
+		else {
+			registerOnly = true;
+		}
+
+		if ( registerOnly ) {
+			// Register the installer version
+			LOG.info(
+					"Only performing registration of installer {} - version {} for module {}",
+					installerMetaData.getName(),
+					installerMetaData.getVersion(),
+					module.getName()
+			);
+
+			installed = true;
+		}
+
+		if ( installed ) {
+			repository.setInstalled( module.getName(), installerMetaData );
+		}
+	}
+
+	private Optional<Object> prepareInstaller( AcrossModule module,
+	                                           Class<?> installerClass,
+	                                           Optional<Object> installerInstance ) {
+		AcrossConfigurableApplicationContext installerContext = getInstallerContext( module );
+
+		if ( !installerInstance.isPresent() ) {
+			installerContext.register( installerClass );
+
+			try {
+				return Optional.ofNullable( BeanFactoryUtils.beanOfType( installerContext, installerClass ) );
+			}
+			catch ( NoSuchBeanDefinitionException nsbe ) {
+				return Optional.empty();
+			}
+		}
+		else {
+			// For compatibility reasons
+			LOG.warn(
+					"Installer {} was passed as an instance - this functionality will be removed in future releases." );
+
+			Object installer = installerInstance.get();
+			AutowireCapableBeanFactory beanFactory = installerContext.getAutowireCapableBeanFactory();
 
 			beanFactory.autowireBeanProperties( installer, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
 			beanFactory.initializeBean( installer, "" );
 
-			boolean executed = false;
-
-			for ( Method method : ReflectionUtils.getAllDeclaredMethods( installer.getClass() ) ) {
-				if ( method.isAnnotationPresent(
-						InstallerMethod.class ) && method.getParameterTypes().length == 0 ) {
-					try {
-						method.setAccessible( true );
-						method.invoke( installer );
-
-						executed = true;
-					}
-					catch ( Exception e ) {
-						throw new AcrossException( e );
-					}
-				}
-			}
-
-			if ( !executed ) {
-				throw new AcrossException(
-						"At least one @InstallerMethod method was expected for " + installer.getClass() );
-			}
-
-			LOG.trace( "Finished execution of installer {} for module {}", installer.getClass(), module.getName() );
+			return installerInstance;
 		}
-		else {
-			// Register the installer version
-			LOG.info(
-					"Only performing registration of installer {} - version {} for module {}",
-					installer.getClass(),
-					metadata.version(),
-					module.getName()
-			);
-		}
-
-		repository.setInstalled( module, metadata, installer.getClass() );
 	}
 
 	private boolean shouldCheckRunCondition( InstallerAction action ) {
@@ -184,8 +232,7 @@ public class AcrossBootstrapInstallerRegistry
 
 	private boolean shouldPerformAction( InstallerAction action,
 	                                     AcrossModule module,
-	                                     Class<?> installerClass,
-	                                     Installer metadata ) {
+	                                     InstallerMetaData installerMetaData ) {
 		// Get the installer repository because now we need to perform version lookups
 		// and possibly register on execution.  This will also install the core schema if necessary.
 		AcrossInstallerRepository repository = getInstallerRepository();
@@ -194,16 +241,17 @@ public class AcrossBootstrapInstallerRegistry
 			return true;
 		}
 
-		switch ( metadata.runCondition() ) {
+		switch ( installerMetaData.getRunCondition() ) {
 			case AlwaysRun:
 				LOG.debug( "Performing action {} for installer {} because it is set to always run", action,
-				           installerClass );
+				           installerMetaData.getInstallerClass() );
 				return true;
 			case VersionDifferent:
-				int installedVersion = repository.getInstalledVersion( module, installerClass );
-				if ( metadata.version() > installedVersion ) {
+				int installedVersion = repository.getInstalledVersion( module.getName(), installerMetaData.getName() );
+				if ( installerMetaData.getVersion() > installedVersion ) {
 					LOG.debug( "Performing action {} for installer {} because version {} is higher than installed {}",
-					           action, installerClass, metadata.version(), installedVersion );
+					           action, installerMetaData.getInstallerClass(), installerMetaData.getVersion(),
+					           installedVersion );
 					return true;
 				}
 				break;
@@ -230,22 +278,16 @@ public class AcrossBootstrapInstallerRegistry
 		return installerRepository;
 	}
 
-	private InstallerAction determineInstallerAction( Object installer, ModuleBootstrapConfig moduleConfig ) {
+	private InstallerAction determineInstallerAction( InstallerMetaData installerMetaData,
+	                                                  ModuleBootstrapConfig moduleConfig ) {
 		InstallerSettings contextSettings = contextConfig.getInstallerSettings();
-
-		// Search InstallerGroup annotation up the hierarchy, as it can be inherited
-		Class<?> installerClass = installer.getClass();
-		InstallerGroup groupAnnotation = AnnotationUtils.findAnnotation( installerClass, InstallerGroup.class );
-
-		String group = groupAnnotation != null ? groupAnnotation.value() : null;
-
-		InstallerAction action = contextSettings.shouldRun( group, installer );
+		InstallerAction action = contextSettings.shouldRun( moduleConfig.getModuleName(), installerMetaData );
 
 		if ( action != InstallerAction.DISABLED ) {
 			InstallerSettings moduleSettings = moduleConfig.getInstallerSettings();
 
 			if ( moduleSettings != null ) {
-				action = moduleSettings.shouldRun( group, installer );
+				action = moduleSettings.shouldRun( moduleConfig.getModuleName(), installerMetaData );
 			}
 		}
 
@@ -256,38 +298,52 @@ public class AcrossBootstrapInstallerRegistry
 		return installerOrClass instanceof Class ? (Class) installerOrClass : installerOrClass.getClass();
 	}
 
-	private Object determineInstallerInstance( Object installerOrClass ) {
-		try {
-			if ( installerOrClass instanceof Class ) {
-				Class<?> installerClass = (Class<?>) installerOrClass;
-
-				Constructor<?> c = installerClass.getDeclaredConstructor();
-				ReflectionUtils.makeAccessible( c );
-
-				return c.newInstance();
-			}
-
-			return installerOrClass;
-		}
-		catch ( InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException ie ) {
-			throw new AcrossException( "Could not create installer instance: " + installerOrClass, ie );
-		}
+	private Optional<Object> determineInstallerInstance( Object installerOrClass ) {
+		return installerOrClass instanceof Class ? Optional.empty() : Optional.of( installerOrClass );
 	}
 
-	private boolean areDependenciesMet( Class<?> installerClass ) {
-		return AcrossDependsCondition.applies( contextConfig, installerClass );
-	}
+	private AcrossConfigurableApplicationContext getInstallerContext( AcrossModule module ) {
+		boolean created = false;
 
-	private ConfigurableListableBeanFactory getBeanFactoryForInstallerWiring( AcrossModule module ) {
-		AcrossApplicationContextHolder moduleContext =
-				AcrossContextUtils.getAcrossApplicationContextHolder( module );
+		if ( !installerContexts.containsKey( module ) ) {
+			AcrossConfigurableApplicationContext context = applicationContextFactory.createInstallerContext();
+			context.setDisplayName( "Installer context: " + module.getName() );
+			installerContexts.put( module, context );
 
+			created = true;
+		}
+
+		AcrossConfigurableApplicationContext installerContext = installerContexts.get( module );
+
+		AcrossApplicationContextHolder moduleContext
+				= AcrossContextUtils.getAcrossApplicationContextHolder( module );
+
+		// Ensure the installer ApplicationContext has the right parent
 		if ( moduleContext == null ) {
-			// If module context not yet available, use the root context
-			return AcrossContextUtils.getBeanFactory( contextConfig.getContext() );
+			installerContext.setParent( AcrossContextUtils.getApplicationContext( contextConfig.getContext() ) );
 		}
 		else {
-			return moduleContext.getBeanFactory();
+			installerContext.setParent( AcrossContextUtils.getApplicationContext( module ) );
 		}
+
+		if ( created ) {
+			applicationContextFactory.loadApplicationContext(
+					installerContext, contextConfig.getModule( module.getName() ).getInstallerContextConfigurers()
+			);
+		}
+
+		return installerContext;
+	}
+
+	/**
+	 * Destroy the installer registry, this will destroy all created installer application context instances.
+	 */
+	public void destroy() {
+		installerContexts.values()
+		                 .forEach( c -> {
+			                 c.stop();
+			                 c.close();
+		                 } );
+		installerContexts.clear();
 	}
 }

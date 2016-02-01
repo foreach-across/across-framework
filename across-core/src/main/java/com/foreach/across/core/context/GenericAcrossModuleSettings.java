@@ -25,6 +25,7 @@ import com.foreach.across.core.AcrossModuleSettingsRegistry;
  * @author Arne Vandamme
  * @see com.foreach.across.core.AcrossModuleSettings
  */
+@Deprecated
 public class GenericAcrossModuleSettings extends AcrossModuleSettings
 {
 	@Override

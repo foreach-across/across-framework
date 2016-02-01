@@ -45,7 +45,7 @@ public class ScannedBeanModule1 extends TestContextEventListener
 	@Autowired(required = false)
 	private ScannedBeanModule2 referenceToBeanFromModule2;
 
-	@Value("${module1.beanValue}")
+	@Value("${module1.beanValue:}")
 	private String beanValue;
 
 	@Autowired

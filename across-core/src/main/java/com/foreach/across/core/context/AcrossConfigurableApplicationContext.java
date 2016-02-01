@@ -42,4 +42,8 @@ public interface AcrossConfigurableApplicationContext extends ConfigurableApplic
 	void refresh();
 
 	void start();
+
+	void setDisplayName( String displayName );
+
+	void destroy();
 }

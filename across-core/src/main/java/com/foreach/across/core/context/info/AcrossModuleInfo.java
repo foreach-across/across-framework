@@ -17,7 +17,6 @@
 package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.context.AcrossModuleEntity;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
@@ -103,9 +102,4 @@ public interface AcrossModuleInfo extends AcrossModuleEntity
 	 * @return The collection of exposed BeanDefinitions.
 	 */
 	Map<String, ExposedBeanDefinition> getExposedBeanDefinitions();
-
-	/**
-	 * @return The settings used to configure this module.
-	 */
-	AcrossModuleSettings getSettings();
 }

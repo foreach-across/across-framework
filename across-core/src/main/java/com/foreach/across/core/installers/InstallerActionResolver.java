@@ -16,19 +16,26 @@
 
 package com.foreach.across.core.installers;
 
+import java.util.Optional;
+
 /**
  * Implement to have a callback for resolving installer actions upon bootstrap.
+ *
+ * When an {@link com.foreach.across.core.annotations.Installer} annotated class implements this interface,
+ * the {@link #resolve(String, InstallerMetaData)} method will be called if the pre-determined action is
+ * {@link InstallerAction#EXECUTE}.
+ *
+ * @see InstallerSettings
  */
 public interface InstallerActionResolver
 {
 	/**
-	 * Resolve the action for an installer belonging to a particular group.  Used by
-	 * the InstallerSettings to allow ad hoc user decision if installer should be run or not.
+	 * Resolve the action for a particular installer in a module.
 	 *
-	 * @param group     Group the installer belongs to.
-	 * @param installer Installer instance - not yet autowired.
+	 * @param moduleName        Module that is running the installer.
+	 * @param installerMetaData Installer metadata.
 	 * @return Action or null if it delegates the decision back to the InstallerSettings.
 	 * @see com.foreach.across.core.installers.InstallerSettings
 	 */
-	InstallerAction resolve( String group, Object installer );
+	Optional<InstallerAction> resolve( String moduleName, InstallerMetaData installerMetaData );
 }

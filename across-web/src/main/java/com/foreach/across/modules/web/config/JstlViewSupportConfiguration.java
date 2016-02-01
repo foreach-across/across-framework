@@ -17,6 +17,7 @@
 package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.annotations.Exposed;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
  * Creates a JSP/JSTL view resolver.
  */
 @Configuration
+@ConditionalOnProperty(value = "acrossWebModule.views.jsp")
 public class JstlViewSupportConfiguration
 {
 	@Bean

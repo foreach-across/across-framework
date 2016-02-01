@@ -18,10 +18,10 @@ package com.foreach.across.modules.web.context;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.bootstrap.AnnotationConfigBootstrapApplicationContextFactory;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -31,13 +31,13 @@ import org.springframework.web.context.WebApplicationContext;
 public class WebBootstrapApplicationContextFactory extends AnnotationConfigBootstrapApplicationContextFactory
 {
 	@Override
-	public AbstractApplicationContext createApplicationContext() {
+	public AcrossConfigurableApplicationContext createApplicationContext() {
 		return new AcrossWebApplicationContext();
 	}
 
 	@Override
-	public AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                            ApplicationContext parentApplicationContext ) {
+	public AcrossConfigurableApplicationContext createApplicationContext( AcrossContext across,
+	                                                                      ApplicationContext parentApplicationContext ) {
 		if ( parentApplicationContext == null || parentApplicationContext instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentApplicationContext;
 			AcrossWebApplicationContext applicationContext = new AcrossWebApplicationContext();
@@ -60,9 +60,9 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 	}
 
 	@Override
-	public AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                            ModuleBootstrapConfig moduleBootstrapConfig,
-	                                                            AcrossApplicationContextHolder parentContext ) {
+	public AcrossConfigurableApplicationContext createApplicationContext( AcrossContext across,
+	                                                                      ModuleBootstrapConfig moduleBootstrapConfig,
+	                                                                      AcrossApplicationContextHolder parentContext ) {
 		if ( parentContext.getApplicationContext() instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentContext.getApplicationContext();
 			AcrossWebApplicationContext child = new AcrossWebApplicationContext();

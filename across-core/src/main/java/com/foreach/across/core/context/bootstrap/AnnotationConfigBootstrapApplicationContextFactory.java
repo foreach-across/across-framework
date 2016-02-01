@@ -17,16 +17,17 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.config.CommonModuleConfiguration;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
@@ -36,8 +37,17 @@ import java.util.Collection;
 public class AnnotationConfigBootstrapApplicationContextFactory implements BootstrapApplicationContextFactory
 {
 	@Override
-	public AbstractApplicationContext createApplicationContext() {
+	public AcrossConfigurableApplicationContext createApplicationContext() {
 		return new AcrossApplicationContext();
+	}
+
+	@Override
+	public AcrossConfigurableApplicationContext createInstallerContext() {
+		AcrossApplicationContext installerContext = new AcrossApplicationContext();
+		installerContext.setInstallerMode( true );
+		installerContext.register( PropertyPlaceholderSupportConfigurer.Config.class );
+
+		return installerContext;
 	}
 
 	/**
@@ -47,12 +57,12 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 *
 	 * @param across                   AcrossContext being created.
 	 * @param parentApplicationContext Parent ApplicationContext, can be null.
-	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
+	 * @return Spring ApplicationContext instance implementing AcrossConfigurableApplicationContext.
 	 */
 	@Override
-	public AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                            ApplicationContext parentApplicationContext ) {
-		AbstractApplicationContext applicationContext = createApplicationContext();
+	public AcrossConfigurableApplicationContext createApplicationContext( AcrossContext across,
+	                                                                      ApplicationContext parentApplicationContext ) {
+		AcrossConfigurableApplicationContext applicationContext = createApplicationContext();
 		applicationContext.setDisplayName( "[" + across.getId() + "]" );
 
 		if ( parentApplicationContext != null ) {
@@ -68,13 +78,13 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	 * @param across                AcrossContext being loaded.
 	 * @param moduleBootstrapConfig Bootstrap configuration of the AcrossModule being created.
 	 * @param parentContext         Contains the parent context.
-	 * @return Spring ApplicationContext instance implementing AbstractApplicationContext.
+	 * @return Spring ApplicationContext instance implementing AcrossConfigurableApplicationContext.
 	 */
 	@Override
-	public AbstractApplicationContext createApplicationContext( AcrossContext across,
-	                                                            ModuleBootstrapConfig moduleBootstrapConfig,
-	                                                            AcrossApplicationContextHolder parentContext ) {
-		AbstractApplicationContext child = createApplicationContext();
+	public AcrossConfigurableApplicationContext createApplicationContext( AcrossContext across,
+	                                                                      ModuleBootstrapConfig moduleBootstrapConfig,
+	                                                                      AcrossApplicationContextHolder parentContext ) {
+		AcrossConfigurableApplicationContext child = createApplicationContext();
 		child.setDisplayName( moduleBootstrapConfig.getModuleName() );
 		child.setParent( parentContext.getApplicationContext() );
 
@@ -91,7 +101,8 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	public void loadApplicationContext( AcrossContext across, AcrossApplicationContextHolder context ) {
 		AcrossConfigurableApplicationContext root =
 				(AcrossConfigurableApplicationContext) context.getApplicationContext();
-		Collection<ApplicationContextConfigurer> configurers = AcrossContextUtils.getConfigurersToApply( across );
+		Collection<ApplicationContextConfigurer> configurers = AcrossContextUtils.getApplicationContextConfigurers(
+				across );
 
 		loadApplicationContext( root, configurers );
 	}
@@ -113,9 +124,12 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 		loadApplicationContext( child, moduleBootstrapConfig.getApplicationContextConfigurers() );
 	}
 
-	protected void loadApplicationContext( AcrossConfigurableApplicationContext context,
-	                                       Collection<ApplicationContextConfigurer> configurers ) {
+	@Override
+	public void loadApplicationContext( AcrossConfigurableApplicationContext context,
+	                                    Collection<ApplicationContextConfigurer> configurers ) {
 		ConfigurableEnvironment environment = context.getEnvironment();
+
+		context.register( CommonModuleConfiguration.class );
 
 		for ( ApplicationContextConfigurer configurer : configurers ) {
 			// First register property sources

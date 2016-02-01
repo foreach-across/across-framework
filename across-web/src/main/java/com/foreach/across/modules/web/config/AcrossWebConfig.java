@@ -22,6 +22,7 @@ import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.AcrossWebArgumentResolver;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
@@ -61,6 +62,9 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter implements Prefixin
 	private AcrossWebModule acrossWebModule;
 
 	@Autowired
+	private AcrossWebModuleSettings settings;
+
+	@Autowired
 	private AcrossDevelopmentMode developmentMode;
 
 	@Autowired
@@ -70,7 +74,7 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter implements Prefixin
 	public void addResourceHandlers( ResourceHandlerRegistry registry ) {
 		for ( String resource : DEFAULT_RESOURCES ) {
 			registry.addResourceHandler(
-					acrossWebModule.getViewsResourcePath() + "/" + resource + "/**" ).addResourceLocations(
+					settings.getViews().getResources() + "/" + resource + "/**" ).addResourceLocations(
 					"classpath:/views/" + resource + "/" );
 
 			if ( developmentMode.isActive() ) {
@@ -80,7 +84,7 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter implements Prefixin
 						"views/" + resource );
 
 				for ( Map.Entry<String, String> entry : views.entrySet() ) {
-					String url = acrossWebModule.getViewsResourcePath() + "/" + resource + "/" + entry.getKey() + "/**";
+					String url = settings.getViews().getResources() + "/" + resource + "/" + entry.getKey() + "/**";
 					File physical = new File( entry.getValue() );
 
 					LOG.info( "Mapping {} development views for {} to physical path {}", resource, url, physical );
@@ -141,7 +145,7 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter implements Prefixin
 
 	@Bean
 	public WebResourceTranslator viewsWebResourceTranslator() {
-		if ( acrossWebModule.getViewsResourcePath() != null ) {
+		if ( settings.getViews().getResources() != null ) {
 			return new WebResourceTranslator()
 			{
 				public boolean shouldTranslate( WebResource resource ) {
@@ -150,7 +154,7 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter implements Prefixin
 
 				public void translate( WebResource resource ) {
 					resource.setLocation( WebResource.RELATIVE );
-					resource.setData( acrossWebModule.getViewsResourcePath() + resource.getData() );
+					resource.setData( settings.getViews().getResources() + resource.getData() );
 				}
 			};
 		}

@@ -21,13 +21,17 @@ import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver
 import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.context.support.ModuleSetBuilder;
 import com.foreach.across.core.installers.InstallerAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
+import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
 import javax.sql.DataSource;
@@ -40,9 +44,11 @@ import java.util.*;
  * <p>A DataSource bean names acrossDataSource is required.</p>
  */
 @Configuration
-public class AcrossContextConfiguration implements ImportAware
+public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 {
 	public static final String STANDARD_MODULES_PACKAGE = "com.foreach.across.modules";
+
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextConfiguration.class );
 
 	static final String ANNOTATION_TYPE = EnableAcrossContext.class.getName();
 
@@ -58,10 +64,16 @@ public class AcrossContextConfiguration implements ImportAware
 	private Collection<AcrossContextConfigurer> configurers = Collections.emptyList();
 
 	private AnnotationMetadata importMetadata;
+	private Environment environment;
 
 	@Override
 	public void setImportMetadata( AnnotationMetadata importMetadata ) {
 		this.importMetadata = importMetadata;
+	}
+
+	@Override
+	public void setEnvironment( Environment environment ) {
+		this.environment = environment;
 	}
 
 	@SuppressWarnings("all")
@@ -100,6 +112,7 @@ public class AcrossContextConfiguration implements ImportAware
 	private AcrossContext createAcrossContext( ConfigurableApplicationContext applicationContext,
 	                                           Map<String, Object> configuration ) {
 		AcrossContext acrossContext = new AcrossContext( applicationContext );
+		acrossContext.setDevelopmentMode( isDevelopmentMode() );
 
 		if ( configuration != null ) {
 			if ( Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
@@ -125,6 +138,17 @@ public class AcrossContextConfiguration implements ImportAware
 		}
 
 		return acrossContext;
+	}
+
+	private boolean isDevelopmentMode() {
+		if ( environment.containsProperty( "across.development.active" ) ) {
+			return environment.getProperty( "across.development.active", Boolean.class, false );
+		}
+		else if ( environment.acceptsProfiles( "dev" ) ) {
+			LOG.info( "Activating development mode for Across because of 'dev' Spring profile" );
+			return true;
+		}
+		return false;
 	}
 
 	private Collection<String> modulesToConfigure( Map<String, Object> configuration ) {

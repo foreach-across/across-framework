@@ -25,11 +25,6 @@ import com.foreach.across.modules.web.AcrossWebModule;
 public class TestAcrossWebModuleConventions extends AbstractAcrossModuleConventionsTest
 {
 	@Override
-	protected boolean hasSettings() {
-		return true;
-	}
-
-	@Override
 	protected AcrossModule createModule() {
 		return new AcrossWebModule();
 	}

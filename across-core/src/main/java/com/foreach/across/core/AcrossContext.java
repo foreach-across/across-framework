@@ -18,6 +18,7 @@ package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
 import com.foreach.across.core.context.AbstractAcrossEntity;
+import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
@@ -35,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.util.Assert;
@@ -67,6 +67,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
 			new LinkedHashMap<>();
+	private List<ApplicationContextConfigurer> installerContextConfigurers = new ArrayList<>();
 
 	private Map<String, AcrossModule> modules = new LinkedHashMap<>();
 
@@ -295,6 +296,20 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	}
 
 	/**
+	 * <p>Add an ApplicationContextConfigurer to the installer context of every module.</p>
+	 *
+	 * @param configurer Configurer instance.
+	 * @see com.foreach.across.core.context.configurer.ConfigurerScope
+	 */
+	public void addInstallerContextConfigurer( ApplicationContextConfigurer configurer ) {
+		installerContextConfigurers.add( configurer );
+	}
+
+	public List<ApplicationContextConfigurer> getInstallerContextConfigurers() {
+		return installerContextConfigurers;
+	}
+
+	/**
 	 * @return The transformer that will be applied to all exposed beans before copying them to the parent context.
 	 */
 	public ExposedBeanDefinitionTransformer getExposeTransformer() {
@@ -397,7 +412,8 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 			for ( AcrossModuleInfo moduleInfo : reverseList ) {
 				if ( moduleInfo.isBootstrapped() ) {
 					AcrossModule module = moduleInfo.getModule();
-					AbstractApplicationContext applicationContext = AcrossContextUtils.getApplicationContext( module );
+					AcrossConfigurableApplicationContext applicationContext = AcrossContextUtils.getApplicationContext(
+							module );
 
 					if ( applicationContext != null ) {
 						LOG.debug( "Destroying ApplicationContext for module {}", module.getName() );

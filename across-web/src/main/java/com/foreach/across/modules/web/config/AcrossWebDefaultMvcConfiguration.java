@@ -36,6 +36,7 @@ import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -178,7 +179,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	@Exposed
-	@AcrossCondition("not hasBean('" + AcrossWebModule.CONVERSION_SERVICE_BEAN + "', T(org.springframework.format.support.FormattingConversionService))")
+	@ConditionalOnMissingBean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	public FormattingConversionService mvcConversionService() {
 		if ( beanRegistry.containsBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME ) ) {
 			Object conversionService
