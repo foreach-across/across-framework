@@ -29,7 +29,7 @@ import javax.servlet.ServletException;
 import java.util.EnumSet;
 
 @Configuration
-@ConditionalOnProperty(value = "acrossWebModule.resources.configure-versioning", matchIfMissing = true)
+@ConditionalOnProperty(value = "acrossWebModule.resources.versioning", matchIfMissing = true)
 public class ResourceUrlEncodingFilterConfiguration extends AcrossWebDynamicServletConfigurer
 {
 	public static final String FILTER_NAME = "ResourceUrlEncodingFilter";

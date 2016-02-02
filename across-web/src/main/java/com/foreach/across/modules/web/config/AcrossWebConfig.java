@@ -40,12 +40,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 @Configuration
 @Exposed
@@ -64,30 +61,30 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter implements Prefixin
 	@Autowired
 	private PrefixingPathRegistry prefixingPathRegistry;
 
-	@Override
-	public void addResourceHandlers( ResourceHandlerRegistry registry ) {
-		for ( String resource : DEFAULT_RESOURCES ) {
-			registry.addResourceHandler(
-					settings.getResources().getPath() + "/" + resource + "/**" ).addResourceLocations(
-					"classpath:/views/" + resource + "/" );
-
-			if ( developmentMode.isActive() ) {
-				LOG.info( "Activating {} development mode resource handlers", resource );
-
-				Map<String, String> views = developmentMode.getDevelopmentLocationsForResourcePath(
-						"views/" + resource );
-
-				for ( Map.Entry<String, String> entry : views.entrySet() ) {
-					String url = settings.getResources().getPath() + "/" + resource + "/" + entry.getKey() + "/**";
-					File physical = new File( entry.getValue() );
-
-					LOG.info( "Mapping {} development views for {} to physical path {}", resource, url, physical );
-					registry.addResourceHandler( url )
-					        .addResourceLocations( physical.toURI().toString() );
-				}
-			}
-		}
-	}
+//	@Override
+//	public void addResourceHandlers( ResourceHandlerRegistry registry ) {
+//		for ( String resource : DEFAULT_RESOURCES ) {
+//			registry.addResourceHandler(
+//					settings.getResources().getPath() + "/" + resource + "/**" ).addResourceLocations(
+//					"classpath:/views/" + resource + "/" );
+//
+//			if ( developmentMode.isActive() ) {
+//				LOG.info( "Activating {} development mode resource handlers", resource );
+//
+//				Map<String, String> views = developmentMode.getDevelopmentLocationsForResourcePath(
+//						"views/" + resource );
+//
+//				for ( Map.Entry<String, String> entry : views.entrySet() ) {
+//					String url = settings.getResources().getPath() + "/" + resource + "/" + entry.getKey() + "/**";
+//					File physical = new File( entry.getValue() );
+//
+//					LOG.info( "Mapping {} development views for {} to physical path {}", resource, url, physical );
+//					registry.addResourceHandler( url )
+//					        .addResourceLocations( physical.toURI().toString() );
+//				}
+//			}
+//		}
+//	}
 
 	@Override
 	public boolean supports( String mapperName ) {

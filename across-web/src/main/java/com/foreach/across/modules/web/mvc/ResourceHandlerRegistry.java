@@ -16,24 +16,40 @@
 
 package com.foreach.across.modules.web.mvc;
 
-import com.foreach.across.core.context.info.AcrossModuleInfo;
-import com.foreach.across.modules.web.AcrossWebModuleSettings;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.servlet.resource.*;
 
 import javax.servlet.ServletContext;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Extension in order to get
+ */
 @SuppressWarnings("all")
 public class ResourceHandlerRegistry extends org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 {
-	private String version;
+	public ResourceHandlerRegistry( ApplicationContext applicationContext, ServletContext servletContext ) {
+		super( applicationContext, servletContext );
+	}
+
+	@Override
+	public AbstractHandlerMapping getHandlerMapping() {
+		return super.getHandlerMapping();
+	}
+
+	public Map<String, ?> getUrlMap() {
+		AbstractHandlerMapping mapping = getHandlerMapping();
+
+		if ( mapping instanceof SimpleUrlHandlerMapping ) {
+			return ( (SimpleUrlHandlerMapping) mapping ).getUrlMap();
+		}
+
+		return Collections.emptyMap();
+	}
+
+	/*private String version;
 	private Boolean autoConfigure;
 
 	public ResourceHandlerRegistry( ApplicationContext applicationContext,
@@ -69,7 +85,7 @@ public class ResourceHandlerRegistry extends org.springframework.web.servlet.con
 							//TODO: AX-56 improve this check without rewriting all spring classes?
 							AppCacheManifestTransformer appCacheTransformer = new AppCacheManifestTransformer();
 							VersionResourceResolver versionResolver = new VersionResourceResolver()
-									.addVersionStrategy( new FixedVersionStrategy( version ), "/**" );
+									.addVersionStrategy( new FixedVersionStrategy( version ), "*//**" );
 							handler.setResourceResolvers( Arrays.asList( versionResolver,
 							                                             new PathResourceResolver() ) );
 							handler.setResourceTransformers( Arrays.asList( appCacheTransformer,
@@ -92,5 +108,5 @@ public class ResourceHandlerRegistry extends org.springframework.web.servlet.con
 		}
 
 		return Collections.emptyMap();
-	}
+	}*/
 }

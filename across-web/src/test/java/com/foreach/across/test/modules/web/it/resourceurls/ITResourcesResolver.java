@@ -6,6 +6,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInter
 
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @WebAppConfiguration
@@ -36,7 +38,8 @@ public class ITResourcesResolver
 		ResourceUrlProvider resourceUrlProvider = ctx.getBean( ResourceUrlProvider.class );
 		assertNotNull( resourceUrlProvider );
 
-		ResourceUrlProviderExposingInterceptor interceptor = ctx.getBean( ResourceUrlProviderExposingInterceptor.class );
+		ResourceUrlProviderExposingInterceptor interceptor = ctx.getBean(
+				ResourceUrlProviderExposingInterceptor.class );
 		assertNotNull( interceptor );
 	}
 

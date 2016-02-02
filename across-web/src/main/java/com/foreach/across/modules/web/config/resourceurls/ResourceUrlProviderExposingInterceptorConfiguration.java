@@ -26,7 +26,7 @@ import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInter
 
 @Configuration
 @OrderInModule(4)
-@ConditionalOnProperty(value = "acrossWebModule.resources.configure-versioning", matchIfMissing = true)
+@ConditionalOnProperty(value = "acrossWebModule.resources.versioning", matchIfMissing = true)
 public class ResourceUrlProviderExposingInterceptorConfiguration extends PrefixingHandlerMappingConfigurerAdapter
 {
 	@Override

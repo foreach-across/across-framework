@@ -163,6 +163,11 @@ public class AcrossWebModuleSettings
 		 */
 		private String fixedVersion;
 
+		/**
+		 * Duration (seconds) that static resources should be cached.  Defaults to 1 year, put 0 to avoid caching.
+		 */
+		private Integer cachePeriod = 60 * 60 * 24 * 365;
+
 		public String getPath() {
 			return path;
 		}
@@ -185,6 +190,14 @@ public class AcrossWebModuleSettings
 
 		public void setFixedVersion( String fixedVersion ) {
 			this.fixedVersion = fixedVersion;
+		}
+
+		public Integer getCachePeriod() {
+			return cachePeriod;
+		}
+
+		public void setCachePeriod( Integer cachePeriod ) {
+			this.cachePeriod = cachePeriod;
 		}
 	}
 

@@ -148,7 +148,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Autowired(required = false)
 	private WebTemplateInterceptor webTemplateInterceptor;
 
-	@Autowired(required=false)
+	@Autowired(required = false)
 	private ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor;
 
 	@Autowired(required = false)
@@ -208,16 +208,16 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	protected void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
 		// Reload the adapter
 		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>();
-		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<HandlerMethodReturnValueHandler>();
+		List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>();
 		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
 		ContentNegotiationConfigurer contentNegotiationConfigurer = new ContentNegotiationConfigurer( servletContext );
 		contentNegotiationConfigurer.mediaTypes( getDefaultMediaTypes() );
 
-		ResourceHandlerRegistry resourceHandlerRegistry =
-				new ResourceHandlerRegistry( applicationContext, servletContext, currentModuleInfo );
+		ResourceHandlerRegistry resourceHandlerRegistry = new ResourceHandlerRegistry( applicationContext,
+		                                                                               servletContext );
 
 		DelayedAsyncSupportConfigurer asyncSupportConfigurer = new DelayedAsyncSupportConfigurer();
 
@@ -282,14 +282,15 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		// Update the resource handler mapping
 		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
-		if( resourceUrlProviderExposingInterceptor != null && resourceUrlProvider != null ) {
-			resourceHandlerMapping.setInterceptors(new HandlerInterceptor[] {resourceUrlProviderExposingInterceptor});
+		if ( resourceUrlProviderExposingInterceptor != null && resourceUrlProvider != null ) {
+			resourceHandlerMapping.setInterceptors(
+					new HandlerInterceptor[] { resourceUrlProviderExposingInterceptor } );
 		}
 		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );
 		resourceHandlerMapping.initApplicationContext();
 
 //		// Detect the handler mappings
-		if( resourceUrlProvider != null ) {
+		if ( resourceUrlProvider != null ) {
 			resourceUrlProvider.onApplicationEvent( new ContextRefreshedEvent( applicationContext ) );
 		}
 

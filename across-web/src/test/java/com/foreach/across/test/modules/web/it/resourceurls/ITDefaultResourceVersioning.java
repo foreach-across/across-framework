@@ -45,6 +45,33 @@ public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 		output = get( "/across/resources/js/testResources/javascript.js" );
 		assertNotNull( output );
 		assertTrue( output.contains( "alert('hello');" ) );
+
+		output = get( "/across/resources/static/testResources/parent.css" );
+		assertNotNull( output );
+		assertTrue( output.contains( "body { color: black; }" ) );
+
+		output = get( "/across/resources/static/testResources/javascript.js" );
+		assertNotNull( output );
+		assertTrue( output.contains( "alert('hello');" ) );
+	}
+
+	@Test
+	public void staticResourcesShouldBeServedUnderVersionedPath() {
+		String output = get( "/across/resources/css/95247852/testResources/parent.css" );
+		assertNotNull( output );
+		assertTrue( output.contains( "body { color: black; }" ) );
+
+		output = get( "/across/resources/js/95247852/testResources/javascript.js" );
+		assertNotNull( output );
+		assertTrue( output.contains( "alert('hello');" ) );
+
+		output = get( "/across/resources/static/95247852/testResources/parent.css" );
+		assertNotNull( output );
+		assertTrue( output.contains( "body { color: black; }" ) );
+
+		output = get( "/across/resources/static/95247852/testResources/javascript.js" );
+		assertNotNull( output );
+		assertTrue( output.contains( "alert('hello');" ) );
 	}
 
 	@Test
@@ -53,6 +80,12 @@ public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 		assertNotNull( output );
 		assertTrue( output.contains( "parent css: /across/resources/css/95247852/testResources/parent.css" ) );
 		assertTrue( output.contains( "javascript: /across/resources/js/95247852/testResources/javascript.js" ) );
+		assertTrue( output.contains( "static css: /across/resources/static/95247852/testResources/parent.css" ) );
+	}
+
+	@Test
+	public void customShouldNotBeServed() {
+		assertTrue( notFound( "/across/resources/custom/test.txt" ) );
 	}
 
 	@Configuration

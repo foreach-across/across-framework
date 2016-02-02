@@ -6,6 +6,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInter
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @WebAppConfiguration
