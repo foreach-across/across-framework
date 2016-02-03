@@ -81,7 +81,7 @@ public class ITAsyncSupported extends AbstractWebIntegrationTest
 	}
 
 	@Configuration
-	@EnableAcrossContext(AsyncModule.NAME)
+	@EnableAcrossContext(modules = AsyncModule.NAME)
 	protected static class Config extends WebMvcConfigurerAdapter
 	{
 		@Bean
