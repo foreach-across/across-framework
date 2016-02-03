@@ -39,7 +39,7 @@ import java.util.*;
 
 /**
  * Extends a {@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
- * with support for Exposed beans.
+ * with support for Exposed beans.  This implementation also allows the parent bean factory to be updated.
  * <p>
  * Exposed beans are fetched from the module context but are not managed by the bean factory.
  * </p>
@@ -48,13 +48,24 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 {
 	private Set<String> exposedBeanNames = new HashSet<>();
 
+	private BeanFactory parentBeanFactory;
+
 	public AcrossListableBeanFactory() {
 	}
 
 	public AcrossListableBeanFactory( BeanFactory parentBeanFactory ) {
-		super( parentBeanFactory );
+		setParentBeanFactory( parentBeanFactory );
 	}
 
+	@Override
+	public BeanFactory getParentBeanFactory() {
+		return parentBeanFactory;
+	}
+
+	@Override
+	public void setParentBeanFactory( BeanFactory parentBeanFactory ) {
+		this.parentBeanFactory = parentBeanFactory;
+	}
 
 	/**
 	 * Forcibly expose the beans with the given name.  Beans exposed this way will be exposed no matter
@@ -70,7 +81,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	 * @return The array of all forcibly exposed beans.
 	 */
 	public String[] getExposedBeanNames() {
-		return exposedBeanNames.toArray( new String[ exposedBeanNames.size() ] );
+		return exposedBeanNames.toArray( new String[exposedBeanNames.size()] );
 	}
 
 	/**
@@ -139,7 +150,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 			AnnotatedElement annotatedElement =
 					descriptor.getField() != null ? descriptor.getField() : descriptor.getMethodParameter().getMethod();
 
-			if( annotatedElement != null ) {
+			if ( annotatedElement != null ) {
 				RefreshableCollection annotation = AnnotationUtils.getAnnotation( annotatedElement,
 				                                                                  RefreshableCollection.class );
 
@@ -171,7 +182,6 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 					return registry;
 				}
 			}
-
 
 		}
 

@@ -1,7 +1,124 @@
 [[across-web]]
 = III. Across Web
 
-artifact
+:module-artifact: across-web
+:module-name: AcrossWebModule
+:module-url: https://foreach.atlassian.net/wiki/display/AX/Across+web+module
+== General information
+
+[abstract]
+=== About
+{module-name} provides the following infrastructure:
+
+ * a thymeleaf across dialect
+ * a menu builder
+ * auto configuration of <<multipart-config,Multipart filter>>
+ * auto configuration of <<resource-urls-config,Resource Versioning>>
+
+Module website: {module-url}
+
+=== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across</groupId>
+			<artifactId>{module-artifact}</artifactId>
+			<version>{across-version}</version>
+		</dependency>
+	</dependencies>
+----
+
+=== Module settings
+
+|===
+|Property |Type |Description |Default
+
+|acrossWeb.templates.enabled
+|`boolean`
+|Should Thymeleaf templates be enabled by default?
+|_true_
+
+|acrossWeb.templates.autoregister
+|`boolean`
+|Should the Thymeleaf templates automatically register a NamedWebTemplateProcessor?
+|_true_
+
+|acrossWeb.multipart.autoconfigure
+|`boolean`
+|Should {module-name} automatically register a Spring MultipartFilter?
+|_true_
+
+|acrossWeb.multipart.settings
+|`MultipartConfiguration.class`
+|An object to allow configuration of the MultipartFilter
+|null
+
+|acrossWeb.resource.autoconfigure
+|`boolean`
+|Should {module-name} automatically configure Resource Versioning
+|_true_
+
+|acrossWeb.development.views
+|`boolean`
+|The physical locations of development views
+|_Collections.emptyMap()_
+
+|===
+
+=== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across</groupId>
+			<artifactId>across-web</artifactId>
+			<version>{across-version}</version>
+		</dependency>
+	</dependencies>
+----
+
+[[across-web-module-settings]]
+=== Module settings
+
+All properties start with the *acrossWebModule.* prefix.
+
+|===
+|Property |Type |Description |Default
+
+|views.resources
+|`String`
+|Relative path for serving all static resources.
+|/across/resources
+
+|views.thymeleaf
+|`Boolean`
+|Should Thymeleaf view support be enabled.
+|_true_
+
+|views.jsp
+|`Boolean`
+|Should JSP/JSTL view support be enabled.
+|_false_
+
+|templates.enabled
+|`Boolean`
+|Should support for <<web-templates,web templates>> be enabled.
+|_true_
+
+|templates.auto-register
+|`Boolean`
+|If <<web-templates,web templates>> are enabled, should named templates be autodetected.
+|_true_
+
+|multipart.auto-configure
+|`Boolean`
+|Should a multipart resolver be configured automatically.
+|_true_
+
+|===
 
 === AcrossWebModule and ConversionService
 AcrossWebModule requires a `FormattingConversionService` bean named *mvcConversionService* to be present.
@@ -29,9 +146,75 @@ NOTE: There will be at least 2 `ConversionService` beans in the across context w
 *conversionService* and *mvcConversionService*.  If you have duplicate bean exceptions due to unqualified autowiring,
 you should make one of both primary.
 
+[[multipart-config]]
+=== Multipart Filter configuration
+
+TODO
+
+[[resource-urls-config]]
+=== Resource Urls Configuration
+
+When using link:http://docs.spring.io/spring-framework/docs/current/spring-framework-reference/html/mvc.html#mvc-config-static-resources[Resource Versioning] this will configure
+a `ResourceUrlEncodingFilter`, a `ResourceUrlProviderExposingInterceptor` on the `resourceHandlerMapping()` and an
+`ResourceUrlProvider` which is used inside the ResourceUrlEncodingFilter.
+
+The `ResourceUrlEncodingFilter` will rewrite all calls to `HttpServletResponse.encodeUrl()` if there is a
+`VersionStrategy` defined.
+
+If no such strategy on the resource is defined, the url is not rewritten and the default url is kept. In thymeleaf all
+links defined with `@{"/resources/css/main.css"}` are candidates to be versioned.
+
+In JSPs, the equivalent is the `<spring:url value="/resources/css/main.css" var="maincss"/>` tag.
+
+It is important to note that only URLs are rewritten when the `encodeUrl()` is called on the response,
+so when using Javascript resources in combination with AMD loaders, it is important you take this into account.
+Any resources which are using `require([])` mechanism will not be rewritten.
+
+A possible solution for this is to use a `FixedVersionStrategy` for your main configuration Javascript and work relatively
+against this configuration file. The following `requirejs` configuration shows how this could be achieved.
+
+[source,html,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+<html>
+<head>
+<title>Versioned Loading</title>
+</head>
+<body>
+...
+<script th:attr="data-main=@{/static/js/application.js}" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.20/require.min.js"></script>
+</body>
+</html>
+----
+
+In your ApplicationWebConfig add the following:
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+public class ApplicationWebConfig extends WebMvcConfigurerAdapter {
+...
+   @Override
+   public void addResourceHandlers( ResourceHandlerRegistry registry ) {
+        AppCacheManifestTransformer appCacheTransformer = new AppCacheManifestTransformer();
+        VersionResourceResolver versionResolver = new VersionResourceResolver()
+                .addVersionStrategy( new FixedVersionStrategy( "build-1.1.0 ), "/**" );
+        registry.addResourceHandler( "/static/**" )
+                .addResourceLocations( "classpath:static/" )
+                .setCachePeriod( TimeUnit.DAYS.toSeconds( 365 ) )
+                .resourceChain( true )
+                .addResolver( versionResolver )
+                .addTransformer( appCacheTransformer );
+   }
+...
+}
+----
+
+For CSS, also note that using a `VersionStrategy` will register a link:http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/servlet/resource/CssLinkResourceTransformer.html[`CssLinkResourceTransformer`]
+This will rewrite all `@import` and `url()` statements inside CSS resources.
 
 === JSP and Thymeleaf integration
-If both JSP and Thymeleaf support are enabled, you can easily use both view types at the same time.  The `AcrossWebModule`
+If both JSP and Thymeleaf support are enabled, you can easily use both view types at the same time.  The `{module-name}`
  also provides a tag that can be used to import Thymeleaf templates or fragments in a JSP rendering pipeline.  The same
  model (request attributes) should be available in the Thymeleaf template as in the calling JSP.
 
@@ -53,7 +236,9 @@ If both JSP and Thymeleaf support are enabled, you can easily use both view type
 </html>
 ----
 
----
+[[web-templates]]
+=== Templates
+Named web templates + autodetection
 
 link builders:
 prefixing path context
@@ -66,7 +251,7 @@ To avoid the default configuration: extend AcrossWebModule and override default 
 If you want to add a custom validator/message codes resolver: add it as bean to the AcrossWebModule before bootstrap.
 Working with templates
 Building menus
-Multipart resolving
+Multipart resolving/multipart configuration
 
 viewelement
 viewelement builder

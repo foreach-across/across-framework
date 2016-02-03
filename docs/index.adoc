@@ -1,5 +1,5 @@
 = Across framework
-Arne Vandamme
+Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :toc: left
 :sectanchors:
 :across-version: 1.1.2-SNAPSHOT
@@ -7,6 +7,12 @@ Arne Vandamme
 :spring-data-url: http://projects.spring.io/spring-data/
 :spring-batch-url: http://projects.spring.io/spring-batch/
 :spring-security-url: http://projects.spring.io/spring-security/
+
+[copyright,verbatim]
+--
+Copyright (C) 2014-2016 +
+[small]#Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.#
+--
 
 :numbered!:
 [abstract]
@@ -30,10 +36,24 @@ start-up procedures.  To this end, a module can define its own installers.
 * <<moduleconfiguration>> annotation provides a no-hassle way to declare annotated classes that need to be added to a specific module
 * message sources are now <<auto-detecting-message-sources,auto-detected>> if they follow the conventions
 * both `AcrossModule` and `ModuleBootstrapConfig` now have shortcut `expose()` methods that make it easier to expose additional beans
+* several changes and improvements were made to installers:
+** installers are now created in their own configurable <<installer-applicationcontext,installer `ApplicationContext`>>
+** installers are detected automatically through classpath scanning (defaults to *installers* package of a module)
+** installers are ordered based on the presence of an `@Order` annotation
+** installers now support `@Conditional` annotations for building more complex conditions
+** installers should only be specified as class names in `getInstallers()`, the use of instances is deprecated
+** `InstallerSettings` has been refactored (breaking change) to use `InstallerMetaData` instead
+** installers can implement `InstallerActionResolver` directly to suppress execution at runtime
+** `AcrossInstallerRepository` now has methods to rename installers
+** `AcrossLiquibaseInstaller` detects the most appropriate `SchemaConfiguration` to use and modifies default schema accordingly
+* development mode can be set through the property *across.development.active* and is active by default if a Spring profile called *dev* is active
 
 *Across Web*
 
 * async configuration can now correctly be set through `WebMvcConfigurer#configureAsyncSupport(AsyncSupportConfigurer)`
+* `AcrossWebModuleSettings` has been refactored and `AcrossWebModule` can now be <<across-web-module-settings,configured through properties>>
+** properties support Spring configuration metadata with possible IDE support
+* by default only Thymeleaf views support is activated (breaking change)
 
 === 1.1.1.RELEASE
 Initial public release available on http://search.maven.org/[Maven central].
@@ -169,7 +189,7 @@ across-test:: Supports integration testing of your Across modules, both web and 
 Across is directly tied to Spring framework and all artifacts come with a set of curated dependencies.
 Applications built on top of Across should either manage the dependencies manually by fixing the versions or let the modules pull in the required dependencies transitively.
 
-.Most common dependency versions that almost all modules rely on
+.Most common dependency versions that almost all modules rely on:
 |===
 | Java | 1.8
 | Java Servlet API _(if applicable)_ | 3.0.1

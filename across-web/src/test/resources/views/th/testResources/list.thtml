@@ -20,5 +20,6 @@
 <body>
     parent css: <th:block th:text="@{/across/resources/css/testResources/parent.css}">parent css</th:block>
     javascript: <th:block th:text="@{/across/resources/js/testResources/javascript.js}">javascript</th:block>
+    static css: <th:block th:text="@{/across/resources/static/testResources/parent.css}">parent css</th:block>
 </body>
 </html>

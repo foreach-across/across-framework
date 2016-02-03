@@ -36,11 +36,13 @@ import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
@@ -72,6 +74,7 @@ import org.springframework.web.context.request.async.DeferredResultProcessingInt
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -81,6 +84,8 @@ import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
 import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
+import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -143,6 +148,12 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Autowired(required = false)
 	private WebTemplateInterceptor webTemplateInterceptor;
 
+	@Autowired(required = false)
+	private ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor;
+
+	@Autowired(required = false)
+	private ResourceUrlProvider resourceUrlProvider;
+
 	private ConfigurableWebBindingInitializer initializer;
 
 	private ValidatorDelegate validatorDelegate = new ValidatorDelegate();
@@ -168,7 +179,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	@Exposed
-	@AcrossCondition("not hasBean('" + AcrossWebModule.CONVERSION_SERVICE_BEAN + "', T(org.springframework.format.support.FormattingConversionService))")
+	@ConditionalOnMissingBean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	public FormattingConversionService mvcConversionService() {
 		if ( beanRegistry.containsBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME ) ) {
 			Object conversionService
@@ -197,16 +208,16 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	protected void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
 		// Reload the adapter
 		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>();
-		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<HandlerMethodReturnValueHandler>();
+		List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>();
 		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
 		ContentNegotiationConfigurer contentNegotiationConfigurer = new ContentNegotiationConfigurer( servletContext );
 		contentNegotiationConfigurer.mediaTypes( getDefaultMediaTypes() );
 
-		ResourceHandlerRegistry resourceHandlerRegistry =
-				new ResourceHandlerRegistry( applicationContext, servletContext );
+		ResourceHandlerRegistry resourceHandlerRegistry = new ResourceHandlerRegistry( applicationContext,
+		                                                                               servletContext );
 
 		DelayedAsyncSupportConfigurer asyncSupportConfigurer = new DelayedAsyncSupportConfigurer();
 
@@ -271,8 +282,17 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		// Update the resource handler mapping
 		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
+		if ( resourceUrlProviderExposingInterceptor != null && resourceUrlProvider != null ) {
+			resourceHandlerMapping.setInterceptors(
+					new HandlerInterceptor[] { resourceUrlProviderExposingInterceptor } );
+		}
 		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );
 		resourceHandlerMapping.initApplicationContext();
+
+//		// Detect the handler mappings
+		if ( resourceUrlProvider != null ) {
+			resourceUrlProvider.onApplicationEvent( new ContextRefreshedEvent( applicationContext ) );
+		}
 
 		// Handler exception resolver
 		if ( exceptionResolvers.isEmpty() ) {

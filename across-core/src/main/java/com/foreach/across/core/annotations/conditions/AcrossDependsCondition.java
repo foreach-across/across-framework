@@ -59,7 +59,7 @@ public class AcrossDependsCondition implements Condition
 			return applies( acrossContext.getBootstrapConfiguration(), required, optional );
 		}
 		catch ( NoSuchBeanDefinitionException nsbe ) {
-			LOG.warn( "Use of AcrossDepends outside of an AcrossContext - condition will always evaluate to true" );
+			LOG.error( "Use of AcrossDepends outside of an AcrossContext - condition will always evaluate to true" );
 			return true;
 		}
 	}

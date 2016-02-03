@@ -1,6 +1,5 @@
 package com.foreach.across.modules.web.config.multipart;
 
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.PathResource;
 import org.springframework.util.Assert;
@@ -39,7 +39,7 @@ import java.util.Map;
  * @see org.springframework.web.multipart.commons.CommonsMultipartResolver
  */
 @Configuration
-@AcrossCondition("settings.autoConfigureMultipartResolver")
+@ConditionalOnProperty(value = "acrossWebModule.multipart.auto-configure", matchIfMissing = true)
 public class MultipartResolverConfiguration extends AcrossWebDynamicServletConfigurer
 {
 	public static final String FILTER_NAME = "multipartFilter";
@@ -170,12 +170,11 @@ public class MultipartResolverConfiguration extends AcrossWebDynamicServletConfi
 	}
 
 	private MultipartConfigElement determineMultipartConfig() {
-		MultipartConfigElement config = settings.getProperty( AcrossWebModuleSettings.MULTIPART_SETTINGS,
-		                                                      MultipartConfigElement.class );
+		MultipartConfigElement config = settings.getMultipart().getSettings();
 
 		if ( config == null ) {
-			Map<String, MultipartConfigElement> configs = BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory,
-			                                                                                              MultipartConfigElement.class );
+			Map<String, MultipartConfigElement> configs
+					= BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory, MultipartConfigElement.class );
 
 			if ( !configs.isEmpty() && configs.size() > 1 ) {
 				throw new IllegalStateException(
@@ -200,8 +199,8 @@ public class MultipartResolverConfiguration extends AcrossWebDynamicServletConfi
 	}
 
 	private String determineExistingResolverBeanName() {
-		Map<String, MultipartResolver> existingResolvers = BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory,
-		                                                                                                   MultipartResolver.class );
+		Map<String, MultipartResolver> existingResolvers
+				= BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory, MultipartResolver.class );
 
 		if ( !existingResolvers.isEmpty() ) {
 			MultipartResolver resolver = existingResolvers.get( DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME );

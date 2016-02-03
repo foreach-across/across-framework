@@ -16,10 +16,12 @@
 package com.foreach.across.test.scan.packageOne;
 
 import com.foreach.across.core.AcrossModule;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Arne Vandamme
  */
+@Configuration
 public class ModuleWithoutName extends AcrossModule
 {
 	@Override

@@ -21,6 +21,7 @@ import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.installers.AcrossCoreSchemaInstaller;
 import com.foreach.across.core.installers.AcrossInstallerRepository;
+import com.foreach.across.core.installers.AcrossInstallerRepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class AcrossInstallerConfig
 	@Autowired
 	private AcrossContext acrossContext;
 
+	@Autowired
+	private CoreSchemaConfigurationHolder schemaHolder;
+
 	/**
 	 * Requesting the AcrossInstallerRepository will result in the core schema to be installed.
 	 * This bean is lazy because if no installers are required to run, there is no need for a DataSource
@@ -51,7 +55,7 @@ public class AcrossInstallerConfig
 	@Lazy
 	@DependsOn("acrossCoreSchemaInstaller")
 	public AcrossInstallerRepository installerRepository() {
-		DataSource installerDataSource = acrossInstallerDataSource();
+		DataSource installerDataSource = acrossDataSource();
 
 		if ( installerDataSource == null ) {
 			throw new AcrossException(
@@ -60,7 +64,10 @@ public class AcrossInstallerConfig
 			);
 		}
 
-		return new AcrossInstallerRepository( installerDataSource );
+		AcrossInstallerRepositoryImpl repository = new AcrossInstallerRepositoryImpl( installerDataSource );
+		repository.setSchema( schemaHolder.getDefaultSchema() );
+
+		return repository;
 	}
 
 	@Bean
@@ -76,7 +83,12 @@ public class AcrossInstallerConfig
 			);
 		}
 
-		return new AcrossCoreSchemaInstaller( installerDataSource, AcrossContextUtils.getApplicationContext( acrossContext ) );
+		AcrossCoreSchemaInstaller installer = new AcrossCoreSchemaInstaller(
+				installerDataSource, AcrossContextUtils.getApplicationContext( acrossContext )
+		);
+		installer.setDefaultSchema( schemaHolder.getDefaultSchema() );
+
+		return installer;
 	}
 
 	@Bean(name = AcrossContext.INSTALLER_DATASOURCE)

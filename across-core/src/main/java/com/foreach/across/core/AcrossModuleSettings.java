@@ -16,9 +16,11 @@
 
 package com.foreach.across.core;
 
+import com.foreach.across.core.annotations.Module;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertyResolver;
 
 /**
@@ -26,7 +28,11 @@ import org.springframework.core.env.PropertyResolver;
  * and informative description.  This class provides an easy interface to query the configured settings.
  *
  * @author Arne Vandamme
+ * @deprecated obsolete - favour the use of {@link org.springframework.boot.context.properties.ConfigurationProperties}
+ * and Spring Boot {@link org.springframework.context.annotation.Conditional} implementations instead
  */
+@Deprecated
+@Module(AcrossModule.CURRENT_MODULE)
 public abstract class AcrossModuleSettings implements EnvironmentAware, PropertyResolver
 {
 	private Environment environment;
@@ -44,13 +50,18 @@ public abstract class AcrossModuleSettings implements EnvironmentAware, Property
 
 	@Override
 	public void setEnvironment( Environment environment ) {
-		this.environment = environment;
+		if ( this.environment == null ) {
+			this.environment = environment;
 
-		if ( environment instanceof ConfigurableEnvironment ) {
-			ConfigurableEnvironment configurable = (ConfigurableEnvironment) environment;
+			if ( environment instanceof ConfigurableEnvironment ) {
+				ConfigurableEnvironment configurable = (ConfigurableEnvironment) environment;
 
-			// Add defaults as the very last property source
-			configurable.getPropertySources().addLast( registry );
+				// Add defaults as the very last property source
+				MutablePropertySources ps = configurable.getPropertySources();
+				if ( !ps.contains( registry.getName() ) ) {
+					ps.addLast( registry );
+				}
+			}
 		}
 	}
 

@@ -17,8 +17,6 @@
 package com.foreach.across.test.lifecycle;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
-import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.TestContextEventListener;
@@ -27,18 +25,17 @@ import com.foreach.across.test.modules.module1.*;
 import com.foreach.across.test.modules.module2.ConstructedBeanModule2;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
 import com.foreach.across.test.modules.module2.TestModule2;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -48,7 +45,7 @@ import javax.sql.DataSource;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestAcrossContextBoot.Config.class)
+@ContextConfiguration(classes = { TestAcrossContextBoot.Config.class, PropertyPlaceholderAutoConfiguration.class })
 @DirtiesContext
 public class TestAcrossContextBoot
 {
@@ -202,21 +199,9 @@ public class TestAcrossContextBoot
 	}
 
 	@Configuration
+	@PropertySource("classpath:com/foreach/across/test/TestAcrossContextBoot.properties")
 	public static class Config
 	{
-		@Configuration
-		public static class CustomPropertyConfig
-		{
-			@Bean
-			public static PropertySourcesPlaceholderConfigurer properties() {
-				PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-				configurer.setLocation(
-						new ClassPathResource( "com/foreach/across/test/TestAcrossContextBoot.properties" ) );
-
-				return configurer;
-			}
-		}
-
 		@Bean
 		public TestContextEventListener testListener() {
 			return new TestContextEventListener();
@@ -237,8 +222,6 @@ public class TestAcrossContextBoot
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
 			context.setInstallerAction( InstallerAction.EXECUTE );
-			context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( CustomPropertyConfig.class ),
-			                                         ConfigurerScope.CONTEXT_AND_MODULES );
 
 			context.addModule( testModule1() );
 			context.addModule( testModule2() );

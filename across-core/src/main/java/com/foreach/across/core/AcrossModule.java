@@ -169,9 +169,23 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 
 	/**
 	 * @return Array containing the installer classes in the order of which they should be run.
+	 * @deprecated Signature is subject to change in the future, only class instances should be returned.
 	 */
+	@Deprecated
 	public Object[] getInstallers() {
 		return new Object[0];
+	}
+
+	/**
+	 * The collection of packages that should be scanned for {@link com.foreach.across.core.annotations.Installer}
+	 * annotated classes. Defaults to the "installers" package relative to the package of the implementing class.
+	 * <p>
+	 *
+	 * @return Array of package names.
+	 * @see #registerDefaultInstallerContextConfigurers(Set)
+	 */
+	public String[] getInstallerScanPackages() {
+		return new String[] { getClass().getPackage().getName() + ".installers" };
 	}
 
 	/**
@@ -202,10 +216,14 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	/**
 	 * Register the default {@link ApplicationContextConfigurer} to be added to the global installer
 	 * {@link org.springframework.context.ApplicationContext} for this module.
+	 * This defaults to the "installers.config" package relative to the package of the implementing class.
 	 *
 	 * @param installerContextConfigurers Set of existing configurers to add to.
 	 */
 	protected void registerDefaultInstallerContextConfigurers( Set<ApplicationContextConfigurer> installerContextConfigurers ) {
+		installerContextConfigurers.add(
+				new ComponentScanConfigurer( getClass().getPackage().getName() + ".installers.config" )
+		);
 	}
 
 	public Set<ApplicationContextConfigurer> getApplicationContextConfigurers() {
