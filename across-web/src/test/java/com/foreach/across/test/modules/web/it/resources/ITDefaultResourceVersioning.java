@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.it.resourceurls;
+package com.foreach.across.test.modules.web.it.resources;
 
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.modules.web.it.AbstractWebIntegrationTest;
 import com.foreach.across.test.modules.web.it.modules.TestModules;
 import com.foreach.across.test.modules.web.it.modules.testResources.TestResourcesModule;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.resource.AppCacheManifestTransformer;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
+import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
+import org.springframework.web.servlet.resource.VersionResourceResolver;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -36,6 +42,20 @@ import static org.junit.Assert.assertTrue;
 @TestPropertySource(properties = "build.number=95247852")
 public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 {
+	@Autowired
+	private AcrossContextBeanRegistry beanRegistry;
+
+	@Test
+	public void cachingShouldBeEnabled() {
+		HttpHeaders headers = headers( "/across/resources/css/testResources/parent.css" );
+		assertEquals( "max-age=31536000, must-revalidate", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
+		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+
+		headers = headers( "/across/resources/js/testResources/javascript.js" );
+		assertEquals( "max-age=31536000, must-revalidate", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
+		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+	}
+
 	@Test
 	public void staticResourcesShouldBeServedUnderDefaultPath() {
 		String output = get( "/across/resources/css/testResources/parent.css" );
@@ -88,26 +108,24 @@ public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 		assertTrue( notFound( "/across/resources/custom/test.txt" ) );
 	}
 
+	@Test
+	public void versioningRelatedBeansShouldExist() {
+		assertNotNull( beanRegistry.getBeanOfTypeFromModule( AcrossWebModule.NAME, VersionResourceResolver.class ) );
+		assertNotNull( beanRegistry.getBeanOfTypeFromModule(
+				AcrossWebModule.NAME, AppCacheManifestTransformer.class
+		) );
+		assertNotNull( beanRegistry.getBeanOfTypeFromModule( AcrossWebModule.NAME, ResourceUrlProvider.class ) );
+		assertNotNull( beanRegistry.getBeanOfTypeFromModule(
+				AcrossWebModule.NAME, ResourceUrlProviderExposingInterceptor.class
+		) );
+	}
+
 	@Configuration
 	@EnableAcrossContext(
 			modules = TestResourcesModule.NAME,
 			modulePackageClasses = { AcrossPlatform.class, TestModules.class }
 	)
-	public static class Config extends WebMvcConfigurerAdapter
+	public static class Config
 	{
-		// todo: doesnt need to be here, test needs to be adapted with the default resource versioning strategy in place
-		/*@Override
-		public void addResourceHandlers( ResourceHandlerRegistry registry ) {
-			String resourceLocations = "classpath:/views/";
-			AppCacheManifestTransformer appCacheTransformer = new AppCacheManifestTransformer();
-			VersionResourceResolver versionResolver = new VersionResourceResolver()
-					.addVersionStrategy( new FixedVersionStrategy( "build-1.1.0" ), "*//**" );
-	 registry.addResourceHandler( "/across/resources*//**" )
-	 .addResourceLocations( resourceLocations )
-	 .setCachePeriod( 0 )
-	 .resourceChain( false )
-	 .addResolver( versionResolver )
-	 .addTransformer( appCacheTransformer );
-	 }*/
 	}
 }

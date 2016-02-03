@@ -154,12 +154,12 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 				context.addBeanFactoryPostProcessor( postProcessor );
 			}
 
-			if ( !ArrayUtils.isEmpty( configurer.annotatedClasses() ) ) {
-				context.register( configurer.annotatedClasses() );
-			}
-
 			if ( !ArrayUtils.isEmpty( configurer.componentScanPackages() ) ) {
 				context.scan( configurer.componentScanPackages() );
+			}
+
+			if ( !ArrayUtils.isEmpty( configurer.annotatedClasses() ) ) {
+				context.register( configurer.annotatedClasses() );
 			}
 		}
 

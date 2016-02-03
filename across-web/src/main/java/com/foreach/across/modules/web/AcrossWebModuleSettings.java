@@ -34,8 +34,6 @@ public class AcrossWebModuleSettings
 	public static final String DEVELOPMENT_VIEWS = "acrossWebModule.developmentViews";
 
 	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.resources.path";
-	public static final String RESOURCE_URLS_AUTO_CONFIGURE = "acrossWebModule.resources.configure-versioning";
-	public static final String RESOURCES_VERSION = "acrossWebModule.resources.fixed-version";
 
 	/**
 	 * Multipart support configuration settings.

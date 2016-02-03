@@ -8,6 +8,12 @@ Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :spring-batch-url: http://projects.spring.io/spring-batch/
 :spring-security-url: http://projects.spring.io/spring-security/
 
+[copyright,verbatim]
+--
+Copyright (C) 2014-2016 +
+[small]#Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.#
+--
+
 :numbered!:
 [abstract]
 == Across in a nutshell

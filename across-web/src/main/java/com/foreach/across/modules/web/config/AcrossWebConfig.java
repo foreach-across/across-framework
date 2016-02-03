@@ -50,7 +50,6 @@ import java.util.List;
 public class AcrossWebConfig extends WebMvcConfigurerAdapter implements PrefixingHandlerMappingConfigurer
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );
-	private static final String[] DEFAULT_RESOURCES = new String[] { "css", "js" };
 
 	@Autowired
 	private AcrossWebModuleSettings settings;
