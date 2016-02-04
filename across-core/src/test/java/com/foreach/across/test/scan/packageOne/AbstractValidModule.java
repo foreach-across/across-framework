@@ -15,19 +15,15 @@
  */
 package com.foreach.across.test.scan.packageOne;
 
-import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.test.scan.packageTwo.OtherValidModule;
+import com.foreach.across.core.AcrossModule;
 
 /**
  * @author Arne Vandamme
  */
-@AcrossDepends(optional = OtherValidModule.NAME)
-public class ExtendedValidModule extends AbstractValidModule
+public abstract class AbstractValidModule extends AcrossModule
 {
-	public static final String NAME = "ExtendedValidModule";
-
 	@Override
-	public String getName() {
-		return NAME;
+	public String getDescription() {
+		return "Abstract module implementation";
 	}
 }
