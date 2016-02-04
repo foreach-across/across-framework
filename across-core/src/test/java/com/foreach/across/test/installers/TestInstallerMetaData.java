@@ -156,6 +156,10 @@ public class TestInstallerMetaData
 	@Installer(description = "multi methods")
 	private static class ExtendedInstaller extends AbstractInstaller
 	{
+		@Override
+		public void abstractInstallerMethod() {
+		}
+
 		@InstallerMethod
 		@Order(2)
 		protected void methodTwo() {
