@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.config.resources;
 
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
@@ -23,10 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
@@ -63,6 +68,12 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	@Autowired
 	private DefaultResourceRegistrationConfigurer defaultResourceRegistrationConfigurer;
 
+	@Autowired(required = false)
+	private ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor;
+
+	@Autowired(required = false)
+	private ResourceUrlProvider resourceUrlProvider;
+
 	@Override
 	public void addResourceHandlers( ResourceHandlerRegistry registry ) {
 		for ( String resourceFolder : configuration.getFolders() ) {
@@ -93,6 +104,36 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 				}
 			}
 		}
+	}
+
+	/**
+	 * Reloads the required resources configuration.
+	 *
+	 * @param resourceHandlerRegistry containing the registered resources
+	 * @param applicationContext      triggering the reload
+	 */
+	public void reload( com.foreach.across.modules.web.mvc.ResourceHandlerRegistry resourceHandlerRegistry,
+	                    ApplicationContext applicationContext ) {
+		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
+
+		if ( resourceUrlProviderExposingInterceptor != null && resourceUrlProvider != null ) {
+			resourceHandlerMapping.setInterceptors(
+					new HandlerInterceptor[] { resourceUrlProviderExposingInterceptor }
+			);
+		}
+		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );
+		resourceHandlerMapping.initApplicationContext();
+
+		// Detect the handler mappings
+		if ( resourceUrlProvider != null ) {
+			resourceUrlProvider.onApplicationEvent( new ContextRefreshedEvent( applicationContext ) );
+		}
+	}
+
+	@Bean
+	@Exposed
+	public SimpleUrlHandlerMapping resourceHandlerMapping() {
+		return new SimpleUrlHandlerMapping();
 	}
 
 	/**
