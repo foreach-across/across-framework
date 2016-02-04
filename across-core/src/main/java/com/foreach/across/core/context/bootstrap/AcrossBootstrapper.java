@@ -417,7 +417,7 @@ public class AcrossBootstrapper
 			                        )
 			);
 
-			registerSettings( module, providedSingletons );
+			registerSettings( module, providedSingletons, false );
 
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
 			config.addApplicationContextConfigurers(
@@ -444,23 +444,27 @@ public class AcrossBootstrapper
 		return contextConfig;
 	}
 
-	private void registerSettings( AcrossModule module, ProvidedBeansMap beansMap ) {
+	private void registerSettings( AcrossModule module, ProvidedBeansMap beansMap, boolean compatibility ) {
 		String settingsClassName = ClassUtils.getUserClass( module.getClass() ).getName() + "Settings";
 
 		try {
 			Class settingsClass = Class.forName( settingsClassName );
 
-			GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
-			beanDefinition.setBeanClass( settingsClass );
-			beanDefinition.setPrimary( true );
-			beanDefinition.addQualifier(
-					new AutowireCandidateQualifier( Module.class.getName(), AcrossModule.CURRENT_MODULE )
-			);
+			if ( !compatibility ) {
+				// Register settings as bean in the module application context
+				GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+				beanDefinition.setBeanClass( settingsClass );
+				beanDefinition.setPrimary( true );
+				beanDefinition.addQualifier(
+						new AutowireCandidateQualifier( Module.class.getName(), AcrossModule.CURRENT_MODULE )
+				);
 
-			beansMap.put( AcrossModule.CURRENT_MODULE + "Settings", beanDefinition );
-
-			if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
-				beanDefinition = new GenericBeanDefinition();
+				beansMap.put( AcrossModule.CURRENT_MODULE + "Settings", beanDefinition );
+			}
+			else if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
+				// If this is an old settings class, register it in the parent context as well,
+				// note that this means the bean will be wired in a different context than in the module
+				GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
 				beanDefinition.setBeanClass( settingsClass );
 				beanDefinition.setPrimary( false );
 				beanDefinition.setLazyInit( true );
@@ -563,13 +567,8 @@ public class AcrossBootstrapper
 					                                                   moduleInfo.getName() )
 			                   )
 			);
-			/*
-			providedBeans.put( "across.moduleSettings." + moduleInfo.getName(),
-			                   new SingletonBean(
-					                   moduleInfo.getSettings(),
-					                   new AutowireCandidateQualifier( Module.class.getName(),
-					                                                   moduleInfo.getName() )
-			                   ) );*/
+
+			registerSettings( moduleInfo.getModule(), providedBeans, true );
 		}
 
 		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),
