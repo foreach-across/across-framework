@@ -39,6 +39,10 @@ public class SettingsConfig
 	@Module(AcrossModule.CURRENT_MODULE)
 	private SettingsModuleSettings settings;
 
+	@Autowired
+	@Module("SettingsModule")
+	private SettingsModuleSettings othersettings;
+
 	public boolean isActive() {
 		return settings.isActive();
 	}
@@ -49,6 +53,10 @@ public class SettingsConfig
 
 	public Date getDate() {
 		return settings.getDate();
+	}
+
+	public SettingsModuleSettings getNamedModuleSettings() {
+		return othersettings;
 	}
 
 	@Bean

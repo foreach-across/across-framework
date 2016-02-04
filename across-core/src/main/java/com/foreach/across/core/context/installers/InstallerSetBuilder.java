@@ -29,8 +29,7 @@ import java.util.*;
  */
 public class InstallerSetBuilder
 {
-	private final Set<Object> candidates = new LinkedHashSet<>();
-	private final Set<String> installerNames = new HashSet<>();
+	private Map<String, Object> candidateMap = new LinkedHashMap<>();
 
 	/**
 	 * Add one or more installers either as instance or class.
@@ -57,11 +56,11 @@ public class InstallerSetBuilder
 	 */
 	public Object[] build() {
 		List<Object> installers = new ArrayList<>();
-		installers.addAll( candidates );
+		installers.addAll( candidateMap.values() );
 
 		final Map<Object, Integer> registrationOrderMap = new HashMap<>();
 		int ix = 0;
-		for ( Object installer : candidates ) {
+		for ( Object installer : installers ) {
 			registrationOrderMap.put( installer, ix++ );
 		}
 
@@ -88,23 +87,30 @@ public class InstallerSetBuilder
 	private void validateAndAddCandidate( Object candidate ) {
 		Assert.notNull( candidate );
 
-		if ( !candidates.contains( candidate ) ) {
-			Class<?> installerClass = candidate.getClass();
-
-			if ( candidate instanceof Class ) {
-				installerClass = (Class<?>) candidate;
-			}
+		if ( !candidateMap.containsValue( candidate ) ) {
+			Class<?> installerClass = installerClass( candidate );
 
 			InstallerMetaData metaData = InstallerMetaData.forClass( installerClass );
 
-			if ( installerNames.contains( metaData.getName() ) ) {
-				throw new IllegalArgumentException(
-						"Another installer was already registered with name: " + metaData.getName() );
+			if ( candidateMap.containsKey( metaData.getName() ) ) {
+				Class<?> otherInstaller = installerClass( candidateMap.get( metaData.getName() ) );
+
+				if ( !otherInstaller.equals( installerClass ) ) {
+					throw new IllegalArgumentException(
+							"Another installer was already registered with name: " + metaData.getName() );
+				}
 			}
-
-			installerNames.add( metaData.getName() );
-
-			candidates.add( candidate );
+			else {
+				candidateMap.put( metaData.getName(), candidate );
+			}
 		}
+	}
+
+	private Class<?> installerClass( Object installer ) {
+		if ( installer instanceof Class ) {
+			return (Class<?>) installer;
+		}
+
+		return installer.getClass();
 	}
 }

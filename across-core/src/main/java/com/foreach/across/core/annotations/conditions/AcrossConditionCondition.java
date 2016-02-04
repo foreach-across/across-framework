@@ -119,7 +119,7 @@ public class AcrossConditionCondition implements Condition
 				ConfigurableListableBeanFactory beanFactory = (ConfigurableListableBeanFactory) getBeanFactory();
 				String[] beanNames = beanFactory.getBeanNamesForType( AcrossModuleSettings.class );
 
-				if ( beanNames.length == 1 ) {
+				if ( beanNames.length >= 1 ) {
 					AcrossModuleSettings settings
 							= (AcrossModuleSettings) beanFactory.createBean( beanFactory.getType( beanNames[0] ) );
 					settings.setEnvironment( environment );
