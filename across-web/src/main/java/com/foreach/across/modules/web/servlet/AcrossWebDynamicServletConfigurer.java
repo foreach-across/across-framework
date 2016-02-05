@@ -16,9 +16,6 @@
 
 package com.foreach.across.modules.web.servlet;
 
-import com.foreach.across.core.AcrossException;
-import org.springframework.web.context.ServletContextAware;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
@@ -30,22 +27,24 @@ import javax.servlet.ServletException;
  * @author Arne Vandamme
  * @see com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer
  */
-public abstract class AcrossWebDynamicServletConfigurer implements ServletContextAware
+public abstract class AcrossWebDynamicServletConfigurer
 {
-	@Override
-	public void setServletContext( ServletContext servletContext ) {
-		Object loader = servletContext.getAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER );
-
-		try {
-			if ( loader != null ) {
-				dynamicConfigurationAllowed( servletContext );
-			}
-			else {
-				dynamicConfigurationDenied( servletContext );
-			}
+	/**
+	 * Apply the configuration to the {@link ServletContext} provided.  Will dispatch to either
+	 * {@link #dynamicConfigurationAllowed(ServletContext)} or {@link #dynamicConfigurationDenied(ServletContext)}
+	 * depending on the changeable state of the {@link ServletContext} itself.
+	 *
+	 * @param servletContext in which to register the servlets (if possible)
+	 * @param servletContextIsExtensible {@code true} if the context can still have filters or servlets registered
+	 * @throws ServletException if an error occurs
+	 */
+	public final void configure( ServletContext servletContext,
+	                             boolean servletContextIsExtensible ) throws ServletException {
+		if ( servletContextIsExtensible ) {
+			dynamicConfigurationAllowed( servletContext );
 		}
-		catch ( ServletException se ) {
-			throw new AcrossException( se );
+		else {
+			dynamicConfigurationDenied( servletContext );
 		}
 	}
 

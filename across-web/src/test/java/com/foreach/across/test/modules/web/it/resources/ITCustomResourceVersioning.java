@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = ITCustomResourceVersioning.Config.class)
-@TestPropertySource(properties = "build.number=95247852")
+@TestPropertySource(properties = { "build.number=95247852", "acrossWebModule.resources.versioning=true" })
 public class ITCustomResourceVersioning extends AbstractWebIntegrationTest
 {
 	@Test
