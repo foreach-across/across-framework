@@ -70,7 +70,10 @@ public class StringToDateConverter implements Converter<String, Date>
 			"EEEE, MMM dd, yyyy HH:mm:ss z",
 			"EEEE, MMM dd, yyyy HH:mm:ss.SSS",
 			"EEEE, MMM dd, yyyy HH:mm:ss.SSSZ",
-			"EEEE, MMM dd, yyyy HH:mm:ss.SSSXXX"
+			"EEEE, MMM dd, yyyy HH:mm:ss.SSSXXX",
+			"yyyyMMddHHmm",
+			"yyyyMMdd-HHmm",
+			"yyyy-MM-dd'T'HH:mm:ss'Z'"
 	};
 
 	private String[] patterns;
