@@ -28,6 +28,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -139,6 +141,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	/**
 	 * Configures the {@link ResourceUrlEncodingFilter} of resource versioning if active.
 	 */
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	@Configuration("resourceUrlEncodingFilterConfiguration")
 	@ConditionalOnProperty(value = "acrossWebModule.resources.versioning", matchIfMissing = true)
 	public static class ResourceUrlEncodingFilterConfiguration extends AcrossWebDynamicServletConfigurer
