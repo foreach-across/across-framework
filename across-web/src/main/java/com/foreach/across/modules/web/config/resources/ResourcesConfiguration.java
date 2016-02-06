@@ -159,7 +159,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 					                                                    DispatcherType.ERROR,
 					                                                    DispatcherType.ASYNC
 			                                                    ),
-			                                                    false,
+			                                                    true,
 			                                                    "/*" );
 		}
 

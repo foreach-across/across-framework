@@ -22,10 +22,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.resource.AppCacheManifestTransformer;
-import org.springframework.web.servlet.resource.FixedVersionStrategy;
+import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
+import org.springframework.web.servlet.resource.ResourceTransformerChain;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * Applies the caching and versioning configuration for the default module resources.
@@ -36,6 +41,28 @@ import org.springframework.web.servlet.resource.VersionResourceResolver;
 @Configuration
 public class DefaultResourceRegistrationConfigurer
 {
+	/**
+	 * Special implementation that does no link transforming inside css files.  This appears
+	 * to work better if we use a fixed version strategy, otherwise relative urls inside css
+	 * files get transformed incorrectly.
+	 * <p>
+	 * See https://jira.spring.io/browse/SPR-13727 and https://jira.spring.io/browse/SPR-13806.
+	 * </p>
+	 * <p>
+	 * Implementation is required as there's no way to tell the transformer chain to have
+	 * *no* {@link CssLinkResourceTransformer}.  It gets added by default if there is none yet.
+	 * </p>
+	 */
+	protected static class NoOpCssLinkTransformer extends CssLinkResourceTransformer
+	{
+		@Override
+		public Resource transform( HttpServletRequest request,
+		                           Resource resource,
+		                           ResourceTransformerChain transformerChain ) throws IOException {
+			return transformerChain.transform( request, resource );
+		}
+	}
+
 	@Autowired
 	private ResourcesConfigurationSettings configuration;
 
@@ -57,7 +84,8 @@ public class DefaultResourceRegistrationConfigurer
 		if ( shouldApplyFixedVersion() ) {
 			registration.resourceChain( cacheResourceResolving() )
 			            .addResolver( versionResourceResolver() )
-			            .addTransformer( appCacheManifestTransformer() );
+			            .addTransformer( appCacheManifestTransformer() )
+			            .addTransformer( new NoOpCssLinkTransformer() );
 		}
 	}
 
@@ -65,14 +93,14 @@ public class DefaultResourceRegistrationConfigurer
 	 * @return period to cache resources
 	 */
 	protected Integer getCachePeriod() {
-		return developmentMode.isActive() ? 0 : configuration.getCachingPeriod();
+		return developmentMode.isActive() ? Integer.valueOf( 0 ) : configuration.getCachingPeriod();
 	}
 
 	/**
 	 * @return configured fixed version to use for versioning strategy
 	 */
 	protected String getFixedVersion() {
-		return configuration.getVersioningVersion();
+		return developmentMode.isActive() ? developmentMode.getBuildId() : configuration.getVersioningVersion();
 	}
 
 	/**
@@ -101,7 +129,7 @@ public class DefaultResourceRegistrationConfigurer
 	@ConditionalOnMissingBean(value = VersionResourceResolver.class, search = SearchStrategy.CURRENT)
 	public VersionResourceResolver versionResourceResolver() {
 		return new VersionResourceResolver()
-				.addVersionStrategy( new FixedVersionStrategy( getFixedVersion() ), "/**" );
+				.addFixedVersionStrategy( getFixedVersion(), "/**" );
 	}
 
 	@Bean

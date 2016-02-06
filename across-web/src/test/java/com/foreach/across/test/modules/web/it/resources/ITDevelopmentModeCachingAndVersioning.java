@@ -17,25 +17,30 @@ package com.foreach.across.test.modules.web.it.resources;
 
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.test.modules.web.it.AbstractWebIntegrationTest;
 import com.foreach.across.test.modules.web.it.modules.TestModules;
 import com.foreach.across.test.modules.web.it.modules.testResources.TestResourcesModule;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = ITDefaultResourceVersioning.Config.class)
 @TestPropertySource(properties = { "across.development.active=true" })
-public class ITDevelopmentModeNoCaching extends AbstractWebIntegrationTest
+public class ITDevelopmentModeCachingAndVersioning extends AbstractWebIntegrationTest
 {
+	@Autowired
+	private AcrossContextBeanRegistry beanRegistry;
+
 	@Test
 	public void noCacheShouldBeExplicit() {
 		HttpHeaders headers = headers( "/across/resources/css/testResources/parent.css" );
@@ -45,6 +50,42 @@ public class ITDevelopmentModeNoCaching extends AbstractWebIntegrationTest
 		headers = headers( "/across/resources/js/testResources/javascript.js" );
 		assertEquals( "no-cache", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
 		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+	}
+
+	@Test
+	public void resourcesShouldUseDevelopmentBuildIdAsVersion() {
+		String output = get( "/across/resources/css/" + version() + "/testResources/parent.css" );
+		assertNotNull( output );
+		assertTrue( output.contains( "body { background: url(\"images/test.png\"); }" ) );
+
+		output = get( "/across/resources/js/" + version() + "/testResources/javascript.js" );
+		assertNotNull( output );
+		assertTrue( output.contains( "alert('hello');" ) );
+
+		output = get( "/across/resources/static/" + version() + "/testResources/parent.css" );
+		assertNotNull( output );
+		assertTrue( output.contains( "body { background: url(\"./images/test.png\"); }" ) );
+
+		output = get( "/across/resources/static/" + version() + "/testResources/javascript.js" );
+		assertNotNull( output );
+		assertTrue( output.contains( "alert('hello');" ) );
+	}
+
+	@Test
+	public void thymeleafShouldReplaceResourceUrls() {
+		String output = get( "/testResources" );
+		assertNotNull( output );
+		assertTrue( output.contains( "parent css: /across/resources/css/" + version() + "/testResources/parent.css" ) );
+		assertTrue(
+				output.contains( "javascript: /across/resources/js/" + version() + "/testResources/javascript.js" )
+		);
+		assertTrue(
+				output.contains( "static css: /across/resources/static/" + version() + "/testResources/parent.css" )
+		);
+	}
+
+	private String version() {
+		return beanRegistry.getBeanOfType( AcrossDevelopmentMode.class ).getBuildId();
 	}
 
 	@Configuration

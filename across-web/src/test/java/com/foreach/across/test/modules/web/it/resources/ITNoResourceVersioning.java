@@ -70,7 +70,7 @@ public class ITNoResourceVersioning extends AbstractWebIntegrationTest
 	public void staticResourcesShouldBeServedUnderDefaultPath() {
 		String output = get( "/across/resources/css/testResources/parent.css" );
 		assertNotNull( output );
-		assertTrue( output.contains( "body { color: black; }" ) );
+		assertTrue( output.contains( "body { background: url(\"images/test.png\"); }" ) );
 
 		output = get( "/across/resources/js/testResources/javascript.js" );
 		assertNotNull( output );
