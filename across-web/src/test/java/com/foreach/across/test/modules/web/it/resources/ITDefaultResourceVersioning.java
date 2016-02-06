@@ -60,7 +60,7 @@ public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 	public void staticResourcesShouldBeServedUnderDefaultPath() {
 		String output = get( "/across/resources/css/testResources/parent.css" );
 		assertNotNull( output );
-		assertTrue( output.contains( "body { color: black; }" ) );
+		assertTrue( output.contains( "body { background: url(\"images/test.png\"); }" ) );
 
 		output = get( "/across/resources/js/testResources/javascript.js" );
 		assertNotNull( output );
@@ -68,7 +68,7 @@ public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 
 		output = get( "/across/resources/static/testResources/parent.css" );
 		assertNotNull( output );
-		assertTrue( output.contains( "body { color: black; }" ) );
+		assertTrue( output.contains( "body { background: url(\"./images/test.png\"); }" ) );
 
 		output = get( "/across/resources/static/testResources/javascript.js" );
 		assertNotNull( output );
@@ -79,7 +79,7 @@ public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 	public void staticResourcesShouldBeServedUnderVersionedPath() {
 		String output = get( "/across/resources/css/95247852/testResources/parent.css" );
 		assertNotNull( output );
-		assertTrue( output.contains( "body { color: black; }" ) );
+		assertTrue( output.contains( "body { background: url(\"images/test.png\"); }" ) );
 
 		output = get( "/across/resources/js/95247852/testResources/javascript.js" );
 		assertNotNull( output );
@@ -87,7 +87,7 @@ public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 
 		output = get( "/across/resources/static/95247852/testResources/parent.css" );
 		assertNotNull( output );
-		assertTrue( output.contains( "body { color: black; }" ) );
+		assertTrue( output.contains( "body { background: url(\"./images/test.png\"); }" ) );
 
 		output = get( "/across/resources/static/95247852/testResources/javascript.js" );
 		assertNotNull( output );
