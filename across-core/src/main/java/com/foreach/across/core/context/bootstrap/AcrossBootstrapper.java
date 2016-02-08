@@ -54,6 +54,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.util.ClassUtils;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -450,29 +451,31 @@ public class AcrossBootstrapper
 		try {
 			Class settingsClass = Class.forName( settingsClassName );
 
-			if ( !compatibility ) {
-				// Register settings as bean in the module application context
-				GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
-				beanDefinition.setBeanClass( settingsClass );
-				beanDefinition.setPrimary( true );
-				beanDefinition.addQualifier(
-						new AutowireCandidateQualifier( Module.class.getName(), AcrossModule.CURRENT_MODULE )
-				);
+			if ( !settingsClass.isInterface() && !Modifier.isAbstract( settingsClass.getModifiers() ) ) {
+				if ( !compatibility ) {
+					// Register settings as bean in the module application context
+					GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+					beanDefinition.setBeanClass( settingsClass );
+					beanDefinition.setPrimary( true );
+					beanDefinition.addQualifier(
+							new AutowireCandidateQualifier( Module.class.getName(), AcrossModule.CURRENT_MODULE )
+					);
 
-				beansMap.put( AcrossModule.CURRENT_MODULE + "Settings", beanDefinition );
-			}
-			else if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
-				// If this is an old settings class, register it in the parent context as well,
-				// note that this means the bean will be wired in a different context than in the module
-				GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
-				beanDefinition.setBeanClass( settingsClass );
-				beanDefinition.setPrimary( false );
-				beanDefinition.setLazyInit( true );
-				beanDefinition.addQualifier(
-						new AutowireCandidateQualifier( Module.class.getName(), module.getName() )
-				);
+					beansMap.put( AcrossModule.CURRENT_MODULE + "Settings", beanDefinition );
+				}
+				else if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
+					// If this is an old settings class, register it in the parent context as well,
+					// note that this means the bean will be wired in a different context than in the module
+					GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+					beanDefinition.setBeanClass( settingsClass );
+					beanDefinition.setPrimary( false );
+					beanDefinition.setLazyInit( true );
+					beanDefinition.addQualifier(
+							new AutowireCandidateQualifier( Module.class.getName(), module.getName() )
+					);
 
-				beansMap.put( settingsClassName, beanDefinition );
+					beansMap.put( settingsClassName, beanDefinition );
+				}
 			}
 		}
 		catch ( ClassNotFoundException ignore ) {
