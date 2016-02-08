@@ -60,8 +60,7 @@ public class ResourcesConfigurationSettings
 	private boolean versioning = true;
 
 	/**
-	 * Auto configure caching of the default resource resolvers.
-	 * This enables both client-side caching and caching of the resolved resources.
+	 * Auto configure client-side caching of static resources
 	 */
 	private boolean caching = true;
 

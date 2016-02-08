@@ -18,7 +18,6 @@ package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.OrderInModule;
-import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
@@ -34,8 +33,6 @@ import com.foreach.across.modules.web.resource.WebResourcePackageManager;
 import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
 import com.foreach.across.modules.web.resource.WebResourceTranslator;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,41 +46,11 @@ import java.util.List;
 @OrderInModule(1)
 public class AcrossWebConfig extends WebMvcConfigurerAdapter implements PrefixingHandlerMappingConfigurer
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );
-
 	@Autowired
 	private AcrossWebModuleSettings settings;
 
 	@Autowired
-	private AcrossDevelopmentMode developmentMode;
-
-	@Autowired
 	private PrefixingPathRegistry prefixingPathRegistry;
-
-//	@Override
-//	public void addResourceHandlers( ResourceHandlerRegistry registry ) {
-//		for ( String resource : DEFAULT_RESOURCES ) {
-//			registry.addResourceHandler(
-//					settings.getResources().getPath() + "/" + resource + "/**" ).addResourceLocations(
-//					"classpath:/views/" + resource + "/" );
-//
-//			if ( developmentMode.isActive() ) {
-//				LOG.info( "Activating {} development mode resource handlers", resource );
-//
-//				Map<String, String> views = developmentMode.getDevelopmentLocationsForResourcePath(
-//						"views/" + resource );
-//
-//				for ( Map.Entry<String, String> entry : views.entrySet() ) {
-//					String url = settings.getResources().getPath() + "/" + resource + "/" + entry.getKey() + "/**";
-//					File physical = new File( entry.getValue() );
-//
-//					LOG.info( "Mapping {} development views for {} to physical path {}", resource, url, physical );
-//					registry.addResourceHandler( url )
-//					        .addResourceLocations( physical.toURI().toString() );
-//				}
-//			}
-//		}
-//	}
 
 	@Override
 	public boolean supports( String mapperName ) {

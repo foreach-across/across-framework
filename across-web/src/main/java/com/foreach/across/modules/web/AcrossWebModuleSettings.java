@@ -56,7 +56,7 @@ public class AcrossWebModuleSettings
 	private final Resources resources = new Resources();
 
 	/**
-	 * Map of physical locations for views resources.
+	 * Map of physical locations for views resources.  Only used if development mode is active.
 	 */
 	private Map<String, String> developmentViews = Collections.emptyMap();
 
