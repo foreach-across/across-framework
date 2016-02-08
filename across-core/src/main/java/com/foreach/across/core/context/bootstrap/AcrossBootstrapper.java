@@ -19,6 +19,7 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.*;
 import com.foreach.across.core.context.beans.PrimarySingletonBean;
@@ -47,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -399,7 +401,7 @@ public class AcrossBootstrapper
 			config.getInstallers().addAll( buildInstallerSet( module ) );
 
 			// Provide the current module beans
-			Map<String, Object> providedSingletons = new HashMap<>();
+			ProvidedBeansMap providedSingletons = new ProvidedBeansMap();
 			providedSingletons.put( AcrossModule.CURRENT_MODULE + "Info",
 			                        new PrimarySingletonBean(
 					                        moduleInfo,
@@ -415,7 +417,7 @@ public class AcrossBootstrapper
 			                        )
 			);
 
-			registerSettings( module, config );
+			registerSettings( module, providedSingletons, false );
 
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
 			config.addApplicationContextConfigurers(
@@ -442,12 +444,36 @@ public class AcrossBootstrapper
 		return contextConfig;
 	}
 
-	private void registerSettings( AcrossModule module, ModuleBootstrapConfig config ) {
+	private void registerSettings( AcrossModule module, ProvidedBeansMap beansMap, boolean compatibility ) {
 		String settingsClassName = ClassUtils.getUserClass( module.getClass() ).getName() + "Settings";
 
 		try {
 			Class settingsClass = Class.forName( settingsClassName );
-			config.addApplicationContextConfigurer( settingsClass );
+
+			if ( !compatibility ) {
+				// Register settings as bean in the module application context
+				GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+				beanDefinition.setBeanClass( settingsClass );
+				beanDefinition.setPrimary( true );
+				beanDefinition.addQualifier(
+						new AutowireCandidateQualifier( Module.class.getName(), AcrossModule.CURRENT_MODULE )
+				);
+
+				beansMap.put( AcrossModule.CURRENT_MODULE + "Settings", beanDefinition );
+			}
+			else if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
+				// If this is an old settings class, register it in the parent context as well,
+				// note that this means the bean will be wired in a different context than in the module
+				GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+				beanDefinition.setBeanClass( settingsClass );
+				beanDefinition.setPrimary( false );
+				beanDefinition.setLazyInit( true );
+				beanDefinition.addQualifier(
+						new AutowireCandidateQualifier( Module.class.getName(), module.getName() )
+				);
+
+				beansMap.put( settingsClassName, beanDefinition );
+			}
 		}
 		catch ( ClassNotFoundException ignore ) {
 		}
@@ -541,6 +567,8 @@ public class AcrossBootstrapper
 					                                                   moduleInfo.getName() )
 			                   )
 			);
+
+			registerSettings( moduleInfo.getModule(), providedBeans, true );
 		}
 
 		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),

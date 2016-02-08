@@ -69,7 +69,7 @@ public class ClassPathScanningCandidateModuleProvider
 					MetadataReader metadataReader = metadataReaderFactory.getMetadataReader( resource );
 					ClassMetadata classMetadata = metadataReader.getClassMetadata();
 
-					if ( isAcrossModuleClass( classMetadata ) ) {
+					if ( isAcrossModuleClass( classMetadata, false ) ) {
 						try {
 							Class moduleClass = Class.forName( classMetadata.getClassName() );
 
@@ -147,8 +147,8 @@ public class ClassPathScanningCandidateModuleProvider
 		return false;
 	}
 
-	protected boolean isAcrossModuleClass( ClassMetadata classMetadata ) {
-		if ( classMetadata.isConcrete() && classMetadata.hasSuperClass() ) {
+	protected boolean isAcrossModuleClass( ClassMetadata classMetadata, boolean canBeAbstract ) {
+		if ( ( canBeAbstract || classMetadata.isConcrete() ) && classMetadata.hasSuperClass() ) {
 			String superClassName = classMetadata.getSuperClassName();
 
 			if ( StringUtils.equals( MODULE_CLASS, superClassName ) ) {
@@ -159,7 +159,7 @@ public class ClassPathScanningCandidateModuleProvider
 					MetadataReader metadataReader = metadataReaderFactory.getMetadataReader( superClassName );
 					ClassMetadata parentClassMetadata = metadataReader.getClassMetadata();
 
-					return isAcrossModuleClass( parentClassMetadata );
+					return isAcrossModuleClass( parentClassMetadata, true );
 				}
 				catch ( IOException ioe ) {
 					return false;
