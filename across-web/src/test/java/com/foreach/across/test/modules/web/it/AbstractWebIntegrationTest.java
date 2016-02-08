@@ -30,7 +30,10 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -68,6 +71,20 @@ public abstract class AbstractWebIntegrationTest
 
 	protected String get( String relativePath ) {
 		return template.getForEntity( url( relativePath ), String.class ).getBody();
+	}
+
+	protected HttpHeaders headers( String relativePath ) {
+		return template.getForEntity( url( relativePath ), String.class ).getHeaders();
+	}
+
+	protected boolean notFound( String relativePath ) {
+		try {
+			get( relativePath );
+		}
+		catch ( HttpClientErrorException hcee ) {
+			return HttpStatus.NOT_FOUND.equals( hcee.getStatusCode() );
+		}
+		return false;
 	}
 
 	/**

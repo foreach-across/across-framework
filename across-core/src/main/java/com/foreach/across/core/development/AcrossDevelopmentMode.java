@@ -32,6 +32,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * Bean that is created if development mode is active on the AcrossContext.
@@ -46,6 +47,8 @@ public class AcrossDevelopmentMode
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossDevelopmentMode.class );
 
 	public static final String PROPERTIES = "across.devel.properties";
+
+	private final String buildId = "dev:" + UUID.randomUUID().toString();
 
 	@Autowired
 	private Environment environment;
@@ -114,6 +117,15 @@ public class AcrossDevelopmentMode
 	 */
 	public boolean isActive() {
 		return contextInfo.getContext().isDevelopmentMode();
+	}
+
+	/**
+	 * Get a unique build id that changes between application restarts.
+	 *
+	 * @return unique build id
+	 */
+	public String getBuildId() {
+		return buildId;
 	}
 
 	/**

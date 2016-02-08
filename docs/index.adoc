@@ -8,6 +8,12 @@ Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :spring-batch-url: http://projects.spring.io/spring-batch/
 :spring-security-url: http://projects.spring.io/spring-security/
 
+[copyright,verbatim]
+--
+Copyright (C) 2014-2016 +
+[small]#Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.#
+--
+
 :numbered!:
 [abstract]
 == Across in a nutshell
@@ -48,6 +54,7 @@ start-up procedures.  To this end, a module can define its own installers.
 * `AcrossWebModuleSettings` has been refactored and `AcrossWebModule` can now be <<across-web-module-settings,configured through properties>>
 ** properties support Spring configuration metadata with possible IDE support
 * by default only Thymeleaf views support is activated (breaking change)
+* static resources now configure default <<client-side-caching,client-side caching>> and <<resource-url-versioning,resource url versioning>>
 
 === 1.1.1.RELEASE
 Initial public release available on http://search.maven.org/[Maven central].

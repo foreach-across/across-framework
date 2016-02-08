@@ -24,6 +24,9 @@ import javax.servlet.ServletContext;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Extension in order to get
+ */
 @SuppressWarnings("all")
 public class ResourceHandlerRegistry extends org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 {
@@ -45,4 +48,65 @@ public class ResourceHandlerRegistry extends org.springframework.web.servlet.con
 
 		return Collections.emptyMap();
 	}
+
+	/*private String version;
+	private Boolean autoConfigure;
+
+	public ResourceHandlerRegistry( ApplicationContext applicationContext,
+	                                ServletContext servletContext,
+	                                AcrossModuleInfo currentModuleInfo ) {
+		super( applicationContext, servletContext );
+		setVersion( applicationContext, currentModuleInfo );
+	}
+
+	private void setVersion( ApplicationContext applicationContext, AcrossModuleInfo currentModuleInfo ) {
+		version = applicationContext.getEnvironment().getProperty( AcrossWebModuleSettings.RESOURCES_VERSION );
+		autoConfigure = applicationContext.getEnvironment().getProperty(
+				AcrossWebModuleSettings.RESOURCE_URLS_AUTO_CONFIGURE, Boolean.class, true );
+		if ( StringUtils.isEmpty( version ) ) {
+			version = applicationContext.getEnvironment().getProperty( "build.number" );
+			if ( StringUtils.isEmpty( version ) ) {
+				version = currentModuleInfo.getVersionInfo().getVersion();
+			}
+		}
+	}
+
+	public Map<String, ?> getUrlMap() {
+		AbstractHandlerMapping mapping = getHandlerMapping();
+
+		if ( mapping instanceof SimpleUrlHandlerMapping ) {
+			if ( autoConfigure && StringUtils.isNotEmpty( version ) ) {
+				Map<String, ?> entries = ( (SimpleUrlHandlerMapping) mapping ).getUrlMap();
+				for ( Map.Entry<String, ?> entry : entries.entrySet() ) {
+					if ( entry.getValue() instanceof ResourceHttpRequestHandler ) {
+						ResourceHttpRequestHandler handler = (ResourceHttpRequestHandler) entry.getValue();
+						if ( handler.getResourceResolvers().size() == 1 && handler.getResourceResolvers().get(
+								0 ) instanceof PathResourceResolver && handler.getResourceTransformers().isEmpty() ) {
+							//TODO: AX-56 improve this check without rewriting all spring classes?
+							AppCacheManifestTransformer appCacheTransformer = new AppCacheManifestTransformer();
+							VersionResourceResolver versionResolver = new VersionResourceResolver()
+									.addVersionStrategy( new FixedVersionStrategy( version ), "*//**" );
+							handler.setResourceResolvers( Arrays.asList( versionResolver,
+							                                             new PathResourceResolver() ) );
+							handler.setResourceTransformers( Arrays.asList( appCacheTransformer,
+							                                                new CssLinkResourceTransformer() ) );
+							try {
+								handler.afterPropertiesSet();
+							}
+							catch ( Exception e ) {
+								throw new BeanInitializationException( "Failed to init ResourceHttpRequestHandler", e );
+							}
+						}
+					}
+				}
+				return entries;
+			}
+			else {
+				return ( (SimpleUrlHandlerMapping) mapping ).getUrlMap();
+			}
+
+		}
+
+		return Collections.emptyMap();
+	}*/
 }

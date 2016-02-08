@@ -13,44 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.it;
+package com.foreach.across.test.modules.web.it.resources;
 
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
+import com.foreach.across.test.modules.web.it.AbstractWebIntegrationTest;
 import com.foreach.across.test.modules.web.it.modules.TestModules;
 import com.foreach.across.test.modules.web.it.modules.testResources.TestResourcesModule;
 import org.junit.Test;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 /**
  * @author Arne Vandamme
  */
-@ContextConfiguration(classes = ITCustomConfiguration.Config.class)
-@TestPropertySource(properties = { "acrossWebModule.resources.path=/static",
-                                   "acrossWebModule.views.thymeleaf=false" })
-public class ITCustomConfiguration extends AbstractWebIntegrationTest
+@ContextConfiguration(classes = ITDefaultResourceVersioning.Config.class)
+@TestPropertySource(properties = {
+		"acrossWebModule.resources.versioning-version=alpha",
+		"acrossWebModule.resources.caching=false"
+})
+public class ITDisableCaching extends AbstractWebIntegrationTest
 {
 	@Test
-	public void staticResourcesShouldBeServedUnderConfiguredPath() {
-		String output = get( "/static/css/testResources/parent.css" );
-		assertNotNull( output );
-		assertTrue( output.contains( "body { background: url(\"images/test.png\"); }" ) );
+	public void noCacheHeadersShouldBeSentButVersioningApplied() {
+		HttpHeaders headers = headers( "/across/resources/css/alpha/testResources/parent.css" );
+		assertFalse( headers.containsKey( HttpHeaders.CACHE_CONTROL ) );
+		assertFalse( headers.containsKey( HttpHeaders.EXPIRES ) );
 
-		output = get( "/static/js/testResources/javascript.js" );
-		assertNotNull( output );
-		assertTrue( output.contains( "alert('hello');" ) );
-	}
-
-	@Test(expected = HttpClientErrorException.class)
-	public void thymeleafShouldBeDisabled() {
-		get( "/testResources" );
+		headers = headers( "/across/resources/js/alpha/testResources/javascript.js" );
+		assertFalse( headers.containsKey( HttpHeaders.CACHE_CONTROL ) );
+		assertFalse( headers.containsKey( HttpHeaders.EXPIRES ) );
 	}
 
 	@Configuration
@@ -58,7 +54,7 @@ public class ITCustomConfiguration extends AbstractWebIntegrationTest
 			modules = TestResourcesModule.NAME,
 			modulePackageClasses = { AcrossPlatform.class, TestModules.class }
 	)
-	public static class Config extends WebMvcConfigurerAdapter
+	public static class Config
 	{
 	}
 }

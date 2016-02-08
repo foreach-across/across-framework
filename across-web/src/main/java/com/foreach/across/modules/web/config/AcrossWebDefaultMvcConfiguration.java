@@ -25,6 +25,7 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.convert.StringToDateConverter;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.*;
@@ -144,6 +145,9 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Autowired(required = false)
 	private WebTemplateInterceptor webTemplateInterceptor;
 
+	@Autowired
+	private ResourcesConfiguration resourcesConfiguration;
+
 	private ConfigurableWebBindingInitializer initializer;
 
 	private ValidatorDelegate validatorDelegate = new ValidatorDelegate();
@@ -198,16 +202,16 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	protected void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
 		// Reload the adapter
 		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>();
-		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<HandlerMethodReturnValueHandler>();
+		List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>();
 		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
 		ContentNegotiationConfigurer contentNegotiationConfigurer = new ContentNegotiationConfigurer( servletContext );
 		contentNegotiationConfigurer.mediaTypes( getDefaultMediaTypes() );
 
-		ResourceHandlerRegistry resourceHandlerRegistry =
-				new ResourceHandlerRegistry( applicationContext, servletContext );
+		ResourceHandlerRegistry resourceHandlerRegistry = new ResourceHandlerRegistry( applicationContext,
+		                                                                               servletContext );
 
 		DelayedAsyncSupportConfigurer asyncSupportConfigurer = new DelayedAsyncSupportConfigurer();
 
@@ -270,10 +274,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		controllerHandlerMapping.reload();
 
-		// Update the resource handler mapping
-		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
-		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );
-		resourceHandlerMapping.initApplicationContext();
+		// Reload the resources resolving configuration
+		resourcesConfiguration.reload( resourceHandlerRegistry, applicationContext );
 
 		// Handler exception resolver
 		if ( exceptionResolvers.isEmpty() ) {

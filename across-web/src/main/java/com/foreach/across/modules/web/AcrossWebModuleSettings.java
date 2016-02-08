@@ -31,8 +31,9 @@ public class AcrossWebModuleSettings
 	public static final String MULTIPART_AUTO_CONFIGURE = "acrossWebModule.multipart.auto-configure";
 	public static final String MULTIPART_SETTINGS = "acrossWebModule.multipart.settings";
 
-	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.views.resources";
 	public static final String DEVELOPMENT_VIEWS = "acrossWebModule.developmentViews";
+
+	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.resources.path";
 
 	/**
 	 * Multipart support configuration settings.
@@ -50,7 +51,12 @@ public class AcrossWebModuleSettings
 	private final Views views = new Views();
 
 	/**
-	 * Map of physical locations for views resources.
+	 * Resources configuration.
+	 */
+	private final Resources resources = new Resources();
+
+	/**
+	 * Map of physical locations for views resources.  Only used if development mode is active.
 	 */
 	private Map<String, String> developmentViews = Collections.emptyMap();
 
@@ -60,6 +66,10 @@ public class AcrossWebModuleSettings
 
 	public Templates getTemplates() {
 		return templates;
+	}
+
+	public Resources getResources() {
+		return resources;
 	}
 
 	public Views getViews() {
@@ -134,13 +144,63 @@ public class AcrossWebModuleSettings
 		}
 	}
 
-	public static class Views
+	public static class Resources
 	{
 		/**
 		 * Relative path for serving all static resources.
 		 */
-		private String resources = AcrossWebModule.DEFAULT_VIEWS_RESOURCES_PATH;
+		private String path = AcrossWebModule.DEFAULT_VIEWS_RESOURCES_PATH;
 
+		/**
+		 * Auto configure a resource url resolver and relevant filters/interceptors.
+		 */
+		private boolean configureVersioning;
+
+		/**
+		 * The version to use for the {@link org.springframework.web.servlet.resource.FixedVersionStrategy}.
+		 */
+		private String fixedVersion;
+
+		/**
+		 * Duration (seconds) that static resources should be cached.  Defaults to 1 year, put 0 to avoid caching.
+		 */
+		private Integer cachePeriod = 60 * 60 * 24 * 365;
+
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath( String path ) {
+			this.path = path;
+		}
+
+		public boolean isConfigureVersioning() {
+			return configureVersioning;
+		}
+
+		public void setConfigureVersioning( boolean configureVersioning ) {
+			this.configureVersioning = configureVersioning;
+		}
+
+		public String getFixedVersion() {
+			return fixedVersion;
+		}
+
+		public void setFixedVersion( String fixedVersion ) {
+			this.fixedVersion = fixedVersion;
+		}
+
+		public Integer getCachePeriod() {
+			return cachePeriod;
+		}
+
+		public void setCachePeriod( Integer cachePeriod ) {
+			this.cachePeriod = cachePeriod;
+		}
+	}
+
+	public static class Views
+	{
 		/**
 		 * Should thymeleaf view support be enabled.
 		 */
@@ -150,14 +210,6 @@ public class AcrossWebModuleSettings
 		 * Should jsp view support be enabled.
 		 */
 		private boolean jsp = false;
-
-		public String getResources() {
-			return resources;
-		}
-
-		public void setResources( String resources ) {
-			this.resources = resources;
-		}
 
 		public boolean isThymeleaf() {
 			return thymeleaf;
