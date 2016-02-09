@@ -43,6 +43,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
@@ -467,7 +468,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping handlerMapping =
 				new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class, true ) );
-		handlerMapping.setOrder( currentModuleInfo.getIndex() );
+		// Default @Controllers are matched after other prefixed mappings
+		handlerMapping.setOrder( Ordered.LOWEST_PRECEDENCE );
 
 		return handlerMapping;
 	}
