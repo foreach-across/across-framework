@@ -56,6 +56,7 @@ start-up procedures.  To this end, a module can define its own installers.
 * by default only Thymeleaf views support is activated (breaking change)
 * static resources now configure default <<client-side-caching,client-side caching>> and <<resource-url-versioning,resource url versioning>>
 * <<dynamic-servlet-registration,dynamic registration of servlets and filters>> now supports ordering
+* <<default-http-encoding,default HTTP encoding>> is now forced to UTF-8
 
 === 1.1.1.RELEASE
 Initial public release available on http://search.maven.org/[Maven central].
