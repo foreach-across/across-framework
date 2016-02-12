@@ -79,7 +79,7 @@ public class LayoutTemplateProcessorAdapterBean implements NamedWebTemplateProce
 	                           HttpServletResponse response,
 	                           Object handler,
 	                           ModelAndView modelAndView ) {
-		if ( modelAndView.hasView() && modelAndView.isReference() ) {
+		if ( modelAndView != null && modelAndView.hasView() && modelAndView.isReference() ) {
 			String viewName = modelAndView.getViewName();
 
 			// Redirect views should not be modified
