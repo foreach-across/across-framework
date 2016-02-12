@@ -42,7 +42,7 @@ start-up procedures.  To this end, a module can define its own installers.
 ** installers are ordered based on the presence of an `@Order` annotation
 ** installers now support `@Conditional` annotations for building more complex conditions
 ** installers should only be specified as class names in `getInstallers()`, the use of instances is deprecated
-** `InstallerSettings` has been refactored (breaking change) to use `InstallerMetaData` instead
+** `InstallerSettings` has been refactored to use `InstallerMetaData` instead (breaking change)
 ** installers can implement `InstallerActionResolver` directly to suppress execution at runtime
 ** `AcrossInstallerRepository` now has methods to rename installers
 ** `AcrossLiquibaseInstaller` detects the most appropriate `SchemaConfiguration` to use and modifies default schema accordingly
@@ -55,6 +55,8 @@ start-up procedures.  To this end, a module can define its own installers.
 ** properties support Spring configuration metadata with possible IDE support
 * by default only Thymeleaf views support is activated (breaking change)
 * static resources now configure default <<client-side-caching,client-side caching>> and <<resource-url-versioning,resource url versioning>>
+* <<dynamic-servlet-registration,dynamic registration of servlets and filters>> now supports ordering
+* <<default-http-encoding,default HTTP encoding>> is now forced to UTF-8
 
 === 1.1.1.RELEASE
 Initial public release available on http://search.maven.org/[Maven central].
