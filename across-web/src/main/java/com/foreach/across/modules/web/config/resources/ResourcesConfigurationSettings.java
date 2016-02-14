@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 /**
  * Contains the different settings for the default resource configuration (path, folders, versioning and caching).
@@ -59,8 +60,7 @@ public class ResourcesConfigurationSettings
 	private boolean versioning = true;
 
 	/**
-	 * Auto configure caching of the default resource resolvers.
-	 * This enables both client-side caching and caching of the resolved resources.
+	 * Auto configure client-side caching of static resources
 	 */
 	private boolean caching = true;
 
@@ -75,11 +75,12 @@ public class ResourcesConfigurationSettings
 	private String versioningVersion;
 
 	public String[] getFolders() {
-		return folders;
+		return folders.clone();
 	}
 
 	public void setFolders( String[] folders ) {
-		this.folders = folders;
+		Assert.notNull( folders );
+		this.folders = folders.clone();
 	}
 
 	public String getPath() {

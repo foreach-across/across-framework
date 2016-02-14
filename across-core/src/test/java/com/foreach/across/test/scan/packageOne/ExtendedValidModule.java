@@ -22,7 +22,7 @@ import com.foreach.across.test.scan.packageTwo.OtherValidModule;
  * @author Arne Vandamme
  */
 @AcrossDepends(optional = OtherValidModule.NAME)
-public class ExtendedValidModule extends ValidModule
+public class ExtendedValidModule extends AbstractValidModule
 {
 	public static final String NAME = "ExtendedValidModule";
 

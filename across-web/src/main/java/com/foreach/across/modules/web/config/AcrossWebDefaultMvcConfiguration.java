@@ -25,6 +25,7 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.convert.StringToDateConverter;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.*;
@@ -42,7 +43,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
@@ -74,7 +75,6 @@ import org.springframework.web.context.request.async.DeferredResultProcessingInt
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -84,8 +84,6 @@ import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
 import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
-import org.springframework.web.servlet.resource.ResourceUrlProvider;
-import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -148,11 +146,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Autowired(required = false)
 	private WebTemplateInterceptor webTemplateInterceptor;
 
-	@Autowired(required = false)
-	private ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor;
-
-	@Autowired(required = false)
-	private ResourceUrlProvider resourceUrlProvider;
+	@Autowired
+	private ResourcesConfiguration resourcesConfiguration;
 
 	private ConfigurableWebBindingInitializer initializer;
 
@@ -280,19 +275,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		controllerHandlerMapping.reload();
 
-		// Update the resource handler mapping
-		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
-		if ( resourceUrlProviderExposingInterceptor != null && resourceUrlProvider != null ) {
-			resourceHandlerMapping.setInterceptors(
-					new HandlerInterceptor[] { resourceUrlProviderExposingInterceptor } );
-		}
-		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );
-		resourceHandlerMapping.initApplicationContext();
-
-//		// Detect the handler mappings
-		if ( resourceUrlProvider != null ) {
-			resourceUrlProvider.onApplicationEvent( new ContextRefreshedEvent( applicationContext ) );
-		}
+		// Reload the resources resolving configuration
+		resourcesConfiguration.reload( resourceHandlerRegistry, applicationContext );
 
 		// Handler exception resolver
 		if ( exceptionResolvers.isEmpty() ) {
@@ -484,7 +468,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping handlerMapping =
 				new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class, true ) );
-		handlerMapping.setOrder( currentModuleInfo.getIndex() );
+		// Default @Controllers are matched after other prefixed mappings
+		handlerMapping.setOrder( Ordered.LOWEST_PRECEDENCE );
 
 		return handlerMapping;
 	}

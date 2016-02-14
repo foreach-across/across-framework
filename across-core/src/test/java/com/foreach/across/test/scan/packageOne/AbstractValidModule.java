@@ -13,4 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-body { background: url("./images/test.png"); }
+package com.foreach.across.test.scan.packageOne;
+
+import com.foreach.across.core.AcrossModule;
+
+/**
+ * @author Arne Vandamme
+ */
+public abstract class AbstractValidModule extends AcrossModule
+{
+	@Override
+	public String getDescription() {
+		return "Abstract module implementation";
+	}
+}

@@ -131,6 +131,16 @@ public class TestInstallerSetBuilder
 		assertInstallers( InstallerThree.class );
 	}
 
+	@Test
+	public void compatibilityOfManualAndScannedInstallers() {
+		InstallerOne installerOne = new InstallerOne();
+
+		builder.add( installerOne );
+		builder.scan( "com.foreach.across.test.installers.scan.installers" );
+
+		assertInstallers( InstallerTwo.class, installerOne );
+	}
+
 	private void assertInstallers( Object... expected ) {
 		assertArrayEquals( expected, builder.build() );
 	}

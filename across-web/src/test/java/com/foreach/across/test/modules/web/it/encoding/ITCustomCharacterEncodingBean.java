@@ -13,44 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.it;
+package com.foreach.across.test.modules.web.it.encoding;
 
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
+import com.foreach.across.test.modules.web.it.AbstractWebIntegrationTest;
 import com.foreach.across.test.modules.web.it.modules.TestModules;
 import com.foreach.across.test.modules.web.it.modules.testResources.TestResourcesModule;
 import org.junit.Test;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Arne Vandamme
  */
-@ContextConfiguration(classes = ITCustomConfiguration.Config.class)
-@TestPropertySource(properties = { "acrossWebModule.resources.path=/static",
-                                   "acrossWebModule.views.thymeleaf=false" })
-public class ITCustomConfiguration extends AbstractWebIntegrationTest
+@ContextConfiguration(classes = ITCustomCharacterEncodingBean.Config.class)
+public class ITCustomCharacterEncodingBean extends AbstractWebIntegrationTest
 {
 	@Test
-	public void staticResourcesShouldBeServedUnderConfiguredPath() {
-		String output = get( "/static/css/testResources/parent.css" );
-		assertNotNull( output );
-		assertTrue( output.contains( "body { background: url(\"images/test.png\"); }" ) );
-
-		output = get( "/static/js/testResources/javascript.js" );
-		assertNotNull( output );
-		assertTrue( output.contains( "alert('hello');" ) );
+	public void encodingShouldBeUTF32() {
+		assertEquals( "UTF-32", get( "/characterEncoding" ) );
 	}
 
-	@Test(expected = HttpClientErrorException.class)
-	public void thymeleafShouldBeDisabled() {
-		get( "/testResources" );
+	@Test
+	public void filterShouldBeRegistered() {
+		assertEquals( "true", get( "filtered?name=characterEncodingFilter" ) );
 	}
 
 	@Configuration
@@ -58,7 +49,13 @@ public class ITCustomConfiguration extends AbstractWebIntegrationTest
 			modules = TestResourcesModule.NAME,
 			modulePackageClasses = { AcrossPlatform.class, TestModules.class }
 	)
-	public static class Config extends WebMvcConfigurerAdapter
+	public static class Config
 	{
+		@Bean
+		public CharacterEncodingFilter characterEncodingFilter() {
+			CharacterEncodingFilter filter = new CharacterEncodingFilter();
+			filter.setEncoding( "UTF-32" );
+			return filter;
+		}
 	}
 }

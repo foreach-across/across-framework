@@ -503,6 +503,7 @@ postrefresh is always called
 A RefreshableRegistry is a collection of beans of a specified class that updates itself on every context refresh.  A RefreshableRegistry can also scan for beans inside the other modules in the running context, without the need for those beans to be exposed.  This allows other modules to pick up extensions or configurations from other modules that bootstrap later, and update its configuration on the context bootstrapped event.
 The members of a RefreshableRegistry are also ordered according to the Across module order hierarchy (see section Ordering beans).
 
+[[ordering-beans]]
 == Ordering beans
 In an Across based application, the primary order of bean interaction should be defined by the module dependencies.
 When scanning for beans in all modules (eg. when using a `RefreshableRegistry` or `@RefreshableCollection`), the beans will be returned according to the module order: beans from earlier bootstrapped modules will be before beans from later modules.
@@ -536,6 +537,20 @@ Apart from setting the *developmentMode* property on `AcrossContext`, developmen
 
 . property *across.development.active* is _true_
 . Spring profile *dev* is active
+
+.Resource resolving
+By default resources (eg. messages, templates) are resolved from the classpath.
+It is possible to configure a physical location for the resources of a module if development mode is active (eg on your local filesystem).
+This is done in a special properties file that will be looked for in *${user.home}/dev-configs/across-devel.properties*.
+The properties file should contain properties where the key references the module name, and the value the physical resources directory.
+
+.Example development properties
+[source,text,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+acrossModule.MyModule.resources=c:/code/mymodule/src/main/resources
+acrossModule.OtherModule.resources=c:/code/othermodule/src/main/resources
+----
 
 == Default beans
 === AcrossContextInfo

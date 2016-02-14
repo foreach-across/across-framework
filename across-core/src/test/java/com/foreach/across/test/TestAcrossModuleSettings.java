@@ -49,6 +49,11 @@ public class TestAcrossModuleSettings
 	}
 
 	@Test
+	public void settingsByModuleName() {
+		assertNotNull( config.getNamedModuleSettings() );
+	}
+
+	@Test
 	public void acrossConditionEvaluated() {
 		// for compatibility, @AcrossCondition supports "settings" directly
 		assertEquals( "someBean", config.someBean() );
