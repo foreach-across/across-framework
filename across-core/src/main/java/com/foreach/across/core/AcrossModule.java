@@ -325,7 +325,9 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	/**
 	 * @return Description of the content of this module.
 	 */
-	public abstract String getDescription();
+	public String getDescription() {
+		return "Across module - no description set";
+	}
 
 	/**
 	 * <p>Called when a context is preparing to bootstrap, but before the actual bootstrap happens.
