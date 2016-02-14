@@ -31,7 +31,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(AcrossApplicationConfiguration.class)
+@Import({ AcrossApplicationConfiguration.class, DynamicApplicationModulesConfiguration.class })
 @EnableAcrossContext
 public @interface AcrossApplication
 {
