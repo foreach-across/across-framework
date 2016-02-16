@@ -20,7 +20,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.AcrossWebModuleSettings;
+import com.foreach.across.modules.web.config.resources.ResourceConfigurationProperties;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.AcrossWebArgumentResolver;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
@@ -47,10 +47,10 @@ import java.util.List;
 public class AcrossWebConfig extends WebMvcConfigurerAdapter implements PrefixingHandlerMappingConfigurer
 {
 	@Autowired
-	private AcrossWebModuleSettings settings;
+	private PrefixingPathRegistry prefixingPathRegistry;
 
 	@Autowired
-	private PrefixingPathRegistry prefixingPathRegistry;
+	private ResourceConfigurationProperties resourceConfigurationProperties;
 
 	@Override
 	public boolean supports( String mapperName ) {
@@ -102,7 +102,7 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter implements Prefixin
 
 	@Bean
 	public WebResourceTranslator viewsWebResourceTranslator() {
-		if ( settings.getResources().getPath() != null ) {
+		if ( resourceConfigurationProperties.getPath() != null ) {
 			return new WebResourceTranslator()
 			{
 				public boolean shouldTranslate( WebResource resource ) {
@@ -111,7 +111,7 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter implements Prefixin
 
 				public void translate( WebResource resource ) {
 					resource.setLocation( WebResource.RELATIVE );
-					resource.setData( settings.getResources().getPath() + resource.getData() );
+					resource.setData( resourceConfigurationProperties.getPath() + resource.getData() );
 				}
 			};
 		}

@@ -57,22 +57,22 @@ All properties start with the *acrossWebModule.* prefix.
 |Default subfolders of _views_ that should be served as static resources.
 |js,css,static
 
-|resources.versioning
+|resources.versioning.enabled
 |`Boolean`
 |Auto configure versioning of the default resource resolvers.
 |_true_
 
-|resources.versioning-version
+|resources.versioning.version
 |`String`
 |Fixed version if resource versioning is enabled.  Default will use build number or module version.
 |_null_
 
-|resources.caching
+|resources.caching.enabled
 |`Boolean`
 |Auto configure client-side caching of static resources.
 |_true_
 
-|resources.caching-period
+|resources.caching.period
 |`Integer`
 |Period for client-side resource caching (if enabled).  Defaults to 1 year.
 |_60*60*24*365_
@@ -251,10 +251,10 @@ The relative path under which the static resources are available is determined b
 [[client-side-caching]]
 === Client-side caching
 By default static resources will be cached on the client-side for a period of 1 year.
-Disabling client-side caching is done with the *acrossWebModule.resources.caching* property.
+Disabling client-side caching is done with the *acrossWebModule.resources.caching.enabled* property.
 If client-side caching is disabled, no cache headers will be sent to the client.
 
-Configuring the caching period is done separately with the *acrossWebModule.resources.caching-period* property.
+Configuring the caching period is done separately with the *acrossWebModule.resources.caching.period* property.
 Setting the value to *0* with caching enabled will sent *no-cache* headers.
 This is also the default if development mode is active.
 
@@ -279,7 +279,7 @@ When enabled this means that resources of the form */across/resources/static/mym
 
 The fixed version used is determined as follows:
 
-. *acrossWebModule.resources.versioning-version* property
+. *acrossWebModule.resources.versioning.version* property
 . *build.number* property
 . version of the {module-name}
 

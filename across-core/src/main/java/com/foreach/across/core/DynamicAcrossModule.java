@@ -84,7 +84,7 @@ public abstract class DynamicAcrossModule extends AcrossModule implements Ordere
 
 	@Override
 	public String[] getInstallerScanPackages() {
-		return installerScanPackages;
+		return installerScanPackages.clone();
 	}
 
 	void setInstallerScanPackages( String... installerScanPackages ) {
@@ -93,7 +93,7 @@ public abstract class DynamicAcrossModule extends AcrossModule implements Ordere
 
 	@Override
 	public String[] getModuleConfigurationScanPackages() {
-		return moduleConfigurationScanPackages;
+		return moduleConfigurationScanPackages.clone();
 	}
 
 	void setModuleConfigurationScanPackages( String... moduleConfigurationScanPackages ) {
