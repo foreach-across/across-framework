@@ -118,7 +118,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			if ( Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
 				ModuleSetBuilder moduleSetBuilder = new ModuleSetBuilder();
 
-				ModuleDependencyResolver dependencyResolver = moduleDependencyResolver( configuration );
+				ModuleDependencyResolver dependencyResolver = moduleDependencyResolver();
 				moduleSetBuilder.setDependencyResolver( dependencyResolver );
 				acrossContext.setModuleDependencyResolver( dependencyResolver );
 
@@ -162,10 +162,12 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		return modules;
 	}
 
-	private ModuleDependencyResolver moduleDependencyResolver( Map<String, Object> configuration ) {
+	@Bean
+	public ModuleDependencyResolver moduleDependencyResolver() {
 		ClassPathScanningModuleDependencyResolver moduleDependencyResolver
 				= new ClassPathScanningModuleDependencyResolver();
 
+		Map<String, Object> configuration = importMetadata.getAnnotationAttributes( ANNOTATION_TYPE );
 		if ( configuration != null ) {
 			moduleDependencyResolver.setResolveRequired(
 					Boolean.TRUE.equals( configuration.get( "scanForRequiredModules" ) )

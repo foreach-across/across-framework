@@ -41,9 +41,9 @@ import static org.junit.Assert.*;
  */
 @ContextConfiguration(classes = ITDefaultResourceVersioning.Config.class)
 @TestPropertySource(properties = {
-		"acrossWebModule.resources.versioning=false",
+		"acrossWebModule.resources.versioning.enabled=false",
 		"acrossWebModule.resources.folders=js,css,custom",
-		"acrossWebModule.resources.caching-period=1000",
+		"acrossWebModule.resources.caching.period=1000",
 		"build.number=95247852"
 })
 public class ITNoResourceVersioning extends AbstractWebIntegrationTest

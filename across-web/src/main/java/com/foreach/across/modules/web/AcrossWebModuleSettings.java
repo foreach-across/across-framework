@@ -22,6 +22,7 @@ import javax.servlet.MultipartConfigElement;
 import java.util.Collections;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 @ConfigurationProperties(prefix = "acrossWebModule")
 public class AcrossWebModuleSettings
 {
@@ -51,11 +52,6 @@ public class AcrossWebModuleSettings
 	private final Views views = new Views();
 
 	/**
-	 * Resources configuration.
-	 */
-	private final Resources resources = new Resources();
-
-	/**
 	 * Map of physical locations for views resources.  Only used if development mode is active.
 	 */
 	private Map<String, String> developmentViews = Collections.emptyMap();
@@ -66,10 +62,6 @@ public class AcrossWebModuleSettings
 
 	public Templates getTemplates() {
 		return templates;
-	}
-
-	public Resources getResources() {
-		return resources;
 	}
 
 	public Views getViews() {
@@ -141,61 +133,6 @@ public class AcrossWebModuleSettings
 
 		public void setAutoRegister( boolean autoRegister ) {
 			this.autoRegister = autoRegister;
-		}
-	}
-
-	public static class Resources
-	{
-		/**
-		 * Relative path for serving all static resources.
-		 */
-		private String path = AcrossWebModule.DEFAULT_VIEWS_RESOURCES_PATH;
-
-		/**
-		 * Auto configure a resource url resolver and relevant filters/interceptors.
-		 */
-		private boolean configureVersioning;
-
-		/**
-		 * The version to use for the {@link org.springframework.web.servlet.resource.FixedVersionStrategy}.
-		 */
-		private String fixedVersion;
-
-		/**
-		 * Duration (seconds) that static resources should be cached.  Defaults to 1 year, put 0 to avoid caching.
-		 */
-		private Integer cachePeriod = 60 * 60 * 24 * 365;
-
-		public String getPath() {
-			return path;
-		}
-
-		public void setPath( String path ) {
-			this.path = path;
-		}
-
-		public boolean isConfigureVersioning() {
-			return configureVersioning;
-		}
-
-		public void setConfigureVersioning( boolean configureVersioning ) {
-			this.configureVersioning = configureVersioning;
-		}
-
-		public String getFixedVersion() {
-			return fixedVersion;
-		}
-
-		public void setFixedVersion( String fixedVersion ) {
-			this.fixedVersion = fixedVersion;
-		}
-
-		public Integer getCachePeriod() {
-			return cachePeriod;
-		}
-
-		public void setCachePeriod( Integer cachePeriod ) {
-			this.cachePeriod = cachePeriod;
 		}
 	}
 

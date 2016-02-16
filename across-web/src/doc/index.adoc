@@ -57,22 +57,22 @@ All properties start with the *acrossWebModule.* prefix.
 |Default subfolders of _views_ that should be served as static resources.
 |js,css,static
 
-|resources.versioning
+|resources.versioning.enabled
 |`Boolean`
 |Auto configure versioning of the default resource resolvers.
 |_true_
 
-|resources.versioning-version
+|resources.versioning.version
 |`String`
 |Fixed version if resource versioning is enabled.  Default will use build number or module version.
 |_null_
 
-|resources.caching
+|resources.caching.enabled
 |`Boolean`
 |Auto configure client-side caching of static resources.
 |_true_
 
-|resources.caching-period
+|resources.caching.period
 |`Integer`
 |Period for client-side resource caching (if enabled).  Defaults to 1 year.
 |_60*60*24*365_
@@ -130,6 +130,85 @@ NOTE: There will be at least 2 `ConversionService` beans in the across context w
 *conversionService* and *mvcConversionService*.  If you have duplicate bean exceptions due to unqualified autowiring,
 you should make one of both primary.
 
+[[across-application]]
+== @AcrossApplication
+`@AcrossApplication` annotation can be used as an alternative for `@EnableAcrossContext` when defining an application.
+In addition to default context configuration options, it adds Spring Boot auto configuration classes for embedded servlet containers and enables dynamic modules.
+
+=== Embedded servlet container
+Using `@AcrossApplication` adds the necessary Spring Boot auto configuration classes for embedded servlet containers.
+If you have for example *spring-boot-starter-tomcat* on the classpath, you can run an Across based application inside an embedded Tomcat using `SpringApplication`.
+
+.Minimal example of a Spring Boot based Across application
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@AcrossApplication(modules = { MyModule.NAME, MyOtherModule.NAME })
+public class MyApplication
+{
+	public static void main( String[] args ) {
+		SpringApplication.run( MyApplication.class, args );
+	}
+}
+----
+
+=== Dynamic Across modules
+Using `@AcrossApplication` on a class will automatically enable dynamic Across modules on that class.
+Before bootstrapping the context, the configurator will attempt to find an application specific infrastructure, application or postprocessor module.
+The name of the expected module is generated based on the name of the importing class.
+If no module with that name can be resolved, the configurator will see if a child package is present relative to the package of the importing class.
+Depending on the child package name, a dynamic module will be generated.
+
+|===
+|||
+
+|*Importing class*
+|MyApplication
+|MyConfiguration
+
+|*Infrastructure module* +
+package: _infrastructure_
+|MyApplicationInfrastructureModule +
+resources: myApplicationInfrastructure
+|MyConfigurationInfrastructureModule +
+resources: myConfigurationInfrastructure
+
+|*Application module* +
+package: _application_
+|MyApplicationModule +
+resources: *my*
+|MyConfigurationApplicationModule +
+resources: *myConfiguration*
+
+|*PostProcessor module* +
+package: _postprocessor_
+|MyApplicationPostProcessorModule +
+resources: myApplicationPostProcessor
+|MyConfigurationPostProcessorModule +
+resources: myConfigurationPostProcessor
+
+|===
+
+.Example package structure for application modules
+[source,text,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+com.mypackage
+  MyApplication.class
+  application.config
+    MyApplicationModuleConfiguration.class
+  infrastructure.installers
+    SchemaInstallerToRunBeforeAnyOtherModule.class
+----
+
+Disabling dynamic modules on an `@AcrossApplication` can be done through the *enableDynamicModules* attribute.
+
+WARNING: Dynamic modules perform an automatic component scan of all their child packages with the exception of _installers_ and _extensions_.
+If you want the default behavior of scanning only the _config_ child package, you must provide an `AcrossModule` implementation.
+
+NOTE: Manually adding dynamic modules can be done by importing `AcrossDynamicModulesConfiguration` on any configuration class.
+This will use the importing class as the base for the dynamic modules.
+
 [[multipart-config]]
 == Multipart Filter configuration
 TODO
@@ -172,10 +251,10 @@ The relative path under which the static resources are available is determined b
 [[client-side-caching]]
 === Client-side caching
 By default static resources will be cached on the client-side for a period of 1 year.
-Disabling client-side caching is done with the *acrossWebModule.resources.caching* property.
+Disabling client-side caching is done with the *acrossWebModule.resources.caching.enabled* property.
 If client-side caching is disabled, no cache headers will be sent to the client.
 
-Configuring the caching period is done separately with the *acrossWebModule.resources.caching-period* property.
+Configuring the caching period is done separately with the *acrossWebModule.resources.caching.period* property.
 Setting the value to *0* with caching enabled will sent *no-cache* headers.
 This is also the default if development mode is active.
 
@@ -200,7 +279,7 @@ When enabled this means that resources of the form */across/resources/static/mym
 
 The fixed version used is determined as follows:
 
-. *acrossWebModule.resources.versioning-version* property
+. *acrossWebModule.resources.versioning.version* property
 . *build.number* property
 . version of the {module-name}
 

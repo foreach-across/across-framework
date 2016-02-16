@@ -34,7 +34,7 @@ import java.io.IOException;
 
 /**
  * Applies the caching and versioning configuration for the default module resources.
- * Supports the different properties specified in {@link ResourcesConfigurationSettings}.
+ * Supports the different properties specified in {@link ResourceConfigurationProperties}.
  * <p>
  * Replacing the default behavior can be done by injecting an extension in the same context.
  */
@@ -64,7 +64,10 @@ public class DefaultResourceRegistrationConfigurer
 	}
 
 	@Autowired
-	private ResourcesConfigurationSettings configuration;
+	private ResourceCachingProperties resourceCachingProperties;
+
+	@Autowired
+	private ResourceVersioningProperties resourceVersioningProperties;
 
 	@Autowired
 	private AcrossDevelopmentMode developmentMode;
@@ -93,28 +96,28 @@ public class DefaultResourceRegistrationConfigurer
 	 * @return period to cache resources
 	 */
 	protected Integer getCachePeriod() {
-		return developmentMode.isActive() ? Integer.valueOf( 0 ) : configuration.getCachingPeriod();
+		return developmentMode.isActive() ? Integer.valueOf( 0 ) : resourceCachingProperties.getPeriod();
 	}
 
 	/**
 	 * @return configured fixed version to use for versioning strategy
 	 */
 	protected String getFixedVersion() {
-		return developmentMode.isActive() ? developmentMode.getBuildId() : configuration.getVersioningVersion();
+		return developmentMode.isActive() ? developmentMode.getBuildId() : resourceVersioningProperties.getVersion();
 	}
 
 	/**
 	 * @return true if versioning is enabled
 	 */
 	protected boolean shouldApplyFixedVersion() {
-		return configuration.isVersioning();
+		return resourceVersioningProperties.isEnabled();
 	}
 
 	/**
 	 * @return true if a cache  period should be set
 	 */
 	protected boolean shouldApplyCaching() {
-		return developmentMode.isActive() || configuration.isCaching();
+		return developmentMode.isActive() || resourceCachingProperties.isEnabled();
 	}
 
 	/**
@@ -125,7 +128,7 @@ public class DefaultResourceRegistrationConfigurer
 	}
 
 	@Bean
-	@ConditionalOnProperty(value = "acrossWebModule.resources.versioning", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
 	@ConditionalOnMissingBean(value = VersionResourceResolver.class, search = SearchStrategy.CURRENT)
 	public VersionResourceResolver versionResourceResolver() {
 		return new VersionResourceResolver()
@@ -133,7 +136,7 @@ public class DefaultResourceRegistrationConfigurer
 	}
 
 	@Bean
-	@ConditionalOnProperty(value = "acrossWebModule.resources.versioning", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
 	@ConditionalOnMissingBean(value = AppCacheManifestTransformer.class, search = SearchStrategy.CURRENT)
 	public AppCacheManifestTransformer appCacheManifestTransformer() {
 		return new AppCacheManifestTransformer();

@@ -33,8 +33,8 @@ import static org.junit.Assert.assertFalse;
  */
 @ContextConfiguration(classes = ITDefaultResourceVersioning.Config.class)
 @TestPropertySource(properties = {
-		"acrossWebModule.resources.versioning-version=alpha",
-		"acrossWebModule.resources.caching=false"
+		"acrossWebModule.resources.versioning.version=alpha",
+		"acrossWebModule.resources.caching.enabled=false"
 })
 public class ITDisableCaching extends AbstractWebIntegrationTest
 {

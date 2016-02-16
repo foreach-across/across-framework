@@ -50,6 +50,7 @@ start-up procedures.  To this end, a module can define its own installers.
 
 *Across Web*
 
+* <<across-application,`@AcrossApplication`>> can be used with `SpringApplication` to bootstrap an Across context with dynamic modules and support for embedded servlet containers
 * async configuration can now correctly be set through `WebMvcConfigurer#configureAsyncSupport(AsyncSupportConfigurer)`
 * `AcrossWebModuleSettings` has been refactored and `AcrossWebModule` can now be <<across-web-module-settings,configured through properties>>
 ** properties support Spring configuration metadata with possible IDE support

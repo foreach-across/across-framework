@@ -61,8 +61,10 @@ import java.util.Map;
 @Configuration
 public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 {
+	private static final Logger LOG = LoggerFactory.getLogger( ResourcesConfiguration.class );
+
 	@Autowired
-	private ResourcesConfigurationSettings configuration;
+	private ResourceConfigurationProperties configuration;
 
 	@Autowired
 	private AcrossDevelopmentMode developmentMode;
@@ -86,8 +88,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 			);
 
 			if ( developmentMode.isActive() ) {
-				ResourcesConfigurationSettings.LOG.info( "Activating {} development mode resource handlers",
-				                                         resourceFolder );
+				LOG.info( "Activating {} development mode resource handlers", resourceFolder );
 
 				Map<String, String> views
 						= developmentMode.getDevelopmentLocationsForResourcePath( "views/" + resourceFolder );
@@ -96,8 +97,9 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 					String url = configuration.getPath() + "/" + resourceFolder + "/" + entry.getKey() + "/**";
 					File physical = new File( entry.getValue() );
 
-					ResourcesConfigurationSettings.LOG.info( "Mapping {} development views for {} to physical path {}",
-					                                         resourceFolder, url, physical );
+					LOG.info( "Mapping {} development views for {} to physical path {}",
+					          resourceFolder, url, physical );
+
 					defaultResourceRegistrationConfigurer.configure(
 							resourceFolder,
 							registry.addResourceHandler( url )
@@ -143,7 +145,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	 */
 	@Order(Ordered.LOWEST_PRECEDENCE)
 	@Configuration("resourceUrlEncodingFilterConfiguration")
-	@ConditionalOnProperty(value = "acrossWebModule.resources.versioning", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
 	public static class ResourceUrlEncodingFilterConfiguration extends AcrossWebDynamicServletConfigurer
 	{
 		public static final String FILTER_NAME = "ResourceUrlEncodingFilter";
@@ -174,7 +176,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	 * Ensures the interceptor is registered so all controllers have access to it.
 	 */
 	@Configuration("resourceUrlProviderExposingInterceptorConfiguration")
-	@ConditionalOnProperty(value = "acrossWebModule.resources.versioning", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
 	public static class ResourceUrlProviderExposingInterceptorConfiguration extends PrefixingHandlerMappingConfigurerAdapter
 	{
 		@Override

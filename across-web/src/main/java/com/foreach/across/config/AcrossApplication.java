@@ -24,17 +24,24 @@ import java.lang.annotation.*;
 /**
  * Annotation that merges {@link EnableAcrossContext} together with Spring Boot configuration classes
  * for web applications.  Supports most attributes that {@link EnableAcrossContext} does, but allows
- * for minimal configuration of an application.
+ * for minimal configuration of an application.  Optionally adds support for dynamic modules based on the
+ * {@link #enableDynamicModules()} value.
  *
  * @author Arne Vandamme
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(AcrossApplicationConfiguration.class)
+@Import({ AcrossApplicationConfiguration.class, AcrossWebApplicationConfiguration.class })
 @EnableAcrossContext
 public @interface AcrossApplication
 {
+	/**
+	 * If enabled, this will register a {@link AcrossDynamicModulesConfiguration} and will scan for dynamic modules
+	 * based on the package of the importing class.
+	 */
+	boolean enableDynamicModules() default true;
+
 	/**
 	 * Array of {@link AcrossModule} names that should be configured if auto configuration is enabled.
 	 * These will be added to the {@link AcrossContext} before any configured module beans and before
