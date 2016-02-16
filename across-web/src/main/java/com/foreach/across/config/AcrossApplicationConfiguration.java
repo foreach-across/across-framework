@@ -23,12 +23,17 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
 import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportSelector;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
@@ -44,32 +49,55 @@ import javax.servlet.ServletException;
 @Import({ DispatcherServletAutoConfiguration.class,
           EmbeddedServletContainerAutoConfiguration.class,
           ServerPropertiesAutoConfiguration.class })
-public class AcrossApplicationConfiguration implements BeanDefinitionRegistryPostProcessor, ServletContextInitializer
+public class AcrossApplicationConfiguration implements ImportSelector
 {
-	@Override
-	public void postProcessBeanDefinitionRegistry( BeanDefinitionRegistry registry ) throws BeansException {
-		BeanDefinition beanDefinition = registry.getBeanDefinition( "acrossContext" );
-		beanDefinition.setLazyInit( true );
+	@ConditionalOnBean(EmbeddedServletContainerFactory.class)
+	@Bean
+	public AcrossServletContextInitializer acrossServletContextInitializer() {
+		return new AcrossServletContextInitializer();
 	}
 
 	@Override
-	public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) throws BeansException {
+	public String[] selectImports( AnnotationMetadata importingClassMetadata ) {
+		if ( (Boolean) importingClassMetadata.getAnnotationAttributes( AcrossApplication.class.getName() )
+		                                     .getOrDefault( "enableDynamicModules", true ) ) {
+			return new String[] { AcrossDynamicModulesConfiguration.class.getName() };
+		}
+		return new String[0];
 	}
 
-	@Override
-	public void onStartup( ServletContext servletContext ) throws ServletException {
-		servletContext.setAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER, true );
+	/**
+	 * {@link ServletContextInitializer} that ensures that the {@link AcrossContext} is bootstrapped before the
+	 * {@link ServletContext} is fully initialized.  This is required for
+	 * {@link com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer} instances to work.
+	 */
+	public static class AcrossServletContextInitializer implements ServletContextInitializer, BeanDefinitionRegistryPostProcessor
+	{
+		@Override
+		public void postProcessBeanDefinitionRegistry( BeanDefinitionRegistry registry ) throws BeansException {
+			BeanDefinition beanDefinition = registry.getBeanDefinition( "acrossContext" );
+			beanDefinition.setLazyInit( true );
+		}
 
-		AnnotationConfigEmbeddedWebApplicationContext rootContext =
-				(AnnotationConfigEmbeddedWebApplicationContext) servletContext.getAttribute(
-						WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE );
+		@Override
+		public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) throws BeansException {
+		}
 
-		// Ensure the AcrossContext has bootstrapped while the ServletContext can be modified
-		AcrossContext acrossContext = rootContext.getBean( AcrossContext.class );
+		@Override
+		public void onStartup( ServletContext servletContext ) throws ServletException {
+			servletContext.setAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER, true );
 
-		servletContext.setAttribute( WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-		                             AcrossContextUtils.getApplicationContext( acrossContext ) );
+			AnnotationConfigEmbeddedWebApplicationContext rootContext =
+					(AnnotationConfigEmbeddedWebApplicationContext) servletContext.getAttribute(
+							WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE );
 
+			// Ensure the AcrossContext has bootstrapped while the ServletContext can be modified
+			AcrossContext acrossContext = rootContext.getBean( AcrossContext.class );
+
+			servletContext.setAttribute( WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
+			                             AcrossContextUtils.getApplicationContext( acrossContext ) );
+
+		}
 	}
 }
 

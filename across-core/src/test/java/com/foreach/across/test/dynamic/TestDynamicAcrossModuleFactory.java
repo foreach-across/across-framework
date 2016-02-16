@@ -140,7 +140,8 @@ public class TestDynamicAcrossModuleFactory
 		Set<ApplicationContextConfigurer> configurers = module.getApplicationContextConfigurers();
 		assertEquals( 1, configurers.size() );
 		assertArrayEquals(
-				new String[] { PkgConfig.class.getPackage().getName(), PkgController.class.getPackage().getName() },
+				new String[] { PkgConfig.class.getPackage().getName(), PkgController.class.getPackage().getName(),
+				               PkgMember.class.getPackage().getName() + ".util" },
 				configurers.iterator().next().componentScanPackages()
 		);
 

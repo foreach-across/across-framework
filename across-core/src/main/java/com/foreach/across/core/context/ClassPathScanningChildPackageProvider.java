@@ -81,10 +81,13 @@ public class ClassPathScanningChildPackageProvider
 
 				String packageName = StringUtils.substringBeforeLast( classMetadata.getClassName(), "." );
 				if ( !StringUtils.equals( basePackage, packageName ) ) {
-					String child = StringUtils.replaceOnce( packageName, basePackage + ".", "" );
+					String child = StringUtils.substringBefore(
+							StringUtils.replaceOnce( packageName, basePackage + ".", "" ),
+							"."
+					);
 
-					if ( child.indexOf( '.' ) == -1 && !excluded.contains( child ) ) {
-						packageNames.add( packageName );
+					if ( !excluded.contains( child ) ) {
+						packageNames.add( basePackage + "." + child );
 					}
 				}
 

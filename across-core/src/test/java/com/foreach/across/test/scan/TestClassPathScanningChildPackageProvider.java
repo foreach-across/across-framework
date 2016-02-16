@@ -47,7 +47,9 @@ public class TestClassPathScanningChildPackageProvider
 		assertArrayEquals(
 				new String[] { PkgConfig.class.getPackage().getName(), PkgController.class.getPackage().getName(),
 				               PkgExtensionConfig.class.getPackage().getName(),
-				               PkgInstaller.class.getPackage().getName() },
+				               PkgInstaller.class.getPackage().getName(),
+				               PkgMember.class.getPackage().getName() + ".util"
+				},
 				children
 		);
 	}
@@ -60,7 +62,8 @@ public class TestClassPathScanningChildPackageProvider
 		String[] children = packageProvider.findChildren( PkgMember.class.getPackage().getName() );
 
 		assertArrayEquals(
-				new String[] { PkgConfig.class.getPackage().getName(), PkgController.class.getPackage().getName() },
+				new String[] { PkgConfig.class.getPackage().getName(), PkgController.class.getPackage().getName(),
+				               PkgMember.class.getPackage().getName() + ".util" },
 				children
 		);
 	}

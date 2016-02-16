@@ -121,9 +121,8 @@ public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModu
 
 		this.basePackage = basePackage;
 
-		Package pkg = Package.getPackage( basePackage );
-		shortPackageName = pkg.getName().contains( "." )
-				? StringUtils.substringAfterLast( pkg.getName(), "." ) : pkg.getName();
+		shortPackageName = basePackage.contains( "." )
+				? StringUtils.substringAfterLast( basePackage, "." ) : basePackage;
 
 		return this;
 	}

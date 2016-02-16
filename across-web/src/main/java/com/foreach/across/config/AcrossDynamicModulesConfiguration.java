@@ -22,7 +22,6 @@ import com.foreach.across.core.DynamicAcrossModuleFactory;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ClassPathScanningChildPackageProvider;
 import com.foreach.across.core.context.ModuleDependencyResolver;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +40,16 @@ import java.util.Optional;
  * The name and package of the importing class will be used as a basis.  This config will scan for child packages
  * application, infrastructure and postprocessor.  For each of these found, a module with the respective role
  * will be added.  The name of the module will be based on the name of the importing class.
+ * <p>
+ * If there is a {@link ModuleDependencyResolver} found in the bean factory, it will be used to resolve the corresponding modules.
+ * This way an implemented {@link AcrossModule} descriptor will automatically be picked up.
  *
  * @author Arne Vandamme
  */
 @Configuration
-public class DynamicApplicationModulesConfiguration implements AcrossContextConfigurer, BeanFactoryAware, ImportAware
+public class AcrossDynamicModulesConfiguration implements AcrossContextConfigurer, BeanFactoryAware, ImportAware
 {
-	private static final Logger LOG = LoggerFactory.getLogger( DynamicApplicationModulesConfiguration.class );
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossDynamicModulesConfiguration.class );
 
 	private AnnotationMetadata importMetadata;
 
@@ -73,15 +75,25 @@ public class DynamicApplicationModulesConfiguration implements AcrossContextConf
 		ClassPathScanningChildPackageProvider packageProvider = new ClassPathScanningChildPackageProvider();
 		String[] children = packageProvider.findChildren( basePackage );
 
-		if ( ArrayUtils.contains( children, "application" ) ) {
+		if ( hasPackage( children, "application" ) ) {
 			configureApplicationModule( context, basePackage + ".application", baseModuleName );
 		}
-		if ( ArrayUtils.contains( children, "infrastructure" ) ) {
+		if ( hasPackage( children, "infrastructure" ) ) {
 			configureInfrastructureModule( context, basePackage + ".infrastructure", baseModuleName );
 		}
-		if ( ArrayUtils.contains( children, "postprocessor" ) ) {
+		if ( hasPackage( children, "postprocessor" ) ) {
 			configurePostProcessorModule( context, basePackage + ".postprocessor", baseModuleName );
 		}
+	}
+
+	private boolean hasPackage( String[] packages, String name ) {
+		String suffix = "." + name;
+		for ( String pkg : packages ) {
+			if ( StringUtils.endsWith( pkg, suffix ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void configureApplicationModule( AcrossContext context, String moduleBasePackage, String baseModuleName ) {
