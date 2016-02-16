@@ -15,7 +15,7 @@
  */
 package com.foreach.across.test.modules.web.it;
 
-import com.foreach.across.config.AcrossApplicationConfiguration;
+import com.foreach.across.config.AcrossWebApplicationConfiguration;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebIntegrationTest(randomPort = true)
-@SpringApplicationConfiguration(classes = AcrossApplicationConfiguration.class)
+@SpringApplicationConfiguration(classes = AcrossWebApplicationConfiguration.class)
 public abstract class AbstractWebIntegrationTest
 {
 	@Autowired

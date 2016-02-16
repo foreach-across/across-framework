@@ -20,6 +20,7 @@ import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import org.springframework.core.Ordered;
 
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -35,6 +36,8 @@ public abstract class DynamicAcrossModule extends AcrossModule implements Ordere
 
 	private String[] installerScanPackages = new String[0];
 	private String[] moduleConfigurationScanPackages = new String[0];
+
+	private final AcrossVersionInfo acrossVersionInfo = new DynamicAcrossVersionInfo();
 
 	/**
 	 * Only the {@link DynamicAcrossModuleFactory} can create instances.
@@ -100,6 +103,11 @@ public abstract class DynamicAcrossModule extends AcrossModule implements Ordere
 		this.moduleConfigurationScanPackages = moduleConfigurationScanPackages;
 	}
 
+	@Override
+	public AcrossVersionInfo getVersionInfo() {
+		return acrossVersionInfo;
+	}
+
 	@AcrossRole(value = AcrossModuleRole.APPLICATION)
 	public static final class DynamicApplicationModule extends DynamicAcrossModule
 	{
@@ -118,6 +126,19 @@ public abstract class DynamicAcrossModule extends AcrossModule implements Ordere
 	public static final class DynamicPostProcessorModule extends DynamicAcrossModule
 	{
 		DynamicPostProcessorModule() {
+		}
+	}
+
+	public static final class DynamicAcrossVersionInfo extends AcrossVersionInfo
+	{
+		public DynamicAcrossVersionInfo() {
+			super( new Date(), "dynamic-module", "Across" );
+			setAvailable( false );
+		}
+
+		@Override
+		public boolean isSnapshot() {
+			return true;
 		}
 	}
 }

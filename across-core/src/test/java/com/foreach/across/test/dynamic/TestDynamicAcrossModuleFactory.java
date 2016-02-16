@@ -15,6 +15,7 @@
  */
 package com.foreach.across.test.dynamic;
 
+import com.foreach.across.core.AcrossVersionInfo;
 import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.DynamicAcrossModule.DynamicApplicationModule;
 import com.foreach.across.core.DynamicAcrossModule.DynamicInfrastructureModule;
@@ -61,6 +62,12 @@ public class TestDynamicAcrossModuleFactory
 		assertEquals( "MyModule", module.getName() );
 		assertEquals( "MyModule", module.getResourcesKey() );
 		assertEquals( Ordered.LOWEST_PRECEDENCE, module.getOrder() );
+
+		AcrossVersionInfo versionInfo = module.getVersionInfo();
+		assertNotNull( versionInfo );
+		assertNotNull( versionInfo.getBuildTime() );
+		assertEquals( "dynamic-module", versionInfo.getVersion() );
+		assertEquals( "Across", versionInfo.getProjectName() );
 	}
 
 	@Test
