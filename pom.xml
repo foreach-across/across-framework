@@ -133,6 +133,9 @@
 					<doctype>book</doctype>
 					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
 					<backend>html</backend>
+					<attributes>
+						<stylesheet>across.css</stylesheet>
+					</attributes>
 				</configuration>
 				<executions>
 					<execution>

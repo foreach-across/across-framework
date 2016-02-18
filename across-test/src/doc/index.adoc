@@ -1,4 +1,0 @@
-[[across-test]]
-= IV. Across test
-
-artifact
