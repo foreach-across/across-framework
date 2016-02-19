@@ -31,12 +31,12 @@ All properties start with the *acrossWebModule.* prefix.
 |===
 |Property |Type |Description |Default
 
-|views.thymeleaf
+|views.thymeleaf.enabled
 |`Boolean`
 |Should Thymeleaf view support be enabled.
 |_true_
 
-|views.jsp
+|views.jsp.enabled
 |`Boolean`
 |Should JSP/JSTL view support be enabled.
 |_false_

@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "acrossWebModule.views.thymeleaf.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable Thymeleaf support.",
+      "defaultValue": true
+    },
+    {
+      "name": "acrossWebModule.views.jsp.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable JSP/JSTL support.",
+      "defaultValue": false
+    }
+  ]
+}

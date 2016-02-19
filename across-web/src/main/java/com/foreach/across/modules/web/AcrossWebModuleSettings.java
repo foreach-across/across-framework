@@ -47,11 +47,6 @@ public class AcrossWebModuleSettings
 	private final Templates templates = new Templates();
 
 	/**
-	 * Views configuration.
-	 */
-	private final Views views = new Views();
-
-	/**
 	 * Map of physical locations for views resources.  Only used if development mode is active.
 	 */
 	private Map<String, String> developmentViews = Collections.emptyMap();
@@ -62,10 +57,6 @@ public class AcrossWebModuleSettings
 
 	public Templates getTemplates() {
 		return templates;
-	}
-
-	public Views getViews() {
-		return views;
 	}
 
 	public Map<String, String> getDevelopmentViews() {
@@ -133,35 +124,6 @@ public class AcrossWebModuleSettings
 
 		public void setAutoRegister( boolean autoRegister ) {
 			this.autoRegister = autoRegister;
-		}
-	}
-
-	public static class Views
-	{
-		/**
-		 * Should thymeleaf view support be enabled.
-		 */
-		private boolean thymeleaf = true;
-
-		/**
-		 * Should jsp view support be enabled.
-		 */
-		private boolean jsp = false;
-
-		public boolean isThymeleaf() {
-			return thymeleaf;
-		}
-
-		public void setThymeleaf( boolean thymeleaf ) {
-			this.thymeleaf = thymeleaf;
-		}
-
-		public boolean isJsp() {
-			return jsp;
-		}
-
-		public void setJsp( boolean jsp ) {
-			this.jsp = jsp;
 		}
 	}
 }

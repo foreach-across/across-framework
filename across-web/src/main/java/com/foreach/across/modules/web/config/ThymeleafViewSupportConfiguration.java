@@ -41,7 +41,7 @@ import java.util.Map;
  * Creates Thymeleaf view resolver.
  */
 @Configuration
-@ConditionalOnProperty(value = "acrossWebModule.views.thymeleaf", matchIfMissing = true)
+@ConditionalOnProperty(value = "acrossWebModule.views.thymeleaf.enabled", matchIfMissing = true)
 public class ThymeleafViewSupportConfiguration
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );

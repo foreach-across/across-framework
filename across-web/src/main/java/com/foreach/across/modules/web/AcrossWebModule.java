@@ -61,9 +61,9 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	 */
 	@Deprecated
 	public void setSupportViews( AcrossWebViewSupport... viewSupport ) {
-		setProperty( "acrossWebModule.views.thymeleaf",
+		setProperty( "acrossWebModule.views.thymeleaf.enabled",
 		             ArrayUtils.contains( viewSupport, AcrossWebViewSupport.THYMELEAF ) );
-		setProperty( "acrossWebModule.views.jsp", ArrayUtils.contains( viewSupport, AcrossWebViewSupport.JSP ) );
+		setProperty( "acrossWebModule.views.jsp.enabled", ArrayUtils.contains( viewSupport, AcrossWebViewSupport.JSP ) );
 	}
 
 	@Override
