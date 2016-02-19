@@ -8,4 +8,11 @@ functionality including web controllers and their views.  Across provides the ba
 make them depend on each other.  A module will most often be a separate jar, but this is in no way a requirement.
 
 The general principle is that every Across module can depend on others, but is responsible for its own installation and
-start-up procedures.  To this end, a module can define its own installers.s
+start-up procedures.  To this end, a module can define its own installers.
+
+.Getting started
+This is the reference documentation,
+
+* release overview
+* samples and tutorials
+* appendices list events and overview of conventions
