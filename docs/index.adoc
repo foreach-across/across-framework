@@ -26,3 +26,5 @@ include::section-about-across.adoc[]
 include::../across-core/src/doc/section-across-core.adoc[]
 include::../across-web/src/doc/section-across-web.adoc[]
 include::../across-test/src/doc/section-across-test.adoc[]
+
+include::section-appendices.adoc[]
