@@ -38,6 +38,8 @@ public class WebResourceRegistry
 	private final WebResourcePackageManager packageManager;
 	private final List<WebResource> resources = new LinkedList<>();
 
+	private final Set<String> installedPackages = new HashSet<>();
+
 	public WebResourceRegistry( WebResourcePackageManager packageManager ) {
 		this.packageManager = packageManager;
 	}
@@ -217,13 +219,16 @@ public class WebResourceRegistry
 	 */
 	public void addPackage( String... packageNames ) {
 		for ( String packageName : packageNames ) {
-			WebResourcePackage webResourcePackage = packageManager.getPackage( packageName );
+			if ( !installedPackages.contains( packageName ) ) {
+				WebResourcePackage webResourcePackage = packageManager.getPackage( packageName );
 
-			if ( webResourcePackage == null ) {
-				throw new AcrossException( "No WebResourcePackage found with name " + packageName );
+				if ( webResourcePackage == null ) {
+					throw new AcrossException( "No WebResourcePackage found with name " + packageName );
+				}
+
+				installedPackages.add( packageName );
+				webResourcePackage.install( this );
 			}
-
-			webResourcePackage.install( this );
 		}
 	}
 
@@ -239,6 +244,7 @@ public class WebResourceRegistry
 			// Package not found is ignored
 			if ( webResourcePackage != null ) {
 				webResourcePackage.uninstall( this );
+				installedPackages.remove( packageName );
 			}
 		}
 	}
