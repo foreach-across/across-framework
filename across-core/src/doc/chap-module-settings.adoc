@@ -1,0 +1,4 @@
+=== Module settings
+about @ConfigurationProperties
+Spring configuration metadata
+property source

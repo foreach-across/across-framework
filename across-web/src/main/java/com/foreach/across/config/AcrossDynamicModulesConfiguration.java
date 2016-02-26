@@ -69,7 +69,7 @@ public class AcrossDynamicModulesConfiguration implements AcrossContextConfigure
 	public void configure( AcrossContext context ) {
 		Class<?> importingClass = importingClass();
 
-		String basePackage = importingClass.getPackage().getName();
+		String basePackage = packageName( importingClass );
 		String baseModuleName = baseModuleName( importingClass );
 
 		ClassPathScanningChildPackageProvider packageProvider = new ClassPathScanningChildPackageProvider();
@@ -84,6 +84,10 @@ public class AcrossDynamicModulesConfiguration implements AcrossContextConfigure
 		if ( hasPackage( children, "postprocessor" ) ) {
 			configurePostProcessorModule( context, basePackage + ".postprocessor", baseModuleName );
 		}
+	}
+
+	private String packageName( Class<?> clazz ) {
+		return clazz.getPackage() != null ? clazz.getPackage().getName() : "";
 	}
 
 	private boolean hasPackage( String[] packages, String name ) {

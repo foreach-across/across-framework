@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
  */
 @ContextConfiguration(classes = ITCustomConfiguration.Config.class)
 @TestPropertySource(properties = { "acrossWebModule.resources.path=/static",
-                                   "acrossWebModule.views.thymeleaf=false" })
+                                   "acrossWebModule.views.thymeleaf.enabled=false" })
 public class ITCustomConfiguration extends AbstractWebIntegrationTest
 {
 	@Test

@@ -28,7 +28,7 @@ import org.springframework.util.ClassUtils;
 
 /**
  * Event fired by the MenuFactory whenever a menu is being generated.  After menu generation,
- * a menu will be sorted and selected.
+ * a menu will be sorted and the selector applied..
  *
  * @param <T> Specific Menu implementation
  * @see com.foreach.across.modules.web.menu.MenuFactory

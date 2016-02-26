@@ -2,6 +2,10 @@
 = IV. Across test
 
 artifact
+module conventions test
+test context
+multiple across context configuration for bootstrapping
+warn about database reset!
 
 Thymeleaf integration: AcrossWebDialect
 
