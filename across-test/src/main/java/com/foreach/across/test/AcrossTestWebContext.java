@@ -35,6 +35,12 @@ public class AcrossTestWebContext extends AcrossTestContext
 		super( configurers );
 	}
 
+	/**
+	 * Retrieve the {@link MockAcrossServletContext} that was set.
+	 * If dynamic registration was enabled, the instance can be queried for servlet registrations.
+	 *
+	 * @return servletContext instance
+	 */
 	public MockAcrossServletContext getServletContext() {
 		return servletContext;
 	}

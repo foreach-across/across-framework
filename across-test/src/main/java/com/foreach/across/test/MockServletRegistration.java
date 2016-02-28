@@ -16,84 +16,113 @@
 package com.foreach.across.test;
 
 import javax.servlet.MultipartConfigElement;
+import javax.servlet.Servlet;
 import javax.servlet.ServletRegistration;
 import javax.servlet.ServletSecurityElement;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Created by marc on 14/10/2014.
+ * Mock version of a {@link javax.servlet.ServletRegistration.Dynamic} that does nothing but keep a number
+ * of configured properties.  Support is limited and only intended in combination with {@link MockAcrossServletContext}.
+ *
+ * @author Marc Vanbrabant, Arne Vandamme
  */
-public class MockServletRegistration implements ServletRegistration.Dynamic
+public class MockServletRegistration extends AbstractMockRegistration implements ServletRegistration.Dynamic
 {
-	@Override
-	public void setLoadOnStartup( int loadOnStartup ) {
+	private final Servlet servlet;
+	private final Class<? extends Servlet> servletClass;
 
+	private final Set<String> mappings = new LinkedHashSet<>();
+
+	private int loadOnStartup;
+	private String runAsRole;
+	private ServletSecurityElement servletSecurity;
+	private MultipartConfigElement multipartConfig;
+
+	MockServletRegistration( String name, Servlet servlet ) {
+		super( name, servlet.getClass().getName() );
+
+		this.servlet = servlet;
+		this.servletClass = servlet.getClass();
+	}
+
+	MockServletRegistration( String name, Class<? extends Servlet> servletClass ) {
+		super( name, servletClass.getName() );
+
+		this.servletClass = servletClass;
+		this.servlet = null;
+	}
+
+	MockServletRegistration( String name, String className ) {
+		super( name, className );
+
+		this.servlet = null;
+		this.servletClass = null;
+	}
+
+	/**
+	 * @return filter instance if configured
+	 */
+	public Servlet getServlet() {
+		return servlet;
+	}
+
+	/**
+	 * @return filter class if configured
+	 */
+	public Class<? extends Servlet> getServletClass() {
+		return servletClass;
 	}
 
 	@Override
-	public Set<String> setServletSecurity( ServletSecurityElement constraint ) {
-		return null;
+	public void setLoadOnStartup( int loadOnStartup ) {
+		this.loadOnStartup = loadOnStartup;
+	}
+
+	@Override
+	public Set<String> setServletSecurity( ServletSecurityElement servletSecurity ) {
+		this.servletSecurity = servletSecurity;
+		return Collections.emptySet();
 	}
 
 	@Override
 	public void setMultipartConfig( MultipartConfigElement multipartConfig ) {
-
+		this.multipartConfig = multipartConfig;
 	}
 
 	@Override
 	public void setRunAsRole( String roleName ) {
-
-	}
-
-	@Override
-	public void setAsyncSupported( boolean isAsyncSupported ) {
-
+		this.runAsRole = roleName;
 	}
 
 	@Override
 	public Set<String> addMapping( String... urlPatterns ) {
-		return null;
+		Collections.addAll( mappings, urlPatterns );
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Collection<String> getMappings() {
-		return null;
+		return Collections.unmodifiableSet( mappings );
 	}
 
 	@Override
 	public String getRunAsRole() {
-		return null;
+		return runAsRole;
 	}
 
-	@Override
-	public String getName() {
-		return null;
+	public int getLoadOnStartup() {
+		return loadOnStartup;
 	}
 
-	@Override
-	public String getClassName() {
-		return null;
+	public ServletSecurityElement getServletSecurity() {
+		return servletSecurity;
 	}
 
-	@Override
-	public boolean setInitParameter( String name, String value ) {
-		return false;
-	}
-
-	@Override
-	public String getInitParameter( String name ) {
-		return null;
-	}
-
-	@Override
-	public Set<String> setInitParameters( Map<String, String> initParameters ) {
-		return null;
-	}
-
-	@Override
-	public Map<String, String> getInitParameters() {
-		return null;
+	public MultipartConfigElement getMultipartConfig() {
+		return multipartConfig;
 	}
 }

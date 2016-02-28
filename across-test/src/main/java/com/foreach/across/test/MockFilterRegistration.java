@@ -16,70 +16,157 @@
 package com.foreach.across.test;
 
 import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class MockFilterRegistration implements FilterRegistration.Dynamic
+/**
+ * Mock version of a {@link javax.servlet.FilterRegistration.Dynamic} that does nothing but keep a number
+ * of configured properties.  Support is limited and only intended in combination with {@link MockAcrossServletContext}.
+ *
+ * @author Marc Vanbrabant, Arne Vandamme
+ */
+public class MockFilterRegistration extends AbstractMockRegistration implements FilterRegistration.Dynamic
 {
-	@Override
-	public void setAsyncSupported( boolean isAsyncSupported ) {
+	public static class MappingRule
+	{
+		private final boolean isUrlPatterns, matchAfter;
+		private final EnumSet<DispatcherType> dispatcherTypes;
+		private final String[] namesOrPatterns;
 
+		public MappingRule( boolean isUrlPatterns,
+		                    boolean matchAfter,
+		                    EnumSet<DispatcherType> dispatcherTypes,
+		                    String... namesOrPatterns ) {
+			this.isUrlPatterns = isUrlPatterns;
+			this.matchAfter = matchAfter;
+			this.dispatcherTypes = dispatcherTypes;
+			this.namesOrPatterns = namesOrPatterns;
+		}
+
+		public String[] getServletNames() {
+			return isUrlPatterns ? new String[0] : namesOrPatterns;
+		}
+
+		public String[] getUrlPatterns() {
+			return isUrlPatterns ? namesOrPatterns : new String[0];
+		}
+
+		public boolean isMatchAfter() {
+			return matchAfter;
+		}
+
+		public EnumSet<DispatcherType> getDispatcherTypes() {
+			return dispatcherTypes;
+		}
+
+		public boolean isUrlPatterns() {
+			return isUrlPatterns;
+		}
+
+		public boolean isServletNames() {
+			return !isUrlPatterns;
+		}
+
+		@Override
+		public boolean equals( Object o ) {
+			if ( this == o ) {
+				return true;
+			}
+			if ( o == null || getClass() != o.getClass() ) {
+				return false;
+			}
+			MappingRule that = (MappingRule) o;
+			return isUrlPatterns == that.isUrlPatterns &&
+					matchAfter == that.matchAfter &&
+					Objects.equals( dispatcherTypes, that.dispatcherTypes ) &&
+					Arrays.equals( namesOrPatterns, that.namesOrPatterns );
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash( isUrlPatterns, matchAfter, dispatcherTypes, namesOrPatterns );
+		}
+	}
+
+	private final Filter filter;
+	private final Class<? extends Filter> filterClass;
+
+	private final List<MappingRule> mappingRules = new ArrayList<>();
+
+	MockFilterRegistration( String name, Filter filter ) {
+		super( name, filter.getClass().getName() );
+
+		this.filter = filter;
+		this.filterClass = filter.getClass();
+	}
+
+	MockFilterRegistration( String name, Class<? extends Filter> filterClass ) {
+		super( name, filterClass.getName() );
+
+		this.filterClass = filterClass;
+		this.filter = null;
+	}
+
+	MockFilterRegistration( String name, String className ) {
+		super( name, className );
+
+		this.filter = null;
+		this.filterClass = null;
+	}
+
+	/**
+	 * @return filter instance if configured
+	 */
+	public Filter getFilter() {
+		return filter;
+	}
+
+	/**
+	 * @return filter class if configured
+	 */
+	public Class<? extends Filter> getFilterClass() {
+		return filterClass;
+	}
+
+	/**
+	 * @return list of mapping rules in the order they were added
+	 */
+	public List<MappingRule> getMappingRules() {
+		return Collections.unmodifiableList( mappingRules );
 	}
 
 	@Override
 	public void addMappingForServletNames( EnumSet<DispatcherType> dispatcherTypes,
 	                                       boolean isMatchAfter,
 	                                       String... servletNames ) {
-
+		mappingRules.add( new MappingRule( false, isMatchAfter, dispatcherTypes, servletNames ) );
 	}
 
 	@Override
 	public Collection<String> getServletNameMappings() {
-		return null;
+		return mappingRules.stream()
+		                   .filter( MappingRule::isServletNames )
+		                   .map( MappingRule::getServletNames )
+		                   .flatMap( Stream::of )
+		                   .collect( Collectors.toSet() );
 	}
 
 	@Override
 	public void addMappingForUrlPatterns( EnumSet<DispatcherType> dispatcherTypes,
 	                                      boolean isMatchAfter,
 	                                      String... urlPatterns ) {
-
+		mappingRules.add( new MappingRule( true, isMatchAfter, dispatcherTypes, urlPatterns ) );
 	}
 
 	@Override
 	public Collection<String> getUrlPatternMappings() {
-		return null;
-	}
-
-	@Override
-	public String getName() {
-		return null;
-	}
-
-	@Override
-	public String getClassName() {
-		return null;
-	}
-
-	@Override
-	public boolean setInitParameter( String name, String value ) {
-		return false;
-	}
-
-	@Override
-	public String getInitParameter( String name ) {
-		return null;
-	}
-
-	@Override
-	public Set<String> setInitParameters( Map<String, String> initParameters ) {
-		return null;
-	}
-
-	@Override
-	public Map<String, String> getInitParameters() {
-		return null;
+		return mappingRules.stream()
+		                   .filter( MappingRule::isUrlPatterns )
+		                   .map( MappingRule::getUrlPatterns )
+		                   .flatMap( Stream::of )
+		                   .collect( Collectors.toSet() );
 	}
 }

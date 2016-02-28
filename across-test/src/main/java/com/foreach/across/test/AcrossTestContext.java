@@ -31,9 +31,9 @@ import java.io.Closeable;
  * Creates and bootstraps a new AcrossContext instance using the configurers passed in
  * as constructor parameters.  The default test datasource is used and no default modules
  * are added to the context.
- * <p/>
+ * <p>
  * The test context provides methods for easy querying of an AcrossContext and its modules.
- * <p/>
+ * <p>
  * <strong>Note:</strong> when finished with an AcrossTestContext it is important that
  * the {@link #close()} method is called.  To make this easier this class implements
  * {@link java.io.Closeable}.

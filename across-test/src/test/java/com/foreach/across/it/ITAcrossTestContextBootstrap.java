@@ -24,12 +24,13 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestContext;
-import com.foreach.across.test.AcrossTestWebContext;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Set;
 
+import static com.foreach.across.test.support.AcrossTestBuilders.standard;
+import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -45,7 +46,7 @@ public class ITAcrossTestContextBootstrap
 
 	@Test
 	public void bootstrapWithoutWebModule() {
-		try (AcrossTestContext ctx = new AcrossTestContext( new Config() )) {
+		try (AcrossTestContext ctx = standard().configurer( new Config() ).build()) {
 			assertTrue( SimpleInstaller.installed );
 			assertTrue( ctx.contextInfo().getModuleInfo( "MyModule" ).isBootstrapped() );
 			assertFalse( ctx.contextInfo().hasModule( AcrossWebModule.NAME ) );
@@ -54,7 +55,7 @@ public class ITAcrossTestContextBootstrap
 
 	@Test
 	public void bootstrapWithWebModule() {
-		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config() )) {
+		try (AcrossTestContext ctx = web().configurer( new Config() ).build()) {
 			assertTrue( SimpleInstaller.installed );
 			assertTrue( ctx.contextInfo().getModuleInfo( "MyModule" ).isBootstrapped() );
 			assertTrue( ctx.contextInfo().hasModule( AcrossWebModule.NAME ) );
