@@ -30,6 +30,7 @@ import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfigurat
 import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.context.WebApplicationContext;
@@ -49,7 +50,7 @@ import javax.servlet.ServletException;
           ServerPropertiesAutoConfiguration.class })
 public class AcrossWebApplicationConfiguration
 {
-	@ConditionalOnBean(EmbeddedServletContainerFactory.class)
+	@ConditionalOnBean({ EmbeddedServletContainerFactory.class, SpringBootServletInitializer.class })
 	@Bean
 	public AcrossServletContextInitializer acrossServletContextInitializer() {
 		return new AcrossServletContextInitializer();
