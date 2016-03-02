@@ -21,8 +21,6 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.*;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
-import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.core.convert.StringToDateConverter;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
@@ -37,15 +35,12 @@ import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
@@ -126,9 +121,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Module(AcrossModule.CURRENT_MODULE)
 	private AcrossModuleInfo currentModuleInfo;
 
-	@Autowired
-	private AcrossContextBeanRegistry beanRegistry;
-
 	@RefreshableCollection(includeModuleInternals = true)
 	private Collection<PrefixingHandlerMappingConfigurer> prefixingHandlerMappingConfigurers;
 
@@ -139,7 +131,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	private ServletContext servletContext;
 
-	@Autowired(required = false)
+	@Autowired
 	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	private FormattingConversionService mvcConversionService;
 
@@ -166,34 +158,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		Assert.notNull( applicationContext, "applicationContext should be autowired and cannot be null" );
 		Assert.notNull( servletContext, "servletContext should be autowired and cannot be null" );
 		Assert.notNull( acrossContext );
-
-		if ( mvcConversionService == null ) {
-			mvcConversionService = mvcConversionService();
-		}
-	}
-
-	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
-	@Exposed
-	@ConditionalOnMissingBean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
-	public FormattingConversionService mvcConversionService() {
-		if ( beanRegistry.containsBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME ) ) {
-			Object conversionService
-					= beanRegistry.getBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
-
-			if ( conversionService instanceof FormattingConversionService ) {
-				LOG.info( "Using the default ConversionService as {}", AcrossWebModule.CONVERSION_SERVICE_BEAN );
-				return (FormattingConversionService) conversionService;
-			}
-		}
-
-		LOG.info(
-				"No ConversionService named {} found in Across context - creating and exposing a new FormattingConversionService bean",
-				AcrossWebModule.CONVERSION_SERVICE_BEAN );
-
-		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-		conversionService.addConverter( new StringToDateConverter() );
-
-		return conversionService;
 	}
 
 	/**
