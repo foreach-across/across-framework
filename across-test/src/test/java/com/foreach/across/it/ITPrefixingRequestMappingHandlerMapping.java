@@ -97,7 +97,7 @@ public class ITPrefixingRequestMappingHandlerMapping
 	 */
 	private void validateUrlMap( AcrossTestContext ctx, String... expectedPaths ) throws Exception {
 		RequestMappingHandlerMapping requestMappingHandlerMapping =
-				(RequestMappingHandlerMapping) ctx.beanRegistry().getBean( "prefixingRequestMappingHandlerMapping" );
+				(RequestMappingHandlerMapping) ctx.getBean( "prefixingRequestMappingHandlerMapping" );
 		assertNotNull( requestMappingHandlerMapping );
 		MultiValueMap<String, LinkedList<?>>
 				urlMap = (MultiValueMap<String, LinkedList<?>>) ReflectionTestUtils.getField(

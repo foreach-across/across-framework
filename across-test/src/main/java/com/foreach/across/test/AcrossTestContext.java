@@ -110,10 +110,20 @@ public class AcrossTestContext extends DefaultAcrossContextBeanRegistry implemen
 		}
 	}
 
+	/**
+	 * Provides access to registry for the {@link AcrossContext}.
+	 *
+	 * @return bean registry
+	 * @deprecated no longer useful as {@link AcrossTestContext} implements the bean registry interface directly
+	 */
+	@Deprecated
 	public AcrossContextBeanRegistry beanRegistry() {
 		return beanRegistry;
 	}
 
+	/**
+	 * @return the bootstrapped Across context infor
+	 */
 	public AcrossContextInfo contextInfo() {
 		return contextInfo;
 	}

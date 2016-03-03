@@ -7,6 +7,7 @@ Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :spring-data-url: http://projects.spring.io/spring-data/
 :spring-batch-url: http://projects.spring.io/spring-batch/
 :spring-security-url: http://projects.spring.io/spring-security/
+:commons-fileupload-url: http://commons.apache.org/proper/commons-fileupload/
 
 [copyright,verbatim]
 --

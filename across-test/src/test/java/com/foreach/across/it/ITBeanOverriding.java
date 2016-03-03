@@ -45,7 +45,7 @@ public class ITBeanOverriding
 	@Test
 	public void nonOverriddenBeanDefinition() {
 		try (AcrossTestContext ctx = standard().configurer( new Config() ).build()) {
-			Object beanOne = ctx.beanRegistry().getBeanFromModule( "MyModule", "beanOne" );
+			Object beanOne = ctx.getBeanFromModule( "MyModule", "beanOne" );
 
 			assertNotNull( beanOne );
 			assertEquals( "beanOne.MyModuleConfig", beanOne );
@@ -55,7 +55,7 @@ public class ITBeanOverriding
 	@Test
 	public void overriddenBeanDefinition() {
 		try (AcrossTestContext ctx = standard().configurer( new OverridingConfig(), new Config() ).build()) {
-			Object beanOne = ctx.beanRegistry().getBeanFromModule( "MyModule", "beanOne" );
+			Object beanOne = ctx.getBeanFromModule( "MyModule", "beanOne" );
 
 			assertNotNull( beanOne );
 			assertEquals( 123, beanOne );
@@ -65,7 +65,7 @@ public class ITBeanOverriding
 	@Test
 	public void nonOverriddenBeanDefinitionWebContext() {
 		try (AcrossTestContext ctx = web().configurer( new Config() ).build()) {
-			Object beanOne = ctx.beanRegistry().getBeanFromModule( "MyModule", "beanOne" );
+			Object beanOne = ctx.getBeanFromModule( "MyModule", "beanOne" );
 
 			assertNotNull( beanOne );
 			assertEquals( "beanOne.MyModuleConfig", beanOne );
@@ -75,7 +75,7 @@ public class ITBeanOverriding
 	@Test
 	public void overriddenBeanDefinitionWebContext() {
 		try (AcrossTestContext ctx = web().configurer( new OverridingConfig(), new Config() ).build()) {
-			Object beanOne = ctx.beanRegistry().getBeanFromModule( "MyModule", "beanOne" );
+			Object beanOne = ctx.getBeanFromModule( "MyModule", "beanOne" );
 
 			assertNotNull( beanOne );
 			assertEquals( 123, beanOne );
