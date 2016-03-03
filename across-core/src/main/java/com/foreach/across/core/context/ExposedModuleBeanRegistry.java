@@ -21,6 +21,7 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Map;
@@ -32,12 +33,21 @@ import java.util.Map;
  */
 public class ExposedModuleBeanRegistry extends AbstractExposedBeanRegistry
 {
+	private final BeanDefinitionRegistry beanDefinitionRegistry;
+
 	public ExposedModuleBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry,
 	                                  ConfigurableAcrossModuleInfo moduleInfo,
 	                                  ConfigurableApplicationContext child,
 	                                  BeanFilter filter,
 	                                  ExposedBeanDefinitionTransformer transformer ) {
 		super( contextBeanRegistry, moduleInfo.getName(), transformer );
+
+		if ( child instanceof BeanDefinitionRegistry ) {
+			beanDefinitionRegistry = (BeanDefinitionRegistry) child;
+		}
+		else {
+			beanDefinitionRegistry = null;
+		}
 
 		if ( filter == null ) {
 			return;
@@ -48,5 +58,10 @@ public class ExposedModuleBeanRegistry extends AbstractExposedBeanRegistry
 				ApplicationContextScanner.findBeanDefinitionsMatching( child, filter );
 
 		addBeans( definitions, beans );
+	}
+
+	@Override
+	protected String[] getAliases( String beanName ) {
+		return beanDefinitionRegistry != null ? beanDefinitionRegistry.getAliases( beanName ) : new String[0];
 	}
 }

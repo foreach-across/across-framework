@@ -22,6 +22,7 @@ import com.foreach.across.core.transformers.BeanPrefixingTransformer;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +38,8 @@ public class TestBeanPrefixingTransformer
 				                 mock( AcrossContextBeanRegistry.class ),
 				                 "module",
 				                 "sessionFactory",
-				                 Object.class
+				                 Object.class,
+				                 new String[0]
 		                 )
 		);
 		definitions.put( "transactionManager",
@@ -45,28 +47,37 @@ public class TestBeanPrefixingTransformer
 				                 mock( AcrossContextBeanRegistry.class ),
 				                 "module",
 				                 "transactionManager",
-				                 Object.class
+				                 Object.class,
+				                 new String[] { "myTransactionManager" }
 		                 )
 		);
 	}
 
 	@Test
-	public void testCamelCasing() {
+	public void camelCasing() {
 		ExposedBeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "test" );
 		transformer.transformBeanDefinitions( definitions );
 
 		assertEquals( 2, definitions.size() );
 		assertEquals( "testSessionFactory", definitions.get( "sessionFactory" ).getPreferredBeanName() );
 		assertEquals( "testTransactionManager", definitions.get( "transactionManager" ).getPreferredBeanName() );
+		assertEquals(
+				Collections.singleton( "testMyTransactionManager" ),
+				definitions.get( "transactionManager" ).getAliases()
+		);
 	}
 
 	@Test
-	public void testNoCamelCasing() {
+	public void noCamelCasing() {
 		ExposedBeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "some.", false );
 		transformer.transformBeanDefinitions( definitions );
 
 		assertEquals( 2, definitions.size() );
 		assertEquals( "some.sessionFactory", definitions.get( "sessionFactory" ).getPreferredBeanName() );
 		assertEquals( "some.transactionManager", definitions.get( "transactionManager" ).getPreferredBeanName() );
+		assertEquals(
+				Collections.singleton( "some.myTransactionManager" ),
+				definitions.get( "transactionManager" ).getAliases()
+		);
 	}
 }

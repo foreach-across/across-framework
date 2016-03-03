@@ -61,7 +61,8 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
 	                              String moduleName,
 	                              String originalBeanName,
-	                              Class beanClass ) {
+	                              Class beanClass,
+	                              String[] aliases ) {
 		this.contextId = contextBeanRegistry.getContextId();
 		this.moduleName = moduleName;
 
@@ -95,14 +96,17 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		fullyQualifiedBeanName = contextId + "." + moduleName + "@" + originalBeanName;
 
 		setPreferredBeanName( originalBeanName );
+
+		Collections.addAll( this.aliases, aliases );
 	}
 
 	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
 	                              String moduleName,
 	                              String originalBeanName,
 	                              BeanDefinition original,
-	                              Class<?> beanClass ) {
-		this( contextBeanRegistry, moduleName, originalBeanName, beanClass );
+	                              Class<?> beanClass,
+	                              String[] aliases ) {
+		this( contextBeanRegistry, moduleName, originalBeanName, beanClass, aliases );
 
 		setPrimary( original.isPrimary() );
 		setDescription( original.getDescription() );

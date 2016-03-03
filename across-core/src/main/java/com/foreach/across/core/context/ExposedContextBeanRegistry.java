@@ -36,6 +36,7 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 	private static final AnnotationBeanFilter EXPOSED_FILTER = new AnnotationBeanFilter( true, true, Exposed.class );
 
 	private final ConfigurableListableBeanFactory beanFactory;
+	private final BeanDefinitionRegistry beanDefinitionRegistry;
 
 	public ExposedContextBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry,
 	                                   ConfigurableListableBeanFactory beanFactory,
@@ -43,6 +44,13 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 		super( contextBeanRegistry, null, transformer );
 
 		this.beanFactory = beanFactory;
+
+		if ( beanFactory instanceof BeanDefinitionRegistry ) {
+			beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
+		}
+		else {
+			beanDefinitionRegistry = null;
+		}
 
 		Map<String, Object> beans = ApplicationContextScanner.findSingletonsMatching( beanFactory, EXPOSED_FILTER );
 		Map<String, BeanDefinition> definitions =
@@ -96,5 +104,10 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 		}
 
 		super.copyBeanDefinitions( beanFactory, beanDefinitionRegistry );
+	}
+
+	@Override
+	protected String[] getAliases( String beanName ) {
+		return beanDefinitionRegistry != null ? beanDefinitionRegistry.getAliases( beanName ) : new String[0];
 	}
 }

@@ -21,7 +21,6 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.exposing.*;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,6 +91,14 @@ public class TestDefaultExposeFilter
 		assertTrue( exposedBeans.containsKey( "exposedBean" ) );
 		assertTrue( exposedBeans.containsKey( "myBeanWithExposed" ) );
 		assertTrue( exposedBeans.containsKey( "beanFromExposingConfiguration" ) );
+	}
+
+	@Test
+	public void aliasShouldBeExposedAsWell() {
+		MyBean bean = applicationContext.getBean( "exposedBean", MyBean.class );
+		MyBean aliased = applicationContext.getBean( "aliasedExposedBean", MyBean.class );
+
+		assertSame( bean, aliased );
 	}
 
 	@Configuration
