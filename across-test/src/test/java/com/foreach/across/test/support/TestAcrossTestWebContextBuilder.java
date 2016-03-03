@@ -19,7 +19,9 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
 import com.foreach.across.test.AcrossTestWebContext;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -67,6 +69,23 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 			ServletConfigurer configurer = ctx.getBeanOfType( ServletConfigurer.class );
 			assertNotNull( configurer );
 			assertEquals( Boolean.FALSE, configurer.getAllowed() );
+		}
+	}
+
+	@Test
+	public void servletContextShouldHaveWebApplicationContextRegistered() {
+		try (
+				AcrossTestWebContext ctx = new AcrossTestWebContextBuilder()
+						.dynamicServletContext( false )
+						.modules( AcrossWebModule.NAME )
+						.register( ServletConfigurer.class )
+						.build()
+		) {
+			ApplicationContext applicationContext = ctx.contextInfo().getApplicationContext();
+
+			assertNotNull( WebApplicationContextUtils.getWebApplicationContext( ctx.getServletContext() ) );
+			assertSame( applicationContext,
+			            WebApplicationContextUtils.getWebApplicationContext( ctx.getServletContext() ) );
 		}
 	}
 

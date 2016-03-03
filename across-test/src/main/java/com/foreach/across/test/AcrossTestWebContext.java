@@ -16,8 +16,18 @@
 package com.foreach.across.test;
 
 import com.foreach.across.config.AcrossContextConfigurer;
+import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.util.Collection;
 
 /**
  * Extends the default AcrossTextContext by creating a WebApplicationContext,
@@ -32,6 +42,9 @@ import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
 public class AcrossTestWebContext extends AcrossTestContext
 {
 	private MockAcrossServletContext servletContext;
+	private MockMvc mockMvc;
+
+	private ApplicationContext acrossApplicationContext;
 
 	/**
 	 * @param configurers list of configures
@@ -57,6 +70,18 @@ public class AcrossTestWebContext extends AcrossTestContext
 	}
 
 	@Override
+	protected void setAcrossContext( AcrossContext acrossContext ) {
+		super.setAcrossContext( acrossContext );
+
+		acrossApplicationContext = AcrossContextUtils.getApplicationContext( acrossContext );
+	}
+
+	@Override
+	protected void setApplicationContext( ConfigurableApplicationContext applicationContext ) {
+		super.setApplicationContext( applicationContext );
+	}
+
+	@Override
 	protected AcrossConfigurableApplicationContext createApplicationContext() {
 		AcrossWebApplicationContext wac = new AcrossWebApplicationContext();
 		wac.register( AcrossTestWebContextConfiguration.class );
@@ -65,5 +90,47 @@ public class AcrossTestWebContext extends AcrossTestContext
 		wac.setServletContext( servletContext );
 
 		return wac;
+	}
+
+	/**
+	 * Returns an initialized {@link MockMvc} for the internal {@link com.foreach.across.core.AcrossContext}.
+	 * If the attached {@link MockAcrossServletContext} has {@link MockAcrossServletContext#isDynamicRegistrationAllowed()}
+	 * {@code true}, registered filters will be added to this {@link MockMvc} instance.
+	 *
+	 * @return instance ready for mock requests
+	 */
+	public MockMvc mockMvc() {
+		if ( mockMvc == null ) {
+			MockAcrossServletContext servletContext = getServletContext();
+
+			WebApplicationContext wac = webApplicationContext();
+			DefaultMockMvcBuilder mockMvcBuilder = MockMvcBuilders.webAppContextSetup( wac );
+
+			if ( servletContext.isDynamicRegistrationAllowed() ) {
+				servletContext.getFilterRegistrations()
+				              .values()
+				              .stream()
+				              .filter( r -> r.getFilter() != null )
+				              .forEach( r -> {
+					              Collection<String> urlPatternMappings = r.getUrlPatternMappings();
+					              mockMvcBuilder.addFilter(
+							              r.getFilter(),
+							              urlPatternMappings.toArray( new String[urlPatternMappings.size()] )
+					              );
+				              } );
+			}
+
+			mockMvc = mockMvcBuilder.build();
+		}
+
+		return mockMvc;
+	}
+
+	private WebApplicationContext webApplicationContext() {
+		if ( acrossApplicationContext instanceof WebApplicationContext ) {
+			return (WebApplicationContext) acrossApplicationContext;
+		}
+
+		return (WebApplicationContext) acrossApplicationContext.getParent();
 	}
 }

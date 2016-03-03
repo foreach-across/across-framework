@@ -16,8 +16,6 @@
 
 package com.foreach.across.it;
 
-import com.foreach.across.config.AcrossContextConfigurer;
-import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.database.DatabaseInfo;
 import com.foreach.across.test.AcrossTestConfiguration;
 import org.junit.Test;
@@ -69,10 +67,7 @@ public class ITDatabaseInfo
 
 	@Configuration
 	@AcrossTestConfiguration
-	static class Config implements AcrossContextConfigurer
+	static class Config
 	{
-		@Override
-		public void configure( AcrossContext context ) {
-		}
 	}
 }

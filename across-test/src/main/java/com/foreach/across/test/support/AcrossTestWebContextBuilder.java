@@ -19,11 +19,13 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
 import com.foreach.across.test.AcrossTestWebContext;
 import com.foreach.across.test.MockAcrossServletContext;
 import org.springframework.core.env.PropertySource;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -168,6 +170,10 @@ public class AcrossTestWebContextBuilder extends AcrossTestContextBuilder
 	protected AcrossTestWebContext createTestContext( AcrossConfigurableApplicationContext applicationContext,
 	                                                  AcrossContext context ) {
 		AcrossWebApplicationContext wac = (AcrossWebApplicationContext) applicationContext;
+		wac.getServletContext().setAttribute(
+				WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
+				AcrossContextUtils.getApplicationContext( context )
+		);
 		return new RunningAcrossContext( wac, context );
 	}
 
