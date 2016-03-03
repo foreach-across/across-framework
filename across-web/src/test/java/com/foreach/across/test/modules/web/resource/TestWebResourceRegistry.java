@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
- * @since 2015-02-26
+ * @since 1.1.2
  */
 public class TestWebResourceRegistry
 {

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author Arne Vandamme
- * @since feb 2016
+ * @since 1.1.2
  */
 public abstract class AbstractMockRegistration implements Registration.Dynamic
 {

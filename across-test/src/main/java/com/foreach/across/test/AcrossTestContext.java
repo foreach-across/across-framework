@@ -23,7 +23,10 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.beans.SingletonBean;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Closeable;
 
@@ -41,16 +44,26 @@ import java.io.Closeable;
  * @author Arne Vandamme
  * @see com.foreach.across.test.AcrossTestWebContext
  * @see com.foreach.across.test.AcrossTestConfiguration
+ * @see com.foreach.across.test.support.AcrossTestBuilders
+ * @see com.foreach.across.test.support.AcrossTestContextBuilder
  */
-public class AcrossTestContext implements Closeable
+public class AcrossTestContext extends DefaultAcrossContextBeanRegistry implements Closeable
 {
-	private final AcrossConfigurableApplicationContext applicationContext;
-	private final AcrossContext acrossContext;
-	private final AcrossContextBeanRegistry beanRegistry;
-	private final AcrossContextInfo contextInfo;
+	private ConfigurableApplicationContext applicationContext;
+	private AcrossContext acrossContext;
+	private AcrossContextBeanRegistry beanRegistry;
+	private AcrossContextInfo contextInfo;
 
+	protected AcrossTestContext() {
+	}
+
+	/**
+	 * @param configurers list of configures
+	 * @deprecated use {@link com.foreach.across.test.support.AcrossTestBuilders} instead
+	 */
+	@Deprecated
 	public AcrossTestContext( AcrossContextConfigurer... configurers ) {
-		applicationContext = createApplicationContext();
+		AcrossConfigurableApplicationContext parent = createApplicationContext();
 
 		ProvidedBeansMap providedBeans = new ProvidedBeansMap();
 
@@ -61,14 +74,25 @@ public class AcrossTestContext implements Closeable
 			);
 		}
 
-		applicationContext.provide( providedBeans );
+		parent.provide( providedBeans );
 
-		applicationContext.refresh();
-		applicationContext.start();
+		parent.refresh();
+		parent.start();
 
-		acrossContext = applicationContext.getBean( AcrossContext.class );
+		setApplicationContext( parent );
+		setAcrossContext( parent.getBean( AcrossContext.class ) );
+	}
+
+	protected void setApplicationContext( ConfigurableApplicationContext applicationContext ) {
+		this.applicationContext = applicationContext;
+	}
+
+	protected void setAcrossContext( AcrossContext acrossContext ) {
+		this.acrossContext = acrossContext;
+
 		beanRegistry = AcrossContextUtils.getBeanRegistry( acrossContext );
 		contextInfo = AcrossContextUtils.getContextInfo( acrossContext );
+		setContextInfo( (ConfigurableAcrossContextInfo) contextInfo );
 	}
 
 	protected AcrossConfigurableApplicationContext createApplicationContext() {
@@ -81,7 +105,9 @@ public class AcrossTestContext implements Closeable
 	@Override
 	public void close() {
 		acrossContext.shutdown();
-		applicationContext.stop();
+		if ( applicationContext != null ) {
+			applicationContext.stop();
+		}
 	}
 
 	public AcrossContextBeanRegistry beanRegistry() {

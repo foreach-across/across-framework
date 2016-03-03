@@ -55,7 +55,7 @@ public class ITAcrossTestContextBootstrap
 
 	@Test
 	public void bootstrapWithWebModule() {
-		try (AcrossTestContext ctx = web().configurer( new Config() ).build()) {
+		try (AcrossTestContext ctx = web().modules( AcrossWebModule.NAME ).configurer( new Config() ).build()) {
 			assertTrue( SimpleInstaller.installed );
 			assertTrue( ctx.contextInfo().getModuleInfo( "MyModule" ).isBootstrapped() );
 			assertTrue( ctx.contextInfo().hasModule( AcrossWebModule.NAME ) );

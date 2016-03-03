@@ -26,11 +26,18 @@ import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
  * annotation.
  *
  * @author Arne Vandamme
+ * @see com.foreach.across.test.support.AcrossTestBuilders
+ * @see com.foreach.across.test.support.AcrossTestWebContextBuilder
  */
 public class AcrossTestWebContext extends AcrossTestContext
 {
 	private MockAcrossServletContext servletContext;
 
+	/**
+	 * @param configurers list of configures
+	 * @deprecated use {@link com.foreach.across.test.support.AcrossTestBuilders} instead
+	 */
+	@Deprecated
 	public AcrossTestWebContext( AcrossContextConfigurer... configurers ) {
 		super( configurers );
 	}
@@ -43,6 +50,10 @@ public class AcrossTestWebContext extends AcrossTestContext
 	 */
 	public MockAcrossServletContext getServletContext() {
 		return servletContext;
+	}
+
+	protected void setServletContext( MockAcrossServletContext servletContext ) {
+		this.servletContext = servletContext;
 	}
 
 	@Override

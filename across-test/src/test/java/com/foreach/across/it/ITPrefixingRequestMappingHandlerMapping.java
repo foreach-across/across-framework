@@ -27,11 +27,11 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfiguration;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestContext;
-import com.foreach.across.test.AcrossTestWebContext;
 import org.junit.Test;
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -48,13 +48,18 @@ import java.lang.annotation.*;
 import java.util.LinkedList;
 import java.util.Set;
 
+import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.Assert.assertNotNull;
 
 public class ITPrefixingRequestMappingHandlerMapping
 {
 	@Test
 	public void testThatDefaultPathIsFoundInUrlMap() throws Exception {
-		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config() )) {
+		try (
+				AcrossTestContext ctx = web()
+						.register( Config.class )
+						.build()
+		) {
 			validateUrlMap( ctx, "/defaultpath/testrequestmapping", "/defaultpath/testrequestmappingendingwithslash/",
 			                "/defaultpath/testrequestmappingwithoutendingandtrailingslash" );
 		}
@@ -62,7 +67,12 @@ public class ITPrefixingRequestMappingHandlerMapping
 
 	@Test
 	public void testThatOverridenPrefixPathIsFoundInUrlMapForSlash() throws Exception {
-		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config( "/" ) )) {
+		try (
+				AcrossTestContext ctx = web()
+						.property( "prefixPath", "/" )
+						.register( Config.class )
+						.build()
+		) {
 			validateUrlMap( ctx, "/testrequestmapping", "/testrequestmappingendingwithslash/",
 			                "/testrequestmappingwithoutendingandtrailingslash" );
 		}
@@ -70,7 +80,12 @@ public class ITPrefixingRequestMappingHandlerMapping
 
 	@Test
 	public void testThatOverridenPrefixPathIsFoundInUrlMapForPathEndingWithSlash() throws Exception {
-		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config( "/otherpath/" ) )) {
+		try (
+				AcrossTestContext ctx = web()
+						.property( "prefixPath", "/otherpath/" )
+						.register( Config.class )
+						.build()
+		) {
 			validateUrlMap( ctx, "/otherpath/testrequestmapping", "/otherpath/testrequestmappingendingwithslash/",
 			                "/otherpath/testrequestmappingwithoutendingandtrailingslash" );
 		}
@@ -103,15 +118,8 @@ public class ITPrefixingRequestMappingHandlerMapping
 	@Configuration
 	protected static class Config implements AcrossContextConfigurer
 	{
-		private final String prefixPath;
-
-		public Config() {
-			this.prefixPath = "/defaultpath";
-		}
-
-		public Config( String prefixPath ) {
-			this.prefixPath = prefixPath;
-		}
+		@Value("${prefixPath:/defaultpath}")
+		private String prefixPath;
 
 		@Override
 		public void configure( AcrossContext context ) {

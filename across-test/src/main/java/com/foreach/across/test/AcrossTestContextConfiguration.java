@@ -34,6 +34,16 @@ import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 import java.util.Map;
 
+/**
+ * Deprecated configuration for creating an {@link AcrossContext} with the default test datasource that will also
+ * reset the database before bootstrapping.
+ *
+ * @deprecated favour the use of an {@link com.foreach.across.test.support.AcrossTestContextBuilder} instead
+ * @see com.foreach.across.test.support.AcrossTestContextBuilder
+ * @see com.foreach.across.test.support.config.ResetDatabaseConfigurer
+ * @see com.foreach.across.test.support.config.TestDataSourceConfigurer
+ */
+@Deprecated
 @Configuration
 @PropertySource(value = "file:${user.home}/dev-configs/across-test.properties", ignoreResourceNotFound = true)
 public class AcrossTestContextConfiguration implements EnvironmentAware

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * @author Arne Vandamme
- * @since Feb 2016
+ * @since 1.1.2
  */
 public class TestMockServletContext
 {

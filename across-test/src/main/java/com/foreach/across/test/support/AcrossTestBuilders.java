@@ -25,7 +25,7 @@ package com.foreach.across.test.support;
  * @author Arne Vandamme
  * @see AcrossTestContextBuilder
  * @see AcrossTestWebContextBuilder
- * @since feb 2016
+ * @since 1.1.2
  */
 public abstract class AcrossTestBuilders
 {
