@@ -98,8 +98,8 @@ public class AcrossBootstrapper
 
 			LOG.info( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
 			for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
-				LOG.info( "{} - {}: {}", moduleInfo.getIndex(), moduleInfo.getName(),
-				          moduleInfo.getModule().getClass() );
+				LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
+				          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
 			}
 
 			runModuleBootstrapperCustomizations( modulesInOrder );
@@ -497,7 +497,7 @@ public class AcrossBootstrapper
 		           .stream()
 		           .filter( AcrossModuleInfo::isEnabled )
 		           .forEach( acrossModuleInfo -> Collections.addAll(
-				                     basePackages, acrossModuleInfo.getModule().getModuleConfigurationScanPackages()
+				           basePackages, acrossModuleInfo.getModule().getModuleConfigurationScanPackages()
 		                     )
 		           );
 
