@@ -21,12 +21,18 @@ import com.foreach.across.test.AcrossTestWebContext;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import static com.foreach.across.test.support.AcrossTestBuilders.web;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Arne Vandamme
@@ -86,6 +92,20 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 			assertNotNull( WebApplicationContextUtils.getWebApplicationContext( ctx.getServletContext() ) );
 			assertSame( applicationContext,
 			            WebApplicationContextUtils.getWebApplicationContext( ctx.getServletContext() ) );
+		}
+	}
+
+	@Test
+	public void mockMvcCharacterEncodingFilterShouldApply() throws Exception {
+		try (AcrossTestWebContext ctx = web().property( "build.number", "unit-test" )
+		                                     .property( "spring.http.encoding.force", "true" )
+		                                     .modules( AcrossWebModule.NAME )
+		                                     .build()) {
+			MockMvc mvc = ctx.mockMvc();
+
+			mvc.perform( get( "/across/resources/static/unit-test/testResources/test.txt" ) )
+			   .andExpect( status().isOk() )
+			   .andExpect( content().string( is( "hùllµ€" ) ) );
 		}
 	}
 

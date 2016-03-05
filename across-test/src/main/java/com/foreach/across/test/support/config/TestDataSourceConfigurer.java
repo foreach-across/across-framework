@@ -22,6 +22,8 @@ import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,6 +60,8 @@ import javax.sql.DataSource;
 @PropertySource(value = "file:${user.home}/dev-configs/across-test.properties", ignoreResourceNotFound = true)
 public class TestDataSourceConfigurer implements EnvironmentAware, AcrossContextConfigurer
 {
+	private static final Logger LOG = LoggerFactory.getLogger( TestDataSourceConfigurer.class );
+
 	private Environment environment;
 
 	public void setEnvironment( Environment environment ) {
@@ -87,7 +91,7 @@ public class TestDataSourceConfigurer implements EnvironmentAware, AcrossContext
 			dsName = environment.getProperty( "acrossTest.datasource.default", "auto" );
 		}
 
-		System.out.println( "Creating Across test datasource with profile: " + dsName );
+		LOG.info( "Creating Across test datasource with profile: {}", dsName );
 
 		if ( StringUtils.equals( "auto", dsName ) ) {
 			dataSource = HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver",
@@ -107,8 +111,7 @@ public class TestDataSourceConfigurer implements EnvironmentAware, AcrossContext
 		}
 
 		DatabaseInfo databaseInfo = DatabaseInfo.retrieve( dataSource );
-		System.out.println(
-				"Connection to " + databaseInfo.getProductName() + " - version: " + databaseInfo.getProductVersion() );
+		LOG.info( "Connection to {} - version: {}", databaseInfo.getProductName(), databaseInfo.getProductVersion() );
 
 		return dataSource;
 	}

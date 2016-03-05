@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = TestAcrossTestConfiguration.Config.class)
+@ContextConfiguration
 public class TestAcrossTestConfiguration
 {
 	@Autowired
@@ -84,7 +84,7 @@ public class TestAcrossTestConfiguration
 	protected static class Config
 	{
 		@Bean
-		private DataSource acrossInstallerDataSource() {
+		public DataSource acrossInstallerDataSource() {
 			DataSource installerDs = new EmbeddedDatabaseBuilder()
 					.setName( UUID.randomUUID().toString() )
 					.addScript( "scripts/create_test_table.sql" )

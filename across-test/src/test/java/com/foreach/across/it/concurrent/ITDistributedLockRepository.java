@@ -28,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
@@ -46,7 +45,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = ITDistributedLockRepository.Config.class)
+@ContextConfiguration
 public class ITDistributedLockRepository
 {
 	private static final int BATCHES = 3;
@@ -229,7 +228,6 @@ public class ITDistributedLockRepository
 	/**
 	 * Instantiate an Across context so we get access to the test datasource.
 	 */
-	@Configuration
 	@AcrossTestConfiguration
 	protected static class Config
 	{

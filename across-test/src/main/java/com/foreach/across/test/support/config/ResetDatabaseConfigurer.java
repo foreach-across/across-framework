@@ -18,6 +18,8 @@ package com.foreach.across.test.support.config;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import liquibase.integration.spring.SpringLiquibase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -36,16 +38,20 @@ import javax.sql.DataSource;
 @Configuration
 public class ResetDatabaseConfigurer implements AcrossContextConfigurer
 {
+	private static final Logger LOG = LoggerFactory.getLogger( ResetDatabaseConfigurer.class );
+
 	@Override
 	public void configure( AcrossContext context ) {
 		DataSource ds = context.getDataSource();
 		DataSource installerDs = context.getInstallerDataSource();
 
 		if ( ds != null ) {
+			LOG.info( "Resetting database for Across datasource" );
 			dropDataSource( ds );
 		}
 
 		if ( installerDs != null && installerDs != ds ) {
+			LOG.info( "Resetting database for Across installer datasource" );
 			dropDataSource( installerDs );
 		}
 	}

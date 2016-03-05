@@ -10,6 +10,7 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/demo-web" />
     <file type="web" url="file://$PROJECT_DIR$/test-web" />
+    <type id="Spring" />
   </component>
   <component name="IdProvider" IDEtalkID="DB3B0B76923C4E8337D6E50B65FCF5BB" />
   <component name="JavadocGenerationManager">

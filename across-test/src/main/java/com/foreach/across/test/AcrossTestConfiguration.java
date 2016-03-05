@@ -21,25 +21,41 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
+import com.foreach.across.test.support.config.MockMvcConfiguration;
 import com.foreach.across.test.support.config.ResetDatabaseConfigurer;
 import com.foreach.across.test.support.config.TestDataSourceConfigurer;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
 
+/**
+ * Custom annotation that provides most of the attributes that {@link EnableAcrossContext} does, but adds
+ * some test-related configurations.  If no datasources are configured, a test datasource will be used.
+ * See the javadoc for {@link TestDataSourceConfigurer} for more information.
+ * <p>WARNING: Do not use this annotation when configuring a context with a real-life database.
+ * Using this annotation will add configurers that will reset both the across datasource and optional
+ * installer datasource before the context is bootstrapped.  All tables in the databases will be dropped.</p>
+ * <p>When used in conjunction with {@link AcrossWebAppConfiguration}, this configuration will also
+ * provide a {@link org.springframework.test.web.servlet.MockMvc} instance initialized with all filters
+ * registered by Across modules. </p>
+ * <p>Any class marked with this annotation is also marked with {@link Configuration} automatically.</p>
+ *
+ * @see AcrossWebAppConfiguration
+ * @see TestDataSourceConfigurer
+ * @see ResetDatabaseConfigurer
+ * @see MockMvcConfiguration
+ * @since 1.0.0
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
+@Configuration
 @EnableAcrossContext
-@Import({ TestDataSourceConfigurer.class, ResetDatabaseConfigurer.class })
+@Import({ TestDataSourceConfigurer.class, ResetDatabaseConfigurer.class, MockMvcConfiguration.class })
 public @interface AcrossTestConfiguration
 {
-	/**
-	 * Alias for the {@link #modules()} attribute.  Allows for more concise annotation declarations.
-	 */
-	String[] value() default {};
-
 	/**
 	 * Array of {@link AcrossModule} names that should be configured if auto configuration is enabled.
 	 * These will be added to the {@link AcrossContext} before any configured module beans and before
