@@ -15,10 +15,7 @@
  */
 package com.foreach.across.test;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.Servlet;
-import javax.servlet.ServletRegistration;
-import javax.servlet.ServletSecurityElement;
+import javax.servlet.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -30,7 +27,7 @@ import java.util.Set;
  *
  * @author Marc Vanbrabant, Arne Vandamme
  */
-public class MockServletRegistration extends AbstractMockRegistration implements ServletRegistration.Dynamic
+public class MockServletRegistration extends AbstractMockRegistration implements ServletRegistration.Dynamic, ServletConfig
 {
 	private final Servlet servlet;
 	private final Class<? extends Servlet> servletClass;
@@ -42,25 +39,35 @@ public class MockServletRegistration extends AbstractMockRegistration implements
 	private ServletSecurityElement servletSecurity;
 	private MultipartConfigElement multipartConfig;
 
-	MockServletRegistration( String name, Servlet servlet ) {
-		super( name, servlet.getClass().getName() );
+	MockServletRegistration( MockAcrossServletContext servletContext, String name, Servlet servlet ) {
+		super( servletContext, name, servlet.getClass().getName() );
 
 		this.servlet = servlet;
 		this.servletClass = servlet.getClass();
 	}
 
-	MockServletRegistration( String name, Class<? extends Servlet> servletClass ) {
-		super( name, servletClass.getName() );
+	MockServletRegistration( MockAcrossServletContext servletContext,
+	                         String name,
+	                         Class<? extends Servlet> servletClass ) {
+		super( servletContext, name, servletClass.getName() );
 
 		this.servletClass = servletClass;
 		this.servlet = null;
 	}
 
-	MockServletRegistration( String name, String className ) {
-		super( name, className );
+	MockServletRegistration( MockAcrossServletContext servletContext, String name, String className ) {
+		super( servletContext, name, className );
 
 		this.servlet = null;
 		this.servletClass = null;
+	}
+
+	/**
+	 * @return servlet name
+	 */
+	@Override
+	public String getServletName() {
+		return getName();
 	}
 
 	/**

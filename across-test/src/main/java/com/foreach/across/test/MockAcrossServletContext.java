@@ -16,10 +16,11 @@
 package com.foreach.across.test;
 
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
 
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
+import javax.servlet.*;
 import java.util.*;
 
 /**
@@ -38,9 +39,13 @@ import java.util.*;
  */
 public class MockAcrossServletContext extends MockServletContext
 {
+	private final static Logger LOG = LoggerFactory.getLogger( MockAcrossServletContext.class );
+
 	private final Map<String, MockFilterRegistration> filters = new LinkedHashMap<>();
 	private final Map<String, MockServletRegistration> servlets = new LinkedHashMap<>();
 	private final List<Object> listeners = new ArrayList<>();
+
+	private boolean initialized;
 
 	public MockAcrossServletContext() {
 		this( true );
@@ -71,17 +76,17 @@ public class MockAcrossServletContext extends MockServletContext
 
 	@Override
 	public MockServletRegistration addServlet( String servletName, Class<? extends Servlet> servletClass ) {
-		return servletRegistration( new MockServletRegistration( servletName, servletClass ) );
+		return servletRegistration( new MockServletRegistration( this, servletName, servletClass ) );
 	}
 
 	@Override
 	public MockServletRegistration addServlet( String servletName, String className ) {
-		return servletRegistration( new MockServletRegistration( servletName, className ) );
+		return servletRegistration( new MockServletRegistration( this, servletName, className ) );
 	}
 
 	@Override
 	public MockServletRegistration addServlet( String servletName, Servlet servlet ) {
-		return servletRegistration( new MockServletRegistration( servletName, servlet ) );
+		return servletRegistration( new MockServletRegistration( this, servletName, servlet ) );
 	}
 
 	@Override
@@ -96,17 +101,17 @@ public class MockAcrossServletContext extends MockServletContext
 
 	@Override
 	public MockFilterRegistration addFilter( String filterName, String className ) {
-		return filterRegistration( new MockFilterRegistration( filterName, className ) );
+		return filterRegistration( new MockFilterRegistration( this, filterName, className ) );
 	}
 
 	@Override
 	public MockFilterRegistration addFilter( String filterName, Filter filter ) {
-		return filterRegistration( new MockFilterRegistration( filterName, filter ) );
+		return filterRegistration( new MockFilterRegistration( this, filterName, filter ) );
 	}
 
 	@Override
 	public MockFilterRegistration addFilter( String filterName, Class<? extends Filter> filterClass ) {
-		return filterRegistration( new MockFilterRegistration( filterName, filterClass ) );
+		return filterRegistration( new MockFilterRegistration( this, filterName, filterClass ) );
 	}
 
 	@Override
@@ -157,5 +162,43 @@ public class MockAcrossServletContext extends MockServletContext
 	 */
 	public List<Object> getListeners() {
 		return Collections.unmodifiableList( listeners );
+	}
+
+	/**
+	 * Initializes all filters and servlets registered on this context.  This will call either
+	 * {@link Servlet#init(ServletConfig)} or {@link Filter#init(FilterConfig)} with the corresponding
+	 * {@link MockServletRegistration} or {@link MockFilterRegistration} that is registered.
+	 * <p>
+	 * Unfortunately since the actual config will be a dummy implementation, it is possible that some
+	 * classes will not support it.  Though in most cases this should not be an issue.
+	 * <p>
+	 * Can be called safely multiple times, actual initialization will occur only once.
+	 */
+	public void initialize() {
+		if ( !initialized ) {
+			initialized = true;
+			filters.values().stream()
+			       .filter( f -> f.getFilter() != null )
+			       .forEach( f -> {
+				       try {
+					       f.getFilter().init( f );
+				       }
+				       catch ( ServletException se ) {
+					       LOG.error( "Unable to initialize filter {} with mock FilterConfig", f.getFilterName(), se );
+				       }
+			       } );
+
+			servlets.values().stream()
+			        .filter( s -> s.getServlet() != null )
+			        .forEach( s -> {
+				        try {
+					        s.getServlet().init( s );
+				        }
+				        catch ( ServletException se ) {
+					        LOG.error( "Unable to initialize servlet {} with mock ServletConfig", s.getServletName(),
+					                   se );
+				        }
+			        } );
+		}
 	}
 }

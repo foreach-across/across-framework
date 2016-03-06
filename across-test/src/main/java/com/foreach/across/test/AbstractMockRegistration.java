@@ -18,10 +18,7 @@ package com.foreach.across.test;
 import org.springframework.util.Assert;
 
 import javax.servlet.Registration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,14 +30,20 @@ public abstract class AbstractMockRegistration implements Registration.Dynamic
 	private final String name;
 	private final String className;
 	private final Map<String, String> initParameters = new HashMap<>();
+	private final MockAcrossServletContext servletContext;
 
 	private boolean asyncSupported;
 
-	protected AbstractMockRegistration( String name, String className ) {
+	protected AbstractMockRegistration( MockAcrossServletContext servletContext, String name, String className ) {
 		Assert.notNull( name );
 
+		this.servletContext = servletContext;
 		this.name = name;
 		this.className = className;
+	}
+
+	public MockAcrossServletContext getServletContext() {
+		return servletContext;
 	}
 
 	@Override
@@ -89,5 +92,9 @@ public abstract class AbstractMockRegistration implements Registration.Dynamic
 	@Override
 	public Map<String, String> getInitParameters() {
 		return Collections.unmodifiableMap( initParameters );
+	}
+
+	public Enumeration<String> getInitParameterNames() {
+		return Collections.enumeration( initParameters.keySet() );
 	}
 }

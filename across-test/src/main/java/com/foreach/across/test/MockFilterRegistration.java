@@ -17,6 +17,7 @@ package com.foreach.across.test;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
+import javax.servlet.FilterConfig;
 import javax.servlet.FilterRegistration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ import java.util.stream.Stream;
  *
  * @author Marc Vanbrabant, Arne Vandamme
  */
-public class MockFilterRegistration extends AbstractMockRegistration implements FilterRegistration.Dynamic
+public class MockFilterRegistration extends AbstractMockRegistration implements FilterRegistration.Dynamic, FilterConfig
 {
 	public static class MappingRule
 	{
@@ -96,25 +97,35 @@ public class MockFilterRegistration extends AbstractMockRegistration implements 
 
 	private final List<MappingRule> mappingRules = new ArrayList<>();
 
-	MockFilterRegistration( String name, Filter filter ) {
-		super( name, filter.getClass().getName() );
+	MockFilterRegistration( MockAcrossServletContext servletContext, String name, Filter filter ) {
+		super( servletContext, name, filter.getClass().getName() );
 
 		this.filter = filter;
 		this.filterClass = filter.getClass();
 	}
 
-	MockFilterRegistration( String name, Class<? extends Filter> filterClass ) {
-		super( name, filterClass.getName() );
+	MockFilterRegistration( MockAcrossServletContext servletContext,
+	                        String name,
+	                        Class<? extends Filter> filterClass ) {
+		super( servletContext, name, filterClass.getName() );
 
 		this.filterClass = filterClass;
 		this.filter = null;
 	}
 
-	MockFilterRegistration( String name, String className ) {
-		super( name, className );
+	MockFilterRegistration( MockAcrossServletContext servletContext, String name, String className ) {
+		super( servletContext, name, className );
 
 		this.filter = null;
 		this.filterClass = null;
+	}
+
+	/**
+	 * @return filter name
+	 */
+	@Override
+	public String getFilterName() {
+		return getName();
 	}
 
 	/**

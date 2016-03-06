@@ -184,6 +184,9 @@ public class AcrossTestWebContextBuilder extends AcrossTestContextBuilder
 			setApplicationContext( parentApplicationContext );
 			setServletContext( (MockAcrossServletContext) parentApplicationContext.getServletContext() );
 			setAcrossContext( acrossContext );
+
+			// Ensure the servlets and filters are initialized
+			getServletContext().initialize();
 		}
 	}
 }

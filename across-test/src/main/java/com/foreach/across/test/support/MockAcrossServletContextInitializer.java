@@ -17,7 +17,10 @@ package com.foreach.across.test.support;
 
 import com.foreach.across.test.MockAcrossServletContext;
 import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * {@link ApplicationContextInitializer} to be used in conjunction with
@@ -33,5 +36,30 @@ public class MockAcrossServletContextInitializer implements ApplicationContextIn
 	public void initialize( ConfigurableWebApplicationContext applicationContext ) {
 		MockAcrossServletContext servletContext = new MockAcrossServletContext( true );
 		applicationContext.setServletContext( servletContext );
+		applicationContext.addApplicationListener( new ContextRefreshListener( applicationContext, servletContext ) );
+	}
+
+	/**
+	 * Ensures that {@link MockAcrossServletContext#initialize()} is called once the
+	 * {@link org.springframework.context.ApplicationContext} is refreshed.  This should initialize all
+	 * registered filters and servlets.
+	 */
+	private static class ContextRefreshListener implements ApplicationListener<ContextRefreshedEvent>
+	{
+		private final WebApplicationContext wac;
+		private final MockAcrossServletContext servletContext;
+
+		public ContextRefreshListener( WebApplicationContext wac,
+		                               MockAcrossServletContext servletContext ) {
+			this.wac = wac;
+			this.servletContext = servletContext;
+		}
+
+		@Override
+		public void onApplicationEvent( ContextRefreshedEvent event ) {
+			if ( event.getApplicationContext() == wac ) {
+				servletContext.initialize();
+			}
+		}
 	}
 }

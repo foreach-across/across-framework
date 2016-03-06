@@ -16,13 +16,15 @@
 package com.foreach.across.test;
 
 import com.foreach.across.modules.web.config.multipart.MultipartConfiguration;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.Servlet;
 import javax.servlet.ServletSecurityElement;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -34,12 +36,21 @@ import static org.mockito.Mockito.mock;
  */
 public class TestMockServletRegistration
 {
+	private MockAcrossServletContext servletContext;
+
+	@Before
+	public void resetServletContext() {
+		servletContext = new MockAcrossServletContext();
+	}
+
 	@Test
 	public void createWithInstance() {
 		Servlet servlet = mock( Servlet.class );
 
-		MockServletRegistration registration = new MockServletRegistration( "someName", servlet );
+		MockServletRegistration registration = new MockServletRegistration( servletContext, "someName", servlet );
 		assertEquals( "someName", registration.getName() );
+		assertEquals( "someName", registration.getServletName() );
+		assertSame( servletContext, registration.getServletContext() );
 		assertSame( servlet, registration.getServlet() );
 		assertEquals( servlet.getClass(), registration.getServletClass() );
 		assertEquals( servlet.getClass().getName(), registration.getClassName() );
@@ -48,8 +59,10 @@ public class TestMockServletRegistration
 
 	@Test
 	public void createWithClass() {
-		MockServletRegistration registration = new MockServletRegistration( "someName", Servlet.class );
+		MockServletRegistration registration = new MockServletRegistration( servletContext, "someName", Servlet.class );
 		assertEquals( "someName", registration.getName() );
+		assertEquals( "someName", registration.getServletName() );
+		assertSame( servletContext, registration.getServletContext() );
 		assertNull( registration.getServlet() );
 		assertEquals( Servlet.class, registration.getServletClass() );
 		assertEquals( Servlet.class.getName(), registration.getClassName() );
@@ -58,8 +71,11 @@ public class TestMockServletRegistration
 
 	@Test
 	public void createWithClassName() {
-		MockServletRegistration registration = new MockServletRegistration( "someName", Servlet.class.getName() );
+		MockServletRegistration registration = new MockServletRegistration( servletContext, "someName",
+		                                                                    Servlet.class.getName() );
 		assertEquals( "someName", registration.getName() );
+		assertEquals( "someName", registration.getServletName() );
+		assertSame( servletContext, registration.getServletContext() );
 		assertNull( registration.getServlet() );
 		assertNull( registration.getServletClass() );
 		assertEquals( Servlet.class.getName(), registration.getClassName() );
@@ -77,7 +93,7 @@ public class TestMockServletRegistration
 
 	@Test
 	public void initParameters() {
-		MockServletRegistration registration = new MockServletRegistration( "name", Servlet.class );
+		MockServletRegistration registration = new MockServletRegistration( servletContext, "name", Servlet.class );
 
 		assertTrue( registration.getInitParameters().isEmpty() );
 		assertTrue( registration.setInitParameter( "one", "two" ) );
@@ -85,7 +101,7 @@ public class TestMockServletRegistration
 
 		assertEquals( "two", registration.getInitParameter( "one" ) );
 
-		Map<String, String> expected = new HashMap<>();
+		Map<String, String> expected = new LinkedHashMap<>();
 		expected.put( "two", "x" );
 		expected.put( "one", "five" );
 		expected.put( "value", "other" );
@@ -95,11 +111,16 @@ public class TestMockServletRegistration
 		expected.put( "one", "two" );
 
 		assertEquals( expected, registration.getInitParameters() );
+
+		Enumeration<String> parameterNames = registration.getInitParameterNames();
+		assertEquals( "one", parameterNames.nextElement() );
+		assertEquals( "two", parameterNames.nextElement() );
+		assertEquals( "value", parameterNames.nextElement() );
 	}
 
 	@Test
 	public void loadOnStartup() {
-		MockServletRegistration registration = new MockServletRegistration( "name", Servlet.class );
+		MockServletRegistration registration = new MockServletRegistration( servletContext, "name", Servlet.class );
 		assertEquals( 0, registration.getLoadOnStartup() );
 		registration.setLoadOnStartup( 1 );
 		assertEquals( 1, registration.getLoadOnStartup() );
@@ -107,7 +128,7 @@ public class TestMockServletRegistration
 
 	@Test
 	public void runAsRole() {
-		MockServletRegistration registration = new MockServletRegistration( "name", Servlet.class );
+		MockServletRegistration registration = new MockServletRegistration( servletContext, "name", Servlet.class );
 		assertNull( registration.getRunAsRole() );
 		registration.setRunAsRole( "some role" );
 		assertEquals( "some role", registration.getRunAsRole() );
@@ -116,7 +137,7 @@ public class TestMockServletRegistration
 	@Test
 	public void multipartConfig() {
 		MultipartConfigElement multipartConfigElement = new MultipartConfiguration( "" );
-		MockServletRegistration registration = new MockServletRegistration( "name", Servlet.class );
+		MockServletRegistration registration = new MockServletRegistration( servletContext, "name", Servlet.class );
 		assertNull( registration.getMultipartConfig() );
 		registration.setMultipartConfig( multipartConfigElement );
 		assertSame( multipartConfigElement, registration.getMultipartConfig() );
@@ -125,7 +146,7 @@ public class TestMockServletRegistration
 	@Test
 	public void servletSecurity() {
 		ServletSecurityElement servletSecurityElement = new ServletSecurityElement();
-		MockServletRegistration registration = new MockServletRegistration( "name", Servlet.class );
+		MockServletRegistration registration = new MockServletRegistration( servletContext, "name", Servlet.class );
 		assertNull( registration.getServletSecurity() );
 		registration.setServletSecurity( servletSecurityElement );
 		assertSame( servletSecurityElement, registration.getServletSecurity() );
@@ -133,7 +154,7 @@ public class TestMockServletRegistration
 
 	@Test
 	public void urlMappings() {
-		MockServletRegistration registration = new MockServletRegistration( "name", Servlet.class );
+		MockServletRegistration registration = new MockServletRegistration( servletContext, "name", Servlet.class );
 		assertTrue( registration.getMappings().isEmpty() );
 
 		registration.addMapping( "one", "two" );

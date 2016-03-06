@@ -16,6 +16,7 @@
 package com.foreach.across.test;
 
 import com.foreach.across.test.MockFilterRegistration.MappingRule;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.DispatcherType;
@@ -31,12 +32,21 @@ import static org.mockito.Mockito.mock;
  */
 public class TestMockFilterRegistration
 {
+	private MockAcrossServletContext servletContext;
+
+	@Before
+	public void resetServletContext() {
+		servletContext = new MockAcrossServletContext();
+	}
+
 	@Test
 	public void createWithInstance() {
 		Filter filter = mock( Filter.class );
 
-		MockFilterRegistration registration = new MockFilterRegistration( "someName", filter );
+		MockFilterRegistration registration = new MockFilterRegistration( servletContext, "someName", filter );
 		assertEquals( "someName", registration.getName() );
+		assertEquals( "someName", registration.getFilterName() );
+		assertSame( servletContext, registration.getServletContext() );
 		assertSame( filter, registration.getFilter() );
 		assertEquals( filter.getClass(), registration.getFilterClass() );
 		assertEquals( filter.getClass().getName(), registration.getClassName() );
@@ -45,8 +55,10 @@ public class TestMockFilterRegistration
 
 	@Test
 	public void createWithClass() {
-		MockFilterRegistration registration = new MockFilterRegistration( "someName", Filter.class );
+		MockFilterRegistration registration = new MockFilterRegistration( servletContext, "someName", Filter.class );
 		assertEquals( "someName", registration.getName() );
+		assertEquals( "someName", registration.getFilterName() );
+		assertSame( servletContext, registration.getServletContext() );
 		assertNull( registration.getFilter() );
 		assertEquals( Filter.class, registration.getFilterClass() );
 		assertEquals( Filter.class.getName(), registration.getClassName() );
@@ -55,8 +67,11 @@ public class TestMockFilterRegistration
 
 	@Test
 	public void createWithClassName() {
-		MockFilterRegistration registration = new MockFilterRegistration( "someName", Filter.class.getName() );
+		MockFilterRegistration registration = new MockFilterRegistration( servletContext, "someName",
+		                                                                  Filter.class.getName() );
 		assertEquals( "someName", registration.getName() );
+		assertEquals( "someName", registration.getFilterName() );
+		assertSame( servletContext, registration.getServletContext() );
 		assertNull( registration.getFilter() );
 		assertNull( registration.getFilterClass() );
 		assertEquals( Filter.class.getName(), registration.getClassName() );
@@ -65,7 +80,7 @@ public class TestMockFilterRegistration
 
 	@Test
 	public void initParameters() {
-		MockFilterRegistration registration = new MockFilterRegistration( "name", Filter.class );
+		MockFilterRegistration registration = new MockFilterRegistration( servletContext, "name", Filter.class );
 
 		assertTrue( registration.getInitParameters().isEmpty() );
 		assertTrue( registration.setInitParameter( "one", "two" ) );
@@ -73,7 +88,7 @@ public class TestMockFilterRegistration
 
 		assertEquals( "two", registration.getInitParameter( "one" ) );
 
-		Map<String, String> expected = new HashMap<>();
+		Map<String, String> expected = new LinkedHashMap<>();
 		expected.put( "two", "x" );
 		expected.put( "one", "five" );
 		expected.put( "value", "other" );
@@ -83,11 +98,16 @@ public class TestMockFilterRegistration
 		expected.put( "one", "two" );
 
 		assertEquals( expected, registration.getInitParameters() );
+
+		Enumeration<String> parameterNames = registration.getInitParameterNames();
+		assertEquals( "one", parameterNames.nextElement() );
+		assertEquals( "two", parameterNames.nextElement() );
+		assertEquals( "value", parameterNames.nextElement() );
 	}
 
 	@Test
 	public void mappingRules() {
-		MockFilterRegistration registration = new MockFilterRegistration( "name", Filter.class );
+		MockFilterRegistration registration = new MockFilterRegistration( servletContext, "name", Filter.class );
 		registration.addMappingForServletNames(
 				EnumSet.allOf( DispatcherType.class ), true, "servletOne", "servletTwo"
 		);
