@@ -25,15 +25,18 @@ import java.util.*;
 
 /**
  * Extension of the Spring {@link MockServletContext} that also keeps track of all registration actions that
- * have occurred on servlets, filters and listeners.  While they will never work in a mock mvc scenario, the
- * {@link MockAcrossServletContext} can be queried to verify registration was done correctly.
+ * have occurred on servlets, filters and listeners.  The {@link MockAcrossServletContext} can be queried
+ * to verify registration was done correctly.
  * <p>
- * By setting {@link #setDynamicRegistrationAllowed(boolean)} to {@code true} this {@link MockServletContext}
- * can mimic a dynamically extensible {@link javax.servlet.ServletContext} (that has not yet been initialized).
- * If allowed, any {@link com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer} bean in the
- * {@link com.foreach.across.core.AcrossContext} will execute its configuration.
+ * This implementation can act as a not-initialized {@link ServletContext} that allows for dynamic registration
+ * of filters and servlets.  It can be used in an integration test scenario to have any
+ * {@link com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer} bean in the
+ * {@link com.foreach.across.core.AcrossContext} to execute its configuration.
  * <p>
- * This is also the default behaviour when creating a new {@link MockAcrossServletContext}.
+ * The latter is also the default behaviour when creating a new {@link MockAcrossServletContext}.  Once the context
+ * has been initialized by calling {@link #initialize()}, all registration operations will throw an
+ * {@link IllegalStateException}.  Initializing the context will call the corresponding {@code init()} methods
+ * on the filters and servlets registered.
  *
  * @author Marc Vanbrabant, Arne Vandamme
  */
@@ -47,31 +50,24 @@ public class MockAcrossServletContext extends MockServletContext
 
 	private boolean initialized;
 
+	/**
+	 * Create a new instance that acts as if it has not yet been initialized.
+	 */
 	public MockAcrossServletContext() {
 		this( true );
 	}
 
+	/**
+	 * Create a new instance with the specified initialized status.  If dynamic registration is allowed,
+	 * the instance will not yet be initialized and will require a call to {@link #initialize()}.
+	 *
+	 * @param dynamicRegistrationAllowed true if the context should not yet be initialized
+	 */
 	public MockAcrossServletContext( boolean dynamicRegistrationAllowed ) {
-		setDynamicRegistrationAllowed( dynamicRegistrationAllowed );
-	}
-
-	/**
-	 * @param allowed true if servlet context should allow extensions (servlet & filter registrations)
-	 */
-	public void setDynamicRegistrationAllowed( boolean allowed ) {
-		if ( !allowed ) {
-			removeAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER );
+		setAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER, true );
+		if ( !dynamicRegistrationAllowed ) {
+			initialize();
 		}
-		else {
-			setAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER, true );
-		}
-	}
-
-	/**
-	 * @return true if the servlet context acts as not yet fully initialized
-	 */
-	public boolean isDynamicRegistrationAllowed() {
-		return getAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER ) != null;
 	}
 
 	@Override
@@ -125,6 +121,10 @@ public class MockAcrossServletContext extends MockServletContext
 	}
 
 	private MockFilterRegistration filterRegistration( MockFilterRegistration registration ) {
+		if ( isInitialized() ) {
+			throw new IllegalStateException( "Unable to add filter to an already initialized ServletContext" );
+		}
+
 		if ( filters.containsKey( registration.getName() ) ) {
 			return filters.get( registration.getName() );
 		}
@@ -134,6 +134,10 @@ public class MockAcrossServletContext extends MockServletContext
 	}
 
 	private MockServletRegistration servletRegistration( MockServletRegistration registration ) {
+		if ( isInitialized() ) {
+			throw new IllegalStateException( "Unable to add servlet to an already initialized ServletContext" );
+		}
+
 		if ( servlets.containsKey( registration.getName() ) ) {
 			return servlets.get( registration.getName() );
 		}
@@ -144,17 +148,24 @@ public class MockAcrossServletContext extends MockServletContext
 
 	@Override
 	public void addListener( Class<? extends EventListener> listenerClass ) {
-		listeners.add( listenerClass );
+		listener( listenerClass );
 	}
 
 	@Override
 	public void addListener( String className ) {
-		listeners.add( className );
+		listener( className );
 	}
 
 	@Override
 	public <T extends EventListener> void addListener( T t ) {
-		listeners.add( t );
+		listener( t );
+	}
+
+	private void listener( Object l ) {
+		if ( isInitialized() ) {
+			throw new IllegalStateException( "Unable to add listener to an already initialized ServletContext" );
+		}
+		listeners.add( l );
 	}
 
 	/**
@@ -170,13 +181,17 @@ public class MockAcrossServletContext extends MockServletContext
 	 * {@link MockServletRegistration} or {@link MockFilterRegistration} that is registered.
 	 * <p>
 	 * Unfortunately since the actual config will be a dummy implementation, it is possible that some
-	 * classes will not support it.  Though in most cases this should not be an issue.
+	 * classes will not support it.  In most cases this should not be an issue however.  Initialization will
+	 * however only occur on registered instances, if a filter or servlet was registered by type or class name only,
+	 * it will be skipped.
 	 * <p>
 	 * Can be called safely multiple times, actual initialization will occur only once.
+	 * Once this method has been called, all registration methods will throw an exception.
 	 */
 	public void initialize() {
 		if ( !initialized ) {
 			initialized = true;
+			removeAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER );
 			filters.values().stream()
 			       .filter( f -> f.getFilter() != null )
 			       .forEach( f -> {
@@ -200,5 +215,12 @@ public class MockAcrossServletContext extends MockServletContext
 				        }
 			        } );
 		}
+	}
+
+	/**
+	 * @return true if context acts as initialized and {@link #initialize()} has been called
+	 */
+	public boolean isInitialized() {
+		return initialized;
 	}
 }

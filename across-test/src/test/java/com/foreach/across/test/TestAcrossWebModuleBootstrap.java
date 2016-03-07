@@ -44,7 +44,6 @@ public class TestAcrossWebModuleBootstrap
 		try (AcrossTestWebContext ctx = web().modules( AcrossWebModule.NAME ).build()) {
 			MockAcrossServletContext servletContext = ctx.getServletContext();
 			assertNotNull( servletContext );
-			assertTrue( servletContext.isDynamicRegistrationAllowed() );
 
 			assertCharacterEncodingFilter(
 					servletContext.getFilterRegistration( CharacterEncodingConfiguration.FILTER_NAME )
@@ -119,13 +118,7 @@ public class TestAcrossWebModuleBootstrap
 						.modules( AcrossWebModule.NAME )
 						.build()
 		) {
-			MockAcrossServletContext servletContext = ctx.getServletContext();
-			assertNotNull( servletContext );
-			assertTrue( servletContext.isDynamicRegistrationAllowed() );
-
-			assertNull( servletContext.getFilterRegistration( CharacterEncodingConfiguration.FILTER_NAME ) );
-			assertNull( servletContext.getFilterRegistration( ResourceUrlEncodingFilterConfiguration.FILTER_NAME ) );
-			assertNull( servletContext.getFilterRegistration( MultipartResolverConfiguration.FILTER_NAME ) );
+			verifyNoFiltersRegistered( ctx );
 		}
 	}
 
@@ -137,13 +130,17 @@ public class TestAcrossWebModuleBootstrap
 						.modules( AcrossWebModule.NAME )
 						.build()
 		) {
-			MockAcrossServletContext servletContext = ctx.getServletContext();
-			assertNotNull( servletContext );
-			assertFalse( servletContext.isDynamicRegistrationAllowed() );
-
-			assertNull( servletContext.getFilterRegistration( CharacterEncodingConfiguration.FILTER_NAME ) );
-			assertNull( servletContext.getFilterRegistration( ResourceUrlEncodingFilterConfiguration.FILTER_NAME ) );
-			assertNull( servletContext.getFilterRegistration( MultipartResolverConfiguration.FILTER_NAME ) );
+			verifyNoFiltersRegistered( ctx );
 		}
+	}
+
+	private void verifyNoFiltersRegistered( AcrossTestWebContext ctx ) {
+		MockAcrossServletContext servletContext = ctx.getServletContext();
+		assertNotNull( servletContext );
+		assertTrue( servletContext.isInitialized() );
+
+		assertNull( servletContext.getFilterRegistration( CharacterEncodingConfiguration.FILTER_NAME ) );
+		assertNull( servletContext.getFilterRegistration( ResourceUrlEncodingFilterConfiguration.FILTER_NAME ) );
+		assertNull( servletContext.getFilterRegistration( MultipartResolverConfiguration.FILTER_NAME ) );
 	}
 }

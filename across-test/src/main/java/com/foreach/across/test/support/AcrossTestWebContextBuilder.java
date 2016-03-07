@@ -154,8 +154,7 @@ public class AcrossTestWebContextBuilder extends AcrossTestContextBuilder
 	protected AcrossConfigurableApplicationContext createDefaultApplicationContext() {
 		AcrossWebApplicationContext wac = new AcrossWebApplicationContext();
 
-		MockAcrossServletContext servletContext = new MockAcrossServletContext();
-		servletContext.setDynamicRegistrationAllowed( dynamicServletContext );
+		MockAcrossServletContext servletContext = new MockAcrossServletContext( dynamicServletContext );
 		wac.setServletContext( servletContext );
 
 		return wac;

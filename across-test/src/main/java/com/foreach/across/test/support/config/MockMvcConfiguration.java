@@ -65,19 +65,17 @@ public class MockMvcConfiguration
 
 		if ( servletContext instanceof MockAcrossServletContext ) {
 			MockAcrossServletContext sc = (MockAcrossServletContext) servletContext;
-			if ( sc.isDynamicRegistrationAllowed() ) {
-				sc.getFilterRegistrations()
-				  .values()
-				  .stream()
-				  .filter( r -> r.getFilter() != null )
-				  .forEach( r -> {
-					  Collection<String> urlPatternMappings = r.getUrlPatternMappings();
-					  mockMvcBuilder.addFilter(
-							  r.getFilter(),
-							  urlPatternMappings.toArray( new String[urlPatternMappings.size()] )
-					  );
-				  } );
-			}
+			sc.getFilterRegistrations()
+			  .values()
+			  .stream()
+			  .filter( r -> r.getFilter() != null )
+			  .forEach( r -> {
+				  Collection<String> urlPatternMappings = r.getUrlPatternMappings();
+				  mockMvcBuilder.addFilter(
+						  r.getFilter(),
+						  urlPatternMappings.toArray( new String[urlPatternMappings.size()] )
+				  );
+			  } );
 		}
 		else {
 			LOG.error( "Creating a MockMvc instance but impossible to add dynamically registered filters" +

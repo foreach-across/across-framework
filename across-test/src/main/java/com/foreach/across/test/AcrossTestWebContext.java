@@ -94,8 +94,7 @@ public class AcrossTestWebContext extends AcrossTestContext
 
 	/**
 	 * Returns an initialized {@link MockMvc} for the internal {@link com.foreach.across.core.AcrossContext}.
-	 * If the attached {@link MockAcrossServletContext} has {@link MockAcrossServletContext#isDynamicRegistrationAllowed()}
-	 * {@code true}, registered filters will be added to this {@link MockMvc} instance.
+	 * All filters registered on the {@link MockAcrossServletContext} will be added to this {@link MockMvc} instance.
 	 *
 	 * @return instance ready for mock requests
 	 */
@@ -106,19 +105,17 @@ public class AcrossTestWebContext extends AcrossTestContext
 			WebApplicationContext wac = webApplicationContext();
 			DefaultMockMvcBuilder mockMvcBuilder = MockMvcBuilders.webAppContextSetup( wac );
 
-			if ( servletContext.isDynamicRegistrationAllowed() ) {
-				servletContext.getFilterRegistrations()
-				              .values()
-				              .stream()
-				              .filter( r -> r.getFilter() != null )
-				              .forEach( r -> {
-					              Collection<String> urlPatternMappings = r.getUrlPatternMappings();
-					              mockMvcBuilder.addFilter(
-							              r.getFilter(),
-							              urlPatternMappings.toArray( new String[urlPatternMappings.size()] )
-					              );
-				              } );
-			}
+			servletContext.getFilterRegistrations()
+			              .values()
+			              .stream()
+			              .filter( r -> r.getFilter() != null )
+			              .forEach( r -> {
+				              Collection<String> urlPatternMappings = r.getUrlPatternMappings();
+				              mockMvcBuilder.addFilter(
+						              r.getFilter(),
+						              urlPatternMappings.toArray( new String[urlPatternMappings.size()] )
+				              );
+			              } );
 
 			mockMvc = mockMvcBuilder.build();
 		}

@@ -53,7 +53,7 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 						.register( ServletConfigurer.class )
 						.build()
 		) {
-			assertTrue( ctx.getServletContext().isDynamicRegistrationAllowed() );
+			assertTrue( ctx.getServletContext().isInitialized() );
 
 			ServletConfigurer configurer = ctx.getBeanOfType( ServletConfigurer.class );
 			assertNotNull( configurer );
@@ -70,7 +70,7 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 						.register( ServletConfigurer.class )
 						.build()
 		) {
-			assertFalse( ctx.getServletContext().isDynamicRegistrationAllowed() );
+			assertTrue( ctx.getServletContext().isInitialized() );
 
 			ServletConfigurer configurer = ctx.getBeanOfType( ServletConfigurer.class );
 			assertNotNull( configurer );

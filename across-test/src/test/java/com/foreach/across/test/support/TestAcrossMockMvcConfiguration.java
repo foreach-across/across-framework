@@ -59,8 +59,8 @@ public class TestAcrossMockMvcConfiguration
 	private AcrossContextInfo contextInfo;
 
 	@Test
-	public void servletContextShouldAllowDynamicRegistration() {
-		assertTrue( servletContext.isDynamicRegistrationAllowed() );
+	public void servletContextShouldBeInitialized() {
+		assertTrue( servletContext.isInitialized() );
 	}
 
 	@Test

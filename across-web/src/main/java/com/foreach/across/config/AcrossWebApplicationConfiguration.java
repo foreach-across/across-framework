@@ -86,7 +86,7 @@ public class AcrossWebApplicationConfiguration
 
 			servletContext.setAttribute( WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
 			                             AcrossContextUtils.getApplicationContext( acrossContext ) );
-
+			servletContext.removeAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER );
 		}
 	}
 }
