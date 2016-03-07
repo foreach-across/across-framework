@@ -61,6 +61,8 @@ public class ITAsyncSupported extends AbstractWebIntegrationTest
 		String response = get( "/callable?msg=" + message );
 		assertEquals( "callable:" + message, response );
 
+		Thread.sleep( 100 );
+
 		verify( spyTaskExecutor ).submit( any( Runnable.class ) );
 		verify( callableProcessingInterceptor ).afterCompletion( any(), any() );
 		verify( deferredResultProcessingInterceptor, never() ).afterCompletion( any(), any() );
@@ -72,7 +74,7 @@ public class ITAsyncSupported extends AbstractWebIntegrationTest
 		String response = get( "/deferredResult?msg=" + message );
 		assertEquals( "deferred:" + message, response );
 
-		//Add a delay so deferred result processing would be completed
+		// Add a delay so deferred result processing would be completed
 		Thread.sleep( 100 );
 
 		verify( spyTaskExecutor, never() ).submit( any( Runnable.class ) );
