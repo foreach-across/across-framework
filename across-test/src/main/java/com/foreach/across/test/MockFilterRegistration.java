@@ -48,11 +48,11 @@ public class MockFilterRegistration extends AbstractMockRegistration implements 
 		}
 
 		public String[] getServletNames() {
-			return isUrlPatterns ? new String[0] : namesOrPatterns;
+			return isUrlPatterns ? new String[0] : namesOrPatterns.clone();
 		}
 
 		public String[] getUrlPatterns() {
-			return isUrlPatterns ? namesOrPatterns : new String[0];
+			return isUrlPatterns ? namesOrPatterns.clone() : new String[0];
 		}
 
 		public boolean isMatchAfter() {
