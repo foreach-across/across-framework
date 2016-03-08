@@ -25,7 +25,6 @@ import com.foreach.across.core.transformers.BeanRenameTransformer;
 import com.foreach.across.core.transformers.PrimaryBeanTransformer;
 import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.exposing.*;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,6 +94,14 @@ public class TestExposeTransformer
 		assertTrue( exposedBeans.containsKey( "prefixExposedBean" ) );
 		assertTrue( exposedBeans.containsKey( "prefixMyBeanWithExposed" ) );
 		assertTrue( exposedBeans.containsKey( "prefixBeanFromExposingConfiguration" ) );
+	}
+
+	@Test
+	public void aliasesShouldBePrefixedAsWell() {
+		MyBean bean = applicationContext.getBean( "prefixExposedBean", MyBean.class );
+		MyBean aliased = applicationContext.getBean( "prefixAliasedExposedBean", MyBean.class );
+
+		assertSame( bean, aliased );
 	}
 
 	@Configuration

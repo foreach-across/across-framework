@@ -148,7 +148,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
 	public static class ResourceUrlEncodingFilterConfiguration extends AcrossWebDynamicServletConfigurer
 	{
-		public static final String FILTER_NAME = "ResourceUrlEncodingFilter";
+		public static final String FILTER_NAME = "resourceUrlEncodingFilter";
 
 		private static final Logger LOG = LoggerFactory.getLogger( ResourceUrlEncodingFilterConfiguration.class );
 

@@ -30,7 +30,7 @@ public class SimpleConfiguration
 		return new MyBean();
 	}
 
-	@Bean
+	@Bean(name = { "exposedBean", "aliasedExposedBean" })
 	@Exposed
 	public MyBean exposedBean() {
 		return new MyBean();

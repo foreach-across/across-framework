@@ -33,9 +33,16 @@ import java.util.*;
 
 public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegistry
 {
-	private final ConfigurableAcrossContextInfo contextInfo;
+	private ConfigurableAcrossContextInfo contextInfo;
 
 	public DefaultAcrossContextBeanRegistry( ConfigurableAcrossContextInfo contextInfo ) {
+		setContextInfo( contextInfo );
+	}
+
+	protected DefaultAcrossContextBeanRegistry() {
+	}
+
+	protected void setContextInfo( ConfigurableAcrossContextInfo contextInfo ) {
 		this.contextInfo = contextInfo;
 	}
 

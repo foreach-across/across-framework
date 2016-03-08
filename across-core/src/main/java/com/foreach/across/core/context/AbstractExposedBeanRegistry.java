@@ -63,7 +63,8 @@ public abstract class AbstractExposedBeanRegistry
 						moduleName,
 						definition.getKey(),
 						original,
-						contextBeanRegistry.getBeanTypeFromModule( moduleName, definition.getKey() )
+						contextBeanRegistry.getBeanTypeFromModule( moduleName, definition.getKey() ),
+				        getAliases( definition.getKey() )
 				);
 
 				candidates.put( definition.getKey(), exposed );
@@ -74,11 +75,13 @@ public abstract class AbstractExposedBeanRegistry
 			if ( !candidates.containsKey( singleton.getKey() )
 					&& singleton.getValue() != null
 					&& !isScopedTarget( singleton.getKey() ) ) {
+
 				ExposedBeanDefinition exposed = new ExposedBeanDefinition(
 						contextBeanRegistry,
 						moduleName,
 						singleton.getKey(),
-						contextBeanRegistry.getBeanTypeFromModule( moduleName, singleton.getKey() )
+						contextBeanRegistry.getBeanTypeFromModule( moduleName, singleton.getKey() ),
+				        getAliases( singleton.getKey() )
 				);
 
 				candidates.put( singleton.getKey(), exposed );
@@ -135,8 +138,10 @@ public abstract class AbstractExposedBeanRegistry
 			registry.registerBeanDefinition( beanName, beanDefinition );
 
 			for ( String alias : beanDefinition.getAliases() ) {
-				registry.registerAlias( definition.getKey(), alias );
+				registry.registerAlias( beanName, alias );
 			}
 		}
 	}
+
+	protected abstract String[] getAliases( String beanName );
 }

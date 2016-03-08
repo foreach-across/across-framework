@@ -25,26 +25,17 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfiguration;
-import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
-import com.foreach.across.modules.web.context.PrefixingPathContext;
-import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestContext;
-import com.foreach.across.test.AcrossTestWebContext;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,44 +48,62 @@ import java.lang.annotation.*;
 import java.util.LinkedList;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static com.foreach.across.test.support.AcrossTestBuilders.web;
+import static org.junit.Assert.assertNotNull;
 
 public class ITPrefixingRequestMappingHandlerMapping
 {
 	@Test
 	public void testThatDefaultPathIsFoundInUrlMap() throws Exception {
-		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config() )) {
-			validateUrlMap( ctx, "/defaultpath/testrequestmapping", "/defaultpath/testrequestmappingendingwithslash/", "/defaultpath/testrequestmappingwithoutendingandtrailingslash" );
+		try (
+				AcrossTestContext ctx = web()
+						.register( Config.class )
+						.build()
+		) {
+			validateUrlMap( ctx, "/defaultpath/testrequestmapping", "/defaultpath/testrequestmappingendingwithslash/",
+			                "/defaultpath/testrequestmappingwithoutendingandtrailingslash" );
 		}
 	}
 
 	@Test
 	public void testThatOverridenPrefixPathIsFoundInUrlMapForSlash() throws Exception {
-		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config( "/" ) )) {
-			validateUrlMap( ctx, "/testrequestmapping", "/testrequestmappingendingwithslash/", "/testrequestmappingwithoutendingandtrailingslash" );
+		try (
+				AcrossTestContext ctx = web()
+						.property( "prefixPath", "/" )
+						.register( Config.class )
+						.build()
+		) {
+			validateUrlMap( ctx, "/testrequestmapping", "/testrequestmappingendingwithslash/",
+			                "/testrequestmappingwithoutendingandtrailingslash" );
 		}
 	}
 
 	@Test
 	public void testThatOverridenPrefixPathIsFoundInUrlMapForPathEndingWithSlash() throws Exception {
-		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config( "/otherpath/" ) )) {
-			validateUrlMap( ctx, "/otherpath/testrequestmapping", "/otherpath/testrequestmappingendingwithslash/", "/otherpath/testrequestmappingwithoutendingandtrailingslash" );
+		try (
+				AcrossTestContext ctx = web()
+						.property( "prefixPath", "/otherpath/" )
+						.register( Config.class )
+						.build()
+		) {
+			validateUrlMap( ctx, "/otherpath/testrequestmapping", "/otherpath/testrequestmappingendingwithslash/",
+			                "/otherpath/testrequestmappingwithoutendingandtrailingslash" );
 		}
 	}
 
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	/**
 	 * This check makes sure we have directPathMatches in {@link org.springframework.web.servlet.handler.AbstractHandlerMethodMapping#lookupHandlerMethod(String, HttpServletRequest)}
 	 */
 	private void validateUrlMap( AcrossTestContext ctx, String... expectedPaths ) throws Exception {
 		RequestMappingHandlerMapping requestMappingHandlerMapping =
-				(RequestMappingHandlerMapping) ctx.beanRegistry().getBean( "prefixingRequestMappingHandlerMapping" );
+				(RequestMappingHandlerMapping) ctx.getBean( "prefixingRequestMappingHandlerMapping" );
 		assertNotNull( requestMappingHandlerMapping );
 		MultiValueMap<String, LinkedList<?>>
 				urlMap = (MultiValueMap<String, LinkedList<?>>) ReflectionTestUtils.getField(
 				requestMappingHandlerMapping, "urlMap" );
 		assertNotNull( urlMap );
-		for( String expectedPath : expectedPaths ) {
+		for ( String expectedPath : expectedPaths ) {
 
 			LinkedList<?> mappings = (LinkedList<?>) urlMap.get( expectedPath );
 			assertNotNull( "Could not find url " + expectedPath + " in urlMap", mappings );
@@ -109,49 +118,20 @@ public class ITPrefixingRequestMappingHandlerMapping
 	@Configuration
 	protected static class Config implements AcrossContextConfigurer
 	{
-		private final String prefixPath;
-
-		public Config() {
-			this.prefixPath = null;
-		}
-
-		public Config( String prefixPath ) {
-			this.prefixPath = prefixPath;
-		}
+		@Value("${prefixPath:/defaultpath}")
+		private String prefixPath;
 
 		@Override
 		public void configure( AcrossContext context ) {
 			context.addModule( new AcrossWebModule() );
 			PrefixingTestWebModule prefixingTestWebModule = new PrefixingTestWebModule();
-			if( prefixPath != null ) {
-				prefixingTestWebModule.setRootPath( prefixPath );
-			}
 			context.addModule( prefixingTestWebModule );
-		}
-	}
-
-	public static final class PrefixingModule extends PrefixingPathContext
-	{
-		public static final String NAME = "PrefixingModule";
-
-		public PrefixingModule( String prefix ) {
-			super( prefix );
 		}
 	}
 
 	@AcrossDepends(required = "AcrossWebModule")
 	public static class PrefixingTestWebModule extends AcrossModule
 	{
-		private String rootPath = "/defaultpath";
-
-		public void setRootPath( String rootPath ) {
-			this.rootPath = rootPath;
-		}
-
-		public String getRootPath() {
-			return rootPath;
-		}
-
 		@Override
 		public String getName() {
 			return "PrefixingWebModule";
@@ -164,29 +144,7 @@ public class ITPrefixingRequestMappingHandlerMapping
 
 		@Override
 		protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-			contextConfigurers.add( new AnnotatedClassConfigurer( PrefixingModuleAdapter.class, PrefixingModuleWebMvcConfiguration.class ) );
-		}
-	}
-
-	@Controller
-	public static class PrefixingModuleAdapter extends PrefixingHandlerMappingConfigurerAdapter {
-
-		@Autowired
-		private PrefixingPathRegistry prefixingPathRegistry;
-		@Autowired
-		private PrefixingTestWebModule prefixingTestWebModule;
-
-		@Override
-		public boolean supports( String mapperName ) {
-			return PrefixingModule.NAME.equals( mapperName );
-		}
-
-		@Bean(name = PrefixingModule.NAME)
-		@Exposed
-		public PrefixingModule testWeb() {
-			PrefixingModule prefixingModule = new PrefixingModule( prefixingTestWebModule.getRootPath() );
-			prefixingPathRegistry.add( PrefixingModule.NAME, prefixingModule );
-			return prefixingModule;
+			contextConfigurers.add( new AnnotatedClassConfigurer( PrefixingModuleWebMvcConfiguration.class ) );
 		}
 	}
 
@@ -194,11 +152,11 @@ public class ITPrefixingRequestMappingHandlerMapping
 	public static class PrefixingModuleWebMvcConfiguration extends PrefixingHandlerMappingConfiguration
 	{
 		@Autowired
-		private PrefixingTestWebModule prefixingTestWebModule;
+		private Config config;
 
 		@Override
 		protected String getPrefixPath() {
-			return prefixingTestWebModule.getRootPath();
+			return config.prefixPath;
 		}
 
 		@Override
@@ -224,21 +182,21 @@ public class ITPrefixingRequestMappingHandlerMapping
 	{
 		@RequestMapping("/testrequestmapping")
 		@ResponseBody
-		@SuppressWarnings( "unused" )
+		@SuppressWarnings("unused")
 		public String testRequestMapping() {
 			return "test";
 		}
 
 		@RequestMapping("/testrequestmappingendingwithslash/")
 		@ResponseBody
-		@SuppressWarnings( "unused" )
+		@SuppressWarnings("unused")
 		public String testRequestMappingEndingWithSlash() {
 			return "test";
 		}
 
 		@RequestMapping("testrequestmappingwithoutendingandtrailingslash")
 		@ResponseBody
-		@SuppressWarnings( "unused" )
+		@SuppressWarnings("unused")
 		public String testRequestMappingWithoutEndingAndTrailingSlash() {
 			return "test";
 		}

@@ -49,6 +49,8 @@ import java.util.EnumSet;
 @ConditionalOnProperty(prefix = "spring.http.encoding", value = "enabled", matchIfMissing = true)
 public class CharacterEncodingConfiguration extends AcrossWebDynamicServletConfigurer
 {
+	public static final String FILTER_NAME = "characterEncodingFilter";
+
 	private static final Logger LOG = LoggerFactory.getLogger( CharacterEncodingConfiguration.class );
 
 	@Autowired
@@ -57,7 +59,7 @@ public class CharacterEncodingConfiguration extends AcrossWebDynamicServletConfi
 	@Override
 	protected void dynamicConfigurationAllowed( ServletContext servletContext ) throws ServletException {
 		FilterRegistration.Dynamic registration
-				= servletContext.addFilter( "characterEncodingFilter", characterEncodingFilter );
+				= servletContext.addFilter( FILTER_NAME, characterEncodingFilter );
 
 		registration.addMappingForUrlPatterns(
 				EnumSet.of( DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR ),

@@ -22,3 +22,14 @@ AbstractViewElementTemplateTest
 
 test view element builder
 AbstractViewElementBuilderTest
+
+AcrossTestBuilders
+* single class and acrosscontext, multiple tests
+* single class, multiple context configurations
+* MockServletContext
+
+annotations:
+* @AcrossMockMvcConfiguration
+* @AcrossTestConfiguration
+
+testing full application

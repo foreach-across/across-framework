@@ -16,11 +16,11 @@
 
 package com.foreach.across.it.concurrent;
 
-import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.support.AcrossContextBuilder;
 import com.foreach.across.test.AcrossTestConfiguration;
-import com.foreach.across.test.AcrossTestContextConfiguration;
+import com.foreach.across.test.support.config.TestDataSourceConfigurer;
 import com.foreach.common.concurrent.locks.distributed.DistributedLock;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
 import org.apache.commons.lang3.time.StopWatch;
@@ -28,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
@@ -46,7 +45,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = ITDistributedLockRepository.Config.class)
+@ContextConfiguration
 public class ITDistributedLockRepository
 {
 	private static final int BATCHES = 3;
@@ -54,13 +53,12 @@ public class ITDistributedLockRepository
 	private static final int EXECUTORS_PER_LOCK = 10;
 
 	@Autowired
-	private Environment environment;
+	private DataSource testDataSource;
 
 	@Autowired
-	private DataSource dataSource;
+	private Environment environment;
 
-	private final Map<String, Integer> resultsByLock = Collections.synchronizedMap(
-			new HashMap<String, Integer>() );
+	private final Map<String, Integer> resultsByLock = Collections.synchronizedMap( new HashMap<>() );
 
 	@Before
 	public void setup() {
@@ -94,7 +92,7 @@ public class ITDistributedLockRepository
 
 		assertEquals( totalResults, actualResults );
 
-		JdbcTemplate jdbcTemplate = new JdbcTemplate( dataSource );
+		JdbcTemplate jdbcTemplate = new JdbcTemplate( testDataSource );
 		assertEquals( Integer.valueOf( totalLocks ),
 		              jdbcTemplate.queryForObject( "SELECT count(*) FROM across_locks", Integer.class ) );
 
@@ -105,21 +103,6 @@ public class ITDistributedLockRepository
 		}
 	}
 
-	private AcrossContext createContext() {
-		AcrossContext context = new AcrossContext();
-		context.setDataSource( uniqueDataSource() );
-
-		context.bootstrap();
-
-		return context;
-	}
-
-	private DataSource uniqueDataSource() {
-		AcrossTestContextConfiguration factory = new AcrossTestContextConfiguration();
-		factory.setEnvironment( environment );
-
-		return factory.dataSource();
-	}
 
 	protected class ExecutorBatch implements Callable<Integer>
 	{
@@ -135,42 +118,55 @@ public class ITDistributedLockRepository
 				Thread.sleep( startDelay );
 			}
 
-			AcrossContext context = createContext();
-			DistributedLockRepository distributedLockRepository = AcrossContextUtils.getBeanRegistry( context )
-			                                                                        .getBeanOfType(
-					                                                                        DistributedLockRepository.class );
+			AcrossContext context = new AcrossContextBuilder().dataSource( uniqueDataSource() ).build();
 
-			ExecutorService fixedThreadPool = Executors.newFixedThreadPool( 50 );
+			try {
+				context.bootstrap();
 
-			List<Executor> executors = new ArrayList<>( LOCKS_PER_BATCH * EXECUTORS_PER_LOCK );
+				DistributedLockRepository distributedLockRepository
+						= AcrossContextUtils.getBeanRegistry( context )
+						                    .getBeanOfType( DistributedLockRepository.class );
 
-			for ( int i = 0; i < LOCKS_PER_BATCH; i++ ) {
-				DistributedLock lock = distributedLockRepository.getLock( "batch-lock-" + i );
+				ExecutorService fixedThreadPool = Executors.newFixedThreadPool( 50 );
 
-				for ( int j = 0; j < EXECUTORS_PER_LOCK; j++ ) {
-					executors.add( new Executor( lock, 10 ) );
+				List<Executor> executors = new ArrayList<>( LOCKS_PER_BATCH * EXECUTORS_PER_LOCK );
+
+				for ( int i = 0; i < LOCKS_PER_BATCH; i++ ) {
+					DistributedLock lock = distributedLockRepository.getLock( "batch-lock-" + i );
+
+					for ( int j = 0; j < EXECUTORS_PER_LOCK; j++ ) {
+						executors.add( new Executor( lock, 10 ) );
+					}
 				}
-			}
 
-			for ( Executor executor : executors ) {
-				fixedThreadPool.submit( executor );
-			}
-
-			fixedThreadPool.shutdown();
-			fixedThreadPool.awaitTermination( 3, TimeUnit.MINUTES );
-
-			int totalSucceeded = 0;
-
-			for ( Executor executor : executors ) {
-				if ( executor.isFinished() ) {
-					totalSucceeded++;
+				for ( Executor executor : executors ) {
+					fixedThreadPool.submit( executor );
 				}
+
+				fixedThreadPool.shutdown();
+				fixedThreadPool.awaitTermination( 3, TimeUnit.MINUTES );
+
+				int totalSucceeded = 0;
+
+				for ( Executor executor : executors ) {
+					if ( executor.isFinished() ) {
+						totalSucceeded++;
+					}
+				}
+
+				return totalSucceeded;
 			}
-
-			context.destroy();
-
-			return totalSucceeded;
+			finally {
+				context.destroy();
+			}
 		}
+	}
+
+	private DataSource uniqueDataSource() {
+		TestDataSourceConfigurer factory = new TestDataSourceConfigurer();
+		factory.setEnvironment( environment );
+
+		return factory.testDataSource();
 	}
 
 	protected class Executor implements Runnable
@@ -229,12 +225,11 @@ public class ITDistributedLockRepository
 		}
 	}
 
-	@Configuration
+	/**
+	 * Instantiate an Across context so we get access to the test datasource.
+	 */
 	@AcrossTestConfiguration
-	static class Config implements AcrossContextConfigurer
+	protected static class Config
 	{
-		@Override
-		public void configure( AcrossContext context ) {
-		}
 	}
 }

@@ -39,6 +39,10 @@ import javax.servlet.ServletRegistration;
  */
 public abstract class AbstractAcrossServletInitializer extends AbstractDispatcherServletInitializer
 {
+	/**
+	 * Attribute set on the {@link ServletContext} during the initialization phase.  Can be used to detect
+	 * if it is still possible to register servlets or filters on the context.
+	 */
 	public static final String DYNAMIC_INITIALIZER = "com.foreach.across.modules.web.servlet.AcrossServletInitializer";
 	public static final String ATTRIBUTE_DYNAMIC_MULTIPART_CONFIG =
 			"com.foreach.across.modules.web.servlet.AcrossServletInitializer.MultiPartConfigElement";
