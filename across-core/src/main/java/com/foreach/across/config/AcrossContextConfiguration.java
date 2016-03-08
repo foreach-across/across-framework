@@ -19,15 +19,18 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
 import com.foreach.across.core.context.ModuleDependencyResolver;
-import com.foreach.across.core.context.support.ModuleSetBuilder;
-import com.foreach.across.core.installers.InstallerAction;
-import org.springframework.beans.factory.BeanFactoryUtils;
+import com.foreach.across.core.support.AcrossContextBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
 import javax.sql.DataSource;
@@ -37,12 +40,12 @@ import java.util.*;
  * <p>Creates an AcrossContext bean and will apply all AcrossContextConfigurer instances
  * before bootstrapping.  Depending on the settings imported from {@link EnableAcrossContext},
  * modules will be auto-configured and further configuration of the context delegated to the configurer beans.</p>
- * <p>A DataSource bean names acrossDataSource is required.</p>
+ * <p>A DataSource bean named acrossDataSource is required for installers to work.</p>
  */
 @Configuration
-public class AcrossContextConfiguration implements ImportAware
+public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 {
-	public static final String STANDARD_MODULES_PACKAGE = "com.foreach.across.modules";
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextConfiguration.class );
 
 	static final String ANNOTATION_TYPE = EnableAcrossContext.class.getName();
 
@@ -57,77 +60,65 @@ public class AcrossContextConfiguration implements ImportAware
 	@Autowired(required = false)
 	private Collection<AcrossContextConfigurer> configurers = Collections.emptyList();
 
+	@Autowired(required = false)
+	private Collection<AcrossModule> moduleBeans = Collections.emptyList();
+
 	private AnnotationMetadata importMetadata;
+	private Environment environment;
 
 	@Override
 	public void setImportMetadata( AnnotationMetadata importMetadata ) {
 		this.importMetadata = importMetadata;
 	}
 
-	@SuppressWarnings("all")
+	@Override
+	public void setEnvironment( Environment environment ) {
+		this.environment = environment;
+	}
+
 	@Bean
 	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
-		AcrossContext context
-				= createAcrossContext( applicationContext, importMetadata.getAnnotationAttributes( ANNOTATION_TYPE ) );
+		Map<String, Object> configuration = importMetadata.getAnnotationAttributes( ANNOTATION_TYPE );
 
-		// Set installer datasource
-		DataSource ds = dataSourceForInstallers();
+		AcrossContextBuilder contextBuilder = new AcrossContextBuilder()
+				.applicationContext( applicationContext )
+				.dataSource( dataSource )
+				.installerDataSource( installerDataSource )
+				.developmentMode( isDevelopmentMode() )
+				.moduleConfigurationPackages( determineModuleConfigurationPackages( configuration ) )
+				.configurer( configurers.toArray( new AcrossContextConfigurer[configurers.size()] ) );
 
-		if ( ds != null ) {
-			context.setInstallerAction( InstallerAction.EXECUTE );
-			context.setInstallerDataSource( ds );
-		}
-		else {
-			context.setInstallerAction( InstallerAction.DISABLED );
-			System.err.println(
-					"No datasource bean named acrossDataSource or acrossInstallerDataSource found - " +
-							"configuring a context without datasource and disabling the installers." );
-		}
+		autoConfigureContextBuilder( contextBuilder, importMetadata.getAnnotationAttributes( ANNOTATION_TYPE ) );
 
-		// Set the context datasource
-		context.setDataSource( dataSource );
-
-		for ( AcrossContextConfigurer configurer : configurers ) {
-			configurer.configure( context );
-		}
-
-		// Start the context
+		AcrossContext context = contextBuilder.build();
 		context.bootstrap();
 
 		return context;
 	}
 
-	private AcrossContext createAcrossContext( ConfigurableApplicationContext applicationContext,
-	                                           Map<String, Object> configuration ) {
-		AcrossContext acrossContext = new AcrossContext( applicationContext );
-
+	private void autoConfigureContextBuilder( AcrossContextBuilder contextBuilder,
+	                                          Map<String, Object> configuration ) {
 		if ( configuration != null ) {
 			if ( Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
-				ModuleSetBuilder moduleSetBuilder = new ModuleSetBuilder();
-
-				ModuleDependencyResolver dependencyResolver = moduleDependencyResolver( configuration );
-				moduleSetBuilder.setDependencyResolver( dependencyResolver );
-				acrossContext.setModuleDependencyResolver( dependencyResolver );
-
-				modulesToConfigure( configuration ).forEach( moduleSetBuilder::addModule );
-
-				BeanFactoryUtils
-						.beansOfTypeIncludingAncestors( applicationContext, AcrossModule.class )
-						.values()
-						.forEach( moduleSetBuilder::addModule );
-
-				acrossContext.setModules( moduleSetBuilder.build().getModules() );
-
-				acrossContext.setModuleConfigurationScanPackages(
-						determineModuleConfigurationPackages( configuration )
-				);
+				contextBuilder.moduleDependencyResolver( moduleDependencyResolver() )
+				              .modules( namedModulesToConfigure( configuration ) )
+				              .modules( moduleBeans.toArray( new AcrossModule[moduleBeans.size()] ) );
 			}
 		}
-
-		return acrossContext;
 	}
 
-	private Collection<String> modulesToConfigure( Map<String, Object> configuration ) {
+	private boolean isDevelopmentMode() {
+		if ( environment.containsProperty( "across.development.active" ) ) {
+			return environment.getProperty( "across.development.active", Boolean.class, false );
+		}
+		else if ( environment.acceptsProfiles( "dev" ) ) {
+			LOG.info( "Activating development mode for Across because of 'dev' Spring profile" );
+			return true;
+		}
+		return false;
+	}
+
+	private String[] namedModulesToConfigure( Map<String, Object> configuration ) {
 		String[] valueModuleNames = (String[]) configuration.get( "value" );
 		String[] moduleNames = (String[]) configuration.get( "modules" );
 
@@ -135,13 +126,16 @@ public class AcrossContextConfiguration implements ImportAware
 		modules.addAll( Arrays.asList( valueModuleNames ) );
 		modules.addAll( Arrays.asList( moduleNames ) );
 
-		return modules;
+		return modules.toArray( new String[modules.size()] );
 	}
 
-	private ModuleDependencyResolver moduleDependencyResolver( Map<String, Object> configuration ) {
+	@Bean
+	@Lazy
+	public ModuleDependencyResolver moduleDependencyResolver() {
 		ClassPathScanningModuleDependencyResolver moduleDependencyResolver
 				= new ClassPathScanningModuleDependencyResolver();
 
+		Map<String, Object> configuration = importMetadata.getAnnotationAttributes( ANNOTATION_TYPE );
 		if ( configuration != null ) {
 			moduleDependencyResolver.setResolveRequired(
 					Boolean.TRUE.equals( configuration.get( "scanForRequiredModules" ) )
@@ -204,7 +198,7 @@ public class AcrossContextConfiguration implements ImportAware
 		}
 
 		if ( modulePackageSet.isEmpty() ) {
-			modulePackageSet.add( STANDARD_MODULES_PACKAGE );
+			modulePackageSet.add( AcrossContextBuilder.STANDARD_MODULES_PACKAGE );
 
 			try {
 				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
@@ -222,13 +216,5 @@ public class AcrossContextConfiguration implements ImportAware
 		}
 
 		return modulePackageSet.toArray( new String[modulePackageSet.size()] );
-	}
-
-	private DataSource dataSourceForInstallers() {
-		if ( installerDataSource != null ) {
-			return installerDataSource;
-		}
-
-		return dataSource;
 	}
 }

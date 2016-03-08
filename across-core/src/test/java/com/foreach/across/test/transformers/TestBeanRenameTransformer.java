@@ -22,6 +22,7 @@ import com.foreach.across.core.transformers.BeanRenameTransformer;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,15 +36,16 @@ public class TestBeanRenameTransformer
 	public TestBeanRenameTransformer() {
 		definitions.put( "sessionFactory",
 		                 new ExposedBeanDefinition( mock( AcrossContextBeanRegistry.class ), "module", "sessionFactory",
-		                                            Object.class ) );
+		                                            Object.class, new String[0] ) );
 		definitions.put( "transactionManager",
 		                 new ExposedBeanDefinition( mock( AcrossContextBeanRegistry.class ), "module",
-		                                            "transactionManager", Object.class ) );
+		                                            "transactionManager", Object.class,
+		                                            new String[] { "currentTransactionManager" } ) );
 	}
 
 	@Test
 	public void renameWithoutRemovals() {
-		Map<String, String> renames = new HashMap<String, String>();
+		Map<String, String> renames = new HashMap<>();
 		renames.put( "sessionFactory", "testSessionFactory" );
 
 		ExposedBeanDefinitionTransformer transformer = new BeanRenameTransformer( renames, false );
@@ -55,8 +57,25 @@ public class TestBeanRenameTransformer
 	}
 
 	@Test
+	public void renameAlias() {
+		Map<String, String> renames = new HashMap<>();
+		renames.put( "currentTransactionManager", "myTransactionManager" );
+
+		ExposedBeanDefinitionTransformer transformer = new BeanRenameTransformer( renames, false );
+		transformer.transformBeanDefinitions( definitions );
+
+		assertEquals( 2, definitions.size() );
+		assertEquals( "sessionFactory", definitions.get( "sessionFactory" ).getPreferredBeanName() );
+		assertEquals( "transactionManager", definitions.get( "transactionManager" ).getPreferredBeanName() );
+		assertEquals(
+				Collections.singleton( "myTransactionManager" ),
+				definitions.get( "transactionManager" ).getAliases()
+		);
+	}
+
+	@Test
 	public void renameWithRemovals() {
-		Map<String, String> renames = new HashMap<String, String>();
+		Map<String, String> renames = new HashMap<>();
 		renames.put( "sessionFactory", "testSessionFactory" );
 
 		ExposedBeanDefinitionTransformer transformer = new BeanRenameTransformer( renames, true );

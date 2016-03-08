@@ -28,6 +28,7 @@ import com.foreach.across.core.context.beans.SingletonBean;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
+import com.foreach.across.core.context.installers.InstallerSetBuilder;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
@@ -47,11 +48,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.util.ClassUtils;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -95,8 +98,8 @@ public class AcrossBootstrapper
 
 			LOG.info( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
 			for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
-				LOG.info( "{} - {}: {}", moduleInfo.getIndex(), moduleInfo.getName(),
-				          moduleInfo.getModule().getClass() );
+				LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
+				          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
 			}
 
 			runModuleBootstrapperCustomizations( modulesInOrder );
@@ -167,12 +170,6 @@ public class AcrossBootstrapper
 					AcrossContextUtils.setAcrossApplicationContextHolder( config.getModule(),
 					                                                      moduleApplicationContext );
 
-					AcrossModuleSettings moduleSettings = moduleInfo.getSettings();
-
-					if ( moduleSettings != null ) {
-						moduleSettings.setEnvironment( child.getEnvironment() );
-					}
-
 					applicationContextFactory.loadApplicationContext( context, config, moduleApplicationContext );
 
 					// Bootstrap the module
@@ -209,6 +206,8 @@ public class AcrossBootstrapper
 				// Refresh beans
 				AcrossContextUtils.refreshBeans( context );
 
+				contextInfo.setBootstrapped( true );
+
 				// Bootstrapping done, run installers that require context bootstrap finished
 				installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
 
@@ -218,8 +217,6 @@ public class AcrossBootstrapper
 			finally {
 				bootstrapLockManager.ensureUnlocked();
 			}
-
-			contextInfo.setBootstrapped( true );
 
 			// Bootstrap finished - publish the event
 			eventPublisher.publish( new AcrossContextBootstrappedEvent( contextInfo ) );
@@ -351,7 +348,7 @@ public class AcrossBootstrapper
 		int row = 1;
 		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
 			ConfigurableAcrossModuleInfo moduleInfo = new ConfigurableAcrossModuleInfo( contextInfo, module, row++ );
-			moduleInfo.setSettings( createModuleSettings( module.getClass() ) );
+			//moduleInfo.setSettings( createModuleSettings( module.getClass() ) );
 
 			configured.add( moduleInfo );
 		}
@@ -371,31 +368,6 @@ public class AcrossBootstrapper
 		}
 
 		return contextInfo;
-	}
-
-	private AcrossModuleSettings createModuleSettings( Class<? extends AcrossModule> moduleClass ) {
-		String settingsClassName = ClassUtils.getUserClass( moduleClass ).getName() + "Settings";
-
-		try {
-			Class settingsClass = Class.forName( settingsClassName );
-
-			if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
-				return (AcrossModuleSettings) settingsClass.newInstance();
-			}
-
-			LOG.warn( "Unable to load settings, {} should extend AcrossModuleSettings", moduleClass );
-		}
-		catch ( ClassNotFoundException e ) {
-			LOG.trace( "No specific settings implementation defined for {}", moduleClass );
-		}
-		catch ( InstantiationException | IllegalAccessException iae ) {
-			throw new AcrossException(
-					"Illegal configuration, " + settingsClassName + " should have a public parameter-less constructor",
-					iae );
-		}
-
-		// Create generic setting
-		return new GenericAcrossModuleSettings();
 	}
 
 	private Collection<AcrossModuleInfo> convertToModuleInfo( Collection<AcrossModule> list,
@@ -427,10 +399,10 @@ public class AcrossBootstrapper
 			config.setExposeFilter( module.getExposeFilter() );
 			config.setExposeTransformer( module.getExposeTransformer() );
 			config.setInstallerSettings( module.getInstallerSettings() );
-			config.getInstallers().addAll( Arrays.asList( module.getInstallers() ) );
+			config.getInstallers().addAll( buildInstallerSet( module ) );
 
 			// Provide the current module beans
-			Map<String, Object> providedSingletons = new HashMap<>();
+			ProvidedBeansMap providedSingletons = new ProvidedBeansMap();
 			providedSingletons.put( AcrossModule.CURRENT_MODULE + "Info",
 			                        new PrimarySingletonBean(
 					                        moduleInfo,
@@ -445,17 +417,13 @@ public class AcrossBootstrapper
 					                                                        AcrossModule.CURRENT_MODULE )
 			                        )
 			);
-			providedSingletons.put( AcrossModule.CURRENT_MODULE + "Settings",
-			                        new PrimarySingletonBean(
-					                        moduleInfo.getSettings(),
-					                        new AutowireCandidateQualifier( Module.class.getName(),
-					                                                        AcrossModule.CURRENT_MODULE )
-			                        )
-			);
+
+			registerSettings( module, providedSingletons, false );
 
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
-			config.addApplicationContextConfigurers( AcrossContextUtils.getApplicationContextConfigurers( context,
-			                                                                                              module ) );
+			config.addApplicationContextConfigurers(
+					AcrossContextUtils.getApplicationContextConfigurers( context, module )
+			);
 
 			// create installer application context
 			config.addInstallerContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
@@ -477,6 +445,51 @@ public class AcrossBootstrapper
 		return contextConfig;
 	}
 
+	private void registerSettings( AcrossModule module, ProvidedBeansMap beansMap, boolean compatibility ) {
+		String settingsClassName = ClassUtils.getUserClass( module.getClass() ).getName() + "Settings";
+
+		try {
+			Class settingsClass = Class.forName( settingsClassName );
+
+			if ( !settingsClass.isInterface() && !Modifier.isAbstract( settingsClass.getModifiers() ) ) {
+				if ( !compatibility ) {
+					// Register settings as bean in the module application context
+					GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+					beanDefinition.setBeanClass( settingsClass );
+					beanDefinition.setPrimary( true );
+					beanDefinition.addQualifier(
+							new AutowireCandidateQualifier( Module.class.getName(), AcrossModule.CURRENT_MODULE )
+					);
+
+					beansMap.put( AcrossModule.CURRENT_MODULE + "Settings", beanDefinition );
+				}
+				else if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
+					// If this is an old settings class, register it in the parent context as well,
+					// note that this means the bean will be wired in a different context than in the module
+					GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+					beanDefinition.setBeanClass( settingsClass );
+					beanDefinition.setPrimary( false );
+					beanDefinition.setLazyInit( true );
+					beanDefinition.addQualifier(
+							new AutowireCandidateQualifier( Module.class.getName(), module.getName() )
+					);
+
+					beansMap.put( settingsClassName, beanDefinition );
+				}
+			}
+		}
+		catch ( ClassNotFoundException ignore ) {
+		}
+	}
+
+	private Collection<Object> buildInstallerSet( AcrossModule module ) {
+		InstallerSetBuilder installerSetBuilder = new InstallerSetBuilder();
+		installerSetBuilder.add( module.getInstallers() );
+		installerSetBuilder.scan( module.getInstallerScanPackages() );
+
+		return Arrays.asList( installerSetBuilder.build() );
+	}
+
 	private ModuleConfigurationSet buildModuleConfigurationSet( AcrossContextInfo contextInfo ) {
 		Set<String> basePackages = new LinkedHashSet<>();
 
@@ -484,7 +497,7 @@ public class AcrossBootstrapper
 		           .stream()
 		           .filter( AcrossModuleInfo::isEnabled )
 		           .forEach( acrossModuleInfo -> Collections.addAll(
-				                     basePackages, acrossModuleInfo.getModule().getModuleConfigurationScanPackages()
+				           basePackages, acrossModuleInfo.getModule().getModuleConfigurationScanPackages()
 		                     )
 		           );
 
@@ -557,12 +570,8 @@ public class AcrossBootstrapper
 					                                                   moduleInfo.getName() )
 			                   )
 			);
-			providedBeans.put( "across.moduleSettings." + moduleInfo.getName(),
-			                   new SingletonBean(
-					                   moduleInfo.getSettings(),
-					                   new AutowireCandidateQualifier( Module.class.getName(),
-					                                                   moduleInfo.getName() )
-			                   ) );
+
+			registerSettings( moduleInfo.getModule(), providedBeans, true );
 		}
 
 		context.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedBeans ),

@@ -29,9 +29,6 @@ import com.foreach.across.test.AcrossTestWebConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -39,8 +36,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -49,23 +44,18 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = ITSimpleContextBootstrap.Config.class)
+@ContextConfiguration
 public class ITSimpleContextBootstrap
 {
-	@Autowired
-	private AcrossWebModule webModule;
-
 	@Autowired
 	private AcrossContextInfo contextInfo;
 
 	@Test
 	public void webModuleShouldHaveBeenBootstrapped() {
-		assertNotNull( webModule );
 		assertTrue( SimpleInstaller.installed );
 		assertTrue( contextInfo.getModuleInfo( AcrossWebModule.NAME ).isBootstrapped() );
 	}
 
-	@Configuration
 	@AcrossTestWebConfiguration
 	static class Config implements AcrossContextConfigurer
 	{

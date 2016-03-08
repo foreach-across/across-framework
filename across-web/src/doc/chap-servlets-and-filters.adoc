@@ -1,0 +1,43 @@
+[[dynamic-servlet-registration]]
+== Registering servlets and filters
+It is possible to register `Servlet` and `Filter` instances from within an Across module.
+This can be easily done by implementing an `AcrossWebDynamicServletConfigurer` bean that will give you access to a configurable `ServletContext`.
+During bootstrap, {module-name} will detect all `AcrossWebDynamicServletConfigurer` beans and execute them <<ordering-beans,in order>>.
+
+.Example registering the resourceUrlrEncodingFilterConfiguration after all other filters
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+@Order(Ordered.LOWEST_PRECEDENCE)
+@Configuration("resourceUrlEncodingFilterConfiguration")
+@ConditionalOnProperty(value = "acrossWebModule.resources.versioning.enabled", matchIfMissing = true)
+public static class ResourceUrlEncodingFilterConfiguration extends AcrossWebDynamicServletConfigurer
+{
+	public static final String FILTER_NAME = "ResourceUrlEncodingFilter";
+
+	private static final Logger LOG = LoggerFactory.getLogger( ResourceUrlEncodingFilterConfiguration.class );
+
+	@Override
+	protected void dynamicConfigurationAllowed( ServletContext servletContext ) throws ServletException {
+		FilterRegistration.Dynamic resourceUrlEncodingFilter
+			= servletContext.addFilter( FILTER_NAME, new ResourceUrlEncodingFilter() );
+		resourceUrlEncodingFilter.addMappingForUrlPatterns(
+			EnumSet.of(
+					DispatcherType.REQUEST,
+					DispatcherType.ERROR,
+					DispatcherType.ASYNC
+			),
+			true,
+			"/*"
+		);
+	}
+
+	@Override
+	protected void dynamicConfigurationDenied( ServletContext servletContext ) throws ServletException {
+		LOG.warn( "Unable to auto configure ResourceUrlEncodingFilter." );
+	}
+}
+----
+
+NOTE: By default `AcrossWebDynamicServletConfigurer` requires a synchronous startup of the `ServletContext`.
+However a fallback method will be called if the bootstrap is not synchronous (`dynamicConfigurationDenied()`).

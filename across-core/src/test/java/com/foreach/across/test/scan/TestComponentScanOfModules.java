@@ -17,7 +17,6 @@ package com.foreach.across.test.scan;
 
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
-import com.foreach.across.test.scan.packageOne.ExtendedValidModule;
 import com.foreach.across.test.scan.packageOne.ValidModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +45,7 @@ public class TestComponentScanOfModules
 	public void moduleShouldBeScanned() {
 		assertTrue( contextInfo.isBootstrapped() );
 		assertEquals( 1, contextInfo.getModules().size() );
-		assertTrue( contextInfo.hasModule( ExtendedValidModule.NAME ) );
+		assertTrue( contextInfo.hasModule( "someName" ) );
 	}
 
 	@Configuration

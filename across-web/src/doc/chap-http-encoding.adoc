@@ -1,0 +1,10 @@
+[[default-http-encoding]]
+== Default HTTP encoding
+{module-name} registers a default `CharacterEncodingFilter` that forces the request and response encoding to use UTF-8.
+This is done through the `HttpEncodingAutoConfiguration` from Spring Boot and can be controlled with the following properties:
+
+* spring.http.encoding.enabled
+* spring.http.encoding.charset
+* spring.http.encoding.force
+
+If a `CharacterEncodingFilter` bean is found in the parent `ApplicationContext` but default HTTP encoding is enabled, {module-name} will take care of registering that filter bean.

@@ -1,0 +1,4 @@
+Extending modules should just define a WebMvcConfigurer component or configuration (does not need to be exposed).
+To avoid the default configuration: extend AcrossWebModule and override default context configurers.
+
+prefixed handler mapping

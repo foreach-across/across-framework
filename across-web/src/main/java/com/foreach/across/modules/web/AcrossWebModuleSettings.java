@@ -16,70 +16,114 @@
 
 package com.foreach.across.modules.web;
 
-import com.foreach.across.core.AcrossModuleSettings;
-import com.foreach.across.core.AcrossModuleSettingsRegistry;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import javax.servlet.MultipartConfigElement;
 import java.util.Collections;
 import java.util.Map;
 
-public class AcrossWebModuleSettings extends AcrossModuleSettings
+@SuppressWarnings("unused")
+@ConfigurationProperties(prefix = "acrossWebModule")
+public class AcrossWebModuleSettings
 {
-	/**
-	 * Prefix for JSP view resolver path.
-	 */
-	public static final String JSP_VIEW_PREFIX = "acrossWeb.jsp.prefix";
+	public static final String TEMPLATES_ENABLED = "acrossWebModule.templates.enabled";
+	public static final String TEMPLATES_AUTO_REGISTER = "acrossWebModule.templates.auto-register";
+
+	public static final String MULTIPART_AUTO_CONFIGURE = "acrossWebModule.multipart.auto-configure";
+	public static final String MULTIPART_SETTINGS = "acrossWebModule.multipart.settings";
+
+	public static final String DEVELOPMENT_VIEWS = "acrossWebModule.developmentViews";
+
+	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.resources.path";
 
 	/**
-	 * Suffix for JSP view resolver path.
+	 * Multipart support configuration settings.
 	 */
-	public static final String JSP_VIEW_SUFFIX = "acrossWeb.jsp.suffix";
+	private final Multipart multipart = new Multipart();
 
 	/**
-	 * True if a default WebTemplateRegistry should be created with support
-	 * for WebTemplateProcessors.
+	 * Templates configuration.
 	 */
-	public static final String TEMPLATES_ENABLED = "acrossWeb.templates.enabled";
+	private final Templates templates = new Templates();
 
 	/**
-	 * True if NamedWebTemplateProcessor instances should automatically register themselves
-	 * in the registry. Only relevant if templates are enabled.
+	 * Map of physical locations for views resources.  Only used if development mode is active.
 	 */
-	public static final String TEMPLATES_AUTO_REGISTER = "acrossWeb.templates.autoregister";
+	private Map<String, String> developmentViews = Collections.emptyMap();
 
-	public static final String MULTIPART_AUTO_CONFIGURE = "acrossWeb.multipart.autoconfigure";
-
-	public static final String MULTIPART_SETTINGS = "acrossWeb.multipart.settings";
-
-	public static final String DEVELOPMENT_VIEWS = "acrossWeb.development.views";
-
-	@Override
-	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
-		registry.register( TEMPLATES_ENABLED, Boolean.class, true );
-
-		registry.register( MULTIPART_AUTO_CONFIGURE, Boolean.class, true, "Auto configure a multipart resolver." );
-		registry.register( MULTIPART_SETTINGS, MultipartConfigElement.class,
-		                   null, "MultipartConfigElement holding the multipart upload settings." );
-
-		registry.register( TEMPLATES_AUTO_REGISTER, Boolean.class, true );
-		registry.register( DEVELOPMENT_VIEWS, Map.class, Collections.<String, String>emptyMap(),
-		                   "Map of physical locations for views resources." );
+	public Multipart getMultipart() {
+		return multipart;
 	}
 
-	public boolean isAutoConfigureMultipartResolver() {
-		return getProperty( MULTIPART_AUTO_CONFIGURE, Boolean.class );
+	public Templates getTemplates() {
+		return templates;
 	}
 
-	/*
-	public String getMultipartResolverBeanName() {
-	}
-	*/
-
-	public boolean isTemplatesEnabled() {
-		return getProperty( TEMPLATES_ENABLED, Boolean.class );
+	public Map<String, String> getDevelopmentViews() {
+		return developmentViews;
 	}
 
-	public boolean isAutoRegisterTemplates() {
-		return getProperty( TEMPLATES_AUTO_REGISTER, Boolean.class );
+	public void setDevelopmentViews( Map<String, String> developmentViews ) {
+		this.developmentViews = developmentViews;
+	}
+
+	public static class Multipart
+	{
+		/**
+		 * Auto configure a multipart resolver.
+		 */
+		private boolean autoConfigure = true;
+
+		/**
+		 * MultipartConfigElement holding the multipart upload settings.
+		 */
+		private MultipartConfigElement settings;
+
+		public boolean isAutoConfigure() {
+			return autoConfigure;
+		}
+
+		public void setAutoConfigure( boolean autoConfigure ) {
+			this.autoConfigure = autoConfigure;
+		}
+
+		public MultipartConfigElement getSettings() {
+			return settings;
+		}
+
+		public void setSettings( MultipartConfigElement settings ) {
+			this.settings = settings;
+		}
+	}
+
+	public static class Templates
+	{
+		/**
+		 * True if a default WebTemplateRegistry should be created with support
+		 * for WebTemplateProcessors.
+		 */
+		private boolean enabled = true;
+
+		/**
+		 * True if NamedWebTemplateProcessor instances should automatically register themselves
+		 * in the registry. Only relevant if templates are enabled.
+		 */
+		private boolean autoRegister = true;
+
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled( boolean enabled ) {
+			this.enabled = enabled;
+		}
+
+		public boolean isAutoRegister() {
+			return autoRegister;
+		}
+
+		public void setAutoRegister( boolean autoRegister ) {
+			this.autoRegister = autoRegister;
+		}
 	}
 }

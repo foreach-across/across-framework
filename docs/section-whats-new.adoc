@@ -1,0 +1,33 @@
+== What's new in this version?
+=== 1.1.2-SNAPSHOT
+*Across Core*
+
+* <<enableacrosscontext>> annotation now supports autoconfiguration of an `AcrossContext`
+* <<moduleconfiguration>> annotation provides a no-hassle way to declare annotated classes that need to be added to a specific module
+* message sources are now <<auto-detecting-message-sources,auto-detected>> if they follow the conventions
+* both `AcrossModule` and `ModuleBootstrapConfig` now have shortcut `expose()` methods that make it easier to expose additional beans
+* several changes and improvements were made to installers:
+** installers are now created in their own configurable <<installer-applicationcontext,installer `ApplicationContext`>>
+** installers are detected automatically through classpath scanning (defaults to *installers* package of a module)
+** installers are ordered based on the presence of an `@Order` annotation
+** installers now support `@Conditional` annotations for building more complex conditions
+** installers should only be specified as class names in `getInstallers()`, the use of instances is deprecated
+** `InstallerSettings` has been refactored to use `InstallerMetaData` instead (breaking change)
+** installers can implement `InstallerActionResolver` directly to suppress execution at runtime
+** `AcrossInstallerRepository` now has methods to rename installers
+** `AcrossLiquibaseInstaller` detects the most appropriate `SchemaConfiguration` to use and modifies default schema accordingly
+* development mode can be set through the property *across.development.active* and is active by default if a Spring profile called *dev* is active
+
+*Across Web*
+
+* <<across-application,@AcrossApplication>> can be used with `SpringApplication` to bootstrap an Across context with dynamic modules and support for embedded servlet containers
+* async configuration can now correctly be set through `WebMvcConfigurer#configureAsyncSupport(AsyncSupportConfigurer)`
+* `AcrossWebModuleSettings` has been refactored and `AcrossWebModule` can now be <<across-web-module-settings,configured through properties>>
+** properties support Spring configuration metadata with possible IDE support
+* by default only Thymeleaf views support is activated (breaking change)
+* static resources now configure default <<client-side-caching,client-side caching>> and <<resource-url-versioning,resource url versioning>>
+* <<dynamic-servlet-registration,dynamic registration of servlets and filters>> now supports ordering
+* <<default-http-encoding,default HTTP encoding>> is now forced to UTF-8
+
+=== 1.1.1.RELEASE
+Initial public release available on http://search.maven.org/[Maven central].

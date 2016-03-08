@@ -16,14 +16,23 @@
 
 package com.foreach.across.test;
 
-import org.springframework.context.annotation.Import;
+import com.foreach.across.modules.web.AcrossWebModule;
 
 import java.lang.annotation.*;
 
+/**
+ * Boots a default {@link com.foreach.across.core.AcrossContext} with only the {@link AcrossWebModule} configured.
+ * <p>Since refactoring the {@link AcrossTestConfiguration} annotation in 1.1.2, this annotation has little
+ * added value and can be replaced by {@code @AcrossTestConfiguration(modules = { AcrossWebModule.NAME })}.
+ * It will be removed in future releases.</p>
+ *
+ * @deprecated since 1.1.2
+ */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(AcrossTestWebContextConfiguration.class)
+@AcrossTestConfiguration(modules = { AcrossWebModule.NAME })
 public @interface AcrossTestWebConfiguration
 {
 }

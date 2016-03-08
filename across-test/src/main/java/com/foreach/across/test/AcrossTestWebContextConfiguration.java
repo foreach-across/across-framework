@@ -34,6 +34,7 @@ import javax.annotation.PostConstruct;
  * Creates an AcrossContext with a parent WebApplicationContext.
  * Requires the use of @WebAppConfiguration on the containing JUnit class.
  */
+@Deprecated
 @Configuration
 @Import(AcrossTestContextConfiguration.class)
 public class AcrossTestWebContextConfiguration implements AcrossContextConfigurer

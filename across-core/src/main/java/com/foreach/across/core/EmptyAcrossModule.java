@@ -52,4 +52,14 @@ public final class EmptyAcrossModule extends AcrossModule
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 		// No context configurers should be loaded by default
 	}
+
+	@Override
+	protected void registerDefaultInstallerContextConfigurers( Set<ApplicationContextConfigurer> installerContextConfigurers ) {
+		// No context configurers should be loaded by default
+	}
+
+	@Override
+	public String[] getInstallerScanPackages() {
+		return new String[0];
+	}
 }

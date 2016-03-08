@@ -1,0 +1,18 @@
+== Across in a nutshell
+Across is a Java framework that aims to facilitate module based development for Java (web) applications.
+It builds heavily on Spring framework and allows defining a module consisting of a number of classes and configuration files.
+Every module defines its own Spring application context and can share one or more beans with other modules.
+
+Across modules can contain any set of functionality: low-level add-ons like facilities to activate caching or end user
+functionality including web controllers and their views.  Across provides the basic infrastructure to define modules and
+make them depend on each other.  A module will most often be a separate jar, but this is in no way a requirement.
+
+The general principle is that every Across module can depend on others, but is responsible for its own installation and
+start-up procedures.  To this end, a module can define its own installers.
+
+.Getting started
+This is the reference documentation,
+
+* release overview
+* samples and tutorials
+* appendices list events and overview of conventions

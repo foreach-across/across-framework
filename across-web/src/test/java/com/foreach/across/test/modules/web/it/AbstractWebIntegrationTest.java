@@ -15,29 +15,18 @@
  */
 package com.foreach.across.test.modules.web.it;
 
-import com.foreach.across.core.AcrossContext;
-import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
+import com.foreach.across.config.AcrossWebApplicationConfiguration;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
-import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext;
 import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
-import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Base class for a fully bootstrapped webapplication in embedded tomcat.
@@ -48,7 +37,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebIntegrationTest(randomPort = true)
-@SpringApplicationConfiguration(classes = AbstractWebIntegrationTest.EmbeddedWebServerConfiguration.class)
+@SpringApplicationConfiguration(classes = AcrossWebApplicationConfiguration.class)
 public abstract class AbstractWebIntegrationTest
 {
 	@Autowired
@@ -70,24 +59,17 @@ public abstract class AbstractWebIntegrationTest
 		return template.getForEntity( url( relativePath ), String.class ).getBody();
 	}
 
-	/**
-	 * Base configuration as an alternative to {@link AbstractAcrossServletInitializer} with Spring Boot based tests.
-	 */
-	@Import({ DispatcherServletAutoConfiguration.class, EmbeddedServletContainerAutoConfiguration.class,
-	          ServerPropertiesAutoConfiguration.class })
-	@Configuration
-	static class EmbeddedWebServerConfiguration implements ServletContextInitializer
-	{
-		@Override
-		public void onStartup( ServletContext servletContext ) throws ServletException {
-			servletContext.setAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER, true );
+	protected HttpHeaders headers( String relativePath ) {
+		return template.getForEntity( url( relativePath ), String.class ).getHeaders();
+	}
 
-			AnnotationConfigEmbeddedWebApplicationContext rootContext =
-					(AnnotationConfigEmbeddedWebApplicationContext) servletContext.getAttribute(
-							WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE );
-
-			// Ensure the AcrossContext has bootstrapped while the ServletContext can be modified
-			assertNotNull( rootContext.getBean( AcrossContext.class ) );
+	protected boolean notFound( String relativePath ) {
+		try {
+			get( relativePath );
 		}
+		catch ( HttpClientErrorException hcee ) {
+			return HttpStatus.NOT_FOUND.equals( hcee.getStatusCode() );
+		}
+		return false;
 	}
 }

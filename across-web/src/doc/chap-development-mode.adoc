@@ -1,0 +1,6 @@
+== Development mode support
+{module-name} supports development mode retrieval of physical resources.
+If the conventions for static resources and Thymeleaf templates were followed, these will be fetched automatically from their physical location.
+This ensures that an application restart is not required for static resources or Thymeleaf rendering.
+
+If development mode is active {module-name} will also send no-cache headers for static resources and will use a generated fixed version if versioning is enabled.

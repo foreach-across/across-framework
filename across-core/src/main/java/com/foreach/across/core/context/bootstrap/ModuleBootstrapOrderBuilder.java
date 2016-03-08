@@ -24,6 +24,7 @@ import com.foreach.across.core.context.support.ModuleSet;
 import com.foreach.across.core.context.support.ModuleSetBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
@@ -397,6 +398,10 @@ public class ModuleBootstrapOrderBuilder
 	}
 
 	private int getOrderInRole( AcrossModule module ) {
+		if ( module instanceof Ordered ) {
+			return ( (Ordered) module ).getOrder();
+		}
+
 		Annotation role = AnnotationUtils.getAnnotation( module.getClass(), AcrossRole.class );
 
 		if ( role != null ) {

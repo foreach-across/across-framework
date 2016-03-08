@@ -433,6 +433,10 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		}
 	}
 
+	public boolean isBootstrapped() {
+		return isBootstrapped;
+	}
+
 	public void destroy() {
 		shutdown();
 	}

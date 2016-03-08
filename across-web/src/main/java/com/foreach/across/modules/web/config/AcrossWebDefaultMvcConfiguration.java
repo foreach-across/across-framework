@@ -21,10 +21,9 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.*;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
-import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.core.convert.StringToDateConverter;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.*;
@@ -38,11 +37,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
@@ -123,9 +121,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Module(AcrossModule.CURRENT_MODULE)
 	private AcrossModuleInfo currentModuleInfo;
 
-	@Autowired
-	private AcrossContextBeanRegistry beanRegistry;
-
 	@RefreshableCollection(includeModuleInternals = true)
 	private Collection<PrefixingHandlerMappingConfigurer> prefixingHandlerMappingConfigurers;
 
@@ -136,12 +131,15 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	private ServletContext servletContext;
 
-	@Autowired(required = false)
+	@Autowired
 	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	private FormattingConversionService mvcConversionService;
 
 	@Autowired(required = false)
 	private WebTemplateInterceptor webTemplateInterceptor;
+
+	@Autowired
+	private ResourcesConfiguration resourcesConfiguration;
 
 	private ConfigurableWebBindingInitializer initializer;
 
@@ -160,34 +158,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		Assert.notNull( applicationContext, "applicationContext should be autowired and cannot be null" );
 		Assert.notNull( servletContext, "servletContext should be autowired and cannot be null" );
 		Assert.notNull( acrossContext );
-
-		if ( mvcConversionService == null ) {
-			mvcConversionService = mvcConversionService();
-		}
-	}
-
-	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
-	@Exposed
-	@AcrossCondition("not hasBean('" + AcrossWebModule.CONVERSION_SERVICE_BEAN + "', T(org.springframework.format.support.FormattingConversionService))")
-	public FormattingConversionService mvcConversionService() {
-		if ( beanRegistry.containsBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME ) ) {
-			Object conversionService
-					= beanRegistry.getBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
-
-			if ( conversionService instanceof FormattingConversionService ) {
-				LOG.info( "Using the default ConversionService as {}", AcrossWebModule.CONVERSION_SERVICE_BEAN );
-				return (FormattingConversionService) conversionService;
-			}
-		}
-
-		LOG.info(
-				"No ConversionService named {} found in Across context - creating and exposing a new FormattingConversionService bean",
-				AcrossWebModule.CONVERSION_SERVICE_BEAN );
-
-		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-		conversionService.addConverter( new StringToDateConverter() );
-
-		return conversionService;
 	}
 
 	/**
@@ -197,16 +167,16 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	protected void reload( AcrossContextBootstrappedEvent bootstrappedEvent ) {
 		// Reload the adapter
 		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>();
-		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<HandlerMethodReturnValueHandler>();
+		List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+		List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>();
 		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
 		ContentNegotiationConfigurer contentNegotiationConfigurer = new ContentNegotiationConfigurer( servletContext );
 		contentNegotiationConfigurer.mediaTypes( getDefaultMediaTypes() );
 
-		ResourceHandlerRegistry resourceHandlerRegistry =
-				new ResourceHandlerRegistry( applicationContext, servletContext );
+		ResourceHandlerRegistry resourceHandlerRegistry = new ResourceHandlerRegistry( applicationContext,
+		                                                                               servletContext );
 
 		DelayedAsyncSupportConfigurer asyncSupportConfigurer = new DelayedAsyncSupportConfigurer();
 
@@ -269,10 +239,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		controllerHandlerMapping.reload();
 
-		// Update the resource handler mapping
-		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
-		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );
-		resourceHandlerMapping.initApplicationContext();
+		// Reload the resources resolving configuration
+		resourcesConfiguration.reload( resourceHandlerRegistry, applicationContext );
 
 		// Handler exception resolver
 		if ( exceptionResolvers.isEmpty() ) {
@@ -464,7 +432,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping handlerMapping =
 				new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class, true ) );
-		handlerMapping.setOrder( currentModuleInfo.getIndex() );
+		// Default @Controllers are matched after other prefixed mappings
+		handlerMapping.setOrder( Ordered.LOWEST_PRECEDENCE );
 
 		return handlerMapping;
 	}

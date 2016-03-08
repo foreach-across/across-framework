@@ -16,8 +16,6 @@
 
 package com.foreach.across.it;
 
-import com.foreach.across.config.AcrossContextConfigurer;
-import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.database.DatabaseInfo;
 import com.foreach.across.test.AcrossTestConfiguration;
 import org.junit.Test;
@@ -25,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,7 +37,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = ITDatabaseInfo.Config.class)
+@ContextConfiguration
 public class ITDatabaseInfo
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ITDatabaseInfo.class );
@@ -67,12 +64,8 @@ public class ITDatabaseInfo
 		);
 	}
 
-	@Configuration
 	@AcrossTestConfiguration
-	static class Config implements AcrossContextConfigurer
+	static class Config
 	{
-		@Override
-		public void configure( AcrossContext context ) {
-		}
 	}
 }

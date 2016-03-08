@@ -17,6 +17,11 @@ package com.foreach.across.test.modules.web.it.modules.testResources.config;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Arne Vandamme
@@ -27,5 +32,18 @@ public class TestController
 	@RequestMapping("/testResources")
 	public String listTestResources() {
 		return "th/testResources/list";
+	}
+
+	@RequestMapping("/characterEncoding")
+	@ResponseBody
+	public String encoding( HttpServletRequest request ) {
+		return request.getCharacterEncoding();
+	}
+
+	@RequestMapping("/filtered")
+	@ResponseBody
+	public String filtered( @RequestParam("name") String filterName, HttpServletRequest request ) {
+		Boolean filtered = (Boolean) request.getAttribute( filterName + OncePerRequestFilter.ALREADY_FILTERED_SUFFIX );
+		return Boolean.toString( filtered != null ? filtered : false );
 	}
 }

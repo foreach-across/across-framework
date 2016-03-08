@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +44,6 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -51,6 +51,7 @@ import java.util.Map;
  * Creates Thymeleaf view resolver.
  */
 @Configuration
+@ConditionalOnProperty(value = "acrossWebModule.views.thymeleaf.enabled", matchIfMissing = true)
 public class ThymeleafViewSupportConfiguration
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );
@@ -118,10 +119,7 @@ public class ThymeleafViewSupportConfiguration
 
 		if ( developmentMode.isActive() ) {
 			Map<String, String> developmentViews = developmentMode.getDevelopmentLocations( "views" );
-			developmentViews.putAll(
-					settings.getProperty( AcrossWebModuleSettings.DEVELOPMENT_VIEWS, Map.class,
-					                      Collections.<String, String>emptyMap() )
-			);
+			developmentViews.putAll( settings.getDevelopmentViews() );
 
 			for ( Map.Entry<String, String> views : developmentViews.entrySet() ) {
 				String prefix = "file:" + views.getValue() + "/";

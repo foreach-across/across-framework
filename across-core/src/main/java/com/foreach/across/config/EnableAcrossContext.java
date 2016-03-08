@@ -29,6 +29,7 @@ import java.lang.annotation.*;
  * will automatically create an {@link AcrossContext} using the settings from this annotation.
  *
  * @see AcrossContextConfiguration
+ * @see com.foreach.across.core.support.AcrossContextBuilder
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -59,6 +60,8 @@ public @interface EnableAcrossContext
 	 * beans from the parent {@link ApplicationContext} will be picked up and class path scanning for modules by
 	 * names will be supported.  The configured context will have a {@link ClassPathScanningModuleDependencyResolver}
 	 * set to resolve the module dependencies as well.
+	 * <p>
+	 * The ability to disable auto configuration is mainly kept for compatibility reasons.
 	 */
 	boolean autoConfigure() default true;
 

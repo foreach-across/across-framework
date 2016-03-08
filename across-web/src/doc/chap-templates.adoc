@@ -1,0 +1,5 @@
+[[web-templates]]
+== Templates
+Named web templates + autodetection
+
+Working with templates

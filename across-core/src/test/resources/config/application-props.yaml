@@ -1,0 +1,4 @@
+bootProperties:
+  yaml:
+    one: yamlOne
+    two: yamlTwo

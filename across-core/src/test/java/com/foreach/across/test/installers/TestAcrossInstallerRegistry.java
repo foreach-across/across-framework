@@ -18,7 +18,6 @@ package com.foreach.across.test.installers;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
@@ -28,6 +27,7 @@ import com.foreach.across.core.context.bootstrap.BootstrapApplicationContextFact
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.*;
 import com.foreach.across.test.modules.installer.installers.*;
@@ -44,6 +44,13 @@ import static org.mockito.Mockito.*;
 
 public class TestAcrossInstallerRegistry
 {
+	private final InstallerMetaData BEFORE_CTX_META
+			= InstallerMetaData.forClass( AlwaysRunBeforeContextBootstrapInstaller.class );
+	private final InstallerMetaData AFTER_MOD_META
+			= InstallerMetaData.forClass( AlwaysRunAfterModuleBootstrapInstaller.class );
+	private final InstallerMetaData VERSION_META
+			= InstallerMetaData.forClass( VersionBasedInstaller.class );
+
 	private AcrossBootstrapInstallerRegistry registry;
 	private AcrossBootstrapConfig contextConfig;
 	private ModuleBootstrapConfig moduleConfig;
@@ -78,10 +85,17 @@ public class TestAcrossInstallerRegistry
 		when( acrossContext.getAcrossApplicationContextHolder() ).thenReturn( acrossApplicationContextHolder );
 
 		module = mock( AcrossModule.class );
+		when( module.getName() ).thenReturn( "module" );
 		contextConfig = mock( AcrossBootstrapConfig.class );
+
+		AcrossContextInfo contextInfo = mock( AcrossContextInfo.class );
+		when( contextInfo.getBootstrapConfiguration() ).thenReturn( contextConfig );
+
+		applicationContext.getBeanFactory().registerSingleton( "acrossContextInfo", contextInfo );
 
 		moduleConfig = mock( ModuleBootstrapConfig.class );
 		when( moduleConfig.getModule() ).thenReturn( module );
+		when( moduleConfig.getModuleName() ).thenReturn( "module" );
 
 		contextSettings = mock( InstallerSettings.class );
 
@@ -107,10 +121,10 @@ public class TestAcrossInstallerRegistry
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 		when( moduleSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.DISABLED );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( contextSettings ).shouldRun( anyString(), any( AlwaysRunBeforeContextBootstrapInstaller.class ) );
-		verify( moduleSettings ).shouldRun( anyString(), any( AlwaysRunBeforeContextBootstrapInstaller.class ) );
+		verify( contextSettings ).shouldRun( eq( "module" ), eq( BEFORE_CTX_META ) );
+		verify( moduleSettings ).shouldRun( eq( "module" ), eq( BEFORE_CTX_META ) );
 
 		// Nothing executed
 		assertExecuted();
@@ -126,11 +140,10 @@ public class TestAcrossInstallerRegistry
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.DISABLED );
 		when( moduleSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.FORCE );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( contextSettings ).shouldRun( anyString(), any( AlwaysRunBeforeContextBootstrapInstaller.class ) );
-		verify( moduleSettings, never() ).shouldRun( anyString(), any(
-				AlwaysRunBeforeContextBootstrapInstaller.class ) );
+		verify( contextSettings ).shouldRun( eq( "module" ), eq( BEFORE_CTX_META ) );
+		verify( moduleSettings, never() ).shouldRun( eq( "module" ), eq( BEFORE_CTX_META ) );
 
 		// Nothing executed
 		assertExecuted();
@@ -142,7 +155,7 @@ public class TestAcrossInstallerRegistry
 
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.SKIP );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
 		assertTrue( TestInstaller.WIRED_VALUES.isEmpty() );
 
@@ -155,7 +168,7 @@ public class TestAcrossInstallerRegistry
 
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
 		assertExecuted( AlwaysRunBeforeContextBootstrapInstaller.class );
 		assertEquals(
@@ -175,7 +188,7 @@ public class TestAcrossInstallerRegistry
 
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
 		assertExecuted( AlwaysRunBeforeContextBootstrapInstaller.class );
 		assertEquals(
@@ -188,13 +201,6 @@ public class TestAcrossInstallerRegistry
 	public void installerBeansAreWiredInModuleContextIfAvailable() {
 		installers( AlwaysRunBeforeContextBootstrapInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
-
-//		Set<ApplicationContextConfigurer> configurers = Collections.singleton(
-//				new ProvidedBeansConfigurer( Collections.singletonMap( "someBean", "moduleBootstrap" ) )
-//		);
-//		when( moduleConfig.getInstallerContextConfigurers() ).thenReturn( configurers );
-//
-//		moduleConfig.getApplicationContextConfigurers()
 
 		AcrossApplicationContext applicationContext = new AcrossApplicationContext();
 		applicationContext.refresh();
@@ -210,7 +216,7 @@ public class TestAcrossInstallerRegistry
 		when( module.hasApplicationContext() ).thenReturn( true );
 		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
 		assertExecuted( AlwaysRunBeforeContextBootstrapInstaller.class );
 		assertEquals(
@@ -243,7 +249,7 @@ public class TestAcrossInstallerRegistry
 		when( module.hasApplicationContext() ).thenReturn( true );
 		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
 		assertExecuted( AlwaysRunBeforeContextBootstrapInstaller.class );
 		assertEquals(
@@ -260,23 +266,11 @@ public class TestAcrossInstallerRegistry
 		);
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( installerRepository, never() ).getInstalledVersion( module,
-		                                                            AlwaysRunBeforeContextBootstrapInstaller.class );
-		verify( installerRepository )
-				.setInstalled(
-						module,
-						AlwaysRunBeforeContextBootstrapInstaller.class.getAnnotation( Installer.class ),
-						AlwaysRunBeforeContextBootstrapInstaller.class
-				);
-
-		verify( installerRepository, never() )
-				.setInstalled(
-						eq( module ),
-						any( Installer.class ),
-						eq( AlwaysRunAfterModuleBootstrapInstaller.class )
-				);
+		verify( installerRepository, never() ).getInstalledVersion( module.getName(), BEFORE_CTX_META.getName() );
+		verify( installerRepository ).setInstalled( module.getName(), BEFORE_CTX_META );
+		verify( installerRepository, never() ).setInstalled( module.getName(), AFTER_MOD_META );
 
 		assertExecuted(
 				AlwaysRunBeforeContextBootstrapInstaller.class
@@ -290,14 +284,9 @@ public class TestAcrossInstallerRegistry
 		);
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.REGISTER );
 
-		registry.runInstallersForModule( "", InstallerPhase.AfterModuleBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.AfterModuleBootstrap );
 
-		verify( installerRepository )
-				.setInstalled(
-						module,
-						AlwaysRunAfterModuleBootstrapInstaller.class.getAnnotation( Installer.class ),
-						AlwaysRunAfterModuleBootstrapInstaller.class
-				);
+		verify( installerRepository ).setInstalled( module.getName(), AFTER_MOD_META );
 
 		assertExecuted();
 	}
@@ -309,17 +298,12 @@ public class TestAcrossInstallerRegistry
 		);
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		when( installerRepository.getInstalledVersion( module, VersionBasedInstaller.class ) ).thenReturn(
-				VersionBasedInstaller.VERSION );
+		when( installerRepository.getInstalledVersion( module.getName(), VERSION_META.getName() ) )
+				.thenReturn( VersionBasedInstaller.VERSION );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( installerRepository, never() )
-				.setInstalled(
-						module,
-						VersionBasedInstaller.class.getAnnotation( Installer.class ),
-						VersionBasedInstaller.class
-				);
+		verify( installerRepository, never() ).setInstalled( module.getName(), VERSION_META );
 
 		assertExecuted();
 	}
@@ -329,18 +313,12 @@ public class TestAcrossInstallerRegistry
 		installers( VersionBasedInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		when( installerRepository.getInstalledVersion( module, VersionBasedInstaller.class ) ).thenReturn(
-				VersionBasedInstaller.VERSION + 1 );
+		when( installerRepository.getInstalledVersion( module.getName(), VERSION_META.getName() ) )
+				.thenReturn( VersionBasedInstaller.VERSION + 1 );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( installerRepository, never() )
-				.setInstalled(
-						module,
-						VersionBasedInstaller.class.getAnnotation( Installer.class ),
-						VersionBasedInstaller.class
-				);
-
+		verify( installerRepository, never() ).setInstalled( module.getName(), VERSION_META );
 		assertExecuted();
 	}
 
@@ -349,17 +327,12 @@ public class TestAcrossInstallerRegistry
 		installers( VersionBasedInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		when( installerRepository.getInstalledVersion( module, VersionBasedInstaller.class ) ).thenReturn(
-				VersionBasedInstaller.VERSION - 1 );
+		when( installerRepository.getInstalledVersion( module.getName(), VERSION_META.getName() ) )
+				.thenReturn( VersionBasedInstaller.VERSION - 1 );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( installerRepository )
-				.setInstalled(
-						module,
-						VersionBasedInstaller.class.getAnnotation( Installer.class ),
-						VersionBasedInstaller.class
-				);
+		verify( installerRepository ).setInstalled( module.getName(), VERSION_META );
 
 		assertExecuted( VersionBasedInstaller.class );
 	}
@@ -369,17 +342,12 @@ public class TestAcrossInstallerRegistry
 		installers( VersionBasedInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.FORCE );
 
-		when( installerRepository.getInstalledVersion( module, VersionBasedInstaller.class ) ).thenReturn(
-				VersionBasedInstaller.VERSION );
+		when( installerRepository.getInstalledVersion( module.getName(), VERSION_META.getName() ) )
+				.thenReturn( VersionBasedInstaller.VERSION );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( installerRepository )
-				.setInstalled(
-						module,
-						VersionBasedInstaller.class.getAnnotation( Installer.class ),
-						VersionBasedInstaller.class
-				);
+		verify( installerRepository ).setInstalled( module.getName(), VERSION_META );
 
 		assertExecuted( VersionBasedInstaller.class );
 	}
@@ -389,14 +357,9 @@ public class TestAcrossInstallerRegistry
 		installers( AlwaysRunBeforeContextBootstrapInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.SKIP );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( installerRepository, never() )
-				.setInstalled(
-						module,
-						AlwaysRunBeforeContextBootstrapInstaller.class.getAnnotation( Installer.class ),
-						AlwaysRunBeforeContextBootstrapInstaller.class
-				);
+		verify( installerRepository, never() ).setInstalled( module.getName(), BEFORE_CTX_META );
 
 		assertExecuted();
 	}
@@ -406,26 +369,21 @@ public class TestAcrossInstallerRegistry
 		installers( AlwaysRunBeforeContextBootstrapInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.DISABLED );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( installerRepository, never() )
-				.setInstalled(
-						module,
-						AlwaysRunBeforeContextBootstrapInstaller.class.getAnnotation( Installer.class ),
-						AlwaysRunBeforeContextBootstrapInstaller.class
-				);
+		verify( installerRepository, never() ).setInstalled( module.getName(), BEFORE_CTX_META );
 
 		assertExecuted();
 	}
 
 	@Test
-	public void installerGroupShouldBePassedToSettings() {
+	public void moduleNameAndMetaDataShouldBePassedToSettings() {
 		installers( VersionBasedInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.DISABLED );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( contextSettings ).shouldRun( eq( VersionBasedInstaller.GROUP ), any( VersionBasedInstaller.class ) );
+		verify( contextSettings ).shouldRun( "module", VERSION_META );
 	}
 
 	@Test
@@ -434,9 +392,9 @@ public class TestAcrossInstallerRegistry
 
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		// The order does not matter
+		// The order does not matter for this test
 		Set<Class<?>> expected = new HashSet<>( Arrays.asList( MultipleMethodInstaller.class, String.class,
 		                                                       Object.class ) );
 		Set<Class<?>> actual = new HashSet<>( TestInstaller.EXECUTED );
@@ -446,20 +404,15 @@ public class TestAcrossInstallerRegistry
 
 	@Test
 	public void installerShouldNotExecuteIfDependencyNotMet() {
+		InstallerMetaData meta = InstallerMetaData.forClass( AlwaysRunWithDependencyInstaller.class );
+
 		installers( AlwaysRunWithDependencyInstaller.class );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
-		verify( contextSettings, never() ).shouldRun( anyString(), anyObject() );
-		verify( installerRepository, never() ).getInstalledVersion( module,
-		                                                            AlwaysRunWithDependencyInstaller.class );
-		verify( installerRepository, never() )
-				.setInstalled(
-						module,
-						AlwaysRunWithDependencyInstaller.class.getAnnotation( Installer.class ),
-						AlwaysRunWithDependencyInstaller.class
-				);
+		verify( installerRepository, never() ).getInstalledVersion( module.getName(), meta.getName() );
+		verify( installerRepository, never() ).setInstalled( module.getName(), meta );
 
 		assertExecuted();
 	}
@@ -471,7 +424,7 @@ public class TestAcrossInstallerRegistry
 		when( contextConfig.hasModule( "requiredModule" ) ).thenReturn( true );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
 		assertExecuted( AlwaysRunWithDependencyInstaller.class );
 	}
@@ -486,7 +439,7 @@ public class TestAcrossInstallerRegistry
 		when( contextConfig.hasModule( "requiredModule" ) ).thenReturn( true );
 		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		registry.runInstallersForModule( "", InstallerPhase.BeforeContextBootstrap );
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
 
 		assertExecuted(
 				AlwaysRunWithDependencyInstaller.class,

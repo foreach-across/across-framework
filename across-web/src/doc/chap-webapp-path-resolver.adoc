@@ -1,0 +1,6 @@
+
+link builders:
+prefixing path context
+special characters:
+- ! = suppress prefix
+- {adminWeb}/boe/test/
