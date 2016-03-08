@@ -30,10 +30,14 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.Collection;
 
 /**
- * Extends the default AcrossTextContext by creating a WebApplicationContext,
- * MockServletContext and adding AcrossWebModule to the configuration.  An
- * AcrossTestWebContext has the same result as using the {@link com.foreach.across.test.AcrossTestWebConfiguration}
- * annotation.
+ * Extends the default {@link AcrossTestContext} with support for web configurations.
+ * This class assumes that the configured {@link AcrossContext} was configured using
+ * a {@link MockAcrossServletContext} and with {@link WebApplicationContext} support.
+ * <p>
+ * Instances of this class should not be created manually but through one of the builders.
+ * See {@link com.foreach.across.test.support.AcrossTestBuilders}.
+ * Public constructors will be removes in a future release.
+ * </p>
  *
  * @author Arne Vandamme
  * @see com.foreach.across.test.support.AcrossTestBuilders
@@ -67,29 +71,6 @@ public class AcrossTestWebContext extends AcrossTestContext
 
 	protected void setServletContext( MockAcrossServletContext servletContext ) {
 		this.servletContext = servletContext;
-	}
-
-	@Override
-	protected void setAcrossContext( AcrossContext acrossContext ) {
-		super.setAcrossContext( acrossContext );
-
-		acrossApplicationContext = AcrossContextUtils.getApplicationContext( acrossContext );
-	}
-
-	@Override
-	protected void setApplicationContext( ConfigurableApplicationContext applicationContext ) {
-		super.setApplicationContext( applicationContext );
-	}
-
-	@Override
-	protected AcrossConfigurableApplicationContext createApplicationContext() {
-		AcrossWebApplicationContext wac = new AcrossWebApplicationContext();
-		wac.register( AcrossTestWebContextConfiguration.class );
-
-		servletContext = new MockAcrossServletContext();
-		wac.setServletContext( servletContext );
-
-		return wac;
 	}
 
 	/**
@@ -129,5 +110,28 @@ public class AcrossTestWebContext extends AcrossTestContext
 		}
 
 		return (WebApplicationContext) acrossApplicationContext.getParent();
+	}
+
+	@Override
+	protected void setAcrossContext( AcrossContext acrossContext ) {
+		super.setAcrossContext( acrossContext );
+
+		acrossApplicationContext = AcrossContextUtils.getApplicationContext( acrossContext );
+	}
+
+	@Override
+	protected void setApplicationContext( ConfigurableApplicationContext applicationContext ) {
+		super.setApplicationContext( applicationContext );
+	}
+
+	@Override
+	protected AcrossConfigurableApplicationContext createApplicationContext() {
+		AcrossWebApplicationContext wac = new AcrossWebApplicationContext();
+		wac.register( AcrossTestWebContextConfiguration.class );
+
+		servletContext = new MockAcrossServletContext();
+		wac.setServletContext( servletContext );
+
+		return wac;
 	}
 }

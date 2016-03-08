@@ -2,6 +2,10 @@
 === 1.1.2-SNAPSHOT
 *Across Core*
 
+Across now requires JDK8 and has improved support for Spring Boot.
+The latter is also a required dependency as of 1.1.2.
+A lot of improvements have been done to reduce the amount of boilerplate code necessary to create a new `AcrossContext`.
+
 * <<enableacrosscontext>> annotation now supports autoconfiguration of an `AcrossContext`
 * <<moduleconfiguration>> annotation provides a no-hassle way to declare annotated classes that need to be added to a specific module
 * message sources are now <<auto-detecting-message-sources,auto-detected>> if they follow the conventions
@@ -28,6 +32,14 @@
 * static resources now configure default <<client-side-caching,client-side caching>> and <<resource-url-versioning,resource url versioning>>
 * <<dynamic-servlet-registration,dynamic registration of servlets and filters>> now supports ordering
 * <<default-http-encoding,default HTTP encoding>> is now forced to UTF-8
+
+*Across Test*
+
+Several improvements have been done for easier integration testing of modules in a web context.
+
+* <<test-builders,test context builders>> have been added for easy configuration of an `AcrossContext` in test methods
+* <<mock-across-servlet-context,MockAcrossServletContext>> can now be used for testing of dynamic `ServletContext` configuration
+* both <<test-annotations,annotations>> and <<test-builders,builders>> now provide a `MockMvc` instance that is initialized with the bootstrapped context and all dynamically registered filters
 
 === 1.1.1.RELEASE
 Initial public release available on http://search.maven.org/[Maven central].

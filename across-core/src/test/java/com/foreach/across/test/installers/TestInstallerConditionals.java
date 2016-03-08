@@ -38,6 +38,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -55,7 +56,8 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @ContextConfiguration(classes = TestInstallerConditionals.Config.class)
-@TestPropertySource(properties = { "spring.profiles.active=dev", "active.value=true" })
+@ActiveProfiles("dev")
+@TestPropertySource(properties = "active.value=true")
 public class TestInstallerConditionals
 {
 	private static Set<Class<?>> createdInstallerBeans = new HashSet<>();
