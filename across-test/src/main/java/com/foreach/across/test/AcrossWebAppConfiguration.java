@@ -15,7 +15,7 @@
  */
 package com.foreach.across.test;
 
-import com.foreach.across.test.support.MockAcrossServletContextInitializer;
+import com.foreach.across.test.support.config.MockAcrossServletContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextLoader;
 import org.springframework.test.context.SmartContextLoader;
@@ -36,7 +36,7 @@ import java.lang.annotation.*;
  * This annotation has aliases for {@link org.springframework.test.context.ContextConfiguration#classes()} and
  * {@link org.springframework.test.context.ContextConfiguration#loader()}.  If you need more advanced customization
  * you should revert to the manual combination of the annotations and adding the
- * {@link com.foreach.across.test.support.MockAcrossServletContextInitializer}.
+ * {@link MockAcrossServletContextInitializer}.
  *
  * @author Arne Vandamme
  * @see AcrossTestConfiguration

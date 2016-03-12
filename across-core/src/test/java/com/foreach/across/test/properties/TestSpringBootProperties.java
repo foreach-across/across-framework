@@ -25,6 +25,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -36,8 +37,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @SpringApplicationConfiguration(classes = TestSpringBootProperties.Config.class)
+@ActiveProfiles("props")
 @TestPropertySource(properties = {
-		"spring.profiles.active=props",
 		"bootProperties.directValue=parent",
 		"bootProperties.yaml.two=parentTwo"
 })

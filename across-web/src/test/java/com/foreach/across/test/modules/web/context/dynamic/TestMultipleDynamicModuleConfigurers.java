@@ -15,61 +15,75 @@
  */
 package com.foreach.across.test.modules.web.context.dynamic;
 
-import com.foreach.across.config.AcrossApplication;
+import com.foreach.across.config.AcrossDynamicModulesConfigurer;
+import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.DynamicAcrossModule;
+import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.test.modules.web.context.dynamic.postprocessor.config.SamplePostProcessorModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author Arne Vandamme
+ * @since 1.1.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @ContextConfiguration
-public class TestDefaultDynamicModules
+public class TestMultipleDynamicModuleConfigurers
 {
 	@Autowired
 	private AcrossContextInfo contextInfo;
 
 	@Test
-	public void infrastructureModuleShouldBeAdded() {
-		assertEquals( 1, contextInfo.getModuleIndex( "SampleInfrastructureModule" ) );
-		assertEquals( "sampleInfrastructure", contextInfo.getModuleInfo( "SampleInfrastructureModule" )
-		                                                 .getResourcesKey() );
+	public void sampleModulesShouldBeAdded() {
 		assertTrue( contextInfo.getModuleInfo( "SampleInfrastructureModule" )
 		                       .getModule() instanceof DynamicAcrossModule );
-	}
-
-	@Test
-	public void applicationModuleShouldBeAdded() {
-		assertEquals( 2, contextInfo.getModuleIndex( "SampleApplicationModule" ) );
-		assertEquals( "sample", contextInfo.getModuleInfo( "SampleApplicationModule" ).getResourcesKey() );
 		assertTrue( contextInfo.getModuleInfo( "SampleApplicationModule" )
 		                       .getModule() instanceof DynamicAcrossModule );
-	}
-
-	@Test
-	public void postProcessorModuleShouldBeAddedButScanned() {
-		assertEquals( 3, contextInfo.getModuleIndex( "SamplePostProcessorModule" ) );
-		assertEquals( "SamplePostProcessorModule", contextInfo.getModuleInfo( "SamplePostProcessorModule" )
-		                                                      .getResourcesKey() );
 		assertTrue( contextInfo.getModuleInfo( "SamplePostProcessorModule" )
 		                       .getModule() instanceof SamplePostProcessorModule );
 	}
 
-	@AcrossApplication
+	@Test
+	public void otherModulesShouldBeAdded() {
+		assertTrue( contextInfo.getModuleInfo( "OtherInfrastructureModule" )
+		                       .getModule() instanceof EmptyAcrossModule );
+		assertTrue( contextInfo.getModuleInfo( "OtherApplicationModule" )
+		                       .getModule() instanceof DynamicAcrossModule );
+		assertTrue( contextInfo.getModuleInfo( "OtherPostProcessorModule" )
+		                       .getModule() instanceof DynamicAcrossModule );
+	}
+
 	@Configuration
-	protected static class SampleApplication
+	@EnableAcrossContext
+	public static class SampleApplication
 	{
+		@Bean
+		public AcrossDynamicModulesConfigurer sampleDynamicModules() {
+			return new AcrossDynamicModulesConfigurer( SampleApplication.class );
+		}
+
+		@Bean
+		public AcrossDynamicModulesConfigurer otherDynamicModules() {
+			return new AcrossDynamicModulesConfigurer(
+					TestMultipleDynamicModuleConfigurers.class.getPackage().getName(),
+					"Other"
+			);
+		}
+
+		@Bean
+		public EmptyAcrossModule otherInfrastructureModule() {
+			return new EmptyAcrossModule( "OtherInfrastructureModule" );
+		}
 	}
 }

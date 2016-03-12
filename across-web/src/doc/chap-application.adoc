@@ -71,8 +71,6 @@ Disabling dynamic modules on an `@AcrossApplication` can be done through the *en
 WARNING: Dynamic modules perform an automatic component scan of all their child packages with the exception of _installers_ and _extensions_.
 If you want the default behavior of scanning only the _config_ child package, you must provide an `AcrossModule` implementation.
 
-NOTE: Manually adding dynamic modules can be done by importing `AcrossDynamicModulesConfiguration` on any configuration class.
-This will use the importing class as the base for the dynamic modules.
-
+NOTE: If you want to manually add dynamic modules, please see the javadoc for `AcrossDynamicModulesConfigurer` and `AcrossDynamicModulesConfiguration`.
 
 TODO: old school web initializer for bootstrapping with support for dynamic servlets and filters

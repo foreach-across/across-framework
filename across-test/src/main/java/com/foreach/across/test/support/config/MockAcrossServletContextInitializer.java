@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.support;
+package com.foreach.across.test.support.config;
 
+import com.foreach.across.config.AcrossServletContextInitializer;
+import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.test.MockAcrossServletContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -32,6 +38,8 @@ import org.springframework.web.context.WebApplicationContext;
  */
 public class MockAcrossServletContextInitializer implements ApplicationContextInitializer<ConfigurableWebApplicationContext>
 {
+	private static final Logger LOG = LoggerFactory.getLogger( MockAcrossServletContextInitializer.class );
+
 	@Override
 	public void initialize( ConfigurableWebApplicationContext applicationContext ) {
 		MockAcrossServletContext servletContext = new MockAcrossServletContext( true );
@@ -43,8 +51,11 @@ public class MockAcrossServletContextInitializer implements ApplicationContextIn
 	 * Ensures that {@link MockAcrossServletContext#initialize()} is called once the
 	 * {@link org.springframework.context.ApplicationContext} is refreshed.  This should initialize all
 	 * registered filters and servlets.
+	 * <p>
+	 * Implements {@link Ordered} to ensure this handler is executed after
+	 * {@link AcrossServletContextInitializer}.
 	 */
-	private static class ContextRefreshListener implements ApplicationListener<ContextRefreshedEvent>
+	private static class ContextRefreshListener implements ApplicationListener<ContextRefreshedEvent>, Ordered
 	{
 		private final WebApplicationContext wac;
 		private final MockAcrossServletContext servletContext;
@@ -56,9 +67,17 @@ public class MockAcrossServletContextInitializer implements ApplicationContextIn
 		}
 
 		@Override
+		public int getOrder() {
+			return AcrossServletContextInitializer.LISTENER_ORDER + 1;
+		}
+
+		@Override
 		public void onApplicationEvent( ContextRefreshedEvent event ) {
 			if ( event.getApplicationContext() == wac ) {
+				AcrossContext acrossContext = wac.getBean( AcrossContext.class );
 				servletContext.initialize();
+				servletContext.setAttribute( WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
+				                             AcrossContextUtils.getApplicationContext( acrossContext ) );
 			}
 		}
 	}

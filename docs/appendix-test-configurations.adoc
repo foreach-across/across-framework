@@ -1,0 +1,28 @@
+== Test configuration classes
+
+Across Test library has a number of `@Configuration` and `AcrossContextConfigurer` classes that can come in useful when setting up integration tests.
+These configurations can be found in the `com.foreach.across.test.support.config` package.
+
+Making use of these directly is only required when setting up integration tests without the Across <<test-annotations,test annotations>> or <<test-builders,builders>>.
+
+.Test configuration classes
+|===
+||
+
+|`TestDataSourceConfigurer`
+|`AcrossContextConfigurer` that will configure the <<test-datasources,test datasource>> on the `AcrossContext` if no other datasource has been set.
+
+|`ResetDatabaseConfigurer`
+|`AcrossContextConfigurer` that resets the datasources attached to the `AcrossContext` before it bootstraps.
+This will drop all tables, stored procedures etc in the database.
+
+|`MockMvcConfiguration`
+|Configures a `MockMvc` bean that will be created from a bootstrapped `AcrossContext`.
+If a `MockAcrossServletContext` is available, all registered filters will be configured on the `MockMvc` instance.
+
+|`MockAcrossServletContextInitializer`
+|`ApplicationContextInitializer` for use with `@ContextConfiguration` that ensures that `MockAcrossServletContext` is used instead of the default `MockServletContext`.
+Note that this initializer also requires that `@WebAppConfiguration` has been used on the test class.
+
+|===
+

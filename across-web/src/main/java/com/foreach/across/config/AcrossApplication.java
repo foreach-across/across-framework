@@ -17,6 +17,7 @@ package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -32,7 +33,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import({ AcrossApplicationConfiguration.class, AcrossWebApplicationConfiguration.class })
+@Import({ PropertyPlaceholderAutoConfiguration.class,
+          AcrossApplicationConfiguration.class,
+          AcrossWebApplicationConfiguration.class })
 @EnableAcrossContext
 public @interface AcrossApplication
 {

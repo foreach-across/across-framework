@@ -1,0 +1,8 @@
+[[test-annotations]]
+== Annotations
+
+The Across Test library provides a set of Across-specific annotations that extend the default Spring Testing annotations (eg `@ContextConfiguration`) to support `AcrossContext` setups.
+
+=== @AcrossTestConfiguration
+
+=== @AcrossWebAppConfiguration

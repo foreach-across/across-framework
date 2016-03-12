@@ -12,3 +12,5 @@ include::appendix-application-conventions.adoc[]
 
 include::appendix-core-events.adoc[]
 
+include::appendix-test-configurations.adoc[]
+

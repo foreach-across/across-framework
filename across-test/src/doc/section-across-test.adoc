@@ -1,12 +1,22 @@
 [[across-test]]
-= IV. Across test
+= IV. Across Test
 
-artifact
-module conventions test
-test context
-multiple across context configuration for bootstrapping
-warn about database reset!
+Across Test is a utility library that provides helpers for integration testing of Across modules in both a standard and web context.
+Across Test builds on top of the Spring testing library.
 
+[discrete]
+== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across</groupId>
+			<artifactId>across-test</artifactId>
+			<version>{across-version}</version>
+		</dependency>
+	</dependencies>
+----
 Thymeleaf integration: AcrossWebDialect
 
 #webapp.path('')
@@ -28,8 +38,12 @@ AcrossTestBuilders
 * single class, multiple context configurations
 * MockServletContext
 
-annotations:
-* @AcrossMockMvcConfiguration
-* @AcrossTestConfiguration
+include::chap-base-test-classes.adoc[]
 
-testing full application
+include::chap-test-context-builders.adoc[]
+
+include::chap-test-annotations.adoc[]
+
+include::chap-mock-across-servlet-context.adoc[]
+
+include::chap-test-datasources.adoc[]

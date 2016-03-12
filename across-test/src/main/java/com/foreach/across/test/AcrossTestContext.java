@@ -31,15 +31,15 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Closeable;
 
 /**
- * Creates and bootstraps a new AcrossContext instance using the configurers passed in
- * as constructor parameters.  The default test datasource is used and no default modules
- * are added to the context.
+ * This class is a wrapper around a bootstrapped {@link AcrossContext} and provides methods
+ * for easy querying of said context and its modules.  This class also implements {@link Closeable}.
+ * Calling {@link #close()} will close both the {@link AcrossContext} and (if provided) the additional
+ * parent {@link org.springframework.context.ApplicationContext}.
  * <p>
- * The test context provides methods for easy querying of an AcrossContext and its modules.
- * <p>
- * <strong>Note:</strong> when finished with an AcrossTestContext it is important that
- * the {@link #close()} method is called.  To make this easier this class implements
- * {@link java.io.Closeable}.
+ * Instances of this class should not be created manually but through one of the builders.
+ * See {@link com.foreach.across.test.support.AcrossTestBuilders}.
+ * Public constructors will be removes in a future release.
+ * </p>
  *
  * @author Arne Vandamme
  * @see com.foreach.across.test.AcrossTestWebContext
@@ -122,7 +122,7 @@ public class AcrossTestContext extends DefaultAcrossContextBeanRegistry implemen
 	}
 
 	/**
-	 * @return the bootstrapped Across context infor
+	 * @return the bootstrapped Across context info
 	 */
 	public AcrossContextInfo contextInfo() {
 		return contextInfo;
