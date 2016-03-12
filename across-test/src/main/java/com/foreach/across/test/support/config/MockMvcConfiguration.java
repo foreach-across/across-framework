@@ -55,11 +55,6 @@ public class MockMvcConfiguration
 	@Bean
 	@Lazy
 	public MockMvc mockMvc( MockServletContext servletContext, AcrossContextInfo contextInfo ) {
-		servletContext.setAttribute(
-				WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-				contextInfo.getApplicationContext()
-		);
-
 		WebApplicationContext wac = webApplicationContext( contextInfo );
 		DefaultMockMvcBuilder mockMvcBuilder = MockMvcBuilders.webAppContextSetup( wac );
 
@@ -81,6 +76,12 @@ public class MockMvcConfiguration
 			LOG.error( "Creating a MockMvc instance but impossible to add dynamically registered filters" +
 					           " as the ServletContext is not a MockAcrossServletContext." );
 			LOG.error( "Did you forget to annotate your test class with @AcrossWebAppConfiguration?" );
+
+			// Set the web application context attribute to AcrossContext anyway for maximum functionality
+			servletContext.setAttribute(
+					WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
+					contextInfo.getApplicationContext()
+			);
 		}
 
 		return mockMvcBuilder.build();
