@@ -18,7 +18,7 @@ package com.foreach.across.test.application;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.application.app.DummyApplication;
-import com.foreach.across.test.support.MockAcrossServletContextInitializer;
+import com.foreach.across.test.support.config.MockAcrossServletContextInitializer;
 import com.foreach.across.test.support.config.MockMvcConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
