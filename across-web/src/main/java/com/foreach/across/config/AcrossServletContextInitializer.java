@@ -74,6 +74,8 @@ public class AcrossServletContextInitializer
 
 		// Ensure the AcrossContext has bootstrapped while the ServletContext can be modified
 		applicationContext.getBean( AcrossContext.class );
+
+		servletContext.removeAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER );
 	}
 
 	@Override
