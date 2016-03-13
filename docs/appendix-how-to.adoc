@@ -1,4 +1,4 @@
-=== Module resolving problems
+=== Module resolving
 By default modules are resolved using a `ClassPathScanningModuleDependencyResolver`.
 If a module can't be resolved the reason is usually one of the following:
 

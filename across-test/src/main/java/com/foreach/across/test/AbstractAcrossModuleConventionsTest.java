@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
 import static org.junit.Assert.*;
 
 /**
- * Abstract unit test for testing AcrossModule conventions.
+ * Abstract unit test for testing {@link AcrossModule} conventions.
  *
  * @author Arne Vandamme
  */

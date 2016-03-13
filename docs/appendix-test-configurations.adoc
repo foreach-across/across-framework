@@ -1,3 +1,4 @@
+[[appendix-test-configuration-classes]]
 == Test configuration classes
 
 Across Test library has a number of `@Configuration` and `AcrossContextConfigurer` classes that can come in useful when setting up integration tests.
