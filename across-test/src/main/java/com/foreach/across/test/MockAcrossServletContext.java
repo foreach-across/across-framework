@@ -39,6 +39,8 @@ import java.util.*;
  * on the filters and servlets registered.
  *
  * @author Marc Vanbrabant, Arne Vandamme
+ * @see MockFilterRegistration
+ * @see MockServletRegistration
  */
 public class MockAcrossServletContext extends MockServletContext
 {

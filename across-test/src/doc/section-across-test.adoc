@@ -44,6 +44,10 @@ include::chap-test-context-builders.adoc[]
 
 include::chap-test-annotations.adoc[]
 
+include::chap-test-spring-boot.adoc[]
+
+include::chap-test-dynamic-modules.adoc[]
+
 include::chap-mock-across-servlet-context.adoc[]
 
 include::chap-test-datasources.adoc[]

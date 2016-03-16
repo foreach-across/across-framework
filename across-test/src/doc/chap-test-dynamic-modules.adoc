@@ -1,0 +1,50 @@
+== Testing dynamic modules
+
+Testing dynamic modules outside of a full `@AcrossApplication` test can be done by adding one or more `AcrossDynamicModulesConfigurer` instances to the `AcrossContext` configuration.
+Every configurer instance is responsible for building a set of dynamic modules for a particular base package.
+An existing `@AcrossApplication` class can easily be reused as base for the configurer.
+
+.Example adding dynamic modules to a builder
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Test
+public void dynamicModulesRegistration() {
+    try (
+            AcrossTestContext ctx = standard()
+                    .configurer( new AcrossDynamicModulesConfigurer( DummyApplication.class ) )
+                    .build()
+    ) {
+        assertTrue( ctx.contextInfo().hasModule( "DummyApplicationModule" ) );
+    }
+}
+----
+
+.Example adding dynamic modules to an annotations based test
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext
+@ContextConfiguration
+public class TestDynamicModulesConfiguration
+{
+	@Autowired
+	private AcrossContextInfo contextInfo;
+
+	@Test
+	public void sampleModulesShouldBeAdded() {
+	    assertTrue( contextInfo.hasModule( "DummyApplicationModule" ) );
+   	}
+
+	@Configuration
+	@EnableAcrossContext
+	protected static class SampleConfiguration
+	{
+		@Bean
+		public AcrossDynamicModulesConfigurer sampleDynamicModules() {
+			return new AcrossDynamicModulesConfigurer( DummyApplication.class );
+		}
+	}
+}
+----

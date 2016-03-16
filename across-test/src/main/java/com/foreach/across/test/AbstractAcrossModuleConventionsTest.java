@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
 import static org.junit.Assert.*;
 
 /**
- * Abstract unit test for testing AcrossModule conventions.
+ * Abstract unit test for testing {@link AcrossModule} conventions.
  *
  * @author Arne Vandamme
  */
@@ -108,7 +108,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 				fail( "A settings class must extend AcrossModuleSettings" );
 			}
 		}
-		else {
+		else if ( settingsClass != null ) {
 			if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
 				assertNull(
 						"Test declares module does not have settings but AcrossModuleSettings implementation was found",
