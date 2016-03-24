@@ -1,6 +1,6 @@
 == General information
 
-=== About
+=== TODO: About
 {module-name} provides the following infrastructure:
 
  * a thymeleaf across dialect

@@ -93,7 +93,6 @@ public static class CustomVersionResourceResolver
 NOTE: Because of limitations of the `CssLinkTransformer` in combination with a fixed version strategy, {module-name} does not rewrite links inside css files.
 If you absolutely need this in your application, you will have to disable the automatic resource versioning and configure it yourself.
 
-
-
+=== TODO: WebResourceRegistry
 registering resources in a web resource registry
 package manager!

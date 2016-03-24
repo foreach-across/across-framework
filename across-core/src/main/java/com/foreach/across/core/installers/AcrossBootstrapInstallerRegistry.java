@@ -172,7 +172,8 @@ public class AcrossBootstrapInstallerRegistry
 				LOG.trace( "Finished execution of installer {} for module {}", installer.getClass(), module.getName() );
 			}
 			else {
-				LOG.debug( "Skipping installer {} - instance could not be retrieved (dependencies not met)" );
+				LOG.debug( "Skipping installer {} for modules {} - instance could not be retrieved (dependencies not met)",
+				           installerMetaData.getName(), module.getName() );
 			}
 		}
 		else {
@@ -214,7 +215,8 @@ public class AcrossBootstrapInstallerRegistry
 		else {
 			// For compatibility reasons
 			LOG.warn(
-					"Installer {} was passed as an instance - this functionality will be removed in future releases." );
+					"Installer {} for module {} was passed as an instance - this functionality will be removed in future releases.",
+					installerClass.getName(), module.getName() );
 
 			Object installer = installerInstance.get();
 			AutowireCapableBeanFactory beanFactory = installerContext.getAutowireCapableBeanFactory();

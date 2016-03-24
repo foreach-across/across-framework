@@ -8,6 +8,7 @@ Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :spring-batch-url: http://projects.spring.io/spring-batch/
 :spring-security-url: http://projects.spring.io/spring-security/
 :commons-fileupload-url: http://commons.apache.org/proper/commons-fileupload/
+:platform-bom-url: https://foreach.atlassian.net/wiki/display/AX/Across+Platform
 
 [copyright,verbatim]
 --
