@@ -35,7 +35,7 @@ public class TestDynamicModulesInBuilders
 	@Test
 	public void nonWebBuilder() {
 		try (
-				AcrossTestContext ctx = standard()
+				AcrossTestContext ctx = standard( false )
 						.configurer( new AcrossDynamicModulesConfigurer( DummyApplication.class ) )
 						.build()
 		) {
@@ -50,7 +50,7 @@ public class TestDynamicModulesInBuilders
 		String pkg = DummyApplication.class.getPackage().getName();
 
 		try (
-				AcrossTestWebContext ctx = web()
+				AcrossTestWebContext ctx = web( false )
 						.configurer( new AcrossDynamicModulesConfigurer( pkg, "Test" ) )
 						.build()
 		) {
