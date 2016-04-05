@@ -19,8 +19,12 @@ package com.foreach.across.modules.web;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.bootstrap.BootstrapAdapter;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
+import com.foreach.across.modules.web.config.*;
+import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
+import com.foreach.across.modules.web.config.resources.*;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -90,8 +94,26 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 		contextConfigurers.add(
+				new AnnotatedClassConfigurer(
+						AcrossWebConfig.class,
+						AcrossWebTemplateConfig.class,
+						AcrossWebDefaultMvcConfiguration.class,
+						ConversionServiceConfiguration.class,
+						DynamicServletConfiguration.class,
+						MultipartResolverConfiguration.class,
+						CharacterEncodingConfiguration.class,
+						MultipartResolverConfiguration.class,
+						DefaultResourceRegistrationConfigurer.class,
+						JstlViewSupportConfiguration.class,
+						ThymeleafViewSupportConfiguration.class,
+						ResourcesConfiguration.class,
+						ResourceCachingProperties.class,
+						ResourceConfigurationProperties.class,
+						ResourceVersioningProperties.class
+				)
+		);
+		contextConfigurers.add(
 				new ComponentScanConfigurer(
-						getClass().getPackage().getName() + ".config",
 						getClass().getPackage().getName() + ".menu"
 				)
 		);
