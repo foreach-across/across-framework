@@ -20,6 +20,7 @@ import com.foreach.across.core.context.ModuleConfigurationSet;
 import com.foreach.across.test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
 import com.foreach.across.test.scan.moduleExtendingValidModule.config.BeanOneConfiguration;
 import com.foreach.across.test.scan.moduleExtendingValidModule.extensions.BeanTwoConfiguration;
+import com.foreach.across.test.scan.moduleExtendingValidModule.extensions.SameBeanConfiguration;
 import com.foreach.across.test.scan.packageOne.ValidModule;
 import com.foreach.across.test.scan.packageTwo.OtherValidModule;
 import org.junit.Test;
@@ -75,7 +76,7 @@ public class TestClassPathScanningModuleConfigurationProvider
 
 		assertNotNull( configurationSet );
 		assertArrayEquals(
-				new Class[] { BeanOneConfiguration.class, BeanTwoConfiguration.class },
+				new Class[] { BeanOneConfiguration.class, BeanTwoConfiguration.class, SameBeanConfiguration.class },
 				configurationSet.getAnnotatedClasses( ValidModule.NAME )
 		);
 		assertArrayEquals(

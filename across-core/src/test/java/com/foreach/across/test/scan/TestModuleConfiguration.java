@@ -20,6 +20,7 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.test.scan.extensions.BeanFourAndFiveConfiguration;
+import com.foreach.across.test.scan.extensions.SomeBeanInterface;
 import com.foreach.across.test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
 import com.foreach.across.test.scan.packageOne.ValidModule;
 import com.foreach.across.test.scan.packageTwo.OtherValidModule;
@@ -30,6 +31,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -69,6 +72,12 @@ public class TestModuleConfiguration
 		assertFalse( beanRegistry.moduleContainsLocalBean( OtherValidModule.NAME, "beanThree" ) );
 		assertFalse( beanRegistry.moduleContainsLocalBean( OtherValidModule.NAME, "beanFour" ) );
 		assertTrue( beanRegistry.moduleContainsLocalBean( OtherValidModule.NAME, "beanFive" ) );
+	}
+
+	@Test
+	public void twoBeansShouldExistFromTheSameBeanConfigurations() {
+		List<SomeBeanInterface> beans = beanRegistry.getBeansOfType( SomeBeanInterface.class, true );
+		assertEquals( 2, beans.size() );
 	}
 
 	@Configuration
