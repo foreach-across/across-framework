@@ -60,7 +60,7 @@ public class CharacterEncodingConfiguration extends AcrossWebDynamicServletConfi
 	protected void dynamicConfigurationAllowed( ServletContext servletContext ) throws ServletException {
 		FilterRegistration.Dynamic registration
 				= servletContext.addFilter( FILTER_NAME, characterEncodingFilter );
-
+		registration.setAsyncSupported( true );
 		registration.addMappingForUrlPatterns(
 				EnumSet.of( DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR ),
 				false,

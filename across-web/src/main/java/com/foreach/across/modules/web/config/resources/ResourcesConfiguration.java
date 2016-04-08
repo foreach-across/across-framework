@@ -156,6 +156,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 		protected void dynamicConfigurationAllowed( ServletContext servletContext ) throws ServletException {
 			FilterRegistration.Dynamic resourceUrlEncodingFilter = servletContext.addFilter( FILTER_NAME,
 			                                                                                 new ResourceUrlEncodingFilter() );
+			resourceUrlEncodingFilter.setAsyncSupported( true );
 			resourceUrlEncodingFilter.addMappingForUrlPatterns( EnumSet.of(
 					                                                    DispatcherType.REQUEST,
 					                                                    DispatcherType.ERROR,
