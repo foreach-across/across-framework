@@ -1,4 +1,6 @@
+== TODO: Web MVC coniguration
 Extending modules should just define a WebMvcConfigurer component or configuration (does not need to be exposed).
 To avoid the default configuration: extend AcrossWebModule and override default context configurers.
 
+== TODO: Prefixed handler mapping
 prefixed handler mapping

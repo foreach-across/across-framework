@@ -66,6 +66,7 @@ public class TestAcrossWebModuleBootstrap
 	private void assertCharacterEncodingFilter( MockFilterRegistration registration ) {
 		assertNotNull( registration );
 		assertTrue( registration.getFilter() instanceof CharacterEncodingFilter );
+		assertTrue( registration.isAsyncSupported() );
 		assertEquals(
 				Collections.singletonList(
 						new MockFilterRegistration.MappingRule(
@@ -81,6 +82,7 @@ public class TestAcrossWebModuleBootstrap
 	private void assertResourceUrlEncodingFilter( MockFilterRegistration registration ) {
 		assertNotNull( registration );
 		assertTrue( registration.getFilter() instanceof ResourceUrlEncodingFilter );
+		assertTrue( registration.isAsyncSupported() );
 		assertEquals(
 				Collections.singletonList(
 						new MockFilterRegistration.MappingRule(
@@ -96,6 +98,7 @@ public class TestAcrossWebModuleBootstrap
 	private void assertMultipartResolverFilter( MockFilterRegistration registration ) {
 		assertNotNull( registration );
 		assertTrue( registration.getFilter() instanceof AcrossMultipartFilter );
+		assertTrue( registration.isAsyncSupported() );
 		assertEquals(
 				Collections.singletonList(
 						new MockFilterRegistration.MappingRule(

@@ -85,42 +85,47 @@ public final class AcrossContextUtils
 	 * autowiring again.  Additionally will scan for all @PostRefresh methods and execute those.
 	 */
 	public static void refreshBeans( AcrossContext context ) {
-		for ( AcrossModule module : context.getModules() ) {
-			ApplicationContext moduleContext = AcrossContextUtils.getApplicationContext( module );
+		AcrossContextInfo contextInfo = getContextInfo( context );
 
-			// If no ApplicationContext the module will not have bootstrapped
-			if ( moduleContext != null ) {
-				ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( module );
+		if ( contextInfo != null ) {
+			for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
+				ApplicationContext moduleContext = moduleInfo.getApplicationContext();
 
-				Collection<Object> refreshableBeans =
-						ApplicationContextScanner.findBeansWithAnnotation( moduleContext, Refreshable.class );
+				// If no ApplicationContext the module will not have bootstrapped
+				if ( moduleContext != null ) {
+					ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( moduleInfo );
 
-				for ( Object singleton : refreshableBeans ) {
-					Object bean = AcrossContextUtils.getProxyTarget( singleton );
-					beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
-				}
+					Collection<Object> refreshableBeans =
+							ApplicationContextScanner.findBeansWithAnnotation( moduleContext, Refreshable.class );
 
-				Map<String, Object> postRefreshBeans = ApplicationContextScanner.findSingletonsMatching( moduleContext,
-				                                                                                         new AnnotatedMethodFilter(
-						                                                                                         PostRefresh.class ) );
+					for ( Object singleton : refreshableBeans ) {
+						Object bean = AcrossContextUtils.getProxyTarget( singleton );
+						beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+					}
 
-				for ( Object singleton : postRefreshBeans.values() ) {
-					Object bean = AcrossContextUtils.getProxyTarget( singleton );
+					Map<String, Object> postRefreshBeans = ApplicationContextScanner.findSingletonsMatching(
+							moduleContext,
+							new AnnotatedMethodFilter(
+									PostRefresh.class ) );
 
-					Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
+					for ( Object singleton : postRefreshBeans.values() ) {
+						Object bean = AcrossContextUtils.getProxyTarget( singleton );
 
-					for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
-						if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
-							if ( method.getParameterTypes().length != 0 ) {
-								LOG.error( "@PostRefresh method {} should be parameter-less", method );
-							}
-							else {
-								try {
-									method.setAccessible( true );
-									method.invoke( bean );
+						Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
+
+						for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
+							if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
+								if ( method.getParameterTypes().length != 0 ) {
+									LOG.error( "@PostRefresh method {} should be parameter-less", method );
 								}
-								catch ( Exception e ) {
-									LOG.error( "Exception executing @PostRefresh method", e );
+								else {
+									try {
+										method.setAccessible( true );
+										method.invoke( bean );
+									}
+									catch ( Exception e ) {
+										LOG.error( "Exception executing @PostRefresh method", e );
+									}
 								}
 							}
 						}

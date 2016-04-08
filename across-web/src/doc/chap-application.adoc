@@ -1,5 +1,5 @@
 [[across-application]]
-== @AcrossApplication
+== TODO: @AcrossApplication
 `@AcrossApplication` annotation can be used as an alternative for `@EnableAcrossContext` when defining an application.
 In addition to default context configuration options, it adds Spring Boot auto configuration classes for embedded servlet containers and enables dynamic modules.
 

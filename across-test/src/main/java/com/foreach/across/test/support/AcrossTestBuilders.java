@@ -33,10 +33,35 @@ public abstract class AcrossTestBuilders
 	 * Create a new builder for a standard (non-web) {@link com.foreach.across.core.AcrossContext}.
 	 * This builder will create a {@link com.foreach.across.test.AcrossTestContext}.
 	 *
+	 * @param useTestDataSource true if integration test datasource should be used (default)
+	 * @return builder instance
+	 */
+	public static AcrossTestContextBuilder standard( boolean useTestDataSource ) {
+		return standard().useTestDataSource( useTestDataSource );
+	}
+
+	/**
+	 * Create a new builder for a standard (non-web) {@link com.foreach.across.core.AcrossContext}.
+	 * This builder will create a {@link com.foreach.across.test.AcrossTestContext}.
+	 *
 	 * @return builder instance
 	 */
 	public static AcrossTestContextBuilder standard() {
 		return new AcrossTestContextBuilder();
+	}
+
+	/**
+	 * Create a new builder for a web based {@link com.foreach.across.core.AcrossContext}.
+	 * This will ensure a {@link javax.servlet.ServletContext} is initialized and Spring
+	 * {@link org.springframework.web.context.WebApplicationContext} is being used.
+	 * This builder will create a {@link com.foreach.across.test.AcrossTestWebContext} with support for
+	 * {@link org.springframework.test.web.servlet.MockMvc}.
+	 *
+	 * @param useTestDataSource true if integration test datasource should be used (default)
+	 * @return builder instance
+	 */
+	public static AcrossTestWebContextBuilder web( boolean useTestDataSource ) {
+		return web().useTestDataSource( useTestDataSource );
 	}
 
 	/**

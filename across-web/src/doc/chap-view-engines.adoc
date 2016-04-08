@@ -1,4 +1,4 @@
-== JSP and Thymeleaf integration
+== TODO: JSP and Thymeleaf integration
 If both JSP and Thymeleaf support are enabled, you can easily use both view types at the same time.  The `{module-name}`
  also provides a tag that can be used to import Thymeleaf templates or fragments in a JSP rendering pipeline.  The same
  model (request attributes) should be available in the Thymeleaf template as in the calling JSP.

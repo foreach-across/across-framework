@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.context;
 
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
+import com.foreach.across.core.context.annotation.ModuleConfigurationBeanNameGenerator;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -40,6 +41,10 @@ import java.util.Map;
 public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationContext implements AcrossConfigurableApplicationContext
 {
 	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
+
+	public AcrossWebApplicationContext() {
+		setBeanNameGenerator( new ModuleConfigurationBeanNameGenerator() );
+	}
 
 	@Override
 	protected DefaultListableBeanFactory createBeanFactory() {
