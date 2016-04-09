@@ -1,0 +1,38 @@
+== Mock MVC integration
+By default using either the <<test-builders,test builders>> or <<annotation-across-test-configuration,@AcrossTestConfiguration>> will provide you with a singleton `MockMvc` instance that is configured with the bootstrapped `AcrossContext`.
+You can also manually add this singleton configuration by importing the `MockMvcConfiguration` in your test application context, see the example in the <<boot-integration-test-mockmvc,Spring Boot section>>.
+
+Across Test also provides a `AcrossMockMvcBuilders` class that has factory methods for creating an ad hoc `MockMvcBuilder` based on a bootstrapped `AcrossContext`.
+Use this implementation if you want to customize the `MockMvc` configuration, for example for Spring REST documentation generation.
+
+.Ad hoc instantiation of a MockMvc instance
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext
+@AcrossWebAppConfiguration
+public class TestSample
+{
+    @Autowired
+    private AcrossContextInfo contextInfo;
+
+    private MockMvc mvc;
+
+    @Before
+    public void setUp() {
+        this.mvc = AcrossMockMvcBuilders.acrossContextSetup( contextInfo ).build();
+    }
+
+    @Test
+    public void staticResourceShouldBeReturned() {
+        mvc.perform( get( "/across/resources/static/testResources/test.txt" ) )
+           .andExpect( status().isOk() )
+    }
+
+    @EnableAcrossContext(modules = { AcrossWebModule.NAME })
+    protected static class Config
+    {
+    }
+}
+----

@@ -17,21 +17,14 @@ package com.foreach.across.test.support.config;
 
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.test.MockAcrossServletContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.foreach.across.test.support.AcrossMockMvcBuilders;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-
-import java.util.Collection;
 
 /**
  * Configures a {@link MockMvc} bean that supports testing a bootstrapped {@link com.foreach.across.core.AcrossContext}
@@ -50,50 +43,9 @@ import java.util.Collection;
 @ConditionalOnBean(MockServletContext.class)
 public class MockMvcConfiguration
 {
-	public static final Logger LOG = LoggerFactory.getLogger( MockMvcConfiguration.class );
-
 	@Bean
 	@Lazy
-	public MockMvc mockMvc( MockServletContext servletContext, AcrossContextInfo contextInfo ) {
-		WebApplicationContext wac = webApplicationContext( contextInfo );
-		DefaultMockMvcBuilder mockMvcBuilder = MockMvcBuilders.webAppContextSetup( wac );
-
-		if ( servletContext instanceof MockAcrossServletContext ) {
-			MockAcrossServletContext sc = (MockAcrossServletContext) servletContext;
-			sc.getFilterRegistrations()
-			  .values()
-			  .stream()
-			  .filter( r -> r.getFilter() != null )
-			  .forEach( r -> {
-				  Collection<String> urlPatternMappings = r.getUrlPatternMappings();
-				  mockMvcBuilder.addFilter(
-						  r.getFilter(),
-						  urlPatternMappings.toArray( new String[urlPatternMappings.size()] )
-				  );
-			  } );
-		}
-		else {
-			LOG.error( "Creating a MockMvc instance but impossible to add dynamically registered filters" +
-					           " as the ServletContext is not a MockAcrossServletContext." );
-			LOG.error( "Did you forget to annotate your test class with @AcrossWebAppConfiguration?" );
-
-			// Set the web application context attribute to AcrossContext anyway for maximum functionality
-			servletContext.setAttribute(
-					WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-					contextInfo.getApplicationContext()
-			);
-		}
-
-		return mockMvcBuilder.build();
-	}
-
-	private WebApplicationContext webApplicationContext( AcrossContextInfo contextInfo ) {
-		ApplicationContext acrossApplicationContext = contextInfo.getApplicationContext();
-
-		if ( acrossApplicationContext instanceof WebApplicationContext ) {
-			return (WebApplicationContext) acrossApplicationContext;
-		}
-
-		return (WebApplicationContext) acrossApplicationContext.getParent();
+	public MockMvc mockMvc( AcrossContextInfo contextInfo ) {
+		return AcrossMockMvcBuilders.acrossContextSetup( contextInfo ).build();
 	}
 }
