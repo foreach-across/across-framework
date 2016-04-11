@@ -16,14 +16,15 @@
 package com.foreach.across.test;
 
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
+import com.foreach.across.modules.web.servlet.JspPropertyGroupDescriptorStub;
 import org.junit.Test;
 
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import java.util.Arrays;
-import java.util.EventListener;
-import java.util.Map;
+import javax.servlet.descriptor.JspConfigDescriptor;
+import javax.servlet.descriptor.JspPropertyGroupDescriptor;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -217,6 +218,28 @@ public class TestMockServletContext
 		illegal( () -> servletContext.addListener( mock( EventListener.class ) ) );
 		illegal( () -> servletContext.addListener( EventListener.class ) );
 		illegal( () -> servletContext.addListener( EventListener.class.getName() ) );
+	}
+
+	@Test
+	public void jspConfigDescriptorIsCustomizable() {
+		MockAcrossServletContext servletContext = new MockAcrossServletContext();
+		JspConfigDescriptor jspConfigDescriptor = servletContext.getJspConfigDescriptor();
+		JspPropertyGroupDescriptor propertyGroupDescriptor = new JspPropertyGroupDescriptorStub()
+		{
+			@Override
+			public Collection<String> getUrlPatterns() {
+				return Collections.singletonList( "*.jsp" );
+			}
+
+			@Override
+			public String getScriptingInvalid() {
+				return "true";
+			}
+
+		};
+		jspConfigDescriptor.getJspPropertyGroups().add( propertyGroupDescriptor );
+		assertEquals( 1, jspConfigDescriptor.getJspPropertyGroups().size() );
+		assertEquals( 0, jspConfigDescriptor.getTaglibs().size() );
 	}
 
 	private void illegal( Runnable runnable ) {
