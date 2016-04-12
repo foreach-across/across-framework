@@ -25,6 +25,8 @@ include::chap-development-mode.adoc[]
 
 include::chap-templates.adoc[]
 
+include::chap-menus.adoc[]
+
 include::chap-servlets-and-filters.adoc[]
 
 include::chap-http-encoding.adoc[]
