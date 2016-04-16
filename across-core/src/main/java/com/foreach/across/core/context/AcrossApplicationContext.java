@@ -35,7 +35,11 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	private boolean installerMode = false;
 
 	public AcrossApplicationContext() {
-		super( new AcrossListableBeanFactory() );
+		this( new AcrossListableBeanFactory() );
+	}
+
+	protected AcrossApplicationContext( AcrossListableBeanFactory beanFactory ) {
+		super( beanFactory );
 		setBeanNameGenerator( new ModuleConfigurationBeanNameGenerator() );
 	}
 
