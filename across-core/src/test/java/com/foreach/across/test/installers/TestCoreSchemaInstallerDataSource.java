@@ -63,9 +63,18 @@ public class TestCoreSchemaInstallerDataSource
 	@Test
 	public void coreSchemaShouldBeInInstallerDataSource() {
 		assertEquals(
-				Integer.valueOf( 0 ),
+				Integer.valueOf( 1 ),
 				new JdbcTemplate( installerDataSource ).queryForObject(
 						"SELECT count(*) FROM acrossmodules",
+						Integer.class
+				)
+
+		);
+
+		assertEquals(
+				Integer.valueOf( 1 ),
+				new JdbcTemplate( installerDataSource ).queryForObject(
+						"SELECT count(*) FROM acrossmodules WHERE module_id = 'Across' AND installer_id = 'AcrossCoreSchemaInstaller'",
 						Integer.class
 				)
 
