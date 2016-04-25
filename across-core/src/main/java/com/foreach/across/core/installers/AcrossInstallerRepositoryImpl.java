@@ -27,12 +27,12 @@ import java.util.Date;
 
 public class AcrossInstallerRepositoryImpl implements AcrossInstallerRepository
 {
-	private static final String SQL_SELECT_VERSION =
+	static final String SQL_SELECT_VERSION =
 			"select version from {schema}ACROSSMODULES where module_id = ? and installer_id = ?";
-	private static final String SQL_UPDATE_VERSION =
+	static final String SQL_UPDATE_VERSION =
 			"update {schema}ACROSSMODULES set version = ?, description = ?, created = ? " +
 					"where module_id = ? and installer_id = ?";
-	private static final String SQL_INSERT_VERSION =
+	static final String SQL_INSERT_VERSION =
 			"insert into {schema}ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?)";
 	private static final String SQL_RENAME_INSTALLER_FOR_MODULE =

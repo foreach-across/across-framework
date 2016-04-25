@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
 
 import javax.servlet.*;
+import javax.servlet.descriptor.JspConfigDescriptor;
 import java.util.*;
 
 /**
@@ -49,6 +50,7 @@ public class MockAcrossServletContext extends MockServletContext
 	private final Map<String, MockFilterRegistration> filters = new LinkedHashMap<>();
 	private final Map<String, MockServletRegistration> servlets = new LinkedHashMap<>();
 	private final List<Object> listeners = new ArrayList<>();
+	private final MockJspConfigDescriptor mockJspConfigDescriptor = new MockJspConfigDescriptor();
 
 	private boolean initialized;
 
@@ -161,6 +163,11 @@ public class MockAcrossServletContext extends MockServletContext
 	@Override
 	public <T extends EventListener> void addListener( T t ) {
 		listener( t );
+	}
+
+	@Override
+	public JspConfigDescriptor getJspConfigDescriptor() {
+		return mockJspConfigDescriptor;
 	}
 
 	private void listener( Object l ) {

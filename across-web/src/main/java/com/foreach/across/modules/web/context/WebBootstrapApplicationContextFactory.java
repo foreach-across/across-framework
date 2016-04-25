@@ -31,7 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 public class WebBootstrapApplicationContextFactory extends AnnotationConfigBootstrapApplicationContextFactory
 {
 	@Override
-	public AcrossConfigurableApplicationContext createApplicationContext() {
+	public AcrossWebApplicationContext createApplicationContext() {
 		return new AcrossWebApplicationContext();
 	}
 
@@ -40,7 +40,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 	                                                                      ApplicationContext parentApplicationContext ) {
 		if ( parentApplicationContext == null || parentApplicationContext instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentApplicationContext;
-			AcrossWebApplicationContext applicationContext = new AcrossWebApplicationContext();
+			AcrossWebApplicationContext applicationContext = createApplicationContext();
 			applicationContext.setDisplayName( "[" + across.getId() + "]" );
 
 			if ( parentApplicationContext != null ) {
@@ -65,7 +65,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 	                                                                      AcrossApplicationContextHolder parentContext ) {
 		if ( parentContext.getApplicationContext() instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentContext.getApplicationContext();
-			AcrossWebApplicationContext child = new AcrossWebApplicationContext();
+			AcrossWebApplicationContext child = createApplicationContext();
 
 			child.setDisplayName( moduleBootstrapConfig.getModuleName() );
 			child.setServletContext( parentWebContext.getServletContext() );

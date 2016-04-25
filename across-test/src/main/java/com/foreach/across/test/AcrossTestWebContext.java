@@ -20,14 +20,11 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
+import com.foreach.across.test.support.AcrossMockMvcBuilders;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.Collection;
 
 /**
  * Extends the default {@link AcrossTestContext} with support for web configurations.
@@ -81,35 +78,10 @@ public class AcrossTestWebContext extends AcrossTestContext
 	 */
 	public MockMvc mockMvc() {
 		if ( mockMvc == null ) {
-			MockAcrossServletContext servletContext = getServletContext();
-
-			WebApplicationContext wac = webApplicationContext();
-			DefaultMockMvcBuilder mockMvcBuilder = MockMvcBuilders.webAppContextSetup( wac );
-
-			servletContext.getFilterRegistrations()
-			              .values()
-			              .stream()
-			              .filter( r -> r.getFilter() != null )
-			              .forEach( r -> {
-				              Collection<String> urlPatternMappings = r.getUrlPatternMappings();
-				              mockMvcBuilder.addFilter(
-						              r.getFilter(),
-						              urlPatternMappings.toArray( new String[urlPatternMappings.size()] )
-				              );
-			              } );
-
-			mockMvc = mockMvcBuilder.build();
+			mockMvc = AcrossMockMvcBuilders.acrossContextSetup( this ).build();
 		}
 
 		return mockMvc;
-	}
-
-	private WebApplicationContext webApplicationContext() {
-		if ( acrossApplicationContext instanceof WebApplicationContext ) {
-			return (WebApplicationContext) acrossApplicationContext;
-		}
-
-		return (WebApplicationContext) acrossApplicationContext.getParent();
 	}
 
 	@Override

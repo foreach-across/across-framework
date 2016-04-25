@@ -118,12 +118,13 @@ public class AnnotationBeanFilter implements BeanFilter
 				try {
 					Class factoryClass = ClassUtils.getUserClass( Class.forName( metadata.getDeclaringClassName() ) );
 
-					Object factory = beanFactory.getSingleton( definition.getFactoryBeanName() );
+					if ( definition.getFactoryBeanName() != null ) {
+						Object factory = beanFactory.getSingleton( definition.getFactoryBeanName() );
 
-					if ( factory != null ) {
-						factoryClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( factory ) );
+						if ( factory != null ) {
+							factoryClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( factory ) );
+						}
 					}
-
 					if ( isMatchIfBeanFactoryApplies() ) {
 						// If the bean factory has the annotation, then it should apply as well
 						for ( Class<? extends Annotation> annotation : annotations ) {

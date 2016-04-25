@@ -93,6 +93,65 @@ public static class CustomVersionResourceResolver
 NOTE: Because of limitations of the `CssLinkTransformer` in combination with a fixed version strategy, {module-name} does not rewrite links inside css files.
 If you absolutely need this in your application, you will have to disable the automatic resource versioning and configure it yourself.
 
-=== TODO: WebResourceRegistry
-registering resources in a web resource registry
-package manager!
+=== WebResourceRegistry
+{module-name} allows for programatically registering web resources through the use of a `WebResourceRegistry`.
+A new `WebResourceRegistry` is attached to every request and can be accessed as a request attribute or a handler method parameter.
+
+Resources can be added in a group (eg: css, javascript) and with a specific location (eg: relative, views, external).
+The groups can be used for retrieval of related resources, the location determines the `WebResourceTranslator` that will be used.
+Web resource translating happens before the actual view is rendered and allows for the data to be converted into a more appropriate format for the view rendering.
+Using the `WebResource.VIEWS` location for a web resource will have the relative path prefixed with the configured across web views resources prefix.
+
+Resources can be identified with a unique key, ensuring they are added only once.
+
+.Example controller registering specific web resources
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+@Controller
+public class MyController
+{
+	@ModelAttribute
+	public void registerWebResources( WebResourceRegistry webResourceRegistry ) {
+	    webResourceRegistry.add( WebResource.CSS, "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css, WebResource.EXTERNAL );
+	    webResourceRegistry.add( WebResource.CSS, "/static/mymodule/css/main.css", WebResource.VIEWS );
+	}
+}
+----
+
+NOTE: Views can access the `WebResourceRegistry` under the *webResourceRegistry* attribute.
+It is however the view implementation that will determine how resources are handled.
+
+==== WebResourcePackage
+To avoid adding single items, web resources can be bundled into a `WebResourcePackage` and registered with the `WebResourcePackageManager`.
+Adding an entire package can then be done by calling `WebResourceRegistry#addPackage` with the right package name.
+
+.Example creating a WebResourcePackage
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+@Component
+public class BootstrapUiWebResources extends SimpleWebResourcePackage
+{
+	public static final String VERSION = "3.3.5";
+	public static final String NAME = "bootstrap";
+
+	public BootstrapUiWebResources() {
+		setDependencies( JQueryWebResources.NAME );     // Install the jquery package first
+		setWebResources(
+				new WebResource( WebResource.CSS, NAME,
+				                 "//maxcdn.bootstrapcdn.com/bootstrap/" + VERSION + "/css/bootstrap.min.css",
+				                 WebResource.EXTERNAL ),
+				new WebResource( WebResource.JAVASCRIPT_PAGE_END, NAME,
+				                 "//maxcdn.bootstrapcdn.com/bootstrap/" + VERSION + "/js/bootstrap.min.js",
+				                 WebResource.EXTERNAL )
+		);
+	}
+
+	@Autowired
+	public void registerPackage( WebResourcePackageManager packageManager ) {
+	    packageManager.register( NAME, this );
+	}
+}
+----
+
