@@ -51,6 +51,10 @@ public class WebResourceUtils
 		return (WebResourceRegistry) request.getAttribute( REGISTRY_ATTRIBUTE_KEY, WebRequest.SCOPE_REQUEST );
 	}
 
+	public static WebResourceRegistry getRegistry( WebRequest request ) {
+		return getRegistry( (RequestAttributes) request );
+	}
+
 	public static WebResourceRegistry getRegistry( HttpServletRequest request ) {
 		return (WebResourceRegistry) request.getAttribute( REGISTRY_ATTRIBUTE_KEY );
 	}
