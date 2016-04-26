@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.resource.AppCacheManifestTransformer;
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
@@ -31,6 +32,7 @@ import org.springframework.web.servlet.resource.VersionResourceResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Applies the caching and versioning configuration for the default module resources.
@@ -81,7 +83,7 @@ public class DefaultResourceRegistrationConfigurer
 	 */
 	public void configure( String resourceFolder, ResourceHandlerRegistration registration ) {
 		if ( shouldApplyCaching() ) {
-			registration.setCachePeriod( getCachePeriod() );
+			registration.setCacheControl( CacheControl.maxAge( getCachePeriod(), TimeUnit.SECONDS ) );
 		}
 
 		if ( shouldApplyFixedVersion() ) {

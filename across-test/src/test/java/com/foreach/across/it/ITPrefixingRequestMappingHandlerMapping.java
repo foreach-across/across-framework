@@ -99,14 +99,13 @@ public class ITPrefixingRequestMappingHandlerMapping
 		RequestMappingHandlerMapping requestMappingHandlerMapping =
 				(RequestMappingHandlerMapping) ctx.getBean( "prefixingRequestMappingHandlerMapping" );
 		assertNotNull( requestMappingHandlerMapping );
-		MultiValueMap<String, LinkedList<?>>
-				urlMap = (MultiValueMap<String, LinkedList<?>>) ReflectionTestUtils.getField(
-				requestMappingHandlerMapping, "urlMap" );
-		assertNotNull( urlMap );
+		Object mappingRegistry = ReflectionTestUtils.getField( requestMappingHandlerMapping, "mappingRegistry" );
+		MultiValueMap<String, LinkedList<?>> urlLookup =
+				(MultiValueMap<String, LinkedList<?>>) ReflectionTestUtils.getField( mappingRegistry, "urlLookup" );
 		for ( String expectedPath : expectedPaths ) {
 
-			LinkedList<?> mappings = (LinkedList<?>) urlMap.get( expectedPath );
-			assertNotNull( "Could not find url " + expectedPath + " in urlMap", mappings );
+			LinkedList<?> mappings = (LinkedList<?>) urlLookup.get( expectedPath );
+			assertNotNull( "Could not find url " + expectedPath + " in urlLookup", mappings );
 			HttpServletRequest request = new MockHttpServletRequest( "GET", expectedPath );
 			HandlerExecutionChain chain = requestMappingHandlerMapping.getHandler( request );
 			assertNotNull( chain );

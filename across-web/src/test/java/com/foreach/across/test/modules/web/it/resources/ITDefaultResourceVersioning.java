@@ -48,12 +48,10 @@ public class ITDefaultResourceVersioning extends AbstractWebIntegrationTest
 	@Test
 	public void cachingShouldBeEnabled() {
 		HttpHeaders headers = headers( "/across/resources/css/testResources/parent.css" );
-		assertEquals( "max-age=31536000, must-revalidate", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
-		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+		assertEquals( "max-age=31536000", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
 
 		headers = headers( "/across/resources/js/testResources/javascript.js" );
-		assertEquals( "max-age=31536000, must-revalidate", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
-		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+		assertEquals( "max-age=31536000", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
 	}
 
 	@Test

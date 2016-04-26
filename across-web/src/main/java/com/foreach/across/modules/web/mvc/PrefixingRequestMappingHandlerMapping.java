@@ -28,6 +28,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.HandlerMethodSelector;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.mvc.condition.*;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -94,8 +95,8 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	}
 
 	@Override
-	protected void detectMappedInterceptors( List<MappedInterceptor> mappedInterceptors ) {
-		for ( MappedInterceptor mappedInterceptor : BeanFactoryUtils.beansOfTypeIncludingAncestors(
+	protected void detectMappedInterceptors( List<HandlerInterceptor> mappedInterceptors ) {
+		for ( HandlerInterceptor mappedInterceptor : BeanFactoryUtils.beansOfTypeIncludingAncestors(
 				getApplicationContext(), MappedInterceptor.class, true, false ).values() ) {
 
 			if ( !mappedInterceptors.contains( mappedInterceptor ) ) {
