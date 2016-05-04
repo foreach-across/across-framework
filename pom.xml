@@ -52,7 +52,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.platform.version>2.0.3.RELEASE</spring.platform.version>
 		<foreach.common.version>0.12</foreach.common.version>
-		<querydsl.version>3.5.1</querydsl.version>
+		<querydsl.version>3.6.9</querydsl.version>
 		<hikaricp.version>2.4.5</hikaricp.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 	</properties>
@@ -240,22 +240,6 @@
 				<version>${spring.platform.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<!-- Specific versions -->
-			<dependency>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-core</artifactId>
-				<version>3.1.0</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>jetty-servlet</artifactId>
-						<groupId>org.eclipse.jetty</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>velocity</artifactId>
-						<groupId>org.apache.velocity</groupId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 			<!-- Non-spring managed -->
