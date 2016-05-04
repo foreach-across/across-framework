@@ -54,16 +54,13 @@ public class ITNoResourceVersioning extends AbstractWebIntegrationTest
 	@Test
 	public void customCachingShouldBeEnabled() {
 		HttpHeaders headers = headers( "/across/resources/css/testResources/parent.css" );
-		assertEquals( "max-age=1000, must-revalidate", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
-		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+		assertEquals( "max-age=1000", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
 
 		headers = headers( "/across/resources/js/testResources/javascript.js" );
-		assertEquals( "max-age=1000, must-revalidate", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
-		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+		assertEquals( "max-age=1000", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
 
 		headers = headers( "/across/resources/custom/test.txt" );
-		assertEquals( "max-age=1000, must-revalidate", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
-		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+		assertEquals( "max-age=1000", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
 	}
 
 	@Test

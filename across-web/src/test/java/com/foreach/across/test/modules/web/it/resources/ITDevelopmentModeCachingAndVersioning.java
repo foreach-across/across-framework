@@ -44,12 +44,10 @@ public class ITDevelopmentModeCachingAndVersioning extends AbstractWebIntegratio
 	@Test
 	public void noCacheShouldBeExplicit() {
 		HttpHeaders headers = headers( "/across/resources/css/testResources/parent.css" );
-		assertEquals( "no-cache", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
-		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+		assertEquals( "max-age=0", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
 
 		headers = headers( "/across/resources/js/testResources/javascript.js" );
-		assertEquals( "no-cache", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
-		assertTrue( headers.containsKey( HttpHeaders.EXPIRES ) );
+		assertEquals( "max-age=0", headers.get( HttpHeaders.CACHE_CONTROL ).get( 0 ) );
 	}
 
 	@Test
