@@ -2,7 +2,7 @@
 Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :toc: left
 :sectanchors:
-:across-version: 1.1.2.RELEASE
+:across-version: 1.2.0-SNAPSHOT
 :spring-url: http://projects.spring.io/spring-framework/
 :spring-data-url: http://projects.spring.io/spring-data/
 :spring-batch-url: http://projects.spring.io/spring-batch/
