@@ -1,5 +1,5 @@
 == What's new in this version?
-=== 1.1.2-SNAPSHOT
+=== 1.1.2.RELEASE
 *Across Core*
 
 Across now requires JDK8 and has improved support for Spring Boot.
