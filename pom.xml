@@ -52,6 +52,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.platform.version>2.0.3.RELEASE</spring.platform.version>
 		<foreach.common.version>0.12</foreach.common.version>
+		<querydsl.version>3.5.1</querydsl.version>
 		<hikaricp.version>2.4.5</hikaricp.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 	</properties>

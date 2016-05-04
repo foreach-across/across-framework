@@ -56,6 +56,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
+		<querydsl.version>3.6.9</querydsl.version>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 	</properties>
 
@@ -239,6 +240,20 @@
 							</configuration>
 						</execution>
 					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>com.mysema.querydsl</groupId>
+							<artifactId>querydsl-apt</artifactId>
+							<optional>true</optional>
+							<version>${querydsl.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>com.mysema.querydsl</groupId>
+							<artifactId>querydsl-jpa</artifactId>
+							<classifier>apt</classifier>
+							<version>${querydsl.version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 			</plugins>
 		</pluginManagement>
