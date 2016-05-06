@@ -51,7 +51,7 @@
 		<across.version>2.0.0-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.platform.version>2.0.3.RELEASE</spring.platform.version>
-		<foreach.common.version>0.12</foreach.common.version>
+		<foreach.common.version>1.0</foreach.common.version>
 		<querydsl.version>3.6.9</querydsl.version>
 		<hikaricp.version>2.4.5</hikaricp.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
@@ -306,37 +306,6 @@
 				<groupId>com.foreach.libs</groupId>
 				<artifactId>common-concurrent</artifactId>
 				<version>${foreach.common.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-spring</artifactId>
-				<version>${foreach.common.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-web</artifactId>
-				<version>${foreach.common.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-mybatis</artifactId>
-				<version>${foreach.common.version</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>text-synchronizer</artifactId>
-				<version>1.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-test</artifactId>
-				<version>${foreach.common.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.mockito</groupId>
-						<artifactId>mockito-all</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

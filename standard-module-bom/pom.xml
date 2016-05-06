@@ -96,21 +96,27 @@
 				<version>${across.version}</version>
 			</dependency>
 
-			<!-- Old Across dependencies - to be removed before release -->
+			<!-- Foreach commons -->
 			<dependency>
-				<groupId>across</groupId>
-				<artifactId>across-core</artifactId>
-				<version>${across.version}</version>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-spring</artifactId>
+				<version>${foreach.common.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>across</groupId>
-				<artifactId>across-test</artifactId>
-				<version>${across.version}</version>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-web</artifactId>
+				<version>${foreach.common.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>across</groupId>
-				<artifactId>across-web</artifactId>
-				<version>${across.version}</version>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-test</artifactId>
+				<version>${foreach.common.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.mockito</groupId>
+						<artifactId>mockito-all</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
