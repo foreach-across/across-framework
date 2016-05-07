@@ -29,10 +29,14 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 /**
  * Finds and applies the web template configured to a particular request.
+ * Also provides support for partial rendering, though this assumes Thymeleaf templates.
+ * When a <strong>_partial</strong> parameter is present, the view returned will be suffixed with
+ * that the value as fragment name.  In case of partial rendering, the template will be skipped altogether.
  *
  * @see com.foreach.across.modules.web.template.Template
  * @see com.foreach.across.modules.web.template.ClearTemplate
@@ -52,10 +56,10 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	public boolean preHandle( HttpServletRequest request,
 	                          HttpServletResponse response,
 	                          Object handler ) {
-		boolean containsPartialParameter = request.getParameterMap().containsKey( PARTIAL_PARAMETER );
+		Optional<String> partialFragment = Optional.ofNullable( request.getParameter( PARTIAL_PARAMETER ) );
 
 		// if the request contains a parameter _partial, then we will not render a template
-		if ( !containsPartialParameter ) {
+		if ( !partialFragment.isPresent() ) {
 			String templateName = determineTemplateName( handler );
 
 			if ( templateName != null ) {
@@ -84,11 +88,13 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 		if ( processor != null ) {
 			processor.applyTemplate( request, response, handler, modelAndView );
 		}
-		else {
-			boolean containsPartialParameter = request.getParameterMap().containsKey( PARTIAL_PARAMETER );
-			if ( containsPartialParameter && !modelAndView.getViewName().contains( "::" ) ) {
-				modelAndView.setViewName( modelAndView.getViewName() + "::" + request.getParameter(
-						PARTIAL_PARAMETER ) );
+		else if ( modelAndView != null ) {
+			Optional<String> partialFragment = Optional.ofNullable( request.getParameter( PARTIAL_PARAMETER ) );
+
+			if ( partialFragment.isPresent() && !modelAndView.getViewName().contains( "::" ) ) {
+				modelAndView.setViewName(
+						modelAndView.getViewName() + "::" + request.getParameter( PARTIAL_PARAMETER )
+				);
 			}
 		}
 	}
