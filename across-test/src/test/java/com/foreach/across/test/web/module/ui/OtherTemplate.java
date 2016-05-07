@@ -18,8 +18,6 @@ package com.foreach.across.test.web.module.ui;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.template.LayoutTemplateProcessorAdapterBean;
-import com.foreach.across.modules.web.template.WebTemplateRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,21 +25,16 @@ import org.springframework.stereotype.Component;
  * @since 1.1.3
  */
 @Component
-public class MainTemplate extends LayoutTemplateProcessorAdapterBean
+public class OtherTemplate extends LayoutTemplateProcessorAdapterBean
 {
-	public static final String NAME = "MainTemplate";
+	public static final String NAME = "OtherTemplate";
 
-	public MainTemplate() {
-		super( NAME, "th/webControllers/templates/main" );
-	}
-
-	@Autowired
-	public void registerAsDefaultTemplate( WebTemplateRegistry webTemplateRegistry ) {
-		webTemplateRegistry.setDefaultTemplateName( NAME );
+	public OtherTemplate() {
+		super( NAME, "th/webControllers/templates/other" );
 	}
 
 	@Override
 	protected void registerWebResources( WebResourceRegistry registry ) {
-		registry.add( WebResource.CSS, "/test.css", WebResource.VIEWS );
+		registry.add( WebResource.CSS, "/other.css", WebResource.VIEWS );
 	}
 }

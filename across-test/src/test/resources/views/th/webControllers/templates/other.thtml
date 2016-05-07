@@ -13,5 +13,5 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-header-<th:block th:include="${childPage} :: content"></th:block>-footer
+otherhead-<th:block th:include="${childPage} :: content"></th:block>-otherfoot
 resources:[<th:block th:each="resource,iStat: ${webResourceRegistry.getResources('css')}" th:text="${iStat.last ? resource.data : resource.data + ','}"></th:block>]

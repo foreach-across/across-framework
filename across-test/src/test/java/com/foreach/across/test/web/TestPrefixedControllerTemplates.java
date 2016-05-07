@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @AcrossWebAppConfiguration
-public class TestDefaultTemplate
+public class TestPrefixedControllerTemplates
 {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -49,52 +49,52 @@ public class TestDefaultTemplate
 	@Autowired
 	private MockMvc mvc;
 
-	// AX-123
 	@Test
-	public void defaultTemplateShouldApplyToValidControllerCall() throws Exception {
-		mvc.perform( get( "/home" ) )
+	public void configuredTemplateShouldApplyToValidControllerCall() throws Exception {
+		mvc.perform( get( "/prefix/home" ) )
 		   .andExpect( status().isOk() )
-		   .andExpect( content().string( containsString( "header-child-footer" ) ) )
-		   .andExpect( content().string( containsString( "resources:[/across/resources/test.css,/across/resources/controller.css]" ) ) );
-	}
-
-	// AX-123 - registry should be reset and handled
-	@Test
-	public void defaultTemplateShouldApplyToRegisteredExceptionHandler() throws Exception {
-		mvc.perform( get( "/databaseError" ) )
-		   .andExpect( status().isOk() )
-		   .andExpect( content().string( containsString( "header-a database error has occurred-footer" ) ) )
-		   .andExpect( content().string( containsString( "resources:[/across/resources/test.css]" ) ) );
+		   .andExpect( content().string( containsString( "otherhead-child-otherfoot" ) ) )
+		   .andExpect( content().string( containsString( "resources:[/across/resources/other.css,/across/resources/controller.css]" ) ) );
 	}
 
 	@Test
-	public void defaultTemplateWithPartialRendering() throws Exception {
-		mvc.perform( get( "/home?_partial=content" ) )
+	public void configuredTemplateShouldApplyToRegisteredExceptionHandler() throws Exception {
+		mvc.perform( get( "/prefix/databaseError" ) )
 		   .andExpect( status().isOk() )
-		   .andExpect( content().string( not( containsString( "header" ) ) ) )
+		   .andExpect( content().string( containsString( "otherhead-a database error has occurred-otherfoot" ) ) )
+		   .andExpect( content().string( containsString( "resources:[/across/resources/other.css]" ) ) );
+	}
+
+	@Test
+	public void noTemplateWithPartialRendering() throws Exception {
+		mvc.perform( get( "/prefix/home?_partial=content" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( not( containsString( "resources" ) ) ) )
 		   .andExpect( content().string( containsString( "child" ) ) );
 	}
 
 	@Test
-	public void defaultTemplateWithPartialOnRegisteredExceptionHandler() throws Exception {
-		mvc.perform( get( "/databaseError?_partial=content" ) )
+	public void noTemplateWithPartialOnRegisteredExceptionHandler() throws Exception {
+		mvc.perform( get( "/prefix/databaseError?_partial=content" ) )
 		   .andExpect( status().isOk() )
-		   .andExpect( content().string( not( containsString( "header" ) ) ) )
+		   .andExpect( content().string( not( containsString( "resources" ) ) ) )
 		   .andExpect( content().string( containsString( "a database error has occurred" ) ) );
 	}
 
 	@Test
-	public void defaultTemplateWithDefaultExceptionHandlerShouldHaveCorrectNestedException() throws Exception {
-		thrown.expectMessage( containsString( "Runtime error occurred." ) );
-
-		mvc.perform( get( "/runtimeError" ) );
+	public void templateConfiguredOnExceptionHandlerInControllerAdvice() throws Exception {
+		mvc.perform( get( "/prefix/runtimeError" ) )
+		   .andExpect( status().is5xxServerError() )
+		   .andExpect( content().string( containsString( "errorhead-Runtime error occurred.-errorfoot" ) ) )
+		   .andExpect( content().string( containsString( "resources:[/across/resources/error.css]" ) ) );
 	}
 
 	@Test
-	public void defaultTemplateWithPartialOnDefaultExceptionHandlerShouldHaveCorrectNestedException() throws Exception {
-		thrown.expectMessage( containsString( "Runtime error occurred." ) );
-
-		mvc.perform( get( "/runtimeError?_partial=content" ) );
+	public void noTemplateOnExceptionHandlerInControllerAdviceIfPartial() throws Exception {
+		mvc.perform( get( "/prefix/runtimeError?_partial=content" ) )
+		   .andExpect( status().is5xxServerError() )
+		   .andExpect( content().string( not( containsString( "resources" ) ) ) )
+		   .andExpect( content().string( containsString( "Runtime error occurred." ) ) );
 	}
 
 	@AcrossTestConfiguration

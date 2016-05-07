@@ -15,10 +15,13 @@
  */
 package com.foreach.across.test.web.module.controllers;
 
+import com.foreach.across.modules.web.resource.WebResource;
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -30,6 +33,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class DefaultController
 {
+	@ModelAttribute
+	public void registerWebResources( WebResourceRegistry webResourceRegistry ) {
+		webResourceRegistry.add( WebResource.CSS, "/controller.css", WebResource.VIEWS );
+	}
+
 	@RequestMapping("/home")
 	public String home() {
 		return "th/webControllers/childPage";
