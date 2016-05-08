@@ -38,7 +38,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
- * Tests the behaviour of Spring 4.1 with bean definition overriding.
+ * Tests the behaviour of Spring 4.2 with bean definition overriding.
  * See also https://jira.spring.io/browse/SPR-9567.
  *
  * @author Arne Vandamme
@@ -53,10 +53,11 @@ public class TestBeanOverriding
 	private AcrossContextBeanRegistry beanRegistry;
 
 	@Test
-	public void myComponentShouldBeTheScannedVersion() {
+	public void myComponentShouldBeTheReplacedVersion() {
 		Object myComponent = beanRegistry.getBeanFromModule( "MyModule", "myComponent" );
 		assertNotNull( myComponent );
-		assertTrue( myComponent instanceof MyComponent );
+		assertTrue( myComponent instanceof String );
+		assertEquals( "myComponent", Objects.toString( myComponent ) );
 	}
 
 	@Test
