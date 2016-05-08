@@ -2,6 +2,9 @@
 
 === 1.2.0-SNAPSHOT
 
+=== 1.1.3-SNAPSHOT
+Maintenance release containing several bugfixes.
+
 === 1.1.2.RELEASE
 *Across Core*
 

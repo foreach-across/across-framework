@@ -18,10 +18,8 @@ package com.foreach.across.test;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
-import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
 import com.foreach.across.test.support.AcrossMockMvcBuilders;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
@@ -44,8 +42,6 @@ public class AcrossTestWebContext extends AcrossTestContext
 {
 	private MockAcrossServletContext servletContext;
 	private MockMvc mockMvc;
-
-	private ApplicationContext acrossApplicationContext;
 
 	/**
 	 * @param configurers list of configures
@@ -82,13 +78,6 @@ public class AcrossTestWebContext extends AcrossTestContext
 		}
 
 		return mockMvc;
-	}
-
-	@Override
-	protected void setAcrossContext( AcrossContext acrossContext ) {
-		super.setAcrossContext( acrossContext );
-
-		acrossApplicationContext = AcrossContextUtils.getApplicationContext( acrossContext );
 	}
 
 	@Override
