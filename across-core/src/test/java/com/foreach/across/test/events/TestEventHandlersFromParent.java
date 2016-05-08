@@ -18,7 +18,6 @@ package com.foreach.across.test.events;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
@@ -59,7 +58,7 @@ public class TestEventHandlersFromParent
 
 	@Configuration
 	@EnableAcrossContext
-	@AcrossEventHandler
+
 	protected static class Config
 	{
 		public final List<String> eventsReceived = new ArrayList<>();

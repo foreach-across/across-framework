@@ -22,6 +22,7 @@ import java.util.*;
 
 /**
  * @author Arne Vandamme
+ * @deprecated since 1.1.2 - should be removed in 4.0.0
  */
 public class AcrossModuleSettingsRegistry extends EnumerablePropertySource<Map<String, Object>>
 {
@@ -92,7 +93,7 @@ public class AcrossModuleSettingsRegistry extends EnumerablePropertySource<Map<S
 
 	@Override
 	public String[] getPropertyNames() {
-		return this.source.keySet().toArray( new String[ source.size() ] );
+		return this.source.keySet().toArray( new String[source.size()] );
 	}
 
 	public boolean isRequired( String key ) {

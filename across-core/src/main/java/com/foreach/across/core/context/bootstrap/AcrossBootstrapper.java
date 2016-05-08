@@ -192,8 +192,6 @@ public class AcrossBootstrapper
 						exposedBeanRegistry.addAll( configurableAcrossModuleInfo.getExposedBeanDefinitions() );
 					}
 
-					AcrossContextUtils.autoRegisterEventHandlers( child, eventPublisher );
-
 					failOnEventErrors();
 				}
 

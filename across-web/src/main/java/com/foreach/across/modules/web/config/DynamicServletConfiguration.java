@@ -17,7 +17,6 @@ package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
@@ -39,7 +38,6 @@ import java.util.List;
  * @author Arne Vandamme
  */
 @Configuration
-@AcrossEventHandler
 public class DynamicServletConfiguration
 {
 	private static final Logger LOG = LoggerFactory.getLogger( DynamicServletConfiguration.class );

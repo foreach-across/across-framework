@@ -1,6 +1,6 @@
 
 == Events
-Every Across context creates an AcrossEventPublisher bean.
+Every Across context creates an `AcrossEventPublisher` bean.
 This bean can be wired in any module to dispatch events.
 The default implementation of the event publisher uses MBassador.
 
@@ -26,35 +26,14 @@ public void sendEvent() {
 [discrete]
 === Subscribing to events
 Event handlers must not implement any special interface, event handler methods must declare themselves as handling an event by specifying the @Event annotation.
-A single event handler bean can have many handler methods, all event handler beans must be added to the AcrossEventPublisher however.
+A single object can have many handler methods.
+All beans created in the `ApplicationContext` are automatically scanned for event handler methods.
 
-[source,java,indent=0]
-[subs="verbatim,quotes,attributes"]
-----
-@Autowired
-private AcrossEventPublisher eventBus;
-
-@PostConstruct
-public void listen() {
-    // Subscribe ourselves to the event bus
-    eventBus.subscribe( this );
-}
-
-@Event
-public void handle( SomeEvent event ) {
-    // Called whenever an event of type SomeEvent is published
-}
-----
-
-[discrete]
-=== Auto-detecting event handlers
-Some beans are automatically scanned for handler methods, these are all beans annotated with @Controller or @AcrossEventHandler.
-
+.Example component with an event handling method
 [source,java,indent=0]
 [subs="verbatim,quotes,attributes"]
 ----
 @Component
-@AcrossEventHandler
 public class MyHandler {
     @Event
     public void handle( SomeEvent event ) {
@@ -66,6 +45,31 @@ public class MyHandler {
 WARNING: Take special care when combining AOP with event handlers, as the event publisher only has limited support for AOP proxies.
 Depending on the strategy used (CGlib or JDK proxy) the actual proxy (CGlib) or the proxy target (in case of JDK proxy) will be registered as the event handler.
 In the latter case the event will still be fired but the actual handle method will not be intercepted.
+
+==== Manual subscription
+Any object can register itself as listener by subscribing to the `AcrossEventPublisher`.
+
+.Example of a non-managed object manually subscribing to the AcrossEventPublisher
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+private AcrossEventPublisher eventBus;
+
+public void startListening() {
+    // Subscribe ourselves to the event bus
+    eventBus.subscribe( this );
+}
+
+public void stopListening() {
+    // Remove ourselves from the event bus
+    eventBus.unsubscribe( this );
+}
+
+@Event
+public void handle( SomeEvent event ) {
+    // Called whenever an event of type SomeEvent is published
+}
+----
 
 [discrete]
 === Filtering events
@@ -139,11 +143,6 @@ public void handle( MyListEvent<List<Integer>> event ) {
 ----
 
 [discrete]
-=== Advanced event filtering and asynchronous event handling
-Because the default implementation uses the MBassador messaging bus, it is possible to create custom filters and configure handlers or listeners to work asynchronously.
-Please refer to the MBassador documentation on how to do this.
-
-[discrete]
 === Bootstrap events
 The following bootstrap events are being published by the AcrossContext:
 
@@ -166,4 +165,5 @@ However, when an exception occurs that is not handled within the handler method,
 By default all exceptions will be logged in the AcrossEventPublisher logger.
 There is no defined order in which an event is sent to the handlers.
 Your event handlers should not depend on other event handlers having run.
-WARNING: Ordering event handlers is currently not supported, issue #21 on the backlog hopes to resolve this in a future release.
+
+WARNING: Ordering event handlers is currently not supported.

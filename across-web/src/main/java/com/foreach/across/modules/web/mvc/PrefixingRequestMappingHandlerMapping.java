@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.mvc;
 
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
@@ -45,7 +44,6 @@ import java.util.Set;
  * <p>
  * <b>WARN: interceptors are only supported once.</b>
  */
-@AcrossEventHandler
 public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandlerMapping
 {
 	private final String prefixPath;
