@@ -1,7 +1,11 @@
 == What's new in this version?
 
 === 2.0.0-SNAPSHOT
-tbd
+*Across Core*
+
+* `@AcrossEventHandler` has been deprecated, all beans are now automatically scanned for `@Event` methods
+* the `AcrossEventPublisher` interface has some MBassador specific methods removed
+** note that the backing implementation of the event bus might change in the future, applications should avoid using MBassdor specific features
 
 === 1.1.3-SNAPSHOT
 Maintenance release containing several bugfixes.

@@ -28,7 +28,7 @@ import org.springframework.core.env.PropertyResolver;
  * and informative description.  This class provides an easy interface to query the configured settings.
  *
  * @author Arne Vandamme
- * @deprecated obsolete - favour the use of {@link org.springframework.boot.context.properties.ConfigurationProperties}
+ * @deprecated obsolete - favour the use of {@link org.springframework.boot.context.properties.ConfigurationProperties} - should be removed in 4.0.0
  * and Spring Boot {@link org.springframework.context.annotation.Conditional} implementations instead
  */
 @Deprecated

@@ -21,10 +21,13 @@ import java.lang.annotation.*;
 /**
  * All beans having this annotation will automatically be registered in the AcrossEventPublisher.
  * Note: this annotation is not inherited.
+ *
+ * @deprecated all beans are scanned for listeners since 2.0.0, should be removed in 4.0.0
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Deprecated
 public @interface AcrossEventHandler
 {
 }

@@ -19,7 +19,10 @@ package com.foreach.across.modules.web.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.*;
+import com.foreach.across.core.annotations.Event;
+import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.annotations.Module;
+import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.AcrossWebModule;
@@ -94,7 +97,6 @@ import java.util.*;
  * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport
  */
 @Configuration
-@AcrossEventHandler
 public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware, ServletContextAware
 {
 	private static final boolean jaxb2Present =

@@ -16,13 +16,11 @@
 
 package com.foreach.across.test.modules.module2;
 
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.EventName;
 
 import java.util.*;
 
-@AcrossEventHandler
 public class CustomEventHandlers
 {
 	private Set<SimpleEvent> receivedAll = new HashSet<SimpleEvent>();

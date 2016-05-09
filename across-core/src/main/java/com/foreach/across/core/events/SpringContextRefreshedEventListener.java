@@ -32,7 +32,6 @@ import javax.annotation.PostConstruct;
  * Actions include:
  * <ul>
  * <li>updating all @Refreshable components</li>
- * <li>scanning for and registering new @AcrossEventHandler beans</li>
  * </ul>
  * </p>
  */
@@ -56,9 +55,6 @@ public class SpringContextRefreshedEventListener implements ApplicationListener<
 
 	public void onApplicationEvent( ContextRefreshedEvent event ) {
 		if ( event.getApplicationContext() == AcrossContextUtils.getParentApplicationContext( context ) ) {
-			// Scan for event handlers
-			AcrossContextUtils.autoRegisterEventHandlers( event.getApplicationContext(), publisher );
-
 			// Refresh the different beans
 			AcrossContextUtils.refreshBeans( context );
 		}

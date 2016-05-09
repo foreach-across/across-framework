@@ -19,7 +19,6 @@ package com.foreach.across.core.context;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.config.AcrossConfig;
@@ -31,11 +30,7 @@ import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.filters.AnnotatedMethodFilter;
-import com.foreach.across.core.filters.AnnotationBeanFilter;
-import com.foreach.across.core.filters.BeanFilter;
-import com.foreach.across.core.filters.BeanFilterComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.Advised;
@@ -46,7 +41,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -61,23 +55,6 @@ public final class AcrossContextUtils
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextUtils.class );
 
 	private AcrossContextUtils() {
-	}
-
-	/**
-	 * Scans for all AcrossEventHandler instances inside the context specified, and will
-	 * register them with the AcrossEventPublisher.
-	 */
-	public static void autoRegisterEventHandlers( ApplicationContext applicationContext,
-	                                              AcrossEventPublisher publisher ) {
-		BeanFilter eventHandlerFilter =
-				new BeanFilterComposite( new AnnotationBeanFilter( true, true, AcrossEventHandler.class ),
-				                         new AnnotationBeanFilter( Controller.class ) );
-		Collection<Object> handlers =
-				ApplicationContextScanner.findSingletonsMatching( applicationContext, eventHandlerFilter ).values();
-
-		for ( Object handler : handlers ) {
-			publisher.subscribe( handler );
-		}
 	}
 
 	/**

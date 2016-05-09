@@ -20,8 +20,7 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.bus.config.BusConfiguration;
 
-import java.util.Map;
-import java.util.WeakHashMap;
+import javax.annotation.PreDestroy;
 
 /**
  * <p>EventBus implementation for the AcrossContext.  Allows for publishing AcrossEvent
@@ -32,8 +31,6 @@ import java.util.WeakHashMap;
  */
 public class MBassadorEventPublisher extends MBassador<AcrossEvent> implements AcrossEventPublisher
 {
-	private final Map<Object, Boolean> listeners = new WeakHashMap<>();
-
 	public MBassadorEventPublisher() {
 		super( BusConfiguration.SyncAsync() );
 
@@ -41,20 +38,16 @@ public class MBassadorEventPublisher extends MBassador<AcrossEvent> implements A
 	}
 
 	public boolean unsubscribe( Object listener ) {
-		listeners.remove( listener );
 		return super.unsubscribe( AcrossContextUtils.getProxyTarget( listener ) );
 	}
 
 	public void subscribe( Object listener ) {
-		listeners.put( listener, true );
 		super.subscribe( AcrossContextUtils.getProxyTarget( listener ) );
 	}
 
-	/**
-	 * @param listener Listener object to check for.
-	 * @return true if the listener was registered with the publisher.
-	 */
-	public boolean isListener( Object listener ) {
-		return listeners.containsKey( listener );
+	@PreDestroy
+	@Override
+	public void shutdown() {
+		super.shutdown();
 	}
 }

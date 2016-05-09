@@ -19,7 +19,6 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
@@ -205,7 +204,6 @@ public class ITPrefixingRequestMappingHandlerMapping
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Component
-	@AcrossEventHandler
 	public @interface PrefixingWebController
 	{
 	}
