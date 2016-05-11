@@ -49,7 +49,7 @@ public class MBassadorEventPublisher extends MBassador<AcrossEvent> implements A
 		}
 	}
 
-	public static BusConfiguration SyncAsyncBusConfiguration() {
+	private static BusConfiguration SyncAsyncBusConfiguration() {
 		BusConfiguration defaultConfig = new BusConfiguration();
 		defaultConfig.addFeature( Feature.SyncPubSub.Default() );
 		defaultConfig.addFeature( Feature.AsynchronousHandlerInvocation.Default() );
