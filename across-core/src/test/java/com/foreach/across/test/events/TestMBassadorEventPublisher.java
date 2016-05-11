@@ -19,13 +19,18 @@ import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.MBassadorEventPublisher;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.target.AbstractLazyCreationTargetSource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -65,7 +70,60 @@ public class TestMBassadorEventPublisher
 		assertEquals( Collections.singletonList( eventOne ), two.received );
 	}
 
-	private static class EventHandler
+	@Test
+	public void subscribeWithLazyProxyDoesNotNullPointer() {
+		AtomicReference<EventHandlerProxy> lazyEventHandlerProxy = new AtomicReference<>();
+		eventPublisher.subscribe( createLazyProxy( lazyEventHandlerProxy, EventHandlerProxy.class ) );
+		EventHandler lazyEventHandler = new EventHandler();
+		lazyEventHandlerProxy.set( lazyEventHandler );
+
+		AcrossEvent eventOne = mock( AcrossEvent.class );
+		eventPublisher.publish( eventOne );
+		assertEquals( 0, lazyEventHandler.received.size() );
+	}
+
+	private <T> T createLazyProxy( AtomicReference<T> reference, Class<T> type ) {
+		// As seen in SimpleBatchConfiguration
+		ProxyFactory factory = new ProxyFactory();
+		factory.setTargetSource( new ReferenceTargetSource<T>( reference ) );
+		factory.addAdvice( new PassthruAdvice() );
+		factory.setInterfaces( new Class<?>[] { type } );
+		@SuppressWarnings("unchecked")
+		T proxy = (T) factory.getProxy();
+		return proxy;
+	}
+
+	private class PassthruAdvice implements MethodInterceptor
+	{
+
+		@Override
+		public Object invoke( MethodInvocation invocation ) throws Throwable {
+			return invocation.proceed();
+		}
+
+	}
+
+	private class ReferenceTargetSource<T> extends AbstractLazyCreationTargetSource
+	{
+
+		private AtomicReference<T> reference;
+
+		public ReferenceTargetSource( AtomicReference<T> reference ) {
+			this.reference = reference;
+		}
+
+		@Override
+		protected Object createObject() throws Exception {
+			return reference.get();
+		}
+	}
+
+	protected static interface EventHandlerProxy
+	{
+
+	}
+
+	private static class EventHandler implements EventHandlerProxy
 	{
 		public final List<AcrossEvent> received = new ArrayList<>();
 
