@@ -19,6 +19,7 @@ package com.foreach.across.core.events;
 import com.foreach.across.core.context.AcrossContextUtils;
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.bus.config.BusConfiguration;
+import net.engio.mbassy.bus.config.Feature;
 
 import javax.annotation.PreDestroy;
 
@@ -32,7 +33,7 @@ import javax.annotation.PreDestroy;
 public class MBassadorEventPublisher extends MBassador<AcrossEvent> implements AcrossEventPublisher
 {
 	public MBassadorEventPublisher() {
-		super( BusConfiguration.SyncAsync() );
+		super( SyncAsyncBusConfiguration() );
 
 		this.addErrorHandler( error -> LOG.error( "Event handling error occurred: {}", error, error.getCause() ) );
 	}
@@ -42,7 +43,18 @@ public class MBassadorEventPublisher extends MBassador<AcrossEvent> implements A
 	}
 
 	public void subscribe( Object listener ) {
-		super.subscribe( AcrossContextUtils.getProxyTarget( listener ) );
+		Object target = AcrossContextUtils.getProxyTarget( listener );
+		if ( target != null ) {
+			super.subscribe( target );
+		}
+	}
+
+	public static BusConfiguration SyncAsyncBusConfiguration() {
+		BusConfiguration defaultConfig = new BusConfiguration();
+		defaultConfig.addFeature( Feature.SyncPubSub.Default() );
+		defaultConfig.addFeature( Feature.AsynchronousHandlerInvocation.Default() );
+		defaultConfig.addFeature( Feature.AsynchronousMessageDispatch.Default() );
+		return defaultConfig;
 	}
 
 	@PreDestroy
