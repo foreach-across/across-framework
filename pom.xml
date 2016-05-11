@@ -50,10 +50,9 @@
 	<properties>
 		<across.version>2.0.0-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>2.0.3.RELEASE</spring.platform.version>
+		<spring.platform.version>2.0.4.RELEASE</spring.platform.version>
 		<foreach.common.version>1.0</foreach.common.version>
 		<querydsl.version>3.6.9</querydsl.version>
-		<hikaricp.version>2.4.5</hikaricp.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 	</properties>
 
@@ -278,11 +277,6 @@
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
 				<version>5.1.31</version>
-			</dependency>
-			<dependency>
-				<groupId>com.zaxxer</groupId>
-				<artifactId>HikariCP</artifactId>
-				<version>${hikaricp.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.oracle</groupId>
