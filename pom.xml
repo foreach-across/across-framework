@@ -245,8 +245,8 @@
 			<dependency>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-core</artifactId>
-				<!-- Forced to 3.5.0 due to an issue in 3.4.2 which comes with spring-bom 2.0.4 https://github.com/liquibase/liquibase/commit/1b06154e063d4e0a57e37f1d246a80fbf6f26593 -->
-				<version>3.5.0</version>
+				<!-- See https://foreach.atlassian.net/browse/AX-57 -->
+				<version>3.1.0</version>
 			</dependency>
 
 			<!-- Non-spring managed -->
