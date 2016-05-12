@@ -241,12 +241,15 @@
 				<scope>import</scope>
 			</dependency>
 
-			<!-- Non-spring managed -->
+			<!-- Specific versions -->
 			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-collections4</artifactId>
-				<version>4.0</version>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-core</artifactId>
+				<!-- Forced to 3.5.0 due to an issue in 3.4.2 which comes with spring-bom 2.0.4 https://github.com/liquibase/liquibase/commit/1b06154e063d4e0a57e37f1d246a80fbf6f26593 -->
+				<version>3.5.0</version>
 			</dependency>
+
+			<!-- Non-spring managed -->
 			<dependency>
 				<groupId>com.mattbertolini</groupId>
 				<artifactId>liquibase-slf4j</artifactId>
@@ -287,12 +290,6 @@
 				<groupId>net.sourceforge.jtds</groupId>
 				<artifactId>jtds</artifactId>
 				<version>1.3.1</version>
-			</dependency>
-
-			<dependency>
-				<groupId>cglib</groupId>
-				<artifactId>cglib</artifactId>
-				<version>3.1</version>
 			</dependency>
 
 			<!-- Foreach commons -->

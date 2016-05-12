@@ -97,6 +97,18 @@
 				<version>${across.version}</version>
 			</dependency>
 
+			<!-- Non-spring managed -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib</artifactId>
+				<version>3.1</version>
+			</dependency>
+
 			<!-- Foreach commons -->
 			<dependency>
 				<groupId>com.foreach.libs</groupId>
