@@ -53,6 +53,7 @@
 
 	<properties>
 		<across.version>2.0.0-SNAPSHOT</across.version>
+		<foreach.common.version>1.0</foreach.common.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
