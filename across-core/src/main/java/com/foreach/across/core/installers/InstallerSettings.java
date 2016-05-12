@@ -25,7 +25,7 @@ import java.util.*;
  */
 public class InstallerSettings
 {
-	private InstallerAction defaultAction = InstallerAction.DISABLED;
+	private InstallerAction defaultAction = InstallerAction.EXECUTE;
 
 	private InstallerActionResolver priorityActionResolver;
 
