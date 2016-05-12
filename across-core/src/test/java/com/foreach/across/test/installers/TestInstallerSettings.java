@@ -43,6 +43,11 @@ public class TestInstallerSettings
 	}
 
 	@Test
+	public void defaultActionOfConstructedSettingsIsExecute() {
+		assertEquals( InstallerAction.EXECUTE, settings.getDefaultAction() );
+	}
+
+	@Test
 	public void defaultActionAppliesIfNothingSpecificIsSet() {
 		for ( InstallerAction defaultAction : InstallerAction.values() ) {
 			settings.setDefaultAction( defaultAction );
