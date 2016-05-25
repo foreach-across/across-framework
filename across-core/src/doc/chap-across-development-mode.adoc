@@ -15,6 +15,9 @@ It is possible to configure a physical location for the resources of a module if
 This is done in a special properties file that will be looked for in *${user.home}/dev-configs/across-devel.properties*.
 The properties file should contain properties where the key references the module name, and the value the physical resources directory.
 
+It is possible to change the default location of the properties file (*${user.home}/dev-configs/across-devel.properties*) in the following way:
+. property *across.development.properties* (e.g. *${java.io.tmpdir}/across-development.properties*)
+
 .Example development properties
 [source,text,indent=0]
 [subs="verbatim,quotes,attributes"]

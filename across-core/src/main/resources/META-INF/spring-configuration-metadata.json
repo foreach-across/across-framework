@@ -5,6 +5,12 @@
       "type": "java.lang.Boolean",
       "description": "Should development mode be active.",
       "defaultValue": false
+    },
+    {
+      "name": "across.development.properties",
+      "type": "java.lang.String",
+      "description": "The file location where the development properties will be loaded from.",
+      "defaultValue": "${user.home}/dev-configs/across-devel.properties"
     }
   ]
 }
