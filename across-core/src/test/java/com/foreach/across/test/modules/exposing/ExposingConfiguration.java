@@ -17,13 +17,23 @@
 package com.foreach.across.test.modules.exposing;
 
 import com.foreach.across.core.annotations.Exposed;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.Assert;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 @Configuration
 @Exposed
 public class ExposingConfiguration
 {
+	@Autowired
+	public void wireInternals( AtomicReference<Integer> integerReference, AtomicReference<String> stringReference ) {
+		Assert.notNull( integerReference );
+		Assert.notNull( stringReference );
+	}
+
 	@Bean
 	public MyBean beanFromExposingConfiguration() {
 		return new MyBean();
