@@ -25,6 +25,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -47,9 +48,12 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 	private Set<String> aliases = new HashSet<>();
 
+	private RootBeanDefinition originalRootBeanDefinition;
+
 	public ExposedBeanDefinition( ExposedBeanDefinition original ) {
 		super( original );
 
+		originalRootBeanDefinition = original.originalRootBeanDefinition;
 		contextId = original.contextId;
 		moduleName = original.moduleName;
 		originalBeanName = original.originalBeanName;
@@ -114,6 +118,10 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		setAutowireCandidate( original.isAutowireCandidate() );
 
+		if ( original instanceof RootBeanDefinition ) {
+			originalRootBeanDefinition = (RootBeanDefinition) original;
+		}
+
 		// Add detailed information
 		if ( original instanceof AbstractBeanDefinition ) {
 			AbstractBeanDefinition originalAbstract = (AbstractBeanDefinition) original;
@@ -122,6 +130,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 				addQualifier( qualifier );
 			}
 		}
+
 	}
 
 	public String getOriginalBeanName() {
@@ -159,6 +168,14 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 	public void removeAlias( String alias ) {
 		aliases.remove( alias );
+	}
+
+	@Override
+	public Method getResolvedFactoryMethod() {
+		if ( originalRootBeanDefinition != null ) {
+			return originalRootBeanDefinition.getResolvedFactoryMethod();
+		}
+		return super.getResolvedFactoryMethod();
 	}
 
 	@Override
