@@ -46,7 +46,7 @@ public class AcrossDevelopmentMode
 
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossDevelopmentMode.class );
 
-	public static final String PROPERTIES = "across.devel.properties";
+	public static final String PROPERTIES = "across.development.properties";
 
 	private final String buildId = "dev:" + UUID.randomUUID().toString();
 
