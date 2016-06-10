@@ -22,6 +22,8 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 @Configuration
 public class SimpleConfiguration
 {
@@ -61,5 +63,17 @@ public class SimpleConfiguration
 				return false;
 			}
 		};
+	}
+
+	@Bean
+	@Exposed
+	public AtomicReference<Integer> integerAtomicReference() {
+		return new AtomicReference<>( 1 );
+	}
+
+	@Bean
+	@Exposed
+	public AtomicReference<String> stringAtomicReference() {
+		return new AtomicReference<>( "value" );
 	}
 }
