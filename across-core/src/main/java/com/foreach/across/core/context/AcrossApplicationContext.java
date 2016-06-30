@@ -112,6 +112,7 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 		try {
 			EventHandlerBeanPostProcessor eventHandlerBeanPostProcessor
 					= BeanFactoryUtils.beanOfTypeIncludingAncestors( beanFactory, EventHandlerBeanPostProcessor.class );
+			eventHandlerBeanPostProcessor.registerExistingSingletons( beanFactory );
 
 			beanFactory.addBeanPostProcessor( eventHandlerBeanPostProcessor );
 		}

@@ -58,7 +58,6 @@ public class TestEventHandlersFromParent
 
 	@Configuration
 	@EnableAcrossContext
-
 	protected static class Config
 	{
 		public final List<String> eventsReceived = new ArrayList<>();

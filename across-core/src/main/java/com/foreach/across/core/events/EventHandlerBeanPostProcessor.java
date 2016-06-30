@@ -43,17 +43,23 @@ public class EventHandlerBeanPostProcessor implements BeanPostProcessor
 		this.beanFactory = beanFactory;
 
 		addPostProcessorToBeanFactoryHierarchy( beanFactory );
-		registerExistingSingletons( beanFactory );
+
+		// Register existing singletons recursively
+		registerSingletonsFromBeanFactoryHierarchy( beanFactory );
 	}
 
-	private void registerExistingSingletons( ConfigurableListableBeanFactory beanFactory ) {
-		for ( String singletonName : beanFactory.getSingletonNames() ) {
-			register( beanFactory.getSingleton( singletonName ) );
-		}
+	private void registerSingletonsFromBeanFactoryHierarchy( ConfigurableListableBeanFactory beanFactory ) {
+		registerExistingSingletons( beanFactory );
 
 		BeanFactory parentBeanFactory = beanFactory.getParentBeanFactory();
 		if ( parentBeanFactory instanceof ConfigurableListableBeanFactory ) {
-			registerExistingSingletons( (ConfigurableListableBeanFactory) parentBeanFactory );
+			registerSingletonsFromBeanFactoryHierarchy( (ConfigurableListableBeanFactory) parentBeanFactory );
+		}
+	}
+
+	public void registerExistingSingletons( ConfigurableListableBeanFactory beanFactory ) {
+		for ( String singletonName : beanFactory.getSingletonNames() ) {
+			register( beanFactory.getSingleton( singletonName ) );
 		}
 	}
 
