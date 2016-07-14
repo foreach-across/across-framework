@@ -106,6 +106,25 @@ public class TestWebTemplateInterceptor
 		assertEquals( "myview :: otherfragment", mav.getViewName() );
 	}
 
+	@Test
+	public void postHandleShouldNotAppendPartialFragmentToRedirect() {
+		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
+
+		ModelAndView mav = new ModelAndView( "forward:/bar" );
+		interceptor.postHandle( request, response, null, mav );
+
+		assertEquals( "forward:/bar", mav.getViewName() );
+	}
+
+	@Test
+	public void postHandleShouldNotAppendPartialFragmentToForward() {
+		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
+
+		ModelAndView mav = new ModelAndView( "redirect:/foo" );
+		interceptor.postHandle( request, response, null, mav );
+
+		assertEquals( "redirect:/foo", mav.getViewName() );
+	}
 
 	// AX-120 - NPE on partial view rendering
 	@Test
@@ -113,5 +132,15 @@ public class TestWebTemplateInterceptor
 		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
 
 		interceptor.postHandle( request, response, null, null );
+	}
+
+	// AX-131 no longer add fragment to redirect view in posthandle, but do add a request attribute in prehandle to make it easier for client code to add custom handling.  This is probably a temporary feature (until a more complete redirect handling is added), but this test ensures that we don't accidentally break compatibility...)
+	@Test
+	public void preHandleWithPartialShouldSetRequestAttribute() {
+		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
+
+		interceptor.preHandle( request, response, null );
+
+		assertEquals( "myfragment", request.getAttribute( WebTemplateInterceptor.PARTIAL_PARAMETER ) );
 	}
 }

@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.Exposed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.util.Assert;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,5 +38,11 @@ public class ExposingConfiguration
 	@Bean
 	public MyBean beanFromExposingConfiguration() {
 		return new MyBean();
+	}
+
+	@Bean
+	@Scope("prototype")
+	public MyPrototypeBean myPrototypeBean() {
+		return new MyPrototypeBean();
 	}
 }

@@ -17,6 +17,7 @@
 package com.foreach.across.modules.web.template;
 
 import com.foreach.across.core.AcrossException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +27,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,6 +76,10 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 				}
 			}
 		}
+		// at present, we don't handle partial for redirects, so we'll add this attribute to make it easier for client code to handle it
+		else {
+			request.setAttribute( PARTIAL_PARAMETER, partialFragment.get() );
+		}
 
 		return true;
 	}
@@ -88,13 +94,23 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 		if ( processor != null ) {
 			processor.applyTemplate( request, response, handler, modelAndView );
 		}
-		else if ( modelAndView != null ) {
+		else if ( modelAndView != null && modelAndView.hasView() && modelAndView.isReference() ) {
 			Optional<String> partialFragment = Optional.ofNullable( request.getParameter( PARTIAL_PARAMETER ) );
 
-			if ( partialFragment.isPresent() && !modelAndView.getViewName().contains( "::" ) ) {
-				modelAndView.setViewName(
-						modelAndView.getViewName() + "::" + request.getParameter( PARTIAL_PARAMETER )
-				);
+			if ( partialFragment.isPresent() ) {
+				String viewName = modelAndView.getViewName();
+
+				if (
+						// Redirect views should not be modified
+						!StringUtils.startsWithAny( viewName, UrlBasedViewResolver.REDIRECT_URL_PREFIX,
+						                            UrlBasedViewResolver.FORWARD_URL_PREFIX )
+						// Nor should views that already contain a fragment
+						&& !viewName.contains( "::" )
+				) {
+					modelAndView.setViewName(
+							viewName + "::" + request.getParameter( PARTIAL_PARAMETER )
+					);
+				}
 			}
 		}
 	}

@@ -17,6 +17,7 @@
 package com.foreach.across.core.context.registry;
 
 import com.foreach.across.core.context.AcrossListableBeanFactory;
+import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
@@ -161,11 +162,18 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		                                        .keySet() ) {
 
 			if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
-				Object bean = beanFactory.getBean( beanName );
-				comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
+				boolean isExposedNonSingleton = !beanFactory.isSingleton( beanName )
+						&& beanFactory.getBeanDefinition( beanName ) instanceof ExposedBeanDefinition;
 
-				beans.add( (T) bean );
-				beanNames.put( (T) bean, beanName );
+				// only include exposed non-singletons if we don't include module internals, else we will end up
+				// with double entries
+				if ( !includeModuleInternals || !isExposedNonSingleton ) {
+					Object bean = beanFactory.getBean( beanName );
+					comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
+
+					beans.add( (T) bean );
+					beanNames.put( (T) bean, beanName );
+				}
 			}
 		}
 
