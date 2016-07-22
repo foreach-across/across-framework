@@ -82,7 +82,7 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 //
 //		Collection<String> methodExceptions = new ArrayList<>();
 //		Collections.addAll( methodExceptions, "^build$", "^wait$", "^equals$", "^toString$",
-//		                    "^hashCode$", "^notify$", "^notifyAll$", "^get[A-Z].+",
+//		                    "^hashCode$", "^notify$", "^notifyAll$", "^find[A-Z].+",
 //		                    "^is[A-Z].+", "^has[A-Z].+" );
 //		methodExceptions.addAll( nonBuilderReturningMethods() );
 //

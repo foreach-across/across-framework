@@ -16,7 +16,6 @@
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
-import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.thymeleaf.Arguments;
@@ -33,9 +32,9 @@ public class ContainerViewElementThymeleafBuilder implements ViewElementThymelea
 	                              ViewElementNodeFactory componentElementProcessor ) {
 		List<Node> list = new ArrayList<>();
 
-		for ( ViewElement child : container ) {
-			list.addAll( componentElementProcessor.buildNodes( child, arguments ) );
-		}
+		container.getChildren().forEach(
+				c -> list.addAll( componentElementProcessor.buildNodes( c, arguments ) )
+		);
 
 		return list;
 	}

@@ -46,7 +46,7 @@ public class DefaultResourceRegistrationConfigurer
 	/**
 	 * Special implementation that does no link transforming inside css files.  This appears
 	 * to work better if we use a fixed version strategy, otherwise relative urls inside css
-	 * files get transformed incorrectly.
+	 * files find transformed incorrectly.
 	 * <p>
 	 * See https://jira.spring.io/browse/SPR-13727 and https://jira.spring.io/browse/SPR-13806.
 	 * </p>

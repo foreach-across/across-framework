@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Extension in order to get
+ * Extension in order to find
  */
 @SuppressWarnings("all")
 public class ResourceHandlerRegistry extends org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
@@ -80,7 +80,7 @@ public class ResourceHandlerRegistry extends org.springframework.web.servlet.con
 				for ( Map.Entry<String, ?> entry : entries.entrySet() ) {
 					if ( entry.getValue() instanceof ResourceHttpRequestHandler ) {
 						ResourceHttpRequestHandler handler = (ResourceHttpRequestHandler) entry.getValue();
-						if ( handler.getResourceResolvers().size() == 1 && handler.getResourceResolvers().get(
+						if ( handler.getResourceResolvers().size() == 1 && handler.getResourceResolvers().find(
 								0 ) instanceof PathResourceResolver && handler.getResourceTransformers().isEmpty() ) {
 							//TODO: AX-56 improve this check without rewriting all spring classes?
 							AppCacheManifestTransformer appCacheTransformer = new AppCacheManifestTransformer();

@@ -15,17 +15,53 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class TestContainerViewElement extends AbstractViewElementTemplateTest
 {
 	@Test
+	public void childElements() {
+		ContainerViewElement container = new ContainerViewElement();
+
+		assertFalse( container.hasChildren() );
+		assertTrue( container.getChildren().isEmpty() );
+
+		ViewElement child = mock( ViewElement.class );
+		container.addChild( child );
+		assertTrue( container.hasChildren() );
+		assertEquals( 1, container.getChildren().size() );
+		assertTrue( container.getChildren().contains( child ) );
+
+		container.removeChild( child );
+		assertFalse( container.hasChildren() );
+		assertTrue( container.getChildren().isEmpty() );
+
+		container.addChild( child );
+
+		ViewElement other = mock( ViewElement.class );
+		ViewElement third = mock( ViewElement.class );
+
+		container.addChild( other );
+		assertSame( container.getChildren().get( 0 ), child );
+		assertSame( container.getChildren().get( 1 ), other );
+
+		container.addFirstChild( third );
+		assertSame( container.getChildren().get( 0 ), third );
+		assertSame( container.getChildren().get( 1 ), child );
+		assertSame( container.getChildren().get( 2 ), other );
+	}
+
+	@Test
 	public void multipleTextElements() {
 		ContainerViewElement container = new ContainerViewElement();
-		container.add( new TextViewElement( "one, " ) );
-		container.add( new TextViewElement( "two, " ) );
-		container.add( new TextViewElement( "three" ) );
+		container.addChild( new TextViewElement( "one, " ) );
+		container.addChild( new TextViewElement( "two, " ) );
+		container.addChild( new TextViewElement( "three" ) );
 
 		renderAndExpect( container, "one, two, three" );
 	}
@@ -33,13 +69,13 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 	@Test
 	public void nestedContainerElements() {
 		ContainerViewElement container = new ContainerViewElement();
-		container.add( new TextViewElement( "one, " ) );
+		container.addChild( new TextViewElement( "one, " ) );
 
 		ContainerViewElement subContainer = new ContainerViewElement();
-		subContainer.add( new TextViewElement( "two, " ) );
-		subContainer.add( new TextViewElement( "three" ) );
+		subContainer.addChild( new TextViewElement( "two, " ) );
+		subContainer.addChild( new TextViewElement( "three" ) );
 
-		container.add( subContainer );
+		container.addChild( subContainer );
 		renderAndExpect( container, "one, two, three" );
 	}
 
@@ -47,9 +83,9 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 	public void customTemplateWithoutNesting() {
 		ContainerViewElement container = new ContainerViewElement();
 		container.setCustomTemplate( "th/test/elements/container" );
-		container.add( new TextViewElement( "one" ) );
-		container.add( new TextViewElement( "two" ) );
-		container.add( new TextViewElement( "three" ) );
+		container.addChild( new TextViewElement( "one" ) );
+		container.addChild( new TextViewElement( "two" ) );
+		container.addChild( new TextViewElement( "three" ) );
 
 		renderAndExpect( container, "<ul><li>one</li><li>two</li><li>three</li></ul>" );
 	}
@@ -58,20 +94,20 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 	public void customTemplateWithNesting() {
 		ContainerViewElement container = new ContainerViewElement();
 		container.setCustomTemplate( "th/test/elements/container :: nested(${component})" );
-		container.add( new TextViewElement( "one" ) );
+		container.addChild( new TextViewElement( "one" ) );
 
 		ContainerViewElement subContainer = new ContainerViewElement();
-		subContainer.add( new TextViewElement( "two, " ) );
-		subContainer.add( new TextViewElement( "three" ) );
+		subContainer.addChild( new TextViewElement( "two, " ) );
+		subContainer.addChild( new TextViewElement( "three" ) );
 
 		ContainerViewElement otherSubContainer = new ContainerViewElement();
 		otherSubContainer.setCustomTemplate( "th/test/elements/container" );
-		otherSubContainer.add( new TextViewElement( "four" ) );
-		otherSubContainer.add( new TextViewElement( "five" ) );
+		otherSubContainer.addChild( new TextViewElement( "four" ) );
+		otherSubContainer.addChild( new TextViewElement( "five" ) );
 
-		subContainer.add( otherSubContainer );
+		subContainer.addChild( otherSubContainer );
 
-		container.add( subContainer );
+		container.addChild( subContainer );
 
 		renderAndExpect( container,
 		                 "<ol><li>one</li><li>two, three<ul><li>four</li><li>five</li></ul></li></ol>" );
@@ -80,7 +116,7 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 	@Test
 	public void customTemplateChild() {
 		ContainerViewElement container = new ContainerViewElement();
-		container.add( new TemplateViewElement( CUSTOM_TEMPLATE ) );
+		container.addChild( new TemplateViewElement( CUSTOM_TEMPLATE ) );
 
 		renderAndExpect( container, CUSTOM_TEMPLATE_OUTPUT );
 	}

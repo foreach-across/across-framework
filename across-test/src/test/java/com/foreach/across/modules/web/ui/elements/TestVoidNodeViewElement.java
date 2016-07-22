@@ -96,8 +96,8 @@ public class TestVoidNodeViewElement extends AbstractViewElementTemplateTest
 		otherOne.setHtmlId( "one" );
 
 		ContainerViewElement list = new ContainerViewElement();
-		list.add( one );
-		list.add( otherOne );
+		list.addChild( one );
+		list.addChild( otherOne );
 
 		renderAndExpect( list,
 		                 "<hr id='one' /><hr id='one1' />" );

@@ -15,14 +15,14 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
-import com.foreach.across.modules.web.ui.IteratorItemStats;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+
+import static com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils.find;
 
 /**
  * Tests the generation of view elements based on content lists.
@@ -45,15 +45,15 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 			NodeViewElement name = new NodeViewElement( "td" );
 			name.setHtmlId( "name-cell" );
-			name.add( new TextViewElement( person.getName() ) );
-			row.add( name );
+			name.addChild( new TextViewElement( person.getName() ) );
+			row.addChild( name );
 
 			NodeViewElement email = new NodeViewElement( "td" );
 			email.setHtmlId( "email-cell" );
-			email.add( new TextViewElement( person.getEmail() ) );
-			row.add( email );
+			email.addChild( new TextViewElement( person.getEmail() ) );
+			row.addChild( email );
 
-			table.add( row );
+			table.addChild( row );
 		}
 
 		renderAndExpect(
@@ -70,12 +70,12 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 		NodeViewElement rowTemplate = new NodeViewElement( "tr" );
 		NodeViewElement name = new NodeViewElement( "td" );
 		name.setHtmlId( "name-cell" );
-		name.add( new TextViewElement( "name", "" ) );
-		rowTemplate.add( name );
+		name.addChild( new TextViewElement( "name", "" ) );
+		rowTemplate.addChild( name );
 		NodeViewElement email = new NodeViewElement( "td" );
 		email.setHtmlId( "email-cell" );
-		email.add( new TextViewElement( "email", "" ) );
-		rowTemplate.add( email );
+		email.addChild( new TextViewElement( "email", "" ) );
+		rowTemplate.addChild( email );
 
 		NodeViewElement table = new NodeViewElement( "table" );
 
@@ -83,21 +83,18 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 		generator.setItemTemplate( rowTemplate );
 		generator.setItems( people );
 		generator.setCreationCallback(
-				new ViewElementGenerator.CreationCallback<Person, NodeViewElement>()
-				{
-					@Override
-					public NodeViewElement create( IteratorItemStats<Person> itemStats,
-					                               NodeViewElement template ) {
-						Person item = itemStats.getItem();
-						template.<TextViewElement>get( "name" ).setText( item.getName() );
-						template.<TextViewElement>get( "email" ).setText( item.getEmail() );
+				( itemStats, template ) -> {
+					Person item = itemStats.getItem();
+					find( template, "name", TextViewElement.class )
+							.ifPresent( t -> t.setText( item.getName() ) );
+					find( template, "email", TextViewElement.class )
+							.ifPresent( t -> t.setText( item.getEmail() ) );
 
-						return template;
-					}
+					return template;
 				}
 		);
 
-		table.add( generator );
+		table.addChild( generator );
 
 		renderAndExpect(
 				table,
@@ -125,22 +122,18 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 	@Test
 	public void viewElementBuilderTemplate() {
-		ViewElementBuilder<NodeViewElement> builder = new ViewElementBuilder<NodeViewElement>()
-		{
-			@Override
-			public NodeViewElement build( ViewElementBuilderContext builderContext ) {
-				NodeViewElement rowTemplate = new NodeViewElement( "tr" );
-				NodeViewElement name = new NodeViewElement( "td" );
-				name.setHtmlId( "name-cell" );
-				name.add( new TextViewElement( "name", "" ) );
-				rowTemplate.add( name );
-				NodeViewElement email = new NodeViewElement( "td" );
-				email.setHtmlId( "email-cell" );
-				email.add( new TextViewElement( "email", "" ) );
-				rowTemplate.add( email );
+		ViewElementBuilder<NodeViewElement> builder = builderContext -> {
+			NodeViewElement rowTemplate = new NodeViewElement( "tr" );
+			NodeViewElement name = new NodeViewElement( "td" );
+			name.setHtmlId( "name-cell" );
+			name.addChild( new TextViewElement( "name", "" ) );
+			rowTemplate.addChild( name );
+			NodeViewElement email = new NodeViewElement( "td" );
+			email.setHtmlId( "email-cell" );
+			email.addChild( new TextViewElement( "email", "" ) );
+			rowTemplate.addChild( email );
 
-				return rowTemplate;
-			}
+			return rowTemplate;
 		};
 
 		NodeViewElement table = new NodeViewElement( "table" );
@@ -149,20 +142,17 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 		generator.setItemTemplate( builder );
 		generator.setItems( people );
 		generator.setCreationCallback(
-				new ViewElementGenerator.CreationCallback<Person, NodeViewElement>()
-				{
-					@Override
-					public NodeViewElement create( IteratorItemStats<Person> itemStats,
-					                               NodeViewElement template ) {
-						template.<TextViewElement>get( "name" ).setText( itemStats.getItem().getName() );
-						template.<TextViewElement>get( "email" ).setText( itemStats.getItem().getEmail() );
+				( itemStats, template ) -> {
+					find( template, "name", TextViewElement.class )
+							.ifPresent( t -> t.setText( itemStats.getItem().getName() ) );
+					find( template, "email", TextViewElement.class )
+							.ifPresent( t -> t.setText( itemStats.getItem().getEmail() ) );
 
-						return template;
-					}
+					return template;
 				}
 		);
 
-		table.add( generator );
+		table.addChild( generator );
 
 		renderAndExpect(
 				table,
@@ -179,28 +169,24 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 		ViewElementGenerator<Person, NodeViewElement> generator = new ViewElementGenerator<>();
 		generator.setItems( people );
-		generator.setCreationCallback( new ViewElementGenerator.CreationCallback<Person, NodeViewElement>()
-		{
-			@Override
-			public NodeViewElement create( IteratorItemStats<Person> itemStats, NodeViewElement template ) {
-				Person person = itemStats.getItem();
-				NodeViewElement row = new NodeViewElement( "tr" );
+		generator.setCreationCallback( ( itemStats, template ) -> {
+			Person person = itemStats.getItem();
+			NodeViewElement row = new NodeViewElement( "tr" );
 
-				NodeViewElement name = new NodeViewElement( "td" );
-				name.setHtmlId( "name-cell" );
-				name.add( new TextViewElement( person.getName() ) );
-				row.add( name );
+			NodeViewElement name = new NodeViewElement( "td" );
+			name.setHtmlId( "name-cell" );
+			name.addChild( new TextViewElement( person.getName() ) );
+			row.addChild( name );
 
-				NodeViewElement email = new NodeViewElement( "td" );
-				email.setHtmlId( "email-cell" );
-				email.add( new TextViewElement( person.getEmail() ) );
-				row.add( email );
+			NodeViewElement email = new NodeViewElement( "td" );
+			email.setHtmlId( "email-cell" );
+			email.addChild( new TextViewElement( person.getEmail() ) );
+			row.addChild( email );
 
-				return row;
-			}
+			return row;
 		} );
 
-		table.add( generator );
+		table.addChild( generator );
 
 		renderAndExpect(
 				table,

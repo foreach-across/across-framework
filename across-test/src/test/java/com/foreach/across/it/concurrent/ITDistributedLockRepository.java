@@ -226,7 +226,7 @@ public class ITDistributedLockRepository
 	}
 
 	/**
-	 * Instantiate an Across context so we get access to the test datasource.
+	 * Instantiate an Across context so we find access to the test datasource.
 	 */
 	@AcrossTestConfiguration
 	protected static class Config

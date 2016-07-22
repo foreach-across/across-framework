@@ -37,9 +37,9 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 	@Test
 	public void nodeWithChildren() {
 		NodeViewElement node = new NodeViewElement( "ul" );
-		node.add( new NodeViewElement( "li" ) );
-		node.add( new TextViewElement( "child text" ) );
-		node.add( new NodeViewElement( "li" ) );
+		node.addChild( new NodeViewElement( "li" ) );
+		node.addChild( new TextViewElement( "child text" ) );
+		node.addChild( new NodeViewElement( "li" ) );
 
 		renderAndExpect( node, "<ul><li></li>child text<li></li></ul>" );
 	}
@@ -99,9 +99,9 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 
 		NodeViewElement paragraph = new NodeViewElement( "p" );
 		paragraph.setAttribute( "class", "main-paragraph" );
-		paragraph.add( new TextViewElement( "paragraph text" ) );
+		paragraph.addChild( new TextViewElement( "paragraph text" ) );
 
-		node.add( paragraph );
+		node.addChild( paragraph );
 
 		renderAndExpect( node, "<div class='some-class'><p class='main-paragraph'>paragraph text</p></div>" );
 	}
@@ -113,8 +113,8 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 
 		NodeViewElement otherOne = new NodeViewElement( "div" );
 		otherOne.setHtmlId( "one" );
-		one.add( otherOne );
-		one.add( otherOne );
+		one.addChild( otherOne );
+		one.addChild( otherOne );
 
 		renderAndExpect( one,
 		                 "<div id='one'>" +
@@ -126,7 +126,7 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 	@Test
 	public void customTemplateChild() {
 		NodeViewElement node = new NodeViewElement( "div" );
-		node.add( new TemplateViewElement( CUSTOM_TEMPLATE ) );
+		node.addChild( new TemplateViewElement( CUSTOM_TEMPLATE ) );
 
 		renderAndExpect( node, "<div>" + CUSTOM_TEMPLATE_OUTPUT + "</div>" );
 	}

@@ -42,7 +42,7 @@ import java.util.*;
  * <p>Like the {@link com.foreach.across.modules.web.ui.elements.ContainerViewElement}, a ViewElementGenerator does not
  * add any additional output, it only renders its children.</p>
  */
-public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implements ViewElementCollection<VIEW_ELEMENT>, MutableViewElement
+public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implements Iterable<VIEW_ELEMENT>, MutableViewElement
 {
 	/**
 	 * Callback interface for customizing the generated {@link com.foreach.across.modules.web.ui.ViewElement}.
@@ -261,12 +261,10 @@ public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implem
 		return callback;
 	}
 
-	@Override
 	public int size() {
 		return items.size();
 	}
 
-	@Override
 	public boolean isEmpty() {
 		return items.isEmpty();
 	}

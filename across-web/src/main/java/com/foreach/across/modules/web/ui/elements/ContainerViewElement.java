@@ -17,22 +17,33 @@ package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.StandardViewElements;
-import com.foreach.across.modules.web.ui.ViewElements;
+import com.foreach.across.modules.web.ui.ViewElement;
+import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Simplest implementation of {@link com.foreach.across.modules.web.ui.ViewElements} that also implements
- * {@link com.foreach.across.modules.web.ui.ViewElement}.  A container is a named
- * collection of elements that allows configuration of a custom template for rendering.
+ * A container is a named collection of elements ({@link #getChildren()} that allows
+ * configuration of a custom template for rendering.  This is a base class for every other {@link ViewElement}
+ * that supports children.
  * <p>
  * Unless a custom template is being used, a collection does not add additional output but simply renders
  * its children in order.
  * </p>
+ * <p>
+ * Complex operations on containers (including on children that are in turn containers) can easily be done
+ * using the {@link com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils}.
+ * </p>
  *
  * @author Arne Vandamme
+ * @see com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils
  */
-public class ContainerViewElement extends ViewElements implements MutableViewElement
+public class ContainerViewElement implements MutableViewElement
 {
 	public static final String ELEMENT_TYPE = StandardViewElements.CONTAINER;
+
+	private final List<ViewElement> children = new ArrayList<>();
 
 	private String name, customTemplate, elementType;
 
@@ -71,5 +82,50 @@ public class ContainerViewElement extends ViewElements implements MutableViewEle
 
 	protected void setElementType( String elementType ) {
 		this.elementType = elementType;
+	}
+
+	/**
+	 * @return modifiable list of child elements this container has
+	 */
+	@SuppressWarnings("all")
+	public List<ViewElement> getChildren() {
+		return children;
+	}
+
+	/**
+	 * Add a child to this container.
+	 *
+	 * @param element to add
+	 */
+	public void addChild( ViewElement element ) {
+		Assert.notNull( element );
+		children.add( element );
+	}
+
+	/**
+	 * Adds a child as the first one to this container.
+	 *
+	 * @param element to add
+	 */
+	public void addFirstChild( ViewElement element ) {
+		Assert.notNull( element );
+		children.add( 0, element );
+	}
+
+	/**
+	 * Remove a child from this container.
+	 *
+	 * @param element to remove
+	 * @return true if child was present and has been removed
+	 */
+	public boolean removeChild( ViewElement element ) {
+		return children.remove( element );
+	}
+
+	/**
+	 * @return true if this container has child elements
+	 */
+	public boolean hasChildren() {
+		return !children.isEmpty();
 	}
 }

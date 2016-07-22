@@ -7,10 +7,12 @@ package com.foreach.across.modules.web.ui;
 public interface ViewElement
 {
 	/**
-	 * A ViewElement can have an internal name that should preferably be unique within a
-	 * {@link com.foreach.across.modules.web.ui.ViewElements} collection.  A name is optional however.
+	 * A ViewElement can have an internal name that identifies it within a
+	 * {@link com.foreach.across.modules.web.ui.elements.ContainerViewElement}.  A name is optional but when given,
+	 * is preferably unique within its container as most operations work on the first element with a specific name.
 	 *
 	 * @return Internal name of this element, can be null.
+	 * @see com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils
 	 */
 	String getName();
 

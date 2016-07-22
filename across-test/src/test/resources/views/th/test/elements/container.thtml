@@ -3,11 +3,11 @@
 <body>
 
 <ul th:fragment="render(component)">
-	<li th:each="item: ${component}" th:text="${item.text}">item</li>
+	<li th:each="item: ${component.children}" th:text="${item.text}">item</li>
 </ul>
 
 <ol th:fragment="nested(component)">
-	<li th:each="item: ${component}">
+	<li th:each="item: ${component.children}">
 		<across:view element="${item}"/>
 	</li>
 </ol>

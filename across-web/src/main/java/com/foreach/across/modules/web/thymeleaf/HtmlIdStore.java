@@ -86,7 +86,7 @@ public class HtmlIdStore
 	/**
 	 * Create a new instance by copying the the original generated elements.
 	 * New elements added will not be added to the original set, making this store safe to use within
-	 * a single iteration that creates new ViewElements.
+	 * a single iteration that creates new {@link ViewElement}s.
 	 *
 	 * @return new instance of a HtmlIdStore
 	 */

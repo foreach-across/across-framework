@@ -4,6 +4,7 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,11 +44,11 @@ public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupp
 		ContainerViewElement container = new ContainerViewElement();
 
 		for ( ElementOrBuilder child : children ) {
-			container.add( child.get( builderContext ) );
+			container.addChild( child.get( builderContext ) );
 		}
 
 		if ( sortElements != null ) {
-			container.sort( sortElements );
+			ContainerViewElementUtils.sortRecursively( container, sortElements );
 		}
 
 		return apply( container, builderContext );

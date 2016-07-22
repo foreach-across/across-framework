@@ -53,7 +53,7 @@ public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 		viewElementNodeFactory.setAttributes( node, viewElement.getAttributes() );
 
 		if ( viewElement instanceof AbstractNodeViewElement ) {
-			for ( ViewElement child : (AbstractNodeViewElement) viewElement ) {
+			for ( ViewElement child : ((AbstractNodeViewElement) viewElement).getChildren() ) {
 				for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
 					node.addChild( childNode );
 				}

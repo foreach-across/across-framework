@@ -38,6 +38,6 @@ public class TextViewElementThymeleafBuilder implements ViewElementThymeleafBuil
 
 		Text text = new Text( html, null, null, true );
 
-		return Collections.singletonList( (Node) text );
+		return Collections.singletonList( text );
 	}
 }

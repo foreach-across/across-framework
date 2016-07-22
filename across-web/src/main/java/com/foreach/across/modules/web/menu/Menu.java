@@ -553,7 +553,7 @@ public class Menu implements Ordered
 	 * <li>Attributes from other are added or overwritten (merge of attribute map)</li>
 	 * <li>All sub items undergo a merge</li>
 	 * </ul>
-	 * A merge only looks downstream, the parent structure does not get modified.  The selected item
+	 * A merge only looks downstream, the parent structure does not find modified.  The selected item
 	 * however can be modified by the merge.
 	 * </p>
 	 *

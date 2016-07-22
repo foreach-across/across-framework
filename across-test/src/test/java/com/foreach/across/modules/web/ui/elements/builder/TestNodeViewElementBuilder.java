@@ -34,7 +34,7 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 	public void defaults() {
 		build();
 
-		assertTrue( element.isEmpty() );
+		assertFalse( element.hasChildren() );
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 
 		build();
 
-		assertEquals( 1, element.size() );
+		assertEquals( 1, element.getChildren().size() );
 
 		assertEquals( "a", element.getTagName() );
 		assertEquals( "somelink", element.getAttribute( "href" ) );

@@ -5,6 +5,7 @@ import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -51,16 +52,16 @@ public abstract class ContainerViewElementBuilderSupport<T extends ContainerView
 		for ( Object child : children ) {
 			if ( child != null ) {
 				if ( child instanceof ViewElement ) {
-					container.add( (ViewElement) child );
+					container.addChild( (ViewElement) child );
 				}
 				else {
-					container.add( ( (ViewElementBuilder) child ).build( builderContext ) );
+					container.addChild( ( (ViewElementBuilder) child ).build( builderContext ) );
 				}
 			}
 		}
 
 		if ( sortElements != null ) {
-			container.sort( sortElements );
+			ContainerViewElementUtils.sortRecursively( container, sortElements );
 		}
 
 		return container;

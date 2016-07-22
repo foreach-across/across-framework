@@ -23,7 +23,9 @@ import com.foreach.across.test.support.AbstractViewElementBuilderTest;
 import org.junit.Test;
 
 import java.util.Iterator;
+import java.util.Optional;
 
+import static com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils.find;
 import static org.junit.Assert.*;
 
 public class TestContainerViewElementBuilder extends AbstractViewElementBuilderTest<ContainerViewElementBuilder, ContainerViewElement>
@@ -37,7 +39,7 @@ public class TestContainerViewElementBuilder extends AbstractViewElementBuilderT
 	public void defaults() {
 		build();
 
-		assertTrue( element.isEmpty() );
+		assertFalse( element.hasChildren() );
 	}
 
 	@Test
@@ -48,18 +50,18 @@ public class TestContainerViewElementBuilder extends AbstractViewElementBuilderT
 		builder.add( textOne ).add( textTwo );
 
 		build();
-		assertEquals( 2, element.size() );
-		assertSame( textOne, element.get( "textOne" ) );
-		assertSame( textTwo, element.get( "textTwo" ) );
-		assertSame( textOne, element.iterator().next() );
+		assertEquals( 2, element.getChildren().size() );
+		assertEquals( Optional.of( textOne ), find( element, "textOne" ) );
+		assertEquals( Optional.of( textTwo ), find( element, "textTwo" ) );
+		assertSame( textOne, element.getChildren().get( 0 ) );
 
 		builder.sort( "textTwo", "textOne" );
 
 		build();
-		assertEquals( 2, element.size() );
-		assertSame( textOne, element.get( "textOne" ) );
-		assertSame( textTwo, element.get( "textTwo" ) );
-		assertSame( textTwo, element.iterator().next() );
+		assertEquals( 2, element.getChildren().size() );
+		assertEquals( Optional.of( textOne ), find( element, "textOne" ) );
+		assertEquals( Optional.of( textTwo ), find( element, "textTwo" ) );
+		assertSame( textTwo, element.getChildren().get( 0 ) );
 	}
 
 	@Test
@@ -69,8 +71,9 @@ public class TestContainerViewElementBuilder extends AbstractViewElementBuilderT
 		builder.add( textBuilder );
 
 		build();
-		assertEquals( 1, element.size() );
-		assertSame( "text three", element.<TextViewElement>get( "textThree" ).getText() );
+		assertEquals( 1, element.getChildren().size() );
+		assertSame( "text three", find( element, "textThree", TextViewElement.class )
+				.orElse( new TextViewElement() ).getText() );
 	}
 
 	@Test
@@ -84,9 +87,9 @@ public class TestContainerViewElementBuilder extends AbstractViewElementBuilderT
 		       .add( textThree ).add( textOne, textTwo ).add( textFour );
 
 		build();
-		assertEquals( 4, element.size() );
+		assertEquals( 4, element.getChildren().size() );
 
-		Iterator<ViewElement> iterator = element.iterator();
+		Iterator<ViewElement> iterator = element.getChildren().iterator();
 		assertEquals( "textFour", iterator.next().getName() );
 		assertEquals( "textTwo", iterator.next().getName() );
 		assertEquals( "textThree", iterator.next().getName() );
