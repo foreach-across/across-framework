@@ -43,6 +43,9 @@ public class AcrossTestWebContext extends AcrossTestContext
 	private MockAcrossServletContext servletContext;
 	private MockMvc mockMvc;
 
+	protected AcrossTestWebContext() {
+	}
+
 	/**
 	 * @param configurers list of configures
 	 * @deprecated use {@link com.foreach.across.test.support.AcrossTestBuilders} instead
