@@ -15,13 +15,12 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
-import com.foreach.across.test.modules.webtest.controllers.RenderViewElementController;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.thymeleaf.exceptions.TemplateProcessingException;
 
 /**
  * @author Arne Vandamme
@@ -30,13 +29,18 @@ public class TestTemplateViewElement extends AbstractViewElementTemplateTest
 {
 	@Before
 	public void globalCallback() {
-		setCallback( new RenderViewElementController.Callback()
-		{
-			@Override
-			public void prepareModel( ModelMap model ) {
-				model.put( "customAttribute", 123 );
-			}
-		} );
+		setCallback( model -> model.put( "customAttribute", 123 ) );
+	}
+
+	@Test(expected = TemplateProcessingException.class)
+	public void illegalFramentInTemplate() throws Throwable {
+		TemplateViewElement template = new TemplateViewElement( "th/test/elements/text :: illegalFragment" );
+		try {
+			renderAndExpect( template, "Custom attribute value: 123" );
+		}
+		catch ( RuntimeException rte ) {
+			throw rte.getCause().getCause();
+		}
 	}
 
 	@Test
@@ -56,15 +60,9 @@ public class TestTemplateViewElement extends AbstractViewElementTemplateTest
 		TemplateViewElement template = new TemplateViewElement( "th/test/elements/text :: customAttribute" );
 
 		renderAndExpect( template,
-		                 new RenderViewElementController.Callback()
-		                 {
-			                 @Override
-			                 public void prepareModel( ModelMap model ) {
-				                 RequestContextHolder
-						                 .getRequestAttributes()
-						                 .setAttribute( "customAttribute", "hello!", RequestAttributes.SCOPE_REQUEST );
-			                 }
-		                 },
+		                 model -> RequestContextHolder
+				                 .getRequestAttributes()
+				                 .setAttribute( "customAttribute", "hello!", RequestAttributes.SCOPE_REQUEST ),
 		                 "Custom attribute value: hello!" );
 		renderAndExpect( template, "Custom attribute value: 123" );
 	}

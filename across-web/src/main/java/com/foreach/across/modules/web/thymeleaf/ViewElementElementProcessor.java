@@ -27,6 +27,7 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.NestableAttributeHolderNode;
 import org.thymeleaf.dom.Node;
+import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
 import org.thymeleaf.spring4.context.SpringWebContext;
 import org.thymeleaf.standard.expression.IStandardExpression;
@@ -139,17 +140,25 @@ public class ViewElementElementProcessor
 
 	private List<Node> renderCustomTemplate( ViewElement viewElement, Arguments arguments ) {
 		Arguments newArguments = arguments.addLocalVariables(
-				Collections.singletonMap( "component", (Object) viewElement )
+				Collections.singletonMap( "component", viewElement )
 		);
+
+		String templateWithFragment = appendFragmentIfRequired( viewElement.getCustomTemplate() );
 
 		StandardFragment fragment = StandardFragmentProcessor.computeStandardFragmentSpec(
 				newArguments.getConfiguration(),
 				newArguments,
-				appendFragmentIfRequired( viewElement.getCustomTemplate() ),
+				templateWithFragment,
 				"th", "fragment" );
 
-		return fragment.extractFragment( newArguments.getConfiguration(), newArguments,
-		                                 newArguments.getTemplateRepository() );
+		List<Node> nodes = fragment.extractFragment( newArguments.getConfiguration(), newArguments,
+		                                             newArguments.getTemplateRepository() );
+
+		if ( nodes == null ) {
+			throw new TemplateProcessingException( "Not a valid template [" + templateWithFragment + "]" );
+		}
+
+		return nodes;
 	}
 
 	/**
