@@ -3,21 +3,25 @@
 <body>
 
 <h3 th:fragment="render(component)" class="page-header" th:text="${component.text}">
-	header text
+    header text
 </h3>
 
 <div th:fragment="randomText" th:remove="tag">
-	Some random text instead...
+    Some random text instead...
 </div>
 
 <div th:fragment="otherTemplate(component)" th:text="|Received text: ${component.text}|">
-	Received text will be shown here.
+    Received text will be shown here.
 </div>
 
 <div th:fragment="customAttribute" th:remove="tag">
-	Custom attribute value: <span th:remove="tag" th:text="${customAttribute}">unknown</span>
+    Custom attribute value: <span th:remove="tag" th:text="${customAttribute}">unknown</span>
 </div>
 
+<div th:fragment="componentAttributes(component)" th:inline="text" th:remove="tag"
+     th:with="text=${component.getAttribute('text')}">
+    [[${component.getAttribute('title')}]]: [[${text}]]
+</div>
 </body>
 </html>
 

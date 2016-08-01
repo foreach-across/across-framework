@@ -50,13 +50,13 @@ public class TestTemplateViewElement extends AbstractViewElementTemplateTest
 	}
 
 	@Test
-	public void customAttributeSetThroughGlobalCallback() {
+	public void customModelAttributeSetThroughGlobalCallback() {
 		TemplateViewElement template = new TemplateViewElement( "th/test/elements/text :: customAttribute" );
 		renderAndExpect( template, "Custom attribute value: 123" );
 	}
 
 	@Test
-	public void customAttributeSetThroughSimpleCallback() {
+	public void customModelAttributeSetThroughSimpleCallback() {
 		TemplateViewElement template = new TemplateViewElement( "th/test/elements/text :: customAttribute" );
 
 		renderAndExpect( template,
@@ -65,5 +65,15 @@ public class TestTemplateViewElement extends AbstractViewElementTemplateTest
 				                 .setAttribute( "customAttribute", "hello!", RequestAttributes.SCOPE_REQUEST ),
 		                 "Custom attribute value: hello!" );
 		renderAndExpect( template, "Custom attribute value: 123" );
+	}
+
+	@Test
+	public void customComponentAttribute() {
+		TemplateViewElement template
+				= new TemplateViewElement( "th/test/elements/text :: componentAttributes(${component})" );
+		template.setAttribute( "title", "random number" );
+		template.setAttribute( "text", 1234 );
+
+		renderAndExpect( template, "random number: 1234" );
 	}
 }

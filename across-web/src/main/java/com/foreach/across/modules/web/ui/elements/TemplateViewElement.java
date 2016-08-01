@@ -17,6 +17,10 @@ package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.ViewElementSupport;
+import org.springframework.util.Assert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A {@link com.foreach.across.modules.web.ui.ViewElement} that simply renders as a custom template.
@@ -27,6 +31,8 @@ import com.foreach.across.modules.web.ui.ViewElementSupport;
 public class TemplateViewElement extends ViewElementSupport
 {
 	public static final String ELEMENT_TYPE = StandardViewElements.TEMPLATE;
+
+	private Map<String, Object> attributes = new HashMap<>();
 
 	public TemplateViewElement( String name, String customTemplate ) {
 		this( customTemplate );
@@ -45,5 +51,43 @@ public class TemplateViewElement extends ViewElementSupport
 	@Override
 	public void setElementType( String elementType ) {
 		super.setElementType( elementType );
+	}
+
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes( Map<String, Object> attributes ) {
+		Assert.notNull( attributes );
+		this.attributes = attributes;
+	}
+
+	public void setAttribute( String attributeName, Object attributeValue ) {
+		attributes.put( attributeName, attributeValue );
+	}
+
+	public void addAttributes( Map<String, Object> attributes ) {
+		this.attributes.putAll( attributes );
+	}
+
+	public void removeAttribute( String attributeName ) {
+		attributes.remove( attributeName );
+	}
+
+	public Object getAttribute( String attributeName ) {
+		return attributes.get( attributeName );
+	}
+
+	public <V> V getAttribute( String attributeName, Class<V> expectedType ) {
+		return returnIfType( attributes.get( attributeName ), expectedType );
+	}
+
+	public boolean hasAttribute( String attributeName ) {
+		return attributes.containsKey( attributeName );
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <V> V returnIfType( Object value, Class<V> elementType ) {
+		return elementType.isInstance( value ) ? (V) value : null;
 	}
 }
