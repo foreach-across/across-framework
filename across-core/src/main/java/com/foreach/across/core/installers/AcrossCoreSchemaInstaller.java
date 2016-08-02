@@ -73,7 +73,7 @@ public class AcrossCoreSchemaInstaller
 
 			liquibase.afterPropertiesSet();
 
-			updateInstalledVersion( installedVersion, EXPECTED_VERSION );
+			updateInstalledVersion( EXPECTED_VERSION );
 		}
 		else {
 			LOG.debug( "Core schema for Across already installed, version {}", EXPECTED_VERSION );
@@ -94,7 +94,10 @@ public class AcrossCoreSchemaInstaller
 		}
 	}
 
-	private void updateInstalledVersion( int previousVersion, int actualVersion ) {
+	private void updateInstalledVersion( int actualVersion ) {
+		// Fetch again in case of concurrent deploys
+		int previousVersion = getInstalledVersion();
+
 		if ( previousVersion != -1 ) {
 			jdbcTemplate.update(
 					applySchema( AcrossInstallerRepositoryImpl.SQL_UPDATE_VERSION ),
