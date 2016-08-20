@@ -15,12 +15,21 @@
  */
 package com.foreach.across.modules.web.ui;
 
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.resource.WebResourceUtils;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Base class for a {@link ViewElementBuilder} of a {@link MutableViewElement}.  Provides defaults functionality
+ * like configuring a custom templates or a set of post processors.
+ *
+ * @param <T>    resulting {@link ViewElement}
+ * @param <SELF> return type for builder methods
+ */
 public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SELF extends ViewElementBuilder<T>>
 		implements ViewElementBuilder<T>
 {
@@ -45,14 +54,35 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 		return (SELF) this;
 	}
 
+	/**
+	 * Build the view element with a default empty builder context.
+	 *
+	 * @return view element
+	 */
+	public final T build() {
+		return build( new ViewElementBuilderContextImpl() );
+	}
+
 	@Override
 	public final T build( ViewElementBuilderContext builderContext ) {
 		T element = createElement( builderContext );
+
+		WebResourceUtils.currentRegistry().ifPresent( this::registerWebResources );
 
 		return postProcess( builderContext, element );
 	}
 
 	protected abstract T createElement( ViewElementBuilderContext builderContext );
+
+	/**
+	 * Method to implement if web resources should be registered.  Will only be called
+	 * if there is a {@link WebResourceRegistry} present in the current (thread local) context.
+	 *
+	 * @param webResourceRegistry to add entries to
+	 */
+	protected void registerWebResources( WebResourceRegistry webResourceRegistry ) {
+
+	}
 
 	protected T apply( T viewElement, ViewElementBuilderContext builderContext ) {
 		if ( name != null ) {

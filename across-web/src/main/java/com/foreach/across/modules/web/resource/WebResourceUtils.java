@@ -22,11 +22,19 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
+/**
+ * Utilities for accessing the {@link WebResourceRegistry} and the  {@link WebAppPathResolver} when
+ * running in a web context.
+ *
+ * @author Arne Vandamme
+ * @since 1.0.0
+ */
 public class WebResourceUtils
 {
 	/**
-	 * Default key under which the registry is put in the request attributes
+	 * Attribute key under which the registry is put in the request attributes
 	 */
 	public static final String REGISTRY_ATTRIBUTE_KEY = "webResourceRegistry";
 
@@ -42,21 +50,23 @@ public class WebResourceUtils
 	/**
 	 * @return the {@link WebResourceRegistry} for the request bound to the current thread
 	 */
-	public static WebResourceRegistry currentRegistry() {
+	public static Optional<WebResourceRegistry> currentRegistry() {
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-		return requestAttributes != null ? getRegistry( requestAttributes ) : null;
+		return requestAttributes != null ? getRegistry( requestAttributes ) : Optional.empty();
 	}
 
-	public static WebResourceRegistry getRegistry( RequestAttributes request ) {
-		return (WebResourceRegistry) request.getAttribute( REGISTRY_ATTRIBUTE_KEY, WebRequest.SCOPE_REQUEST );
+	public static Optional<WebResourceRegistry> getRegistry( RequestAttributes request ) {
+		return Optional.ofNullable(
+				(WebResourceRegistry) request.getAttribute( REGISTRY_ATTRIBUTE_KEY, WebRequest.SCOPE_REQUEST )
+		);
 	}
 
-	public static WebResourceRegistry getRegistry( WebRequest request ) {
+	public static Optional<WebResourceRegistry> getRegistry( WebRequest request ) {
 		return getRegistry( (RequestAttributes) request );
 	}
 
-	public static WebResourceRegistry getRegistry( HttpServletRequest request ) {
-		return (WebResourceRegistry) request.getAttribute( REGISTRY_ATTRIBUTE_KEY );
+	public static Optional<WebResourceRegistry> getRegistry( HttpServletRequest request ) {
+		return Optional.ofNullable( (WebResourceRegistry) request.getAttribute( REGISTRY_ATTRIBUTE_KEY ) );
 	}
 
 	public static void storePathResolver( WebAppPathResolver pathResolver, HttpServletRequest request ) {

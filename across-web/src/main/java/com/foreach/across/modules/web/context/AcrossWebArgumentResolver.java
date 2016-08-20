@@ -27,6 +27,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.Optional;
+
 public class AcrossWebArgumentResolver implements HandlerMethodArgumentResolver
 {
 	@Autowired
@@ -48,6 +50,7 @@ public class AcrossWebArgumentResolver implements HandlerMethodArgumentResolver
 			                              (Class<? extends Menu>) parameter.getParameterType() );
 		}
 
-		return WebResourceUtils.getRegistry( webRequest );
+		Optional<WebResourceRegistry> webResourceRegistry = WebResourceUtils.getRegistry( webRequest );
+		return webResourceRegistry.isPresent() ? webResourceRegistry.get() : null;
 	}
 }

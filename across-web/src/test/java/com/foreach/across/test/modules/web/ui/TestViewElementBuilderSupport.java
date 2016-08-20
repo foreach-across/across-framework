@@ -15,11 +15,15 @@
  */
 package com.foreach.across.test.modules.web.ui;
 
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.resource.WebResourceUtils;
 import com.foreach.across.modules.web.ui.*;
 import org.junit.Test;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
@@ -32,6 +36,11 @@ public class TestViewElementBuilderSupport
 		@Override
 		protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
 			return mock( MutableViewElement.class );
+		}
+
+		@Override
+		protected void registerWebResources( WebResourceRegistry webResourceRegistry ) {
+			webResourceRegistry.add( "item", "value" );
 		}
 	}
 
@@ -76,5 +85,25 @@ public class TestViewElementBuilderSupport
 
 		verify( one ).postProcess( builderContext, element );
 		verify( two ).postProcess( builderContext, element );
+	}
+
+	@Test
+	public void webResourcesAreRegisteredIfRegistryPresent() {
+		WebResourceRegistry registry = mock( WebResourceRegistry.class );
+
+		RequestAttributes attributes = mock( RequestAttributes.class );
+		when( attributes.getAttribute( WebResourceUtils.REGISTRY_ATTRIBUTE_KEY, RequestAttributes.SCOPE_REQUEST ) )
+				.thenReturn( registry );
+		RequestContextHolder.setRequestAttributes( attributes );
+
+		try {
+			ViewElement element = new Builder().build();
+
+			assertNotNull( element );
+			verify( registry ).add( "item", "value" );
+		}
+		finally {
+			RequestContextHolder.resetRequestAttributes();
+		}
 	}
 }
