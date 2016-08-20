@@ -54,7 +54,7 @@ public class AcrossWebArgumentResolver implements HandlerMethodArgumentResolver
 
 		if ( Menu.class.isAssignableFrom( parameter.getParameterType() ) ) {
 			return menuFactory.buildMenu( parameter.getParameterName(),
-			                              Menu.class.asSubclass( parameter.getParameterType() ) );
+			                              parameter.getParameterType().asSubclass( Menu.class ) );
 		}
 
 		if ( ViewElementBuilderContext.class.isAssignableFrom( parameter.getParameterType() ) ) {
