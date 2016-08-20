@@ -54,15 +54,6 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 		return (SELF) this;
 	}
 
-	/**
-	 * Build the view element with a default empty builder context.
-	 *
-	 * @return view element
-	 */
-	public final T build() {
-		return build( new ViewElementBuilderContextImpl() );
-	}
-
 	@Override
 	public final T build( ViewElementBuilderContext builderContext ) {
 		T element = createElement( builderContext );

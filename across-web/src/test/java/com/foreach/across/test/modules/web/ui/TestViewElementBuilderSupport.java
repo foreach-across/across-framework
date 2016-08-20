@@ -46,7 +46,7 @@ public class TestViewElementBuilderSupport
 
 	@Test
 	public void postProcessorsAreExecuted() {
-		ViewElementBuilderContext builderContext = new ViewElementBuilderContextImpl();
+		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
 
@@ -58,7 +58,7 @@ public class TestViewElementBuilderSupport
 
 	@Test
 	public void defaultPostProcessorsAreExecuted() {
-		ViewElementBuilderContext builderContext = new ViewElementBuilderContextImpl();
+		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
 
@@ -72,7 +72,7 @@ public class TestViewElementBuilderSupport
 
 	@Test
 	public void manuallyRegisteringADefaultPostProcessor() {
-		ViewElementBuilderContext builderContext = new ViewElementBuilderContextImpl();
+		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
 
@@ -97,7 +97,7 @@ public class TestViewElementBuilderSupport
 		RequestContextHolder.setRequestAttributes( attributes );
 
 		try {
-			ViewElement element = new Builder().build();
+			ViewElement element = new Builder().build( new DefaultViewElementBuilderContext() );
 
 			assertNotNull( element );
 			verify( registry ).add( "item", "value" );

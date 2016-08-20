@@ -23,16 +23,18 @@ import org.springframework.util.Assert;
  * access to the item being generated and the possible iteration context.
  * <p>
  * This context optionally takes a parent context.  All attributes from the parent context will be inherited
- * and can be masked or replaced in the iterator context.
+ * and can be masked or replaced in the iterator context. This context does not automatically register
+ * default attributes (see {@link DefaultViewElementBuilderContext#registerMissingDefaultAttributes(ViewElementBuilderContext)}).
  *
  * @author Arne Vandamme
  */
-public class IteratorViewElementBuilderContext<ITEM> extends ViewElementBuilderContextImpl
+public class IteratorViewElementBuilderContext<ITEM> extends DefaultViewElementBuilderContext
 		implements ViewElementBuilderContext, IteratorItemStats<ITEM>
 {
 	private IteratorItemStats<ITEM> itemStats;
 
 	public IteratorViewElementBuilderContext( IteratorItemStats<ITEM> itemStats ) {
+		super( false );
 		Assert.notNull( itemStats );
 		this.itemStats = itemStats;
 	}

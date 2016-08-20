@@ -19,6 +19,7 @@ import com.foreach.across.core.support.AttributeOverridingSupport;
 import com.foreach.across.core.support.AttributeSupport;
 import com.foreach.across.core.support.ReadableAttributes;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.resource.WebResourceUtils;
 import org.springframework.ui.Model;
 
 import java.util.Map;
@@ -33,25 +34,37 @@ import java.util.Map;
  * original Model.  Changes to the model should propagate to the model (depending on the model implementation).</p>
  * <p>Custom implementations can override {@link #setParent(ReadableAttributes)} to allow the parent to be set
  * after construction.</p>
+ * <p>This implementation also registers some default attributes, like the {@link WebResourceRegistry},
+ * see {@link #registerMissingDefaultAttributes(ViewElementBuilderContext)}</p>.  See also
+ * {@link #DefaultViewElementBuilderContext(boolean)} for sub class implementations that do not want the default
+ * attributes set.
  *
  * @author Arne Vandamme
  * @see IteratorViewElementBuilderContext
  */
-public class ViewElementBuilderContextImpl extends AttributeOverridingSupport implements ViewElementBuilderContext
+public class DefaultViewElementBuilderContext extends AttributeOverridingSupport implements ViewElementBuilderContext
 {
-	public ViewElementBuilderContextImpl() {
+	public DefaultViewElementBuilderContext() {
+		this( true );
 	}
 
-	public ViewElementBuilderContextImpl( Model parent ) {
+	protected DefaultViewElementBuilderContext( boolean registerDefaultAttributes ) {
+		if ( registerDefaultAttributes ) {
+			registerMissingDefaultAttributes( this );
+		}
+	}
+
+	public DefaultViewElementBuilderContext( Model parent ) {
 		this( parent.asMap() );
 	}
 
-	public ViewElementBuilderContextImpl( Map<String, Object> parent ) {
+	public DefaultViewElementBuilderContext( Map<String, Object> parent ) {
 		this( new AttributesMapWrapper( parent ) );
 	}
 
-	public ViewElementBuilderContextImpl( ReadableAttributes parent ) {
+	public DefaultViewElementBuilderContext( ReadableAttributes parent ) {
 		setParent( parent );
+		registerMissingDefaultAttributes( this );
 	}
 
 	/**
@@ -76,6 +89,20 @@ public class ViewElementBuilderContextImpl extends AttributeOverridingSupport im
 	{
 		public AttributesMapWrapper( Map<String, Object> backingMap ) {
 			super( backingMap );
+		}
+	}
+
+	/**
+	 * Registers default attributes in the builder context if they are not yet present.  If they are present
+	 * - either directly or in the parent - they will be skipped.
+	 *
+	 * @param builderContext to add the attributes to
+	 */
+	public static void registerMissingDefaultAttributes( ViewElementBuilderContext builderContext ) {
+		if ( !builderContext.hasAttribute( WebResourceRegistry.class ) ) {
+			WebResourceUtils.currentRegistry().ifPresent(
+					r -> builderContext.setAttribute( WebResourceRegistry.class, r )
+			);
 		}
 	}
 }

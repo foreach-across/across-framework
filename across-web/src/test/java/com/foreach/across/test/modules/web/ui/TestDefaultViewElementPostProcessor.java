@@ -29,7 +29,7 @@ public class TestDefaultViewElementPostProcessor
 	@Test
 	public void noPostProcessorsRegistered() {
 		ViewElement element = mock( ViewElement.class );
-		ViewElementBuilderContext builderContext = new ViewElementBuilderContextImpl();
+		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 
 		DefaultViewElementPostProcessor.INSTANCE.postProcess( builderContext, element );
 	}
@@ -37,7 +37,7 @@ public class TestDefaultViewElementPostProcessor
 	@Test
 	public void singlePostProcessor() {
 		ViewElement element = mock( ViewElement.class );
-		ViewElementBuilderContext builderContext = new ViewElementBuilderContextImpl();
+		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
@@ -56,11 +56,11 @@ public class TestDefaultViewElementPostProcessor
 	public void postProcessorsAreAttachedToBuilderContext() {
 		ViewElement element = mock( ViewElement.class );
 
-		ViewElementBuilderContext builderContextOne = new ViewElementBuilderContextImpl();
+		ViewElementBuilderContext builderContextOne = new DefaultViewElementBuilderContext();
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		DefaultViewElementPostProcessor.add( builderContextOne, one );
 
-		ViewElementBuilderContext builderContextTwo = new ViewElementBuilderContextImpl();
+		ViewElementBuilderContext builderContextTwo = new DefaultViewElementBuilderContext();
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
 		DefaultViewElementPostProcessor.add( builderContextTwo, two );
 
@@ -77,7 +77,7 @@ public class TestDefaultViewElementPostProcessor
 	@Test
 	public void multiplePostProcessors() {
 		ViewElement element = mock( ViewElement.class );
-		ViewElementBuilderContext builderContext = new ViewElementBuilderContextImpl();
+		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
