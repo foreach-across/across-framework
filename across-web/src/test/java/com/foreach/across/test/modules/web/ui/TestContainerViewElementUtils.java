@@ -48,6 +48,15 @@ public class TestContainerViewElementUtils
 	}
 
 	@Test
+	public void containerWeSearchIsWhatWeLookingFor() {
+		container.setName( "name" );
+		TextViewElement text = new TextViewElement( "name", "text" );
+		container.addChild( text );
+
+		assertEquals( Optional.of( container ), find( container, "name" ) );
+	}
+
+	@Test
 	public void elementWithNameIsDirectChild() {
 		TextViewElement text = new TextViewElement( "name", "text" );
 		container.addChild( text );

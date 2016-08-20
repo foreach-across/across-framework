@@ -67,6 +67,10 @@ public final class ContainerViewElementUtils
 			return Optional.empty();
 		}
 
+		if ( StringUtils.equals( elementName, container.getName() ) && requiredType.isInstance( container ) ) {
+			return Optional.of( requiredType.cast( container ) );
+		}
+
 		for ( ViewElement element : container.getChildren() ) {
 			if ( StringUtils.equals( elementName, element.getName() ) && requiredType.isInstance( element ) ) {
 				return Optional.of( requiredType.cast( element ) );
