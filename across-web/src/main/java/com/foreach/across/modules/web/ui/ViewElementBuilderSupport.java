@@ -16,7 +16,6 @@
 package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
-import com.foreach.across.modules.web.resource.WebResourceUtils;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -58,7 +57,10 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 	public final T build( ViewElementBuilderContext builderContext ) {
 		T element = createElement( builderContext );
 
-		WebResourceUtils.currentRegistry().ifPresent( this::registerWebResources );
+		WebResourceRegistry webResourceRegistry = builderContext.getAttribute( WebResourceRegistry.class );
+		if ( webResourceRegistry != null ) {
+			registerWebResources( webResourceRegistry );
+		}
 
 		return postProcess( builderContext, element );
 	}

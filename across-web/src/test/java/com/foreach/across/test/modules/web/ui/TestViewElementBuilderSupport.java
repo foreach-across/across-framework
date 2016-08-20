@@ -16,11 +16,8 @@
 package com.foreach.across.test.modules.web.ui;
 
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
-import com.foreach.across.modules.web.resource.WebResourceUtils;
 import com.foreach.across.modules.web.ui.*;
 import org.junit.Test;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -90,20 +87,12 @@ public class TestViewElementBuilderSupport
 	@Test
 	public void webResourcesAreRegisteredIfRegistryPresent() {
 		WebResourceRegistry registry = mock( WebResourceRegistry.class );
+		ViewElementBuilderContext builderContext = mock( ViewElementBuilderContext.class );
+		when( builderContext.getAttribute( WebResourceRegistry.class ) ).thenReturn( registry );
 
-		RequestAttributes attributes = mock( RequestAttributes.class );
-		when( attributes.getAttribute( WebResourceUtils.REGISTRY_ATTRIBUTE_KEY, RequestAttributes.SCOPE_REQUEST ) )
-				.thenReturn( registry );
-		RequestContextHolder.setRequestAttributes( attributes );
+		ViewElement element = new Builder().build( builderContext );
 
-		try {
-			ViewElement element = new Builder().build( new DefaultViewElementBuilderContext() );
-
-			assertNotNull( element );
-			verify( registry ).add( "item", "value" );
-		}
-		finally {
-			RequestContextHolder.resetRequestAttributes();
-		}
+		assertNotNull( element );
+		verify( registry ).add( "item", "value" );
 	}
 }
