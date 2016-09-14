@@ -15,6 +15,7 @@
  */
 package com.foreach.across.core.development;
 
+import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.context.AcrossModuleEntity;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
@@ -26,6 +27,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -71,6 +73,8 @@ public class AcrossDevelopmentMode
 
 			Resource developmentProperties = applicationContext.getResource( propertiesResourceLocation );
 
+			registerDynamicModuleResourcesRelativeToWorkingDirectory();
+
 			if ( developmentProperties.exists() ) {
 				LOG.info( "Loading development properties from {}", developmentProperties );
 
@@ -87,6 +91,19 @@ public class AcrossDevelopmentMode
 			}
 
 			registerEnvironmentModuleResources();
+		}
+	}
+
+	private void registerDynamicModuleResourcesRelativeToWorkingDirectory() {
+		File basePath = Paths.get( "src/main/resources" ).toFile();
+		if ( basePath.exists() ) {
+			contextInfo
+					.getModules()
+					.forEach( module -> {
+						if ( module.getModule() instanceof DynamicAcrossModule ) {
+							moduleResourcePaths.put( module.getName(), basePath.getAbsolutePath() );
+						}
+					} );
 		}
 	}
 
