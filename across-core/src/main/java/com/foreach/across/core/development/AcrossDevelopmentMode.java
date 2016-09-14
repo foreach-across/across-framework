@@ -66,6 +66,8 @@ public class AcrossDevelopmentMode
 
 	@PostConstruct
 	private void loadProperties() {
+		LOG.info( "Across development mode active: {}", isActive() );
+
 		if ( isActive() ) {
 			String propertiesResourceLocation = environment.resolvePlaceholders(
 					environment.getProperty( PROPERTIES, "file:${user.home}/dev-configs/across-devel.properties" )
