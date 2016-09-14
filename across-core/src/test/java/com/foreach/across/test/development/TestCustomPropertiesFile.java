@@ -83,7 +83,7 @@ public class TestCustomPropertiesFile
 	{
 		@Override
 		public void configure( AcrossContext context ) {
-			context.setProperty( "across.development.properties", file.toString() );
+			context.setProperty( "across.development.properties", "file:" + file.toString() );
 			assertFalse( context.isDevelopmentMode() );
 			context.setDevelopmentMode( true );
 		}
