@@ -6,6 +6,8 @@
 * `@AcrossEventHandler` has been deprecated, all beans are now automatically scanned for `@Event` methods
 * the `AcrossEventPublisher` interface has some MBassador specific methods removed
 ** note that the backing implementation of the event bus might change in the future, applications should avoid using MBassdor specific features
+* development mode will register a default resources directory for dynamic modules
+** this will be an existing *src/main/resources* folder relative to the working directory of the running application
 
 === 1.1.3-SNAPSHOT
 Maintenance release containing several bugfixes.

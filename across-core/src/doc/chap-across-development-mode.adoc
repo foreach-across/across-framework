@@ -13,6 +13,12 @@ Apart from setting the *developmentMode* property on `AcrossContext`, developmen
 By default resources (eg. messages, templates) are resolved from the classpath.
 It is possible to configure a physical location for the resources of a module if development mode is active (eg on your local filesystem).
 
+_Default location_ +
+For simple Across based applications using `@AcrossApplication` it might be enough to simply activate development mode.
+If the working directory of the running application contains a *src/main/resources* directory, this directory would be used for all dynamic modules, unless a specific value is set.
+This would usually be the case for single maven module projects.
+
+_Specific module resource locations_ +
 The path can be configured by adding the right property to the application properties, or specifying them in the development mode properties.
 The development mode properties is a special properties file that by default will be looked for in *${user.home}/dev-configs/across-devel.properties*.
 
@@ -25,8 +31,16 @@ The development mode properties file should contain properties where the key ref
 [source,text,indent=0]
 [subs="verbatim,quotes,attributes"]
 ----
+# Absolute directory
 acrossModule.MyModule.resources=c:/code/mymodule/src/main/resources
 acrossModule.OtherModule.resources=c:/code/othermodule/src/main/resources
+
+# Relative to the working directory
+acrossModule.SomeModule.resources=some-module/src/main/resources
 ----
 
-NOTE: Properties added directly to the application properties will take precedence over those present in the development mode properties.
+NOTE: Using relative paths can be an effective way to embed development properties in a multi-module maven project.
+Paths should be relative to the working directory of the running application.
+Depending on how you run the application, the working directory can differ.
+
+WARNING: Properties added directly to the application properties will take precedence over those present in the development mode properties.
