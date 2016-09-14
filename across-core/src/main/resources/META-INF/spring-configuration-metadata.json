@@ -9,8 +9,8 @@
     {
       "name": "across.development.properties",
       "type": "java.lang.String",
-      "description": "The location of the development mode properties file.",
-      "defaultValue": "${user.home}/dev-configs/across-devel.properties"
+      "description": "The location of the development mode properties resource.",
+      "defaultValue": "file:${user.home}/dev-configs/across-devel.properties"
     }
   ]
 }
