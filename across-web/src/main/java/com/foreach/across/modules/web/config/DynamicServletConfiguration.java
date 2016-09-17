@@ -18,13 +18,16 @@ package com.foreach.across.modules.web.config;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.annotations.Event;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
 import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
+import com.foreach.across.modules.web.servlet.ServletContextInitializerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.ServletContext;
@@ -47,6 +50,11 @@ public class DynamicServletConfiguration
 
 	@Autowired
 	private ServletContext servletContext;
+
+	@Bean
+	public ServletContextInitializerConfigurer servletContextInitializerConfigurer( AcrossContextInfo contextInfo ) {
+		return new ServletContextInitializerConfigurer( contextInfo );
+	}
 
 	@Event
 	public void registerServletsAndFilters( AcrossContextBootstrappedEvent bootstrappedEvent ) {

@@ -73,4 +73,4 @@ If you want the default behavior of scanning only the _config_ child package, yo
 
 NOTE: If you want to manually add dynamic modules, please see the javadoc for `AcrossDynamicModulesConfigurer` and `AcrossDynamicModulesConfiguration`.
 
-TODO: old school web initializer for bootstrapping with support for dynamic servlets and filters
+TODO: old school web initializerBean for bootstrapping with support for dynamic servlets and filters

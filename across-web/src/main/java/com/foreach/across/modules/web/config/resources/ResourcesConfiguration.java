@@ -15,21 +15,21 @@
  */
 package com.foreach.across.modules.web.config.resources;
 
+import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
-import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -39,11 +39,8 @@ import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import java.io.File;
-import java.util.EnumSet;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -61,6 +58,8 @@ import java.util.Map;
 @Configuration
 public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 {
+	public static final String RESOURCE_URL_ENCODING_FILTER = "resourceUrlEncodingFilter";
+
 	private static final Logger LOG = LoggerFactory.getLogger( ResourcesConfiguration.class );
 
 	@Autowired
@@ -140,36 +139,20 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 		return new SimpleUrlHandlerMapping();
 	}
 
-	/**
-	 * Configures the {@link ResourceUrlEncodingFilter} of resource versioning if active.
-	 */
-	@Order(Ordered.LOWEST_PRECEDENCE)
-	@Configuration("resourceUrlEncodingFilterConfiguration")
+	@Bean
 	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
-	public static class ResourceUrlEncodingFilterConfiguration extends AcrossWebDynamicServletConfigurer
-	{
-		public static final String FILTER_NAME = "resourceUrlEncodingFilter";
+	@ConditionalOnConfigurableServletContext
+	public FilterRegistrationBean resourceUrlEncodingFilterRegistration() {
+		FilterRegistrationBean registration = new FilterRegistrationBean();
+		registration.setName( RESOURCE_URL_ENCODING_FILTER );
+		registration.setFilter( new ResourceUrlEncodingFilter() );
+		registration.setAsyncSupported( true );
+		registration.setMatchAfter( true );
+		registration.setUrlPatterns( Collections.singletonList( "/*" ) );
+		registration.setDispatcherTypes( DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.ASYNC );
+		registration.setOrder( Ordered.LOWEST_PRECEDENCE );
 
-		private static final Logger LOG = LoggerFactory.getLogger( ResourceUrlEncodingFilterConfiguration.class );
-
-		@Override
-		protected void dynamicConfigurationAllowed( ServletContext servletContext ) throws ServletException {
-			FilterRegistration.Dynamic resourceUrlEncodingFilter = servletContext.addFilter( FILTER_NAME,
-			                                                                                 new ResourceUrlEncodingFilter() );
-			resourceUrlEncodingFilter.setAsyncSupported( true );
-			resourceUrlEncodingFilter.addMappingForUrlPatterns( EnumSet.of(
-					                                                    DispatcherType.REQUEST,
-					                                                    DispatcherType.ERROR,
-					                                                    DispatcherType.ASYNC
-			                                                    ),
-			                                                    true,
-			                                                    "/*" );
-		}
-
-		@Override
-		protected void dynamicConfigurationDenied( ServletContext servletContext ) throws ServletException {
-			LOG.warn( "Unable to auto configure ResourceUrlEncodingFilter." );
-		}
+		return registration;
 	}
 
 	/**
