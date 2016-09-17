@@ -23,7 +23,7 @@ If a `MockAcrossServletContext` is available, all registered filters will be con
 
 |`MockAcrossServletContextInitializer`
 |`ApplicationContextInitializer` for use with `@ContextConfiguration` that ensures that `MockAcrossServletContext` is used instead of the default `MockServletContext`.
-Note that this initializerBean also requires that `@WebAppConfiguration` has been used on the test class.
+Note that this initializer also requires that `@WebAppConfiguration` has been used on the test class.
 
 |===
 

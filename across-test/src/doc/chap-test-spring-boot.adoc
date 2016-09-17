@@ -41,7 +41,7 @@ public class TestSpringBootWebIntegration
 === Integration test with MockMvc support
 It is also possible to start your entire `@AcrossApplication` without an embedded servlet container.
 However if you want to have support for `MockMvc` instantiated with dynamically registered filters, you must manually configure the application loader to use a `<<mock-across-servlet-context,MockAcrossServletContext>>`.
-This is done by adding the required configuration and initializerBean classes to the `@SpringApplicationConfiguration`.
+This is done by adding the required configuration and initializer classes to the `@SpringApplicationConfiguration`.
 See the <<appendix-test-configuration-classes,appendix section>> for an overview of all configuration classes available.
 
 .Example Spring Boot integration test with MockMvc

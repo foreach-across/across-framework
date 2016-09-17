@@ -30,7 +30,7 @@ import javax.servlet.ServletRegistration;
  * Initializes a single dispatcher servlet with a root Application context that is initialized upon creation.
  * This allows any modules in the root Application context to extend the ServletContext.
  * <p>
- * Servlet 3 environments only need to extend this initializerBean and configure the application context with
+ * Servlet 3 environments only need to extend this initializer and configure the application context with
  * one or more configuration classes or locations.  Any AcrossContext bootstrapped in the ApplicationContext
  * will be able to extend the ServletContext.</p>
  *
