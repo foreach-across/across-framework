@@ -50,7 +50,7 @@
 	<properties>
 		<across.version>2.0.0-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>2.0.7.RELEASE</spring.platform.version>
+		<spring.platform.version>Athens-RC1</spring.platform.version>
 		<foreach.common.version>1.0</foreach.common.version>
 		<querydsl.version>3.6.9</querydsl.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
@@ -61,6 +61,14 @@
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
 			<url>http://repository.foreach.be/nexus/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/libs-milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 
