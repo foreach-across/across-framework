@@ -203,7 +203,8 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 			);
 
 			if ( annotation != null ) {
-				return AnnotatedElementUtils.getAnnotationAttributes( method, RefreshableCollection.class.getName());
+				return AnnotatedElementUtils.getMergedAnnotationAttributes( method,
+				                                                            RefreshableCollection.class.getName() );
 			}
 		}
 
