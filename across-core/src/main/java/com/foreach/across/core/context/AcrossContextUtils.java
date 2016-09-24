@@ -82,8 +82,7 @@ public final class AcrossContextUtils
 
 					Map<String, Object> postRefreshBeans = ApplicationContextScanner.findSingletonsMatching(
 							moduleContext,
-							new AnnotatedMethodFilter(
-									PostRefresh.class ) );
+							new AnnotatedMethodFilter( PostRefresh.class ) );
 
 					for ( Object singleton : postRefreshBeans.values() ) {
 						Object bean = AcrossContextUtils.getProxyTarget( singleton );

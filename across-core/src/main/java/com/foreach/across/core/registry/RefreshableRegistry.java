@@ -77,11 +77,11 @@ public class RefreshableRegistry<T> implements Collection<T>
 	 */
 	@PostConstruct
 	@PostRefresh
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	public void refresh() {
 		if ( beanRegistry != null ) {
 			List<T> refreshed =
-					new ArrayList<>( (List<T>) beanRegistry.getBeansOfType( resolvableType, includeModuleInternals ) );
+					new ArrayList<>( beanRegistry.getBeansOfType( resolvableType, includeModuleInternals ) );
 
 			// Add fixed members at the end
 			for ( T fixed : fixedMembers ) {
