@@ -30,7 +30,7 @@ import java.util.List;
 @AcrossEventHandler
 public class ConstructedBeanModule1Impl extends TestModuleEventListener implements ConstructedBeanModule1
 {
-	private String text;
+	private String text, otherText;
 
 	@Autowired
 	private ScannedBeanModule1 scannedBeanModule1;
@@ -49,8 +49,14 @@ public class ConstructedBeanModule1Impl extends TestModuleEventListener implemen
 		return someInterfaces;
 	}
 
+	@Override
 	public String getText() {
 		return text;
+	}
+
+	@Override
+	public String getOtherText() {
+		return otherText;
 	}
 
 	public ScannedBeanModule1 getScannedBeanModule1() {
@@ -64,5 +70,10 @@ public class ConstructedBeanModule1Impl extends TestModuleEventListener implemen
 	@PostRefresh
 	private void refresh() {
 		text = "i have been refreshed";
+	}
+
+	@PostRefresh
+	public void otherRefresh() {
+		otherText = "i have also been refreshed";
 	}
 }

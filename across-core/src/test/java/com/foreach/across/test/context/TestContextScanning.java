@@ -27,12 +27,15 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.registry.IncrementalRefreshableRegistry;
 import com.foreach.across.core.registry.RefreshableRegistry;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.ResolvableType;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -40,9 +43,20 @@ import static org.junit.Assert.*;
 
 public class TestContextScanning
 {
+	private AcrossContext context;
+
+	@Before
+	public void setUp() {
+		context = new AcrossContext();
+	}
+
+	@After
+	public void tearDown() {
+		context.shutdown();
+	}
+
 	@Test
 	public void beansShouldBeReturnedInTheRegisteredOrderOfTheModules() {
-		AcrossContext context = new AcrossContext();
 		context.addModule( new ModuleOne() );
 		context.addModule( new ModuleTwo() );
 		context.addModule( new ModuleThree() );
@@ -68,13 +82,10 @@ public class TestContextScanning
 		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:testContextScanning.MyBeanConfig" ).getModule() );
 		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:testContextScanning.MyBeanConfig" ).getModule() );
 		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:testContextScanning.MyBeanConfig" ).getModule() );
-
-		context.shutdown();
 	}
 
 	@Test
 	public void internalGenericBeanResolving() {
-		AcrossContext context = new AcrossContext();
 		context.addModule( new ModuleOne() );
 		context.addModule( new ModuleTwo() );
 		context.addModule( new ModuleThree() );
@@ -128,7 +139,6 @@ public class TestContextScanning
 
 	@Test
 	public void refreshableCollectionTesting() {
-		AcrossContext context = new AcrossContext();
 		context.addModule( new ModuleOne() );
 		context.addModule( new ModuleTwo() );
 		context.bootstrap();
@@ -159,9 +169,49 @@ public class TestContextScanning
 	}
 
 	@Test
-	public void beansShouldBeReturnedInTheBootstrapOrderOfModules() {
-		AcrossContext context = new AcrossContext();
+	public void refreshableTesting() {
+		context.addModule( new ModuleOne() );
+		context.addModule( new ModuleTwo() );
+		context.bootstrap();
 
+		AcrossContextBeanRegistry registry = AcrossContextUtils.getBeanRegistry( context );
+		MyBeanConfig configOne = registry.getBeanOfTypeFromModule( "ModuleOne", MyBeanConfig.class );
+		BeanWithRefreshables one = registry.getBeanOfTypeFromModule( "ModuleOne", BeanWithRefreshables.class );
+		BeanWithRefreshables two = registry.getBeanOfTypeFromModule( "ModuleOne", BeanWithRefreshables.class );
+
+		assertNotNull( one );
+		assertNotNull( two );
+
+		assertNotNull( one.integerLists );
+		assertNotNull( one.otherIntegerLists );
+		assertNotNull( one.dateLists );
+		assertNotNull( one.otherDateLists );
+		assertNotSame( one.dateLists, one.otherDateLists );
+		assertNotSame( configOne.getIntegerLists(), one.integerLists );
+		assertNotSame( configOne.getDateLists(), one.dateLists );
+
+		Collection<GenericBean<Long, List<Integer>>> integerLists = one.integerLists;
+		assertNotNull( integerLists );
+		assertTrue( integerLists.getClass().equals( RefreshableRegistry.class ) );
+		assertEquals( 2, integerLists.size() );
+
+		Collection<GenericBean<Long, List<Integer>>> otherIntegerLists = one.otherIntegerLists;
+		assertNotNull( otherIntegerLists );
+		assertTrue( otherIntegerLists.getClass().equals( IncrementalRefreshableRegistry.class ) );
+		assertEquals( 2, otherIntegerLists.size() );
+
+		Collection<GenericBean<String, List<Date>>> dateLists = two.dateLists;
+		assertNotNull( dateLists );
+		assertTrue( dateLists.getClass().equals( RefreshableRegistry.class ) );
+		assertTrue( dateLists.isEmpty() );
+
+		Iterable<GenericBean<String, List<Date>>> otherDateLists = two.otherDateLists;
+		assertNotNull( otherDateLists );
+		assertTrue( otherDateLists.getClass().equals( IncrementalRefreshableRegistry.class ) );
+	}
+
+	@Test
+	public void beansShouldBeReturnedInTheBootstrapOrderOfModules() {
 		ModuleOne moduleOne = new ModuleOne();
 		moduleOne.addRuntimeDependency( "ModuleThree" );
 		context.addModule( moduleOne );
@@ -188,8 +238,6 @@ public class TestContextScanning
 		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:testContextScanning.MyBeanConfig" ).getModule() );
 		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:testContextScanning.MyBeanConfig" ).getModule() );
 		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:testContextScanning.MyBeanConfig" ).getModule() );
-
-		context.shutdown();
 	}
 
 	@Test
@@ -198,7 +246,7 @@ public class TestContextScanning
 		applicationContext.getBeanFactory().registerSingleton( "fixed-config", new MyFixedBeanConfig() );
 		applicationContext.refresh();
 
-		AcrossContext context = new AcrossContext( applicationContext );
+		context = new AcrossContext( applicationContext );
 
 		ModuleOne moduleOne = new ModuleOne();
 		moduleOne.addRuntimeDependency( "ModuleTwo" );
@@ -268,11 +316,11 @@ public class TestContextScanning
 			return module.getName();
 		}
 
-		public Collection<GenericBean<Long, List<Integer>>> getIntegerLists() {
+		Collection<GenericBean<Long, List<Integer>>> getIntegerLists() {
 			return integerLists;
 		}
 
-		public Collection<GenericBean<String, List<Date>>> getDateLists() {
+		Collection<GenericBean<String, List<Date>>> getDateLists() {
 			return dateLists;
 		}
 
@@ -300,6 +348,32 @@ public class TestContextScanning
 		}
 	}
 
+	@Component
+	static class BeanWithRefreshables
+	{
+		final Collection<GenericBean<Long, List<Integer>>> integerLists, otherIntegerLists;
+		Collection<GenericBean<String, List<Date>>> dateLists, otherDateLists;
+
+		@Autowired
+		public BeanWithRefreshables(
+				@RefreshableCollection(includeModuleInternals = true) Collection<GenericBean<Long, List<Integer>>> integerLists,
+				@RefreshableCollection(incremental = true, includeModuleInternals = true) Collection<GenericBean<Long, List<Integer>>> otherIntegerLists ) {
+			this.integerLists = integerLists;
+			this.otherIntegerLists = otherIntegerLists;
+		}
+
+		@Autowired
+		public void autowireDateLists( @RefreshableCollection Collection<GenericBean<String, List<Date>>> dateLists ) {
+			this.dateLists = dateLists;
+		}
+
+		@Autowired
+		@RefreshableCollection(incremental = true)
+		public void setOtherDateLists( Collection<GenericBean<String, List<Date>>> otherDateLists ) {
+			this.otherDateLists = otherDateLists;
+		}
+	}
+
 	static class MyFixedBeanConfig extends MyBeanConfig
 	{
 		@Override
@@ -322,7 +396,7 @@ public class TestContextScanning
 
 		@Override
 		protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-			contextConfigurers.add( new AnnotatedClassConfigurer( MyBeanConfig.class ) );
+			contextConfigurers.add( new AnnotatedClassConfigurer( MyBeanConfig.class, BeanWithRefreshables.class ) );
 		}
 	}
 

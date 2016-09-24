@@ -32,8 +32,10 @@ import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
@@ -146,45 +148,65 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		Class<?> type = descriptor.getDependencyType();
 
 		if ( Collection.class.isAssignableFrom( type ) && type.isInterface() ) {
-			AnnotatedElement annotatedElement =
-					descriptor.getField() != null ? descriptor.getField() : descriptor.getMethodParameter().getMethod();
+			Map<String, Object> attr = findRefreshableCollectionAttributes( descriptor );
 
-			if ( annotatedElement != null ) {
-				RefreshableCollection annotation = AnnotationUtils.getAnnotation( annotatedElement,
-				                                                                  RefreshableCollection.class );
-
-				if ( annotation != null ) {
-					ResolvableType resolvableType = descriptor.getResolvableType();
-
-					if ( resolvableType.hasGenerics() ) {
-						resolvableType = resolvableType.getNested( 2 );
-					}
-					else {
-						resolvableType = ResolvableType.forClass( Object.class );
-					}
-
-					RefreshableRegistry<?> registry;
-					if ( annotation.incremental() ) {
-						registry = new IncrementalRefreshableRegistry<>( resolvableType,
-						                                                 annotation.includeModuleInternals() );
-					}
-					else {
-						registry = new RefreshableRegistry<>( resolvableType, annotation.includeModuleInternals() );
-					}
-
-					String registryBeanName = RefreshableRegistry.class.getName() + "~" + UUID.randomUUID().toString();
-
-					autowireBean( registry );
-					initializeBean( registry, registryBeanName );
-					registerSingleton( registryBeanName, registry );
-
-					return registry;
+			if ( attr != null ) {
+				if ( !Collection.class.equals( type ) ) {
+					throw new IllegalArgumentException(
+							"@RefreshableCollection can only be used on the Collection interface" );
 				}
+
+				ResolvableType resolvableType = descriptor.getResolvableType();
+
+				if ( resolvableType.hasGenerics() ) {
+					resolvableType = resolvableType.getNested( 2 );
+				}
+				else {
+					resolvableType = ResolvableType.forClass( Object.class );
+				}
+
+				RefreshableRegistry<?> registry;
+				boolean includeModuleInternals = Boolean.TRUE.equals( attr.get( "includeModuleInternals" ) );
+				if ( Boolean.TRUE.equals( attr.get( "incremental" ) ) ) {
+					registry = new IncrementalRefreshableRegistry<>( resolvableType, includeModuleInternals );
+				}
+				else {
+					registry = new RefreshableRegistry<>( resolvableType, includeModuleInternals );
+				}
+
+				String registryBeanName = RefreshableRegistry.class.getName() + "~" + UUID.randomUUID().toString();
+
+				autowireBean( registry );
+				initializeBean( registry, registryBeanName );
+				registerSingleton( registryBeanName, registry );
+
+				return registry;
 			}
 
 		}
 
 		return super.doResolveDependency( descriptor, beanName, autowiredBeanNames, typeConverter );
+	}
+
+	private Map<String, Object> findRefreshableCollectionAttributes( DependencyDescriptor dependencyDescriptor ) {
+		for ( Annotation candidate : dependencyDescriptor.getAnnotations() ) {
+			if ( RefreshableCollection.class.isInstance( candidate ) ) {
+				return AnnotationUtils.getAnnotationAttributes( candidate );
+			}
+		}
+
+		if ( dependencyDescriptor.getMethodParameter() != null ) {
+			AnnotatedElement method = dependencyDescriptor.getMethodParameter().getMethod();
+			Annotation annotation = AnnotationUtils.findAnnotation(
+					dependencyDescriptor.getMethodParameter().getMethod(), RefreshableCollection.class
+			);
+
+			if ( annotation != null ) {
+				return AnnotatedElementUtils.getAnnotationAttributes( method, RefreshableCollection.class.getName());
+			}
+		}
+
+		return null;
 	}
 
 	@Override
