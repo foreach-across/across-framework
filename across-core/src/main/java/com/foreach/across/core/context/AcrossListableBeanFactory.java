@@ -36,7 +36,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -197,10 +197,10 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		}
 
 		if ( dependencyDescriptor.getMethodParameter() != null ) {
-			AnnotatedElement method = dependencyDescriptor.getMethodParameter().getMethod();
+			Method method = dependencyDescriptor.getMethodParameter().getMethod();
 			if ( method != null ) {
 				Annotation annotation = AnnotationUtils.findAnnotation(
-						dependencyDescriptor.getMethodParameter().getMethod(), RefreshableCollection.class
+						method, RefreshableCollection.class
 				);
 
 				if ( annotation != null ) {

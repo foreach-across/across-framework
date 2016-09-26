@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -178,9 +179,13 @@ public class TestContextScanning
 		MyBeanConfig configOne = registry.getBeanOfTypeFromModule( "ModuleOne", MyBeanConfig.class );
 		BeanWithRefreshables one = registry.getBeanOfTypeFromModule( "ModuleOne", BeanWithRefreshables.class );
 		BeanWithRefreshables two = registry.getBeanOfTypeFromModule( "ModuleOne", BeanWithRefreshables.class );
+		BeanWithNormalAutowiredConstructor beanWithOneConstructor = registry.getBeanOfTypeFromModule( "ModuleOne",
+		                                                                                              BeanWithNormalAutowiredConstructor.class );
 
 		assertNotNull( one );
 		assertNotNull( two );
+		assertNotNull( beanWithOneConstructor );
+		assertNotNull( beanWithOneConstructor.getConversionServiceSet() );
 
 		assertNotNull( one.integerLists );
 		assertNotNull( one.otherIntegerLists );
@@ -349,6 +354,21 @@ public class TestContextScanning
 	}
 
 	@Component
+	public static class BeanWithNormalAutowiredConstructor
+	{
+		private Set<ConversionService> conversionServiceSet;
+
+		@Autowired
+		public BeanWithNormalAutowiredConstructor( Set<ConversionService> conversionServiceSet ) {
+			this.conversionServiceSet = conversionServiceSet;
+		}
+
+		public Set<ConversionService> getConversionServiceSet() {
+			return conversionServiceSet;
+		}
+	}
+
+	@Component
 	static class BeanWithRefreshables
 	{
 		final Collection<GenericBean<Long, List<Integer>>> integerLists, otherIntegerLists;
@@ -396,7 +416,8 @@ public class TestContextScanning
 
 		@Override
 		protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-			contextConfigurers.add( new AnnotatedClassConfigurer( MyBeanConfig.class, BeanWithRefreshables.class ) );
+			contextConfigurers.add( new AnnotatedClassConfigurer( MyBeanConfig.class, BeanWithRefreshables.class,
+			                                                      BeanWithNormalAutowiredConstructor.class ) );
 		}
 	}
 
