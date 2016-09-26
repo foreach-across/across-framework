@@ -44,6 +44,7 @@ import java.util.*;
  * with support for Exposed beans.  This implementation also allows the parent bean factory to be updated.
  * <p>
  * Exposed beans are fetched from the module context but are not managed by the bean factory.
+ * </p>
  */
 public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 {
@@ -197,12 +198,15 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 
 		if ( dependencyDescriptor.getMethodParameter() != null ) {
 			AnnotatedElement method = dependencyDescriptor.getMethodParameter().getMethod();
-			Annotation annotation = AnnotationUtils.findAnnotation(
-					dependencyDescriptor.getMethodParameter().getMethod(), RefreshableCollection.class
-			);
+			if ( method != null ) {
+				Annotation annotation = AnnotationUtils.findAnnotation(
+						dependencyDescriptor.getMethodParameter().getMethod(), RefreshableCollection.class
+				);
 
-			if ( annotation != null ) {
-				return AnnotatedElementUtils.getAnnotationAttributes( method, RefreshableCollection.class.getName());
+				if ( annotation != null ) {
+					return AnnotatedElementUtils.getAnnotationAttributes( method,
+					                                                      RefreshableCollection.class.getName() );
+				}
 			}
 		}
 
