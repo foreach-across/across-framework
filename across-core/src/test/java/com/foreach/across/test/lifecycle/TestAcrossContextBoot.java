@@ -122,6 +122,7 @@ public class TestAcrossContextBoot
 		assertNotNull( constructedBeanModule1 );
 		// Only post refresh has been called on the non-refreshable bean
 		assertEquals( "i have been refreshed", constructedBeanModule1.getText() );
+		assertEquals( "i have also been refreshed", constructedBeanModule1.getOtherText() );
 		assertSame( scannedBeanModule1, constructedBeanModule1.getScannedBeanModule1() );
 		assertEquals( 1, constructedBeanModule1.getSomeInterfaces().size() );
 		assertNull( constructedBeanModule1.getScannedBeanModule2() );
@@ -129,6 +130,7 @@ public class TestAcrossContextBoot
 		// The refreshable constructed bean in module 1 does hold all references
 		assertNotNull( refreshedBeanModule1 );
 		assertEquals( "i have been refreshed", refreshedBeanModule1.getText() );
+		assertEquals( "i have also been refreshed", refreshedBeanModule1.getOtherText() );
 		assertSame( scannedBeanModule1, refreshedBeanModule1.getScannedBeanModule1() );
 		assertSame( scannedBeanModule2, refreshedBeanModule1.getScannedBeanModule2() );
 		assertEquals( 2, refreshedBeanModule1.getSomeInterfaces().size() );

@@ -19,6 +19,7 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.config.CharacterEncodingConfiguration;
 import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
+import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.servlet.AcrossMultipartFilter;
 import org.junit.Test;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 
-import static com.foreach.across.modules.web.config.resources.ResourcesConfiguration.ResourceUrlEncodingFilterConfiguration;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.Assert.*;
 
@@ -49,7 +49,7 @@ public class TestAcrossWebModuleBootstrap
 					servletContext.getFilterRegistration( CharacterEncodingConfiguration.FILTER_NAME )
 			);
 			assertResourceUrlEncodingFilter(
-					servletContext.getFilterRegistration( ResourceUrlEncodingFilterConfiguration.FILTER_NAME )
+					servletContext.getFilterRegistration( ResourcesConfiguration.RESOURCE_URL_ENCODING_FILTER )
 			);
 			assertMultipartResolverFilter(
 					servletContext.getFilterRegistration( MultipartResolverConfiguration.FILTER_NAME )
@@ -57,7 +57,7 @@ public class TestAcrossWebModuleBootstrap
 
 			// Resource url encoding must be last
 			assertEquals(
-					ResourceUrlEncodingFilterConfiguration.FILTER_NAME,
+					ResourcesConfiguration.RESOURCE_URL_ENCODING_FILTER,
 					new ArrayList<>( servletContext.getFilterRegistrations().keySet() ).get( 2 )
 			);
 		}
@@ -143,7 +143,7 @@ public class TestAcrossWebModuleBootstrap
 		assertTrue( servletContext.isInitialized() );
 
 		assertNull( servletContext.getFilterRegistration( CharacterEncodingConfiguration.FILTER_NAME ) );
-		assertNull( servletContext.getFilterRegistration( ResourceUrlEncodingFilterConfiguration.FILTER_NAME ) );
+		assertNull( servletContext.getFilterRegistration( ResourcesConfiguration.RESOURCE_URL_ENCODING_FILTER ) );
 		assertNull( servletContext.getFilterRegistration( MultipartResolverConfiguration.FILTER_NAME ) );
 	}
 }

@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.foreach.across.condition;
 
-package com.foreach.across.test.modules.module1;
+import org.springframework.context.annotation.Conditional;
 
-import com.foreach.across.test.modules.TestEvent;
-import com.foreach.across.test.modules.module2.ScannedBeanModule2;
+import java.lang.annotation.*;
 
-import java.util.List;
-
-public interface ConstructedBeanModule1
+/**
+ * {@link Conditional} that only matches when the application context is not a web application, or
+ * the {@link javax.servlet.ServletContext} is already fully initialized.
+ *
+ * @author Arne Vandamme
+ * @since 2.0.0
+ */
+@Target({ ElementType.TYPE, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Conditional(OnConfigurableServletContext.class)
+public @interface ConditionalOnNotConfigurableServletContext
 {
-	List<SomeInterface> getSomeInterfaces();
-
-	String getText();
-
-	String getOtherText();
-
-	ScannedBeanModule1 getScannedBeanModule1();
-
-	ScannedBeanModule2 getScannedBeanModule2();
-
-	List<TestEvent> getEventsReceived();
 }

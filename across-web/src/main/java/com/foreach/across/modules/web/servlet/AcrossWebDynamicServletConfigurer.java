@@ -23,9 +23,13 @@ import javax.servlet.ServletException;
  * Base configurer class that can be used to dynamically extend a ServletContext.
  * Works by checking if the {@link com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer}
  * was used to bootstrap the context.
+ * <p/>
+ * Since {@code 2.0.0} the use of {@link org.springframework.boot.context.embedded.ServletContextInitializer}
+ * beans directly inside modules is also supported.
  *
  * @author Arne Vandamme
  * @see com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer
+ * @see org.springframework.boot.context.embedded.ServletContextInitializer
  */
 public abstract class AcrossWebDynamicServletConfigurer
 {

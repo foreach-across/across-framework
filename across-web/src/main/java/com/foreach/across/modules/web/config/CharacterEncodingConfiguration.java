@@ -15,12 +15,11 @@
  */
 package com.foreach.across.modules.web.config;
 
-import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
@@ -28,10 +27,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import java.util.EnumSet;
+import java.util.Collections;
 
 /**
  * Registers a default {@link org.springframework.web.filter.CharacterEncodingFilter} as the very first
@@ -47,29 +43,22 @@ import java.util.EnumSet;
 @Configuration
 @Import(HttpEncodingAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "spring.http.encoding", value = "enabled", matchIfMissing = true)
-public class CharacterEncodingConfiguration extends AcrossWebDynamicServletConfigurer
+public class CharacterEncodingConfiguration
 {
 	public static final String FILTER_NAME = "characterEncodingFilter";
 
-	private static final Logger LOG = LoggerFactory.getLogger( CharacterEncodingConfiguration.class );
-
-	@Autowired
-	private CharacterEncodingFilter characterEncodingFilter;
-
-	@Override
-	protected void dynamicConfigurationAllowed( ServletContext servletContext ) throws ServletException {
-		FilterRegistration.Dynamic registration
-				= servletContext.addFilter( FILTER_NAME, characterEncodingFilter );
+	@Bean
+	@ConditionalOnConfigurableServletContext
+	public FilterRegistrationBean characterEncodingFilterRegistration( CharacterEncodingFilter characterEncodingFilter ) {
+		FilterRegistrationBean registration = new FilterRegistrationBean();
+		registration.setName( FILTER_NAME );
+		registration.setFilter( characterEncodingFilter );
 		registration.setAsyncSupported( true );
-		registration.addMappingForUrlPatterns(
-				EnumSet.of( DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR ),
-				false,
-				"/*"
-		);
-	}
+		registration.setMatchAfter( false );
+		registration.setUrlPatterns( Collections.singletonList( "/*" ) );
+		registration.setDispatcherTypes( DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.ASYNC );
+		registration.setOrder( Ordered.HIGHEST_PRECEDENCE );
 
-	@Override
-	protected void dynamicConfigurationDenied( ServletContext servletContext ) throws ServletException {
-		LOG.warn( "Unable to auto register the character encoding filter." );
+		return registration;
 	}
 }

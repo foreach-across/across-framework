@@ -6,6 +6,13 @@
 * `@AcrossEventHandler` has been deprecated, all beans are now automatically scanned for `@Event` methods
 * the `AcrossEventPublisher` interface has some MBassador specific methods removed
 ** note that the backing implementation of the event bus might change in the future, applications should avoid using MBassdor specific features
+* development mode will register a default resources directory for dynamic modules
+** this will be an existing *src/main/resources* folder relative to the working directory of the running application
+
+*AcrossWebModule*
+
+* `ServletContextInitializer` beans in modules are now supported directly for customizing the `ServletContext`
+** `@ConditionalOnConfigurableServletContext` and `@ConditionalOnNotConfigurableServletContext` added to determine if `ServletContext` can still be customized
 
 === 1.1.3-SNAPSHOT
 Maintenance release containing several bugfixes.
@@ -33,7 +40,7 @@ A lot of improvements have been done to reduce the amount of boilerplate code ne
 ** `AcrossLiquibaseInstaller` detects the most appropriate `SchemaConfiguration` to use and modifies default schema accordingly
 * development mode can be set through the property *across.development.active* and is active by default if a Spring profile called *dev* is active
 
-*Across Web*
+*AcrossWebModule*
 
 * <<across-application,@AcrossApplication>> can be used with `SpringApplication` to bootstrap an Across context with dynamic modules and support for embedded servlet containers
 * async configuration can now correctly be set through `WebMvcConfigurer#configureAsyncSupport(AsyncSupportConfigurer)`

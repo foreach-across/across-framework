@@ -27,7 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 /**
- * Initializes a single dispatchers servlet with a root Application context that is initialized upon creation.
+ * Initializes a single dispatcher servlet with a root Application context that is initialized upon creation.
  * This allows any modules in the root Application context to extend the ServletContext.
  * <p>
  * Servlet 3 environments only need to extend this initializer and configure the application context with

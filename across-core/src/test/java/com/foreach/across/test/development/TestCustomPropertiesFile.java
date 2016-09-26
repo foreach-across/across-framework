@@ -18,7 +18,7 @@ package com.foreach.across.test.development;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import org.junit.AfterClass;
@@ -32,12 +32,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.FileSystemUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Marc Vanbrabant
@@ -47,20 +49,31 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestCustomPropertiesFile.Config.class)
 public class TestCustomPropertiesFile
 {
-	@Autowired
-	private AcrossContextBeanRegistry beanRegistry;
+	private static final String MODULE_ONE = "one";
+	private static final String MODULE_TWO = "two";
 
 	private static Path file;
 	private static Path temporaryDirectory;
+
+	private AcrossDevelopmentMode developmentMode;
+
+	@Autowired
+	public void retrieveDevelopmentMode( AcrossContextBeanRegistry beanRegistry ) {
+		developmentMode = beanRegistry.getBeanOfType( AcrossDevelopmentMode.class );
+	}
 
 	@BeforeClass
 	public static void setup() throws IOException {
 		file = Files.createTempFile( "across-development", ".properties" );
 		temporaryDirectory = Files.createTempDirectory( "test-across-development" );
-		Files.createDirectory( Paths.get( temporaryDirectory.toString(), TestModule.NAME ) );
-		Files.write( file, ( "acrossModule.TestModule.resources=" + temporaryDirectory.toString().replaceAll( "\\\\",
-		                                                                                                      "/" ) )
-				.getBytes() );
+		Files.createDirectory( temporaryDirectory.resolve( MODULE_TWO ) );
+
+		String propertyValue = temporaryDirectory.toString().replaceAll( "\\\\", "/" );
+		Files.write(
+				file,
+				( "acrossModule.one.resources=" + propertyValue + "\n" +
+						"acrossModule.two.resources=" + propertyValue ).getBytes()
+		);
 	}
 
 	@AfterClass
@@ -70,33 +83,33 @@ public class TestCustomPropertiesFile
 	}
 
 	@Test
-	public void developmentLocationsAreLoaded() {
-		AcrossDevelopmentMode acrossDevelopmentMode = beanRegistry.getBeanOfType( AcrossDevelopmentMode.class );
-		assertTrue( acrossDevelopmentMode.isActive() );
-		assertEquals( 1, acrossDevelopmentMode.getDevelopmentLocations( "/" ).size() );
-		assertEquals( 1, acrossDevelopmentMode.getDevelopmentLocationsForResourcePath( "." ).size() );
+	public void developmentModeShouldBeActive() {
+		assertTrue( developmentMode.isActive() );
+	}
+
+	@Test
+	public void locationsAreLoadedAccordingToPrecedence() {
+		Map<String, String> locations = developmentMode.getDevelopmentLocations( "." );
+		// development properties file
+		assertEquals( temporaryDirectory.resolve( "." ).toFile(), new File( locations.get( MODULE_ONE ) ) );
+		// direct property
+		assertEquals(
+				temporaryDirectory.resolve( MODULE_TWO ).resolve( "." ).toFile(),
+				new File( locations.get( MODULE_TWO ) )
+		);
 	}
 
 	@Configuration
-	@EnableAcrossContext(TestModule.NAME)
+	@EnableAcrossContext
 	static class Config implements AcrossContextConfigurer
 	{
 		@Override
 		public void configure( AcrossContext context ) {
-			context.setProperty( "across.development.properties", file.toString() );
-			assertFalse( context.isDevelopmentMode() );
+			context.setProperty( "across.development.properties", "file:" + file.toString() );
+			context.setProperty( "acrossModule.two.resources", temporaryDirectory.resolve( MODULE_TWO ).toString() );
 			context.setDevelopmentMode( true );
-		}
-	}
-
-	public static final class TestModule extends AcrossModule
-	{
-
-		public static final String NAME = "TestModule";
-
-		@Override
-		public String getName() {
-			return NAME;
+			context.addModule( new EmptyAcrossModule( MODULE_ONE ) );
+			context.addModule( new EmptyAcrossModule( MODULE_TWO ) );
 		}
 	}
 }
