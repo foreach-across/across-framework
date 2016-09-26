@@ -198,13 +198,15 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 
 		if ( dependencyDescriptor.getMethodParameter() != null ) {
 			AnnotatedElement method = dependencyDescriptor.getMethodParameter().getMethod();
-			Annotation annotation = AnnotationUtils.findAnnotation(
-					dependencyDescriptor.getMethodParameter().getMethod(), RefreshableCollection.class
-			);
+			if ( method != null ) {
+				Annotation annotation = AnnotationUtils.findAnnotation(
+						dependencyDescriptor.getMethodParameter().getMethod(), RefreshableCollection.class
+				);
 
-			if ( annotation != null ) {
-				return AnnotatedElementUtils.getMergedAnnotationAttributes( method,
-				                                                            RefreshableCollection.class.getName() );
+				if ( annotation != null ) {
+					return AnnotatedElementUtils.getMergedAnnotationAttributes( method,
+					                                                            RefreshableCollection.class.getName() );
+				}
 			}
 		}
 
