@@ -40,15 +40,12 @@ import org.thymeleaf.standard.fragment.StandardFragmentProcessor;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.Writer;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -60,7 +57,7 @@ import java.util.Map;
  * @author Arne Vandamme
  * @see org.thymeleaf.spring4.view.ThymeleafView
  */
-@SuppressWarnings( "all" )
+@SuppressWarnings("all")
 public class ThymeleafTag extends BodyTagSupport
 {
 	private String template;
@@ -174,43 +171,22 @@ public class ThymeleafTag extends BodyTagSupport
 			ServletContext servletContext = pageContext.getServletContext();
 			ApplicationContext applicationContext = RequestContextUtils.getWebApplicationContext( request );
 
-			Map<String, Object> mergedModel = new HashMap<String, Object>( 30 );
-			Map<String, Object> templateStaticVariables = Collections.emptyMap();
-			if ( templateStaticVariables != null ) {
-				mergedModel.putAll( templateStaticVariables );
-			}
-			String pathVariablesSelector = null;
-			if ( pathVariablesSelector != null ) {
-				@SuppressWarnings("unchecked")
-				final Map<String, Object> pathVars = (Map<String, Object>) request.getAttribute(
-						pathVariablesSelector );
-				if ( pathVars != null ) {
-					mergedModel.putAll( pathVars );
-				}
-			}
-			if ( model != null ) {
-				mergedModel.putAll( model );
-			}
-
 			final RequestContext requestContext =
-					new RequestContext( request, response, servletContext, mergedModel );
+					new RequestContext( request, response, servletContext, null );
 
 			// For compatibility with ThymeleafView
-			addRequestContextAsVariable( mergedModel, SpringContextVariableNames.SPRING_REQUEST_CONTEXT,
-			                             requestContext );
-			// For compatibility with AbstractTemplateView
-			addRequestContextAsVariable( mergedModel, AbstractTemplateView.SPRING_MACRO_REQUEST_CONTEXT_ATTRIBUTE,
-			                             requestContext );
+			request.setAttribute( SpringContextVariableNames.SPRING_REQUEST_CONTEXT, requestContext );
+			request.setAttribute( AbstractTemplateView.SPRING_MACRO_REQUEST_CONTEXT_ATTRIBUTE, requestContext );
 
 			// Expose Thymeleaf's own evaluation context as a model variable
 			final ConversionService conversionService =
 					(ConversionService) request.getAttribute( ConversionService.class.getName() ); // might be null!
 			final ThymeleafEvaluationContext evaluationContext =
 					new ThymeleafEvaluationContext( applicationContext, conversionService );
-			mergedModel.put( ThymeleafEvaluationContext.THYMELEAF_EVALUATION_CONTEXT_CONTEXT_VARIABLE_NAME,
-			                 evaluationContext );
+			request.setAttribute( ThymeleafEvaluationContext.THYMELEAF_EVALUATION_CONTEXT_CONTEXT_VARIABLE_NAME,
+			                      evaluationContext );
 
-			context = new SpringWebContext( request, response, servletContext, locale, mergedModel,
+			context = new SpringWebContext( request, response, servletContext, locale, null,
 			                                applicationContext );
 
 			request.setAttribute( SpringWebContext.class.getName(), context );
@@ -232,17 +208,5 @@ public class ThymeleafTag extends BodyTagSupport
 				"StandardDialect dialect has not been found. In order to use AjaxThymeleafView, you should configure " +
 						"the " + SpringStandardDialect.class.getName() + " dialect at your Template Engine" );
 
-	}
-
-	protected static void addRequestContextAsVariable(
-			final Map<String, Object> model, final String variableName, final RequestContext requestContext )
-			throws ServletException {
-
-		if ( model.containsKey( variableName ) ) {
-			throw new ServletException(
-					"Cannot expose request context in model attribute '" + variableName +
-							"' because of an existing model object of the same name" );
-		}
-		model.put( variableName, requestContext );
 	}
 }
