@@ -1,6 +1,6 @@
 == Static resources
 {module-name} automatically enables serving of static resources bundled with modules.
-With the default settings static resources will be configured with <<resource-url-versionng,versioned urls>> and <<client-side-caching,client-side caching>>.
+With the default settings static resources will be configured with <<resource-url-versioning,versioned urls>> and <<client-side-caching,client-side caching>>.
 
 === Conventions
 The default resources are served from the */views* folder on the classpath.
