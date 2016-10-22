@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import org.thymeleaf.templateresolver.TemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -74,7 +74,7 @@ public class ThymeleafViewSupportConfiguration
 		engine.addTemplateResolver( templateResolver() );
 
 		if ( developmentMode.isActive() ) {
-			for ( TemplateResolver resolver : developmentResolvers() ) {
+			for ( ITemplateResolver resolver : developmentResolvers() ) {
 				engine.addTemplateResolver( resolver );
 			}
 		}
@@ -114,8 +114,8 @@ public class ThymeleafViewSupportConfiguration
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<TemplateResolver> developmentResolvers() {
-		Collection<TemplateResolver> resolvers = new LinkedList<TemplateResolver>();
+	private Collection<ITemplateResolver> developmentResolvers() {
+		Collection<ITemplateResolver> resolvers = new LinkedList<>();
 
 		if ( developmentMode.isActive() ) {
 			Map<String, String> developmentViews = developmentMode.getDevelopmentLocations( "views" );
@@ -128,7 +128,7 @@ public class ThymeleafViewSupportConfiguration
 				LOG.info( "Registering development Thymeleaf lookup for {} with physical path {}", views.getKey(),
 				          views.getValue() );
 
-				TemplateResolver resolver = new SpringResourceTemplateResolver();
+				SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 				resolver.setOrder( 19 );
 				resolver.setCharacterEncoding( "UTF-8" );
 				resolver.setTemplateMode( "HTML5" );
@@ -150,8 +150,8 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
-	public TemplateResolver templateResolver() {
-		TemplateResolver resolver = new SpringResourceTemplateResolver();
+	public ITemplateResolver templateResolver() {
+		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setCharacterEncoding( "UTF-8" );
 		resolver.setTemplateMode( "HTML5" );
 		resolver.setCacheable( true );
