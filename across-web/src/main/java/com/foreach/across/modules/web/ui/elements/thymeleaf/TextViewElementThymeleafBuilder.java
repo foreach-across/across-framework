@@ -20,24 +20,25 @@ import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.dom.Text;
+import org.thymeleaf.model.IModel;
+import org.thymeleaf.model.IModelFactory;
 import org.unbescape.html.HtmlEscape;
-
-import java.util.Collections;
-import java.util.List;
 
 public class TextViewElementThymeleafBuilder implements ViewElementThymeleafBuilder<TextViewElement>
 {
 	@Override
-	public List<Node> buildNodes( TextViewElement viewElement,
-	                              ITemplateContext context,
-	                              ViewElementNodeFactory componentElementProcessor ) {
+	public IModel buildNodes( TextViewElement viewElement,
+	                          ITemplateContext context,
+	                          ViewElementNodeFactory componentElementProcessor ) {
 		String content = StringUtils.defaultString( viewElement.getText() );
 		String html = viewElement.isEscapeXml() ? HtmlEscape.escapeHtml4Xml( content ) : content;
 
-		Text text = new Text( html, null, null, true );
+		IModelFactory modelFactory = context.getModelFactory();
 
-		return Collections.singletonList( text );
+		IModel model = modelFactory.createModel();
+		model.add( modelFactory.createText( html ) );
+		//Text text = new Text( html, null, null, true );
+
+		return model;
 	}
 }

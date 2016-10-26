@@ -15,26 +15,24 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.ClassUtils;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.exceptions.TemplateProcessingException;
+import org.thymeleaf.context.WebEngineContext;
+import org.thymeleaf.model.IModel;
+import org.thymeleaf.model.IModelFactory;
 import org.thymeleaf.model.IProcessableElementTag;
 import org.thymeleaf.processor.element.AbstractElementTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
@@ -49,19 +47,26 @@ public class ViewElementElementProcessor
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	public ViewElementElementProcessor() {
-		super( TemplateMode.RAW, ELEMENT_NAME, 1000 );
+		super(
+				TemplateMode.HTML, // This processor will apply only to HTML mode
+				AcrossWebDialect.PREFIX,     // Prefix to be applied to name for matching
+				ELEMENT_NAME,          // Tag name: match specifically this tag
+				true,              // Apply dialect prefix to tag name
+				null,              // No attribute name: will match by tag name
+				false,             // No prefix to be applied to attribute name
+				10000 );       // Precedence (inside dialect's own precedence)
 	}
 
-	@Override
-	protected List<Node> getMarkupSubstitutes( ITemplateContext context, IProcessableElementTag element ) {
-		ViewElement viewElement = retrieveViewElementFromAttribute( context, element );
-
-		return buildNodes( viewElement, context );
-	}
-
+	//	@Override
+//	protected List<Node> getMarkupSubstitutes( ITemplateContext context, IProcessableElementTag element ) {
+//		ViewElement viewElement = retrieveViewElementFromAttribute( context, element );
+//
+//		return buildNodes( viewElement, context );
+//	}
+//
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Node> buildNodes( ViewElement viewElement, ITemplateContext context ) {
+	public IModel buildNodes( ViewElement viewElement, ITemplateContext context ) {
 		if ( hasCustomTemplate( viewElement ) ) {
 			return renderCustomTemplate( viewElement, context );
 		}
@@ -76,84 +81,105 @@ public class ViewElementElementProcessor
 		throw new IllegalArgumentException( "Unable to render ViewElement of type " + viewElement.getClass() );
 	}
 
-	@Override
-	public void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value ) {
-		if ( !"class".equals( attributeName ) ) {
-			if ( value == null ) {
-				node.removeAttribute( attributeName );
-			}
-			else {
-				node.setAttribute( attributeName, serialize( value ) );
-			}
-		}
-		else {
-			attributeAppend( node, attributeName, Objects.toString( value ) );
-		}
-	}
-
-	private void attributeAppend( NestableAttributeHolderNode element, String attributeName, String value ) {
-		if ( value != null ) {
-			String attributeValue = element.getAttributeValue( attributeName );
-
-			if ( StringUtils.isNotBlank( attributeValue ) ) {
-				attributeValue += " " + value;
-			}
-			else {
-				attributeValue = value;
-			}
-
-			element.setAttribute( attributeName, attributeValue );
-		}
-	}
-
-	private String serialize( Object value ) {
-		if ( value instanceof String || ClassUtils.isPrimitiveOrWrapper( value.getClass() ) ) {
-			return Objects.toString( value );
-		}
-
-		try {
-			return objectMapper.writeValueAsString( value );
-		}
-		catch ( JsonProcessingException jpe ) {
-			throw new RuntimeException( jpe );
-		}
-	}
-
-	@Override
-	public void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes ) {
-		for ( Map.Entry<String, Object> attribute : attributes.entrySet() ) {
-			setAttribute( node, attribute.getKey(), attribute.getValue() );
-		}
-	}
-
+	//
+//	@Override
+//	public void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value ) {
+//		if ( !"class".equals( attributeName ) ) {
+//			if ( value == null ) {
+//				node.removeAttribute( attributeName );
+//			}
+//			else {
+//				node.setAttribute( attributeName, serialize( value ) );
+//			}
+//		}
+//		else {
+//			attributeAppend( node, attributeName, Objects.toString( value ) );
+//		}
+//	}
+//
+//	private void attributeAppend( NestableAttributeHolderNode element, String attributeName, String value ) {
+//		if ( value != null ) {
+//			String attributeValue = element.getAttributeValue( attributeName );
+//
+//			if ( StringUtils.isNotBlank( attributeValue ) ) {
+//				attributeValue += " " + value;
+//			}
+//			else {
+//				attributeValue = value;
+//			}
+//
+//			element.setAttribute( attributeName, attributeValue );
+//		}
+//	}
+//
+//	private String serialize( Object value ) {
+//		if ( value instanceof String || ClassUtils.isPrimitiveOrWrapper( value.getClass() ) ) {
+//			return Objects.toString( value );
+//		}
+//
+//		try {
+//			return objectMapper.writeValueAsString( value );
+//		}
+//		catch ( JsonProcessingException jpe ) {
+//			throw new RuntimeException( jpe );
+//		}
+//	}
+//
+//	@Override
+//	public void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes ) {
+//		for ( Map.Entry<String, Object> attribute : attributes.entrySet() ) {
+//			setAttribute( node, attribute.getKey(), attribute.getValue() );
+//		}
+//	}
+//
 	private ViewElementThymeleafBuilder findElementProcessor( ViewElement viewElement, ITemplateContext context ) {
-		ApplicationContext appCtx = ( (SpringWebContext) context ).getApplicationContext();
+		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext(
+				( (WebEngineContext) context ).getRequest() );
 		ViewElementNodeBuilderRegistry registry = appCtx.getBean( ViewElementNodeBuilderRegistry.class );
 
 		return registry.getNodeBuilder( viewElement );
 	}
 
-	private List<Node> renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
-		Arguments newArguments = context.addLocalVariables(
-				Collections.singletonMap( "component", viewElement )
-		);
+	private IModel renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
+		( (WebEngineContext) context ).setVariable( "component", viewElement );
+//		Arguments newArguments = context.addLocalVariables(
+//				Collections.singletonMap( "component", viewElement )
+//		);
 
 		String templateWithFragment = appendFragmentIfRequired( viewElement.getCustomTemplate() );
 
-		StandardFragment fragment = StandardFragmentProcessor.computeStandardFragmentSpec(
-				newArguments.getConfiguration(),
-				newArguments,
-				templateWithFragment,
-				"th", "fragment" );
+//		StandardFragment fragment = StandardFragmentTagProcessor.computeStandardFragmentSpec(
+//				newArguments.getConfiguration(),
+//				newArguments,
+//				templateWithFragment,
+//				"th", "fragment" );
+//
+//		List<Node> nodes = fragment.extractFragment( newArguments.getConfiguration(), newArguments,
+//		                                             newArguments.getTemplateRepository() );
+//
+//		if ( nodes == null ) {
+//			throw new TemplateProcessingException( "Not a valid template [" + templateWithFragment + "]" );
+//		}
 
-		List<Node> nodes = fragment.extractFragment( newArguments.getConfiguration(), newArguments,
-		                                             newArguments.getTemplateRepository() );
+		IModelFactory modelFactory = context.getModelFactory();
+		IModel model = modelFactory.createModel();
 
-		if ( nodes == null ) {
-			throw new TemplateProcessingException( "Not a valid template [" + templateWithFragment + "]" );
-		}
+		model.add( modelFactory.createOpenElementTag( "div", "th:replace", templateWithFragment, false ) );
+		model.add( modelFactory.createCloseElementTag( "div" ) );
 
-		return nodes;
+//		TemplateManager manager = context.getConfiguration().getTemplateManager();
+//		final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(context.getConfiguration());
+//		IStandardExpression expression = expressionParser.parseExpression( context, templateWithFragment );
+//		Object result = expression.execute( context );
+//		FragmentSignature fragmentSignature = FragmentSignatureUtils.parseFragmentSignature( context.getConfiguration(), templateWithFragment );
+//		final Writer stringWriter = new FastStringWriter( 200);
+//		context.getConfiguration().getTemplateManager().process(null, context, stringWriter);
+//
+//		TemplateModel templateModel = manager.parseStandalone( context, templateWithFragment, Collections.emptySet(), TemplateMode.HTML, true, true );
+
+//		TemplateData templateData = new TemplateData( templateWithFragment, null, context.getTemplateData().getTemplateMode(), context.getTemplateData().getValidity() );
+		//model = context.getModelFactory().parse( context.getTemplateData(), "<div th:replace='" + templateWithFragment + "'></div>" );
+		return model;
 	}
 
 	/**
@@ -185,5 +211,17 @@ public class ViewElementElementProcessor
 		throw new IllegalArgumentException(
 				ELEMENT_NAME + " element requires a " + ATTRIBUTE_ITEM + " attribute of type ViewElement"
 		);
+	}
+
+	@Override
+	protected void doProcess( ITemplateContext context,
+	                          IProcessableElementTag tag,
+	                          IElementTagStructureHandler structureHandler ) {
+
+		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
+
+		IModel model = buildNodes( viewElement, context );
+
+		structureHandler.replaceWith( model, false );
 	}
 }

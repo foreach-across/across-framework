@@ -20,6 +20,8 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.TextViewElementThymeleafBuilder;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +80,7 @@ public class ThymeleafViewSupportConfiguration
 	public ViewElementNodeBuilderRegistry thymeleafViewElementProcessorRegistry() {
 		ViewElementNodeBuilderRegistry registry = new ViewElementNodeBuilderRegistry();
 		//TODO: TH3
-//		registry.registerNodeBuilder( TextViewElement.class, new TextViewElementThymeleafBuilder() );
+		registry.registerNodeBuilder( TextViewElement.class, new TextViewElementThymeleafBuilder() );
 //		registry.registerNodeBuilder( StandardViewElements.TEXT, new TextViewElementThymeleafBuilder() );
 //		registry.registerNodeBuilder( ContainerViewElement.class, new ContainerViewElementThymeleafBuilder() );
 //		registry.registerNodeBuilder( StandardViewElements.CONTAINER, new ContainerViewElementThymeleafBuilder() );

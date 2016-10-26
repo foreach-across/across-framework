@@ -68,7 +68,7 @@ public class AcrossWebDialect extends AbstractProcessorDialect
 		//TODO: TH3
 		Set<IProcessor> processors = new HashSet<>();
 		//processors.add( new ProcessableAttrProcessor() );
-		//processors.add( new ViewElementElementProcessor() );
+		processors.add( new ViewElementElementProcessor() );
 
 		return processors;
 	}
