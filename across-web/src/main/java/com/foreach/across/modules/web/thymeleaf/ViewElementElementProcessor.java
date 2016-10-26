@@ -23,21 +23,16 @@ import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.NestableAttributeHolderNode;
-import org.thymeleaf.dom.Node;
+import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
-import org.thymeleaf.spring4.context.SpringWebContext;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractElementTagProcessor;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
-import org.thymeleaf.standard.fragment.StandardFragment;
-import org.thymeleaf.standard.fragment.StandardFragmentProcessor;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -45,7 +40,7 @@ import java.util.Objects;
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
  */
 public class ViewElementElementProcessor
-		extends AbstractMarkupSubstitutionElementProcessor implements ViewElementNodeFactory
+		extends AbstractElementTagProcessor implements ViewElementNodeFactory
 {
 	public static final String ELEMENT_NAME = "view";
 
@@ -54,27 +49,27 @@ public class ViewElementElementProcessor
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	public ViewElementElementProcessor() {
-		super( ELEMENT_NAME );
+		super( TemplateMode.RAW, ELEMENT_NAME, 1000 );
 	}
 
 	@Override
-	protected List<Node> getMarkupSubstitutes( Arguments arguments, Element element ) {
-		ViewElement viewElement = retrieveViewElementFromAttribute( arguments, element );
+	protected List<Node> getMarkupSubstitutes( ITemplateContext context, IProcessableElementTag element ) {
+		ViewElement viewElement = retrieveViewElementFromAttribute( context, element );
 
-		return buildNodes( viewElement, arguments );
+		return buildNodes( viewElement, context );
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Node> buildNodes( ViewElement viewElement, Arguments arguments ) {
+	public List<Node> buildNodes( ViewElement viewElement, ITemplateContext context ) {
 		if ( hasCustomTemplate( viewElement ) ) {
-			return renderCustomTemplate( viewElement, arguments );
+			return renderCustomTemplate( viewElement, context );
 		}
 		else {
-			ViewElementThymeleafBuilder processor = findElementProcessor( viewElement, arguments );
+			ViewElementThymeleafBuilder processor = findElementProcessor( viewElement, context );
 
 			if ( processor != null ) {
-				return processor.buildNodes( viewElement, arguments, this );
+				return processor.buildNodes( viewElement, context, this );
 			}
 		}
 
@@ -131,15 +126,15 @@ public class ViewElementElementProcessor
 		}
 	}
 
-	private ViewElementThymeleafBuilder findElementProcessor( ViewElement viewElement, Arguments arguments ) {
-		ApplicationContext appCtx = ( (SpringWebContext) arguments.getContext() ).getApplicationContext();
+	private ViewElementThymeleafBuilder findElementProcessor( ViewElement viewElement, ITemplateContext context ) {
+		ApplicationContext appCtx = ( (SpringWebContext) context ).getApplicationContext();
 		ViewElementNodeBuilderRegistry registry = appCtx.getBean( ViewElementNodeBuilderRegistry.class );
 
 		return registry.getNodeBuilder( viewElement );
 	}
 
-	private List<Node> renderCustomTemplate( ViewElement viewElement, Arguments arguments ) {
-		Arguments newArguments = arguments.addLocalVariables(
+	private List<Node> renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
+		Arguments newArguments = context.addLocalVariables(
 				Collections.singletonMap( "component", viewElement )
 		);
 
@@ -176,12 +171,12 @@ public class ViewElementElementProcessor
 		return viewElement.getCustomTemplate() != null;
 	}
 
-	private ViewElement retrieveViewElementFromAttribute( Arguments arguments, Element element ) {
+	private ViewElement retrieveViewElementFromAttribute( ITemplateContext context, IProcessableElementTag element ) {
 		String expr = element.getAttributeValue( ATTRIBUTE_ITEM );
-		IStandardExpressionParser parser = StandardExpressions.getExpressionParser( arguments.getConfiguration() );
-		IStandardExpression expression = parser.parseExpression( arguments.getConfiguration(), arguments, expr );
+		IStandardExpressionParser parser = StandardExpressions.getExpressionParser( context.getConfiguration() );
+		IStandardExpression expression = parser.parseExpression( context, expr );
 
-		Object viewElement = expression.execute( arguments.getConfiguration(), arguments );
+		Object viewElement = expression.execute( context );
 
 		if ( viewElement instanceof ViewElement ) {
 			return (ViewElement) viewElement;
@@ -190,10 +185,5 @@ public class ViewElementElementProcessor
 		throw new IllegalArgumentException(
 				ELEMENT_NAME + " element requires a " + ATTRIBUTE_ITEM + " attribute of type ViewElement"
 		);
-	}
-
-	@Override
-	public int getPrecedence() {
-		return 1000;
 	}
 }

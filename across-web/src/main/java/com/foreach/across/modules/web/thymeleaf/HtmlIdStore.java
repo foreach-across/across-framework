@@ -17,7 +17,8 @@ package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
-import org.thymeleaf.Arguments;
+import org.apache.commons.lang3.NotImplementedException;
+import org.thymeleaf.context.ITemplateContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,24 +31,26 @@ import java.util.Map;
  */
 public class HtmlIdStore
 {
-	private final Arguments arguments;
+	private final ITemplateContext context;
 	private final Map<ViewElement, String> generatedIds;
 
-	public HtmlIdStore( Arguments arguments ) {
-		this( arguments, new HashMap<ViewElement, String>() );
+	public HtmlIdStore( ITemplateContext context ) {
+		this( context, new HashMap<ViewElement, String>() );
 	}
 
-	private HtmlIdStore( Arguments arguments, Map<ViewElement, String> generatedIds ) {
-		this.arguments = arguments;
+	private HtmlIdStore( ITemplateContext context, Map<ViewElement, String> generatedIds ) {
+		this.context = context;
 		this.generatedIds = generatedIds;
 	}
 
-	public static HtmlIdStore fetch( Arguments arguments ) {
-		return (HtmlIdStore) arguments.getExpressionObjects().get( AcrossWebDialect.HTML_ID_STORE );
+	public static HtmlIdStore fetch( ITemplateContext context ) {
+		return (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
 	}
 
-	public static void store( HtmlIdStore idStore, Arguments arguments ) {
-		arguments.getExpressionObjects().put( AcrossWebDialect.HTML_ID_STORE, idStore );
+	public static void store( HtmlIdStore idStore, ITemplateContext context ) {
+		//TODO: TH3
+		throw new NotImplementedException( "a" );
+		//context.getExpressionObjects().put( AcrossWebDialect.HTML_ID_STORE, idStore );
 	}
 
 	/**
@@ -70,7 +73,7 @@ public class HtmlIdStore
 				htmlId = ( (HtmlViewElement) control ).getHtmlId();
 
 				if ( htmlId != null ) {
-					int idCount = arguments.getAndIncrementIDSeq( htmlId );
+					int idCount = context.getIdentifierSequences().getAndIncrementIDSeq( htmlId );
 					if ( idCount > 1 ) {
 						htmlId = htmlId + ( idCount - 1 );
 					}
@@ -91,6 +94,6 @@ public class HtmlIdStore
 	 * @return new instance of a HtmlIdStore
 	 */
 	public HtmlIdStore createNew() {
-		return new HtmlIdStore( arguments, new HashMap<>( generatedIds ) );
+		return new HtmlIdStore( context, new HashMap<>( generatedIds ) );
 	}
 }

@@ -54,6 +54,7 @@
 		<foreach.common.version>1.0</foreach.common.version>
 		<querydsl.version>3.6.9</querydsl.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
+		<thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
 	</properties>
 
 	<repositories>
@@ -256,6 +257,18 @@
 				<!-- See https://foreach.atlassian.net/browse/AX-57 -->
 				<version>3.5.3</version>
 			</dependency>
+
+			<dependency>
+				<groupId>org.thymeleaf</groupId>
+				<artifactId>thymeleaf</artifactId>
+				<version>${thymeleaf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.thymeleaf</groupId>
+				<artifactId>thymeleaf-spring4</artifactId>
+				<version>${thymeleaf.version}</version>
+			</dependency>
+
 
 			<!-- Non-spring managed -->
 			<dependency>

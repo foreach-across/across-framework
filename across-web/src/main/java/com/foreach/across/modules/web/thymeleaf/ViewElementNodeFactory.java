@@ -16,9 +16,7 @@
 package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.NestableAttributeHolderNode;
-import org.thymeleaf.dom.Node;
+import org.thymeleaf.context.ITemplateContext;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +26,7 @@ import java.util.Map;
  */
 public interface ViewElementNodeFactory
 {
-	List<Node> buildNodes( ViewElement viewElement, Arguments arguments );
+	List<Node> buildNodes( ViewElement viewElement, ITemplateContext context );
 
 	void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value );
 

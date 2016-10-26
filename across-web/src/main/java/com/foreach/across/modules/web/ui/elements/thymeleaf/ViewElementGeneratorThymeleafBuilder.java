@@ -20,7 +20,7 @@ import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
-import org.thymeleaf.Arguments;
+import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.dom.Node;
 
 import java.util.ArrayList;
@@ -33,26 +33,26 @@ public class ViewElementGeneratorThymeleafBuilder implements ViewElementThymelea
 {
 	@Override
 	public List<Node> buildNodes( ViewElementGenerator<?, ?> container,
-	                              Arguments arguments,
+	                              ITemplateContext context,
 	                              ViewElementNodeFactory componentElementProcessor ) {
 		List<Node> list = new ArrayList<>();
 
-		HtmlIdStore originalIdStore = HtmlIdStore.fetch( arguments );
+		HtmlIdStore originalIdStore = HtmlIdStore.fetch( context );
 
 		try {
 			for ( ViewElement child : container ) {
 				if ( child != null ) {
 					if ( !container.isBuilderItemTemplate() ) {
-						HtmlIdStore.store( originalIdStore.createNew(), arguments );
+						HtmlIdStore.store( originalIdStore.createNew(), context );
 					}
 
-					list.addAll( componentElementProcessor.buildNodes( child, arguments ) );
+					list.addAll( componentElementProcessor.buildNodes( child, context ) );
 				}
 			}
 		}
 		finally {
 			// Put back the original id store
-			HtmlIdStore.store( originalIdStore, arguments );
+			HtmlIdStore.store( originalIdStore, context );
 		}
 
 		return list;

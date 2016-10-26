@@ -19,7 +19,7 @@ import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.thymeleaf.Arguments;
+import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.dom.Text;
 import org.unbescape.html.HtmlEscape;
@@ -31,7 +31,7 @@ public class TextViewElementThymeleafBuilder implements ViewElementThymeleafBuil
 {
 	@Override
 	public List<Node> buildNodes( TextViewElement viewElement,
-	                              Arguments arguments,
+	                              ITemplateContext context,
 	                              ViewElementNodeFactory componentElementProcessor ) {
 		String content = StringUtils.defaultString( viewElement.getText() );
 		String html = viewElement.isEscapeXml() ? HtmlEscape.escapeHtml4Xml( content ) : content;

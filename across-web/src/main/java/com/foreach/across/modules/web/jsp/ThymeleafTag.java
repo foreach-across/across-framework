@@ -18,35 +18,17 @@ package com.foreach.across.modules.web.jsp;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.web.servlet.view.AbstractTemplateView;
-import org.thymeleaf.Configuration;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.ProcessingContext;
-import org.thymeleaf.dialect.IDialect;
-import org.thymeleaf.exceptions.ConfigurationException;
-import org.thymeleaf.fragment.IFragmentSpec;
-import org.thymeleaf.spring4.context.SpringWebContext;
-import org.thymeleaf.spring4.dialect.SpringStandardDialect;
-import org.thymeleaf.spring4.expression.ThymeleafEvaluationContext;
-import org.thymeleaf.spring4.naming.SpringContextVariableNames;
-import org.thymeleaf.standard.expression.FragmentSelectionUtils;
-import org.thymeleaf.standard.fragment.StandardFragment;
-import org.thymeleaf.standard.fragment.StandardFragmentProcessor;
-import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.Writer;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -98,115 +80,119 @@ public class ThymeleafTag extends BodyTagSupport
 				.getBeanOfTypeFromModule( AcrossWebModule.NAME, TemplateEngine.class );
 
 		if ( !viewTemplateEngine.isInitialized() ) {
-			viewTemplateEngine.initialize();
+			//TODO: TH3
+			throw new NotImplementedException( "TODO" );
+			//viewTemplateEngine.initialize();
 		}
 
 		if ( viewTemplateName == null ) {
 			throw new IllegalArgumentException( "Property 'templateName' is required" );
 		}
 
-		SpringWebContext context = buildWebContext( model, request, response );
-
-		final String templateName;
-		final IFragmentSpec nameFragmentSpec;
-		if ( !viewTemplateName.contains( "::" ) ) {
-			// No fragment specified at the template name
-
-			templateName = viewTemplateName;
-			nameFragmentSpec = null;
-
-		}
-		else {
-			// Template name contains a fragment name, so we should parse it as such
-			final Configuration configuration = viewTemplateEngine.getConfiguration();
-			final ProcessingContext processingContext = new ProcessingContext( context );
-
-			final String dialectPrefix = getStandardDialectPrefix( configuration );
-
-			final StandardFragment fragment =
-					StandardFragmentProcessor.computeStandardFragmentSpec(
-							configuration, processingContext, viewTemplateName, dialectPrefix,
-							StandardFragmentAttrProcessor.ATTR_NAME );
-
-			if ( fragment == null ) {
-				throw new IllegalArgumentException( "Invalid template name specification: '" + viewTemplateName + "'" );
-			}
-
-			templateName = fragment.getTemplateName();
-			nameFragmentSpec = fragment.getFragmentSpec();
-			final Map<String, Object> nameFragmentParameters = fragment.getParameters();
-
-			if ( nameFragmentParameters != null ) {
-
-				if ( FragmentSelectionUtils.parameterNamesAreSynthetic( nameFragmentParameters.keySet() ) ) {
-					// We cannot allow synthetic parameters because there is no way to specify them at the template
-					// engine execution!
-					throw new IllegalArgumentException(
-							"Parameters in a view specification must be named (non-synthetic): '" + viewTemplateName + "'" );
-				}
-
-				context.setVariables( nameFragmentParameters );
-			}
-		}
-
-		IFragmentSpec templateFragmentSpec = null;
-
-		if ( nameFragmentSpec != null ) {
-			templateFragmentSpec = nameFragmentSpec;
-		}
-
-		viewTemplateEngine.process( templateName, context, templateFragmentSpec, writer );
+		//TODO: TH3
+		throw new NotImplementedException( "foo" );
+////		SpringWebContext context = buildWebContext( model, request, response );
+////
+////		final String templateName;
+////		final IFragmentSpec nameFragmentSpec;
+////		if ( !viewTemplateName.contains( "::" ) ) {
+////			// No fragment specified at the template name
+////
+////			templateName = viewTemplateName;
+////			nameFragmentSpec = null;
+////
+////		}
+////		else {
+////			// Template name contains a fragment name, so we should parse it as such
+////			final Configuration configuration = viewTemplateEngine.getConfiguration();
+////			final ProcessingContext processingContext = new ProcessingContext( context );
+////
+////			final String dialectPrefix = getStandardDialectPrefix( configuration );
+////
+////			final StandardFragment fragment =
+////					StandardFragmentProcessor.computeStandardFragmentSpec(
+////							configuration, processingContext, viewTemplateName, dialectPrefix,
+////							StandardFragmentAttrProcessor.ATTR_NAME );
+////
+////			if ( fragment == null ) {
+////				throw new IllegalArgumentException( "Invalid template name specification: '" + viewTemplateName + "'" );
+////			}
+////
+////			templateName = fragment.getTemplateName();
+////			nameFragmentSpec = fragment.getFragmentSpec();
+////			final Map<String, Object> nameFragmentParameters = fragment.getParameters();
+////
+////			if ( nameFragmentParameters != null ) {
+////
+////				if ( FragmentSelectionUtils.parameterNamesAreSynthetic( nameFragmentParameters.keySet() ) ) {
+////					// We cannot allow synthetic parameters because there is no way to specify them at the template
+////					// engine execution!
+////					throw new IllegalArgumentException(
+////							"Parameters in a view specification must be named (non-synthetic): '" + viewTemplateName + "'" );
+////				}
+////
+////				context.setVariables( nameFragmentParameters );
+////			}
+////		}
+////
+////		IFragmentSpec templateFragmentSpec = null;
+//
+//		if ( nameFragmentSpec != null ) {
+//			templateFragmentSpec = nameFragmentSpec;
+//		}
+//
+//		viewTemplateEngine.process( templateName, context, templateFragmentSpec, writer );
 	}
 
-	protected SpringWebContext buildWebContext( Map<String, ?> model,
-	                                            HttpServletRequest request,
-	                                            HttpServletResponse response )
-			throws Exception {
-		SpringWebContext context = (SpringWebContext) request.getAttribute( SpringWebContext.class.getName() );
-
-		if ( context == null ) {
-			// Build a new SpringWebContext
-			Locale locale = LocaleContextHolder.getLocale();
-
-			ServletContext servletContext = pageContext.getServletContext();
-			ApplicationContext applicationContext = RequestContextUtils.getWebApplicationContext( request );
-
-			final RequestContext requestContext =
-					new RequestContext( request, response, servletContext, null );
-
-			// For compatibility with ThymeleafView
-			request.setAttribute( SpringContextVariableNames.SPRING_REQUEST_CONTEXT, requestContext );
-			request.setAttribute( AbstractTemplateView.SPRING_MACRO_REQUEST_CONTEXT_ATTRIBUTE, requestContext );
-
-			// Expose Thymeleaf's own evaluation context as a model variable
-			final ConversionService conversionService =
-					(ConversionService) request.getAttribute( ConversionService.class.getName() ); // might be null!
-			final ThymeleafEvaluationContext evaluationContext =
-					new ThymeleafEvaluationContext( applicationContext, conversionService );
-			request.setAttribute( ThymeleafEvaluationContext.THYMELEAF_EVALUATION_CONTEXT_CONTEXT_VARIABLE_NAME,
-			                      evaluationContext );
-
-			context = new SpringWebContext( request, response, servletContext, locale, null,
-			                                applicationContext );
-
-			request.setAttribute( SpringWebContext.class.getName(), context );
-		}
-
-		return context;
-	}
-
-	protected static String getStandardDialectPrefix( final Configuration configuration ) {
-
-		for ( final Map.Entry<String, IDialect> dialectByPrefix : configuration.getDialects().entrySet() ) {
-			final IDialect dialect = dialectByPrefix.getValue();
-			if ( SpringStandardDialect.class.isAssignableFrom( dialect.getClass() ) ) {
-				return dialectByPrefix.getKey();
-			}
-		}
-
-		throw new ConfigurationException(
-				"StandardDialect dialect has not been found. In order to use AjaxThymeleafView, you should configure " +
-						"the " + SpringStandardDialect.class.getName() + " dialect at your Template Engine" );
-
-	}
+//	protected SpringWebContext buildWebContext( Map<String, ?> model,
+//	                                            HttpServletRequest request,
+//	                                            HttpServletResponse response )
+//			throws Exception {
+//		SpringWebContext context = (SpringWebContext) request.getAttribute( SpringWebContext.class.getName() );
+//
+//		if ( context == null ) {
+//			// Build a new SpringWebContext
+//			Locale locale = LocaleContextHolder.getLocale();
+//
+//			ServletContext servletContext = pageContext.getServletContext();
+//			ApplicationContext applicationContext = RequestContextUtils.getWebApplicationContext( request );
+//
+//			final RequestContext requestContext =
+//					new RequestContext( request, response, servletContext, null );
+//
+//			// For compatibility with ThymeleafView
+//			request.setAttribute( SpringContextVariableNames.SPRING_REQUEST_CONTEXT, requestContext );
+//			request.setAttribute( AbstractTemplateView.SPRING_MACRO_REQUEST_CONTEXT_ATTRIBUTE, requestContext );
+//
+//			// Expose Thymeleaf's own evaluation context as a model variable
+//			final ConversionService conversionService =
+//					(ConversionService) request.getAttribute( ConversionService.class.getName() ); // might be null!
+//			final ThymeleafEvaluationContext evaluationContext =
+//					new ThymeleafEvaluationContext( applicationContext, conversionService );
+//			request.setAttribute( ThymeleafEvaluationContext.THYMELEAF_EVALUATION_CONTEXT_CONTEXT_VARIABLE_NAME,
+//			                      evaluationContext );
+//
+//			context = new SpringWebContext( request, response, servletContext, locale, null,
+//			                                applicationContext );
+//
+//			request.setAttribute( SpringWebContext.class.getName(), context );
+//		}
+//
+//		return context;
+//	}
+//
+//	protected static String getStandardDialectPrefix( final Configuration configuration ) {
+//
+//		for ( final Map.Entry<String, IDialect> dialectByPrefix : configuration.getDialects().entrySet() ) {
+//			final IDialect dialect = dialectByPrefix.getValue();
+//			if ( SpringStandardDialect.class.isAssignableFrom( dialect.getClass() ) ) {
+//				return dialectByPrefix.getKey();
+//			}
+//		}
+//
+//		throw new ConfigurationException(
+//				"StandardDialect dialect has not been found. In order to use AjaxThymeleafView, you should configure " +
+//						"the " + SpringStandardDialect.class.getName() + " dialect at your Template Engine" );
+//
+//	}
 }

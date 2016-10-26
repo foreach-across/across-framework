@@ -25,9 +25,11 @@ import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.Arguments;
+import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.dom.Text;
+import org.thymeleaf.model.IProcessableElementTag;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,25 +44,27 @@ public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 		implements ViewElementThymeleafBuilder<T>
 {
 	@Override
-	public List<Node> buildNodes( T viewElement, Arguments arguments, ViewElementNodeFactory viewElementNodeFactory ) {
-		Element node = createNode( viewElement, arguments, viewElementNodeFactory );
+	public List<Node> buildNodes( T viewElement,
+	                              ITemplateContext context,
+	                              ViewElementNodeFactory viewElementNodeFactory ) {
+		Element node = createNode( viewElement, context, viewElementNodeFactory );
 		ProcessableAttrProcessor.makeProcessable( node );
 
-		attribute( node, "id", retrieveHtmlId( arguments, viewElement ) );
+		attribute( node, "id", retrieveHtmlId( context, viewElement ) );
 
-		applyProperties( viewElement, arguments, node );
+		applyProperties( viewElement, context, node );
 
 		viewElementNodeFactory.setAttributes( node, viewElement.getAttributes() );
 
 		if ( viewElement instanceof AbstractNodeViewElement ) {
 			for ( ViewElement child : ((AbstractNodeViewElement) viewElement).getChildren() ) {
-				for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
+				for ( Node childNode : viewElementNodeFactory.buildNodes( child, context ) ) {
 					node.addChild( childNode );
 				}
 			}
 		}
 
-		node = postProcess( node, viewElement, arguments, viewElementNodeFactory );
+		node = postProcess( node, viewElement, context, viewElementNodeFactory );
 
 		return Collections.singletonList( (Node) node );
 	}
@@ -104,8 +108,8 @@ public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 		}
 	}
 
-	protected String retrieveHtmlId( Arguments arguments, HtmlViewElement control ) {
-		HtmlIdStore idStore = (HtmlIdStore) arguments.getExpressionObjects().get( AcrossWebDialect.HTML_ID_STORE );
+	protected String retrieveHtmlId( ITemplateContext context, HtmlViewElement control ) {
+		HtmlIdStore idStore = (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
 
 		return idStore.retrieveHtmlId( control );
 	}
@@ -119,7 +123,7 @@ public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 		}
 	}
 
-	protected void attribute( Element element, String attributeName, String value ) {
+	protected void attribute( IProcessableElementTag element, String attributeName, String value ) {
 		if ( value != null ) {
 			element.setAttribute( attributeName, value );
 		}

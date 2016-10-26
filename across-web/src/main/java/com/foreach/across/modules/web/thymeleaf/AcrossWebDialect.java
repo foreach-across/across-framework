@@ -15,16 +15,11 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import com.foreach.across.modules.web.resource.WebResourceUtils;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.context.IProcessingContext;
 import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.dialect.IExpressionEnhancingDialect;
+import org.thymeleaf.dialect.IProcessorDialect;
 import org.thymeleaf.processor.IProcessor;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -38,36 +33,42 @@ import java.util.Set;
  *
  * @author Arne Vandamme
  */
-public class AcrossWebDialect extends AbstractDialect implements IExpressionEnhancingDialect
+public class AcrossWebDialect extends AbstractDialect implements IProcessorDialect
 {
 	public static final String PREFIX = "across";
 
 	public static final String UTILITY_WEBAPP = "webapp";
 	public static final String HTML_ID_STORE = "htmlIdStore";
 
-	@Override
-	public Map<String, Object> getAdditionalExpressionObjects( IProcessingContext processingContext ) {
-		Map<String, Object> objects = new HashMap<>();
-
-		Object pathResolver = processingContext.getContext().getVariables().get(
-				WebResourceUtils.PATH_RESOLVER_ATTRIBUTE_KEY );
-
-		if ( pathResolver != null ) {
-			objects.put( UTILITY_WEBAPP, pathResolver );
-		}
-
-		if ( processingContext instanceof Arguments ) {
-			objects.put( HTML_ID_STORE, new HtmlIdStore( (Arguments) processingContext ) );
-		}
-
-		return objects;
+	public AcrossWebDialect() {
+		super( "AcrossWeb" );
 	}
 
+	//TODO: TH3
+//	@Override
+//	public Map<String, Object> getAdditionalExpressionObjects( IProcessingContext processingContext ) {
+//		Map<String, Object> objects = new HashMap<>();
+//
+//		Object pathResolver = processingContext.getContext().getVariables().get(
+//				WebResourceUtils.PATH_RESOLVER_ATTRIBUTE_KEY );
+//
+//		if ( pathResolver != null ) {
+//			objects.put( UTILITY_WEBAPP, pathResolver );
+//		}
+//
+//		if ( processingContext instanceof Arguments ) {
+//			objects.put( HTML_ID_STORE, new HtmlIdStore( (Arguments) processingContext ) );
+//		}
+//
+//		return objects;
+//	}
+
 	@Override
-	public Set<IProcessor> getProcessors() {
+	public Set<IProcessor> getProcessors( final String dialectPrefix ) {
+		//TODO: TH3
 		Set<IProcessor> processors = new HashSet<>();
-		processors.add( new ProcessableAttrProcessor() );
-		processors.add( new ViewElementElementProcessor() );
+		//processors.add( new ProcessableAttrProcessor() );
+		//processors.add( new ViewElementElementProcessor() );
 
 		return processors;
 	}
@@ -75,5 +76,10 @@ public class AcrossWebDialect extends AbstractDialect implements IExpressionEnha
 	@Override
 	public String getPrefix() {
 		return PREFIX;
+	}
+
+	@Override
+	public int getDialectProcessorPrecedence() {
+		return 0;
 	}
 }

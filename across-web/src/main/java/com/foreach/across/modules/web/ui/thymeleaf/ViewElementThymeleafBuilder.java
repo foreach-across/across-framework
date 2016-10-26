@@ -17,12 +17,11 @@ package com.foreach.across.modules.web.ui.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Node;
+import org.thymeleaf.context.ITemplateContext;
 
 import java.util.List;
 
 public interface ViewElementThymeleafBuilder<T extends ViewElement>
 {
-	List<Node> buildNodes( T viewElement, Arguments arguments, ViewElementNodeFactory viewElementNodeFactory );
+	List<Node> buildNodes( T viewElement, ITemplateContext context, ViewElementNodeFactory viewElementNodeFactory );
 }

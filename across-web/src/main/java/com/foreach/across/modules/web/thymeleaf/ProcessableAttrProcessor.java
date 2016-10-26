@@ -15,15 +15,13 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractNoOpAttrProcessor;
 
 /**
  * Dummy processor that can flag an element as requiring processing.
  *
  * @author Arne Vandamme
  */
-public class ProcessableAttrProcessor extends AbstractNoOpAttrProcessor
+public class ProcessableAttrProcessor //extends AbstractNoOpAttrProcessor
 {
 	public static final String ATTRIBUTE = "processable";
 
@@ -31,7 +29,7 @@ public class ProcessableAttrProcessor extends AbstractNoOpAttrProcessor
 		super( ATTRIBUTE );
 	}
 
-	@Override
+	//@Override
 	public int getPrecedence() {
 		return Integer.MAX_VALUE;
 	}
