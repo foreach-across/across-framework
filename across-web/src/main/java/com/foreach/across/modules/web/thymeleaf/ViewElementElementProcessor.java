@@ -29,6 +29,7 @@ import org.thymeleaf.model.IModelFactory;
 import org.thymeleaf.model.IProcessableElementTag;
 import org.thymeleaf.processor.element.AbstractElementTagProcessor;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.standard.expression.Fragment;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
@@ -167,10 +168,11 @@ public class ViewElementElementProcessor
 		model.add( modelFactory.createOpenElementTag( "div", "th:replace", templateWithFragment, false ) );
 		model.add( modelFactory.createCloseElementTag( "div" ) );
 
-//		TemplateManager manager = context.getConfiguration().getTemplateManager();
-//		final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(context.getConfiguration());
-//		IStandardExpression expression = expressionParser.parseExpression( context, templateWithFragment );
-//		Object result = expression.execute( context );
+		//TemplateManager manager = context.getConfiguration().getTemplateManager();
+		final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(
+				context.getConfiguration() );
+		IStandardExpression expression = expressionParser.parseExpression( context, "~{" + templateWithFragment + "}" );
+		Object result = expression.execute( context );
 //		FragmentSignature fragmentSignature = FragmentSignatureUtils.parseFragmentSignature( context.getConfiguration(), templateWithFragment );
 //		final Writer stringWriter = new FastStringWriter( 200);
 //		context.getConfiguration().getTemplateManager().process(null, context, stringWriter);
@@ -179,7 +181,7 @@ public class ViewElementElementProcessor
 
 //		TemplateData templateData = new TemplateData( templateWithFragment, null, context.getTemplateData().getTemplateMode(), context.getTemplateData().getValidity() );
 		//model = context.getModelFactory().parse( context.getTemplateData(), "<div th:replace='" + templateWithFragment + "'></div>" );
-		return model;
+		return ( (Fragment) result ).getTemplateModel();
 	}
 
 	/**
