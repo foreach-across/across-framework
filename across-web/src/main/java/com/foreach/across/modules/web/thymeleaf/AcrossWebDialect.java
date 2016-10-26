@@ -15,9 +15,9 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.dialect.IProcessorDialect;
+import org.thymeleaf.dialect.AbstractProcessorDialect;
 import org.thymeleaf.processor.IProcessor;
+import org.thymeleaf.standard.StandardDialect;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +33,7 @@ import java.util.Set;
  *
  * @author Arne Vandamme
  */
-public class AcrossWebDialect extends AbstractDialect implements IProcessorDialect
+public class AcrossWebDialect extends AbstractProcessorDialect
 {
 	public static final String PREFIX = "across";
 
@@ -41,7 +41,7 @@ public class AcrossWebDialect extends AbstractDialect implements IProcessorDiale
 	public static final String HTML_ID_STORE = "htmlIdStore";
 
 	public AcrossWebDialect() {
-		super( "AcrossWeb" );
+		super( "AcrossWeb", PREFIX, StandardDialect.PROCESSOR_PRECEDENCE );
 	}
 
 	//TODO: TH3
@@ -71,15 +71,5 @@ public class AcrossWebDialect extends AbstractDialect implements IProcessorDiale
 		//processors.add( new ViewElementElementProcessor() );
 
 		return processors;
-	}
-
-	@Override
-	public String getPrefix() {
-		return PREFIX;
-	}
-
-	@Override
-	public int getDialectProcessorPrecedence() {
-		return 0;
 	}
 }
