@@ -42,7 +42,8 @@ import javax.servlet.jsp.JspException;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Created by slyoldfox on 25/10/16.
+ * @author Marc Vanbrabant
+ * @since 1.1.3
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
@@ -66,8 +67,10 @@ public class TestThymeleafTag
 		tag.setPageContext( pageContext );
 		tag.doEndTag();
 		MockHttpServletResponse response = (MockHttpServletResponse) pageContext.getResponse();
-		Assert.assertTrue( StringUtils.contains( response.getContentAsString(), "<p>Hello, Joe Doe!</p>" ) );
-
+		String content = response.getContentAsString();
+		Assert.assertTrue( StringUtils.contains( content, "<p>Hello, Joe Doe!</p>" ) );
+		Assert.assertTrue( StringUtils.contains( content, "mvcConversionService found" ) );
+		Assert.assertTrue( StringUtils.contains( content, "environment found" ) );
 	}
 
 	@EnableAcrossContext

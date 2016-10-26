@@ -6,5 +6,7 @@
 </head>
 <body>
     <p th:text="'Hello, ' + ${name} + '!'" />
+    <div th:text="${'environment found'}" th:if="${@environment != null}"></div>
+    <div th:text="${'mvcConversionService found'}" th:if="${@mvcConversionService != null}"></div>
 </body>
 </html>
