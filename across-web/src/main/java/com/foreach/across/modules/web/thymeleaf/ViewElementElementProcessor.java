@@ -67,7 +67,7 @@ public class ViewElementElementProcessor
 //
 	@Override
 	@SuppressWarnings("unchecked")
-	public IModel buildNodes( ViewElement viewElement, ITemplateContext context ) {
+	public ProcessableModel buildNodes( ViewElement viewElement, ITemplateContext context ) {
 		if ( hasCustomTemplate( viewElement ) ) {
 			return renderCustomTemplate( viewElement, context );
 		}
@@ -141,7 +141,7 @@ public class ViewElementElementProcessor
 		return registry.getNodeBuilder( viewElement );
 	}
 
-	private IModel renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
+	private ProcessableModel renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
 		( (WebEngineContext) context ).setVariable( "component", viewElement );
 //		Arguments newArguments = context.addLocalVariables(
 //				Collections.singletonMap( "component", viewElement )
@@ -181,7 +181,7 @@ public class ViewElementElementProcessor
 
 //		TemplateData templateData = new TemplateData( templateWithFragment, null, context.getTemplateData().getTemplateMode(), context.getTemplateData().getValidity() );
 		//model = context.getModelFactory().parse( context.getTemplateData(), "<div th:replace='" + templateWithFragment + "'></div>" );
-		return ( (Fragment) result ).getTemplateModel();
+		return new ProcessableModel( ( (Fragment) result ).getTemplateModel(), true );
 	}
 
 	/**
@@ -222,8 +222,8 @@ public class ViewElementElementProcessor
 
 		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
 
-		IModel model = buildNodes( viewElement, context );
+		ProcessableModel model = buildNodes( viewElement, context );
 
-		structureHandler.replaceWith( model, false );
+		structureHandler.replaceWith( model.getModel(), model.isProcessable() );
 	}
 }

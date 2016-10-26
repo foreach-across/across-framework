@@ -13,16 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.ui.thymeleaf;
+package com.foreach.across.modules.web.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
-import com.foreach.across.modules.web.ui.ViewElement;
-import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IModel;
 
-public interface ViewElementThymeleafBuilder<T extends ViewElement>
+/**
+ * Created by slyoldfox on 26/10/16.
+ */
+public class ProcessableModel
 {
-	ProcessableModel buildNodes( T viewElement,
-	                             ITemplateContext context,
-	                             ViewElementNodeFactory viewElementNodeFactory );
+	private IModel model;
+	private boolean processable;
+
+	public ProcessableModel( IModel model, boolean processable ) {
+		this.model = model;
+		this.processable = processable;
+	}
+
+	public IModel getModel() {
+		return model;
+	}
+
+	public boolean isProcessable() {
+		return processable;
+	}
 }

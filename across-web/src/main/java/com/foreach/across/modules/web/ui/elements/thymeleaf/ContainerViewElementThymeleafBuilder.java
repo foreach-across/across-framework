@@ -15,27 +15,25 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
+import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.dom.Node;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ContainerViewElementThymeleafBuilder implements ViewElementThymeleafBuilder<ContainerViewElement>
 {
 	@Override
-	public List<Node> buildNodes( ContainerViewElement container,
-	                              ITemplateContext context,
-	                              ViewElementNodeFactory componentElementProcessor ) {
-		List<Node> list = new ArrayList<>();
-
-		container.getChildren().forEach(
-				c -> list.addAll( componentElementProcessor.buildNodes( c, context ) )
-		);
-
-		return list;
+	public ProcessableModel buildNodes( ContainerViewElement container,
+	                                    ITemplateContext context,
+	                                    ViewElementNodeFactory componentElementProcessor ) {
+//		List<Node> list = new ArrayList<>();
+//
+//		container.getChildren().forEach(
+//				c -> list.addAll( componentElementProcessor.buildNodes( c, context ) )
+//		);
+//
+//		return list;
+		return null;
 	}
 }

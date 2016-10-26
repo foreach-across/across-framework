@@ -15,24 +15,12 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
-import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
-import com.foreach.across.modules.web.thymeleaf.ProcessableAttrProcessor;
+import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
-import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
-import org.apache.commons.lang3.StringUtils;
-import org.thymeleaf.Arguments;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.dom.Text;
-import org.thymeleaf.model.IProcessableElementTag;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Supports implementations of {@link com.foreach.across.modules.web.ui.elements.AbstractVoidNodeViewElement}
@@ -44,130 +32,131 @@ public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 		implements ViewElementThymeleafBuilder<T>
 {
 	@Override
-	public List<Node> buildNodes( T viewElement,
-	                              ITemplateContext context,
-	                              ViewElementNodeFactory viewElementNodeFactory ) {
-		Element node = createNode( viewElement, context, viewElementNodeFactory );
-		ProcessableAttrProcessor.makeProcessable( node );
-
-		attribute( node, "id", retrieveHtmlId( context, viewElement ) );
-
-		applyProperties( viewElement, context, node );
-
-		viewElementNodeFactory.setAttributes( node, viewElement.getAttributes() );
-
-		if ( viewElement instanceof AbstractNodeViewElement ) {
-			for ( ViewElement child : ((AbstractNodeViewElement) viewElement).getChildren() ) {
-				for ( Node childNode : viewElementNodeFactory.buildNodes( child, context ) ) {
-					node.addChild( childNode );
-				}
-			}
-		}
-
-		node = postProcess( node, viewElement, context, viewElementNodeFactory );
-
-		return Collections.singletonList( (Node) node );
+	public ProcessableModel buildNodes( T viewElement,
+	                                    ITemplateContext context,
+	                                    ViewElementNodeFactory viewElementNodeFactory ) {
+//		Element node = createNode( viewElement, context, viewElementNodeFactory );
+//		ProcessableAttrProcessor.makeProcessable( node );
+//
+//		attribute( node, "id", retrieveHtmlId( context, viewElement ) );
+//
+//		applyProperties( viewElement, context, node );
+//
+//		viewElementNodeFactory.setAttributes( node, viewElement.getAttributes() );
+//
+//		if ( viewElement instanceof AbstractNodeViewElement ) {
+//			for ( ViewElement child : ((AbstractNodeViewElement) viewElement).getChildren() ) {
+//				for ( Node childNode : viewElementNodeFactory.buildNodes( child, context ) ) {
+//					node.addChild( childNode );
+//				}
+//			}
+//		}
+//
+//		node = postProcess( node, viewElement, context, viewElementNodeFactory );
+//
+//		return Collections.singletonList( (Node) node );
+		return null;
 	}
-
-	protected abstract Element createNode( T control,
-	                                       Arguments arguments,
-	                                       ViewElementNodeFactory viewElementNodeFactory );
-
-	/**
-	 * Adapter method, meant for subclass hierarchies.
-	 */
-	protected void applyProperties( T control, Arguments arguments, Element node ) {
-	}
-
-	/**
-	 * Adapter method allowing modifying the element (eg wrapping it) after it has been built.
-	 */
-	protected Element postProcess( Element element,
-	                               T control,
-	                               Arguments arguments,
-	                               ViewElementNodeFactory viewElementNodeFactory ) {
-		return element;
-	}
-
-	/**
-	 * Create a new {@link Element} that is processable and has the given tag name.
-	 *
-	 * @param tagName value
-	 * @return Element that is processable
-	 */
-	protected Element createElement( String tagName ) {
-		Element element = new Element( tagName );
-		ProcessableAttrProcessor.makeProcessable( element );
-
-		return element;
-	}
-
-	protected void text( Element element, String text ) {
-		if ( text != null ) {
-			element.addChild( new Text( text ) );
-		}
-	}
-
-	protected String retrieveHtmlId( ITemplateContext context, HtmlViewElement control ) {
-		HtmlIdStore idStore = (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
-
-		return idStore.retrieveHtmlId( control );
-	}
-
-	protected void attribute( Element element,
-	                          String attributeName,
-	                          Object value,
-	                          ViewElementNodeFactory viewElementNodeFactory ) {
-		if ( value != null ) {
-			viewElementNodeFactory.setAttribute( element, attributeName, value );
-		}
-	}
-
-	protected void attribute( IProcessableElementTag element, String attributeName, String value ) {
-		if ( value != null ) {
-			element.setAttribute( attributeName, value );
-		}
-	}
-
-	protected void attributeAppend( Element element, String attributeName, String value ) {
-		if ( value != null ) {
-			String attributeValue = element.getAttributeValue( attributeName );
-
-			if ( StringUtils.isNotBlank( attributeValue ) ) {
-				attributeValue += " " + value;
-			}
-			else {
-				attributeValue = value;
-			}
-
-			element.setAttribute( attributeName, attributeValue );
-		}
-	}
-
-	protected void attribute( Element element, String attributeName, boolean condition ) {
-		if ( condition ) {
-			element.setAttribute( attributeName, attributeName );
-		}
-	}
-
-	/**
-	 * Will append the nodes generated for the child {@link ViewElement} as children to the root {@link Element} passed.
-	 * If the child element is null, nothing will be added but no exception will be thrown.
-	 *
-	 * @param element                to which to add generated child nodes
-	 * @param child                  viewelement for which nodes should be generated (can be null)
-	 * @param arguments              contextual arguments
-	 * @param viewElementNodeFactory root factory for generating the child nodes
-	 */
-	@SuppressWarnings("unused")
-	protected void addChild( Element element,
-	                         ViewElement child,
-	                         Arguments arguments,
-	                         ViewElementNodeFactory viewElementNodeFactory ) {
-		if ( child != null ) {
-			for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
-				element.addChild( childNode );
-			}
-		}
-	}
+//
+//	protected abstract Element createNode( T control,
+//	                                       Arguments arguments,
+//	                                       ViewElementNodeFactory viewElementNodeFactory );
+//
+//	/**
+//	 * Adapter method, meant for subclass hierarchies.
+//	 */
+//	protected void applyProperties( T control, Arguments arguments, Element node ) {
+//	}
+//
+//	/**
+//	 * Adapter method allowing modifying the element (eg wrapping it) after it has been built.
+//	 */
+//	protected Element postProcess( Element element,
+//	                               T control,
+//	                               Arguments arguments,
+//	                               ViewElementNodeFactory viewElementNodeFactory ) {
+//		return element;
+//	}
+//
+//	/**
+//	 * Create a new {@link Element} that is processable and has the given tag name.
+//	 *
+//	 * @param tagName value
+//	 * @return Element that is processable
+//	 */
+//	protected Element createElement( String tagName ) {
+//		Element element = new Element( tagName );
+//		ProcessableAttrProcessor.makeProcessable( element );
+//
+//		return element;
+//	}
+//
+//	protected void text( Element element, String text ) {
+//		if ( text != null ) {
+//			element.addChild( new Text( text ) );
+//		}
+//	}
+//
+//	protected String retrieveHtmlId( ITemplateContext context, HtmlViewElement control ) {
+//		HtmlIdStore idStore = (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
+//
+//		return idStore.retrieveHtmlId( control );
+//	}
+//
+//	protected void attribute( Element element,
+//	                          String attributeName,
+//	                          Object value,
+//	                          ViewElementNodeFactory viewElementNodeFactory ) {
+//		if ( value != null ) {
+//			viewElementNodeFactory.setAttribute( element, attributeName, value );
+//		}
+//	}
+//
+//	protected void attribute( IProcessableElementTag element, String attributeName, String value ) {
+//		if ( value != null ) {
+//			element.setAttribute( attributeName, value );
+//		}
+//	}
+//
+//	protected void attributeAppend( Element element, String attributeName, String value ) {
+//		if ( value != null ) {
+//			String attributeValue = element.getAttributeValue( attributeName );
+//
+//			if ( StringUtils.isNotBlank( attributeValue ) ) {
+//				attributeValue += " " + value;
+//			}
+//			else {
+//				attributeValue = value;
+//			}
+//
+//			element.setAttribute( attributeName, attributeValue );
+//		}
+//	}
+//
+//	protected void attribute( Element element, String attributeName, boolean condition ) {
+//		if ( condition ) {
+//			element.setAttribute( attributeName, attributeName );
+//		}
+//	}
+//
+//	/**
+//	 * Will append the nodes generated for the child {@link ViewElement} as children to the root {@link Element} passed.
+//	 * If the child element is null, nothing will be added but no exception will be thrown.
+//	 *
+//	 * @param element                to which to add generated child nodes
+//	 * @param child                  viewelement for which nodes should be generated (can be null)
+//	 * @param arguments              contextual arguments
+//	 * @param viewElementNodeFactory root factory for generating the child nodes
+//	 */
+//	@SuppressWarnings("unused")
+//	protected void addChild( Element element,
+//	                         ViewElement child,
+//	                         Arguments arguments,
+//	                         ViewElementNodeFactory viewElementNodeFactory ) {
+//		if ( child != null ) {
+//			for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
+//				element.addChild( childNode );
+//			}
+//		}
+//	}
 }

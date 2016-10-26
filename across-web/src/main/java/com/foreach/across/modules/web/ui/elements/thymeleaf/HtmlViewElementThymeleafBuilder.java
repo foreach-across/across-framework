@@ -15,24 +15,20 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
-import com.foreach.across.modules.web.ui.elements.ConfigurableTextViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
 
 public class HtmlViewElementThymeleafBuilder extends HtmlViewElementThymeleafSupport<HtmlViewElement>
 {
-	@Override
-	protected Element createNode( HtmlViewElement element,
-	                              Arguments arguments,
-	                              ViewElementNodeFactory viewElementNodeFactory ) {
-		Element node = createElement( element.getTagName() );
-
-		if ( element instanceof ConfigurableTextViewElement ) {
-			text( node, ( (ConfigurableTextViewElement) element ).getText() );
-		}
-
-		return node;
-	}
+//	@Override
+//	protected Element createNode( HtmlViewElement element,
+//	                              Arguments arguments,
+//	                              ViewElementNodeFactory viewElementNodeFactory ) {
+//		Element node = createElement( element.getTagName() );
+//
+//		if ( element instanceof ConfigurableTextViewElement ) {
+//			text( node, ( (ConfigurableTextViewElement) element ).getText() );
+//		}
+//
+//		return node;
+//	}
 }

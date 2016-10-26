@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
+import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
@@ -27,9 +28,9 @@ import org.unbescape.html.HtmlEscape;
 public class TextViewElementThymeleafBuilder implements ViewElementThymeleafBuilder<TextViewElement>
 {
 	@Override
-	public IModel buildNodes( TextViewElement viewElement,
-	                          ITemplateContext context,
-	                          ViewElementNodeFactory componentElementProcessor ) {
+	public ProcessableModel buildNodes( TextViewElement viewElement,
+	                                    ITemplateContext context,
+	                                    ViewElementNodeFactory componentElementProcessor ) {
 		String content = StringUtils.defaultString( viewElement.getText() );
 		String html = viewElement.isEscapeXml() ? HtmlEscape.escapeHtml4Xml( content ) : content;
 
@@ -39,6 +40,6 @@ public class TextViewElementThymeleafBuilder implements ViewElementThymeleafBuil
 		model.add( modelFactory.createText( html ) );
 		//Text text = new Text( html, null, null, true );
 
-		return model;
+		return new ProcessableModel( model, false );
 	}
 }
