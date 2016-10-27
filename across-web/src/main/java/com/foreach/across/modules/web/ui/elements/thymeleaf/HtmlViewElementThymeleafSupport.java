@@ -23,6 +23,7 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.model.AttributeValueQuotes;
 import org.thymeleaf.model.IModel;
@@ -126,45 +127,44 @@ public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 		}
 	}
 
-//	protected void attributeAppend( Element element, String attributeName, String value ) {
-//		if ( value != null ) {
-//			String attributeValue = element.getAttributeValue( attributeName );
-//
-//			if ( StringUtils.isNotBlank( attributeValue ) ) {
-//				attributeValue += " " + value;
-//			}
-//			else {
-//				attributeValue = value;
-//			}
-//
-//			element.setAttribute( attributeName, attributeValue );
-//		}
-//	}
-//
-//	protected void attribute( Element element, String attributeName, boolean condition ) {
-//		if ( condition ) {
-//			element.setAttribute( attributeName, attributeName );
-//		}
-//	}
-//
-//	/**
-//	 * Will append the nodes generated for the child {@link ViewElement} as children to the root {@link Element} passed.
-//	 * If the child element is null, nothing will be added but no exception will be thrown.
-//	 *
-//	 * @param element                to which to add generated child nodes
-//	 * @param child                  viewelement for which nodes should be generated (can be null)
-//	 * @param arguments              contextual arguments
-//	 * @param viewElementNodeFactory root factory for generating the child nodes
-//	 */
-//	@SuppressWarnings("unused")
-//	protected void addChild( Element element,
-//	                         ViewElement child,
-//	                         Arguments arguments,
-//	                         ViewElementNodeFactory viewElementNodeFactory ) {
-//		if ( child != null ) {
-//			for ( Node childNode : viewElementNodeFactory.buildModel( child, arguments ) ) {
-//				element.addChild( childNode );
-//			}
-//		}
-//	}
+	protected void attributeAppend( Map<String, String> nodeAttributes, String attributeName, String value ) {
+		if ( value != null ) {
+			String attributeValue = nodeAttributes.get( attributeName );
+
+			if ( StringUtils.isNotBlank( attributeValue ) ) {
+				attributeValue += " " + value;
+			}
+			else {
+				attributeValue = value;
+			}
+
+			nodeAttributes.put( attributeName, attributeValue );
+		}
+	}
+
+	protected void attribute( Map<String, String> nodeAttributes, String attributeName, boolean condition ) {
+		if ( condition ) {
+			nodeAttributes.put( attributeName, attributeName );
+		}
+	}
+
+	/**
+	 * Will append the nodes generated for the child {@link ViewElement} as children to the root {@link ProcessableModel} passed.
+	 * If the child element is null, nothing will be added but no exception will be thrown.
+	 *
+	 * @param model                  to which to add generated child nodes
+	 * @param child                  viewelement for which nodes should be generated (can be null)
+	 * @param context                contextual arguments
+	 * @param viewElementNodeFactory root factory for generating the child nodes
+	 */
+	@SuppressWarnings("unused")
+	protected void addChild( IModel model,
+	                         ViewElement child,
+	                         ITemplateContext context,
+	                         ViewElementNodeFactory viewElementNodeFactory ) {
+		if ( child != null ) {
+			ProcessableModel processableModel = viewElementNodeFactory.buildModel( child, context );
+			model.addModel( processableModel.getModel() );
+		}
+	}
 }
