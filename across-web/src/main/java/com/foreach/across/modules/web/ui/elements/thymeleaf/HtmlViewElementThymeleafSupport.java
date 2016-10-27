@@ -15,12 +15,22 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
+import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
+import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.AttributeValueQuotes;
+import org.thymeleaf.model.IModel;
+import org.thymeleaf.model.IModelFactory;
+import org.thymeleaf.model.IOpenElementTag;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Supports implementations of {@link com.foreach.across.modules.web.ui.elements.AbstractVoidNodeViewElement}
@@ -32,92 +42,90 @@ public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 		implements ViewElementThymeleafBuilder<T>
 {
 	@Override
-	public ProcessableModel buildNodes( T viewElement,
+	public ProcessableModel buildModel( T viewElement,
 	                                    ITemplateContext context,
 	                                    ViewElementNodeFactory viewElementNodeFactory ) {
-//		Element node = createNode( viewElement, context, viewElementNodeFactory );
-//		ProcessableAttrProcessor.makeProcessable( node );
-//
-//		attribute( node, "id", retrieveHtmlId( context, viewElement ) );
-//
-//		applyProperties( viewElement, context, node );
-//
-//		viewElementNodeFactory.setAttributes( node, viewElement.getAttributes() );
-//
-//		if ( viewElement instanceof AbstractNodeViewElement ) {
-//			for ( ViewElement child : ((AbstractNodeViewElement) viewElement).getChildren() ) {
-//				for ( Node childNode : viewElementNodeFactory.buildNodes( child, context ) ) {
-//					node.addChild( childNode );
-//				}
-//			}
-//		}
-//
-//		node = postProcess( node, viewElement, context, viewElementNodeFactory );
-//
-//		return Collections.singletonList( (Node) node );
-		return null;
+		Map<String, String> nodeAttributes = new HashMap<>();
+		attribute( nodeAttributes, "id", retrieveHtmlId( context, viewElement ) );
+		applyProperties( viewElement, context, nodeAttributes );
+		viewElementNodeFactory.setAttributes( nodeAttributes, viewElement.getAttributes() );
+		ProcessableModel model = createNode( viewElement, context, viewElementNodeFactory, nodeAttributes );
+
+		if ( viewElement instanceof AbstractNodeViewElement ) {
+			for ( ViewElement child : ( (AbstractNodeViewElement) viewElement ).getChildren() ) {
+				ProcessableModel childModel = viewElementNodeFactory.buildModel( child, context );
+				model.getModel().addModel( childModel.getModel() );
+			}
+		}
+
+		model.getModel().add( context.getModelFactory().createCloseElementTag( viewElement.getTagName() ) );
+
+		//TODO: TH3
+		//node = postProcess( node, viewElement, context, viewElementNodeFactory );
+
+		return model;
 	}
-//
-//	protected abstract Element createNode( T control,
-//	                                       Arguments arguments,
-//	                                       ViewElementNodeFactory viewElementNodeFactory );
-//
-//	/**
-//	 * Adapter method, meant for subclass hierarchies.
-//	 */
-//	protected void applyProperties( T control, Arguments arguments, Element node ) {
-//	}
-//
-//	/**
-//	 * Adapter method allowing modifying the element (eg wrapping it) after it has been built.
-//	 */
+
+	protected abstract ProcessableModel createNode( T control,
+	                                                ITemplateContext arguments,
+	                                                ViewElementNodeFactory viewElementNodeFactory,
+	                                                Map<String, String> nodeAttributes );
+
+	/**
+	 * Adapter method, meant for subclass hierarchies.
+	 */
+	protected void applyProperties( T control, ITemplateContext arguments, Map<String, String> nodeAttributes ) {
+	}
+
+	/**
+	 * Adapter method allowing modifying the element (eg wrapping it) after it has been built.
+	 */
 //	protected Element postProcess( Element element,
 //	                               T control,
 //	                               Arguments arguments,
 //	                               ViewElementNodeFactory viewElementNodeFactory ) {
 //		return element;
 //	}
-//
-//	/**
-//	 * Create a new {@link Element} that is processable and has the given tag name.
-//	 *
-//	 * @param tagName value
-//	 * @return Element that is processable
-//	 */
-//	protected Element createElement( String tagName ) {
-//		Element element = new Element( tagName );
-//		ProcessableAttrProcessor.makeProcessable( element );
-//
-//		return element;
-//	}
-//
-//	protected void text( Element element, String text ) {
-//		if ( text != null ) {
-//			element.addChild( new Text( text ) );
-//		}
-//	}
-//
-//	protected String retrieveHtmlId( ITemplateContext context, HtmlViewElement control ) {
-//		HtmlIdStore idStore = (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
-//
-//		return idStore.retrieveHtmlId( control );
-//	}
-//
-//	protected void attribute( Element element,
-//	                          String attributeName,
-//	                          Object value,
-//	                          ViewElementNodeFactory viewElementNodeFactory ) {
-//		if ( value != null ) {
-//			viewElementNodeFactory.setAttribute( element, attributeName, value );
-//		}
-//	}
-//
-//	protected void attribute( IProcessableElementTag element, String attributeName, String value ) {
-//		if ( value != null ) {
-//			element.setAttribute( attributeName, value );
-//		}
-//	}
-//
+
+	/**
+	 * Create a new {@link ProcessableModel} that is processable and has the given tag name.
+	 *
+	 * @param tagName    value
+	 * @param attributes
+	 * @return Element that is processable
+	 */
+	protected IOpenElementTag createElement( IModelFactory modelFactory,
+	                                         String tagName,
+	                                         Map<String, String> attributes ) {
+		return modelFactory.createOpenElementTag( tagName, attributes, AttributeValueQuotes.SINGLE, false );
+	}
+
+	protected void text( IModelFactory modelFactory, IModel model, String text ) {
+		if ( text != null ) {
+			model.add( modelFactory.createText( text ) );
+		}
+	}
+
+	protected String retrieveHtmlId( ITemplateContext context, HtmlViewElement control ) {
+		HtmlIdStore idStore = (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
+		return idStore.retrieveHtmlId( context, control );
+	}
+
+	protected void attribute( Map<String, String> nodeAttributes,
+	                          String attributeName,
+	                          Object value,
+	                          ViewElementNodeFactory viewElementNodeFactory ) {
+		if ( value != null ) {
+			viewElementNodeFactory.setAttribute( nodeAttributes, attributeName, value );
+		}
+	}
+
+	protected void attribute( Map<String, String> nodeAttributes, String attributeName, String value ) {
+		if ( value != null ) {
+			nodeAttributes.put( attributeName, value );
+		}
+	}
+
 //	protected void attributeAppend( Element element, String attributeName, String value ) {
 //		if ( value != null ) {
 //			String attributeValue = element.getAttributeValue( attributeName );
@@ -154,7 +162,7 @@ public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 //	                         Arguments arguments,
 //	                         ViewElementNodeFactory viewElementNodeFactory ) {
 //		if ( child != null ) {
-//			for ( Node childNode : viewElementNodeFactory.buildNodes( child, arguments ) ) {
+//			for ( Node childNode : viewElementNodeFactory.buildModel( child, arguments ) ) {
 //				element.addChild( childNode );
 //			}
 //		}

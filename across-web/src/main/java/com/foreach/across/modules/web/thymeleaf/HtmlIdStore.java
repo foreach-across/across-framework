@@ -17,11 +17,13 @@ package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
-import org.apache.commons.lang3.NotImplementedException;
+import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.expression.IExpressionObjectFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Helper that keeps track of the generated html ids for {@link com.foreach.across.modules.web.ui.elements.HtmlViewElement}
@@ -31,16 +33,17 @@ import java.util.Map;
  */
 public class HtmlIdStore
 {
-	private final ITemplateContext context;
+	private static AcrossWebDialect.AcrossExpressionObjectFactory ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY;
+	private IExpressionObjectFactory temporaryAcrossExpressionObjectFactory;
 	private final Map<ViewElement, String> generatedIds;
 
-	public HtmlIdStore( ITemplateContext context ) {
-		this( context, new HashMap<ViewElement, String>() );
+	public HtmlIdStore() {
+		this.generatedIds = new HashMap<>();
 	}
 
-	private HtmlIdStore( ITemplateContext context, Map<ViewElement, String> generatedIds ) {
-		this.context = context;
-		this.generatedIds = generatedIds;
+	HtmlIdStore( AcrossWebDialect.AcrossExpressionObjectFactory acrossExpressionObjectFactory ) {
+		this();
+		ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY = acrossExpressionObjectFactory;
 	}
 
 	public static HtmlIdStore fetch( ITemplateContext context ) {
@@ -48,9 +51,9 @@ public class HtmlIdStore
 	}
 
 	public static void store( HtmlIdStore idStore, ITemplateContext context ) {
-		//TODO: TH3
-		throw new NotImplementedException( "a" );
-		//context.getExpressionObjects().put( AcrossWebDialect.HTML_ID_STORE, idStore );
+		if ( idStore.temporaryAcrossExpressionObjectFactory == null ) {
+			ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.setTemporaryDelegate( null );
+		}
 	}
 
 	/**
@@ -63,7 +66,7 @@ public class HtmlIdStore
 	 * @param control element for which to retrieve the id
 	 * @return id or null if no id is available
 	 */
-	public String retrieveHtmlId( ViewElement control ) {
+	public String retrieveHtmlId( ITemplateContext context, ViewElement control ) {
 		String htmlId = null;
 
 		if ( control instanceof HtmlViewElement ) {
@@ -94,6 +97,33 @@ public class HtmlIdStore
 	 * @return new instance of a HtmlIdStore
 	 */
 	public HtmlIdStore createNew() {
-		return new HtmlIdStore( context, new HashMap<>( generatedIds ) );
+		HtmlIdStore htmlIdStore = new HtmlIdStore();
+		IExpressionObjectFactory temporaryExpressionObjectFactory = new IExpressionObjectFactory()
+		{
+			@Override
+			public Set<String> getAllExpressionObjectNames() {
+				return ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.getAllExpressionObjectNames();
+			}
+
+			@Override
+			public Object buildObject( IExpressionContext context, String expressionObjectName ) {
+				if ( AcrossWebDialect.HTML_ID_STORE.equals( expressionObjectName ) ) {
+					return htmlIdStore;
+				}
+				return ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.buildObject( context, expressionObjectName );
+			}
+
+			@Override
+			public boolean isCacheable( String expressionObjectName ) {
+				return ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.isCacheable( expressionObjectName );
+			}
+		};
+		htmlIdStore.setTemporaryAcrossExpressionObjectFactory( temporaryExpressionObjectFactory );
+		ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.setTemporaryDelegate( temporaryExpressionObjectFactory );
+		return htmlIdStore;
+	}
+
+	public void setTemporaryAcrossExpressionObjectFactory( IExpressionObjectFactory temporaryAcrossExpressionObjectFactory ) {
+		this.temporaryAcrossExpressionObjectFactory = temporaryAcrossExpressionObjectFactory;
 	}
 }

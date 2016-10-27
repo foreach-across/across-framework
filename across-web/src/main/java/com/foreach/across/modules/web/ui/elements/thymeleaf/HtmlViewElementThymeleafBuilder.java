@@ -15,20 +15,33 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
+import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
+import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
+import com.foreach.across.modules.web.ui.elements.ConfigurableTextViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IModel;
+import org.thymeleaf.model.IModelFactory;
+import org.thymeleaf.model.IOpenElementTag;
+
+import java.util.Map;
 
 public class HtmlViewElementThymeleafBuilder extends HtmlViewElementThymeleafSupport<HtmlViewElement>
 {
-//	@Override
-//	protected Element createNode( HtmlViewElement element,
-//	                              Arguments arguments,
-//	                              ViewElementNodeFactory viewElementNodeFactory ) {
-//		Element node = createElement( element.getTagName() );
-//
-//		if ( element instanceof ConfigurableTextViewElement ) {
-//			text( node, ( (ConfigurableTextViewElement) element ).getText() );
-//		}
-//
-//		return node;
-//	}
+	@Override
+	protected ProcessableModel createNode( HtmlViewElement element,
+	                                       ITemplateContext context,
+	                                       ViewElementNodeFactory viewElementNodeFactory,
+	                                       Map<String, String> nodeAttributes ) {
+		IModelFactory modelFactory = context.getModelFactory();
+		IModel model = modelFactory.createModel();
+		IOpenElementTag node = createElement( modelFactory, element.getTagName(), nodeAttributes );
+		model.add( node );
+
+		if ( element instanceof ConfigurableTextViewElement ) {
+			text( modelFactory, model, ( (ConfigurableTextViewElement) element ).getText() );
+		}
+
+		return new ProcessableModel( model, true );
+	}
 }

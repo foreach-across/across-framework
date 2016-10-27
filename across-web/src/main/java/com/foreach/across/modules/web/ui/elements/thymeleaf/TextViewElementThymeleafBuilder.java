@@ -28,7 +28,7 @@ import org.unbescape.html.HtmlEscape;
 public class TextViewElementThymeleafBuilder implements ViewElementThymeleafBuilder<TextViewElement>
 {
 	@Override
-	public ProcessableModel buildNodes( TextViewElement viewElement,
+	public ProcessableModel buildModel( TextViewElement viewElement,
 	                                    ITemplateContext context,
 	                                    ViewElementNodeFactory componentElementProcessor ) {
 		String content = StringUtils.defaultString( viewElement.getText() );

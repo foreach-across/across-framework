@@ -18,14 +18,16 @@ package com.foreach.across.modules.web.thymeleaf;
 import com.foreach.across.modules.web.ui.ViewElement;
 import org.thymeleaf.context.ITemplateContext;
 
+import java.util.Map;
+
 /**
  * @author Arne Vandamme
  */
 public interface ViewElementNodeFactory
 {
-	ProcessableModel buildNodes( ViewElement viewElement, ITemplateContext context );
+	ProcessableModel buildModel( ViewElement viewElement, ITemplateContext context );
 
-//	void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value );
-//
-//	void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes );
+	void setAttribute( Map<String, String> nodeAttributes, String attributeName, Object value );
+
+	void setAttributes( Map<String, String> nodeAttributes, Map<String, Object> attributes );
 }

@@ -15,11 +15,14 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
+import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IModel;
 
 /**
  * @author Arne Vandamme
@@ -27,30 +30,30 @@ import org.thymeleaf.context.ITemplateContext;
 public class ViewElementGeneratorThymeleafBuilder implements ViewElementThymeleafBuilder<ViewElementGenerator<?, ?>>
 {
 	@Override
-	public ProcessableModel buildNodes( ViewElementGenerator<?, ?> container,
+	public ProcessableModel buildModel( ViewElementGenerator<?, ?> container,
 	                                    ITemplateContext context,
 	                                    ViewElementNodeFactory componentElementProcessor ) {
-//		List<Node> list = new ArrayList<>();
-//
-//		HtmlIdStore originalIdStore = HtmlIdStore.fetch( context );
-//
-//		try {
-//			for ( ViewElement child : container ) {
-//				if ( child != null ) {
-//					if ( !container.isBuilderItemTemplate() ) {
-//						HtmlIdStore.store( originalIdStore.createNew(), context );
-//					}
-//
-//					list.addAll( componentElementProcessor.buildNodes( child, context ) );
-//				}
-//			}
-//		}
-//		finally {
-//			// Put back the original id store
-//			HtmlIdStore.store( originalIdStore, context );
-//		}
-//
-//		return list;
-		return null;
+
+		IModel model = context.getModelFactory().createModel();
+		HtmlIdStore originalIdStore = HtmlIdStore.fetch( context );
+
+		try {
+			for ( ViewElement child : container ) {
+				if ( child != null ) {
+					if ( !container.isBuilderItemTemplate() ) {
+						HtmlIdStore.store( originalIdStore.createNew(), context );
+					}
+
+					ProcessableModel processableModel = componentElementProcessor.buildModel( child, context );
+					model.addModel( processableModel.getModel() );
+				}
+			}
+		}
+		finally {
+			// Put back the original id store
+			HtmlIdStore.store( originalIdStore, context );
+
+		}
+		return new ProcessableModel( model, true );
 	}
 }

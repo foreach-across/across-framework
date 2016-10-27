@@ -22,7 +22,7 @@ import org.thymeleaf.context.ITemplateContext;
 
 public interface ViewElementThymeleafBuilder<T extends ViewElement>
 {
-	ProcessableModel buildNodes( T viewElement,
+	ProcessableModel buildModel( T viewElement,
 	                             ITemplateContext context,
 	                             ViewElementNodeFactory viewElementNodeFactory );
 }

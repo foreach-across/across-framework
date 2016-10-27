@@ -20,20 +20,17 @@ import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.model.IModel;
 
 public class ContainerViewElementThymeleafBuilder implements ViewElementThymeleafBuilder<ContainerViewElement>
 {
 	@Override
-	public ProcessableModel buildNodes( ContainerViewElement container,
+	public ProcessableModel buildModel( ContainerViewElement container,
 	                                    ITemplateContext context,
 	                                    ViewElementNodeFactory componentElementProcessor ) {
-//		List<Node> list = new ArrayList<>();
-//
-//		container.getChildren().forEach(
-//				c -> list.addAll( componentElementProcessor.buildNodes( c, context ) )
-//		);
-//
-//		return list;
-		return null;
+		IModel model = context.getModelFactory().createModel();
+		container.getChildren().forEach(
+				c -> model.addModel( componentElementProcessor.buildModel( c, context ).getModel() ) );
+		return new ProcessableModel( model, true );
 	}
 }

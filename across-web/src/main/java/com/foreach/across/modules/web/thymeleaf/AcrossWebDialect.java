@@ -15,7 +15,11 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
+import com.foreach.across.modules.web.resource.WebResourceUtils;
+import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.dialect.AbstractProcessorDialect;
+import org.thymeleaf.dialect.IExpressionObjectDialect;
+import org.thymeleaf.expression.IExpressionObjectFactory;
 import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
 
@@ -33,7 +37,7 @@ import java.util.Set;
  *
  * @author Arne Vandamme
  */
-public class AcrossWebDialect extends AbstractProcessorDialect
+public class AcrossWebDialect extends AbstractProcessorDialect implements IExpressionObjectDialect
 {
 	public static final String PREFIX = "across";
 
@@ -44,32 +48,55 @@ public class AcrossWebDialect extends AbstractProcessorDialect
 		super( "AcrossWeb", PREFIX, StandardDialect.PROCESSOR_PRECEDENCE );
 	}
 
-	//TODO: TH3
-//	@Override
-//	public Map<String, Object> getAdditionalExpressionObjects( IProcessingContext processingContext ) {
-//		Map<String, Object> objects = new HashMap<>();
-//
-//		Object pathResolver = processingContext.getContext().getVariables().get(
-//				WebResourceUtils.PATH_RESOLVER_ATTRIBUTE_KEY );
-//
-//		if ( pathResolver != null ) {
-//			objects.put( UTILITY_WEBAPP, pathResolver );
-//		}
-//
-//		if ( processingContext instanceof Arguments ) {
-//			objects.put( HTML_ID_STORE, new HtmlIdStore( (Arguments) processingContext ) );
-//		}
-//
-//		return objects;
-//	}
-
 	@Override
 	public Set<IProcessor> getProcessors( final String dialectPrefix ) {
-		//TODO: TH3
 		Set<IProcessor> processors = new HashSet<>();
-		//processors.add( new ProcessableAttrProcessor() );
 		processors.add( new ViewElementElementProcessor() );
-
 		return processors;
+	}
+
+	@Override
+	public IExpressionObjectFactory getExpressionObjectFactory() {
+		return new AcrossExpressionObjectFactory();
+	}
+
+	public static class AcrossExpressionObjectFactory implements IExpressionObjectFactory
+	{
+
+		public HtmlIdStore htmlIdStore = new HtmlIdStore( this );
+		private IExpressionObjectFactory delegate = null;
+
+		@Override
+		public Set<String> getAllExpressionObjectNames() {
+			HashSet names = new HashSet();
+			names.add( UTILITY_WEBAPP );
+			names.add( HTML_ID_STORE );
+			return names;
+		}
+
+		@Override
+		public Object buildObject( IExpressionContext context, String expressionObjectName ) {
+			if ( delegate != null ) {
+				return delegate.buildObject( context, expressionObjectName );
+			}
+			else {
+				if ( HTML_ID_STORE.equals( expressionObjectName ) ) {
+					return htmlIdStore;
+				}
+				else if ( UTILITY_WEBAPP.equals( expressionObjectName ) ) {
+					return context.getVariable( WebResourceUtils.PATH_RESOLVER_ATTRIBUTE_KEY );
+				}
+				return null;
+			}
+		}
+
+		public void setTemporaryDelegate( IExpressionObjectFactory delegate ) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public boolean isCacheable( String expressionObjectName ) {
+			return false;
+		}
 	}
 }

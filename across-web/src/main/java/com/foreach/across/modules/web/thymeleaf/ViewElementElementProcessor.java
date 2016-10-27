@@ -15,12 +15,14 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.context.WebEngineContext;
@@ -34,6 +36,9 @@ import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
@@ -62,12 +67,12 @@ public class ViewElementElementProcessor
 //	protected List<Node> getMarkupSubstitutes( ITemplateContext context, IProcessableElementTag element ) {
 //		ViewElement viewElement = retrieveViewElementFromAttribute( context, element );
 //
-//		return buildNodes( viewElement, context );
+//		return buildModel( viewElement, context );
 //	}
 //
 	@Override
 	@SuppressWarnings("unchecked")
-	public ProcessableModel buildNodes( ViewElement viewElement, ITemplateContext context ) {
+	public ProcessableModel buildModel( ViewElement viewElement, ITemplateContext context ) {
 		if ( hasCustomTemplate( viewElement ) ) {
 			return renderCustomTemplate( viewElement, context );
 		}
@@ -75,64 +80,63 @@ public class ViewElementElementProcessor
 			ViewElementThymeleafBuilder processor = findElementProcessor( viewElement, context );
 
 			if ( processor != null ) {
-				return processor.buildNodes( viewElement, context, this );
+				return processor.buildModel( viewElement, context, this );
 			}
 		}
 
 		throw new IllegalArgumentException( "Unable to render ViewElement of type " + viewElement.getClass() );
 	}
 
-	//
-//	@Override
-//	public void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value ) {
-//		if ( !"class".equals( attributeName ) ) {
-//			if ( value == null ) {
-//				node.removeAttribute( attributeName );
-//			}
-//			else {
-//				node.setAttribute( attributeName, serialize( value ) );
-//			}
-//		}
-//		else {
-//			attributeAppend( node, attributeName, Objects.toString( value ) );
-//		}
-//	}
-//
-//	private void attributeAppend( NestableAttributeHolderNode element, String attributeName, String value ) {
-//		if ( value != null ) {
-//			String attributeValue = element.getAttributeValue( attributeName );
-//
-//			if ( StringUtils.isNotBlank( attributeValue ) ) {
-//				attributeValue += " " + value;
-//			}
-//			else {
-//				attributeValue = value;
-//			}
-//
-//			element.setAttribute( attributeName, attributeValue );
-//		}
-//	}
-//
-//	private String serialize( Object value ) {
-//		if ( value instanceof String || ClassUtils.isPrimitiveOrWrapper( value.getClass() ) ) {
-//			return Objects.toString( value );
-//		}
-//
-//		try {
-//			return objectMapper.writeValueAsString( value );
-//		}
-//		catch ( JsonProcessingException jpe ) {
-//			throw new RuntimeException( jpe );
-//		}
-//	}
-//
-//	@Override
-//	public void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes ) {
-//		for ( Map.Entry<String, Object> attribute : attributes.entrySet() ) {
-//			setAttribute( node, attribute.getKey(), attribute.getValue() );
-//		}
-//	}
-//
+	@Override
+	public void setAttribute( Map<String, String> nodeAttributes, String attributeName, Object value ) {
+		if ( !"class".equals( attributeName ) ) {
+			if ( value == null ) {
+				nodeAttributes.remove( attributeName );
+			}
+			else {
+				nodeAttributes.put( attributeName, serialize( value ) );
+			}
+		}
+		else {
+			attributeAppend( nodeAttributes, attributeName, Objects.toString( value ) );
+		}
+	}
+
+	private void attributeAppend( Map<String, String> nodeAttributes, String attributeName, String value ) {
+		if ( value != null ) {
+			String attributeValue = nodeAttributes.get( attributeName );
+
+			if ( StringUtils.isNotBlank( attributeValue ) ) {
+				attributeValue += " " + value;
+			}
+			else {
+				attributeValue = value;
+			}
+
+			nodeAttributes.put( attributeName, attributeValue );
+		}
+	}
+
+	private String serialize( Object value ) {
+		if ( value instanceof String || ClassUtils.isPrimitiveOrWrapper( value.getClass() ) ) {
+			return Objects.toString( value );
+		}
+
+		try {
+			return objectMapper.writeValueAsString( value );
+		}
+		catch ( JsonProcessingException jpe ) {
+			throw new RuntimeException( jpe );
+		}
+	}
+
+	@Override
+	public void setAttributes( Map<String, String> nodeAttributes, Map<String, Object> attributes ) {
+		for ( Map.Entry<String, Object> attribute : attributes.entrySet() ) {
+			setAttribute( nodeAttributes, attribute.getKey(), attribute.getValue() );
+		}
+	}
+
 	private ViewElementThymeleafBuilder findElementProcessor( ViewElement viewElement, ITemplateContext context ) {
 		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext(
 				( (WebEngineContext) context ).getRequest() );
@@ -143,24 +147,8 @@ public class ViewElementElementProcessor
 
 	private ProcessableModel renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
 		( (WebEngineContext) context ).setVariable( "component", viewElement );
-//		Arguments newArguments = context.addLocalVariables(
-//				Collections.singletonMap( "component", viewElement )
-//		);
 
 		String templateWithFragment = appendFragmentIfRequired( viewElement.getCustomTemplate() );
-
-//		StandardFragment fragment = StandardFragmentTagProcessor.computeStandardFragmentSpec(
-//				newArguments.getConfiguration(),
-//				newArguments,
-//				templateWithFragment,
-//				"th", "fragment" );
-//
-//		List<Node> nodes = fragment.extractFragment( newArguments.getConfiguration(), newArguments,
-//		                                             newArguments.getTemplateRepository() );
-//
-//		if ( nodes == null ) {
-//			throw new TemplateProcessingException( "Not a valid template [" + templateWithFragment + "]" );
-//		}
 
 		IModelFactory modelFactory = context.getModelFactory();
 		IModel model = modelFactory.createModel();
@@ -168,19 +156,10 @@ public class ViewElementElementProcessor
 		model.add( modelFactory.createOpenElementTag( "div", "th:replace", templateWithFragment, false ) );
 		model.add( modelFactory.createCloseElementTag( "div" ) );
 
-		//TemplateManager manager = context.getConfiguration().getTemplateManager();
 		final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(
 				context.getConfiguration() );
 		IStandardExpression expression = expressionParser.parseExpression( context, "~{" + templateWithFragment + "}" );
 		Object result = expression.execute( context );
-//		FragmentSignature fragmentSignature = FragmentSignatureUtils.parseFragmentSignature( context.getConfiguration(), templateWithFragment );
-//		final Writer stringWriter = new FastStringWriter( 200);
-//		context.getConfiguration().getTemplateManager().process(null, context, stringWriter);
-//
-//		TemplateModel templateModel = manager.parseStandalone( context, templateWithFragment, Collections.emptySet(), TemplateMode.HTML, true, true );
-
-//		TemplateData templateData = new TemplateData( templateWithFragment, null, context.getTemplateData().getTemplateMode(), context.getTemplateData().getValidity() );
-		//model = context.getModelFactory().parse( context.getTemplateData(), "<div th:replace='" + templateWithFragment + "'></div>" );
 		return new ProcessableModel( ( (Fragment) result ).getTemplateModel(), true );
 	}
 
@@ -222,7 +201,7 @@ public class ViewElementElementProcessor
 
 		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
 
-		ProcessableModel model = buildNodes( viewElement, context );
+		ProcessableModel model = buildModel( viewElement, context );
 
 		structureHandler.replaceWith( model.getModel(), model.isProcessable() );
 	}
