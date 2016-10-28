@@ -59,4 +59,16 @@ public class TestTextViewElement extends AbstractViewElementTemplateTest
 
 		renderAndExpect( text, "<div>Received text: text content</div>" );
 	}
+
+	@Test
+	public void nestedTemplateRendering() {
+		TextViewElement text = new TextViewElement( "initial text" );
+		text.setCustomTemplate( "th/test/elements/text :: nestedTemplate(${component})" );
+
+		TextViewElement other = new TextViewElement( "other text" );
+		other.setCustomTemplate( "th/test/elements/text :: otherTemplate(${component})" );
+
+		renderAndExpect( text, ( model ) -> model.addAttribute( "otherElement", other ),
+		                 "initial text: <div>Received text: other text</div>" );
+	}
 }

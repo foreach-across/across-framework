@@ -200,9 +200,16 @@ public class ViewElementElementProcessor
 	                          IElementTagStructureHandler structureHandler ) {
 
 		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
+		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext(
+				( (WebEngineContext) context ).getRequest() );
+		ViewElementNodeBuilderRegistry registry = appCtx.getBean( ViewElementNodeBuilderRegistry.class );
 
+		ThymeleafModelBuilder builder = new ThymeleafModelBuilder( context, registry );
+		builder.addViewElement( viewElement );
+		structureHandler.replaceWith( builder.createModel(), true );
+		/*
 		ProcessableModel model = buildModel( viewElement, context );
 
-		structureHandler.replaceWith( model.getModel(), model.isProcessable() );
+		structureHandler.replaceWith( model.getModel(), model.isProcessable() );*/
 	}
 }

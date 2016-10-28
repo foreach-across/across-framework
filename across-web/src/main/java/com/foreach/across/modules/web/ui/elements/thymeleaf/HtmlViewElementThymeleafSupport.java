@@ -15,10 +15,7 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
-import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
-import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
+import com.foreach.across.modules.web.thymeleaf.*;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
@@ -42,6 +39,14 @@ import java.util.Map;
 public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 		implements ViewElementThymeleafBuilder<T>
 {
+	@Override
+	public void writeModel( T viewElement, ThymeleafModelBuilder writer ) {
+		writer.addOpenElement( viewElement.getTagName() );
+		//String htmlId = writer.retrieveHtmlId( viewElement );
+
+		writer.addCloseElement();
+	}
+
 	@Override
 	public ProcessableModel buildModel( T viewElement,
 	                                    ITemplateContext context,

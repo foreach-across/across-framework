@@ -43,7 +43,7 @@ public class ViewElementNodeBuilderRegistry
 	 * @param viewElement instance for which to find a builder
 	 * @return builder instance or null if none found
 	 */
-	public ViewElementThymeleafBuilder getNodeBuilder( ViewElement viewElement ) {
+	public ViewElementThymeleafBuilder<ViewElement> getNodeBuilder( ViewElement viewElement ) {
 		Assert.notNull( viewElement );
 		ViewElementThymeleafBuilder builder = builders.get( viewElement.getClass() );
 

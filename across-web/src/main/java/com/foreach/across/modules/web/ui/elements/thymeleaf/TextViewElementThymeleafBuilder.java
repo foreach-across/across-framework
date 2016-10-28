@@ -16,30 +16,35 @@
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.model.IModel;
-import org.thymeleaf.model.IModelFactory;
-import org.unbescape.html.HtmlEscape;
 
 public class TextViewElementThymeleafBuilder implements ViewElementThymeleafBuilder<TextViewElement>
 {
 	@Override
+	public void writeModel( TextViewElement viewElement, ThymeleafModelBuilder model ) {
+		model.addText( StringUtils.defaultString( viewElement.getText() ), viewElement.isEscapeXml() );
+	}
+
+	@Override
 	public ProcessableModel buildModel( TextViewElement viewElement,
 	                                    ITemplateContext context,
 	                                    ViewElementNodeFactory componentElementProcessor ) {
-		String content = StringUtils.defaultString( viewElement.getText() );
-		String html = viewElement.isEscapeXml() ? HtmlEscape.escapeHtml4Xml( content ) : content;
+//		String content = StringUtils.defaultString( viewElement.getText() );
+//		String html = viewElement.isEscapeXml() ? HtmlEscape.escapeHtml4Xml( content ) : content;
+//
+//		IModelFactory modelFactory = context.getModelFactory();
+//
+//		IModel model = modelFactory.createModel();
+//		model.add( modelFactory.createText( html ) );
+//		//Text text = new Text( html, null, null, true );
+//
+//		return new ProcessableModel( model, false );
 
-		IModelFactory modelFactory = context.getModelFactory();
-
-		IModel model = modelFactory.createModel();
-		model.add( modelFactory.createText( html ) );
-		//Text text = new Text( html, null, null, true );
-
-		return new ProcessableModel( model, false );
+		return null;
 	}
 }

@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.ui.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
 import org.thymeleaf.context.ITemplateContext;
@@ -25,4 +26,6 @@ public interface ViewElementThymeleafBuilder<T extends ViewElement>
 	ProcessableModel buildModel( T viewElement,
 	                             ITemplateContext context,
 	                             ViewElementNodeFactory viewElementNodeFactory );
+
+	void writeModel( T viewElement, ThymeleafModelBuilder writer );
 }

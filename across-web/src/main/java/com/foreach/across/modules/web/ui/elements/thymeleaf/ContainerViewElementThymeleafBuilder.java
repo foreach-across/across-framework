@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
@@ -32,5 +33,10 @@ public class ContainerViewElementThymeleafBuilder implements ViewElementThymelea
 		container.getChildren().forEach(
 				c -> model.addModel( componentElementProcessor.buildModel( c, context ).getModel() ) );
 		return new ProcessableModel( model, true );
+	}
+
+	@Override
+	public void writeModel( ContainerViewElement viewElement, ThymeleafModelBuilder writer ) {
+
 	}
 }

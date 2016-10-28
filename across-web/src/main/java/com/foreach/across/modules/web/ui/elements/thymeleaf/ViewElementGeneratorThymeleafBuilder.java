@@ -17,6 +17,7 @@ package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
@@ -29,6 +30,11 @@ import org.thymeleaf.model.IModel;
  */
 public class ViewElementGeneratorThymeleafBuilder implements ViewElementThymeleafBuilder<ViewElementGenerator<?, ?>>
 {
+	@Override
+	public void writeModel( ViewElementGenerator<?, ?> viewElement, ThymeleafModelBuilder writer ) {
+
+	}
+
 	@Override
 	public ProcessableModel buildModel( ViewElementGenerator<?, ?> container,
 	                                    ITemplateContext context,

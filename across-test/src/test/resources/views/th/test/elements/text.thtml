@@ -22,6 +22,10 @@
      th:with="text=${component.getAttribute('text')}">
     [[${component.getAttribute('title')}]]: [[${text}]]
 </div>
+
+<div th:fragment="nestedTemplate(component)" th:inline="text" th:remove="tag">
+    [[${component.text}]]: <across:view element="${otherElement}" />
+</div>
 </body>
 </html>
 
