@@ -20,7 +20,9 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
+import com.foreach.across.modules.web.ui.DefaultViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.StandardViewElements;
+import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
@@ -97,6 +99,12 @@ public class ThymeleafViewSupportConfiguration
 		registry.registerNodeBuilder( StandardViewElements.NODE, new HtmlViewElementThymeleafBuilder() );
 
 		return registry;
+	}
+
+	@Bean
+	@Exposed
+	public ViewElementAttributeConverter viewElementAttributeConverter() {
+		return new DefaultViewElementAttributeConverter();
 	}
 
 	@Bean

@@ -15,7 +15,10 @@
  */
 package com.foreach.across.test.modules.web.thymeleaf;
 
+import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
+import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +32,7 @@ import org.thymeleaf.model.*;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -47,6 +49,12 @@ public class TestThymeleafModelBuilder
 	private ViewElementNodeBuilderRegistry registry;
 
 	@Mock
+	private HtmlIdStore htmlIdStore;
+
+	@Mock
+	private ViewElementAttributeConverter attributeConverter;
+
+	@Mock
 	private IModelFactory modelFactory;
 
 	@Mock
@@ -58,8 +66,10 @@ public class TestThymeleafModelBuilder
 	public void before() {
 		when( context.getModelFactory() ).thenReturn( modelFactory );
 		when( modelFactory.createModel() ).thenReturn( model );
+		doAnswer( invocation -> invocation.getArgumentAt( 0, String.class ) )
+				.when( attributeConverter ).apply( anyObject() );
 
-		modelBuilder = new ThymeleafModelBuilder( context, registry );
+		modelBuilder = new ThymeleafModelBuilder( context, registry, htmlIdStore, attributeConverter );
 	}
 
 	@Test
@@ -169,10 +179,12 @@ public class TestThymeleafModelBuilder
 
 	@Test
 	public void addAttributes() {
-		Map<String, Collection<String>> attributes = new HashMap<>();
+		Map<String, Collection<Object>> attributes = new HashMap<>();
 		attributes.put( "attributeOne", Arrays.asList( "one", "two" ) );
 		attributes.put( "attributeTwo", Collections.singleton( "three" ) );
 		attributes.put( "attributeThree", Arrays.asList( "four", "five" ) );
+		attributes.put( "noValuesAreIgnored", Collections.emptyList() );
+		attributes.put( "nullValuesAreIgnored", Collections.singleton( null ) );
 
 		modelBuilder.addOpenElement( "div" );
 		modelBuilder.addAttributes( attributes );
@@ -188,7 +200,7 @@ public class TestThymeleafModelBuilder
 
 	@Test
 	public void addAttribute() {
-		Map<String, Collection<String>> attributes = new HashMap<>();
+		Map<String, Collection<Object>> attributes = new HashMap<>();
 		attributes.put( "attributeOne", Arrays.asList( "one", "two" ) );
 		attributes.put( "attributeTwo", Collections.singleton( "three" ) );
 
@@ -196,6 +208,8 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addAttributes( attributes );
 		modelBuilder.addAttribute( "attributeTwo", "four", "five" );
 		modelBuilder.addAttribute( "attributeThree", "six" );
+		modelBuilder.addAttribute( "nullValueIsIgnored", (String) null );
+		modelBuilder.addAttribute( "symmetric" );
 
 		modelBuilder.createModel();
 
@@ -203,12 +217,13 @@ public class TestThymeleafModelBuilder
 		expected.put( "attributeOne", "one two" );
 		expected.put( "attributeTwo", "four five" );
 		expected.put( "attributeThree", "six" );
+		expected.put( "symmetric", "symmetric" );
 		verify( modelFactory ).createOpenElementTag( "div", expected, AttributeValueQuotes.DOUBLE, false );
 	}
 
 	@Test
 	public void addAttributeValue() {
-		Map<String, Collection<String>> attributes = new HashMap<>();
+		Map<String, Collection<Object>> attributes = new HashMap<>();
 		attributes.put( "attributeOne", Arrays.asList( "one", "two" ) );
 		attributes.put( "attributeTwo", Collections.singleton( "three" ) );
 
@@ -226,7 +241,7 @@ public class TestThymeleafModelBuilder
 
 	@Test
 	public void removeAttributeValue() {
-		Map<String, Collection<String>> attributes = new HashMap<>();
+		Map<String, Collection<Object>> attributes = new HashMap<>();
 		attributes.put( "attributeOne", Arrays.asList( "one", "two" ) );
 		attributes.put( "attributeTwo", Collections.singleton( "three" ) );
 
@@ -245,7 +260,7 @@ public class TestThymeleafModelBuilder
 
 	@Test
 	public void removeAttribute() {
-		Map<String, Collection<String>> attributes = new HashMap<>();
+		Map<String, Collection<Object>> attributes = new HashMap<>();
 		attributes.put( "attributeOne", Arrays.asList( "one", "two" ) );
 		attributes.put( "attributeTwo", Collections.singleton( "three" ) );
 
@@ -263,7 +278,7 @@ public class TestThymeleafModelBuilder
 
 	@Test
 	public void removeAttributes() {
-		Map<String, Collection<String>> attributes = new HashMap<>();
+		Map<String, Collection<Object>> attributes = new HashMap<>();
 		attributes.put( "attributeOne", Arrays.asList( "one", "two" ) );
 		attributes.put( "attributeTwo", Collections.singleton( "three" ) );
 
@@ -276,4 +291,17 @@ public class TestThymeleafModelBuilder
 		verify( modelFactory ).createOpenElementTag( "div", Collections.emptyMap(), AttributeValueQuotes.DOUBLE,
 		                                             false );
 	}
+
+	@Test
+	public void retrieveHtmlId() {
+		ViewElement ve = mock( ViewElement.class );
+		when( htmlIdStore.retrieveHtmlId( context, ve ) ).thenReturn( "123" );
+
+		String id = modelBuilder.retrieveHtmlId( ve );
+		assertEquals( "123", id );
+	}
+
+	// test custom template (writes the pending tag)
+	// test attribute value escaping
+	// addBooleanAttribute()
 }

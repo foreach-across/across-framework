@@ -42,7 +42,14 @@ public abstract class HtmlViewElementThymeleafSupport<T extends HtmlViewElement>
 	@Override
 	public void writeModel( T viewElement, ThymeleafModelBuilder writer ) {
 		writer.addOpenElement( viewElement.getTagName() );
-		//String htmlId = writer.retrieveHtmlId( viewElement );
+
+		writer.addAttribute( "id", writer.retrieveHtmlId( viewElement ) );
+
+		viewElement.getAttributes().forEach( writer::addAttribute );
+
+		if ( viewElement instanceof AbstractNodeViewElement ) {
+			( (AbstractNodeViewElement) viewElement ).getChildren().forEach( writer::addViewElement );
+		}
 
 		writer.addCloseElement();
 	}

@@ -17,43 +17,28 @@ package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
-import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.expression.IExpressionObjectFactory;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Helper that keeps track of the generated html ids for {@link com.foreach.across.modules.web.ui.elements.HtmlViewElement}
  * instance (simple nodes).  This ensures that other elements (eg. labels) can retrieve the render time generated id.
  *
  * @author Arne Vandamme
+ * @since 1.0.0
  */
 public class HtmlIdStore
 {
-	private static AcrossWebDialect.AcrossExpressionObjectFactory ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY;
-	private IExpressionObjectFactory temporaryAcrossExpressionObjectFactory;
-	private final Map<ViewElement, String> generatedIds;
+	private final Deque<Map<ViewElement, String>> generatedIdMaps = new ArrayDeque<>();
+
+	private Map<ViewElement, String> generatedIds;
 
 	public HtmlIdStore() {
-		this.generatedIds = new HashMap<>();
-	}
-
-	HtmlIdStore( AcrossWebDialect.AcrossExpressionObjectFactory acrossExpressionObjectFactory ) {
-		this();
-		ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY = acrossExpressionObjectFactory;
-	}
-
-	public static HtmlIdStore fetch( ITemplateContext context ) {
-		return (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
-	}
-
-	public static void store( HtmlIdStore idStore, ITemplateContext context ) {
-		if ( idStore.temporaryAcrossExpressionObjectFactory == null ) {
-			ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.setTemporaryDelegate( null );
-		}
+		generatedIds = new HashMap<>();
 	}
 
 	/**
@@ -90,40 +75,39 @@ public class HtmlIdStore
 	}
 
 	/**
-	 * Create a new instance by copying the the original generated elements.
-	 * New elements added will not be added to the original set, making this store safe to use within
-	 * a single iteration that creates new {@link ViewElement}s.
-	 *
-	 * @return new instance of a HtmlIdStore
+	 * Increase the level of element id caching.  This will copy the currently cached ids into
+	 * a new collection.  Any ids after will only be kept until a call to {@link #decreaseLevel()}.
+	 * When that happens, the previous collection will be reset.
 	 */
-	public HtmlIdStore createNew() {
-		HtmlIdStore htmlIdStore = new HtmlIdStore();
-		IExpressionObjectFactory temporaryExpressionObjectFactory = new IExpressionObjectFactory()
-		{
-			@Override
-			public Set<String> getAllExpressionObjectNames() {
-				return ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.getAllExpressionObjectNames();
-			}
+	public void increaseLevel() {
+		HashMap<ViewElement, String> newIds = new HashMap<>();
+		newIds.putAll( generatedIds );
 
-			@Override
-			public Object buildObject( IExpressionContext context, String expressionObjectName ) {
-				if ( AcrossWebDialect.HTML_ID_STORE.equals( expressionObjectName ) ) {
-					return htmlIdStore;
-				}
-				return ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.buildObject( context, expressionObjectName );
-			}
-
-			@Override
-			public boolean isCacheable( String expressionObjectName ) {
-				return ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.isCacheable( expressionObjectName );
-			}
-		};
-		htmlIdStore.setTemporaryAcrossExpressionObjectFactory( temporaryExpressionObjectFactory );
-		ORIGINAL_ACROSS_EXPRESSION_OBJECT_FACTORY.setTemporaryDelegate( temporaryExpressionObjectFactory );
-		return htmlIdStore;
+		generatedIdMaps.push( generatedIds );
+		generatedIds = newIds;
 	}
 
-	public void setTemporaryAcrossExpressionObjectFactory( IExpressionObjectFactory temporaryAcrossExpressionObjectFactory ) {
-		this.temporaryAcrossExpressionObjectFactory = temporaryAcrossExpressionObjectFactory;
+	/**
+	 * Decrease the level.  This resets the cached element ids to the version that was present before
+	 * the last call to {@link #increaseLevel()}.  If the level has never been increased, this method
+	 * will remove all cached element ids.
+	 */
+	public void decreaseLevel() {
+		if ( !generatedIdMaps.isEmpty() ) {
+			generatedIds = generatedIdMaps.pop();
+		}
+		else {
+			generatedIds.clear();
+		}
+	}
+
+	/**
+	 * Fetch the store from the current template context.
+	 *
+	 * @param context to get the store from
+	 * @return id store instance
+	 */
+	public static HtmlIdStore fetch( ITemplateContext context ) {
+		return (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
 	}
 }

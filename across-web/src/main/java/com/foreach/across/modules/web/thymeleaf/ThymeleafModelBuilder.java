@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
  * When an element is opened, its attributes can be modified until it is flushed to the Thymeleaf model.
  * Flushing happens when either a new element is opened, or the current element is closed.
  * <p/>
- * An attribute can have multiple values, these will be joined together with a single space character.
+ * An attribute can have multiple values, these will be joined together with a DOUBLE space character.
  *
  * @author Arne Vandamme
  * @since 2.0.0
@@ -46,6 +47,8 @@ public class ThymeleafModelBuilder
 {
 	private final ITemplateContext templateContext;
 	private final ViewElementNodeBuilderRegistry nodeBuilderRegistry;
+	private final HtmlIdStore htmlIdStore;
+	private final ViewElementAttributeConverter attributeConverter;
 
 	private final IModelFactory modelFactory;
 	private final IModel model;
@@ -55,12 +58,18 @@ public class ThymeleafModelBuilder
 	private String pendingTag;
 
 	public ThymeleafModelBuilder( ITemplateContext templateContext,
-	                              ViewElementNodeBuilderRegistry nodeBuilderRegistry ) {
+	                              ViewElementNodeBuilderRegistry nodeBuilderRegistry,
+	                              HtmlIdStore htmlIdStore,
+	                              ViewElementAttributeConverter attributeConverter ) {
 		Assert.notNull( templateContext );
 		Assert.notNull( nodeBuilderRegistry );
+		Assert.notNull( htmlIdStore );
+		Assert.notNull( attributeConverter );
 
 		this.templateContext = templateContext;
 		this.nodeBuilderRegistry = nodeBuilderRegistry;
+		this.htmlIdStore = htmlIdStore;
+		this.attributeConverter = attributeConverter;
 
 		this.modelFactory = templateContext.getModelFactory();
 		this.model = modelFactory.createModel();
@@ -71,6 +80,18 @@ public class ThymeleafModelBuilder
 	 */
 	public ITemplateContext getTemplateContext() {
 		return templateContext;
+	}
+
+	/**
+	 * Get a unique id for the specific element.  Takes into account the id property set if it
+	 * is a {@link com.foreach.across.modules.web.ui.elements.HtmlViewElement} but will ensure duplicates
+	 * return a unique value.
+	 *
+	 * @param viewElement to get a unique id for
+	 * @return unique id
+	 */
+	public String retrieveHtmlId( ViewElement viewElement ) {
+		return htmlIdStore.retrieveHtmlId( templateContext, viewElement );
 	}
 
 	/**
@@ -93,6 +114,7 @@ public class ThymeleafModelBuilder
 	}
 
 	private void renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
+		writePendingTag();
 		if ( context instanceof IEngineContext ) {
 			( (IEngineContext) context ).setVariable( "component", viewElement );
 			String templateWithFragment = appendFragmentIfRequired( viewElement.getCustomTemplate() );
@@ -168,7 +190,7 @@ public class ThymeleafModelBuilder
 	 *
 	 * @param attributes to set
 	 */
-	public void addAttributes( Map<String, Collection<String>> attributes ) {
+	public void addAttributes( Map<String, Collection<Object>> attributes ) {
 		verifyPendingTag();
 		attributes.forEach( this::addAttribute );
 	}
@@ -181,14 +203,29 @@ public class ThymeleafModelBuilder
 	 * @param attributeName name of the attribute to set
 	 * @param values        to set for the attribute
 	 */
-	public void addAttribute( String attributeName, String... values ) {
+	public void addAttribute( String attributeName, Object... values ) {
 		verifyPendingTag();
-		addAttribute( attributeName, Arrays.asList( values ) );
+		addAttribute( attributeName,
+		              values.length == 0 ? Collections.singleton( attributeName ) : Arrays.asList( values ) );
 	}
 
-	private void addAttribute( String attributeName, Collection<String> values ) {
-		pendingTagAttributes.compute( attributeName, ( key, v ) -> new LinkedHashSet<>() )
-		                    .addAll( values );
+	private void addAttribute( String attributeName, Collection<Object> values ) {
+		pendingTagAttributes.compute( attributeName, ( key, v ) -> {
+			List<String> newValues = convertToValidAttributeValues( values );
+			return newValues.isEmpty() ? null : newValues;
+		} );
+	}
+
+	/**
+	 * Only keep non-null and no duplicates.  Escape markup characters from attribute value.
+	 */
+	private List<String> convertToValidAttributeValues( Collection<Object> candidates ) {
+		return candidates.stream()
+		                 .map( attributeConverter )
+		                 .filter( Objects::nonNull )
+		                 .distinct()
+		                 .map( HtmlEscape::escapeHtml4Xml )
+		                 .collect( Collectors.toList() );
 	}
 
 	/**
@@ -196,16 +233,16 @@ public class ThymeleafModelBuilder
 	 * Duplicate values will be ignored.
 	 *
 	 * @param attributeName name of the attribute to modify
-	 * @param values        to add tot he attribute
+	 * @param values        to add to the attribute
 	 */
-	public void addAttributeValue( String attributeName, String... values ) {
+	public void addAttributeValue( String attributeName, Object... values ) {
 		verifyPendingTag();
 		pendingTagAttributes.computeIfAbsent( attributeName, k -> new LinkedHashSet<>() )
-		                    .addAll( Arrays.asList( values ) );
+		                    .addAll( convertToValidAttributeValues( Arrays.asList( values ) ) );
 	}
 
 	/**
-	 * Remove a single attribute for the open element.
+	 * Remove a DOUBLE attribute for the open element.
 	 *
 	 * @param attributeName name of the attribute to remove
 	 */
@@ -228,10 +265,10 @@ public class ThymeleafModelBuilder
 	 * @param attributeName name of the attribute from which you want to remove some values
 	 * @param values        to remove
 	 */
-	public void removeAttributeValue( String attributeName, String... values ) {
+	public void removeAttributeValue( String attributeName, Object... values ) {
 		verifyPendingTag();
 		pendingTagAttributes.computeIfPresent( attributeName, ( k, v ) -> {
-			v.removeAll( Arrays.asList( values ) );
+			v.removeAll( convertToValidAttributeValues( Arrays.asList( values ) ) );
 			return v.isEmpty() ? null : v;
 		} );
 	}

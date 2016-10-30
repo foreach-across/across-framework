@@ -36,7 +36,7 @@ public class ContainerViewElementThymeleafBuilder implements ViewElementThymelea
 	}
 
 	@Override
-	public void writeModel( ContainerViewElement viewElement, ThymeleafModelBuilder writer ) {
-
+	public void writeModel( ContainerViewElement container, ThymeleafModelBuilder writer ) {
+		container.getChildren().forEach( writer::addViewElement );
 	}
 }

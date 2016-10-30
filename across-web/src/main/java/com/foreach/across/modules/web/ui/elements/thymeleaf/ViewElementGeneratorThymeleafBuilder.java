@@ -19,11 +19,9 @@ import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
-import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.model.IModel;
 
 /**
  * @author Arne Vandamme
@@ -31,35 +29,53 @@ import org.thymeleaf.model.IModel;
 public class ViewElementGeneratorThymeleafBuilder implements ViewElementThymeleafBuilder<ViewElementGenerator<?, ?>>
 {
 	@Override
-	public void writeModel( ViewElementGenerator<?, ?> viewElement, ThymeleafModelBuilder writer ) {
+	public void writeModel( ViewElementGenerator<?, ?> generator, ThymeleafModelBuilder writer ) {
+		HtmlIdStore idStore = HtmlIdStore.fetch( writer.getTemplateContext() );
 
+		generator.forEach( child -> {
+			if ( child != null ) {
+				if ( !generator.isBuilderItemTemplate() ) {
+					idStore.increaseLevel();
+
+					try {
+						writer.addViewElement( child );
+					}
+					finally {
+						idStore.decreaseLevel();
+					}
+				}
+				else {
+					writer.addViewElement( child );
+				}
+			}
+		} );
 	}
 
 	@Override
 	public ProcessableModel buildModel( ViewElementGenerator<?, ?> container,
 	                                    ITemplateContext context,
 	                                    ViewElementNodeFactory componentElementProcessor ) {
-
-		IModel model = context.getModelFactory().createModel();
-		HtmlIdStore originalIdStore = HtmlIdStore.fetch( context );
-
-		try {
-			for ( ViewElement child : container ) {
-				if ( child != null ) {
-					if ( !container.isBuilderItemTemplate() ) {
-						HtmlIdStore.store( originalIdStore.createNew(), context );
-					}
-
-					ProcessableModel processableModel = componentElementProcessor.buildModel( child, context );
-					model.addModel( processableModel.getModel() );
-				}
-			}
-		}
-		finally {
-			// Put back the original id store
-			HtmlIdStore.store( originalIdStore, context );
-
-		}
-		return new ProcessableModel( model, true );
+//
+//		IModel model = context.getModelFactory().createModel();
+//		HtmlIdStore originalIdStore = HtmlIdStore.fetch( context );
+//
+//		try {
+//			for ( ViewElement child : container ) {
+//				if ( child != null ) {
+//					if ( !container.isBuilderItemTemplate() ) {
+//						HtmlIdStore.store( originalIdStore.createNew(), context );
+//					}
+//
+//					ProcessableModel processableModel = componentElementProcessor.buildModel( child, context );
+//					model.addModel( processableModel.getModel() );
+//				}
+//			}
+//		}
+//		finally {
+//			// Put back the original id store
+//			HtmlIdStore.store( originalIdStore, context );
+//
+//		}
+		return new ProcessableModel( null, true );
 	}
 }

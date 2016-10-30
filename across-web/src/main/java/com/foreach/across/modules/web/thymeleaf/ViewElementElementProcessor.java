@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.thymeleaf;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -198,13 +199,14 @@ public class ViewElementElementProcessor
 	protected void doProcess( ITemplateContext context,
 	                          IProcessableElementTag tag,
 	                          IElementTagStructureHandler structureHandler ) {
-
 		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
 		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext(
 				( (WebEngineContext) context ).getRequest() );
 		ViewElementNodeBuilderRegistry registry = appCtx.getBean( ViewElementNodeBuilderRegistry.class );
+		ViewElementAttributeConverter attributeConverter = appCtx.getBean( ViewElementAttributeConverter.class );
+		HtmlIdStore idStore = (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
 
-		ThymeleafModelBuilder builder = new ThymeleafModelBuilder( context, registry );
+		ThymeleafModelBuilder builder = new ThymeleafModelBuilder( context, registry, idStore, attributeConverter );
 		builder.addViewElement( viewElement );
 		structureHandler.replaceWith( builder.createModel(), true );
 		/*

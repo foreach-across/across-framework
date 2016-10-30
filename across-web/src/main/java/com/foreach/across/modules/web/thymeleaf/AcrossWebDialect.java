@@ -32,6 +32,7 @@ import java.util.Set;
  * Adds the following utility objects:
  * <ul>
  * <li><b>#webapp</b>: {@link com.foreach.across.modules.web.context.WebAppPathResolver} for the current context</li>
+ * <li><b>#htmlIdStore</b>: {@link HtmlIdStore} - same - for the template rendering</li>
  * </ul>
  * </p>
  *
@@ -62,13 +63,9 @@ public class AcrossWebDialect extends AbstractProcessorDialect implements IExpre
 
 	public static class AcrossExpressionObjectFactory implements IExpressionObjectFactory
 	{
-
-		public HtmlIdStore htmlIdStore = new HtmlIdStore( this );
-		private IExpressionObjectFactory delegate = null;
-
 		@Override
 		public Set<String> getAllExpressionObjectNames() {
-			HashSet names = new HashSet();
+			HashSet<String> names = new HashSet<>();
 			names.add( UTILITY_WEBAPP );
 			names.add( HTML_ID_STORE );
 			return names;
@@ -76,27 +73,18 @@ public class AcrossWebDialect extends AbstractProcessorDialect implements IExpre
 
 		@Override
 		public Object buildObject( IExpressionContext context, String expressionObjectName ) {
-			if ( delegate != null ) {
-				return delegate.buildObject( context, expressionObjectName );
+			if ( HTML_ID_STORE.equals( expressionObjectName ) ) {
+				return new HtmlIdStore();
 			}
-			else {
-				if ( HTML_ID_STORE.equals( expressionObjectName ) ) {
-					return htmlIdStore;
-				}
-				else if ( UTILITY_WEBAPP.equals( expressionObjectName ) ) {
-					return context.getVariable( WebResourceUtils.PATH_RESOLVER_ATTRIBUTE_KEY );
-				}
-				return null;
+			else if ( UTILITY_WEBAPP.equals( expressionObjectName ) ) {
+				return context.getVariable( WebResourceUtils.PATH_RESOLVER_ATTRIBUTE_KEY );
 			}
-		}
-
-		public void setTemporaryDelegate( IExpressionObjectFactory delegate ) {
-			this.delegate = delegate;
+			return null;
 		}
 
 		@Override
 		public boolean isCacheable( String expressionObjectName ) {
-			return false;
+			return true;
 		}
 	}
 }
