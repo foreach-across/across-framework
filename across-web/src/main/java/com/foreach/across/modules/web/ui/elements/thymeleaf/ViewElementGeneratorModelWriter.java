@@ -29,8 +29,8 @@ import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
 public class ViewElementGeneratorModelWriter implements ViewElementModelWriter<ViewElementGenerator<?, ?>>
 {
 	@Override
-	public void writeModel( ViewElementGenerator<?, ?> generator, ThymeleafModelBuilder writer ) {
-		HtmlIdStore idStore = HtmlIdStore.fetch( writer.getTemplateContext() );
+	public void writeModel( ViewElementGenerator<?, ?> generator, ThymeleafModelBuilder model ) {
+		HtmlIdStore idStore = HtmlIdStore.fetch( model.getTemplateContext() );
 
 		generator.forEach( child -> {
 			if ( child != null ) {
@@ -38,14 +38,14 @@ public class ViewElementGeneratorModelWriter implements ViewElementModelWriter<V
 					idStore.increaseLevel();
 
 					try {
-						writer.addViewElement( child );
+						model.addViewElement( child );
 					}
 					finally {
 						idStore.decreaseLevel();
 					}
 				}
 				else {
-					writer.addViewElement( child );
+					model.addViewElement( child );
 				}
 			}
 		} );

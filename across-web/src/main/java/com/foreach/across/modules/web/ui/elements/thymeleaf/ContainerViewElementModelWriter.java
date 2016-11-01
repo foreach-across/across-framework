@@ -28,7 +28,7 @@ import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
 public class ContainerViewElementModelWriter implements ViewElementModelWriter<ContainerViewElement>
 {
 	@Override
-	public void writeModel( ContainerViewElement container, ThymeleafModelBuilder writer ) {
-		container.getChildren().forEach( writer::addViewElement );
+	public void writeModel( ContainerViewElement container, ThymeleafModelBuilder model ) {
+		container.getChildren().forEach( model::addViewElement );
 	}
 }

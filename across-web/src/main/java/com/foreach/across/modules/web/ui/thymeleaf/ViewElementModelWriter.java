@@ -27,5 +27,5 @@ import com.foreach.across.modules.web.ui.ViewElement;
  */
 public interface ViewElementModelWriter<T extends ViewElement>
 {
-	void writeModel( T viewElement, ThymeleafModelBuilder writer );
+	void writeModel( T viewElement, ThymeleafModelBuilder model );
 }

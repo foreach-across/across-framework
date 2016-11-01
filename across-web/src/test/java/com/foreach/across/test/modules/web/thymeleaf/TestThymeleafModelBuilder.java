@@ -117,7 +117,7 @@ public class TestThymeleafModelBuilder
 	}
 
 	@Test
-	public void pendingTagIsWrittenAndBalancedIfModelIsBuilt() {
+	public void pendingTagIsWrittenIfModelIsBuilt() {
 		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
 		when( modelFactory.createOpenElementTag( "div", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false ) )
 				.thenReturn( openElementTag );
@@ -132,7 +132,7 @@ public class TestThymeleafModelBuilder
 
 		InOrder ordered = inOrder( model );
 		ordered.verify( model ).add( openElementTag );
-		ordered.verify( model ).add( closeElementTag );
+		verify( modelFactory, never() ).createCloseElementTag( anyString() );
 	}
 
 	@Test
@@ -156,16 +156,82 @@ public class TestThymeleafModelBuilder
 	@Test
 	public void pendingTagIsWrittenIfNewTagAdded() {
 		IOpenElementTag openDiv = mock( IOpenElementTag.class );
-		when( modelFactory.createOpenElementTag( "div", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false ) )
+		when( modelFactory.createOpenElementTag( "div", Collections.singletonMap( "one", "value" ),
+		                                         AttributeValueQuotes.DOUBLE, false ) )
 				.thenReturn( openDiv );
 
 		modelBuilder.addOpenElement( "div" );
+		modelBuilder.addAttribute( "one", "value" );
 		modelBuilder.addOpenElement( "h1" );
 
 		verify( modelFactory, never() )
 				.createOpenElementTag( "h1", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false );
 		verify( model ).add( openDiv );
 		verifyNoMoreInteractions( model );
+
+		modelBuilder.createModel();
+		verify( modelFactory )
+				.createOpenElementTag( "h1", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false );
+	}
+
+	@Test
+	public void multipleTags() {
+		IOpenElementTag openDiv = mock( IOpenElementTag.class );
+		when( modelFactory.createOpenElementTag( "div", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false ) )
+				.thenReturn( openDiv );
+		IOpenElementTag openHeading = mock( IOpenElementTag.class );
+		when( modelFactory.createOpenElementTag( "h1", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false ) )
+				.thenReturn( openHeading );
+		ICloseElementTag closeDiv = mock( ICloseElementTag.class );
+		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeDiv );
+		ICloseElementTag closeHeading = mock( ICloseElementTag.class );
+		when( modelFactory.createCloseElementTag( "h1" ) ).thenReturn( closeHeading );
+
+		modelBuilder.addOpenElement( "div" );
+		modelBuilder.addOpenElement( "h1" );
+		modelBuilder.addCloseElement();
+		modelBuilder.addCloseElement();
+
+		modelBuilder.createModel();
+
+		InOrder ordered = inOrder( model );
+		ordered.verify( model ).add( openDiv );
+		ordered.verify( model ).add( openHeading );
+		ordered.verify( model ).add( closeHeading );
+		ordered.verify( model ).add( closeDiv );
+	}
+
+	@Test
+	public void openElementCanBeChanged() {
+		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
+		when( modelFactory.createOpenElementTag( "h1", Collections.singletonMap( "one", "value" ),
+		                                         AttributeValueQuotes.DOUBLE, false ) )
+				.thenReturn( openElementTag );
+		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
+		when( modelFactory.createCloseElementTag( "h1" ) ).thenReturn( closeElementTag );
+
+		modelBuilder.addOpenElement( "div" );
+		modelBuilder.addAttribute( "one", "value" );
+		modelBuilder.changeOpenElement( "h1" );
+		modelBuilder.addCloseElement();
+
+		modelBuilder.createModel();
+
+		InOrder ordered = inOrder( model );
+		ordered.verify( model ).add( openElementTag );
+		ordered.verify( model ).add( closeElementTag );
+	}
+
+	@Test
+	public void changeThrowsIllegalStateIfNoOpenElement() {
+		modelBuilder.addOpenElement( "div" );
+		modelBuilder.addText( "flush open element" );
+		assertIllegalState( b -> b.changeOpenElement( "h1" ) );
+	}
+
+	@Test
+	public void closeThrowsIllegalStateIfNoOpenElement() {
+		assertIllegalState( ThymeleafModelBuilder::addCloseElement );
 	}
 
 	@Test
@@ -173,6 +239,7 @@ public class TestThymeleafModelBuilder
 		assertIllegalState( b -> b.addAttribute( "test", "value" ) );
 		assertIllegalState( b -> b.addAttributes( Collections.emptyMap() ) );
 		assertIllegalState( b -> b.addAttributeValue( "test", "value" ) );
+		assertIllegalState( b -> b.addBooleanAttribute( "required", false ) );
 		assertIllegalState( b -> b.removeAttribute( "test" ) );
 		assertIllegalState( b -> b.removeAttributeValue( "test", "value" ) );
 	}
@@ -214,12 +281,14 @@ public class TestThymeleafModelBuilder
 		Map<String, Collection<Object>> attributes = new HashMap<>();
 		attributes.put( "attributeOne", Arrays.asList( "one", "two" ) );
 		attributes.put( "attributeTwo", Collections.singleton( "three" ) );
+		attributes.put( "attributeFour", Collections.singleton( "four" ) );
 
 		modelBuilder.addOpenElement( "div" );
 		modelBuilder.addAttributes( attributes );
 		modelBuilder.addAttribute( "attributeTwo", "four", "five" );
 		modelBuilder.addAttribute( "attributeThree", "six" );
 		modelBuilder.addAttribute( "nullValueIsIgnored", (String) null );
+		modelBuilder.addAttribute( "attributeFour", (String) null );
 		modelBuilder.addAttribute( "symmetric" );
 
 		modelBuilder.createModel();
@@ -229,6 +298,7 @@ public class TestThymeleafModelBuilder
 		expected.put( "attributeTwo", "four five" );
 		expected.put( "attributeThree", "six" );
 		expected.put( "symmetric", "symmetric" );
+		expected.put( "attributeFour", "four" );
 		verify( modelFactory ).createOpenElementTag( "div", expected, AttributeValueQuotes.DOUBLE, false );
 	}
 
@@ -323,6 +393,27 @@ public class TestThymeleafModelBuilder
 	}
 
 	@Test
+	public void addBooleanAttribute() {
+		Map<String, Collection<Object>> attributes = new HashMap<>();
+		attributes.put( "replacedAsBoolean", Arrays.asList( "one", "two" ) );
+		attributes.put( "removedAsBoolean", Arrays.asList( "one", "two" ) );
+
+		modelBuilder.addOpenElement( "div" );
+		modelBuilder.addAttributes( attributes );
+		modelBuilder.addBooleanAttribute( "addedAsBoolean", true );
+		modelBuilder.addBooleanAttribute( "notAddedAsBoolean", false );
+		modelBuilder.addBooleanAttribute( "replacedAsBoolean", true );
+		modelBuilder.addBooleanAttribute( "removedAsBoolean", false );
+
+		modelBuilder.createModel();
+
+		Map<String, String> expected = new HashMap<>();
+		expected.put( "replacedAsBoolean", "replacedAsBoolean" );
+		expected.put( "addedAsBoolean", "addedAsBoolean" );
+		verify( modelFactory ).createOpenElementTag( "div", expected, AttributeValueQuotes.DOUBLE, false );
+	}
+
+	@Test
 	public void retrieveHtmlId() {
 		ViewElement ve = mock( ViewElement.class );
 		when( htmlIdStore.retrieveHtmlId( context, ve ) ).thenReturn( "123" );
@@ -400,22 +491,7 @@ public class TestThymeleafModelBuilder
 	}
 
 	@Test
-	public void addBooleanAttribute() {
-		Map<String, Collection<Object>> attributes = new HashMap<>();
-		attributes.put( "replacedAsBoolean", Arrays.asList( "one", "two" ) );
-		attributes.put( "removedAseBoolean", Arrays.asList( "one", "two" ) );
-
-		modelBuilder.addOpenElement( "div" );
-		modelBuilder.addBooleanAttribute( "addedAsBoolean", true );
-		modelBuilder.addBooleanAttribute( "notAddedAsBoolean", false );
-		modelBuilder.addBooleanAttribute( "replacedAsBoolean", true );
-		modelBuilder.addBooleanAttribute( "removedAseBoolean", false );
-
-		modelBuilder.createModel();
-
-		Map<String, String> expected = new HashMap<>();
-		expected.put( "replacedAsBoolean", "replacedAsBoolean" );
-		expected.put( "addedAsBoolean", "addedAsBoolean" );
-		verify( modelFactory ).createOpenElementTag( "div", expected, AttributeValueQuotes.DOUBLE, false );
+	public void nullViewElementIsIgnored() {
+		modelBuilder.addViewElement( null );
 	}
 }

@@ -101,14 +101,16 @@ public class ThymeleafModelBuilder
 	 * @param viewElement to add
 	 */
 	public void addViewElement( ViewElement viewElement ) {
-		if ( hasCustomTemplate( viewElement ) ) {
-			renderCustomTemplate( viewElement, templateContext );
-		}
-		else {
-			ViewElementModelWriter<ViewElement> processor = nodeBuilderRegistry.getNodeBuilder( viewElement );
+		if ( viewElement != null ) {
+			if ( hasCustomTemplate( viewElement ) ) {
+				renderCustomTemplate( viewElement, templateContext );
+			}
+			else {
+				ViewElementModelWriter<ViewElement> processor = nodeBuilderRegistry.getNodeBuilder( viewElement );
 
-			if ( processor != null ) {
-				processor.writeModel( viewElement, this );
+				if ( processor != null ) {
+					processor.writeModel( viewElement, this );
+				}
 			}
 		}
 	}
@@ -149,7 +151,7 @@ public class ThymeleafModelBuilder
 	 * @return model
 	 */
 	public IModel createModel() {
-		balanceOpenTags();
+		writePendingTag();
 		return model;
 	}
 
@@ -188,7 +190,8 @@ public class ThymeleafModelBuilder
 	/**
 	 * Adds all attributes to the current open element.
 	 * Will throw an exception if no element is currently opened and still available for modification.
-	 * Any other attributes will remain, but attributes with the same name will be replaced.
+	 * Any other attributes will remain, but attributes with the same name will be replaced if there is
+	 * at least one valid value for that attribute.
 	 *
 	 * @param attributes to set
 	 * @see #addAttribute(String, Object...) for more information on possible values
@@ -212,15 +215,20 @@ public class ThymeleafModelBuilder
 	 * @param value         true if it should be added
 	 */
 	public void addBooleanAttribute( String attributeName, boolean value ) {
-		addAttribute( attributeName, value ? attributeName : null );
+		if ( value ) {
+			addAttribute( attributeName );
+		}
+		else {
+			removeAttribute( attributeName );
+		}
 	}
 
 	/**
 	 * Set the attribute with the given name. Will replace any existing attribute values.
 	 * <p/>
 	 * If {@param values} is empty, a single value identical to {@param attributeName} will be added.
-	 * If {@param values} is not empty but contains only {@code null}, this will do the same as
-	 * {@link #removeAttribute(String)}, as {@code null} is not an allowed value.
+	 * If {@param values} is not empty but contains only {@code null}, the attribute will be ignored
+	 * and any previously registered value will be kept.
 	 * All values will be XML escaped and duplicate values will be ignored.
 	 * <p/>
 	 * Requires an open element.
@@ -237,7 +245,7 @@ public class ThymeleafModelBuilder
 	private void addAttribute( String attributeName, Collection<Object> values ) {
 		pendingTagAttributes.compute( attributeName, ( key, v ) -> {
 			List<String> newValues = convertToValidAttributeValues( values );
-			return newValues.isEmpty() ? null : newValues;
+			return newValues.isEmpty() ? v : newValues;
 		} );
 	}
 
@@ -317,9 +325,26 @@ public class ThymeleafModelBuilder
 	}
 
 	/**
+	 * Change the open element to the specific tag.
+	 * Will throw {@link IllegalStateException} if there is no currently open element that has not yet
+	 * been flushed.
+	 *
+	 * @param tagName of the element
+	 */
+	public void changeOpenElement( String tagName ) {
+		verifyPendingTag();
+		pendingTag = tagName;
+		openTags.pop();
+		openTags.push( tagName );
+	}
+
+	/**
 	 * Closes the current element, flushes it to the model.
 	 */
 	public void addCloseElement() {
+		if ( openTags.isEmpty() ) {
+			throw new IllegalStateException( "No more open elements to close." );
+		}
 		writePendingTag();
 		String tagName = openTags.pop();
 		model.add( modelFactory.createCloseElementTag( tagName ) );
@@ -333,6 +358,7 @@ public class ThymeleafModelBuilder
 					)
 			);
 			pendingTag = null;
+			removeAttributes();
 		}
 	}
 
@@ -344,12 +370,6 @@ public class ThymeleafModelBuilder
 					.collect( Collectors.toMap( Map.Entry::getKey, e -> StringUtils.join( e.getValue(), ' ' ) ) );
 		}
 		return Collections.emptyMap();
-	}
-
-	private void balanceOpenTags() {
-		while ( !openTags.isEmpty() ) {
-			addCloseElement();
-		}
 	}
 
 	private void verifyPendingTag() {

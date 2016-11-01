@@ -28,11 +28,11 @@ import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 public class HtmlViewElementModelWriter extends AbstractHtmlViewElementModelWriter<HtmlViewElement>
 {
 	@Override
-	protected void writeChildren( HtmlViewElement viewElement, ThymeleafModelBuilder writer ) {
+	protected void writeChildren( HtmlViewElement viewElement, ThymeleafModelBuilder model ) {
 		if ( viewElement instanceof ConfigurableTextViewElement ) {
-			writer.addText( ( (ConfigurableTextViewElement) viewElement ).getText() );
+			model.addText( ( (ConfigurableTextViewElement) viewElement ).getText() );
 		}
 
-		super.writeChildren( viewElement, writer );
+		super.writeChildren( viewElement, model );
 	}
 }

@@ -31,25 +31,25 @@ public abstract class AbstractHtmlViewElementModelWriter<T extends HtmlViewEleme
 		implements ViewElementModelWriter<T>
 {
 	@Override
-	public void writeModel( T viewElement, ThymeleafModelBuilder writer ) {
-		writeOpenElement( viewElement, writer );
-		writeChildren( viewElement, writer );
-		writeCloseElement( viewElement, writer );
+	public void writeModel( T viewElement, ThymeleafModelBuilder model ) {
+		writeOpenElement( viewElement, model );
+		writeChildren( viewElement, model );
+		writeCloseElement( viewElement, model );
 	}
 
-	protected void writeOpenElement( T viewElement, ThymeleafModelBuilder writer ) {
-		writer.addOpenElement( viewElement.getTagName() );
-		writer.addAttribute( "id", writer.retrieveHtmlId( viewElement ) );
-		viewElement.getAttributes().forEach( writer::addAttribute );
+	protected void writeOpenElement( T viewElement, ThymeleafModelBuilder model ) {
+		model.addOpenElement( viewElement.getTagName() );
+		model.addAttribute( "id", model.retrieveHtmlId( viewElement ) );
+		viewElement.getAttributes().forEach( model::addAttribute );
 	}
 
-	protected void writeChildren( T viewElement, ThymeleafModelBuilder writer ) {
+	protected void writeChildren( T viewElement, ThymeleafModelBuilder model ) {
 		if ( viewElement instanceof AbstractNodeViewElement ) {
-			( (AbstractNodeViewElement) viewElement ).getChildren().forEach( writer::addViewElement );
+			( (AbstractNodeViewElement) viewElement ).getChildren().forEach( model::addViewElement );
 		}
 	}
 
-	protected void writeCloseElement( T viewElement, ThymeleafModelBuilder writer ) {
-		writer.addCloseElement();
+	protected void writeCloseElement( T viewElement, ThymeleafModelBuilder model ) {
+		model.addCloseElement();
 	}
 }
