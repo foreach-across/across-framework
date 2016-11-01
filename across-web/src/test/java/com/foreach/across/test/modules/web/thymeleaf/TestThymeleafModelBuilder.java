@@ -73,6 +73,17 @@ public class TestThymeleafModelBuilder
 	}
 
 	@Test
+	public void nullStringIsIgnoredAsText() {
+		modelBuilder.addText( null );
+		modelBuilder.addHtml( null );
+		modelBuilder.addText( null, true );
+		modelBuilder.addText( null, false );
+
+		verify( modelFactory, never() ).createText( anyString() );
+		verify( model, never() ).add( any( ITemplateEvent.class ) );
+	}
+
+	@Test
 	public void textIsEscapedByDefault() {
 		IText text = mock( IText.class );
 		when( modelFactory.createText( "some &gt; text" ) ).thenReturn( text );
@@ -288,8 +299,27 @@ public class TestThymeleafModelBuilder
 
 		modelBuilder.createModel();
 
-		verify( modelFactory ).createOpenElementTag( "div", Collections.emptyMap(), AttributeValueQuotes.DOUBLE,
-		                                             false );
+		verify( modelFactory )
+				.createOpenElementTag( "div", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false );
+	}
+
+	@Test
+	public void attributeValuesShouldBeEscaped() {
+		Map<String, Collection<Object>> attributes = new HashMap<>();
+		attributes.put( "attributeOne", Arrays.asList( "one >", "< two" ) );
+
+		modelBuilder.addOpenElement( "div" );
+		modelBuilder.addAttributes( attributes );
+		modelBuilder.addAttribute( "attributeTwo", "two \"" );
+		modelBuilder.addAttributeValue( "attributeTwo", "< three" );
+		modelBuilder.removeAttributeValue( "attributeOne", "< two" );
+
+		modelBuilder.createModel();
+
+		Map<String, String> expected = new HashMap<>();
+		expected.put( "attributeOne", "one &gt;" );
+		expected.put( "attributeTwo", "two &quot; &lt; three" );
+		verify( modelFactory ).createOpenElementTag( "div", expected, AttributeValueQuotes.DOUBLE, false );
 	}
 
 	@Test
@@ -301,7 +331,91 @@ public class TestThymeleafModelBuilder
 		assertEquals( "123", id );
 	}
 
-	// test custom template (writes the pending tag)
-	// test attribute value escaping
-	// addBooleanAttribute()
+	@Test
+	public void customTemplateWithoutFragment() {
+		ViewElement ve = mock( ViewElement.class );
+		when( ve.getCustomTemplate() ).thenReturn( "myTemplate" );
+
+		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
+		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: render(${component})", false ) )
+				.thenReturn( openElementTag );
+		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
+		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
+
+		modelBuilder.addViewElement( ve );
+
+		modelBuilder.createModel();
+		verify( context ).setVariable( "component", ve );
+
+		InOrder ordered = inOrder( model );
+		ordered.verify( model ).add( openElementTag );
+		ordered.verify( model ).add( closeElementTag );
+	}
+
+	@Test
+	public void customTemplateWithFragmentAppended() {
+		ViewElement ve = mock( ViewElement.class );
+		when( ve.getCustomTemplate() ).thenReturn( "myTemplate :: customFragment" );
+
+		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
+		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: customFragment", false ) )
+				.thenReturn( openElementTag );
+		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
+		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
+
+		modelBuilder.addViewElement( ve );
+
+		modelBuilder.createModel();
+		verify( context ).setVariable( "component", ve );
+
+		InOrder ordered = inOrder( model );
+		ordered.verify( model ).add( openElementTag );
+		ordered.verify( model ).add( closeElementTag );
+	}
+
+	@Test
+	public void renderCustomTemplateShouldFlushTag() {
+		ViewElement ve = mock( ViewElement.class );
+		when( ve.getCustomTemplate() ).thenReturn( "myTemplate :: customFragment" );
+
+		IOpenElementTag openHeader = mock( IOpenElementTag.class );
+		when( modelFactory.createOpenElementTag( "h1", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false ) )
+				.thenReturn( openHeader );
+		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
+		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: customFragment", false ) )
+				.thenReturn( openElementTag );
+		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
+		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
+
+		modelBuilder.addOpenElement( "h1" );
+		modelBuilder.addViewElement( ve );
+
+		modelBuilder.createModel();
+		verify( context ).setVariable( "component", ve );
+
+		InOrder ordered = inOrder( model );
+		ordered.verify( model ).add( openHeader );
+		ordered.verify( model ).add( openElementTag );
+		ordered.verify( model ).add( closeElementTag );
+	}
+
+	@Test
+	public void addBooleanAttribute() {
+		Map<String, Collection<Object>> attributes = new HashMap<>();
+		attributes.put( "replacedAsBoolean", Arrays.asList( "one", "two" ) );
+		attributes.put( "removedAseBoolean", Arrays.asList( "one", "two" ) );
+
+		modelBuilder.addOpenElement( "div" );
+		modelBuilder.addBooleanAttribute( "addedAsBoolean", true );
+		modelBuilder.addBooleanAttribute( "notAddedAsBoolean", false );
+		modelBuilder.addBooleanAttribute( "replacedAsBoolean", true );
+		modelBuilder.addBooleanAttribute( "removedAseBoolean", false );
+
+		modelBuilder.createModel();
+
+		Map<String, String> expected = new HashMap<>();
+		expected.put( "replacedAsBoolean", "replacedAsBoolean" );
+		expected.put( "addedAsBoolean", "addedAsBoolean" );
+		verify( modelFactory ).createOpenElementTag( "div", expected, AttributeValueQuotes.DOUBLE, false );
+	}
 }

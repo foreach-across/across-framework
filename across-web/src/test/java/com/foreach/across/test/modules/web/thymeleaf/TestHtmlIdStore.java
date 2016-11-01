@@ -15,11 +15,80 @@
  */
 package com.foreach.across.test.modules.web.thymeleaf;
 
+import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
+import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.context.IdentifierSequences;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Arne Vandamme
  * @since 2.0.0
  */
+@RunWith(MockitoJUnitRunner.class)
 public class TestHtmlIdStore
 {
+	@Mock
+	private ITemplateContext templateContext;
 
+	@Mock
+	private HtmlViewElement one, two;
+
+	private HtmlIdStore htmlIdStore;
+	private IdentifierSequences identifierSequences;
+
+	@Before
+	public void before() {
+		htmlIdStore = new HtmlIdStore();
+		identifierSequences = new IdentifierSequences();
+		when( templateContext.getIdentifierSequences() ).thenReturn( identifierSequences );
+
+		when( one.getHtmlId() ).thenReturn( "one" );
+		when( two.getHtmlId() ).thenReturn( "two" );
+	}
+
+	@Test
+	public void noIdSpecified() {
+		assertNull( htmlIdStore.retrieveHtmlId( templateContext, mock( ViewElement.class ) ) );
+		assertNull( htmlIdStore.retrieveHtmlId( templateContext, mock( HtmlViewElement.class ) ) );
+	}
+
+	@Test
+	public void sameIdReturnedForSameInstance() {
+		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
+		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
+		assertEquals( "two", htmlIdStore.retrieveHtmlId( templateContext, two ) );
+		assertEquals( "two", htmlIdStore.retrieveHtmlId( templateContext, two ) );
+	}
+
+	@Test
+	public void differentInstanceIncrementsId() {
+		when( two.getHtmlId() ).thenReturn( "one" );
+		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
+		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
+		assertEquals( "one1", htmlIdStore.retrieveHtmlId( templateContext, two ) );
+		assertEquals( "one1", htmlIdStore.retrieveHtmlId( templateContext, two ) );
+	}
+
+	@Test
+	public void increaseAndDecreaseLevel() {
+		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
+
+		htmlIdStore.increaseLevel();
+		assertEquals( "two", htmlIdStore.retrieveHtmlId( templateContext, two ) );
+
+		htmlIdStore.decreaseLevel();
+		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
+		assertEquals( "two1", htmlIdStore.retrieveHtmlId( templateContext, two ) );
+	}
 }

@@ -25,27 +25,27 @@ import java.util.Map;
 @Service
 public class ViewElementNodeBuilderRegistry
 {
-	private final Map<Object, ViewElementThymeleafBuilder> builders = new HashMap<>();
+	private final Map<Object, ViewElementModelWriter> builders = new HashMap<>();
 
 	public void registerNodeBuilder( Class<? extends ViewElement> viewElementClass,
-	                                 ViewElementThymeleafBuilder builder ) {
+	                                 ViewElementModelWriter builder ) {
 		builders.put( viewElementClass, builder );
 	}
 
-	public void registerNodeBuilder( String viewElementType, ViewElementThymeleafBuilder builder ) {
+	public void registerNodeBuilder( String viewElementType, ViewElementModelWriter builder ) {
 		builders.put( viewElementType, builder );
 	}
 
 	/**
-	 * Finds the most appropriate {@link ViewElementThymeleafBuilder}: first attempts to find a builder
+	 * Finds the most appropriate {@link ViewElementModelWriter}: first attempts to find a builder
 	 * registered to that specific class, second looks for the element type.
 	 *
 	 * @param viewElement instance for which to find a builder
 	 * @return builder instance or null if none found
 	 */
-	public ViewElementThymeleafBuilder<ViewElement> getNodeBuilder( ViewElement viewElement ) {
+	public ViewElementModelWriter<ViewElement> getNodeBuilder( ViewElement viewElement ) {
 		Assert.notNull( viewElement );
-		ViewElementThymeleafBuilder builder = builders.get( viewElement.getClass() );
+		ViewElementModelWriter builder = builders.get( viewElement.getClass() );
 
 		return builder != null ? builder : builders.get( viewElement.getElementType() );
 	}

@@ -17,8 +17,8 @@ package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.thymeleaf.context.IEngineContext;
@@ -95,7 +95,7 @@ public class ThymeleafModelBuilder
 	}
 
 	/**
-	 * Add the element to the model.  Will lookup the {@link ViewElementThymeleafBuilder} for the element typs
+	 * Add the element to the model.  Will lookup the {@link ViewElementModelWriter} for the element typs
 	 * in the {@link ViewElementNodeBuilderRegistry} attached to this model builder.
 	 *
 	 * @param viewElement to add
@@ -105,7 +105,7 @@ public class ThymeleafModelBuilder
 			renderCustomTemplate( viewElement, templateContext );
 		}
 		else {
-			ViewElementThymeleafBuilder<ViewElement> processor = nodeBuilderRegistry.getNodeBuilder( viewElement );
+			ViewElementModelWriter<ViewElement> processor = nodeBuilderRegistry.getNodeBuilder( viewElement );
 
 			if ( processor != null ) {
 				processor.writeModel( viewElement, this );
@@ -178,9 +178,11 @@ public class ThymeleafModelBuilder
 	 * @param escapeXml true if text should be escaped
 	 */
 	public void addText( String text, boolean escapeXml ) {
-		writePendingTag();
-		String html = escapeXml ? HtmlEscape.escapeHtml4Xml( text ) : text;
-		model.add( modelFactory.createText( html ) );
+		if ( text != null ) {
+			writePendingTag();
+			String html = escapeXml ? HtmlEscape.escapeHtml4Xml( text ) : text;
+			model.add( modelFactory.createText( html ) );
+		}
 	}
 
 	/**
@@ -189,6 +191,7 @@ public class ThymeleafModelBuilder
 	 * Any other attributes will remain, but attributes with the same name will be replaced.
 	 *
 	 * @param attributes to set
+	 * @see #addAttribute(String, Object...) for more information on possible values
 	 */
 	public void addAttributes( Map<String, Collection<Object>> attributes ) {
 		verifyPendingTag();
@@ -196,9 +199,31 @@ public class ThymeleafModelBuilder
 	}
 
 	/**
-	 * Set the attribute with the given name.
-	 * Will replace any existing attribute values.
-	 * Duplicate values will be ignored.
+	 * Add a boolean attribute.  A boolean attribute is an attribute that is either present or not,
+	 * its value is determined by its presence.  In regular html for example this
+	 * would be written as {@code required="required"}.
+	 * <p/>
+	 * This method will add the attribute if {@param value} is {@code true}.
+	 * Any existing attribute with that name will be replaced, or removed if {@param value} is {@code false}.
+	 * <p/>
+	 * Requires an open element.
+	 *
+	 * @param attributeName name of the attribute
+	 * @param value         true if it should be added
+	 */
+	public void addBooleanAttribute( String attributeName, boolean value ) {
+		addAttribute( attributeName, value ? attributeName : null );
+	}
+
+	/**
+	 * Set the attribute with the given name. Will replace any existing attribute values.
+	 * <p/>
+	 * If {@param values} is empty, a single value identical to {@param attributeName} will be added.
+	 * If {@param values} is not empty but contains only {@code null}, this will do the same as
+	 * {@link #removeAttribute(String)}, as {@code null} is not an allowed value.
+	 * All values will be XML escaped and duplicate values will be ignored.
+	 * <p/>
+	 * Requires an open element.
 	 *
 	 * @param attributeName name of the attribute to set
 	 * @param values        to set for the attribute
@@ -230,7 +255,9 @@ public class ThymeleafModelBuilder
 
 	/**
 	 * Add values for a specific attribute.  Any other values will remain.
-	 * Duplicate values will be ignored.
+	 * Values will be XML escaped and duplicate values will be ignored.
+	 * <p/>
+	 * Requires an open element.
 	 *
 	 * @param attributeName name of the attribute to modify
 	 * @param values        to add to the attribute
@@ -242,7 +269,9 @@ public class ThymeleafModelBuilder
 	}
 
 	/**
-	 * Remove a DOUBLE attribute for the open element.
+	 * Remove a single attribute for the open element.
+	 * <p/>
+	 * Requires an open element.
 	 *
 	 * @param attributeName name of the attribute to remove
 	 */
@@ -261,6 +290,8 @@ public class ThymeleafModelBuilder
 	/**
 	 * Remove one or more values for a particular attribute.
 	 * If no values remain, the entire attribute will be removed.
+	 * <p/>
+	 * Requires an open element.
 	 *
 	 * @param attributeName name of the attribute from which you want to remove some values
 	 * @param values        to remove

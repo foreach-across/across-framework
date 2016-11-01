@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.thymeleaf;
+package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
-import com.foreach.across.modules.web.ui.ViewElement;
-import org.thymeleaf.context.ITemplateContext;
-
-import java.util.Map;
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
 
 /**
+ * Builds model for {@link ContainerViewElement}.
+ *
  * @author Arne Vandamme
+ * @since 2.0.0
  */
-public interface ViewElementNodeFactory
+public class ContainerViewElementModelWriter implements ViewElementModelWriter<ContainerViewElement>
 {
-	ProcessableModel buildModel( ViewElement viewElement, ITemplateContext context );
-
-	void setAttribute( Map<String, String> nodeAttributes, String attributeName, Object value );
-
-	void setAttributes( Map<String, String> nodeAttributes, Map<String, Object> attributes );
+	@Override
+	public void writeModel( ContainerViewElement container, ThymeleafModelBuilder writer ) {
+		container.getChildren().forEach( writer::addViewElement );
+	}
 }

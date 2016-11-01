@@ -15,17 +15,17 @@
  */
 package com.foreach.across.modules.web.ui.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.ViewElement;
-import org.thymeleaf.context.ITemplateContext;
 
-public interface ViewElementThymeleafBuilder<T extends ViewElement>
+/**
+ * API for creating and writing the model for a single {@link ViewElement}.
+ *
+ * @param <T> view element type the write handles
+ * @author Arne Vandamme
+ * @since 2.0.0
+ */
+public interface ViewElementModelWriter<T extends ViewElement>
 {
-	ProcessableModel buildModel( T viewElement,
-	                             ITemplateContext context,
-	                             ViewElementNodeFactory viewElementNodeFactory );
-
 	void writeModel( T viewElement, ThymeleafModelBuilder writer );
 }

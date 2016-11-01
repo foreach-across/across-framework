@@ -15,36 +15,21 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
 import org.apache.commons.lang3.StringUtils;
-import org.thymeleaf.context.ITemplateContext;
 
-public class TextViewElementThymeleafBuilder implements ViewElementThymeleafBuilder<TextViewElement>
+/**
+ * Builds model for {@link TextViewElement}.
+ *
+ * @author Arne Vandamme
+ * @since 2.0.0
+ */
+public class TextViewElementModelWriter implements ViewElementModelWriter<TextViewElement>
 {
 	@Override
 	public void writeModel( TextViewElement viewElement, ThymeleafModelBuilder model ) {
 		model.addText( StringUtils.defaultString( viewElement.getText() ), viewElement.isEscapeXml() );
-	}
-
-	@Override
-	public ProcessableModel buildModel( TextViewElement viewElement,
-	                                    ITemplateContext context,
-	                                    ViewElementNodeFactory componentElementProcessor ) {
-//		String content = StringUtils.defaultString( viewElement.getText() );
-//		String html = viewElement.isEscapeXml() ? HtmlEscape.escapeHtml4Xml( content ) : content;
-//
-//		IModelFactory modelFactory = context.getModelFactory();
-//
-//		IModel model = modelFactory.createModel();
-//		model.add( modelFactory.createText( html ) );
-//		//Text text = new Text( html, null, null, true );
-//
-//		return new ProcessableModel( model, false );
-
-		return null;
 	}
 }

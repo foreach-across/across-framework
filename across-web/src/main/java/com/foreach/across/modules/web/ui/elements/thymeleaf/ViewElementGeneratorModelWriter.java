@@ -16,17 +16,17 @@
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
-import com.foreach.across.modules.web.thymeleaf.ProcessableModel;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
-import org.thymeleaf.context.ITemplateContext;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
 
 /**
+ * Builds model for a {@link ViewElementGenerator}, which in turns builds a collection of elements.
+ *
  * @author Arne Vandamme
+ * @since 2.0.0
  */
-public class ViewElementGeneratorThymeleafBuilder implements ViewElementThymeleafBuilder<ViewElementGenerator<?, ?>>
+public class ViewElementGeneratorModelWriter implements ViewElementModelWriter<ViewElementGenerator<?, ?>>
 {
 	@Override
 	public void writeModel( ViewElementGenerator<?, ?> generator, ThymeleafModelBuilder writer ) {
@@ -49,33 +49,5 @@ public class ViewElementGeneratorThymeleafBuilder implements ViewElementThymelea
 				}
 			}
 		} );
-	}
-
-	@Override
-	public ProcessableModel buildModel( ViewElementGenerator<?, ?> container,
-	                                    ITemplateContext context,
-	                                    ViewElementNodeFactory componentElementProcessor ) {
-//
-//		IModel model = context.getModelFactory().createModel();
-//		HtmlIdStore originalIdStore = HtmlIdStore.fetch( context );
-//
-//		try {
-//			for ( ViewElement child : container ) {
-//				if ( child != null ) {
-//					if ( !container.isBuilderItemTemplate() ) {
-//						HtmlIdStore.store( originalIdStore.createNew(), context );
-//					}
-//
-//					ProcessableModel processableModel = componentElementProcessor.buildModel( child, context );
-//					model.addModel( processableModel.getModel() );
-//				}
-//			}
-//		}
-//		finally {
-//			// Put back the original id store
-//			HtmlIdStore.store( originalIdStore, context );
-//
-//		}
-		return new ProcessableModel( null, true );
 	}
 }
