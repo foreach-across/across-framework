@@ -75,6 +75,10 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 					throw new AcrossException( "No WebTemplateProcessor registered with name: " + templateName );
 				}
 			}
+			else {
+				// remove any existing template processor - in case of exception handling
+				request.removeAttribute( PROCESSOR_ATTRIBUTE );
+			}
 		}
 		// at present, we don't handle partial for redirects, so we'll add this attribute to make it easier for client code to handle it
 		else {
@@ -101,12 +105,12 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 				String viewName = modelAndView.getViewName();
 
 				if (
-						// Redirect views should not be modified
+					// Redirect views should not be modified
 						!StringUtils.startsWithAny( viewName, UrlBasedViewResolver.REDIRECT_URL_PREFIX,
 						                            UrlBasedViewResolver.FORWARD_URL_PREFIX )
-						// Nor should views that already contain a fragment
-						&& !viewName.contains( "::" )
-				) {
+								// Nor should views that already contain a fragment
+								&& !viewName.contains( "::" )
+						) {
 					modelAndView.setViewName(
 							viewName + "::" + request.getParameter( PARTIAL_PARAMETER )
 					);

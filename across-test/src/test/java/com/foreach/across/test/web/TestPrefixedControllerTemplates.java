@@ -54,7 +54,8 @@ public class TestPrefixedControllerTemplates
 		mvc.perform( get( "/prefix/home" ) )
 		   .andExpect( status().isOk() )
 		   .andExpect( content().string( containsString( "otherhead-child-otherfoot" ) ) )
-		   .andExpect( content().string( containsString( "resources:[/across/resources/other.css,/across/resources/controller.css]" ) ) );
+		   .andExpect( content().string(
+				   containsString( "resources:[/across/resources/other.css,/across/resources/controller.css]" ) ) );
 	}
 
 	@Test
@@ -63,6 +64,14 @@ public class TestPrefixedControllerTemplates
 		   .andExpect( status().isOk() )
 		   .andExpect( content().string( containsString( "otherhead-a database error has occurred-otherfoot" ) ) )
 		   .andExpect( content().string( containsString( "resources:[/across/resources/other.css]" ) ) );
+	}
+
+	@Test
+	public void clearTemplateOnRegisteredExceptionHandler() throws Exception {
+		mvc.perform( get( "/prefix/illegalArgumentError" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( not( containsString( "resources" ) ) ) )
+		   .andExpect( content().string( containsString( "a database error has occurred" ) ) );
 	}
 
 	@Test
