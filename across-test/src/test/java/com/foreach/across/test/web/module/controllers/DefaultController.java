@@ -17,6 +17,7 @@ package com.foreach.across.test.web.module.controllers;
 
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.template.ClearTemplate;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
@@ -48,6 +49,11 @@ public class DefaultController
 		throw new CannotAcquireLockException( "bad data access" );
 	}
 
+	@RequestMapping("/illegalArgumentError")
+	public String throwIllegalArgument() {
+		throw new IllegalArgumentException( "illegal argument" );
+	}
+
 	@RequestMapping("/runtimeError")
 	public String throwRuntimeError() {
 		throw new RuntimeException( "Runtime error occurred." );
@@ -55,6 +61,12 @@ public class DefaultController
 
 	@ExceptionHandler(DataAccessException.class)
 	public String databaseError() {
+		return "th/webControllers/databaseError";
+	}
+
+	@ClearTemplate
+	@ExceptionHandler(IllegalArgumentException.class)
+	public String illegalArgumentError() {
 		return "th/webControllers/databaseError";
 	}
 }

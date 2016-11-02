@@ -68,6 +68,14 @@ public class TestDefaultTemplate
 	}
 
 	@Test
+	public void clearTemplateOnRegisteredExceptionHandler() throws Exception {
+		mvc.perform( get( "/illegalArgumentError" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( not( containsString( "resources" ) ) ) )
+		   .andExpect( content().string( containsString( "a database error has occurred" ) ) );
+	}
+
+	@Test
 	public void defaultTemplateWithPartialRendering() throws Exception {
 		mvc.perform( get( "/home?_partial=content" ) )
 		   .andExpect( status().isOk() )
