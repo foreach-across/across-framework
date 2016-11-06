@@ -145,6 +145,7 @@ public class ThymeleafViewSupportConfiguration
 				resolver.setCacheTTLMs( 1000L );
 				resolver.setPrefix( prefix );
 				resolver.setSuffix( suffix );
+				resolver.setCheckExistence( true );
 
 				applicationContext.getAutowireCapableBeanFactory().initializeBean( resolver,
 				                                                                   "developmentResolver." + views
