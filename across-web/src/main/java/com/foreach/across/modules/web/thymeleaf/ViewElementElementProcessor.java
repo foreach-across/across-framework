@@ -18,7 +18,7 @@ package com.foreach.across.modules.web.thymeleaf;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
@@ -60,13 +60,13 @@ public class ViewElementElementProcessor extends AbstractElementTagProcessor
 		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
 		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext(
 				( (WebEngineContext) context ).getRequest() );
-		ViewElementNodeBuilderRegistry registry = appCtx.getBean( ViewElementNodeBuilderRegistry.class );
+		ViewElementModelWriterRegistry registry = appCtx.getBean( ViewElementModelWriterRegistry.class );
 		ViewElementAttributeConverter attributeConverter = appCtx.getBean( ViewElementAttributeConverter.class );
 		HtmlIdStore idStore = (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
 
 		ThymeleafModelBuilder builder = new ThymeleafModelBuilder( context, registry, idStore, attributeConverter );
 		builder.addViewElement( viewElement );
-		structureHandler.replaceWith( builder.createModel(), true );
+		structureHandler.replaceWith( builder.retrieveModel(), true );
 	}
 
 	private ViewElement retrieveViewElementFromAttribute( ITemplateContext context, IProcessableElementTag element ) {

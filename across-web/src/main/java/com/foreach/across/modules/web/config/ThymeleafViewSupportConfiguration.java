@@ -31,7 +31,7 @@ import com.foreach.across.modules.web.ui.elements.thymeleaf.ContainerViewElement
 import com.foreach.across.modules.web.ui.elements.thymeleaf.HtmlViewElementModelWriter;
 import com.foreach.across.modules.web.ui.elements.thymeleaf.TextViewElementModelWriter;
 import com.foreach.across.modules.web.ui.elements.thymeleaf.ViewElementGeneratorModelWriter;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,17 +86,17 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
-	public ViewElementNodeBuilderRegistry thymeleafViewElementProcessorRegistry() {
-		ViewElementNodeBuilderRegistry registry = new ViewElementNodeBuilderRegistry();
+	public ViewElementModelWriterRegistry thymeleafViewElementProcessorRegistry() {
+		ViewElementModelWriterRegistry registry = new ViewElementModelWriterRegistry();
 
-		registry.registerNodeBuilder( TextViewElement.class, new TextViewElementModelWriter() );
-		registry.registerNodeBuilder( StandardViewElements.TEXT, new TextViewElementModelWriter() );
-		registry.registerNodeBuilder( ContainerViewElement.class, new ContainerViewElementModelWriter() );
-		registry.registerNodeBuilder( StandardViewElements.CONTAINER, new ContainerViewElementModelWriter() );
-		registry.registerNodeBuilder( ViewElementGenerator.class, new ViewElementGeneratorModelWriter() );
-		registry.registerNodeBuilder( StandardViewElements.GENERATOR, new ViewElementGeneratorModelWriter() );
-		registry.registerNodeBuilder( NodeViewElement.class, new HtmlViewElementModelWriter() );
-		registry.registerNodeBuilder( StandardViewElements.NODE, new HtmlViewElementModelWriter() );
+		registry.registerModelWriter( TextViewElement.class, new TextViewElementModelWriter() );
+		registry.registerModelWriter( StandardViewElements.TEXT, new TextViewElementModelWriter() );
+		registry.registerModelWriter( ContainerViewElement.class, new ContainerViewElementModelWriter() );
+		registry.registerModelWriter( StandardViewElements.CONTAINER, new ContainerViewElementModelWriter() );
+		registry.registerModelWriter( ViewElementGenerator.class, new ViewElementGeneratorModelWriter() );
+		registry.registerModelWriter( StandardViewElements.GENERATOR, new ViewElementGeneratorModelWriter() );
+		registry.registerModelWriter( NodeViewElement.class, new HtmlViewElementModelWriter() );
+		registry.registerModelWriter( StandardViewElements.NODE, new HtmlViewElementModelWriter() );
 
 		return registry;
 	}

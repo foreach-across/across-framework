@@ -18,7 +18,7 @@ package com.foreach.across.modules.web.thymeleaf;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.thymeleaf.context.IEngineContext;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 public class ThymeleafModelBuilder
 {
 	private final ITemplateContext templateContext;
-	private final ViewElementNodeBuilderRegistry nodeBuilderRegistry;
+	private final ViewElementModelWriterRegistry nodeBuilderRegistry;
 	private final HtmlIdStore htmlIdStore;
 	private final ViewElementAttributeConverter attributeConverter;
 
@@ -58,7 +58,7 @@ public class ThymeleafModelBuilder
 	private String pendingTag;
 
 	public ThymeleafModelBuilder( ITemplateContext templateContext,
-	                              ViewElementNodeBuilderRegistry nodeBuilderRegistry,
+	                              ViewElementModelWriterRegistry nodeBuilderRegistry,
 	                              HtmlIdStore htmlIdStore,
 	                              ViewElementAttributeConverter attributeConverter ) {
 		Assert.notNull( templateContext );
@@ -75,11 +75,28 @@ public class ThymeleafModelBuilder
 		this.model = modelFactory.createModel();
 	}
 
+	private ThymeleafModelBuilder( ThymeleafModelBuilder parent ) {
+		templateContext = parent.templateContext;
+		nodeBuilderRegistry = parent.nodeBuilderRegistry;
+		htmlIdStore = parent.htmlIdStore;
+		attributeConverter = parent.attributeConverter;
+
+		modelFactory = templateContext.getModelFactory();
+		model = modelFactory.createModel();
+	}
+
 	/**
 	 * @return Thymeleaf template context
 	 */
 	public ITemplateContext getTemplateContext() {
 		return templateContext;
+	}
+
+	/**
+	 * @return Thymeleaf model factory
+	 */
+	public IModelFactory getModelFactory() {
+		return modelFactory;
 	}
 
 	/**
@@ -96,7 +113,7 @@ public class ThymeleafModelBuilder
 
 	/**
 	 * Add the element to the model.  Will lookup the {@link ViewElementModelWriter} for the element typs
-	 * in the {@link ViewElementNodeBuilderRegistry} attached to this model builder.
+	 * in the {@link ViewElementModelWriterRegistry} attached to this model builder.
 	 *
 	 * @param viewElement to add
 	 */
@@ -106,13 +123,36 @@ public class ThymeleafModelBuilder
 				renderCustomTemplate( viewElement, templateContext );
 			}
 			else {
-				ViewElementModelWriter<ViewElement> processor = nodeBuilderRegistry.getNodeBuilder( viewElement );
+				ViewElementModelWriter<ViewElement> processor = nodeBuilderRegistry.getModelWriter( viewElement );
 
 				if ( processor != null ) {
 					processor.writeModel( viewElement, this );
 				}
 			}
 		}
+	}
+
+	/**
+	 * Create a separate {@link IModel} for a {@link ViewElement}.  The model will use the configuration of this
+	 * {@link ThymeleafModelBuilder} but will not yet been added.  This method is useful if you want to manually
+	 * post-process a model before adding it.  Adding the child model can be done through {@link #addModel(IModel)}.
+	 *
+	 * @param viewElement to create the model for
+	 * @return model
+	 */
+	public IModel createViewElementModel( ViewElement viewElement ) {
+		ThymeleafModelBuilder nestedBuilder = new ThymeleafModelBuilder( this );
+		nestedBuilder.addViewElement( viewElement );
+		return nestedBuilder.retrieveModel();
+	}
+
+	/**
+	 * Directly add a child model to the current {@link IModel} this builder represents.
+	 *
+	 * @param childModel to add
+	 */
+	public void addModel( IModel childModel ) {
+		retrieveModel().addModel( childModel );
 	}
 
 	private void renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
@@ -146,11 +186,11 @@ public class ThymeleafModelBuilder
 	}
 
 	/**
-	 * Return the finished model, will balance any pending elements first.
+	 * Return the current model, ensures pending tags have been written.
 	 *
 	 * @return model
 	 */
-	public IModel createModel() {
+	public IModel retrieveModel() {
 		writePendingTag();
 		return model;
 	}

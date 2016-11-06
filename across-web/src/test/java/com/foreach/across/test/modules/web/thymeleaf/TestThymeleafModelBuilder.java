@@ -19,7 +19,8 @@ import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +47,7 @@ public class TestThymeleafModelBuilder
 	private IEngineContext context;
 
 	@Mock
-	private ViewElementNodeBuilderRegistry registry;
+	private ViewElementModelWriterRegistry registry;
 
 	@Mock
 	private HtmlIdStore htmlIdStore;
@@ -128,7 +129,7 @@ public class TestThymeleafModelBuilder
 		verify( modelFactory, never() ).createOpenElementTag( anyString() );
 		verify( modelFactory, never() ).createCloseElementTag( anyString() );
 
-		assertSame( model, modelBuilder.createModel() );
+		assertSame( model, modelBuilder.retrieveModel() );
 
 		InOrder ordered = inOrder( model );
 		ordered.verify( model ).add( openElementTag );
@@ -169,7 +170,7 @@ public class TestThymeleafModelBuilder
 		verify( model ).add( openDiv );
 		verifyNoMoreInteractions( model );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 		verify( modelFactory )
 				.createOpenElementTag( "h1", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false );
 	}
@@ -192,7 +193,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addCloseElement();
 		modelBuilder.addCloseElement();
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		InOrder ordered = inOrder( model );
 		ordered.verify( model ).add( openDiv );
@@ -215,7 +216,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.changeOpenElement( "h1" );
 		modelBuilder.addCloseElement();
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		InOrder ordered = inOrder( model );
 		ordered.verify( model ).add( openElementTag );
@@ -267,7 +268,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addOpenElement( "div" );
 		modelBuilder.addAttributes( attributes );
 		modelBuilder.addAttributes( Collections.singletonMap( "attributeThree", Collections.singleton( "six" ) ) );
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		Map<String, String> expected = new HashMap<>();
 		expected.put( "attributeOne", "one two" );
@@ -291,7 +292,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addAttribute( "attributeFour", (String) null );
 		modelBuilder.addAttribute( "symmetric" );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		Map<String, String> expected = new HashMap<>();
 		expected.put( "attributeOne", "one two" );
@@ -312,7 +313,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addAttributes( attributes );
 		modelBuilder.addAttributeValue( "attributeTwo", "four", "five" );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		Map<String, String> expected = new HashMap<>();
 		expected.put( "attributeOne", "one two" );
@@ -332,7 +333,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.removeAttributeValue( "attributeThree", "no worries" );
 		modelBuilder.removeAttributeValue( "attributeOne", "two" );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		Map<String, String> expected = new HashMap<>();
 		expected.put( "attributeOne", "one" );
@@ -350,7 +351,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.removeAttribute( "attributeTwo" );
 		modelBuilder.removeAttribute( "attributeThree" );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		Map<String, String> expected = new HashMap<>();
 		expected.put( "attributeOne", "one two" );
@@ -367,7 +368,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addAttributes( attributes );
 		modelBuilder.removeAttributes();
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		verify( modelFactory )
 				.createOpenElementTag( "div", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false );
@@ -384,7 +385,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addAttributeValue( "attributeTwo", "< three" );
 		modelBuilder.removeAttributeValue( "attributeOne", "< two" );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		Map<String, String> expected = new HashMap<>();
 		expected.put( "attributeOne", "one &gt;" );
@@ -405,7 +406,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addBooleanAttribute( "replacedAsBoolean", true );
 		modelBuilder.addBooleanAttribute( "removedAsBoolean", false );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 
 		Map<String, String> expected = new HashMap<>();
 		expected.put( "replacedAsBoolean", "replacedAsBoolean" );
@@ -435,7 +436,7 @@ public class TestThymeleafModelBuilder
 
 		modelBuilder.addViewElement( ve );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 		verify( context ).setVariable( "component", ve );
 
 		InOrder ordered = inOrder( model );
@@ -456,7 +457,7 @@ public class TestThymeleafModelBuilder
 
 		modelBuilder.addViewElement( ve );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 		verify( context ).setVariable( "component", ve );
 
 		InOrder ordered = inOrder( model );
@@ -481,7 +482,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addOpenElement( "h1" );
 		modelBuilder.addViewElement( ve );
 
-		modelBuilder.createModel();
+		modelBuilder.retrieveModel();
 		verify( context ).setVariable( "component", ve );
 
 		InOrder ordered = inOrder( model );
@@ -493,5 +494,62 @@ public class TestThymeleafModelBuilder
 	@Test
 	public void nullViewElementIsIgnored() {
 		modelBuilder.addViewElement( null );
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void writeViewElement() {
+		ViewElement ve = mock( ViewElement.class );
+		ViewElementModelWriter veWriter = mock( ViewElementModelWriter.class );
+		when( registry.getModelWriter( ve ) ).thenReturn( veWriter );
+
+		modelBuilder.addViewElement( ve );
+		verify( veWriter ).writeModel( ve, modelBuilder );
+	}
+
+	@Test
+	public void addModelWritesPendingTag() {
+		IModel otherModel = mock( IModel.class );
+
+		IOpenElementTag openDiv = mock( IOpenElementTag.class );
+		when( modelFactory.createOpenElementTag( "div", Collections.singletonMap( "one", "value" ),
+		                                         AttributeValueQuotes.DOUBLE, false ) )
+				.thenReturn( openDiv );
+
+		modelBuilder.addOpenElement( "div" );
+		modelBuilder.addAttribute( "one", "value" );
+		modelBuilder.addModel( otherModel );
+		modelBuilder.addOpenElement( "h1" );
+
+		InOrder inOrder = inOrder( model );
+		inOrder.verify( model ).add( openDiv );
+		inOrder.verify( model ).addModel( otherModel );
+		verifyNoMoreInteractions( model );
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void createViewElementModelReturnsNewModel() {
+		ViewElement ve = mock( ViewElement.class );
+		ViewElementModelWriter veWriter = mock( ViewElementModelWriter.class );
+		when( registry.getModelWriter( ve ) ).thenReturn( veWriter );
+
+		IModel childModel = mock( IModel.class );
+		when( modelFactory.createModel() ).thenReturn( childModel );
+
+		modelBuilder.addOpenElement( "div" );
+		doAnswer( invocation -> {
+			          ThymeleafModelBuilder childBuilder = invocation.getArgumentAt( 1, ThymeleafModelBuilder.class );
+			          assertNotSame( modelBuilder, childBuilder );
+			          assertSame( context, childBuilder.getTemplateContext() );
+			          assertSame( childModel, childBuilder.retrieveModel() );
+			          assertSame( modelFactory, childBuilder.getModelFactory() );
+			          return null;
+		          }
+		).when( veWriter ).writeModel( eq( ve ), any( ThymeleafModelBuilder.class ) );
+
+		assertSame( childModel, modelBuilder.createViewElementModel( ve ) );
+		verify( veWriter ).writeModel( eq( ve ), any( ThymeleafModelBuilder.class ) );
+		verifyNoMoreInteractions( model );
 	}
 }
