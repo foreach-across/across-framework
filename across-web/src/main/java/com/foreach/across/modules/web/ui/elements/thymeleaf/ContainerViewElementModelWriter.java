@@ -15,27 +15,20 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Node;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ContainerViewElementThymeleafBuilder implements ViewElementThymeleafBuilder<ContainerViewElement>
+/**
+ * Builds model for {@link ContainerViewElement}.
+ *
+ * @author Arne Vandamme
+ * @since 2.0.0
+ */
+public class ContainerViewElementModelWriter implements ViewElementModelWriter<ContainerViewElement>
 {
 	@Override
-	public List<Node> buildNodes( ContainerViewElement container,
-	                              Arguments arguments,
-	                              ViewElementNodeFactory componentElementProcessor ) {
-		List<Node> list = new ArrayList<>();
-
-		container.getChildren().forEach(
-				c -> list.addAll( componentElementProcessor.buildNodes( c, arguments ) )
-		);
-
-		return list;
+	public void writeModel( ContainerViewElement container, ThymeleafModelBuilder model ) {
+		container.getChildren().forEach( model::addViewElement );
 	}
 }

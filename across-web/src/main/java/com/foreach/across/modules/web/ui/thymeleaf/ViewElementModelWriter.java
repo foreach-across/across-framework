@@ -15,14 +15,17 @@
  */
 package com.foreach.across.modules.web.ui.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.ui.ViewElement;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Node;
 
-import java.util.List;
-
-public interface ViewElementThymeleafBuilder<T extends ViewElement>
+/**
+ * API for creating and writing the model for a single {@link ViewElement}.
+ *
+ * @param <T> view element type the write handles
+ * @author Arne Vandamme
+ * @since 2.0.0
+ */
+public interface ViewElementModelWriter<T extends ViewElement>
 {
-	List<Node> buildNodes( T viewElement, Arguments arguments, ViewElementNodeFactory viewElementNodeFactory );
+	void writeModel( T viewElement, ThymeleafModelBuilder model );
 }

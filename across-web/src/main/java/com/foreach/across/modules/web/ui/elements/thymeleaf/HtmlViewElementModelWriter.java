@@ -15,24 +15,24 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.ViewElementNodeFactory;
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.ui.elements.ConfigurableTextViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
 
-public class HtmlViewElementThymeleafBuilder extends HtmlViewElementThymeleafSupport<HtmlViewElement>
+/**
+ * Default model builder for {@link HtmlViewElement}.
+ *
+ * @author Arne Vandamme
+ * @since 2.0.0
+ */
+public class HtmlViewElementModelWriter extends AbstractHtmlViewElementModelWriter<HtmlViewElement>
 {
 	@Override
-	protected Element createNode( HtmlViewElement element,
-	                              Arguments arguments,
-	                              ViewElementNodeFactory viewElementNodeFactory ) {
-		Element node = createElement( element.getTagName() );
-
-		if ( element instanceof ConfigurableTextViewElement ) {
-			text( node, ( (ConfigurableTextViewElement) element ).getText() );
+	protected void writeChildren( HtmlViewElement viewElement, ThymeleafModelBuilder model ) {
+		if ( viewElement instanceof ConfigurableTextViewElement ) {
+			model.addText( ( (ConfigurableTextViewElement) viewElement ).getText() );
 		}
 
-		return node;
+		super.writeChildren( viewElement, model );
 	}
 }

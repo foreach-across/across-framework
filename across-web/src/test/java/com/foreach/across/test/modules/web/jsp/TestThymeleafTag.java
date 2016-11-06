@@ -68,7 +68,8 @@ public class TestThymeleafTag
 		tag.doEndTag();
 		MockHttpServletResponse response = (MockHttpServletResponse) pageContext.getResponse();
 		String content = response.getContentAsString();
-		Assert.assertTrue( StringUtils.contains( content, "<p>Hello, Joe Doe!</p>" ) );
+		Assert.assertTrue( StringUtils.contains( StringUtils.deleteWhitespace( content ),
+		                                         StringUtils.deleteWhitespace( "<p>Hello, Joe Doe!</p>" ) ) );
 		Assert.assertTrue( StringUtils.contains( content, "mvcConversionService found" ) );
 		Assert.assertTrue( StringUtils.contains( content, "environment found" ) );
 	}

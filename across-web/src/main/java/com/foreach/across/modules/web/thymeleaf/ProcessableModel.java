@@ -15,22 +15,26 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import com.foreach.across.modules.web.ui.ViewElement;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.NestableAttributeHolderNode;
-import org.thymeleaf.dom.Node;
-
-import java.util.List;
-import java.util.Map;
+import org.thymeleaf.model.IModel;
 
 /**
- * @author Arne Vandamme
+ * Created by slyoldfox on 26/10/16.
  */
-public interface ViewElementNodeFactory
+public class ProcessableModel
 {
-	List<Node> buildNodes( ViewElement viewElement, Arguments arguments );
+	private IModel model;
+	private boolean processable;
 
-	void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value );
+	public ProcessableModel( IModel model, boolean processable ) {
+		this.model = model;
+		this.processable = processable;
+	}
 
-	void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes );
+	public IModel getModel() {
+		return model;
+	}
+
+	public boolean isProcessable() {
+		return processable;
+	}
 }

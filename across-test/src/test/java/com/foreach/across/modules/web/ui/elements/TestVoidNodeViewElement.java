@@ -17,6 +17,7 @@ package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Test;
+import org.unbescape.html.HtmlEscape;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -70,7 +71,7 @@ public class TestVoidNodeViewElement extends AbstractViewElementTemplateTest
 	@Test
 	public void attributeSerialization() {
 		Map<String, Object> json = new LinkedHashMap<>();
-		json.put( "name", "myname for you" );
+		json.put( "name", "myname 'for' you" );
 		json.put( "age", 34 );
 		json.put( "nested", new Attr( "inside", 666 ) );
 
@@ -78,11 +79,14 @@ public class TestVoidNodeViewElement extends AbstractViewElementTemplateTest
 		node.setAttribute( "data-json", json );
 		node.setAttribute( "data-extra", new Attr( "extra", 123456789L ) );
 
+		String jsonString = HtmlEscape.escapeHtml4Xml(
+				"{\"name\":\"myname 'for' you\",\"age\":34,\"nested\":{\"name\":\"inside\",\"time\":666}}" );
+		String jsonExtra = HtmlEscape.escapeHtml4Xml("{\"name\":\"extra\",\"time\":123456789}");
 		renderAndExpect(
 				node,
 				"<hr " +
-						"data-json='{\"name\":\"myname for you\",\"age\":34,\"nested\":{\"name\":\"inside\",\"time\":666}}' " +
-						"data-extra='{\"name\":\"extra\",\"time\":123456789}' " +
+						"data-json='" + jsonString + "' " +
+						"data-extra='" + jsonExtra + "' " +
 						"/>"
 		);
 	}

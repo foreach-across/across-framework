@@ -20,16 +20,18 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
+import com.foreach.across.modules.web.ui.DefaultViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.StandardViewElements;
+import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
-import com.foreach.across.modules.web.ui.elements.thymeleaf.ContainerViewElementThymeleafBuilder;
-import com.foreach.across.modules.web.ui.elements.thymeleaf.HtmlViewElementThymeleafBuilder;
-import com.foreach.across.modules.web.ui.elements.thymeleaf.TextViewElementThymeleafBuilder;
-import com.foreach.across.modules.web.ui.elements.thymeleaf.ViewElementGeneratorThymeleafBuilder;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.ContainerViewElementModelWriter;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.HtmlViewElementModelWriter;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.TextViewElementModelWriter;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.ViewElementGeneratorModelWriter;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,25 +86,32 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
-	public ViewElementNodeBuilderRegistry thymeleafViewElementProcessorRegistry() {
-		ViewElementNodeBuilderRegistry registry = new ViewElementNodeBuilderRegistry();
-		registry.registerNodeBuilder( TextViewElement.class, new TextViewElementThymeleafBuilder() );
-		registry.registerNodeBuilder( StandardViewElements.TEXT, new TextViewElementThymeleafBuilder() );
-		registry.registerNodeBuilder( ContainerViewElement.class, new ContainerViewElementThymeleafBuilder() );
-		registry.registerNodeBuilder( StandardViewElements.CONTAINER, new ContainerViewElementThymeleafBuilder() );
-		registry.registerNodeBuilder( ViewElementGenerator.class, new ViewElementGeneratorThymeleafBuilder() );
-		registry.registerNodeBuilder( StandardViewElements.GENERATOR, new ViewElementGeneratorThymeleafBuilder() );
-		registry.registerNodeBuilder( NodeViewElement.class, new HtmlViewElementThymeleafBuilder() );
-		registry.registerNodeBuilder( StandardViewElements.NODE, new HtmlViewElementThymeleafBuilder() );
+	public ViewElementModelWriterRegistry thymeleafViewElementProcessorRegistry() {
+		ViewElementModelWriterRegistry registry = new ViewElementModelWriterRegistry();
+
+		registry.registerModelWriter( TextViewElement.class, new TextViewElementModelWriter() );
+		registry.registerModelWriter( StandardViewElements.TEXT, new TextViewElementModelWriter() );
+		registry.registerModelWriter( ContainerViewElement.class, new ContainerViewElementModelWriter() );
+		registry.registerModelWriter( StandardViewElements.CONTAINER, new ContainerViewElementModelWriter() );
+		registry.registerModelWriter( ViewElementGenerator.class, new ViewElementGeneratorModelWriter() );
+		registry.registerModelWriter( StandardViewElements.GENERATOR, new ViewElementGeneratorModelWriter() );
+		registry.registerModelWriter( NodeViewElement.class, new HtmlViewElementModelWriter() );
+		registry.registerModelWriter( StandardViewElements.NODE, new HtmlViewElementModelWriter() );
 
 		return registry;
 	}
 
 	@Bean
 	@Exposed
-	public ThymeleafViewResolver thymeleafViewResolver() {
+	public ViewElementAttributeConverter viewElementAttributeConverter() {
+		return new DefaultViewElementAttributeConverter();
+	}
+
+	@Bean
+	@Exposed
+	public ThymeleafViewResolver thymeleafViewResolver( SpringTemplateEngine springTemplateEngine ) {
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-		resolver.setTemplateEngine( springTemplateEngine() );
+		resolver.setTemplateEngine( springTemplateEngine );
 		resolver.setOrder( 1 );
 		resolver.setCharacterEncoding( "UTF-8" );
 		resolver.setViewNames( new String[] {
@@ -136,6 +145,7 @@ public class ThymeleafViewSupportConfiguration
 				resolver.setCacheTTLMs( 1000L );
 				resolver.setPrefix( prefix );
 				resolver.setSuffix( suffix );
+				resolver.setCheckExistence( true );
 
 				applicationContext.getAutowireCapableBeanFactory().initializeBean( resolver,
 				                                                                   "developmentResolver." + views

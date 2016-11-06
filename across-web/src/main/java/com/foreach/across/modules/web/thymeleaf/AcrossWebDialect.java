@@ -16,15 +16,14 @@
 package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.resource.WebResourceUtils;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.context.IProcessingContext;
-import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.dialect.IExpressionEnhancingDialect;
+import org.thymeleaf.context.IExpressionContext;
+import org.thymeleaf.dialect.AbstractProcessorDialect;
+import org.thymeleaf.dialect.IExpressionObjectDialect;
+import org.thymeleaf.expression.IExpressionObjectFactory;
 import org.thymeleaf.processor.IProcessor;
+import org.thymeleaf.standard.StandardDialect;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -33,47 +32,59 @@ import java.util.Set;
  * Adds the following utility objects:
  * <ul>
  * <li><b>#webapp</b>: {@link com.foreach.across.modules.web.context.WebAppPathResolver} for the current context</li>
+ * <li><b>#htmlIdStore</b>: {@link HtmlIdStore} - same - for the template rendering</li>
  * </ul>
  * </p>
  *
  * @author Arne Vandamme
  */
-public class AcrossWebDialect extends AbstractDialect implements IExpressionEnhancingDialect
+public class AcrossWebDialect extends AbstractProcessorDialect implements IExpressionObjectDialect
 {
 	public static final String PREFIX = "across";
 
 	public static final String UTILITY_WEBAPP = "webapp";
 	public static final String HTML_ID_STORE = "htmlIdStore";
 
-	@Override
-	public Map<String, Object> getAdditionalExpressionObjects( IProcessingContext processingContext ) {
-		Map<String, Object> objects = new HashMap<>();
-
-		Object pathResolver = processingContext.getContext().getVariables().get(
-				WebResourceUtils.PATH_RESOLVER_ATTRIBUTE_KEY );
-
-		if ( pathResolver != null ) {
-			objects.put( UTILITY_WEBAPP, pathResolver );
-		}
-
-		if ( processingContext instanceof Arguments ) {
-			objects.put( HTML_ID_STORE, new HtmlIdStore( (Arguments) processingContext ) );
-		}
-
-		return objects;
+	public AcrossWebDialect() {
+		super( "AcrossWeb", PREFIX, StandardDialect.PROCESSOR_PRECEDENCE );
 	}
 
 	@Override
-	public Set<IProcessor> getProcessors() {
+	public Set<IProcessor> getProcessors( final String dialectPrefix ) {
 		Set<IProcessor> processors = new HashSet<>();
-		processors.add( new ProcessableAttrProcessor() );
 		processors.add( new ViewElementElementProcessor() );
-
 		return processors;
 	}
 
 	@Override
-	public String getPrefix() {
-		return PREFIX;
+	public IExpressionObjectFactory getExpressionObjectFactory() {
+		return new AcrossExpressionObjectFactory();
+	}
+
+	public static class AcrossExpressionObjectFactory implements IExpressionObjectFactory
+	{
+		@Override
+		public Set<String> getAllExpressionObjectNames() {
+			HashSet<String> names = new HashSet<>();
+			names.add( UTILITY_WEBAPP );
+			names.add( HTML_ID_STORE );
+			return names;
+		}
+
+		@Override
+		public Object buildObject( IExpressionContext context, String expressionObjectName ) {
+			if ( HTML_ID_STORE.equals( expressionObjectName ) ) {
+				return new HtmlIdStore();
+			}
+			else if ( UTILITY_WEBAPP.equals( expressionObjectName ) ) {
+				return context.getVariable( WebResourceUtils.PATH_RESOLVER_ATTRIBUTE_KEY );
+			}
+			return null;
+		}
+
+		@Override
+		public boolean isCacheable( String expressionObjectName ) {
+			return true;
+		}
 	}
 }

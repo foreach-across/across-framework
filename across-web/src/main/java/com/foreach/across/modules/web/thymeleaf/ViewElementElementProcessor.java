@@ -15,37 +15,26 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.ViewElement;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementNodeBuilderRegistry;
-import com.foreach.across.modules.web.ui.thymeleaf.ViewElementThymeleafBuilder;
-import org.apache.commons.lang3.StringUtils;
+import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.ClassUtils;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.NestableAttributeHolderNode;
-import org.thymeleaf.dom.Node;
-import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.processor.element.AbstractMarkupSubstitutionElementProcessor;
-import org.thymeleaf.spring4.context.SpringWebContext;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.context.WebEngineContext;
+import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.processor.element.AbstractElementTagProcessor;
+import org.thymeleaf.processor.element.IElementTagStructureHandler;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
-import org.thymeleaf.standard.fragment.StandardFragment;
-import org.thymeleaf.standard.fragment.StandardFragmentProcessor;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import org.thymeleaf.templatemode.TemplateMode;
 
 /**
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
  */
-public class ViewElementElementProcessor
-		extends AbstractMarkupSubstitutionElementProcessor implements ViewElementNodeFactory
+public class ViewElementElementProcessor extends AbstractElementTagProcessor
 {
 	public static final String ELEMENT_NAME = "view";
 
@@ -54,134 +43,38 @@ public class ViewElementElementProcessor
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	public ViewElementElementProcessor() {
-		super( ELEMENT_NAME );
+		super(
+				TemplateMode.HTML, // This processor will apply only to HTML mode
+				AcrossWebDialect.PREFIX,     // Prefix to be applied to name for matching
+				ELEMENT_NAME,          // Tag name: match specifically this tag
+				true,              // Apply dialect prefix to tag name
+				null,              // No attribute name: will match by tag name
+				false,             // No prefix to be applied to attribute name
+				10000 );       // Precedence (inside dialect's own precedence)
 	}
 
 	@Override
-	protected List<Node> getMarkupSubstitutes( Arguments arguments, Element element ) {
-		ViewElement viewElement = retrieveViewElementFromAttribute( arguments, element );
+	protected void doProcess( ITemplateContext context,
+	                          IProcessableElementTag tag,
+	                          IElementTagStructureHandler structureHandler ) {
+		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
+		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext(
+				( (WebEngineContext) context ).getRequest() );
+		ViewElementModelWriterRegistry registry = appCtx.getBean( ViewElementModelWriterRegistry.class );
+		ViewElementAttributeConverter attributeConverter = appCtx.getBean( ViewElementAttributeConverter.class );
+		HtmlIdStore idStore = (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
 
-		return buildNodes( viewElement, arguments );
+		ThymeleafModelBuilder builder = new ThymeleafModelBuilder( context, registry, idStore, attributeConverter );
+		builder.addViewElement( viewElement );
+		structureHandler.replaceWith( builder.retrieveModel(), true );
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Node> buildNodes( ViewElement viewElement, Arguments arguments ) {
-		if ( hasCustomTemplate( viewElement ) ) {
-			return renderCustomTemplate( viewElement, arguments );
-		}
-		else {
-			ViewElementThymeleafBuilder processor = findElementProcessor( viewElement, arguments );
-
-			if ( processor != null ) {
-				return processor.buildNodes( viewElement, arguments, this );
-			}
-		}
-
-		throw new IllegalArgumentException( "Unable to render ViewElement of type " + viewElement.getClass() );
-	}
-
-	@Override
-	public void setAttribute( NestableAttributeHolderNode node, String attributeName, Object value ) {
-		if ( !"class".equals( attributeName ) ) {
-			if ( value == null ) {
-				node.removeAttribute( attributeName );
-			}
-			else {
-				node.setAttribute( attributeName, serialize( value ) );
-			}
-		}
-		else {
-			attributeAppend( node, attributeName, Objects.toString( value ) );
-		}
-	}
-
-	private void attributeAppend( NestableAttributeHolderNode element, String attributeName, String value ) {
-		if ( value != null ) {
-			String attributeValue = element.getAttributeValue( attributeName );
-
-			if ( StringUtils.isNotBlank( attributeValue ) ) {
-				attributeValue += " " + value;
-			}
-			else {
-				attributeValue = value;
-			}
-
-			element.setAttribute( attributeName, attributeValue );
-		}
-	}
-
-	private String serialize( Object value ) {
-		if ( value instanceof String || ClassUtils.isPrimitiveOrWrapper( value.getClass() ) ) {
-			return Objects.toString( value );
-		}
-
-		try {
-			return objectMapper.writeValueAsString( value );
-		}
-		catch ( JsonProcessingException jpe ) {
-			throw new RuntimeException( jpe );
-		}
-	}
-
-	@Override
-	public void setAttributes( NestableAttributeHolderNode node, Map<String, Object> attributes ) {
-		for ( Map.Entry<String, Object> attribute : attributes.entrySet() ) {
-			setAttribute( node, attribute.getKey(), attribute.getValue() );
-		}
-	}
-
-	private ViewElementThymeleafBuilder findElementProcessor( ViewElement viewElement, Arguments arguments ) {
-		ApplicationContext appCtx = ( (SpringWebContext) arguments.getContext() ).getApplicationContext();
-		ViewElementNodeBuilderRegistry registry = appCtx.getBean( ViewElementNodeBuilderRegistry.class );
-
-		return registry.getNodeBuilder( viewElement );
-	}
-
-	private List<Node> renderCustomTemplate( ViewElement viewElement, Arguments arguments ) {
-		Arguments newArguments = arguments.addLocalVariables(
-				Collections.singletonMap( "component", viewElement )
-		);
-
-		String templateWithFragment = appendFragmentIfRequired( viewElement.getCustomTemplate() );
-
-		StandardFragment fragment = StandardFragmentProcessor.computeStandardFragmentSpec(
-				newArguments.getConfiguration(),
-				newArguments,
-				templateWithFragment,
-				"th", "fragment" );
-
-		List<Node> nodes = fragment.extractFragment( newArguments.getConfiguration(), newArguments,
-		                                             newArguments.getTemplateRepository() );
-
-		if ( nodes == null ) {
-			throw new TemplateProcessingException( "Not a valid template [" + templateWithFragment + "]" );
-		}
-
-		return nodes;
-	}
-
-	/**
-	 * Append the fragment to the custom template name if there is no fragment.
-	 */
-	private String appendFragmentIfRequired( String customTemplate ) {
-		if ( !StringUtils.contains( customTemplate, "::" ) ) {
-			return customTemplate + " :: render(${component})";
-		}
-
-		return customTemplate;
-	}
-
-	private boolean hasCustomTemplate( ViewElement viewElement ) {
-		return viewElement.getCustomTemplate() != null;
-	}
-
-	private ViewElement retrieveViewElementFromAttribute( Arguments arguments, Element element ) {
+	private ViewElement retrieveViewElementFromAttribute( ITemplateContext context, IProcessableElementTag element ) {
 		String expr = element.getAttributeValue( ATTRIBUTE_ITEM );
-		IStandardExpressionParser parser = StandardExpressions.getExpressionParser( arguments.getConfiguration() );
-		IStandardExpression expression = parser.parseExpression( arguments.getConfiguration(), arguments, expr );
+		IStandardExpressionParser parser = StandardExpressions.getExpressionParser( context.getConfiguration() );
+		IStandardExpression expression = parser.parseExpression( context, expr );
 
-		Object viewElement = expression.execute( arguments.getConfiguration(), arguments );
+		Object viewElement = expression.execute( context );
 
 		if ( viewElement instanceof ViewElement ) {
 			return (ViewElement) viewElement;
@@ -190,10 +83,5 @@ public class ViewElementElementProcessor
 		throw new IllegalArgumentException(
 				ELEMENT_NAME + " element requires a " + ATTRIBUTE_ITEM + " attribute of type ViewElement"
 		);
-	}
-
-	@Override
-	public int getPrecedence() {
-		return 1000;
 	}
 }

@@ -15,34 +15,32 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.attr.AbstractNoOpAttrProcessor;
 
 /**
  * Dummy processor that can flag an element as requiring processing.
  *
  * @author Arne Vandamme
  */
-public class ProcessableAttrProcessor extends AbstractNoOpAttrProcessor
+public class ProcessableAttrProcessor //extends AbstractNoOpAttrProcessor
 {
-	public static final String ATTRIBUTE = "processable";
-
-	public ProcessableAttrProcessor() {
-		super( ATTRIBUTE );
-	}
-
-	@Override
-	public int getPrecedence() {
-		return Integer.MAX_VALUE;
-	}
-
-	/**
-	 * Make a certain {@link Element} processable.  Useful to trigger processing when children might
-	 * contain precomputed nodes.
-	 *
-	 * @param node element to make processable
-	 */
-	public static void makeProcessable( Element node ) {
-		node.setAttribute( AcrossWebDialect.PREFIX + ":" + ATTRIBUTE, "true" );
-	}
+//	public static final String ATTRIBUTE = "processable";
+//
+//	public ProcessableAttrProcessor() {
+//		super( ATTRIBUTE );
+//	}
+//
+//	//@Override
+//	public int getPrecedence() {
+//		return Integer.MAX_VALUE;
+//	}
+//
+//	/**
+//	 * Make a certain {@link Element} processable.  Useful to trigger processing when children might
+//	 * contain precomputed nodes.
+//	 *
+//	 * @param node element to make processable
+//	 */
+//	public static void makeProcessable( Element node ) {
+//		node.setAttribute( AcrossWebDialect.PREFIX + ":" + ATTRIBUTE, "true" );
+//	}
 }

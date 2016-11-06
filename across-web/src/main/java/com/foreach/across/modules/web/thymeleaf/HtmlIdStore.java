@@ -17,8 +17,10 @@ package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
-import org.thymeleaf.Arguments;
+import org.thymeleaf.context.ITemplateContext;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,27 +29,16 @@ import java.util.Map;
  * instance (simple nodes).  This ensures that other elements (eg. labels) can retrieve the render time generated id.
  *
  * @author Arne Vandamme
+ * @since 1.0.0
  */
 public class HtmlIdStore
 {
-	private final Arguments arguments;
-	private final Map<ViewElement, String> generatedIds;
+	private final Deque<Map<ViewElement, String>> generatedIdMaps = new ArrayDeque<>();
 
-	public HtmlIdStore( Arguments arguments ) {
-		this( arguments, new HashMap<ViewElement, String>() );
-	}
+	private Map<ViewElement, String> generatedIds;
 
-	private HtmlIdStore( Arguments arguments, Map<ViewElement, String> generatedIds ) {
-		this.arguments = arguments;
-		this.generatedIds = generatedIds;
-	}
-
-	public static HtmlIdStore fetch( Arguments arguments ) {
-		return (HtmlIdStore) arguments.getExpressionObjects().get( AcrossWebDialect.HTML_ID_STORE );
-	}
-
-	public static void store( HtmlIdStore idStore, Arguments arguments ) {
-		arguments.getExpressionObjects().put( AcrossWebDialect.HTML_ID_STORE, idStore );
+	public HtmlIdStore() {
+		generatedIds = new HashMap<>();
 	}
 
 	/**
@@ -60,7 +51,7 @@ public class HtmlIdStore
 	 * @param control element for which to retrieve the id
 	 * @return id or null if no id is available
 	 */
-	public String retrieveHtmlId( ViewElement control ) {
+	public String retrieveHtmlId( ITemplateContext context, ViewElement control ) {
 		String htmlId = null;
 
 		if ( control instanceof HtmlViewElement ) {
@@ -70,7 +61,7 @@ public class HtmlIdStore
 				htmlId = ( (HtmlViewElement) control ).getHtmlId();
 
 				if ( htmlId != null ) {
-					int idCount = arguments.getAndIncrementIDSeq( htmlId );
+					int idCount = context.getIdentifierSequences().getAndIncrementIDSeq( htmlId );
 					if ( idCount > 1 ) {
 						htmlId = htmlId + ( idCount - 1 );
 					}
@@ -84,13 +75,39 @@ public class HtmlIdStore
 	}
 
 	/**
-	 * Create a new instance by copying the the original generated elements.
-	 * New elements added will not be added to the original set, making this store safe to use within
-	 * a single iteration that creates new {@link ViewElement}s.
-	 *
-	 * @return new instance of a HtmlIdStore
+	 * Increase the level of element id caching.  This will copy the currently cached ids into
+	 * a new collection.  Any ids after will only be kept until a call to {@link #decreaseLevel()}.
+	 * When that happens, the previous collection will be reset.
 	 */
-	public HtmlIdStore createNew() {
-		return new HtmlIdStore( arguments, new HashMap<>( generatedIds ) );
+	public void increaseLevel() {
+		HashMap<ViewElement, String> newIds = new HashMap<>();
+		newIds.putAll( generatedIds );
+
+		generatedIdMaps.push( generatedIds );
+		generatedIds = newIds;
+	}
+
+	/**
+	 * Decrease the level.  This resets the cached element ids to the version that was present before
+	 * the last call to {@link #increaseLevel()}.  If the level has never been increased, this method
+	 * will remove all cached element ids.
+	 */
+	public void decreaseLevel() {
+		if ( !generatedIdMaps.isEmpty() ) {
+			generatedIds = generatedIdMaps.pop();
+		}
+		else {
+			generatedIds.clear();
+		}
+	}
+
+	/**
+	 * Fetch the store from the current template context.
+	 *
+	 * @param context to get the store from
+	 * @return id store instance
+	 */
+	public static HtmlIdStore fetch( ITemplateContext context ) {
+		return (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
 	}
 }
