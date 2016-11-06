@@ -109,9 +109,9 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
-	public ThymeleafViewResolver thymeleafViewResolver() {
+	public ThymeleafViewResolver thymeleafViewResolver( SpringTemplateEngine springTemplateEngine ) {
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-		resolver.setTemplateEngine( springTemplateEngine() );
+		resolver.setTemplateEngine( springTemplateEngine );
 		resolver.setOrder( 1 );
 		resolver.setCharacterEncoding( "UTF-8" );
 		resolver.setViewNames( new String[] {
