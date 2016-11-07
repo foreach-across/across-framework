@@ -16,6 +16,7 @@
 package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.type.AnnotationMetadata;
@@ -35,7 +36,7 @@ public class AcrossDynamicModulesConfiguration extends AcrossDynamicModulesConfi
 	@Override
 	public void setImportMetadata( AnnotationMetadata importMetadata ) {
 		try {
-			setApplicationClass( Class.forName( importMetadata.getClassName() ) );
+			setApplicationClass( ClassLoadingUtils.loadClass( importMetadata.getClassName() ) );
 		}
 		catch ( ClassNotFoundException cnfe ) {
 			throw new AcrossException( "Unable to configure dynamic application modules", cnfe );

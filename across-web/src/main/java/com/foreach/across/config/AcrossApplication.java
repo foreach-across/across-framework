@@ -35,7 +35,8 @@ import java.lang.annotation.*;
 @Documented
 @Import({ PropertyPlaceholderAutoConfiguration.class,
           AcrossApplicationConfiguration.class,
-          AcrossWebApplicationConfiguration.class })
+          AcrossWebApplicationConfiguration.class,
+          SpringBootDevToolsSupportingConfiguration.class })
 @EnableAcrossContext
 public @interface AcrossApplication
 {

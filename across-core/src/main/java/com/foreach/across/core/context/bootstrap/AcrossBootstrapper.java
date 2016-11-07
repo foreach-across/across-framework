@@ -41,6 +41,7 @@ import com.foreach.across.core.filters.NamedBeanFilter;
 import com.foreach.across.core.installers.AcrossBootstrapInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import net.engio.mbassy.bus.error.IPublicationErrorHandler;
 import net.engio.mbassy.bus.error.PublicationError;
 import org.slf4j.Logger;
@@ -447,7 +448,7 @@ public class AcrossBootstrapper
 		String settingsClassName = ClassUtils.getUserClass( module.getClass() ).getName() + "Settings";
 
 		try {
-			Class settingsClass = Class.forName( settingsClassName );
+			Class settingsClass = ClassLoadingUtils.loadClass( settingsClassName );
 
 			if ( !settingsClass.isInterface() && !Modifier.isAbstract( settingsClass.getModifiers() ) ) {
 				if ( !compatibility ) {

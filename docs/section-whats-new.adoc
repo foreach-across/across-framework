@@ -1,6 +1,12 @@
 == What's new in this version?
 
 === 2.0.0-SNAPSHOT
+Upgrade to *Spring Platform Athens*, new major dependency versions:
+
+* Spring framework 4.3.x
+* Spring Boot 1.4.x
+* Thymeleaf 3.x
+
 *Across Core*
 
 * `@AcrossEventHandler` has been deprecated, all beans are now automatically scanned for `@Event` methods
@@ -13,6 +19,7 @@
 
 * `ServletContextInitializer` beans in modules are now supported directly for customizing the `ServletContext`
 ** `@ConditionalOnConfigurableServletContext` and `@ConditionalOnNotConfigurableServletContext` added to determine if `ServletContext` can still be customized
+* Spring Boot devtools are now supported - application context restart will be triggered by default if devtools is on the classpath
 
 === 1.1.3-SNAPSHOT
 Maintenance release containing several bugfixes.

@@ -20,6 +20,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
 import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.support.AcrossContextBuilder;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,7 +167,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 
 		if ( configurationPackageSet.isEmpty() ) {
 			try {
-				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
+				Class<?> importingClass = ClassLoadingUtils.loadClass( importMetadata.getClassName() );
 				Package importingClassPackage = importingClass.getPackage();
 
 				String base = "";
@@ -201,7 +202,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			modulePackageSet.add( AcrossContextBuilder.STANDARD_MODULES_PACKAGE );
 
 			try {
-				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
+				Class<?> importingClass = ClassLoadingUtils.loadClass( importMetadata.getClassName() );
 				Package importingClassPackage = importingClass.getPackage();
 
 				if ( importingClassPackage != null ) {

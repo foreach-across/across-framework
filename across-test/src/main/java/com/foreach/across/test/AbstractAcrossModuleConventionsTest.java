@@ -18,6 +18,7 @@ package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossModuleSettings;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import com.foreach.across.modules.web.AcrossWebModule;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -119,7 +120,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 
 	private Class loadClass( String className ) {
 		try {
-			return Class.forName( className );
+			return ClassLoadingUtils.loadClass( className );
 		}
 		catch ( Exception e ) {
 			return null;

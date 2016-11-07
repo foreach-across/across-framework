@@ -16,6 +16,7 @@
 
 package com.foreach.across.core.filters;
 
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -116,7 +117,8 @@ public class AnnotationBeanFilter implements BeanFilter
 				}
 
 				try {
-					Class factoryClass = ClassUtils.getUserClass( Class.forName( metadata.getDeclaringClassName() ) );
+					Class factoryClass = ClassUtils.getUserClass(
+							ClassLoadingUtils.loadClass( metadata.getDeclaringClassName() ) );
 
 					if ( definition.getFactoryBeanName() != null ) {
 						Object factory = beanFactory.getSingleton( definition.getFactoryBeanName() );
@@ -152,7 +154,7 @@ public class AnnotationBeanFilter implements BeanFilter
 			}
 			else if ( bean == null && definition.getBeanClassName() != null ) {
 				try {
-					Class beanClass = Class.forName( definition.getBeanClassName() );
+					Class beanClass = ClassLoadingUtils.loadClass( definition.getBeanClassName() );
 
 					for ( Class<? extends Annotation> annotation : annotations ) {
 						if ( AnnotationUtils.getAnnotation( beanClass, annotation ) != null ) {
