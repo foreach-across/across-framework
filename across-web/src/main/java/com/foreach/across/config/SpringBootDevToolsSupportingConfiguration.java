@@ -15,9 +15,9 @@
  */
 package com.foreach.across.config;
 
-import org.springframework.context.annotation.ImportSelector;
-import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.util.ClassUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration;
+import org.springframework.context.annotation.Import;
 
 /**
  * Adds auto-configuration of Spring Boot devtools if it is on the class path..
@@ -25,22 +25,8 @@ import org.springframework.util.ClassUtils;
  * @author Arne Vandamme
  * @since 2.0.0
  */
-public class SpringBootDevToolsSupportingConfiguration implements ImportSelector
+@ConditionalOnClass(LocalDevToolsAutoConfiguration.class)
+@Import(LocalDevToolsAutoConfiguration.class)
+class SpringBootDevToolsSupportingConfiguration
 {
-	private static final String DEVTOOLS_CONFIGURATION
-			= "org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration";
-
-	@Override
-	public String[] selectImports( AnnotationMetadata importingClassMetadata ) {
-		boolean devToolsPresent = ClassUtils.isPresent(
-				DEVTOOLS_CONFIGURATION,
-				Thread.currentThread().getContextClassLoader()
-		);
-
-		if ( devToolsPresent ) {
-			return new String[] { DEVTOOLS_CONFIGURATION };
-		}
-
-		return new String[0];
-	}
 }
