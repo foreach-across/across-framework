@@ -50,6 +50,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionEvaluationReport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -63,12 +64,14 @@ import java.util.*;
  */
 public class AcrossBootstrapper
 {
+	private static final String AUTO_CONFIGURATION_REPORT_BEAN_NAME = "autoConfigurationReport";
+
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossBootstrapper.class );
 
 	private final AcrossContext context;
 	private BootstrapApplicationContextFactory applicationContextFactory;
 
-	private final Stack<ConfigurableApplicationContext> createdApplicationContexts = new Stack<>();
+	private final Deque<ConfigurableApplicationContext> createdApplicationContexts = new ArrayDeque<>();
 	private Throwable bootstrapEventError;
 
 	public AcrossBootstrapper( AcrossContext context ) {
@@ -417,6 +420,13 @@ public class AcrossBootstrapper
 			                        )
 			);
 
+			// context and modules should use the main configuration report bean name
+			if ( contextInfo.getApplicationContext().containsBean( AUTO_CONFIGURATION_REPORT_BEAN_NAME ) ) {
+				providedSingletons.put( AUTO_CONFIGURATION_REPORT_BEAN_NAME,
+				                        contextInfo.getApplicationContext()
+				                                   .getBean( AUTO_CONFIGURATION_REPORT_BEAN_NAME ) );
+			}
+
 			registerSettings( module, providedSingletons, false );
 
 			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
@@ -537,6 +547,16 @@ public class AcrossBootstrapper
 				                                                    context.getParentApplicationContext() );
 
 		ProvidedBeansMap providedBeans = new ProvidedBeansMap();
+
+		// Register the single autoConfigurationReport
+		if ( context.getParentApplicationContext() != null ) {
+			providedBeans.put(
+					AUTO_CONFIGURATION_REPORT_BEAN_NAME,
+					ConditionEvaluationReport.get( (ConfigurableListableBeanFactory)
+							                               context.getParentApplicationContext()
+							                                      .getAutowireCapableBeanFactory() )
+			);
+		}
 
 		// Create the AcrossContextBeanRegistry
 		AcrossContextBeanRegistry contextBeanRegistry = new DefaultAcrossContextBeanRegistry( contextInfo );
