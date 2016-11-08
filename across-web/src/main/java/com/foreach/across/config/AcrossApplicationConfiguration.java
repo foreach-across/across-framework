@@ -15,22 +15,58 @@
  */
 package com.foreach.across.config;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportSelector;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.util.Assert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configures dynamic application modules for an {@link AcrossApplication}.
  *
  * @author Arne Vandamme
  */
-public class AcrossApplicationConfiguration implements ImportSelector
+public class AcrossApplicationConfiguration implements ImportSelector, EnvironmentAware
 {
+	private ConfigurableEnvironment environment;
+
 	@Override
 	public String[] selectImports( AnnotationMetadata importingClassMetadata ) {
+		if ( environment.getProperty( EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY ) == null ) {
+			MutablePropertySources sources = environment.getPropertySources();
+			Map<String, Object> map = getOrAdd( sources, "across" );
+			if ( !map.containsKey( EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY ) ) {
+				map.put( EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY, false );
+			}
+		}
 		if ( (Boolean) importingClassMetadata.getAnnotationAttributes( AcrossApplication.class.getName() )
 		                                     .getOrDefault( "enableDynamicModules", true ) ) {
 			return new String[] { AcrossDynamicModulesConfiguration.class.getName() };
 		}
 		return new String[0];
+	}
+
+	@Override
+	public void setEnvironment( Environment environment ) {
+		Assert.isInstanceOf( ConfigurableEnvironment.class, environment );
+		this.environment = (ConfigurableEnvironment) environment;
+
+	}
+
+	private static Map<String, Object> getOrAdd( MutablePropertySources sources,
+	                                             String name ) {
+		if ( sources.contains( name ) ) {
+			return (Map<String, Object>) sources.get( name ).getSource();
+		}
+		Map<String, Object> map = new HashMap<>();
+		sources.addFirst( new MapPropertySource( name, map ) );
+		return map;
 	}
 }

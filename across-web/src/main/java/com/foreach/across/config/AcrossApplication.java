@@ -17,6 +17,8 @@ package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
@@ -38,6 +40,8 @@ import java.lang.annotation.*;
           AcrossWebApplicationConfiguration.class,
           SpringBootDevToolsSupportingConfiguration.class })
 @EnableAcrossContext
+@SpringBootConfiguration
+@EnableAutoConfiguration
 public @interface AcrossApplication
 {
 	/**
