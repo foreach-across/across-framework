@@ -46,6 +46,7 @@ public class AcrossApplicationConfiguration implements ImportSelector, Environme
 				map.put( EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY, false );
 			}
 		}
+
 		if ( (Boolean) importingClassMetadata.getAnnotationAttributes( AcrossApplication.class.getName() )
 		                                     .getOrDefault( "enableDynamicModules", true ) ) {
 			return new String[] { AcrossDynamicModulesConfiguration.class.getName() };
