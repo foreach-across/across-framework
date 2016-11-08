@@ -140,7 +140,7 @@ public class ThymeleafViewSupportConfiguration
 				SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 				resolver.setOrder( 19 );
 				resolver.setCharacterEncoding( "UTF-8" );
-				resolver.setTemplateMode( "HTML5" );
+				resolver.setTemplateMode( "HTML" );
 				resolver.setCacheable( true );
 				resolver.setCacheTTLMs( 1000L );
 				resolver.setPrefix( prefix );
@@ -163,7 +163,7 @@ public class ThymeleafViewSupportConfiguration
 	public ITemplateResolver templateResolver() {
 		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setCharacterEncoding( "UTF-8" );
-		resolver.setTemplateMode( "HTML5" );
+		resolver.setTemplateMode( "HTML" );
 		resolver.setCacheable( true );
 
 		if ( developmentMode.isActive() ) {
