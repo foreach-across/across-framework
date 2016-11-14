@@ -27,6 +27,8 @@ public interface ConstructedBeanModule1
 
 	String getText();
 
+	String getOtherText();
+
 	ScannedBeanModule1 getScannedBeanModule1();
 
 	ScannedBeanModule2 getScannedBeanModule2();

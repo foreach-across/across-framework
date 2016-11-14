@@ -71,6 +71,7 @@ public class StringToDateConverter implements Converter<String, Date>
 			"EEEE, MMM dd, yyyy HH:mm:ss.SSS",
 			"EEEE, MMM dd, yyyy HH:mm:ss.SSSZ",
 			"EEEE, MMM dd, yyyy HH:mm:ss.SSSXXX",
+			"yyyyMMdd",
 			"yyyyMMddHHmm",
 			"yyyyMMdd-HHmm",
 			"yyyy-MM-dd'T'HH:mm:ss'Z'"

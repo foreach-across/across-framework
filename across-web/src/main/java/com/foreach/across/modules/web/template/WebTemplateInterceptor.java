@@ -17,6 +17,7 @@
 package com.foreach.across.modules.web.template;
 
 import com.foreach.across.core.AcrossException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,13 +27,18 @@ import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 /**
  * Finds and applies the web template configured to a particular request.
+ * Also provides support for partial rendering, though this assumes Thymeleaf templates.
+ * When a <strong>_partial</strong> parameter is present, the view returned will be suffixed with
+ * that the value as fragment name.  In case of partial rendering, the template will be skipped altogether.
  *
  * @see com.foreach.across.modules.web.template.Template
  * @see com.foreach.across.modules.web.template.ClearTemplate
@@ -52,10 +58,10 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	public boolean preHandle( HttpServletRequest request,
 	                          HttpServletResponse response,
 	                          Object handler ) {
-		boolean containsPartialParameter = request.getParameterMap().containsKey( PARTIAL_PARAMETER );
+		Optional<String> partialFragment = Optional.ofNullable( request.getParameter( PARTIAL_PARAMETER ) );
 
 		// if the request contains a parameter _partial, then we will not render a template
-		if ( !containsPartialParameter ) {
+		if ( !partialFragment.isPresent() ) {
 			String templateName = determineTemplateName( handler );
 
 			if ( templateName != null ) {
@@ -69,6 +75,14 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 					throw new AcrossException( "No WebTemplateProcessor registered with name: " + templateName );
 				}
 			}
+			else {
+				// remove any existing template processor - in case of exception handling
+				request.removeAttribute( PROCESSOR_ATTRIBUTE );
+			}
+		}
+		// at present, we don't handle partial for redirects, so we'll add this attribute to make it easier for client code to handle it
+		else {
+			request.setAttribute( PARTIAL_PARAMETER, partialFragment.get() );
 		}
 
 		return true;
@@ -84,11 +98,23 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 		if ( processor != null ) {
 			processor.applyTemplate( request, response, handler, modelAndView );
 		}
-		else {
-			boolean containsPartialParameter = request.getParameterMap().containsKey( PARTIAL_PARAMETER );
-			if ( containsPartialParameter && !modelAndView.getViewName().contains( "::" ) ) {
-				modelAndView.setViewName( modelAndView.getViewName() + "::" + request.getParameter(
-						PARTIAL_PARAMETER ) );
+		else if ( modelAndView != null && modelAndView.hasView() && modelAndView.isReference() ) {
+			Optional<String> partialFragment = Optional.ofNullable( request.getParameter( PARTIAL_PARAMETER ) );
+
+			if ( partialFragment.isPresent() ) {
+				String viewName = modelAndView.getViewName();
+
+				if (
+					// Redirect views should not be modified
+						!StringUtils.startsWithAny( viewName, UrlBasedViewResolver.REDIRECT_URL_PREFIX,
+						                            UrlBasedViewResolver.FORWARD_URL_PREFIX )
+								// Nor should views that already contain a fragment
+								&& !viewName.contains( "::" )
+						) {
+					modelAndView.setViewName(
+							viewName + "::" + request.getParameter( PARTIAL_PARAMETER )
+					);
+				}
 			}
 		}
 	}

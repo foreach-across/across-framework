@@ -21,12 +21,13 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public class AcrossDevelopmentMode
 
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossDevelopmentMode.class );
 
-	public static final String PROPERTIES = "across.devel.properties";
+	public static final String PROPERTIES = "across.development.properties";
 
 	private final String buildId = "dev:" + UUID.randomUUID().toString();
 
@@ -56,28 +57,34 @@ public class AcrossDevelopmentMode
 	@Autowired
 	private AcrossContextInfo contextInfo;
 
+	@Autowired
+	private ApplicationContext applicationContext;
+
 	private final Map<String, String> moduleResourcePaths = new HashMap<>();
 
 	@PostConstruct
 	private void loadProperties() {
+		LOG.info( "Across development mode active: {}", isActive() );
+
 		if ( isActive() ) {
-			String propertiesFilePath = environment.resolvePlaceholders(
-					environment.getProperty( PROPERTIES, "${user.home}/dev-configs/across-devel.properties" )
+			String propertiesResourceLocation = environment.resolvePlaceholders(
+					environment.getProperty( PROPERTIES, "file:${user.home}/dev-configs/across-devel.properties" )
 			);
 
-			File propertiesFile = new File( propertiesFilePath );
+			Resource developmentProperties = applicationContext.getResource( propertiesResourceLocation );
 
-			if ( propertiesFile.exists() ) {
-				LOG.info( "Loading development properties from {}", propertiesFile );
+			if ( developmentProperties.exists() ) {
+				LOG.info( "Loading development properties from {}", developmentProperties );
 
 				Properties props = new Properties();
-				try (FileInputStream fis = new FileInputStream( propertiesFile )) {
-					props.load( fis );
+
+				try (InputStream is = developmentProperties.getInputStream()) {
+					props.load( is );
 
 					registerModuleProperties( props );
 				}
 				catch ( IOException ioe ) {
-					LOG.warn( "Failed to load development properties from {}", propertiesFile, ioe );
+					LOG.warn( "Failed to load development properties from {}", developmentProperties, ioe );
 				}
 			}
 

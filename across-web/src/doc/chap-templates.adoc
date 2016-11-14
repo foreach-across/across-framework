@@ -69,6 +69,14 @@ The latter will always take precedence.
 NOTE: You can always clear a template from being applied by setting a `@ClearTemplate` annotation on a method.
 Special Spring MVC return options (like methods annotated with `@ResponseBody`) will automatically suppress the template.
 
+WARNING: Methods in a `@Controller` do not take any `@Template` annotations of their `@ControllerAdvice` beans into account and vice versa.
+
+=== Linking a template to an exception handler
+Just like `@Template` can be used on any `@RequestMapping` method, it can also be used on a `@ExceptionHandler` method.
+Since an exception handler uses its own template, a template might be executed twice if an exception occurs.
+Initially a template might have been executed for the controller method.
+In case of an exception, that template will be cleared and a new `WebResourceRegistry` will be created for the `@ExceptionHandler` along with the optional template.
+
 === Registering the default template
 If no explicit template is specified, the default template will be used it there is one.
 The default template must be set on the `WebTemplateRegistry`.
@@ -90,3 +98,4 @@ public class MyTemplate extends LayoutTemplateProcessorAdapterBean {
     ...
 }
 ----
+

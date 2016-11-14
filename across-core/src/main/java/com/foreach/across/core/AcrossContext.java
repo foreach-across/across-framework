@@ -395,7 +395,13 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		if ( !isBootstrapped ) {
 			isBootstrapped = true;
 
-			new AcrossBootstrapper( this ).bootstrap();
+			try {
+				new AcrossBootstrapper( this ).bootstrap();
+			}
+			catch ( Exception ignore ){
+				isBootstrapped = false;
+				throw ignore;
+			}
 		}
 	}
 

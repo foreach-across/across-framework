@@ -27,11 +27,14 @@ import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.*;
-import com.foreach.across.modules.web.template.LayoutingExceptionHandlerExceptionResolver;
+import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
+import com.foreach.across.modules.web.template.LayoutSupportingExceptionHandlerExceptionResolver;
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -77,7 +80,6 @@ import org.springframework.web.servlet.handler.HandlerExceptionResolverComposite
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
 import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 import javax.annotation.PostConstruct;
@@ -134,9 +136,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	@Autowired
 	@Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	private FormattingConversionService mvcConversionService;
-
-	@Autowired(required = false)
-	private WebTemplateInterceptor webTemplateInterceptor;
 
 	@Autowired
 	private ResourcesConfiguration resourcesConfiguration;
@@ -475,15 +474,15 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	private void addDefaultHandlerExceptionResolvers( List<HandlerExceptionResolver> exceptionResolvers,
 	                                                  ContentNegotiationManager contentNegotiationManager,
 	                                                  List<HttpMessageConverter<?>> messageConverters ) {
-		ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver;
-		if ( webTemplateInterceptor != null ) {
-			exceptionHandlerExceptionResolver =
-					new LayoutingExceptionHandlerExceptionResolver( webTemplateInterceptor );
+		LayoutSupportingExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver
+				= new LayoutSupportingExceptionHandlerExceptionResolver();
+		exceptionHandlerExceptionResolver.setWebResourceRegistryInterceptor(
+				nullableBeanOfType( WebResourceRegistryInterceptor.class )
+		);
+		exceptionHandlerExceptionResolver.setWebTemplateInterceptor(
+				nullableBeanOfType( WebTemplateInterceptor.class )
+		);
 
-		}
-		else {
-			exceptionHandlerExceptionResolver = new ExceptionHandlerExceptionResolver();
-		}
 		exceptionHandlerExceptionResolver.setApplicationContext( this.applicationContext );
 		exceptionHandlerExceptionResolver.setContentNegotiationManager( contentNegotiationManager );
 		if ( !messageConverters.isEmpty() ) {
@@ -494,6 +493,15 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		exceptionResolvers.add( exceptionHandlerExceptionResolver );
 		exceptionResolvers.add( new ResponseStatusExceptionResolver() );
 		exceptionResolvers.add( new DefaultHandlerExceptionResolver() );
+	}
+
+	private <U> U nullableBeanOfType( Class<U> beanType ) {
+		try {
+			return BeanFactoryUtils.beanOfType( applicationContext, beanType );
+		}
+		catch ( BeansException be ) {
+			return null;
+		}
 	}
 
 	/**

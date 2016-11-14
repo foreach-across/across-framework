@@ -24,6 +24,7 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestContext;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,8 +32,7 @@ import java.util.Set;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.standard;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -50,6 +50,8 @@ public class ITAcrossTestContextBootstrap
 			assertTrue( SimpleInstaller.installed );
 			assertTrue( ctx.contextInfo().getModuleInfo( "MyModule" ).isBootstrapped() );
 			assertFalse( ctx.contextInfo().hasModule( AcrossWebModule.NAME ) );
+
+			assertSingleAcrossContextCreated( ctx );
 		}
 	}
 
@@ -59,7 +61,18 @@ public class ITAcrossTestContextBootstrap
 			assertTrue( SimpleInstaller.installed );
 			assertTrue( ctx.contextInfo().getModuleInfo( "MyModule" ).isBootstrapped() );
 			assertTrue( ctx.contextInfo().hasModule( AcrossWebModule.NAME ) );
+
+			assertSingleAcrossContextCreated( ctx );
 		}
+	}
+
+	private void assertSingleAcrossContextCreated( AcrossTestContext ctx ) {
+		String actualContextId = ctx.getContextId();
+		String nextContextId = new AcrossContext( null ).getId();
+
+		int actualId = Integer.valueOf( StringUtils.substringAfterLast( actualContextId, "-" ) );
+		int nextId = Integer.valueOf( StringUtils.substringAfterLast( nextContextId, "-" ) );
+		assertEquals( "An additional unexpected AcrossContext has been created", actualId + 1, nextId );
 	}
 
 	static class Config implements AcrossContextConfigurer

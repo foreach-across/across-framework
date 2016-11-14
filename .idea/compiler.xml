@@ -31,6 +31,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="across" target="1.8" />
+      <module name="across-base" target="1.8" />
       <module name="across-core" target="1.8" />
       <module name="across-test" target="1.8" />
       <module name="across-web" target="1.8" />

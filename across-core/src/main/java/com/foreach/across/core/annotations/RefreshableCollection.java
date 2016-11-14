@@ -7,12 +7,13 @@ import java.lang.annotation.*;
 /**
  * Annotation to use on fields that need to be autowired with a
  * {@link com.foreach.across.core.registry.RefreshableRegistry} collection type instead
- * of the collection of beans from the ApplicationContext.
+ * of the collection of beans from the ApplicationContext.  An exception will be thrown if the target type
+ * is not one of the interfaces implemented by {@link com.foreach.across.core.registry.RefreshableRegistry}.
  *
  * @see com.foreach.across.core.registry.RefreshableRegistry
  * @see com.foreach.across.core.registry.IncrementalRefreshableRegistry
  */
-@Target({ ElementType.FIELD, ElementType.ANNOTATION_TYPE })
+@Target({ ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Autowired

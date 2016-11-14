@@ -36,6 +36,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.*;
 
@@ -61,6 +62,12 @@ public class TestDefaultExposeFilter
 
 	@Autowired(required = false)
 	private SimpleConfiguration simpleConfiguration;
+
+	@Autowired(required = false)
+	private AtomicReference<Integer> integerReference;
+
+	@Autowired(required = false)
+	private AtomicReference<String> stringReference;
 
 	@Test
 	public void serviceIsExposedByDefault() {
@@ -99,6 +106,12 @@ public class TestDefaultExposeFilter
 		MyBean aliased = applicationContext.getBean( "aliasedExposedBean", MyBean.class );
 
 		assertSame( bean, aliased );
+	}
+
+	@Test
+	public void autowiredGenericObject() {
+		assertNotNull( integerReference );
+		assertNotNull( stringReference );
 	}
 
 	@Configuration

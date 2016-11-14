@@ -139,9 +139,11 @@ public class AnnotationBeanFilter implements BeanFilter
 						// this has already been tested
 						Method method = ReflectionUtils.findMethod( factoryClass, metadata.getMethodName() );
 
-						for ( Class<? extends Annotation> annotation : annotations ) {
-							if ( AnnotationUtils.getAnnotation( method.getReturnType(), annotation ) != null ) {
-								return true;
+						if ( method != null ) {
+							for ( Class<? extends Annotation> annotation : annotations ) {
+								if ( AnnotationUtils.getAnnotation( method.getReturnType(), annotation ) != null ) {
+									return true;
+								}
 							}
 						}
 					}
