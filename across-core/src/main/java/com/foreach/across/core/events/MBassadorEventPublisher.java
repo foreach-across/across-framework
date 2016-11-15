@@ -20,6 +20,7 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.bus.config.BusConfiguration;
 import net.engio.mbassy.bus.config.Feature;
+import net.engio.mbassy.bus.error.IPublicationErrorHandler;
 
 import javax.annotation.PreDestroy;
 
@@ -30,36 +31,51 @@ import javax.annotation.PreDestroy;
  * <p><strong>Note:</strong> JDK proxies are not supported, meaning the target object
  * of the proxy will be registered as event handler instead of the proxied bean.</p>
  */
-public class MBassadorEventPublisher extends MBassador<AcrossEvent> implements AcrossEventPublisher
+public class MBassadorEventPublisher implements AcrossEventPublisher
 {
+	private final MBassador<AcrossEvent> mbassador;
+
 	public MBassadorEventPublisher() {
-		super( SyncAsyncBusConfiguration() );
-
-		this.addErrorHandler( error -> LOG.error( "Event handling error occurred: {}", error, error.getCause() ) );
-	}
-
-	public boolean unsubscribe( Object listener ) {
-		return super.unsubscribe( AcrossContextUtils.getProxyTarget( listener ) );
-	}
-
-	public void subscribe( Object listener ) {
-		Object target = AcrossContextUtils.getProxyTarget( listener );
-		if ( target != null ) {
-			super.subscribe( target );
-		}
-	}
-
-	private static BusConfiguration SyncAsyncBusConfiguration() {
 		BusConfiguration defaultConfig = new BusConfiguration();
 		defaultConfig.addFeature( Feature.SyncPubSub.Default() );
 		defaultConfig.addFeature( Feature.AsynchronousHandlerInvocation.Default() );
 		defaultConfig.addFeature( Feature.AsynchronousMessageDispatch.Default() );
-		return defaultConfig;
+
+		this.mbassador = new MBassador<>( defaultConfig );
+
+		addErrorHandler( error -> LOG.error( "Event handling error occurred: {}", error, error.getCause() ) );
+	}
+
+	@Override
+	public boolean unsubscribe( Object listener ) {
+		return mbassador.unsubscribe( AcrossContextUtils.getProxyTarget( listener ) );
+	}
+
+	@Override
+	public void subscribe( Object listener ) {
+		Object target = AcrossContextUtils.getProxyTarget( listener );
+		if ( target != null ) {
+			mbassador.subscribe( target );
+		}
+	}
+
+	@Override
+	public void publish( AcrossEvent event ) {
+		mbassador.publish( event );
+	}
+
+	@Override
+	public void publishAsync( AcrossEvent event ) {
+		mbassador.publishAsync( event );
+	}
+
+	@Override
+	public void addErrorHandler( IPublicationErrorHandler errorHandler ) {
+		mbassador.addErrorHandler( errorHandler );
 	}
 
 	@PreDestroy
-	@Override
 	public void shutdown() {
-		super.shutdown();
+		mbassador.shutdown();
 	}
 }

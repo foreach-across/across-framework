@@ -53,6 +53,13 @@ public interface AcrossEventPublisher
 	void publish( AcrossEvent event );
 
 	/**
+	 * Publish an event asynchronously.
+	 *
+	 * @param event to publish
+	 */
+	void publishAsync( AcrossEvent event );
+
+	/**
 	 * Add an error handler that will be called whenever an event handler has thrown an error while
 	 * handling an event.  Note that if this happens, all other event handlers will still be called.
 	 *
