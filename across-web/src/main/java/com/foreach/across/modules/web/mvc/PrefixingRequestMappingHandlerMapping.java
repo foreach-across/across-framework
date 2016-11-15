@@ -23,10 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.MethodIntrospector;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.method.HandlerMethodSelector;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.mvc.condition.*;
@@ -141,7 +141,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 		final Class<?> userType = ClassUtils.getUserClass( handlerType );
 
-		Set<Method> methods = HandlerMethodSelector.selectMethods( userType, new ReflectionUtils.MethodFilter()
+		Set<Method> methods = MethodIntrospector.selectMethods( userType, new ReflectionUtils.MethodFilter()
 		{
 			public boolean matches( Method method ) {
 				return getMappingForMethod( method, userType ) != null;

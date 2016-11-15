@@ -15,6 +15,10 @@ Upgrade to *Spring Platform Athens*, new major dependency versions:
 * development mode will register a default resources directory for dynamic modules
 ** this will be an existing *src/main/resources* folder relative to the working directory of the running application
 
+*Across Test*
+* The spring-boot-test dependency is now part of across-test
+* Updated documentation to use the new `@SpringBootTest` annotation
+
 *AcrossWebModule*
 
 * `ServletContextInitializer` beans in modules are now supported directly for customizing the `ServletContext`

@@ -88,7 +88,7 @@ public class ThymeleafTag extends BodyTagSupport
 	                               final Writer writer )
 			throws Exception {
 		final String viewTemplateName = template;
-		final ApplicationContext applicationContext = RequestContextUtils.getWebApplicationContext( request );
+		final ApplicationContext applicationContext = RequestContextUtils.findWebApplicationContext( request );
 		final TemplateEngine viewTemplateEngine = AcrossContextUtils
 				.getBeanRegistry( applicationContext.getBean( AcrossContextInfo.class ) )
 				.getBeanOfTypeFromModule( AcrossWebModule.NAME, TemplateEngine.class );
@@ -155,7 +155,7 @@ public class ThymeleafTag extends BodyTagSupport
 		WebExpressionContext context = (WebExpressionContext) request.getAttribute(
 				WebExpressionContext.class.getName() );
 		if ( context == null ) {
-			ApplicationContext applicationContext = RequestContextUtils.getWebApplicationContext( request );
+			ApplicationContext applicationContext = RequestContextUtils.findWebApplicationContext( request );
 
 			final RequestContext requestContext =
 					new RequestContext( request, response, pageContext.getServletContext(), null );

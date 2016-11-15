@@ -1,7 +1,7 @@
 == Spring Boot Application testing
 
 It is possible to test your `@AcrossApplication` with Spring Boot testing support.
-Using the `@SpringApplicationConfiguration` in your tests is necessary for default _application.properties_ loading and YAML support.
+Using the `@SpringBootTest` in your tests is necessary for default _application.properties_ loading and YAML support.
 Refer to the Spring Boot reference documentation for more information on Spring Boot testing facilities.
  
 === @WebIntegrationTest
@@ -13,7 +13,7 @@ A full-stack web integration test (eg. with an embedded Tomcat) does not require
 ----
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebIntegrationTest(randomPort = true)
-@SpringApplicationConfiguration(classes = MyApplication.class)
+@SpringBootTest(classes = MyApplication.class)
 public class TestSpringBootWebIntegration
 {
 	private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -41,7 +41,7 @@ public class TestSpringBootWebIntegration
 === Integration test with MockMvc support
 It is also possible to start your entire `@AcrossApplication` without an embedded servlet container.
 However if you want to have support for `MockMvc` instantiated with dynamically registered filters, you must manually configure the application loader to use a `<<mock-across-servlet-context,MockAcrossServletContext>>`.
-This is done by adding the required configuration and initializer classes to the `@SpringApplicationConfiguration`.
+This is done by adding the required configuration to `@SpringBootTest` and initializer classes to the `@ContextConfiguration`.
 See the <<appendix-test-configuration-classes,appendix section>> for an overview of all configuration classes available.
 
 .Example Spring Boot integration test with MockMvc
@@ -50,10 +50,8 @@ See the <<appendix-test-configuration-classes,appendix section>> for an overview
 ----
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@SpringApplicationConfiguration(
-		classes = { MyApplication.class, MockMvcConfiguration.class },
-		initializers = MockAcrossServletContextInitializer.class
-)
+@SpringBootTest( classes = { MyApplication.class, MockMvcConfiguration.class } )
+@ContextConfiguration( initializers = MockAcrossServletContextInitializer.class )
 public class TestSpringBootMockMvc
 {
 	@Autowired
@@ -73,4 +71,4 @@ public class TestSpringBootMockMvc
 }
 ----
 
-NOTE: Using `@AcrossWebAppConfiguration` in combination with `@SpringApplicationConfiguration` is not possible, as the context loaders they use conflict with each other.
+NOTE: Using `@AcrossWebAppConfiguration` in combination with `@SpringBootTest` is not possible, as the context loaders they use conflict with each other.

@@ -17,17 +17,16 @@ package com.foreach.across.test.application;
 
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.test.AcrossWebAppConfiguration;
 import com.foreach.across.test.application.app.DummyApplication;
-import com.foreach.across.test.support.config.MockAcrossServletContextInitializer;
 import com.foreach.across.test.support.config.MockMvcConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
@@ -47,11 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @ActiveProfiles("test")
-@WebAppConfiguration
-@SpringApplicationConfiguration(
-		classes = { DummyApplication.class, MockMvcConfiguration.class },
-		initializers = MockAcrossServletContextInitializer.class
-)
+@SpringBootTest(classes = { DummyApplication.class, MockMvcConfiguration.class })
+@AcrossWebAppConfiguration
 public class TestSpringBootMockMvc
 {
 	@Autowired
