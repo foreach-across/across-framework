@@ -67,13 +67,13 @@ public class SimpleConfiguration
 
 	@Bean
 	@Exposed
-	public AtomicReference<Integer> integerReference() {
+	public AtomicReference<Integer> integerAtomicReference() {
 		return new AtomicReference<>( 1 );
 	}
 
 	@Bean
 	@Exposed
-	public AtomicReference<String> stringReference() {
+	public AtomicReference<String> stringAtomicReference() {
 		return new AtomicReference<>( "value" );
 	}
 }
