@@ -16,6 +16,7 @@ Upgrade to *Spring Platform Athens*, new major dependency versions:
 ** this will be an existing *src/main/resources* folder relative to the working directory of the running application
 
 *Across Test*
+
 * The spring-boot-test dependency is now part of across-test
 * Updated documentation to use the new `@SpringBootTest` annotation
 
