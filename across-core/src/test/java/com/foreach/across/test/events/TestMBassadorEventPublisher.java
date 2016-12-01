@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -71,7 +72,7 @@ public class TestMBassadorEventPublisher
 	}
 
 	@Test
-	public void subscribeWithLazyProxyDoesNotNullPointer() {
+	public void subscribeWithLazyProxyDoesNotNullPointerAndDoesNotEagerlyInstantiate() throws Exception {
 		AtomicReference<EventHandlerProxy> lazyEventHandlerProxy = new AtomicReference<>();
 		eventPublisher.subscribe( createLazyProxy( lazyEventHandlerProxy, EventHandlerProxy.class ) );
 		EventHandler lazyEventHandler = new EventHandler();
@@ -114,11 +115,12 @@ public class TestMBassadorEventPublisher
 
 		@Override
 		protected Object createObject() throws Exception {
+			fail( "A lazy proxy should not be instantiated eagerly" );
 			return reference.get();
 		}
 	}
 
-	protected static interface EventHandlerProxy
+	protected interface EventHandlerProxy
 	{
 
 	}
