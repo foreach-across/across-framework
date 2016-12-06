@@ -24,6 +24,7 @@ import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -120,6 +121,10 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		if ( original instanceof RootBeanDefinition ) {
 			originalRootBeanDefinition = (RootBeanDefinition) original;
+			Method method = getResolvedFactoryMethod();
+			if ( method != null ) {
+				setTargetType( ResolvableType.forMethodReturnType( method ) );
+			}
 		}
 
 		// Add detailed information
