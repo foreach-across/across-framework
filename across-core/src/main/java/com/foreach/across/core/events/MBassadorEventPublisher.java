@@ -48,7 +48,8 @@ public class MBassadorEventPublisher implements AcrossEventPublisher
 
 	@Override
 	public boolean unsubscribe( Object listener ) {
-		return mbassador.unsubscribe( AcrossContextUtils.getProxyTarget( listener ) );
+		Object target = AcrossContextUtils.getProxyTarget( listener );
+		return target != null && mbassador.unsubscribe( target );
 	}
 
 	@Override

@@ -33,9 +33,11 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.filters.AnnotatedMethodFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.aop.target.AbstractLazyCreationTargetSource;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -77,7 +79,9 @@ public final class AcrossContextUtils
 
 					for ( Object singleton : refreshableBeans ) {
 						Object bean = AcrossContextUtils.getProxyTarget( singleton );
-						beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+						if ( bean != null ) {
+							beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+						}
 					}
 
 					Map<String, Object> postRefreshBeans = ApplicationContextScanner.findSingletonsMatching(
@@ -86,21 +90,22 @@ public final class AcrossContextUtils
 
 					for ( Object singleton : postRefreshBeans.values() ) {
 						Object bean = AcrossContextUtils.getProxyTarget( singleton );
+						if ( bean != null ) {
+							Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
 
-						Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
-
-						for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
-							if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
-								if ( method.getParameterTypes().length != 0 ) {
-									LOG.error( "@PostRefresh method {} should be parameter-less", method );
-								}
-								else {
-									try {
-										method.setAccessible( true );
-										method.invoke( bean );
+							for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
+								if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
+									if ( method.getParameterTypes().length != 0 ) {
+										LOG.error( "@PostRefresh method {} should be parameter-less", method );
 									}
-									catch ( Exception e ) {
-										LOG.error( "Exception executing @PostRefresh method", e );
+									else {
+										try {
+											method.setAccessible( true );
+											method.invoke( bean );
+										}
+										catch ( Exception e ) {
+											LOG.error( "Exception executing @PostRefresh method", e );
+										}
 									}
 								}
 							}
@@ -305,7 +310,14 @@ public final class AcrossContextUtils
 	public static Object getProxyTarget( Object instance ) {
 		try {
 			if ( AopUtils.isJdkDynamicProxy( instance ) ) {
-				return getProxyTarget( ( (Advised) instance ).getTargetSource().getTarget() );
+				TargetSource targetSource = ( (Advised) instance ).getTargetSource();
+				if ( !( targetSource instanceof AbstractLazyCreationTargetSource ) ) {
+					return getProxyTarget( targetSource.getTarget() );
+				}
+				else {
+					return null;
+				}
+
 			}
 		}
 		catch ( Exception e ) {
