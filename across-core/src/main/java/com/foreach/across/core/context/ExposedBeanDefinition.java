@@ -121,9 +121,11 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		if ( original instanceof RootBeanDefinition ) {
 			originalRootBeanDefinition = (RootBeanDefinition) original;
-			Method method = getResolvedFactoryMethod();
-			if ( method != null ) {
-				setTargetType( ResolvableType.forMethodReturnType( method ) );
+			if ( ResolvableType.forClass( beanClass ).getGenerics().length > 0 ) {
+				Method method = getResolvedFactoryMethod();
+				if ( method != null ) {
+					setTargetType( ResolvableType.forMethodReturnType( method ) );
+				}
 			}
 		}
 
