@@ -173,6 +173,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
+		CorsRegistry corsRegistry = new CorsRegistry();
+
 		ContentNegotiationConfigurer contentNegotiationConfigurer = new ContentNegotiationConfigurer( servletContext );
 		contentNegotiationConfigurer.mediaTypes( getDefaultMediaTypes() );
 
@@ -186,6 +188,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			configurer.addReturnValueHandlers( returnValueHandlers );
 			configurer.configureMessageConverters( messageConverters );
 			configurer.addInterceptors( interceptorRegistry );
+			configurer.addCorsMappings( corsRegistry );
 			configurer.configureContentNegotiation( contentNegotiationConfigurer );
 			configurer.addResourceHandlers( resourceHandlerRegistry );
 			configurer.addFormatters( mvcConversionService );
@@ -237,11 +240,13 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		PrefixingRequestMappingHandlerMapping controllerHandlerMapping = controllerHandlerMapping();
 		controllerHandlerMapping.setContentNegotiationManager( contentNegotiationManager );
 		controllerHandlerMapping.setInterceptors( interceptorRegistry.getInterceptors().toArray() );
+		controllerHandlerMapping.setCorsConfigurations( corsRegistry.getCorsConfigurations() );
 
 		controllerHandlerMapping.reload();
 
 		// Reload the resources resolving configuration
-		resourcesConfiguration.reload( resourceHandlerRegistry, applicationContext );
+		resourcesConfiguration.reload( resourceHandlerRegistry, applicationContext,
+		                               corsRegistry.getCorsConfigurations() );
 
 		// Handler exception resolver
 		if ( exceptionResolvers.isEmpty() ) {
