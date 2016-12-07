@@ -308,7 +308,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	}
 
 	protected Map<String, MediaType> getDefaultMediaTypes() {
-		Map<String, MediaType> map = new HashMap<String, MediaType>();
+		Map<String, MediaType> map = new HashMap<String, MediaType>( 4 );
 		if ( romePresent ) {
 			map.put( "atom", MediaType.APPLICATION_ATOM_XML );
 			map.put( "rss", MediaType.valueOf( "application/rss+xml" ) );
