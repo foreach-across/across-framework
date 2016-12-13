@@ -17,6 +17,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.PathResource;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -43,6 +45,7 @@ import java.util.Map;
  * @see org.springframework.web.multipart.commons.CommonsMultipartResolver
  */
 @Configuration
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 @ConditionalOnProperty(value = "acrossWebModule.multipart.auto-configure", matchIfMissing = true)
 public class MultipartResolverConfiguration extends AcrossWebDynamicServletConfigurer
 {
