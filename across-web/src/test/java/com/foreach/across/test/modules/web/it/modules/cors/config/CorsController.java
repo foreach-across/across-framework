@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/cors")
 public class CorsController
 {
-
 	@CrossOrigin(origins = "http://domain2.com", maxAge = 89)
 	@RequestMapping("/{id}")
 	public Long retrieveWithCorsAnnotation( @PathVariable Long id ) {
