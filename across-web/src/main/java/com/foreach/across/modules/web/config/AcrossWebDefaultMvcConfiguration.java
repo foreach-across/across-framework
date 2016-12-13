@@ -65,6 +65,7 @@ import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.PathMatcher;
 import org.springframework.validation.Errors;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.validation.Validator;
@@ -77,13 +78,19 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerExceptionResolverComposite;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
 import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.JsonViewRequestBodyAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.JsonViewResponseBodyAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -144,6 +151,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	private ConfigurableWebBindingInitializer initializer;
 
+	private PathMatchConfigurer pathMatchConfigurer;
+
 	private ValidatorDelegate validatorDelegate = new ValidatorDelegate();
 
 	public void setServletContext( ServletContext servletContext ) {
@@ -173,6 +182,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
 
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
+		CorsRegistry corsRegistry = new CorsRegistry();
+
 		ContentNegotiationConfigurer contentNegotiationConfigurer = new ContentNegotiationConfigurer( servletContext );
 		contentNegotiationConfigurer.mediaTypes( getDefaultMediaTypes() );
 
@@ -186,6 +197,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 			configurer.addReturnValueHandlers( returnValueHandlers );
 			configurer.configureMessageConverters( messageConverters );
 			configurer.addInterceptors( interceptorRegistry );
+			configurer.addCorsMappings( corsRegistry );
 			configurer.configureContentNegotiation( contentNegotiationConfigurer );
 			configurer.addResourceHandlers( resourceHandlerRegistry );
 			configurer.addFormatters( mvcConversionService );
@@ -221,6 +233,13 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		adapter.setCustomArgumentResolvers( argumentResolvers );
 		adapter.setCustomReturnValueHandlers( returnValueHandlers );
 
+		if ( jackson2Present ) {
+			adapter.setRequestBodyAdvice(
+					Collections.<RequestBodyAdvice>singletonList( new JsonViewRequestBodyAdvice() ) );
+			adapter.setResponseBodyAdvice(
+					Collections.<ResponseBodyAdvice<?>>singletonList( new JsonViewResponseBodyAdvice() ) );
+		}
+
 		// Async support
 		if ( asyncSupportConfigurer.getTaskExecutor() != null ) {
 			adapter.setTaskExecutor( asyncSupportConfigurer.getTaskExecutor() );
@@ -237,11 +256,33 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		PrefixingRequestMappingHandlerMapping controllerHandlerMapping = controllerHandlerMapping();
 		controllerHandlerMapping.setContentNegotiationManager( contentNegotiationManager );
 		controllerHandlerMapping.setInterceptors( interceptorRegistry.getInterceptors().toArray() );
+		controllerHandlerMapping.setCorsConfigurations( corsRegistry.getCorsConfigurations() );
+
+		PathMatchConfigurer configurer = getPathMatchConfigurer();
+		if ( configurer.isUseSuffixPatternMatch() != null ) {
+			controllerHandlerMapping.setUseSuffixPatternMatch( configurer.isUseSuffixPatternMatch() );
+		}
+		if ( configurer.isUseRegisteredSuffixPatternMatch() != null ) {
+			controllerHandlerMapping.setUseRegisteredSuffixPatternMatch(
+					configurer.isUseRegisteredSuffixPatternMatch() );
+		}
+		if ( configurer.isUseTrailingSlashMatch() != null ) {
+			controllerHandlerMapping.setUseTrailingSlashMatch( configurer.isUseTrailingSlashMatch() );
+		}
+		UrlPathHelper pathHelper = configurer.getUrlPathHelper();
+		if ( pathHelper != null ) {
+			controllerHandlerMapping.setUrlPathHelper( pathHelper );
+		}
+		PathMatcher pathMatcher = configurer.getPathMatcher();
+		if ( pathMatcher != null ) {
+			controllerHandlerMapping.setPathMatcher( pathMatcher );
+		}
 
 		controllerHandlerMapping.reload();
 
 		// Reload the resources resolving configuration
-		resourcesConfiguration.reload( resourceHandlerRegistry, applicationContext );
+		resourcesConfiguration.reload( resourceHandlerRegistry, applicationContext,
+		                               corsRegistry.getCorsConfigurations() );
 
 		// Handler exception resolver
 		if ( exceptionResolvers.isEmpty() ) {
@@ -257,6 +298,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 		// Set the validator
 		Validator validator = getValidator( webMvcConfigurers );
+
 		setValidator( validator );
 
 		// Set the message codes resolver
@@ -265,6 +307,29 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		if ( resolver != null ) {
 			getConfigurableWebBindingInitializer().setMessageCodesResolver( resolver );
 		}
+	}
+
+	/**
+	 * Callback for building the {@link PathMatchConfigurer}.
+	 * Delegates to {@link #configurePathMatch}.
+	 *
+	 * @since 4.1
+	 */
+	protected PathMatchConfigurer getPathMatchConfigurer() {
+		if ( this.pathMatchConfigurer == null ) {
+			this.pathMatchConfigurer = new PathMatchConfigurer();
+			configurePathMatch( this.pathMatchConfigurer );
+		}
+		return this.pathMatchConfigurer;
+	}
+
+	/**
+	 * Override this method to configure path matching options.
+	 *
+	 * @see PathMatchConfigurer
+	 * @since 4.0.3
+	 */
+	protected void configurePathMatch( PathMatchConfigurer configurer ) {
 	}
 
 	public Validator getValidator( Collection<WebMvcConfigurer> delegates ) {
@@ -303,7 +368,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	}
 
 	protected Map<String, MediaType> getDefaultMediaTypes() {
-		Map<String, MediaType> map = new HashMap<String, MediaType>();
+		Map<String, MediaType> map = new HashMap<String, MediaType>( 4 );
 		if ( romePresent ) {
 			map.put( "atom", MediaType.APPLICATION_ATOM_XML );
 			map.put( "rss", MediaType.valueOf( "application/rss+xml" ) );

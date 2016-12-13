@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -116,7 +117,8 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	 * @param applicationContext      triggering the reload
 	 */
 	public void reload( com.foreach.across.modules.web.mvc.ResourceHandlerRegistry resourceHandlerRegistry,
-	                    ApplicationContext applicationContext ) {
+	                    ApplicationContext applicationContext,
+	                    Map<String, CorsConfiguration> corsConfigurations ) {
 		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
 
 		if ( resourceUrlProviderExposingInterceptor != null && resourceUrlProvider != null ) {
@@ -124,6 +126,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 					new HandlerInterceptor[] { resourceUrlProviderExposingInterceptor }
 			);
 		}
+		resourceHandlerMapping.setCorsConfigurations( corsConfigurations );
 		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );
 		resourceHandlerMapping.initApplicationContext();
 
