@@ -303,6 +303,9 @@ public final class AcrossContextUtils
 
 	/**
 	 * Unwraps the target from a proxy (or multiple proxy) hierarchy.
+	 * If the proxy is a {@link AbstractLazyCreationTargetSource} then the target bean will only be
+	 * returned if it has been initialized.  We do not want calls to this method to force any kind
+	 * of initialization of the target.
 	 *
 	 * @param instance Bean that can be proxied or not.
 	 * @return Bean itself or final target of a set of proxies.
@@ -311,13 +314,21 @@ public final class AcrossContextUtils
 		try {
 			if ( AopUtils.isJdkDynamicProxy( instance ) ) {
 				TargetSource targetSource = ( (Advised) instance ).getTargetSource();
-				if ( !( targetSource instanceof AbstractLazyCreationTargetSource ) ) {
-					return getProxyTarget( targetSource.getTarget() );
-				}
-				else {
+
+				if ( targetSource instanceof AbstractLazyCreationTargetSource ) {
+					AbstractLazyCreationTargetSource lazyCreationTargetSource
+							= (AbstractLazyCreationTargetSource) targetSource;
+
+					if ( lazyCreationTargetSource.isInitialized() ) {
+						return getProxyTarget( lazyCreationTargetSource.getTarget() );
+					}
+
+					LOG.trace( "Attempt to retrieve uninitialized proxy target: {}",
+					           lazyCreationTargetSource.getTargetClass() );
 					return null;
 				}
 
+				return getProxyTarget( targetSource.getTarget() );
 			}
 		}
 		catch ( Exception e ) {
