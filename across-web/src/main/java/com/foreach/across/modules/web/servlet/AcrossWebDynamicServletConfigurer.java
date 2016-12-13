@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.web.servlet;
 
+import org.springframework.boot.web.servlet.ServletContextInitializer;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
@@ -24,21 +26,30 @@ import javax.servlet.ServletException;
  * Works by checking if the {@link com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer}
  * was used to bootstrap the context.
  * <p/>
- * Since {@code 2.0.0} the use of {@link org.springframework.boot.context.embedded.ServletContextInitializer}
- * beans directly inside modules is also supported.
+ * Since {@code 2.0.0} the use of {@link ServletContextInitializer} beans directly inside modules is also supported
+ * and preferred.
  *
  * @author Arne Vandamme
  * @see com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer
- * @see org.springframework.boot.context.embedded.ServletContextInitializer
+ * @see ServletContextInitializer
+ * @deprecated in favour of {@link org.springframework.boot.web.servlet.FilterRegistrationBean} or {@link org.springframework.boot.web.servlet.ServletRegistrationBean}
  */
-public abstract class AcrossWebDynamicServletConfigurer
+@Deprecated
+public abstract class AcrossWebDynamicServletConfigurer implements ServletContextInitializer
 {
+	@Override
+	public final void onStartup( ServletContext servletContext ) throws ServletException {
+		configure( servletContext, Boolean.TRUE.equals(
+				servletContext.getAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER )
+		) );
+	}
+
 	/**
 	 * Apply the configuration to the {@link ServletContext} provided.  Will dispatch to either
 	 * {@link #dynamicConfigurationAllowed(ServletContext)} or {@link #dynamicConfigurationDenied(ServletContext)}
 	 * depending on the changeable state of the {@link ServletContext} itself.
 	 *
-	 * @param servletContext in which to register the servlets (if possible)
+	 * @param servletContext             in which to register the servlets (if possible)
 	 * @param servletContextIsExtensible {@code true} if the context can still have filters or servlets registered
 	 * @throws ServletException if an error occurs
 	 */

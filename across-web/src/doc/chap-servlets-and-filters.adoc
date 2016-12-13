@@ -31,3 +31,6 @@ public FilterRegistrationBean resourceUrlEncodingFilterRegistration() {
     return registration;
 }
 ----
+
+WARNING: `ServletContextInitializer` beans can be ordered but the order between initializers defined inside the Across context and outside the context (on application configuration level) is _non deterministic_.
+To enforce overall ordering, it might be easiest to add those initializers to a module using `@ModuleConfiguration`.

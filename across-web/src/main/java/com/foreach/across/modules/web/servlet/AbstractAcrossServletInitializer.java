@@ -63,7 +63,7 @@ public abstract class AbstractAcrossServletInitializer extends AbstractDispatche
 	protected void registerContextLoaderListener( ServletContext servletContext ) {
 		WebApplicationContext rootAppContext = createRootApplicationContext();
 		if ( rootAppContext != null ) {
-			servletContext.setAttribute( DYNAMIC_INITIALIZER, this );
+			servletContext.setAttribute( DYNAMIC_INITIALIZER, true );
 
 			ContextLoaderListener listener = new ShutdownOnlyContextLoaderListener( rootAppContext );
 			listener.initWebApplicationContext( servletContext );
