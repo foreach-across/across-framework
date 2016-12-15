@@ -47,6 +47,7 @@ public class ITServletContextInitializersWithAbstractAcrossServletInitializer
 	public void allServletContextInitializersShouldBeRegistered() {
 		TomcatEmbeddedServletContainerFactory embeddedServletContainerFactory =
 				new TomcatEmbeddedServletContainerFactory();
+		embeddedServletContainerFactory.setPort( 0 );
 		embeddedServletContainerFactory.getEmbeddedServletContainer( new ServletContextInitializer()
 		{
 			@Override
