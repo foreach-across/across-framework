@@ -19,7 +19,6 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.modules.web.AcrossWebModule;
@@ -163,7 +162,6 @@ public class ITPrefixingRequestMappingHandlerMapping
 		}
 
 		@Bean(name = "prefixingRequestMappingHandlerMapping")
-		@Exposed
 		@Override
 		public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 			return super.controllerHandlerMapping();

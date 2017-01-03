@@ -26,8 +26,9 @@ Upgrade to *Spring Platform Athens*, new major dependency versions:
 ** `@ConditionalOnConfigurableServletContext` and `@ConditionalOnNotConfigurableServletContext` added to determine if `ServletContext` can still be customized
 ** favour the use of `FilterRegistrationBean` or `ServletRegistrationBean` instead of `AcrossWebDynamicServletConfigurer`, the latter is now deprecated and will be removed in a future release
 * Spring Boot devtools are now supported - application context restart will be triggered by default if devtools is on the classpath
+* AcrossWebModule now ensures that all `HandlerMapping` beans from other modules are exposed
 
-=== 1.1.3-SNAPSHOT
+=== 1.1.3.RELEASE
 Maintenance release containing several bugfixes.
 
 === 1.1.2.RELEASE

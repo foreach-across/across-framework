@@ -494,11 +494,10 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	}
 
 	@Bean
-	@Exposed
 	public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 		PrefixingRequestMappingHandlerMapping handlerMapping =
 				new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class, true ) );
-		// Default @Controllers are matched after other prefixed mappings
+		// Default @Controllers are matched last, after any other prefixed mappings or resources
 		handlerMapping.setOrder( Ordered.LOWEST_PRECEDENCE );
 
 		return handlerMapping;

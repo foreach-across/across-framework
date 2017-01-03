@@ -16,7 +16,6 @@
 package com.foreach.across.modules.web.config.resources;
 
 import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
@@ -137,9 +136,10 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	}
 
 	@Bean
-	@Exposed
 	public SimpleUrlHandlerMapping resourceHandlerMapping() {
-		return new SimpleUrlHandlerMapping();
+		SimpleUrlHandlerMapping resourceHandlerMapping = new SimpleUrlHandlerMapping();
+		resourceHandlerMapping.setOrder( 1000 );
+		return resourceHandlerMapping;
 	}
 
 	@Bean
