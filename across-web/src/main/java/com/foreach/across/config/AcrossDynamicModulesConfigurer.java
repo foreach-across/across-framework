@@ -107,9 +107,9 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 		ClassPathScanningChildPackageProvider packageProvider = new ClassPathScanningChildPackageProvider();
 		String[] children = packageProvider.findChildren( basePackage );
 
-		if ( hasPackage( children, "application" ) ) {
-			configureApplicationModule( context, basePackage + ".application", baseModuleName );
-		}
+		// always add the application module
+		configureApplicationModule( context, basePackage + ".application", baseModuleName );
+
 		if ( hasPackage( children, "infrastructure" ) ) {
 			configureInfrastructureModule( context, basePackage + ".infrastructure", baseModuleName );
 		}
