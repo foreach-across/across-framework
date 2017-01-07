@@ -55,6 +55,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		super( original );
 
 		originalRootBeanDefinition = original.originalRootBeanDefinition;
+
 		contextId = original.contextId;
 		moduleName = original.moduleName;
 		originalBeanName = original.originalBeanName;
