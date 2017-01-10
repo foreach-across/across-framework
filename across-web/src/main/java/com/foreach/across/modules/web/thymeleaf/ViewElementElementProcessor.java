@@ -34,7 +34,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 /**
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
  */
-public class ViewElementElementProcessor extends AbstractElementTagProcessor
+class ViewElementElementProcessor extends AbstractElementTagProcessor
 {
 	public static final String ELEMENT_NAME = "view";
 

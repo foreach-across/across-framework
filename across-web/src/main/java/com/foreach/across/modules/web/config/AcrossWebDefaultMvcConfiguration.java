@@ -26,8 +26,10 @@ import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.config.resources.ResourceConfigurationProperties;
 import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
+import com.foreach.across.modules.web.context.PrefixingPathContext;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.*;
 import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
@@ -505,8 +507,12 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 
 	@Bean
 	@Exposed
-	public PrefixingPathRegistry prefixingPathRegistry() {
-		return new PrefixingPathRegistry();
+	public PrefixingPathRegistry prefixingPathRegistry( ResourceConfigurationProperties resourcesConfiguration ) {
+		PrefixingPathRegistry prefixingPathRegistry = new PrefixingPathRegistry();
+		PrefixingPathContext resourceContext = new PrefixingPathContext( resourcesConfiguration.getPath() );
+		prefixingPathRegistry.add( "resource", resourceContext );
+		prefixingPathRegistry.add( "static", new PrefixingPathContext( resourceContext.getPathPrefix() + "/static" ) );
+		return prefixingPathRegistry;
 	}
 
 	@Bean

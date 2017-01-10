@@ -106,7 +106,7 @@ public class TestDefaultTemplate
 	}
 
 	@AcrossTestConfiguration
-	static class Config
+	public static class Config
 	{
 		@Bean
 		public WebControllersModule webControllersModule() {

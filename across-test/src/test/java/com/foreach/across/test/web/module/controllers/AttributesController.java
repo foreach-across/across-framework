@@ -13,29 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.thymeleaf;
+package com.foreach.across.test.web.module.controllers;
 
-import org.thymeleaf.model.IModel;
+import com.foreach.across.modules.web.template.ClearTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * @author Marc Vanbrabant
+ * Renders Thymeleaf template that replaces
+ * {@link com.foreach.across.modules.web.thymeleaf.AcrossWebDialect} attributes.
+ *
+ * @author Arne Vandamme
  * @since 2.0.0
  */
-public class ProcessableModel
+@Controller
+@ClearTemplate
+public class AttributesController
 {
-	private IModel model;
-	private boolean processable;
-
-	public ProcessableModel( IModel model, boolean processable ) {
-		this.model = model;
-		this.processable = processable;
-	}
-
-	public IModel getModel() {
-		return model;
-	}
-
-	public boolean isProcessable() {
-		return processable;
+	@RequestMapping("/attributes")
+	public String renderAttribute() {
+		return "th/webControllers/attributes";
 	}
 }
