@@ -24,9 +24,12 @@
 <image across:resource="/static/testResources/test.txt">auto resource image</image>
 <use across:resource="/static/testResources/test.txt">auto resource use</use>
 
-<a across:static-xlink_href="/testResources/test.txt">manual static xlink</a>
+<a across:static-xlink--href="/testResources/test.txt">manual static xlink</a>
 <span across:static-data-image-url="/testResources/test.txt">manual static data-image-url</span>
-<a across:resource-xlink_href="/static/testResources/test.txt">manual resource xlink</a>
+<a across:resource-xlink--href="/static/testResources/test.txt">manual resource xlink</a>
 <span across:resource-data-image-url="/static/testResources/test.txt">manual resource data-image-url</span>
 
 <a across:static="${'/testResources/test.txt'}">dynamic static href</a>
+
+<a th:href="@{@resource:/static/testResources/test.txt}">manual resource url</a>
+<a th:href="@{@static:/testResources/test.txt}">manual static url</a>

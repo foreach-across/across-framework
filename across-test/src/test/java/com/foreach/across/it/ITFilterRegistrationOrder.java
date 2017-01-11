@@ -62,7 +62,7 @@ public class ITFilterRegistrationOrder
 		System.out.println( ArrayUtils.toString( filterNames ) );
 		assertArrayEquals(
 				new String[] { "characterEncodingFilter", "multipartFilter", "corsFilter",
-				               "resourceUrlEncodingFilter" },
+				               "resourceUrlEncodingFilter", "pathResolvingUrlEncodingFilter" },
 				filterNames
 		);
 	}

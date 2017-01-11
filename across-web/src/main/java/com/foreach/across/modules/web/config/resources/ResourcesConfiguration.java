@@ -153,7 +153,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 		registration.setMatchAfter( true );
 		registration.setUrlPatterns( Collections.singletonList( "/*" ) );
 		registration.setDispatcherTypes( DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.ASYNC );
-		registration.setOrder( Ordered.LOWEST_PRECEDENCE );
+		registration.setOrder( Ordered.LOWEST_PRECEDENCE - 10 );
 
 		return registration;
 	}

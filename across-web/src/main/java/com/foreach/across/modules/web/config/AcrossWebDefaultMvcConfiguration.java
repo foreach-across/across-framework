@@ -26,11 +26,8 @@ import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.config.resources.ResourceConfigurationProperties;
 import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
-import com.foreach.across.modules.web.context.PrefixingPathContext;
-import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.mvc.*;
 import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
 import com.foreach.across.modules.web.template.LayoutSupportingExceptionHandlerExceptionResolver;
@@ -505,15 +502,6 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		return handlerMapping;
 	}
 
-	@Bean
-	@Exposed
-	public PrefixingPathRegistry prefixingPathRegistry( ResourceConfigurationProperties resourcesConfiguration ) {
-		PrefixingPathRegistry prefixingPathRegistry = new PrefixingPathRegistry();
-		PrefixingPathContext resourceContext = new PrefixingPathContext( resourcesConfiguration.getPath() );
-		prefixingPathRegistry.add( "resource", resourceContext );
-		prefixingPathRegistry.add( "static", new PrefixingPathContext( resourceContext.getPathPrefix() + "/static" ) );
-		return prefixingPathRegistry;
-	}
 
 	@Bean
 	@Exposed
@@ -571,7 +559,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		try {
 			return BeanFactoryUtils.beanOfType( applicationContext, beanType );
 		}
-		catch ( BeansException be ) {
+		catch ( BeansException ignore ) {
 			return null;
 		}
 	}
@@ -579,7 +567,8 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	/**
 	 * Inherited in order to expose properties.
 	 */
-	final static class DelayedAsyncSupportConfigurer extends AsyncSupportConfigurer
+	@SuppressWarnings( "all" )
+	static final class DelayedAsyncSupportConfigurer extends AsyncSupportConfigurer
 	{
 		@Override
 		protected AsyncTaskExecutor getTaskExecutor() {

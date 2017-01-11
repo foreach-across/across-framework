@@ -71,6 +71,12 @@ public class TestStaticAttribute
 		verify( "dynamic static href", "a", "href" );
 	}
 
+	@Test
+	public void manualUrls() throws Exception {
+		verify( "manual static url", "a", "href" );
+		verify( "manual resource url", "a", "href" );
+	}
+
 	private void verify( String linkName, String element, String attribute ) throws Exception {
 		mvc.perform( get( "/attributes" ) )
 		   .andExpect( status().isOk() )
