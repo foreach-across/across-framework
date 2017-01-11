@@ -33,3 +33,5 @@ include::chap-http-encoding.adoc[]
 
 include::chap-webapp-path-resolver.adoc[]
 
+include::chap-thymeleaf-dialect.adoc[]
+

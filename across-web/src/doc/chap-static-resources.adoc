@@ -4,12 +4,7 @@ With the default settings static resources will be configured with <<resource-ur
 
 === Conventions
 The default resources are served from the */views* folder on the classpath.
-By default {module-name} will serve resources from:
-
-* /views/js
-* /views/css
-* /views/static
-
+By default {module-name} will serve resources from _/views/static_.
 Additional subfolders can be configured with the *acrossWebModule.resources.folders* property.
 
 By convention (and for best development mode support) module specific resources should be located in a subfolder with the `resourcesKey` of the module.
@@ -93,6 +88,7 @@ public static class CustomVersionResourceResolver
 NOTE: Because of limitations of the `CssLinkTransformer` in combination with a fixed version strategy, {module-name} does not rewrite links inside css files.
 If you absolutely need this in your application, you will have to disable the automatic resource versioning and configure it yourself.
 
+[[WebResourceRegistry]]
 === WebResourceRegistry
 {module-name} allows for programatically registering web resources through the use of a `WebResourceRegistry`.
 A new `WebResourceRegistry` is attached to every request and can be accessed as a request attribute or a handler method parameter.

@@ -27,6 +27,10 @@ Upgrade to *Spring Platform Athens*, new major dependency versions:
 ** favour the use of `FilterRegistrationBean` or `ServletRegistrationBean` instead of `AcrossWebDynamicServletConfigurer`, the latter is now deprecated and will be removed in a future release
 * Spring Boot devtools are now supported - application context restart will be triggered by default if devtools is on the classpath
 * AcrossWebModule now ensures that all `HandlerMapping` beans from other modules are exposed
+* a path prefix *@static* and *@resource* is registered to <<web-app-path-resolver,link to static resources>>
+* <<thymeleaf-dialect,Thymeleaf dialect>> extensions
+** using <<web-app-path-resolver,prefixes>> directly in url expressions is now supported
+** addition of *across:static* and *across:resource* attributes for generating links to static resources
 
 === 1.1.3.RELEASE
 Maintenance release containing several bugfixes.

@@ -3,8 +3,8 @@
 === TODO: About
 {module-name} provides the following infrastructure:
 
- * a thymeleaf across dialect
- * a menu builder
+ * a <<thymeleaf-dialect,Thymeleaf dialect>>
+ * infrastructure for <<web-templates,templates>>, <<menu-building,menu building>> and <<WebResourceRegistry,registering web resources>>
  * auto configuration of <<multipart-config,Multipart filter>>
  * auto configuration of static resources with <<client-side-caching,client-side caching>> and <<resource-url-versioning,url versioning>>
 
