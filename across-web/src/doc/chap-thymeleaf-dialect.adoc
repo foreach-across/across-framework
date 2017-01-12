@@ -56,7 +56,7 @@ Any double dash (--) will be replaced by a colon (:).
 |_<a across:resource-data-url="/img"/>_ +
  output: _<a data-url="/res/img">_
 
-|*across:resource-attr-name*
+|*across:static-attr-name*
 |Same as *across:static* except the resulting attribute name will be _attr-name_. +
 Any double dash (--) will be replaced by a colon (:).
 |_<a across:static-data-url="/img"/>_ +
