@@ -22,8 +22,10 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -44,29 +46,37 @@ public class TestDefaultViewElementAttributeConverter
 	@Test
 	public void nullValueIsReturned() {
 		assertNull( converter.apply( null ) );
+		assertNull( converter.apply( (Supplier) () -> null ) );
 	}
 
 	@Test
 	public void stringValue() {
 		assertEquals( "123", converter.apply( "123" ) );
+		assertEquals( "123", converter.apply( (Supplier) () -> "123" ) );
 	}
 
 	@Test
 	public void primitivesOrWrappersUseToString() {
 		assertEquals( "123", converter.apply( 123 ) );
+		assertEquals( "123", converter.apply( (Supplier) () -> 123 ) );
 		assertEquals( "656", converter.apply( 656L ) );
+		assertEquals( "656", converter.apply( (Supplier) () -> 656L ) );
 		assertEquals( "a", converter.apply( 'a' ) );
+		assertEquals( "a", converter.apply( (Supplier) () -> 'a' ) );
 	}
 
 	@Test
 	public void numbers() {
 		assertEquals( "12.33", converter.apply( new BigDecimal( "12.33" ) ) );
+		assertEquals( "12.33", converter.apply( (Supplier) () -> new BigDecimal( "12.33" ) ) );
 	}
 
 	@Test
 	public void dateUsesUniversalPattern() throws ParseException {
-		assertEquals( "2016-01-01 13:45:55",
-		              converter.apply( DateUtils.parseDate( "2016-01-01 13:45:55", "yyyy-MM-dd HH:mm:ss" ) ) );
+		Date date = DateUtils.parseDate( "2016-01-01 13:45:55", "yyyy-MM-dd HH:mm:ss" );
+
+		assertEquals( "2016-01-01 13:45:55", converter.apply( date ) );
+		assertEquals( "2016-01-01 13:45:55", converter.apply( (Supplier) () -> date ) );
 	}
 
 	@Test
@@ -76,5 +86,6 @@ public class TestDefaultViewElementAttributeConverter
 		json.put( "age", 34 );
 
 		assertEquals( "{\"name\":\"myname for you\",\"age\":34}", converter.apply( json ) );
+		assertEquals( "{\"name\":\"myname for you\",\"age\":34}", converter.apply( (Supplier) () -> json ) );
 	}
 }

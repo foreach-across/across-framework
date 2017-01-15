@@ -21,7 +21,11 @@ import com.foreach.across.modules.web.context.PrefixingPathContext;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.context.PrefixingSupportingWebAppLinkBuilder;
 import com.foreach.across.modules.web.context.WebAppLinkBuilder;
+import com.foreach.across.modules.web.resource.WebResourceUtils;
 import org.springframework.context.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
 
@@ -58,7 +62,18 @@ public class UrlPrefixingConfiguration
 	@Bean
 	@Exposed
 	@Scope(value = SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
-	public WebAppLinkBuilder webAppLinkBuilder() {
-		return new PrefixingSupportingWebAppLinkBuilder();
+	public WebAppLinkBuilder webAppLinkBuilder( PrefixingPathRegistry prefixingPathRegistry,
+	                                            HttpServletRequest request,
+	                                            HttpServletResponse response ) {
+		PrefixingSupportingWebAppLinkBuilder linkBuilder
+				= new PrefixingSupportingWebAppLinkBuilder();
+		linkBuilder.setPathResolver( prefixingPathRegistry );
+		linkBuilder.setRequest( request );
+		linkBuilder.setResponse( response );
+
+		// store the current link builder on the request
+		WebResourceUtils.storeLinkBuilder( linkBuilder, request );
+
+		return linkBuilder;
 	}
 }

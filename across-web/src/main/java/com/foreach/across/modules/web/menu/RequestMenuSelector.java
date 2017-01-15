@@ -51,7 +51,7 @@ public class RequestMenuSelector implements MenuSelector
 
 	public RequestMenuSelector( HttpServletRequest request ) {
 		UriComponents uriComponents = ServletUriComponentsBuilder.fromRequest( request ).build();
-		servletPath = uriComponents.getPath();
+		servletPath = stripContextPath( request, uriComponents.getPath() );
 		String url = uriComponents.toUriString();
 		String pathWithQueryString = servletPath;
 		String qs = uriComponents.getQuery();
@@ -62,6 +62,15 @@ public class RequestMenuSelector implements MenuSelector
 
 		fullUrl = url;
 		servletPathWithQueryString = pathWithQueryString;
+	}
+
+	private String stripContextPath( HttpServletRequest request, String path ) {
+		String contextPath = request.getContextPath();
+		if ( contextPath != null && contextPath.length() > 1 ) {
+			return StringUtils.removeStart( path, contextPath );
+		}
+
+		return path;
 	}
 
 	/**

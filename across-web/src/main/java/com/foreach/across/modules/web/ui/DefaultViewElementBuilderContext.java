@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.ui;
 import com.foreach.across.core.support.AttributeOverridingSupport;
 import com.foreach.across.core.support.AttributeSupport;
 import com.foreach.across.core.support.ReadableAttributes;
+import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
 import org.springframework.ui.Model;
@@ -85,9 +86,29 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 		return getAttribute( WebResourceRegistry.class );
 	}
 
+	/**
+	 * Set the {@link WebAppLinkBuilder} that should be used for calls to {@link #buildLink(String)}.
+	 * By default the link builder attached to the current request would have been registered.
+	 *
+	 * @param linkBuilder instance
+	 */
+	public void setWebAppLinkBuilder( WebAppLinkBuilder linkBuilder ) {
+		setAttribute( WebAppLinkBuilder.class, linkBuilder );
+	}
+
+	public WebAppLinkBuilder getWebAppLinkBuilder() {
+		return getAttribute( WebAppLinkBuilder.class );
+	}
+
+	@Override
+	public String buildLink( String baseLink ) {
+		WebAppLinkBuilder linkBuilder = getWebAppLinkBuilder();
+		return linkBuilder != null ? linkBuilder.buildLink( baseLink ) : baseLink;
+	}
+
 	private static class AttributesMapWrapper extends AttributeSupport
 	{
-		public AttributesMapWrapper( Map<String, Object> backingMap ) {
+		AttributesMapWrapper( Map<String, Object> backingMap ) {
 			super( backingMap );
 		}
 	}
@@ -95,6 +116,11 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 	/**
 	 * Registers default attributes in the builder context if they are not yet present.  If they are present
 	 * - either directly or in the parent - they will be skipped.
+	 * The following request-bound attributes are registered by default if present:
+	 * <ul>
+	 * <li>{@link WebResourceRegistry}</li>
+	 * <li>{@link WebAppLinkBuilder}</li>
+	 * </ul>
 	 *
 	 * @param builderContext to add the attributes to
 	 */
@@ -102,6 +128,11 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 		if ( !builderContext.hasAttribute( WebResourceRegistry.class ) ) {
 			WebResourceUtils.currentRegistry().ifPresent(
 					r -> builderContext.setAttribute( WebResourceRegistry.class, r )
+			);
+		}
+		if ( !builderContext.hasAttribute( WebAppLinkBuilder.class ) ) {
+			WebResourceUtils.currentLinkBuilder().ifPresent(
+					lb -> builderContext.setAttribute( WebAppLinkBuilder.class, lb )
 			);
 		}
 	}

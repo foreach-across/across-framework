@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web.resource;
 
+import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.context.WebAppPathResolver;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -39,6 +40,7 @@ public class WebResourceUtils
 	public static final String REGISTRY_ATTRIBUTE_KEY = "webResourceRegistry";
 
 	public static final String PATH_RESOLVER_ATTRIBUTE_KEY = WebAppPathResolver.class.getName();
+	public static final String LINK_BUILDER_ATTRIBUTE_KEY = WebAppLinkBuilder.class.getName();
 
 	protected WebResourceUtils() {
 	}
@@ -87,5 +89,26 @@ public class WebResourceUtils
 
 	public static WebAppPathResolver getPathResolver( HttpServletRequest request ) {
 		return (WebAppPathResolver) request.getAttribute( PATH_RESOLVER_ATTRIBUTE_KEY );
+	}
+
+	public static void storeLinkBuilder( WebAppLinkBuilder pathResolver, HttpServletRequest request ) {
+		request.setAttribute( LINK_BUILDER_ATTRIBUTE_KEY, pathResolver );
+	}
+
+	/**
+	 * @return the {@link WebAppLinkBuilder} for the request bound to the current thread
+	 */
+	public static Optional<WebAppLinkBuilder> currentLinkBuilder() {
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		return requestAttributes != null ? getLinkBuilder( requestAttributes ) : Optional.empty();
+	}
+
+	public static Optional<WebAppLinkBuilder> getLinkBuilder( RequestAttributes request ) {
+		return Optional.ofNullable( (WebAppLinkBuilder) request.getAttribute( LINK_BUILDER_ATTRIBUTE_KEY,
+		                                                                      WebRequest.SCOPE_REQUEST ) );
+	}
+
+	public static Optional<WebAppLinkBuilder> getLinkBuilder( HttpServletRequest request ) {
+		return Optional.ofNullable( (WebAppLinkBuilder) request.getAttribute( LINK_BUILDER_ATTRIBUTE_KEY ) );
 	}
 }

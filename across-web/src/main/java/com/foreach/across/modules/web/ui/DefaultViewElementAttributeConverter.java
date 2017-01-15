@@ -22,11 +22,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import java.util.Date;
+import java.util.function.Supplier;
 
 /**
  * Default implementation of {@link ViewElementAttributeConverter}.  If a raw value is a primitive or wrapper,
  * it will be converted to string using its {@link Object#toString()} method. Otherwise it will be converted
  * to a JSON string using the {@link ObjectMapper}.
+ * <p/>
+ * If the raw value is a {@link Supplier}, the value will be fetched from the supplier first, and then converted.
  *
  * @author Arne Vandamme
  * @since 2.0.0
@@ -39,7 +42,9 @@ public class DefaultViewElementAttributeConverter implements ViewElementAttribut
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public String apply( Object value ) {
+	public String apply( Object baseValue ) {
+		Object value = baseValue instanceof Supplier ? ( (Supplier) baseValue ).get() : baseValue;
+
 		if ( value != null ) {
 			if ( value instanceof String ) {
 				return (String) value;
