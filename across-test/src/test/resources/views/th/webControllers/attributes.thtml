@@ -32,4 +32,4 @@
 <a across:static="${'/testResources/test.txt'}">dynamic static href</a>
 
 <a th:href="@{@resource:/static/testResources/test.txt}">manual resource url</a>
-<a th:href="@{@static:/testResources/test.txt}">manual static url</a>
+<a th:other="@{@static:/testResources/test.txt}">manual static url</a>

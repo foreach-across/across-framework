@@ -45,6 +45,7 @@ public class TestStaticAttribute
 
 	@Test
 	public void defaultAttributeNames() throws Exception {
+
 		verify( "auto static a", "a", "href" );
 		verify( "auto static link", "link", "href" );
 		verify( "auto static script", "script", "src" );
@@ -73,14 +74,14 @@ public class TestStaticAttribute
 
 	@Test
 	public void manualUrls() throws Exception {
-		verify( "manual static url", "a", "href" );
 		verify( "manual resource url", "a", "href" );
+		verify( "manual static url", "a", "other" );
 	}
 
 	private void verify( String linkName, String element, String attribute ) throws Exception {
-		mvc.perform( get( "/attributes" ) )
+		mvc.perform( get( "/ctxPath/attributes" ).contextPath( "/ctxPath" ) )
 		   .andExpect( status().isOk() )
 		   .andExpect( content().string( containsString(
-				   "<" + element + " " + attribute + "=\"/across/resources/static/fixed/testResources/test.txt\">" + linkName + "</" + element + ">" ) ) );
+				   "<" + element + " " + attribute + "=\"/ctxPath/across/resources/static/fixed/testResources/test.txt\">" + linkName + "</" + element + ">" ) ) );
 	}
 }

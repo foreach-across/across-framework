@@ -76,8 +76,11 @@ The `AcrossWebDialect` makes the following expression objects available for scri
 
 |*#webapp*
 |`WebAppPathResolver`
-|Used for generating prefixed urls based on a relative path.
+|Used for generating prefixed links based on a relative path.
 For example to static resources.
+
+These links can still be processed by the Thymeleaf link builder (`@{..}`).
+Usually not necessary to use the `#webapp` however, see the <<url-support,URL support section>>.
 
 |*#htmlIdStore*
 |`HtmlIdStore`
@@ -85,6 +88,7 @@ For example to static resources.
 
 |===
 
+[[url-support]]
 === URL support
 Apart from the availability of *#webapp*, {module-name} activates transparent support for the <<web-app-path-resolver,`WebAppPathResolver`>> on Thymeleaf URL generation. +
 

@@ -15,8 +15,8 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import com.foreach.across.modules.web.context.PrefixingPathContext;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
+import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.IEngineConfiguration;
@@ -97,12 +97,9 @@ class ResourceAttributeProcessor extends AbstractElementTagProcessor
 			String targetAttributeName = determineTargetAttributeName( attributeName, tag );
 			//noinspection ConstantConditions
 			Validate.notNull( targetAttributeName, "Could not determine target attribute name" );
-
-			PrefixingPathContext pathContext = retrievePathContext( context, attributeName );
-			attributeValue = processLink( context, pathContext.path( attributeValue ) );
+			attributeValue = buildLink( context, attributeName, attributeValue );
 
 			structureHandler.setAttribute( targetAttributeName, attributeValue );
-
 			structureHandler.removeAttribute( completeAttributeName );
 		}
 		catch ( final TemplateProcessingException e ) {
@@ -160,15 +157,21 @@ class ResourceAttributeProcessor extends AbstractElementTagProcessor
 		return attributeValue;
 	}
 
-	private PrefixingPathContext retrievePathContext( ITemplateContext context, String attributeName ) {
-		final ApplicationContext appCtx = SpringContextUtils.getApplicationContext( context );
+	private String buildLink( ITemplateContext context, String attributeName, String attributeValue ) {
+		ApplicationContext appCtx = SpringContextUtils.getApplicationContext( context );
 		PrefixingPathRegistry pathRegistry = appCtx.getBean( PrefixingPathRegistry.class );
 
+		String path;
+
 		if ( StringUtils.startsWith( attributeName, STATIC ) ) {
-			return pathRegistry.get( STATIC );
+			path = pathRegistry.get( STATIC ).path( attributeValue );
+		}
+		else {
+			path = pathRegistry.get( RESOURCE ).path( attributeValue );
 		}
 
-		return pathRegistry.get( RESOURCE );
+		WebAppLinkBuilder linkBuilder = appCtx.getBean( WebAppLinkBuilder.class );
+		return linkBuilder.buildLink( path );
 	}
 
 	private String determineTargetAttributeName( String attributeName, IProcessableElementTag tag ) {

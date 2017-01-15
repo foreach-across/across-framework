@@ -15,31 +15,18 @@
  */
 package com.foreach.across.modules.web.config;
 
-import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.config.resources.ResourceConfigurationProperties;
 import com.foreach.across.modules.web.context.PrefixingPathContext;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
-import com.foreach.across.modules.web.context.WebAppPathResolver;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.core.Ordered;
-import org.springframework.util.Assert;
-import org.springframework.web.filter.GenericFilterBean;
+import com.foreach.across.modules.web.context.PrefixingSupportingWebAppLinkBuilder;
+import com.foreach.across.modules.web.context.WebAppLinkBuilder;
+import org.springframework.context.annotation.*;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.IOException;
-import java.util.Collections;
+import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
 
 /**
- * Registers the {@link com.foreach.across.modules.web.context.PrefixingPathRegistry}
- * and inserts a filter to ensure that {@link javax.servlet.http.HttpServletResponse#encodeURL(String)} also
- * supports named prefixes.
+ * Registers the {@link com.foreach.across.modules.web.context.PrefixingPathRegistry}.
  * <p/>
  * Two default prefixes are registered:
  * <ul>
@@ -54,8 +41,6 @@ import java.util.Collections;
 @Configuration
 public class UrlPrefixingConfiguration
 {
-	public static final String PATH_RESOLVING_URL_ENCODING_FILTER = "pathResolvingUrlEncodingFilter";
-
 	public static final String RESOURCE = "resource";
 	public static final String STATIC = "static";
 
@@ -71,64 +56,9 @@ public class UrlPrefixingConfiguration
 	}
 
 	@Bean
-	@ConditionalOnConfigurableServletContext
-	public FilterRegistrationBean prefixingPathUrlEncodingFilterRegistrationBean( PrefixingPathRegistry prefixingPathRegistry ) {
-		FilterRegistrationBean registration = new FilterRegistrationBean();
-		registration.setName( PATH_RESOLVING_URL_ENCODING_FILTER );
-		registration.setFilter( new PathResolvingUrlEncodingFilter( prefixingPathRegistry ) );
-		registration.setAsyncSupported( true );
-		registration.setMatchAfter( true );
-		registration.setUrlPatterns( Collections.singletonList( "/*" ) );
-		registration.setDispatcherTypes( DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.ASYNC );
-		registration.setOrder( Ordered.LOWEST_PRECEDENCE - 9 );
-
-		return registration;
-	}
-
-	/**
-	 * Filter that wraps the {@link HttpServletResponse} so the
-	 * {@link javax.servlet.http.HttpServletResponse#encodeURL(String)} method gets overwritten.
-	 */
-	public static class PathResolvingUrlEncodingFilter extends GenericFilterBean
-	{
-		private final WebAppPathResolver webAppPathResolver;
-
-		PathResolvingUrlEncodingFilter( WebAppPathResolver webAppPathResolver ) {
-			this.webAppPathResolver = webAppPathResolver;
-		}
-
-		@Override
-		public void doFilter( ServletRequest request, ServletResponse response, FilterChain filterChain )
-				throws IOException, ServletException {
-			if ( !( request instanceof HttpServletRequest ) || !( response instanceof HttpServletResponse ) ) {
-				throw new ServletException( "PathResolvingUrlEncodingFilter just supports HTTP requests" );
-			}
-			HttpServletRequest httpRequest = (HttpServletRequest) request;
-			HttpServletResponse httpResponse = (HttpServletResponse) response;
-			filterChain.doFilter(
-					httpRequest,
-					new PathResolvingUrlEncodingResponseWrapper( httpResponse, webAppPathResolver )
-			);
-		}
-
-		/**
-		 * Wrapper to dispatch a url to the {@link WebAppPathResolver} before actually encoding it.
-		 */
-		private static class PathResolvingUrlEncodingResponseWrapper extends HttpServletResponseWrapper
-		{
-			private final WebAppPathResolver webAppPathResolver;
-
-			PathResolvingUrlEncodingResponseWrapper( HttpServletResponse wrapped,
-			                                         WebAppPathResolver webAppPathResolver ) {
-				super( wrapped );
-				Assert.notNull( webAppPathResolver );
-				this.webAppPathResolver = webAppPathResolver;
-			}
-
-			@Override
-			public String encodeURL( String url ) {
-				return super.encodeURL( webAppPathResolver.path( url ) );
-			}
-		}
+	@Exposed
+	@Scope(value = SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
+	public WebAppLinkBuilder webAppLinkBuilder() {
+		return new PrefixingSupportingWebAppLinkBuilder();
 	}
 }

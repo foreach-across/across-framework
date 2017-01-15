@@ -19,7 +19,9 @@ package com.foreach.across.modules.web.config;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
+import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
+import com.foreach.across.modules.web.thymeleaf.PrefixingSupportingLinkBuilder;
 import com.foreach.across.modules.web.ui.DefaultViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
@@ -70,10 +72,11 @@ public class ThymeleafViewSupportConfiguration
 	@Bean
 	@Exposed
 	@Qualifier("springTemplateEngine")
-	public SpringTemplateEngine springTemplateEngine() {
+	public SpringTemplateEngine springTemplateEngine( PrefixingPathRegistry prefixingPathRegistry ) {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.addDialect( new AcrossWebDialect() );
 		engine.addTemplateResolver( templateResolver() );
+		engine.setLinkBuilder( new PrefixingSupportingLinkBuilder( prefixingPathRegistry ) );
 
 		if ( developmentMode.isActive() ) {
 			for ( ITemplateResolver resolver : developmentResolvers() ) {
