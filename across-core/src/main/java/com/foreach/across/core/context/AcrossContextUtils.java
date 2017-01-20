@@ -31,6 +31,7 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.filters.AnnotatedMethodFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.TargetSource;
@@ -38,6 +39,7 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.target.AbstractLazyCreationTargetSource;
+import org.springframework.aop.target.SimpleBeanTargetSource;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -306,6 +308,11 @@ public final class AcrossContextUtils
 	 * If the proxy is a {@link AbstractLazyCreationTargetSource} then the target bean will only be
 	 * returned if it has been initialized.  We do not want calls to this method to force any kind
 	 * of initialization of the target.
+	 * <p/>
+	 * If the proxy is a {@link org.springframework.aop.target.SimpleBeanTargetSource}, then the target
+	 * bean name will be examined and if it is a scopedTarget, it will not be returned either.
+	 * <p/>
+	 * Meant for internal use in the Across framework.
 	 *
 	 * @param instance Bean that can be proxied or not.
 	 * @return Bean itself or final target of a set of proxies.
@@ -326,6 +333,16 @@ public final class AcrossContextUtils
 					LOG.trace( "Attempt to retrieve uninitialized proxy target: {}",
 					           lazyCreationTargetSource.getTargetClass() );
 					return null;
+				}
+				else if ( targetSource instanceof SimpleBeanTargetSource ) {
+					SimpleBeanTargetSource beanTargetSource = (SimpleBeanTargetSource) targetSource;
+					String targetBeanName = beanTargetSource.getTargetBeanName();
+
+					if ( StringUtils.isEmpty( targetBeanName )
+							|| StringUtils.startsWith( targetBeanName, "scopedTarget." ) ) {
+						LOG.trace( "Refusing proxy target for a scoped target bean, might not be initialized." );
+						return null;
+					}
 				}
 
 				return getProxyTarget( targetSource.getTarget() );
