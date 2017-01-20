@@ -368,12 +368,12 @@
 				<repository>
 					<id>foreach-nexus</id>
 					<name>Foreach nexus</name>
-					<url>http://repository.foreach.be/nexus/content/repositories/releases</url>
+					<url>https://repository.foreach.be/nexus/repository/releases/</url>
 				</repository>
 				<snapshotRepository>
 					<id>foreach-nexus</id>
 					<name>Foreach nexus</name>
-					<url>http://repository.foreach.be/nexus/content/repositories/snapshots</url>
+					<url>https://repository.foreach.be/nexus/repository/snapshots/</url>
 				</snapshotRepository>
 			</distributionManagement>
 		</profile>
