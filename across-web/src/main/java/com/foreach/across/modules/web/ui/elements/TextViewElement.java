@@ -70,6 +70,36 @@ public class TextViewElement extends ViewElementSupport implements ConfigurableT
 	public void setEscapeXml( boolean escapeXml ) {
 		this.escapeXml = escapeXml;
 	}
+
+	/**
+	 * Factory method to create a {@link TextViewElement} for plain xml-escaped text.
+	 *
+	 * @param text content
+	 * @return element
+	 */
+	public static TextViewElement text( String text ) {
+		return new TextViewElement( text, true );
+	}
+
+	/**
+	 * Alias to {@link #xml(String)}.
+	 *
+	 * @param html content
+	 * @return element
+	 */
+	public static TextViewElement html( String html ) {
+		return xml( html );
+	}
+
+	/**
+	 * Factory method to create a {@link TextViewElement} for XML content (non-escaped).
+	 *
+	 * @param xml content
+	 * @return element
+	 */
+	public static TextViewElement xml( String xml ) {
+		return new TextViewElement( xml, false );
+	}
 }
 
 

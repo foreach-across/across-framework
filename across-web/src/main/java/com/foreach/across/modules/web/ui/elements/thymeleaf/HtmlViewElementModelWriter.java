@@ -15,8 +15,6 @@
  */
 package com.foreach.across.modules.web.ui.elements.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
-import com.foreach.across.modules.web.ui.elements.ConfigurableTextViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 
 /**
@@ -27,12 +25,4 @@ import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
  */
 public class HtmlViewElementModelWriter extends AbstractHtmlViewElementModelWriter<HtmlViewElement>
 {
-	@Override
-	protected void writeChildren( HtmlViewElement viewElement, ThymeleafModelBuilder model ) {
-		if ( viewElement instanceof ConfigurableTextViewElement ) {
-			model.addText( ( (ConfigurableTextViewElement) viewElement ).getText() );
-		}
-
-		super.writeChildren( viewElement, model );
-	}
 }

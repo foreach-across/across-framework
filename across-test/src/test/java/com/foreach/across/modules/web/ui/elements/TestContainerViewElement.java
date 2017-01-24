@@ -19,6 +19,8 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
@@ -54,6 +56,21 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 		assertSame( container.getChildren().get( 0 ), third );
 		assertSame( container.getChildren().get( 1 ), child );
 		assertSame( container.getChildren().get( 2 ), other );
+	}
+
+	@Test
+	public void addAndClearChildren() {
+		ContainerViewElement container = new ContainerViewElement();
+		ViewElement one = mock( ViewElement.class );
+		ViewElement two = mock( ViewElement.class );
+		container.addChildren( Arrays.asList( one, two ) );
+
+		assertSame( container.getChildren().get( 0 ), one );
+		assertSame( container.getChildren().get( 1 ), two );
+
+		container.clearChildren();
+		assertFalse( container.hasChildren() );
+		assertTrue( container.getChildren().isEmpty() );
 	}
 
 	@Test

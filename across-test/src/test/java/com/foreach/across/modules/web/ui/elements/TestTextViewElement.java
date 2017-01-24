@@ -26,12 +26,27 @@ public class TestTextViewElement extends AbstractViewElementTemplateTest
 				new TextViewElement( "<strong>simple</strong> text" ),
 				"&lt;strong&gt;simple&lt;/strong&gt; text"
 		);
+
+		renderAndExpect(
+				TextViewElement.text( "<strong>simple</strong> text" ),
+				"&lt;strong&gt;simple&lt;/strong&gt; text"
+		);
 	}
 
 	@Test
 	public void htmlText() {
 		renderAndExpect(
 				new TextViewElement( "<strong>test</strong> text", false ),
+				"<strong>test</strong> text"
+		);
+
+		renderAndExpect(
+				TextViewElement.html( "<strong>test</strong> text" ),
+				"<strong>test</strong> text"
+		);
+
+		renderAndExpect(
+				TextViewElement.xml( "<strong>test</strong> text" ),
 				"<strong>test</strong> text"
 		);
 	}

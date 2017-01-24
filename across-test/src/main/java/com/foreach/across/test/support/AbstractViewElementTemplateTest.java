@@ -21,6 +21,7 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.across.test.modules.webtest.WebTestModule;
 import com.foreach.across.test.modules.webtest.controllers.RenderViewElementController;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -115,8 +119,9 @@ public abstract class AbstractViewElementTemplateTest
 		renderController.setElement( viewElement );
 		renderController.setCallback( callback );
 
+		final String doctype = generateDocType();
 		final String expectedXml =
-				"<?xml version=\"1.0\"?><root xmlns:across='http://across.foreach.be'>" + expectedContent + "</root>";
+				"<?xml version=\"1.0\"?>" + doctype + "<root xmlns:across='http://across.foreach.be'>" + expectedContent + "</root>";
 
 		try {
 			mockMvc.perform( get( RenderViewElementController.PATH ) )
@@ -126,6 +131,14 @@ public abstract class AbstractViewElementTemplateTest
 				       @Override
 				       public void handle( MvcResult mvcResult ) throws Exception {
 					       String receivedXml = mvcResult.getResponse().getContentAsString();
+
+					       if ( !StringUtils.isEmpty( doctype ) ) {
+						       receivedXml = StringUtils.replace(
+								       receivedXml,
+								       "<?xml version=\"1.0\"?>",
+								       "<?xml version=\"1.0\"?>" + doctype
+						       );
+					       }
 					       try {
 						       new XmlExpectationsHelper().assertXmlEqual( expectedXml, receivedXml );
 					       }
@@ -139,6 +152,24 @@ public abstract class AbstractViewElementTemplateTest
 		catch ( Exception e ) {
 			throw new RuntimeException( e );
 		}
+	}
+
+	private String generateDocType() {
+		Collection<String> allowedEntities = allowedXmlEntities();
+		if ( !allowedEntities.isEmpty() ) {
+			StringBuilder doctype = new StringBuilder( "<!DOCTYPE doc_type [" );
+			allowedEntities.forEach( s -> doctype.append( "<!ENTITY " ).append( s ).append( " \"&#160;\">" ) );
+			doctype.append( "]>" );
+			return doctype.toString();
+		}
+		return "";
+	}
+
+	/**
+	 * Override this method to define the named entities that can be referenced in the xml.
+	 */
+	protected Collection<String> allowedXmlEntities() {
+		return Collections.emptyList();
 	}
 
 	@Configuration

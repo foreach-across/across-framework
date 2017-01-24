@@ -21,6 +21,7 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -85,7 +86,10 @@ public class ContainerViewElement implements MutableViewElement
 	}
 
 	/**
-	 * @return modifiable list of child elements this container has
+	 * Get the list of children this container represents.
+	 * Certain  this list should be avoided.
+	 *
+	 * @return list of child elements this container represents
 	 */
 	@SuppressWarnings("all")
 	public List<ViewElement> getChildren() {
@@ -100,6 +104,16 @@ public class ContainerViewElement implements MutableViewElement
 	public void addChild( ViewElement element ) {
 		Assert.notNull( element );
 		children.add( element );
+	}
+
+	/**
+	 * Add a collection of children to this container.
+	 *
+	 * @param elements to add
+	 */
+	public void addChildren( Collection<ViewElement> elements ) {
+		Assert.notNull( elements );
+		children.addAll( elements );
 	}
 
 	/**
@@ -127,5 +141,12 @@ public class ContainerViewElement implements MutableViewElement
 	 */
 	public boolean hasChildren() {
 		return !children.isEmpty();
+	}
+
+	/**
+	 * Remove all children from this container.
+	 */
+	public void clearChildren() {
+		children.clear();
 	}
 }
