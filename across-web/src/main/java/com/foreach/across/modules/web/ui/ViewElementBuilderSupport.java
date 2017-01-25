@@ -30,7 +30,7 @@ import java.util.List;
  * @param <SELF> return type for builder methods
  */
 public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SELF extends ViewElementBuilder<T>>
-		implements ViewElementBuilder<T>
+		extends GlobalContextSupportingViewElementBuilder<T>
 {
 	protected String name, customTemplate;
 	private Collection<ViewElementPostProcessor<T>> postProcessors = new ArrayList<>();
@@ -53,6 +53,12 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 		return (SELF) this;
 	}
 
+	/**
+	 * Builds the element using a specific {@link ViewElementBuilderContext}.
+	 *
+	 * @param builderContext provides the context for this build event
+	 * @return element created and post processed
+	 */
 	@Override
 	public final T build( ViewElementBuilderContext builderContext ) {
 		T element = createElement( builderContext );

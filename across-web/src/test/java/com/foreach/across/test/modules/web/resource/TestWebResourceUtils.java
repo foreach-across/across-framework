@@ -17,6 +17,7 @@ package com.foreach.across.test.modules.web.resource;
 
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.context.request.RequestAttributes;
@@ -37,7 +38,8 @@ import static org.mockito.Mockito.when;
 public class TestWebResourceUtils
 {
 	@Before
-	public void after() {
+	@After
+	public void reset() {
 		RequestContextHolder.resetRequestAttributes();
 	}
 

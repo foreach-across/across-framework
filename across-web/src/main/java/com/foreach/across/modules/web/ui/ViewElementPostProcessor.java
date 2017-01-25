@@ -16,6 +16,8 @@
 package com.foreach.across.modules.web.ui;
 
 /**
+ * General purpose interface for post-processing a {@link ViewElement}.
+ *
  * @author Arne Vandamme
  */
 public interface ViewElementPostProcessor<T extends ViewElement>

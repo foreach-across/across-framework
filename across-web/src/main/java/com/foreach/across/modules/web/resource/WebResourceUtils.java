@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.context.WebAppPathResolver;
+import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
@@ -41,6 +42,7 @@ public class WebResourceUtils
 
 	public static final String PATH_RESOLVER_ATTRIBUTE_KEY = WebAppPathResolver.class.getName();
 	public static final String LINK_BUILDER_ATTRIBUTE_KEY = WebAppLinkBuilder.class.getName();
+	public static final String VIEW_ELEMENT_BUILDER_CONTEXT_KEY = ViewElementBuilderContext.class.getName();
 
 	protected WebResourceUtils() {
 	}
@@ -110,5 +112,28 @@ public class WebResourceUtils
 
 	public static Optional<WebAppLinkBuilder> getLinkBuilder( HttpServletRequest request ) {
 		return Optional.ofNullable( (WebAppLinkBuilder) request.getAttribute( LINK_BUILDER_ATTRIBUTE_KEY ) );
+	}
+
+	public static void storeViewElementBuilderContext( ViewElementBuilderContext builderContext,
+	                                                   HttpServletRequest request ) {
+		request.setAttribute( VIEW_ELEMENT_BUILDER_CONTEXT_KEY, builderContext );
+	}
+
+	/**
+	 * @return the {@link ViewElementBuilderContext} for the request bound to the current thread
+	 */
+	public static Optional<ViewElementBuilderContext> currentViewElementBuilderContext() {
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		return requestAttributes != null ? getViewElementBuilderContext( requestAttributes ) : Optional.empty();
+	}
+
+	public static Optional<ViewElementBuilderContext> getViewElementBuilderContext( RequestAttributes request ) {
+		return Optional.ofNullable( (ViewElementBuilderContext) request.getAttribute( VIEW_ELEMENT_BUILDER_CONTEXT_KEY,
+		                                                                              WebRequest.SCOPE_REQUEST ) );
+	}
+
+	public static Optional<ViewElementBuilderContext> getViewElementBuilderContext( HttpServletRequest request ) {
+		return Optional.ofNullable(
+				(ViewElementBuilderContext) request.getAttribute( VIEW_ELEMENT_BUILDER_CONTEXT_KEY ) );
 	}
 }

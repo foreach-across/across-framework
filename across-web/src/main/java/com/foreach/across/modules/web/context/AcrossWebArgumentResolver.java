@@ -20,15 +20,11 @@ import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.MenuFactory;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
-import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
@@ -58,29 +54,19 @@ public class AcrossWebArgumentResolver implements HandlerMethodArgumentResolver
 		}
 
 		if ( ViewElementBuilderContext.class.isAssignableFrom( parameter.getParameterType() ) ) {
-			return resolveBuilderContext( mavContainer.getModel(), webRequest );
+			return resolveBuilderContext();
 		}
 
 		Optional<WebResourceRegistry> webResourceRegistry = WebResourceUtils.getRegistry( webRequest );
 		return webResourceRegistry.isPresent() ? webResourceRegistry.get() : null;
 	}
 
-	/**
-	 * Resolves the default {@link ViewElementBuilderContext} for the request.
-	 * If none is linked to the request, one will be created having the model as parent.
-	 *
-	 * @param model containing the builder context (and serving as parent)
-	 * @return builder context
-	 */
-	private ViewElementBuilderContext resolveBuilderContext( ModelMap model, WebRequest webRequest ) {
-		ViewElementBuilderContext ctx = (ViewElementBuilderContext)
-				webRequest.getAttribute( ViewElementBuilderContext.class.getName(), RequestAttributes.SCOPE_REQUEST );
-
-		if ( ctx == null ) {
-			ctx = new DefaultViewElementBuilderContext( model );
-			webRequest.setAttribute( ViewElementBuilderContext.class.getName(), ctx, RequestAttributes.SCOPE_REQUEST );
-		}
-
-		return ctx;
+	private ViewElementBuilderContext resolveBuilderContext() {
+		return ViewElementBuilderContext
+				.retrieveGlobalBuilderContext()
+				.<IllegalStateException>orElseThrow( () -> {
+					throw new IllegalStateException(
+							"Unable to resolve web argument ViewElementBuilderContext: no global ViewElementBuilderContext is available" );
+				} );
 	}
 }

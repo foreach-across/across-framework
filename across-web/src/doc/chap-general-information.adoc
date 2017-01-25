@@ -71,6 +71,11 @@ All properties start with the *acrossWebModule.* prefix.
 |Period for client-side resource caching (if enabled).  Defaults to 1 year.
 |_60*60*24*365_
 
+|registerGlobalBuilderContext
+|`Boolean`
+|Should a request-bound `ViewElementBuilderContext` be created.
+|_false_
+
 |templates.enabled
 |`Boolean`
 |Should support for <<web-templates,web templates>> be enabled.

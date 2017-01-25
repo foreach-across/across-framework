@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @AcrossWebAppConfiguration(classes = TestDefaultTemplate.Config.class)
+@TestPropertySource(properties = "acrossWebModule.registerGlobalBuilderContext=true")
 public class TestViewElementBuilderContextWebArgument
 {
 	@Autowired
@@ -54,7 +56,8 @@ public class TestViewElementBuilderContextWebArgument
 		   .andExpect( content().string(
 				   containsString(
 						   "[builderContext:builderContextA,builderContextB," +
-								   "com.foreach.across.modules.web.resource.WebResourceRegistry,modelA,modelB,modelC]"
+								   "com.foreach.across.modules.web.context.WebAppLinkBuilder," +
+								   "com.foreach.across.modules.web.resource.WebResourceRegistry]"
 				   )
 		   ) );
 	}
