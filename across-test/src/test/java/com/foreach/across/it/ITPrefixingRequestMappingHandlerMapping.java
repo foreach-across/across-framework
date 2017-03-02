@@ -19,17 +19,19 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.AcrossEventHandler;
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfiguration;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestContext;
+import com.foreach.across.test.AcrossTestWebContext;
 import org.junit.Test;
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -46,18 +48,13 @@ import java.lang.annotation.*;
 import java.util.LinkedList;
 import java.util.Set;
 
-import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.Assert.assertNotNull;
 
 public class ITPrefixingRequestMappingHandlerMapping
 {
 	@Test
 	public void testThatDefaultPathIsFoundInUrlMap() throws Exception {
-		try (
-				AcrossTestContext ctx = web()
-						.register( Config.class )
-						.build()
-		) {
+		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config() )) {
 			validateUrlMap( ctx, "/defaultpath/testrequestmapping", "/defaultpath/testrequestmappingendingwithslash/",
 			                "/defaultpath/testrequestmappingwithoutendingandtrailingslash" );
 		}
@@ -65,12 +62,7 @@ public class ITPrefixingRequestMappingHandlerMapping
 
 	@Test
 	public void testThatOverridenPrefixPathIsFoundInUrlMapForSlash() throws Exception {
-		try (
-				AcrossTestContext ctx = web()
-						.property( "prefixPath", "/" )
-						.register( Config.class )
-						.build()
-		) {
+		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config( "/" ) )) {
 			validateUrlMap( ctx, "/testrequestmapping", "/testrequestmappingendingwithslash/",
 			                "/testrequestmappingwithoutendingandtrailingslash" );
 		}
@@ -78,12 +70,7 @@ public class ITPrefixingRequestMappingHandlerMapping
 
 	@Test
 	public void testThatOverridenPrefixPathIsFoundInUrlMapForPathEndingWithSlash() throws Exception {
-		try (
-				AcrossTestContext ctx = web()
-						.property( "prefixPath", "/otherpath/" )
-						.register( Config.class )
-						.build()
-		) {
+		try (AcrossTestContext ctx = new AcrossTestWebContext( new Config( "/otherpath/" ) )) {
 			validateUrlMap( ctx, "/otherpath/testrequestmapping", "/otherpath/testrequestmappingendingwithslash/",
 			                "/otherpath/testrequestmappingwithoutendingandtrailingslash" );
 		}
@@ -95,15 +82,16 @@ public class ITPrefixingRequestMappingHandlerMapping
 	 */
 	private void validateUrlMap( AcrossTestContext ctx, String... expectedPaths ) throws Exception {
 		RequestMappingHandlerMapping requestMappingHandlerMapping =
-				(RequestMappingHandlerMapping) ctx.getBean( "prefixingRequestMappingHandlerMapping" );
+				(RequestMappingHandlerMapping) ctx.beanRegistry().getBean( "prefixingRequestMappingHandlerMapping" );
 		assertNotNull( requestMappingHandlerMapping );
-		Object mappingRegistry = ReflectionTestUtils.getField( requestMappingHandlerMapping, "mappingRegistry" );
-		MultiValueMap<String, LinkedList<?>> urlLookup =
-				(MultiValueMap<String, LinkedList<?>>) ReflectionTestUtils.getField( mappingRegistry, "urlLookup" );
+		MultiValueMap<String, LinkedList<?>>
+				urlMap = (MultiValueMap<String, LinkedList<?>>) ReflectionTestUtils.getField(
+				requestMappingHandlerMapping, "urlMap" );
+		assertNotNull( urlMap );
 		for ( String expectedPath : expectedPaths ) {
 
-			LinkedList<?> mappings = (LinkedList<?>) urlLookup.get( expectedPath );
-			assertNotNull( "Could not find url " + expectedPath + " in urlLookup", mappings );
+			LinkedList<?> mappings = (LinkedList<?>) urlMap.get( expectedPath );
+			assertNotNull( "Could not find url " + expectedPath + " in urlMap", mappings );
 			HttpServletRequest request = new MockHttpServletRequest( "GET", expectedPath );
 			HandlerExecutionChain chain = requestMappingHandlerMapping.getHandler( request );
 			assertNotNull( chain );
@@ -115,8 +103,15 @@ public class ITPrefixingRequestMappingHandlerMapping
 	@Configuration
 	protected static class Config implements AcrossContextConfigurer
 	{
-		@Value("${prefixPath:/defaultpath}")
-		private String prefixPath;
+		private final String prefixPath;
+
+		public Config() {
+			this.prefixPath = "/defaultpath";
+		}
+
+		public Config( String prefixPath ) {
+			this.prefixPath = prefixPath;
+		}
 
 		@Override
 		public void configure( AcrossContext context ) {
@@ -162,6 +157,7 @@ public class ITPrefixingRequestMappingHandlerMapping
 		}
 
 		@Bean(name = "prefixingRequestMappingHandlerMapping")
+		@Exposed
 		@Override
 		public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 			return super.controllerHandlerMapping();
@@ -202,6 +198,7 @@ public class ITPrefixingRequestMappingHandlerMapping
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Component
+	@AcrossEventHandler
 	public @interface PrefixingWebController
 	{
 	}
