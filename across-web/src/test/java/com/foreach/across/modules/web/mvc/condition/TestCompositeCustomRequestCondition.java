@@ -136,8 +136,8 @@ public class TestCompositeCustomRequestCondition
 		CompositeCustomRequestCondition left = new CompositeCustomRequestCondition( Collections.singleton( one ) );
 		CompositeCustomRequestCondition right = new CompositeCustomRequestCondition( Collections.singleton( two ) );
 
-		assertEquals( -1, left.compareTo( right, request ) );
-		assertEquals( 1, right.compareTo( left, request ) );
+		assertNotEquals( 0, left.compareTo( right, request ) );
+		assertEquals( right.compareTo( left, request ), -left.compareTo( right, request ) );
 	}
 
 	@Test
