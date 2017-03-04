@@ -35,3 +35,36 @@ include::chap-webapp-path-resolver.adoc[]
 
 include::chap-thymeleaf-dialect.adoc[]
 
+TODO:
+[[customrequestcondition]]
+=== @CustomRequestCondition
+The `@CustomRequestCondition` is an implementation of Spring's `RequestCondition`.
+
+It allows you to restrict a `@RequestMapping` on any values that are available on the `HttpServletRequest`.
+This can be used e.g. to a restrict a `@RequestMapping` by `Referrer` header, `Host` header, or any other value.
+The following sample implementation restricts a `@RequestMapping` on a `getServerName()` check.
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+public class ExampleController {
+    @ResponseBody
+    @RequestMapping( value = "/foobar", method = RequestMethod.GET )
+    @CustomCondition( conditions = { ServerNameRequestCondition.class } )
+    public String testMapping()
+    {
+        return "hello world";
+    }
+
+    public static class ServerNameRequestCondition implements CustomConditionMatcher {
+        @Override
+        public boolean matches(HttpServletRequest request) {
+            return request.getServerName().toLowerCase().equals("www.website.com");
+        }
+    }
+
+}
+----
+
+When multiple `@CustomCondition` classes are provided, the first matching condition will match the `@RequestMapping`.
+At the moment it is not possible to create an AND-logic of `@CustomCondition` classes.

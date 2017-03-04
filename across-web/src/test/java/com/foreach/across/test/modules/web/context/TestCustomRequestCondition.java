@@ -19,13 +19,16 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.mvc.CustomRequestCondition;
-import com.foreach.across.modules.web.mvc.CustomRequestConditionMatcher;
+import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestCondition;
+import com.foreach.across.modules.web.mvc.condition.CustomRequestCondition;
+import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -34,16 +37,21 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,39 +61,92 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = TestCustomRequestCondition.Config.class)
 public class TestCustomRequestCondition
 {
+	private static final String FOREACH = "http://www.foreach.be";
+	private static final String MICROSOFT = "http://www.microsoft.com";
+	private static final String GOOGLE = "http://www.google.be";
+
+	private MockMvc mvc;
+
 	@Autowired
-	private WebApplicationContext webApplicationContext;
+	public void createMockMvc( WebApplicationContext webApplicationContext ) {
+		mvc = MockMvcBuilders.webAppContextSetup( webApplicationContext ).build();
+	}
 
 	@Test
-	public void testThatNormalRequestMappingWork() throws Exception {
-		MockMvc mvc = MockMvcBuilders.webAppContextSetup( webApplicationContext ).build();
-		mvc.perform( get( "/normal" ).header( HttpHeaders.REFERER, "http://www.foreach.be" ) ).andExpect(
-				status().isOk() ).andExpect( content().string(
-				"normalcontent" ) );
+	public void helloShouldOnlyBeReturnedWithForeachOrMicrosoftReferrer() throws Exception {
+		fromGoogle( get( "/hello" ) ).andExpect( status().isNotFound() );
+		fromForeach( get( "/hello" ) ).andExpect( status().isOk() ).andExpect( content().string( "hello" ) );
+		fromMicrosoft( get( "/hello" ) ).andExpect( status().isOk() ).andExpect( content().string( "hello" ) );
+	}
+
+	@Test
+	public void savedShouldBeReturnedOnPostWithForeachOrMicrosoftReferrer() throws Exception {
+		fromGoogle( post( "/hello" ) ).andExpect( status().isNotFound() );
+		fromForeach( post( "/hello" ) ).andExpect( status().isOk() ).andExpect( content().string( "saved" ) );
+		fromMicrosoft( get( "/hello" ) ).andExpect( status().isOk() ).andExpect( content().string( "hello" ) );
+	}
+
+	@Test
+	public void googleShouldBeReturnedOnlyWithGoogleReferrer() throws Exception {
+		fromForeach( get( "/google" ) ).andExpect( status().isNotFound() );
+		fromForeach( post( "/google" ) ).andExpect( status().isNotFound() );
+		fromGoogle( get( "/google" ) ).andExpect( status().isOk() ).andExpect( content().string( "google" ) );
+		fromGoogle( post( "/google" ) ).andExpect( status().isOk() ).andExpect( content().string( "google" ) );
+	}
+
+	@Test
+	public void normalRequestMappingWithoutCustom() throws Exception {
+		mvc.perform( get( "/normal" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( "normal" ) );
+
+		mvc.perform( get( "/normal" ).header( "user", "jim" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( "normal" ) );
+	}
+
+	@Test
+	public void normalRequestMappingForJohn() throws Exception {
+		mvc.perform( get( "/normal" ).header( "user", "john" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( "john" ) );
+	}
+
+	@Test
+	public void normalRequestMappingForJimAndGoogle() throws Exception {
+		fromGoogle( get( "/normal" ).header( "user", "jim" ) )
+				.andExpect( status().isOk() )
+				.andExpect( content().string( "jim-google" ) );
 	}
 
 	@Test
 	public void testThatCustomRequestConditionDoesNotMatch() throws Exception {
-		MockMvc mvc = MockMvcBuilders.webAppContextSetup( webApplicationContext ).build();
-		mvc.perform( get( "/requestcondition" ).header( HttpHeaders.REFERER,
-		                                                "http://www.foreach.be" ) ).andExpect( status().is(
-				HttpStatus.NOT_FOUND.value() ) );
+		fromForeach( get( "/requestcondition" ) )
+				.andExpect( status().is( HttpStatus.NOT_FOUND.value() ) );
 	}
 
 	@Test
 	public void testThatCustomRequestConditionMatches() throws Exception {
-		MockMvc mvc = MockMvcBuilders.webAppContextSetup( webApplicationContext ).build();
-		mvc.perform( get( "/requestcondition" ).header( HttpHeaders.REFERER,
-		                                                "http://www.google.be" ) ).andExpect( status().isOk() )
-		   .andExpect( content().string( "requestconditioncontent" ) );
+		fromGoogle( get( "/requestcondition" ) )
+				.andExpect( status().isOk() ).andExpect( content().string( "requestconditioncontent" ) );
 	}
 
 	@Test
-	public void testThatMultipleCustomRequestConditionMatchesFirstOccurence() throws Exception {
-		MockMvc mvc = MockMvcBuilders.webAppContextSetup( webApplicationContext ).build();
-		mvc.perform( get( "/multiplerequestcondition" ).header( HttpHeaders.REFERER,
-		                                                "http://www.google.be" ) ).andExpect( status().isOk() )
-		   .andExpect( content().string( "multiplerequestconditioncontent" ) );
+	public void neverMatchedCondition() throws Exception {
+		fromGoogle( get( "/neverMatched" ) )
+				.andExpect( status().isNotFound() );
+	}
+
+	private ResultActions fromForeach( MockHttpServletRequestBuilder builder ) throws Exception {
+		return mvc.perform( builder.header( HttpHeaders.REFERER, FOREACH ) );
+	}
+
+	private ResultActions fromGoogle( MockHttpServletRequestBuilder builder ) throws Exception {
+		return mvc.perform( builder.header( HttpHeaders.REFERER, GOOGLE ) );
+	}
+
+	private ResultActions fromMicrosoft( MockHttpServletRequestBuilder builder ) throws Exception {
+		return mvc.perform( builder.header( HttpHeaders.REFERER, MICROSOFT ) );
 	}
 
 	@EnableAcrossContext
@@ -101,46 +162,190 @@ public class TestCustomRequestCondition
 		public TestController testController() {
 			return new TestController();
 		}
+
+		@Bean
+		public ReferrerController referrerController() {
+			return new ReferrerController();
+		}
+	}
+
+	/**
+	 * Dummy mapping that will only match if any of the referrers are set.
+	 * If both type and method level annotation is present, the method level annotation attributes will replace
+	 * the type level attributes.
+	 */
+	@Target({ ElementType.METHOD, ElementType.TYPE })
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@CustomRequestMapping(ReferrerRequestCondition.class)
+	private @interface ReferrerMapping
+	{
+		String[] value();
+	}
+
+	@Target({ ElementType.METHOD, ElementType.TYPE })
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@CustomRequestMapping(UserRequestCondition.class)
+	private @interface UserMapping
+	{
+		String value();
+	}
+
+	private static class ReferrerRequestCondition extends AbstractCustomRequestCondition<ReferrerRequestCondition>
+	{
+		private String[] referrers = new String[0];
+
+		@Override
+		public void setAnnotatedTypeMetadata( AnnotatedTypeMetadata metadata ) {
+			referrers = (String[]) metadata.getAnnotationAttributes( ReferrerMapping.class.getName() ).get( "value" );
+		}
+
+		@Override
+		protected Collection<String> getContent() {
+			return Arrays.asList( referrers );
+		}
+
+		@Override
+		protected String getToStringInfix() {
+			return " || ";
+		}
+
+		@Override
+		public ReferrerRequestCondition combine( ReferrerRequestCondition other ) {
+			return other;
+		}
+
+		@Override
+		public ReferrerRequestCondition getMatchingCondition( HttpServletRequest request ) {
+			if ( StringUtils.containsAny( request.getHeader( HttpHeaders.REFERER ), referrers ) ) {
+				return this;
+			}
+			return null;
+		}
+
+		@Override
+		public int compareTo( ReferrerRequestCondition other, HttpServletRequest request ) {
+			return 0;
+		}
+	}
+
+	private static class UserRequestCondition extends AbstractCustomRequestCondition<UserRequestCondition>
+	{
+		private String username;
+
+		@Override
+		public void setAnnotatedTypeMetadata( AnnotatedTypeMetadata metadata ) {
+			username = (String) metadata.getAnnotationAttributes( UserMapping.class.getName() ).get( "value" );
+		}
+
+		@Override
+		protected Collection<?> getContent() {
+			return Collections.singleton( username );
+		}
+
+		@Override
+		protected String getToStringInfix() {
+			return "";
+		}
+
+		@Override
+		public UserRequestCondition combine( UserRequestCondition other ) {
+			return other;
+		}
+
+		@Override
+		public UserRequestCondition getMatchingCondition( HttpServletRequest request ) {
+			return StringUtils.equals( request.getHeader( "user" ), username ) ? this : null;
+		}
+
+		@Override
+		public int compareTo( UserRequestCondition other, HttpServletRequest request ) {
+			return 0;
+		}
+	}
+
+	private static class NeverMatchedRequestCondition implements CustomRequestCondition<NeverMatchedRequestCondition>
+	{
+		@Override
+		public void setAnnotatedTypeMetadata( AnnotatedTypeMetadata metadata ) {
+		}
+
+		@Override
+		public NeverMatchedRequestCondition combine( NeverMatchedRequestCondition other ) {
+			return null;
+		}
+
+		@Override
+		public NeverMatchedRequestCondition getMatchingCondition( HttpServletRequest request ) {
+			return null;
+		}
+
+		@Override
+		public int compareTo( NeverMatchedRequestCondition other, HttpServletRequest request ) {
+			return 0;
+		}
 	}
 
 	@Controller
-	@SuppressWarnings( "unused" )
+	@SuppressWarnings("unused")
 	protected static class TestController
 	{
 		@RequestMapping("/normal")
 		@ResponseBody
 		public String normalRequestMapping() {
-			return "normalcontent";
+			return "normal";
+		}
+
+		@UserMapping("john")
+		@RequestMapping("/normal")
+		@ResponseBody
+		public String normalForJohnRequestMapping() {
+			return "john";
+		}
+
+		@UserMapping("jim")
+		@ReferrerMapping(GOOGLE)
+		@RequestMapping("/normal")
+		@ResponseBody
+		public String normalForJimAndGoogleRequestMapping() {
+			return "jim-google";
 		}
 
 		@RequestMapping("/requestcondition")
 		@ResponseBody
-		@CustomRequestCondition(conditions = ReferrerRequestCondition.class)
+		@ReferrerMapping(GOOGLE)
 		public String requestconditionMapping() {
 			return "requestconditioncontent";
 		}
 
-		@RequestMapping(value = "/multiplerequestcondition", method = { RequestMethod.GET, RequestMethod.HEAD } )
+		@RequestMapping(value = "/neverMatched", method = { RequestMethod.GET, RequestMethod.HEAD })
 		@ResponseBody
-		@CustomRequestCondition(conditions = { ReferrerRequestCondition.class, NeverMatchedRequestCondition.class } )
+		@ReferrerMapping(GOOGLE)
+		@CustomRequestMapping(NeverMatchedRequestCondition.class)
 		public String multipleRequestconditionMapping() {
-			return "multiplerequestconditioncontent";
+			return "neverMatched";
+		}
+	}
+
+	@RestController
+	@ReferrerMapping({ FOREACH, MICROSOFT })
+	protected static class ReferrerController
+	{
+		@GetMapping("/hello")
+		public String hello() {
+			return "hello";
 		}
 
-		private static class ReferrerRequestCondition implements CustomRequestConditionMatcher
-		{
-			@Override
-			public boolean matches( HttpServletRequest request ) {
-				return request.getHeader( HttpHeaders.REFERER ).contains( "http://www.google.be" );
-			}
+		@PostMapping("/hello")
+		public String save() {
+			return "saved";
 		}
 
-		private static class NeverMatchedRequestCondition implements CustomRequestConditionMatcher
-		{
-			@Override
-			public boolean matches( HttpServletRequest request ) {
-				throw new RuntimeException( "This should never be called" );
-			}
+		@RequestMapping("/google")
+		@ReferrerMapping(GOOGLE)
+		public String google() {
+			return "google";
 		}
 	}
 }

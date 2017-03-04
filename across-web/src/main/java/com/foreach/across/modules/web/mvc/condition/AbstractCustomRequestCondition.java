@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.mvc;
+package com.foreach.across.modules.web.mvc.condition;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.servlet.mvc.condition.AbstractRequestCondition;
 
-public interface CustomRequestConditionMatcher
+/**
+ * A base class for {@link CustomRequestCondition} types providing implementations of
+ * {@link #equals(Object)}, {@link #hashCode()}, and {@link #toString()}.
+ *
+ * @author Arne Vandamme
+ * @since 2.0.0
+ */
+public abstract class AbstractCustomRequestCondition<T extends AbstractCustomRequestCondition<T>>
+		extends AbstractRequestCondition<T> implements CustomRequestCondition<T>
 {
-	boolean matches( HttpServletRequest request );
 }

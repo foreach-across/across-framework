@@ -19,15 +19,20 @@ package com.foreach.across.modules.web.mvc;
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
+import com.foreach.across.modules.web.mvc.condition.CompositeCustomRequestCondition;
+import com.foreach.across.modules.web.mvc.condition.CustomRequestCondition;
+import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.ClassFilter;
-import org.springframework.beans.BeanInstantiationException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.MethodIntrospector;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.core.type.StandardAnnotationMetadata;
+import org.springframework.core.type.StandardMethodMetadata;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -37,13 +42,25 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Scans matching beans for RequestMapping annotations and (optionally) prefixes all mappings.
  * Allows for reloading (re-scanning) of mappings and re-initialization of the entire mapping handler mapping.
  * <p>
  * <b>WARN: interceptors are only supported once.</b>
+ * <p/>
+ * Since 2.0.0 also supports {@link CustomRequestMapping} annotations on handler methods.
+ * Any {@link CustomRequestCondition} will be created using the {@link AutowireCapableBeanFactory} of the attached
+ * {@link ApplicationContext}.  Note it will be created as a new prototype bean, existing beans of that type will
+ * be ignored.
+ *
+ * @see CustomRequestMapping
  */
 public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandlerMapping
 {
@@ -142,12 +159,10 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 		final Class<?> userType = ClassUtils.getUserClass( handlerType );
 
-		Set<Method> methods = MethodIntrospector.selectMethods( userType, new ReflectionUtils.MethodFilter()
-		{
-			public boolean matches( Method method ) {
-				return getMappingForMethod( method, userType ) != null;
-			}
-		} );
+		Set<Method> methods = MethodIntrospector.selectMethods(
+				userType,
+				(ReflectionUtils.MethodFilter) method -> getMappingForMethod( method, userType ) != null
+		);
 
 		for ( Method method : methods ) {
 			RequestMappingInfo mapping = getMappingForMethod( method, userType );
@@ -184,7 +199,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 			                                                   new HeadersRequestCondition(),
 			                                                   new ConsumesRequestCondition(),
 			                                                   new ProducesRequestCondition(),
-			                                                   getCustomMethodCondition( method ) );
+			                                                   new CompositeCustomRequestCondition() );
 
 			info = other.combine( info );
 		}
@@ -193,17 +208,37 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	}
 
 	@Override
-	protected RequestCondition<?> getCustomMethodCondition( Method method ) {
-		CustomRequestCondition methodAnnotation = AnnotationUtils.findAnnotation( method, CustomRequestCondition.class );
-		if( methodAnnotation != null ) {
-			Class<? extends CustomRequestConditionMatcher>[] conditions = methodAnnotation.conditions();
-			Collection<CustomRequestConditionMatcher> instances = new ArrayList<>();
-			for( Class<? extends CustomRequestConditionMatcher> condition : conditions ) {
-				instances.add( BeanUtils.instantiateClass( condition ) );
-			}
-			return new CustomRequestConditions( instances );
-		}
-		return super.getCustomMethodCondition( method );
+	protected RequestCondition<?> getCustomTypeCondition( Class<?> handlerType ) {
+		return buildCustomRequestCondition( new StandardAnnotationMetadata( handlerType, true ) );
 	}
 
+	@Override
+	protected RequestCondition<?> getCustomMethodCondition( Method method ) {
+		return buildCustomRequestCondition( new StandardMethodMetadata( method, true ) );
+	}
+
+	private RequestCondition<?> buildCustomRequestCondition( AnnotatedTypeMetadata metadata ) {
+		AutowireCapableBeanFactory beanFactory = getApplicationContext().getAutowireCapableBeanFactory();
+
+		List<CustomRequestCondition> conditions = getCustomRequestConditionClasses( metadata )
+				.stream()
+				.flatMap( Stream::of )
+				.distinct()
+				.map( c -> {
+					CustomRequestCondition condition = beanFactory.createBean( c );
+					condition.setAnnotatedTypeMetadata( metadata );
+					return condition;
+				} )
+				.collect( Collectors.toList() );
+
+		return new CompositeCustomRequestCondition( conditions );
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<Class<CustomRequestCondition>[]> getCustomRequestConditionClasses( AnnotatedTypeMetadata metadata ) {
+		MultiValueMap<String, Object> attributes = metadata.getAllAnnotationAttributes(
+				CustomRequestMapping.class.getName(), false );
+		Object values = ( attributes != null ? attributes.get( "value" ) : null );
+		return (List<Class<CustomRequestCondition>[]>) ( values != null ? values : Collections.emptyList() );
+	}
 }
