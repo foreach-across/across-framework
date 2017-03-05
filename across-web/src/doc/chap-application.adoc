@@ -1,8 +1,15 @@
 [[across-application]]
 == TODO: @AcrossApplication
-`@AcrossApplication` annotation can be used as an alternative for `@EnableAcrossContext` when defining an application.
-In addition to default context configuration options, it adds Spring Boot auto configuration classes for embedded servlet containers and enables dynamic modules.
+`@AcrossApplication` annotation can be used as an alternative for `@EnableAcrossContext` and `@SpringBootApplication` when defining an application.
+In addition to default context configuration options, it also adds selected <<spring-boot-autoconfigure,Spring Boot autoconfiguration classes>> and enables <<dynamic-across-modules,dynamic modules>>.
 
+Using `@AcrossApplication` is probably the easiest way to setup a simple (Spring Boot based) application backed by an AcrossContext.
+
+WARNING: Using `@EnableAutoConfiguration` and Spring Boot starters directly with Across is currently not supported.
+Only a selected number of starters have support directly built into Across.
+See <<across-spring-boot>> for more background information.
+
+[[embedded-servlet-container]]
 === Embedded servlet container
 Using `@AcrossApplication` adds the necessary Spring Boot auto configuration classes for embedded servlet containers.
 If you have for example *spring-boot-starter-tomcat* on the classpath, you can run an Across based application inside an embedded Tomcat using `SpringApplication`.
@@ -20,6 +27,7 @@ public class MyApplication
 }
 ----
 
+[[dynamic-across-modules]]
 === Dynamic Across modules
 Using `@AcrossApplication` on a class will automatically enable dynamic Across modules on that class.
 Before bootstrapping the context, the configurator will attempt to find an application specific infrastructure, application or postprocessor module.
@@ -72,5 +80,3 @@ WARNING: Dynamic modules perform an automatic component scan of all their child 
 If you want the default behavior of scanning only the _config_ child package, you must provide an `AcrossModule` implementation.
 
 NOTE: If you want to manually add dynamic modules, please see the javadoc for `AcrossDynamicModulesConfigurer` and `AcrossDynamicModulesConfiguration`.
-
-TODO: old school web initializerBean for bootstrapping with support for dynamic servlets and filters

@@ -9,10 +9,12 @@ Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :spring-security-url: http://projects.spring.io/spring-security/
 :commons-fileupload-url: http://commons.apache.org/proper/commons-fileupload/
 :platform-bom-url: https://foreach.atlassian.net/wiki/display/AX/Across+Platform
+:admin-web-module-url: https://foreach.atlassian.net/wiki/display/AX/AdminWebModule
+:debug-web-module-url: https://foreach.atlassian.net/wiki/display/AX/DebugWebModule
 
 [copyright,verbatim]
 --
-Copyright (C) 2014-2016 +
+Copyright (C) 2014-2017 +
 [small]#Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.#
 --
 

@@ -10,7 +10,7 @@ Publishing an event can be done from anywhere by simply creating an instance of 
 This is a marker interface not defining any additional methods.
 
 [source,java,indent=0]
-[subs="verbatim,quotes,attributes"]
+[subs="verbatim,attributes"]
 ----
 public static class SomeEvent implements AcrossEvent {
 }
@@ -31,7 +31,7 @@ All beans created in the `ApplicationContext` are automatically scanned for even
 
 .Example component with an event handling method
 [source,java,indent=0]
-[subs="verbatim,quotes,attributes"]
+[subs="verbatim,attributes"]
 ----
 @Component
 public class MyHandler {
@@ -51,7 +51,7 @@ Any object can register itself as listener by subscribing to the `AcrossEventPub
 
 .Example of a non-managed object manually subscribing to the AcrossEventPublisher
 [source,java,indent=0]
-[subs="verbatim,quotes,attributes"]
+[subs="verbatim,attributes"]
 ----
 private AcrossEventPublisher eventBus;
 
@@ -98,7 +98,7 @@ An event must pass all filters before it is handled.
 
 .Examples of custom events
 [source,java,indent=0]
-[subs="verbatim,quotes,attributes"]
+[subs="verbatim,attributes"]
 ----
 
 /**
@@ -161,9 +161,10 @@ Sent once for every AcrossContext, after the entire bootstrap phase has finished
 When dispatching an event through its handlers, each handler is executed in isolation from the others.
 Events do not bubble up to the publisher.
 This means if an exception occurs within a handler, that will not impact the original publisher in anyway and the next handler will simply execute.
-However, when an exception occurs that is not handled within the handler method, a new PublicationError message is publishes that can be picked up with a custom IPublicationErrorHandler implementation added to the underlying MBassadorEventPublisher using addErrorHandler().
-By default all exceptions will be logged in the AcrossEventPublisher logger.
+However, when an exception occurs that is not handled within the handler method, a new `PublicationError` message is publishes that can be picked up with a custom `IPublicationErrorHandler` implementation added to the underlying `MBassadorEventPublisher` using `addErrorHandler()`.
+By default all exceptions will be logged in the `AcrossEventPublisher` logger.
 There is no defined order in which an event is sent to the handlers.
 Your event handlers should not depend on other event handlers having run.
 
-WARNING: Ordering event handlers is currently not supported.
+=== Event limitations
+Ordering event handlers is currently not supported.

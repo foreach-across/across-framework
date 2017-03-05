@@ -1,18 +1,22 @@
 == General information
 
-=== TODO: About
-{module-name} provides the following infrastructure:
+=== About
+{module-name} activates Spring MVC support for all modules in an AcrossContext.
+This means modules can configure the Spring MVC support, add controllers, servlets and filters.
 
- * a <<thymeleaf-dialect,Thymeleaf dialect>>
- * infrastructure for <<web-templates,templates>>, <<menu-building,menu building>> and <<WebResourceRegistry,registering web resources>>
- * auto configuration of <<multipart-config,Multipart filter>>
+On top of that, the out-of-the-box Spring MVC functionality is extended in several ways:
+
+ * a <<thymeleaf-dialect,Thymeleaf dialect>> is provided for interacting with the Across web infrastructure
+ * {module-name} provides infrastructure for <<web-templates,templates>>, <<menu-building,menu building>> and <<WebResourceRegistry,registering web resources>>
+ * adding support for <<extended-request-mapping,prefixing request mappings and adding custom request condition>>
+ * auto configuration of a <<multipart-config,Multipart filter>>
  * auto configuration of static resources with <<client-side-caching,client-side caching>> and <<resource-url-versioning,url versioning>>
 
-Module website: {module-url}
+{module-name} also contains `<<across-application,@AcrossApplication>>`, a replacement for `@SpringBootApplication` when working with an AcrossContext.
 
 === Artifact
 [source,xml,indent=0]
-[subs="verbatim,quotes,attributes"]
+[subs="verbatim,attributes"]
 ----
 	<dependencies>
 		<dependency>

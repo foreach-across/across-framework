@@ -90,6 +90,8 @@ While Across talks about modules just like OSGi does and some similarity between
 The focus of Across is more on providing a way to group end-user functionality than it is on a dynamic runtime environment.
 Integrating Across applications in the OSGi landscape is on the long-term roadmap.
 
+include::chap-across-spring-boot.adoc[]
+
 == Core concepts
 At the heart of Across are a couple of concepts you should understand.  The terms related tot these concepts are used
 throughout all Across documentation, consider them part of the Across http://en.wikipedia.org/wiki/Domain-specific_language[DSL].
@@ -201,13 +203,13 @@ All Across related artifacts - both release and snapshot versions - can be fetch
 [source,xml,indent=0]
 [subs="verbatim,quotes,attributes"]
 ----
-	<repositories>
-        <repository>
-            <id>foreach-nexus</id>
-            <name>Foreach nexus</name>
-            <url>http://repository.foreach.be/nexus/content/groups/public/</url>
-        </repository>
-    </repositories>
+<repositories>
+    <repository>
+        <id>foreach-nexus</id>
+        <name>Foreach nexus</name>
+        <url>http://repository.foreach.be/nexus/repository/public/</url>
+    </repository>
+</repositories>
 ----
 
 Release version are also available in Maven Central.
