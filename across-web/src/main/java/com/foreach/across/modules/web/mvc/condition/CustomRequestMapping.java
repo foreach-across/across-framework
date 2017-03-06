@@ -34,7 +34,6 @@ import java.lang.annotation.*;
 @Target({ ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@RequestMapping
 public @interface CustomRequestMapping
 {
 	/**

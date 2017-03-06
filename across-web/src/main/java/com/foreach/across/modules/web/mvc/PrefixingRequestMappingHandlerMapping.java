@@ -28,12 +28,14 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodIntrospector;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.core.type.StandardAnnotationMetadata;
 import org.springframework.core.type.StandardMethodMetadata;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.MappedInterceptor;
@@ -41,6 +43,7 @@ import org.springframework.web.servlet.mvc.condition.*;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
@@ -190,7 +193,13 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 	@Override
 	protected RequestMappingInfo getMappingForMethod( Method method, Class<?> handlerType ) {
-		RequestMappingInfo info = super.getMappingForMethod( method, handlerType );
+		RequestMappingInfo info = createRequestMappingInfo( method );
+		if ( info != null ) {
+			RequestMappingInfo typeInfo = createRequestMappingInfo( handlerType );
+			if ( typeInfo != null ) {
+				info = typeInfo.combine( info );
+			}
+		}
 
 		if ( info != null && prefixPath != null ) {
 			RequestMappingInfo other = new RequestMappingInfo( new PatternsRequestCondition( prefixPath ),
@@ -205,6 +214,29 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 		}
 
 		return info;
+	}
+
+	// Replaced so a request mapping only composed from a custom condition can be returned
+	private RequestMappingInfo createRequestMappingInfo( AnnotatedElement element ) {
+		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation( element, RequestMapping.class );
+		RequestCondition<?> condition = ( element instanceof Class ?
+				getCustomTypeCondition( (Class<?>) element ) : getCustomMethodCondition( (Method) element ) );
+
+		return createRequestMappingInfo( requestMapping, condition );
+	}
+
+	@Override
+	protected RequestMappingInfo createRequestMappingInfo( RequestMapping requestMapping,
+	                                                       RequestCondition<?> customCondition ) {
+		if ( requestMapping == null && customCondition == null ) {
+			return null;
+		}
+
+		if ( requestMapping == null ) {
+			requestMapping = AnnotatedElementUtils.findMergedAnnotation( Wildcard.class, RequestMapping.class );
+		}
+
+		return super.createRequestMappingInfo( requestMapping, customCondition );
 	}
 
 	@Override
@@ -231,7 +263,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 				} )
 				.collect( Collectors.toList() );
 
-		return new CompositeCustomRequestCondition( conditions );
+		return conditions.isEmpty() ? null : new CompositeCustomRequestCondition( conditions );
 	}
 
 	@SuppressWarnings("unchecked")
@@ -240,5 +272,11 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 				CustomRequestMapping.class.getName(), false );
 		Object values = ( attributes != null ? attributes.get( "value" ) : null );
 		return (List<Class<CustomRequestCondition>[]>) ( values != null ? values : Collections.emptyList() );
+	}
+
+	// placeholder for the wildcard @RequestMapping
+	@RequestMapping
+	private static final class Wildcard
+	{
 	}
 }

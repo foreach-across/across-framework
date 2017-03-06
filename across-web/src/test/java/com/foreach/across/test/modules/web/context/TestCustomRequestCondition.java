@@ -49,6 +49,7 @@ import java.lang.annotation.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -70,6 +71,20 @@ public class TestCustomRequestCondition
 	@Autowired
 	public void createMockMvc( WebApplicationContext webApplicationContext ) {
 		mvc = MockMvcBuilders.webAppContextSetup( webApplicationContext ).build();
+	}
+
+	@Test
+	public void defaultFallbackShouldBeReturnedForRandomUrlFromMicrosoft() throws Exception {
+		fromMicrosoft( get( "/" + UUID.randomUUID().toString() ) )
+				.andExpect( status().isOk() )
+				.andExpect( content().string( "microsoft-default" ) );
+	}
+
+	@Test
+	public void specificFallbackShouldBeReturnedForRandomUrlFromMicrosoftWithRightParam() throws Exception {
+		fromMicrosoft( get( "/" + UUID.randomUUID().toString() ).param( "test", "ok" ) )
+				.andExpect( status().isOk() )
+				.andExpect( content().string( "microsoft-test" ) );
 	}
 
 	@Test
@@ -166,6 +181,11 @@ public class TestCustomRequestCondition
 		@Bean
 		public ReferrerController referrerController() {
 			return new ReferrerController();
+		}
+
+		@Bean
+		public CustomOnlyController customOnlyController() {
+			return new CustomOnlyController();
 		}
 	}
 
@@ -328,6 +348,7 @@ public class TestCustomRequestCondition
 		}
 	}
 
+	@SuppressWarnings( "unused" )
 	@RestController
 	@ReferrerMapping({ FOREACH, MICROSOFT })
 	protected static class ReferrerController
@@ -346,6 +367,22 @@ public class TestCustomRequestCondition
 		@ReferrerMapping(GOOGLE)
 		public String google() {
 			return "google";
+		}
+	}
+
+	@SuppressWarnings( "unused" )
+	@RestController
+	protected static class CustomOnlyController
+	{
+		@ReferrerMapping(MICROSOFT)
+		public String allFromMicrosoft() {
+			return "microsoft-default";
+		}
+
+		@GetMapping(params = "test=ok")
+		@ReferrerMapping(MICROSOFT)
+		public String testFromMicrosoft() {
+			return "microsoft-test";
 		}
 	}
 }
