@@ -193,8 +193,24 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 		RequestMappingInfo info = createRequestMappingInfo( method );
 		if ( info != null ) {
 			RequestMappingInfo typeInfo = createRequestMappingInfo( handlerType );
+
 			if ( typeInfo != null ) {
+				boolean hasCustomCondition = info.getCustomCondition() != null || typeInfo.getCustomCondition() != null;
+				boolean hasNoPatterns = info.getPatternsCondition().getPatterns().isEmpty()
+						&& typeInfo.getPatternsCondition().getPatterns().isEmpty();
+
 				info = typeInfo.combine( info );
+
+				if ( hasCustomCondition && hasNoPatterns ) {
+					// Patterns should be reset, because it will contain a single empty pattern after combining
+					info = new RequestMappingInfo( typeInfo.getPatternsCondition(),
+					                               info.getMethodsCondition(),
+					                               info.getParamsCondition(),
+					                               info.getHeadersCondition(),
+					                               info.getConsumesCondition(),
+					                               info.getProducesCondition(),
+					                               info.getCustomCondition() );
+				}
 			}
 		}
 
@@ -213,7 +229,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 		return info;
 	}
 
-	// Replaced so a request mapping that is composed only be a custom condition can be returned
+	// Replaced so a request mapping that is composed only by a custom condition can be returned
 	private RequestMappingInfo createRequestMappingInfo( AnnotatedElement element ) {
 		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation( element, RequestMapping.class );
 		RequestCondition<?> condition = ( element instanceof Class ?

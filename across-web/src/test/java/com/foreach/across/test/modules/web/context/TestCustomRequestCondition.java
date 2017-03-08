@@ -66,6 +66,7 @@ public class TestCustomRequestCondition
 	private static final String FOREACH = "http://www.foreach.be";
 	private static final String MICROSOFT = "http://www.microsoft.com";
 	private static final String GOOGLE = "http://www.google.be";
+	private static final String FACEBOOK = "http://www.facebook.com";
 
 	private MockMvc mvc;
 
@@ -86,6 +87,13 @@ public class TestCustomRequestCondition
 		fromMicrosoft( get( "/" + UUID.randomUUID().toString() ).param( "test", "ok" ) )
 				.andExpect( status().isOk() )
 				.andExpect( content().string( "microsoft-test" ) );
+	}
+
+	@Test
+	public void facebookSpecificFallback() throws Exception {
+		fromFacebook( get( "/some-path/" + UUID.randomUUID().toString() ) )
+				.andExpect( status().isOk() )
+				.andExpect( content().string( "facebook" ) );
 	}
 
 	@Test
@@ -163,6 +171,10 @@ public class TestCustomRequestCondition
 
 	private ResultActions fromMicrosoft( MockHttpServletRequestBuilder builder ) throws Exception {
 		return mvc.perform( builder.header( HttpHeaders.REFERER, MICROSOFT ) );
+	}
+
+	private ResultActions fromFacebook( MockHttpServletRequestBuilder builder ) throws Exception {
+		return mvc.perform( builder.header( HttpHeaders.REFERER, FACEBOOK ) );
 	}
 
 	@EnableAcrossContext
@@ -368,6 +380,11 @@ public class TestCustomRequestCondition
 		@ReferrerMapping(GOOGLE)
 		public String google() {
 			return "google";
+		}
+
+		@ReferrerMapping(FACEBOOK)
+		public String allFromFacebook() {
+			return "facebook";
 		}
 	}
 
