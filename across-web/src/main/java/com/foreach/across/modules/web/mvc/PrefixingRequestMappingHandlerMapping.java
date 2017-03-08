@@ -29,9 +29,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.core.type.StandardAnnotationMetadata;
-import org.springframework.core.type.StandardMethodMetadata;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ReflectionUtils;
@@ -216,7 +213,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 		return info;
 	}
 
-	// Replaced so a request mapping only composed from a custom condition can be returned
+	// Replaced so a request mapping that is composed only be a custom condition can be returned
 	private RequestMappingInfo createRequestMappingInfo( AnnotatedElement element ) {
 		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation( element, RequestMapping.class );
 		RequestCondition<?> condition = ( element instanceof Class ?
@@ -241,24 +238,24 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 	@Override
 	protected RequestCondition<?> getCustomTypeCondition( Class<?> handlerType ) {
-		return buildCustomRequestCondition( new StandardAnnotationMetadata( handlerType, true ) );
+		return buildCustomRequestCondition( handlerType );
 	}
 
 	@Override
 	protected RequestCondition<?> getCustomMethodCondition( Method method ) {
-		return buildCustomRequestCondition( new StandardMethodMetadata( method, true ) );
+		return buildCustomRequestCondition( method );
 	}
 
-	private RequestCondition<?> buildCustomRequestCondition( AnnotatedTypeMetadata metadata ) {
+	private RequestCondition<?> buildCustomRequestCondition( AnnotatedElement annotatedElement ) {
 		AutowireCapableBeanFactory beanFactory = getApplicationContext().getAutowireCapableBeanFactory();
 
-		List<CustomRequestCondition> conditions = getCustomRequestConditionClasses( metadata )
+		List<CustomRequestCondition> conditions = getCustomRequestConditionClasses( annotatedElement )
 				.stream()
 				.flatMap( Stream::of )
 				.distinct()
 				.map( c -> {
 					CustomRequestCondition condition = beanFactory.createBean( c );
-					condition.setAnnotatedTypeMetadata( metadata );
+					condition.setAnnotatedElement( annotatedElement );
 					return condition;
 				} )
 				.collect( Collectors.toList() );
@@ -267,9 +264,11 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Class<CustomRequestCondition>[]> getCustomRequestConditionClasses( AnnotatedTypeMetadata metadata ) {
-		MultiValueMap<String, Object> attributes = metadata.getAllAnnotationAttributes(
-				CustomRequestMapping.class.getName(), false );
+	private List<Class<CustomRequestCondition>[]> getCustomRequestConditionClasses( AnnotatedElement annotatedElement ) {
+		MultiValueMap<String, Object> attributes = AnnotatedElementUtils.getAllAnnotationAttributes(
+				annotatedElement, CustomRequestMapping.class.getName(), false, true
+		);
+
 		Object values = ( attributes != null ? attributes.get( "value" ) : null );
 		return (List<Class<CustomRequestCondition>[]>) ( values != null ? values : Collections.emptyList() );
 	}

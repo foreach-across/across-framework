@@ -15,13 +15,13 @@
  */
 package com.foreach.across.modules.web.mvc.condition;
 
-import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.AnnotatedElement;
 
 /**
- * Extension of {@link RequestCondition} that is aware of the annotated type it is for (either handler type or method).
+ * Extension of {@link RequestCondition} that is aware of the annotated element it is for (either handler type or method).
  *
  * @param <T> request condition
  * @author Arne Vandamme
@@ -31,11 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 public interface CustomRequestCondition<T extends CustomRequestCondition<T>> extends RequestCondition<T>
 {
 	/**
-	 * Set the contextual metadata for either the type or the method that this condition is being created for.
+	 * Set the handler type or the handler method that this condition is being created for.
 	 *
-	 * @param metadata for the type or method level annotations
+	 * @param annotatedElement handler type or method
 	 */
-	void setAnnotatedTypeMetadata( AnnotatedTypeMetadata metadata );
+	void setAnnotatedElement( AnnotatedElement annotatedElement );
 
 	@Override
 	T combine( T other );

@@ -31,7 +31,7 @@ import java.lang.annotation.*;
  * @see CustomRequestCondition
  * @see PrefixingRequestMappingHandlerMapping
  */
-@Target({ ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE })
+@Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface CustomRequestMapping

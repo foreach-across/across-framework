@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -46,6 +46,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.*;
+import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -217,8 +218,8 @@ public class TestCustomRequestCondition
 		private String[] referrers = new String[0];
 
 		@Override
-		public void setAnnotatedTypeMetadata( AnnotatedTypeMetadata metadata ) {
-			referrers = (String[]) metadata.getAnnotationAttributes( ReferrerMapping.class.getName() ).get( "value" );
+		public void setAnnotatedElement( AnnotatedElement element ) {
+			referrers = AnnotatedElementUtils.findMergedAnnotation( element, ReferrerMapping.class ).value();
 		}
 
 		@Override
@@ -255,8 +256,8 @@ public class TestCustomRequestCondition
 		private String username;
 
 		@Override
-		public void setAnnotatedTypeMetadata( AnnotatedTypeMetadata metadata ) {
-			username = (String) metadata.getAnnotationAttributes( UserMapping.class.getName() ).get( "value" );
+		public void setAnnotatedElement( AnnotatedElement element ) {
+			username = AnnotatedElementUtils.findMergedAnnotation( element, UserMapping.class ).value();
 		}
 
 		@Override
@@ -288,7 +289,7 @@ public class TestCustomRequestCondition
 	private static class NeverMatchedRequestCondition implements CustomRequestCondition<NeverMatchedRequestCondition>
 	{
 		@Override
-		public void setAnnotatedTypeMetadata( AnnotatedTypeMetadata metadata ) {
+		public void setAnnotatedElement( AnnotatedElement element ) {
 		}
 
 		@Override
@@ -348,7 +349,7 @@ public class TestCustomRequestCondition
 		}
 	}
 
-	@SuppressWarnings( "unused" )
+	@SuppressWarnings("unused")
 	@RestController
 	@ReferrerMapping({ FOREACH, MICROSOFT })
 	protected static class ReferrerController
@@ -370,7 +371,7 @@ public class TestCustomRequestCondition
 		}
 	}
 
-	@SuppressWarnings( "unused" )
+	@SuppressWarnings("unused")
 	@RestController
 	protected static class CustomOnlyController
 	{

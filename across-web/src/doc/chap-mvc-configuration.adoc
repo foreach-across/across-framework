@@ -19,7 +19,7 @@ Default `@RequestMapping` implementations can be further specified by adding cus
 The latter allows you to restrict a `@RequestMapping` on any annotation attribute value on the handler method, or even any attribute value that is available on the `HttpServletRequest`.
 
 A `@CustomRequestMapping` allows you to specify a number of `CustomRequestCondition` classes.
-When building the request mapping info, AcrossWebModule will create beans of every `CustomRequestCondition` and will supply them with the `AnnotatedTypeMetadata` of the handler method or handler type they were configured on.
+When building the request mapping info, AcrossWebModule will create beans of every `CustomRequestCondition` and will supply them with the `AnnotatedElement` that represents the handler method or handler type they were configured on.
 Multiple `CustomRequestCondition` classes can be specified and they can be combined on both handler type and handler method, just like the regular `@RequestMapping`.
 
 You can also use `@CustomRequestMapping` as a meta-annotation, which is often much easier in use.
@@ -74,10 +74,9 @@ private static class ReferrerRequestCondition extends AbstractCustomRequestCondi
 
     // get the configured headers from the annotation
     @Override
-    public void setAnnotatedTypeMetadata( AnnotatedTypeMetadata metadata ) {
-        referrers = (String[]) metadata.getAnnotationAttributes(
-                        ReferrerMapping.class.getName()
-                    ).get( "value" );
+    public void setAnnotatedElement( AnnotatedElement element ) {
+        referrers = AnnotatedElementUtils.findMergedAnnotation( element, ReferrerMapping.class )
+                                         .value();
     }
 
     @Override
