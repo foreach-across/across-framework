@@ -40,7 +40,9 @@ public class CssClassAttributeUtils
 	}
 
 	public static void removeCssClass( Map<String, Object> attributes, String... cssClass ) {
-		attributes.put( "class", StringUtils.join( ArrayUtils.removeElements( cssClasses( attributes ), cssClass ) ) );
+		attributes.put( "class",
+		                StringUtils.join( ArrayUtils.removeElements( cssClasses( attributes ), cssClass ), " " )
+		);
 	}
 
 	private static String[] cssClasses( Map<String, Object> attributes ) {
