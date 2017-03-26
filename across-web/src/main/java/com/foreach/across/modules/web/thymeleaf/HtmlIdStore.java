@@ -29,7 +29,7 @@ import java.util.Map;
  * instance (simple nodes).  This ensures that other elements (eg. labels) can retrieve the render time generated id.
  *
  * @author Arne Vandamme
- * @since 1.0.0
+ * @since 2.0.0
  */
 public class HtmlIdStore
 {

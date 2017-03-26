@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
@@ -107,7 +108,13 @@ public class ThymeleafViewSupportConfiguration
 	@Bean
 	@Exposed
 	public ViewElementAttributeConverter viewElementAttributeConverter() {
-		return new DefaultViewElementAttributeConverter();
+		return new DefaultViewElementAttributeConverter( viewElementAttributeObjectMapper() );
+	}
+
+	@Bean(ViewElementAttributeConverter.OBJECT_MAPPER_BEAN)
+	@Exposed
+	public ObjectMapper viewElementAttributeObjectMapper() {
+		return new ObjectMapper();
 	}
 
 	@Bean

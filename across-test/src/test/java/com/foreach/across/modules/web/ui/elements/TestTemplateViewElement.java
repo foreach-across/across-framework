@@ -74,6 +74,25 @@ public class TestTemplateViewElement extends AbstractViewElementTemplateTest
 		template.setAttribute( "title", "random number" );
 		template.setAttribute( "text", 1234 );
 
-		renderAndExpect( template, "random number: 1234" );
+		renderAndExpect( template, "<span>random number: 1234</span>" );
+	}
+
+	@Test
+	public void multipleCustomTemplateInSingleContainer() {
+		ContainerViewElement container = new ContainerViewElement();
+
+		TemplateViewElement template
+				= new TemplateViewElement( "th/test/elements/text :: componentAttributes(${component})" );
+		template.setAttribute( "title", "random number" );
+		template.setAttribute( "text", 1234 );
+		container.addChild( template );
+
+		TemplateViewElement other
+				= new TemplateViewElement( "th/test/elements/text :: componentAttributes(${component})" );
+		other.setAttribute( "title", "other number" );
+		other.setAttribute( "text", 5678 );
+		container.addChild( other );
+
+		renderAndExpect( container, "<span>random number: 1234</span><span>other number: 5678</span>" );
 	}
 }

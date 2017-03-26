@@ -20,9 +20,7 @@ import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.IEngineConfiguration;
-import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.engine.AttributeName;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.model.IAttribute;
@@ -37,7 +35,6 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.util.EscapedAttributeUtils;
 import org.thymeleaf.util.Validate;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 import static com.foreach.across.modules.web.config.UrlPrefixingConfiguration.RESOURCE;
@@ -200,17 +197,6 @@ class ResourceAttributeProcessor extends AbstractElementTagProcessor
 		}
 
 		return null;
-	}
-
-	private String processLink( final IExpressionContext context, final String link ) {
-
-		if ( !( context instanceof IWebContext ) ) {
-			return link;
-		}
-
-		final HttpServletResponse response = ( (IWebContext) context ).getResponse();
-		return response != null ? response.encodeURL( link ) : link;
-
 	}
 
 	private boolean isStaticOrResourceAttribute( AttributeName attributeName ) {

@@ -15,7 +15,6 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
@@ -40,8 +39,6 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 
 	private static final String ATTRIBUTE_ITEM = "element";
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
-
 	public ViewElementElementProcessor() {
 		super(
 				TemplateMode.HTML, // This processor will apply only to HTML mode
@@ -62,9 +59,10 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 				( (WebEngineContext) context ).getRequest() );
 		ViewElementModelWriterRegistry registry = appCtx.getBean( ViewElementModelWriterRegistry.class );
 		ViewElementAttributeConverter attributeConverter = appCtx.getBean( ViewElementAttributeConverter.class );
-		HtmlIdStore idStore = (HtmlIdStore) context.getExpressionObjects().getObject( AcrossWebDialect.HTML_ID_STORE );
+		HtmlIdStore idStore = HtmlIdStore.fetch( context );
+		AttributeNameGenerator generator = AttributeNameGenerator.fetch( context );
 
-		ThymeleafModelBuilder builder = new ThymeleafModelBuilder( context, registry, idStore, attributeConverter );
+		ThymeleafModelBuilder builder = new ThymeleafModelBuilder( context, registry, idStore, attributeConverter, generator );
 		builder.addViewElement( viewElement );
 		structureHandler.replaceWith( builder.retrieveModel(), true );
 	}

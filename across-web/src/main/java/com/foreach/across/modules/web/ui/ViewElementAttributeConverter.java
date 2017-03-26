@@ -28,4 +28,9 @@ import java.util.function.Function;
  */
 public interface ViewElementAttributeConverter extends Function<Object, String>
 {
+	/**
+	 * Name of the {@link com.fasterxml.jackson.databind.ObjectMapper} bean that should be used
+	 * for converting objects to JSON value.
+	 */
+	String OBJECT_MAPPER_BEAN = "viewElementAttributeObjectMapper";
 }

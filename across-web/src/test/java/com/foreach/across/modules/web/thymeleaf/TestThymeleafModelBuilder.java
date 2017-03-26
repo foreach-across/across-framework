@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.thymeleaf;
+package com.foreach.across.modules.web.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
-import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
@@ -70,7 +68,7 @@ public class TestThymeleafModelBuilder
 		doAnswer( invocation -> invocation.getArgumentAt( 0, String.class ) )
 				.when( attributeConverter ).apply( anyObject() );
 
-		modelBuilder = new ThymeleafModelBuilder( context, registry, htmlIdStore, attributeConverter );
+		modelBuilder = new ThymeleafModelBuilder( context, registry, htmlIdStore, attributeConverter, new AttributeNameGenerator());
 	}
 
 	@Test
@@ -429,7 +427,7 @@ public class TestThymeleafModelBuilder
 		when( ve.getCustomTemplate() ).thenReturn( "myTemplate" );
 
 		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
-		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: render(${component})", false ) )
+		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: render(component=${_generatedAttribute0})", false ) )
 				.thenReturn( openElementTag );
 		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
 		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
@@ -437,7 +435,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addViewElement( ve );
 
 		modelBuilder.retrieveModel();
-		verify( context ).setVariable( "component", ve );
+		verify( context ).setVariable( "_generatedAttribute0", ve );
 
 		InOrder ordered = inOrder( model );
 		ordered.verify( model ).add( openElementTag );
@@ -450,7 +448,7 @@ public class TestThymeleafModelBuilder
 		when( ve.getCustomTemplate() ).thenReturn( "myTemplate :: customFragment" );
 
 		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
-		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: customFragment", false ) )
+		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: customFragment(component=${_generatedAttribute0})", false ) )
 				.thenReturn( openElementTag );
 		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
 		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
@@ -458,7 +456,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addViewElement( ve );
 
 		modelBuilder.retrieveModel();
-		verify( context ).setVariable( "component", ve );
+		verify( context ).setVariable( "_generatedAttribute0", ve );
 
 		InOrder ordered = inOrder( model );
 		ordered.verify( model ).add( openElementTag );
@@ -474,7 +472,7 @@ public class TestThymeleafModelBuilder
 		when( modelFactory.createOpenElementTag( "h1", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false ) )
 				.thenReturn( openHeader );
 		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
-		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: customFragment", false ) )
+		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: customFragment(component=${_generatedAttribute0})", false ) )
 				.thenReturn( openElementTag );
 		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
 		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
@@ -483,7 +481,7 @@ public class TestThymeleafModelBuilder
 		modelBuilder.addViewElement( ve );
 
 		modelBuilder.retrieveModel();
-		verify( context ).setVariable( "component", ve );
+		verify( context ).setVariable( "_generatedAttribute0", ve );
 
 		InOrder ordered = inOrder( model );
 		ordered.verify( model ).add( openHeader );

@@ -15,16 +15,21 @@
  */
 package com.foreach.across.test.modules.web.ui;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.foreach.across.modules.web.ui.DefaultViewElementAttributeConverter;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
@@ -37,10 +42,12 @@ import static org.junit.Assert.assertNull;
 public class TestDefaultViewElementAttributeConverter
 {
 	private DefaultViewElementAttributeConverter converter;
+	private ObjectMapper objectMapper;
 
 	@Before
 	public void before() {
-		converter = new DefaultViewElementAttributeConverter();
+		objectMapper = new ObjectMapper();
+		converter = new DefaultViewElementAttributeConverter( objectMapper );
 	}
 
 	@Test
@@ -81,11 +88,57 @@ public class TestDefaultViewElementAttributeConverter
 
 	@Test
 	public void customObjectToJson() {
-		Map<String, Object> json = new LinkedHashMap<>();
-		json.put( "name", "myname for you" );
-		json.put( "age", 34 );
+		MyObject myObject = new MyObject( "myname for you", 34 );
 
-		assertEquals( "{\"name\":\"myname for you\",\"age\":34}", converter.apply( json ) );
-		assertEquals( "{\"name\":\"myname for you\",\"age\":34}", converter.apply( (Supplier) () -> json ) );
+		assertEquals( "{\"name\":\"myname for you\",\"age\":34}", converter.apply( myObject ) );
+		assertEquals( "{\"name\":\"myname for you\",\"age\":34}", converter.apply( (Supplier) () -> myObject ) );
+	}
+
+	@Test
+	public void customObjectToJsonWithCustomSerializer() {
+		SimpleModule module = new SimpleModule();
+		module.addSerializer( MyObject.class, new MyObjectSerializer() );
+		objectMapper.registerModule( module );
+
+		MyObject myObject = new MyObject( "myname for you", 34 );
+
+		assertEquals( "{\"myobject\":\"custom\"}", converter.apply( myObject ) );
+		assertEquals( "{\"myobject\":\"custom\"}", converter.apply( (Supplier) () -> myObject ) );
+	}
+
+	static class MyObject
+	{
+		private String name;
+		private int age;
+
+		public MyObject( String name, int age ) {
+			this.name = name;
+			this.age = age;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public int getAge() {
+			return age;
+		}
+	}
+
+	private static class MyObjectSerializer extends JsonSerializer<MyObject>
+	{
+		@Override
+		public Class<MyObject> handledType() {
+			return MyObject.class;
+		}
+
+		@Override
+		public void serialize( MyObject value,
+		                       JsonGenerator gen,
+		                       SerializerProvider serializers ) throws IOException, JsonProcessingException {
+			gen.writeStartObject();
+			gen.writeStringField( "myobject", "custom" );
+			gen.writeEndObject();
+		}
 	}
 }

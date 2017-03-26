@@ -69,6 +69,7 @@ public class AcrossWebDialect extends AbstractProcessorDialect implements IExpre
 			HashSet<String> names = new HashSet<>();
 			names.add( UTILITY_WEBAPP );
 			names.add( HTML_ID_STORE );
+			names.add( AttributeNameGenerator.ATTR_NAME );
 			return names;
 		}
 
@@ -79,6 +80,9 @@ public class AcrossWebDialect extends AbstractProcessorDialect implements IExpre
 			}
 			else if ( UTILITY_WEBAPP.equals( expressionObjectName ) ) {
 				return context.getVariable( WebResourceUtils.PATH_RESOLVER_ATTRIBUTE_KEY );
+			}
+			else if ( AttributeNameGenerator.ATTR_NAME.equals( expressionObjectName ) ) {
+				return new AttributeNameGenerator();
 			}
 			return null;
 		}

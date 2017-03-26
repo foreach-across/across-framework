@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.thymeleaf;
+package com.foreach.across.modules.web.thymeleaf;
 
-import com.foreach.across.modules.web.thymeleaf.HtmlIdStore;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import org.junit.Before;

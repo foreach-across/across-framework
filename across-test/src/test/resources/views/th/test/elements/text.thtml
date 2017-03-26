@@ -20,7 +20,7 @@
 
 <div th:fragment="componentAttributes(component)" th:inline="text" th:remove="tag"
      th:with="text=${component.getAttribute('text')}">
-    [[${component.getAttribute('title')}]]: [[${text}]]
+    <span>[[${component.getAttribute('title')}]]: [[${text}]]</span>
 </div>
 
 <div th:fragment="nestedTemplate(component)" th:inline="text" th:remove="tag">

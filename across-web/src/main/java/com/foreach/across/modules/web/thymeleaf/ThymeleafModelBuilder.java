@@ -49,6 +49,7 @@ public class ThymeleafModelBuilder
 	private final ViewElementModelWriterRegistry nodeBuilderRegistry;
 	private final HtmlIdStore htmlIdStore;
 	private final ViewElementAttributeConverter attributeConverter;
+	private final AttributeNameGenerator attributeNameGenerator;
 
 	private final IModelFactory modelFactory;
 	private final IModel model;
@@ -60,16 +61,19 @@ public class ThymeleafModelBuilder
 	public ThymeleafModelBuilder( ITemplateContext templateContext,
 	                              ViewElementModelWriterRegistry nodeBuilderRegistry,
 	                              HtmlIdStore htmlIdStore,
-	                              ViewElementAttributeConverter attributeConverter ) {
+	                              ViewElementAttributeConverter attributeConverter,
+	                              AttributeNameGenerator attributeNameGenerator ) {
 		Assert.notNull( templateContext );
 		Assert.notNull( nodeBuilderRegistry );
 		Assert.notNull( htmlIdStore );
 		Assert.notNull( attributeConverter );
+		Assert.notNull( attributeNameGenerator );
 
 		this.templateContext = templateContext;
 		this.nodeBuilderRegistry = nodeBuilderRegistry;
 		this.htmlIdStore = htmlIdStore;
 		this.attributeConverter = attributeConverter;
+		this.attributeNameGenerator = attributeNameGenerator;
 
 		this.modelFactory = templateContext.getModelFactory();
 		this.model = modelFactory.createModel();
@@ -80,6 +84,7 @@ public class ThymeleafModelBuilder
 		nodeBuilderRegistry = parent.nodeBuilderRegistry;
 		htmlIdStore = parent.htmlIdStore;
 		attributeConverter = parent.attributeConverter;
+		attributeNameGenerator = parent.attributeNameGenerator;
 
 		modelFactory = templateContext.getModelFactory();
 		model = modelFactory.createModel();
@@ -158,8 +163,11 @@ public class ThymeleafModelBuilder
 	private void renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
 		writePendingTag();
 		if ( context instanceof IEngineContext ) {
-			( (IEngineContext) context ).setVariable( "component", viewElement );
-			String templateWithFragment = appendFragmentIfRequired( viewElement.getCustomTemplate() );
+			String attributeName = attributeNameGenerator.generateAttributeName();
+			( (IEngineContext) context ).setVariable( attributeName, viewElement );
+			String templateWithFragment = StringUtils.replace(
+					appendFragmentIfRequired( viewElement.getCustomTemplate() ), "${component", "${" + attributeName
+			);
 
 			model.add( modelFactory.createOpenElementTag( "div", "th:replace", templateWithFragment, false ) );
 			model.add( modelFactory.createCloseElementTag( "div" ) );
@@ -175,7 +183,10 @@ public class ThymeleafModelBuilder
 	 */
 	private String appendFragmentIfRequired( String customTemplate ) {
 		if ( !StringUtils.contains( customTemplate, "::" ) ) {
-			return customTemplate + " :: render(${component})";
+			return customTemplate + " :: render(component=${component})";
+		}
+		else if ( !StringUtils.endsWith( customTemplate, ")" ) ) {
+			return customTemplate + "(component=${component})";
 		}
 
 		return customTemplate;
