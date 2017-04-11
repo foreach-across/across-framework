@@ -19,10 +19,13 @@ import com.foreach.across.modules.web.resource.WebResourceUtils;
 import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.dialect.AbstractProcessorDialect;
 import org.thymeleaf.dialect.IExpressionObjectDialect;
+import org.thymeleaf.dialect.IPostProcessorDialect;
 import org.thymeleaf.expression.IExpressionObjectFactory;
+import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,7 +41,7 @@ import java.util.Set;
  *
  * @author Arne Vandamme
  */
-public class AcrossWebDialect extends AbstractProcessorDialect implements IExpressionObjectDialect
+public class AcrossWebDialect extends AbstractProcessorDialect implements IExpressionObjectDialect, IPostProcessorDialect
 {
 	public static final String PREFIX = "across";
 
@@ -55,6 +58,16 @@ public class AcrossWebDialect extends AbstractProcessorDialect implements IExpre
 		processors.add( new ViewElementElementProcessor() );
 		processors.add( new ResourceAttributeProcessor() );
 		return processors;
+	}
+
+	@Override
+	public int getDialectPostProcessorPrecedence() {
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public Set<IPostProcessor> getPostProcessors() {
+		return Collections.singleton( new PartialViewElementTemplateProcessor() );
 	}
 
 	@Override

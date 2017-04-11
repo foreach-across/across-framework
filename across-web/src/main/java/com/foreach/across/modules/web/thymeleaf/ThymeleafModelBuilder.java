@@ -124,6 +124,15 @@ public class ThymeleafModelBuilder
 	 */
 	public void addViewElement( ViewElement viewElement ) {
 		if ( viewElement != null ) {
+			String partialName = (String) templateContext.getVariable( "_partialViewElement" );
+
+			boolean enabled = false;
+
+			if ( partialName != null && partialName.equals( viewElement.getName() ) ) {
+				enabled = true;
+				model.add( modelFactory.createProcessingInstruction( "_partialViewElement", "start" ) );
+			}
+
 			if ( hasCustomTemplate( viewElement ) ) {
 				renderCustomTemplate( viewElement, templateContext );
 			}
@@ -133,6 +142,10 @@ public class ThymeleafModelBuilder
 				if ( processor != null ) {
 					processor.writeModel( viewElement, this );
 				}
+			}
+
+			if ( enabled  ) {
+				model.add( modelFactory.createProcessingInstruction( "_partialViewElement", "end" ) );
 			}
 		}
 	}

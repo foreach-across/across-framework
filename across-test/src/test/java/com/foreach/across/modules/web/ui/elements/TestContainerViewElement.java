@@ -84,6 +84,20 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 	}
 
 	@Test
+	public void multipleTextElementsWithOnlyOneVisible() {
+		ContainerViewElement container = new ContainerViewElement();
+		container.addChild( new TextViewElement( "one, " ) );
+
+		TextViewElement visible = new TextViewElement( "two, " );
+		visible.setName( "visible" );
+
+		container.addChild( visible );
+		container.addChild( new TextViewElement( "three" ) );
+
+		renderAndExpect( container, model -> model.addAttribute( "_partialViewElement", "visible" ), "two, " );
+	}
+
+	@Test
 	public void nestedContainerElements() {
 		ContainerViewElement container = new ContainerViewElement();
 		container.addChild( new TextViewElement( "one, " ) );
@@ -128,6 +142,30 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 
 		renderAndExpect( container,
 		                 "<ol><li>one</li><li>two, three<ul><li>four</li><li>five</li></ul></li></ol>" );
+	}
+
+	@Test
+	public void customTemplateWithNestingAndSelectedVisible() {
+		ContainerViewElement container = new ContainerViewElement();
+		container.setCustomTemplate( "th/test/elements/container :: nested(${component})" );
+		container.addChild( new TextViewElement( "one" ) );
+
+		ContainerViewElement subContainer = new ContainerViewElement();
+		subContainer.addChild( new TextViewElement( "two, " ) );
+		subContainer.addChild( new TextViewElement( "three" ) );
+
+		ContainerViewElement otherSubContainer = new ContainerViewElement();
+		otherSubContainer.setName( "visible" );
+		otherSubContainer.setCustomTemplate( "th/test/elements/container" );
+		otherSubContainer.addChild( new TextViewElement( "four" ) );
+		otherSubContainer.addChild( new TextViewElement( "five" ) );
+
+		subContainer.addChild( otherSubContainer );
+
+		container.addChild( subContainer );
+
+		renderAndExpect( container, model -> model.addAttribute( "_partialViewElement", "visible" ),
+		                 "<ul><li>four</li><li>five</li></ul>" );
 	}
 
 	@Test
