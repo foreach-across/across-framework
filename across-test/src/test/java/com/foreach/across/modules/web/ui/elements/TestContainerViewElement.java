@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
+import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Test;
@@ -94,7 +95,23 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 		container.addChild( visible );
 		container.addChild( new TextViewElement( "three" ) );
 
-		renderAndExpect( container, model -> model.addAttribute( "_partialViewElement", "visible" ), "two, " );
+		renderAndExpect( container, model -> model.addAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "visible" ), "two, " );
+	}
+
+	@Test
+	public void multipleTextElementsWithMultipleVisible() {
+		ContainerViewElement container = new ContainerViewElement();
+		container.addChild( new TextViewElement( "one, " ) );
+
+		TextViewElement visible = new TextViewElement( "two, " );
+		visible.setName( "visible" );
+		container.addChild( visible );
+
+		TextViewElement alsoVisible = new TextViewElement( "three" );
+		alsoVisible.setName( "visible" );
+		container.addChild( alsoVisible );
+
+		renderAndExpect( container, model -> model.addAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "visible" ), "two, three" );
 	}
 
 	@Test
@@ -164,7 +181,7 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 
 		container.addChild( subContainer );
 
-		renderAndExpect( container, model -> model.addAttribute( "_partialViewElement", "visible" ),
+		renderAndExpect( container, model -> model.addAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "visible" ),
 		                 "<ul><li>four</li><li>five</li></ul>" );
 	}
 

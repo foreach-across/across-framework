@@ -99,3 +99,17 @@ public class MyTemplate extends LayoutTemplateProcessorAdapterBean {
 }
 ----
 
+=== Partial rendering
+Across web templates also activate support for partial rendering: rendering only a specific fragment of a (Thymeleaf) template.
+This can be done by simply specifying the fragment to render as a *_partial* request parameter.
+
+Examples:
+
+* _/mypath?id=1_: would render the full page output
+* _/mypath?id=1&_partial=content_: would only render the fragment named *content* from the Thymeleaf template
+
+WARNING: If a partial fragment is specified, the entire `WebTemplateProcessor` will be skipped, only the target view will be rendered.
+All other controller code will still be executed.
+
+NOTE: The fragment specification can also be the name of a single `ViewElement` that needs to be rendered instead.
+See the {bootstrap-ui-module-url}[BootstrapUiModule] documentation for more information on the `ViewElement` infrastructure.

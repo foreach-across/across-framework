@@ -11,6 +11,7 @@ Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :platform-bom-url: https://foreach.atlassian.net/wiki/display/AX/Across+Platform
 :admin-web-module-url: https://foreach.atlassian.net/wiki/display/AX/AdminWebModule
 :debug-web-module-url: https://foreach.atlassian.net/wiki/display/AX/DebugWebModule
+:bootstrap-ui-module-url: https://foreach.atlassian.net/wiki/display/AX/BootstrapUiModule
 
 [copyright,verbatim]
 --

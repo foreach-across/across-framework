@@ -32,6 +32,7 @@ Upgrade to *Spring Platform Athens*, new major dependency versions:
 ** using <<web-app-path-resolver,prefixes>> directly in url expressions is now supported
 ** addition of *across:static* and *across:resource* attributes for generating links to static resources
 * add infrastructure for defining <<customrequestcondition,custom request mapping conditions>> using `@CustomRequestMapping` and `CustomRequestCondition`
+* partial rendering of a single `ViewElement` is now also supported (see {bootstrap-ui-module-url}[BootstrapUiModule] documentation).
 
 === 1.1.3.RELEASE
 Maintenance release containing several bugfixes.

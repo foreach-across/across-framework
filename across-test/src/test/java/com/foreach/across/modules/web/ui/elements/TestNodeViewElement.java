@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
+import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Test;
 
@@ -42,6 +43,18 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 		node.addChild( new NodeViewElement( "li" ) );
 
 		renderAndExpect( node, "<ul><li></li>child text<li></li></ul>" );
+	}
+
+	@Test
+	public void nodeWithSingleVisibleChild() {
+		NodeViewElement node = new NodeViewElement( "ul" );
+		node.addChild( new NodeViewElement( "li" ) );
+		node.addChild( new TextViewElement( "child text" ) );
+		NodeViewElement subNode = new NodeViewElement( "visible", "li" );
+		subNode.addChild( TextViewElement.text( "hello" ) );
+		node.addChild( subNode );
+
+		renderAndExpect( node, model -> model.addAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "visible" ), "<li>hello</li>" );
 	}
 
 	@Test

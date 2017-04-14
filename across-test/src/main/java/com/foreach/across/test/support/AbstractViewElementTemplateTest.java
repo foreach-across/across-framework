@@ -21,7 +21,6 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.across.test.modules.webtest.WebTestModule;
 import com.foreach.across.test.modules.webtest.controllers.RenderViewElementController;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.XmlExpectationsHelper;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -120,31 +117,22 @@ public abstract class AbstractViewElementTemplateTest
 		renderController.setCallback( callback );
 
 		final String doctype = generateDocType();
-		final String expectedXml =
-				"<?xml version=\"1.0\"?>" + doctype + "<root xmlns:across='http://across.foreach.be'>" + expectedContent + "</root>";
+		final String pattern = "<?xml version=\"1.0\"?>" + doctype + "<root xmlns:across='http://across.foreach.be'>%s</root>";
 
 		try {
 			mockMvc.perform( get( RenderViewElementController.PATH ) )
 			       .andExpect( status().isOk() )
-			       .andDo( new ResultHandler()
-			       {
-				       @Override
-				       public void handle( MvcResult mvcResult ) throws Exception {
-					       String receivedXml = mvcResult.getResponse().getContentAsString();
+			       .andDo( mvcResult -> {
+				       String receivedContent = mvcResult.getResponse().getContentAsString();
 
-					       if ( !StringUtils.isEmpty( doctype ) ) {
-						       receivedXml = StringUtils.replace(
-								       receivedXml,
-								       "<?xml version=\"1.0\"?>",
-								       "<?xml version=\"1.0\"?>" + doctype
-						       );
-					       }
-					       try {
-						       new XmlExpectationsHelper().assertXmlEqual( expectedXml, receivedXml );
-					       }
-					       catch ( AssertionError | Exception e ) {
-						       throw new AssertionError( "Unexpected content:\n" + receivedXml, e );
-					       }
+				       try {
+					       new XmlExpectationsHelper().assertXmlEqual(
+							       String.format( pattern, expectedContent ),
+							       String.format( pattern, receivedContent )
+					       );
+				       }
+				       catch ( AssertionError | Exception e ) {
+					       throw new AssertionError( "Unexpected content:\n" + receivedContent, e );
 				       }
 			       } );
 

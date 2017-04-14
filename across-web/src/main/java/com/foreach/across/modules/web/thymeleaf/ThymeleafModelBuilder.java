@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
+import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
  * @author Arne Vandamme
  * @since 2.0.0
  */
-public class ThymeleafModelBuilder
+public final class ThymeleafModelBuilder
 {
 	private final ITemplateContext templateContext;
 	private final ViewElementModelWriterRegistry nodeBuilderRegistry;
@@ -117,20 +118,24 @@ public class ThymeleafModelBuilder
 	}
 
 	/**
-	 * Add the element to the model.  Will lookup the {@link ViewElementModelWriter} for the element typs
+	 * Add the element to the model.  Will lookup the {@link ViewElementModelWriter} for the element type
 	 * in the {@link ViewElementModelWriterRegistry} attached to this model builder.
+	 * <p/>
+	 * If the request contains a {@link WebTemplateInterceptor#RENDER_VIEW_ELEMENT} attribute, it is considered to be the name of the ViewElement
+	 * that should have its actual output rendered.  All other ViewElements will still get built, but their markup suppressed.
+	 * In case of a partial rendering, special processing instructions are added to tell the {@link PartialViewElementTemplateProcessor} to allow the markup.
 	 *
 	 * @param viewElement to add
 	 */
 	public void addViewElement( ViewElement viewElement ) {
 		if ( viewElement != null ) {
-			String partialName = (String) templateContext.getVariable( "_partialViewElement" );
+			String partialName = (String) templateContext.getVariable( WebTemplateInterceptor.RENDER_VIEW_ELEMENT );
 
-			boolean enabled = false;
+			boolean partialRenderingEnabled = false;
 
 			if ( partialName != null && partialName.equals( viewElement.getName() ) ) {
-				enabled = true;
-				model.add( modelFactory.createProcessingInstruction( "_partialViewElement", "start" ) );
+				partialRenderingEnabled = true;
+				model.add( modelFactory.createProcessingInstruction( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "start" ) );
 			}
 
 			if ( hasCustomTemplate( viewElement ) ) {
@@ -144,8 +149,8 @@ public class ThymeleafModelBuilder
 				}
 			}
 
-			if ( enabled  ) {
-				model.add( modelFactory.createProcessingInstruction( "_partialViewElement", "end" ) );
+			if ( partialRenderingEnabled ) {
+				model.add( modelFactory.createProcessingInstruction( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "end" ) );
 			}
 		}
 	}

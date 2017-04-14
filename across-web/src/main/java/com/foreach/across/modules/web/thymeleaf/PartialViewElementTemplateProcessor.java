@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
+import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AbstractTemplateHandler;
 import org.thymeleaf.engine.ITemplateHandler;
@@ -22,11 +23,18 @@ import org.thymeleaf.model.IProcessingInstruction;
 import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import java.util.Optional;
+
 /**
+ * If only a specific {@link com.foreach.across.modules.web.ui.ViewElement} should be rendered, this
+ * processor will submit all output unless it is between specific processing instructions.
+ *
  * @author Arne Vandamme
+ * @see com.foreach.across.modules.web.template.WebTemplateInterceptor
+ * @see ThymeleafModelBuilder
  * @since 2.0.0
  */
-public class PartialViewElementTemplateProcessor implements IPostProcessor
+final class PartialViewElementTemplateProcessor implements IPostProcessor
 {
 	@Override
 	public TemplateMode getTemplateMode() {
@@ -43,54 +51,34 @@ public class PartialViewElementTemplateProcessor implements IPostProcessor
 		return TemplateHandler.class;
 	}
 
-	public static class TemplateHandler extends AbstractTemplateHandler {
+	public static class TemplateHandler extends AbstractTemplateHandler
+	{
 		private ITemplateHandler outputHandler;
-		private boolean partial  = false;
-
-		private boolean active = false;
+		private boolean partial = false;
 
 		@Override
 		public void setNext( ITemplateHandler next ) {
 			this.outputHandler = next;
-
 			super.setNext( partial ? null : next );
 		}
 
 		@Override
 		public void setContext( ITemplateContext context ) {
 			super.setContext( context );
-			String partial = (String) context.getVariable( "_partialViewElement" );
-			if ( partial != null ) {
-				this.partial = true;
-				super.setNext( null );
-			}
+
+			Optional.ofNullable( context.getVariable( WebTemplateInterceptor.RENDER_VIEW_ELEMENT ) )
+			        .ifPresent( elementName -> {
+				                    partial = true;
+				                    super.setNext( null );
+			                    }
+			        );
 		}
 
 		@Override
 		public void handleProcessingInstruction( IProcessingInstruction processingInstruction ) {
-			if ( "_partialViewElement".equals( processingInstruction.getTarget() )) {
+			if ( WebTemplateInterceptor.RENDER_VIEW_ELEMENT.equals( processingInstruction.getTarget() ) ) {
 				super.setNext( "start".equals( processingInstruction.getContent() ) ? outputHandler : null );
 			}
 		}
-
-		/*
-		@Override
-		public void handleOpenElement( IOpenElementTag openElementTag ) {
-			getNext().handleOpenElement( openElementTag );
-			//super.setNext( !partial || active ? outputHandler : null  );
-		}
-
-		@Override
-		public void handleText( IText text ) {
-			getNext().handleText( text );
-			//super.setNext( !partial || active ? outputHandler : null  );
-		}
-
-		@Override
-		public void handleCloseElement( ICloseElementTag closeElementTag ) {
-			getNext().handleCloseElement( closeElementTag );
-			//super.setNext( !partial || active ? outputHandler : null  );
-		}
-		*/
 	}
 }
