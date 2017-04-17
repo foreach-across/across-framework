@@ -16,7 +16,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test that checks that bootstrap fails if an exception occurs during event handling.
+ * DevelopmentModeCondition that checks that bootstrap fails if an exception occurs during event handling.
  */
 public class TestBootstrap
 {

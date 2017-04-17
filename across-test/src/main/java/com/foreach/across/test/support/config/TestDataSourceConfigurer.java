@@ -37,7 +37,7 @@ import javax.sql.DataSource;
 
 /**
  * Adds support for test datasource detection to an {@link AcrossContext}.
- * Test datasources can be configured in the <em>${user.home}/dev-configs/across-test.properties</em> with properties
+ * DevelopmentModeCondition datasources can be configured in the <em>${user.home}/dev-configs/across-test.properties</em> with properties
  * of the form:
  * <ul>
  * <li>acrossTest.datasource.NAME.driver</li>

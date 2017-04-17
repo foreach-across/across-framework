@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Test controller applying the default template.
+ * DevelopmentModeCondition controller applying the default template.
  *
  * @author Arne Vandamme
  * @since 1.1.3

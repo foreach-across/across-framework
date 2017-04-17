@@ -33,7 +33,7 @@ import org.springframework.core.convert.ConversionService;
 import static org.junit.Assert.*;
 
 /**
- * Test @Exposed functionality within the AcrossContext.
+ * DevelopmentModeCondition @Exposed functionality within the AcrossContext.
  *
  * @author Arne Vandamme
  */

@@ -102,7 +102,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 		Class settingsClass = loadClass( settingsClassName );
 
 		if ( hasSettings() ) {
-			assertNotNull( "Test declares module has settings but class was not found: " + settingsClassName,
+			assertNotNull( "DevelopmentModeCondition declares module has settings but class was not found: " + settingsClassName,
 			               settingsClass );
 
 			if ( !AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
@@ -112,7 +112,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 		else if ( settingsClass != null ) {
 			if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
 				assertNull(
-						"Test declares module does not have settings but AcrossModuleSettings implementation was found",
+						"DevelopmentModeCondition declares module does not have settings but AcrossModuleSettings implementation was found",
 						settingsClass );
 			}
 		}

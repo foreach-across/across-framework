@@ -37,7 +37,7 @@ public class PropertiesModule extends AcrossModule
 
 	@Override
 	public String getDescription() {
-		return "Test module for property loading.";
+		return "DevelopmentModeCondition module for property loading.";
 	}
 
 	@Override

@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Test controller verifying the default {@link com.foreach.across.modules.web.ui.ViewElementBuilderContext}.
+ * DevelopmentModeCondition controller verifying the default {@link com.foreach.across.modules.web.ui.ViewElementBuilderContext}.
  *
  * @author Arne Vandamme
  * @since 2.0.0

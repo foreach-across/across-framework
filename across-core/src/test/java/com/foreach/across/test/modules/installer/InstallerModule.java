@@ -30,7 +30,7 @@ public class InstallerModule extends AcrossModule
 
 	@Override
 	public String getDescription() {
-		return "Test module for installers.";
+		return "DevelopmentModeCondition module for installers.";
 	}
 
 	@Override

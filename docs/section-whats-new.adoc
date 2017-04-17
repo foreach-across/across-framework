@@ -14,6 +14,7 @@ Upgrade to *Spring Platform Athens*, new major dependency versions:
 ** note that the backing implementation of the event bus might change in the future, applications should avoid using MBassdor specific features
 * development mode will register a default resources directory for dynamic modules
 ** this will be an existing *src/main/resources* folder relative to the working directory of the running application
+* `@ConditionalOnDevelopmentMode` added to detect if development mode is active
 
 *Across Test*
 

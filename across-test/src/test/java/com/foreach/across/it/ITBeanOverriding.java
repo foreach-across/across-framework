@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Test that configurers added after the initial configurers will override the bean definition.
+ * DevelopmentModeCondition that configurers added after the initial configurers will override the bean definition.
  *
  * @author Arne Vandamme
  */

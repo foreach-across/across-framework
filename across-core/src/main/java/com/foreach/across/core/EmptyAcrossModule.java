@@ -23,13 +23,21 @@ import java.util.Set;
 /**
  * Default empty AcrossModule with a configurable name. This module does not do anything by default,
  * but can be used to inject in an AcrossContext to satisfy dependencies.
+ * <p/>
+ * Optionally a set of annotated classes can be added that should be loaded in this module.
+ *
+ * @author Arne Vandamme
+ * @since 2.0.0
  */
 public final class EmptyAcrossModule extends AcrossModule
 {
 	private final String name;
 
-	public EmptyAcrossModule( String name ) {
+	public EmptyAcrossModule( String name, Class<?>... annotatedClasses ) {
 		this.name = name;
+		if ( annotatedClasses.length > 0 ) {
+			addApplicationContextConfigurer( annotatedClasses );
+		}
 	}
 
 	/**

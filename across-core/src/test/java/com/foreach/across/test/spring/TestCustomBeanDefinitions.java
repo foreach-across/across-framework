@@ -35,7 +35,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
- * Test general approach of Spring ApplicationContext hierarchy and the way to expose beans
+ * DevelopmentModeCondition general approach of Spring ApplicationContext hierarchy and the way to expose beans
  * using custom bean definitions.
  *
  * @author Arne Vandamme

@@ -76,7 +76,7 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 		verify( two ).postProcess( eq( builderContext ), any( ViewElement.class ) );
 	}
 
-//	@Test
+//	@DevelopmentModeCondition
 //	public void methodsShouldReturnBuilderInstance() throws Exception {
 //		Class<?> c = builder.getClass();
 //
