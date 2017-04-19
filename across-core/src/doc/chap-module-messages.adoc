@@ -56,7 +56,7 @@ public class ModuleConfig
 	@Bean
 	public MessageSource messageSource() {
         AcrossModuleMessageSource source = new AcrossModuleMessageSource();
-        source.setBasenames( "classpath:/my/module/messages );
+        source.setBasenames( "classpath:/my/module/messages" );
 
         return source;
 	}
