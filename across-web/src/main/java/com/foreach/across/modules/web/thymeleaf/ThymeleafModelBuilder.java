@@ -57,13 +57,17 @@ public final class ThymeleafModelBuilder
 
 	private final Deque<String> openTags = new ArrayDeque<>();
 	private final Map<String, Collection<String>> pendingTagAttributes = new HashMap<>();
+	private final boolean developmentMode;
+
 	private String pendingTag;
+	private String viewElementName;
 
 	public ThymeleafModelBuilder( ITemplateContext templateContext,
 	                              ViewElementModelWriterRegistry nodeBuilderRegistry,
 	                              HtmlIdStore htmlIdStore,
 	                              ViewElementAttributeConverter attributeConverter,
-	                              AttributeNameGenerator attributeNameGenerator ) {
+	                              AttributeNameGenerator attributeNameGenerator,
+	                              boolean developmentMode ) {
 		Assert.notNull( templateContext );
 		Assert.notNull( nodeBuilderRegistry );
 		Assert.notNull( htmlIdStore );
@@ -78,6 +82,7 @@ public final class ThymeleafModelBuilder
 
 		this.modelFactory = templateContext.getModelFactory();
 		this.model = modelFactory.createModel();
+		this.developmentMode = developmentMode;
 	}
 
 	private ThymeleafModelBuilder( ThymeleafModelBuilder parent ) {
@@ -86,6 +91,7 @@ public final class ThymeleafModelBuilder
 		htmlIdStore = parent.htmlIdStore;
 		attributeConverter = parent.attributeConverter;
 		attributeNameGenerator = parent.attributeNameGenerator;
+		developmentMode = parent.developmentMode;
 
 		modelFactory = templateContext.getModelFactory();
 		model = modelFactory.createModel();
@@ -138,6 +144,13 @@ public final class ThymeleafModelBuilder
 				model.add( modelFactory.createProcessingInstruction( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "start" ) );
 			}
 
+			boolean writeViewElementName = developmentMode && viewElement.getName() != null;
+
+			if ( writeViewElementName ) {
+				writePendingTag();
+				writeViewElementNameComment( viewElement.getName(), false );
+			}
+
 			if ( hasCustomTemplate( viewElement ) ) {
 				renderCustomTemplate( viewElement, templateContext );
 			}
@@ -145,8 +158,13 @@ public final class ThymeleafModelBuilder
 				ViewElementModelWriter<ViewElement> processor = nodeBuilderRegistry.getModelWriter( viewElement );
 
 				if ( processor != null ) {
+					viewElementName = viewElement.getName();
 					processor.writeModel( viewElement, this );
 				}
+			}
+
+			if ( writeViewElementName ) {
+				writeViewElementNameComment( viewElement.getName(), true );
 			}
 
 			if ( partialRenderingEnabled ) {
@@ -254,6 +272,10 @@ public final class ThymeleafModelBuilder
 			String html = escapeXml ? HtmlEscape.escapeHtml4Xml( text ) : text;
 			model.add( modelFactory.createText( html ) );
 		}
+	}
+
+	private void writeViewElementNameComment( String elementName, boolean closing ) {
+		model.add( modelFactory.createComment( ( closing ? "[/ax:" : "[ax:" ) + elementName + "]" ) );
 	}
 
 	/**
@@ -390,6 +412,10 @@ public final class ThymeleafModelBuilder
 	public void addOpenElement( String tagName ) {
 		writePendingTag();
 		pendingTag = tagName;
+		if ( developmentMode && viewElementName != null ) {
+			addAttribute( "data-ax-dev-view-element", viewElementName );
+			viewElementName = null;
+		}
 		openTags.push( tagName );
 	}
 
@@ -419,7 +445,7 @@ public final class ThymeleafModelBuilder
 		model.add( modelFactory.createCloseElementTag( tagName ) );
 	}
 
-	private void writePendingTag() {
+	private boolean writePendingTag() {
 		if ( pendingTag != null ) {
 			model.add(
 					modelFactory.createOpenElementTag(
@@ -428,7 +454,11 @@ public final class ThymeleafModelBuilder
 			);
 			pendingTag = null;
 			removeAttributes();
+
+			return true;
 		}
+
+		return false;
 	}
 
 	private Map<String, String> buildAttributeValues() {

@@ -17,6 +17,7 @@ package com.foreach.across.test.support;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.across.test.modules.webtest.WebTestModule;
@@ -64,7 +65,7 @@ public abstract class AbstractViewElementTemplateTest
 	public static final String CUSTOM_TEMPLATE_OUTPUT = "Hello from RenderViewElementController.";
 
 	@Autowired
-	private WebApplicationContext wac;
+	private AcrossContextInfo contextInfo;
 
 	@Autowired
 	private RenderViewElementController renderController;
@@ -74,7 +75,7 @@ public abstract class AbstractViewElementTemplateTest
 
 	@Before
 	public void initMvc() {
-		mockMvc = MockMvcBuilders.webAppContextSetup( wac ).build();
+		mockMvc = MockMvcBuilders.webAppContextSetup( (WebApplicationContext) contextInfo.getApplicationContext() ).build();
 	}
 
 	/**
@@ -136,6 +137,33 @@ public abstract class AbstractViewElementTemplateTest
 				       }
 			       } );
 
+		}
+		catch ( Exception e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	/**
+	 * @return output that was rendered
+	 */
+	public String render( ViewElement viewElement ) {
+		return render( viewElement, callback );
+	}
+
+	/**
+	 * @return output that was rendered
+	 */
+	public String render( ViewElement viewElement, RenderViewElementController.Callback callback ) {
+		renderController.setElement( viewElement );
+		renderController.setCallback( callback );
+
+		final String doctype = generateDocType();
+
+		try {
+			return mockMvc.perform( get( RenderViewElementController.PATH ) )
+			              .andExpect( status().isOk() )
+			              .andReturn()
+			              .getResponse().getContentAsString();
 		}
 		catch ( Exception e ) {
 			throw new RuntimeException( e );

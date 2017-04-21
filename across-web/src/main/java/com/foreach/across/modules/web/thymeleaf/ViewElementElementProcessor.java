@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
+import com.foreach.across.modules.web.config.AcrossWebModuleDevSettings;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
@@ -62,7 +63,10 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 		HtmlIdStore idStore = HtmlIdStore.fetch( context );
 		AttributeNameGenerator generator = AttributeNameGenerator.fetch( context );
 
-		ThymeleafModelBuilder builder = new ThymeleafModelBuilder( context, registry, idStore, attributeConverter, generator );
+		AcrossWebModuleDevSettings developmentMode = appCtx.getBean( AcrossWebModuleDevSettings.class );
+
+		ThymeleafModelBuilder builder = new ThymeleafModelBuilder( context, registry, idStore, attributeConverter, generator,
+		                                                           developmentMode.shouldRenderViewElementNames() );
 		builder.addViewElement( viewElement );
 		structureHandler.replaceWith( builder.retrieveModel(), true );
 	}

@@ -18,9 +18,9 @@
 <body>
 
 <!-- Custom template that replaces model attributes and can be used for verifying template parsing works. -->
-<div th:fragment="render(component)" th:remove="tag">
-    Hello from <span th:text="${controllerAttributes[name]}" th:remove="tag">controller name</span>.
-</div>
+<div th:fragment="render(component)" th:remove="tag"><!--/*
+    */-->Hello from <span th:text="${controllerAttributes[name]}" th:remove="tag">controller name</span>.<!--/*
+*/--></div>
 
 </body>
 </html>

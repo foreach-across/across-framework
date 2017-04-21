@@ -68,7 +68,7 @@ public class TestThymeleafModelBuilder
 		doAnswer( invocation -> invocation.getArgumentAt( 0, String.class ) )
 				.when( attributeConverter ).apply( anyObject() );
 
-		modelBuilder = new ThymeleafModelBuilder( context, registry, htmlIdStore, attributeConverter, new AttributeNameGenerator());
+		modelBuilder = new ThymeleafModelBuilder( context, registry, htmlIdStore, attributeConverter, new AttributeNameGenerator(), false );
 	}
 
 	@Test
