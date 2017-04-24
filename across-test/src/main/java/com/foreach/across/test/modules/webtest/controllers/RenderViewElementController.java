@@ -16,6 +16,7 @@
 package com.foreach.across.test.modules.webtest.controllers;
 
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.web.template.ClearTemplate;
 import com.foreach.across.modules.web.ui.ViewElement;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 @Exposed
 @Controller
+@ClearTemplate
 public class RenderViewElementController
 {
 	public static final String PATH = "/renderViewElement";
