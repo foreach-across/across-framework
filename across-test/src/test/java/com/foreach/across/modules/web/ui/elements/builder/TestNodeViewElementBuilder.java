@@ -40,12 +40,16 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 	@Test
 	public void addElements() {
 		TextViewElement textOne = new TextViewElement( "textOne", "text 1" );
+		TextViewElement textTwo = new TextViewElement( "textTwo", "text 2" );
 
-		builder.tagName( "a" ).attribute( "href", "somelink" ).removeAttribute( "class" ).add( textOne );
+		builder.tagName( "a" ).attribute( "href", "somelink" ).removeAttribute( "class" ).add( textOne )
+		       .addFirst( textTwo );
 
 		build();
 
-		assertEquals( 1, element.getChildren().size() );
+		assertEquals( 2, element.getChildren().size() );
+		assertSame( textTwo, element.getChildren().get( 0 ) );
+		assertSame( textOne, element.getChildren().get( 1 ) );
 
 		assertEquals( "a", element.getTagName() );
 		assertEquals( "somelink", element.getAttribute( "href" ) );

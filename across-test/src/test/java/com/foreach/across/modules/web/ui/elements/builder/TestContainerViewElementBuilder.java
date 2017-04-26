@@ -65,6 +65,20 @@ public class TestContainerViewElementBuilder extends AbstractViewElementBuilderT
 	}
 
 	@Test
+	public void addFirstElements() {
+		TextViewElement textOne = new TextViewElement( "textOne", "text 1" );
+		TextViewElement textTwo = new TextViewElement( "textTwo", "text 2" );
+
+		builder.addFirst( textOne ).addFirst( textTwo );
+
+		build();
+		assertEquals( 2, element.getChildren().size() );
+		assertEquals( Optional.of( textOne ), find( element, "textOne" ) );
+		assertEquals( Optional.of( textTwo ), find( element, "textTwo" ) );
+		assertSame( textTwo, element.getChildren().get( 0 ) );
+	}
+
+	@Test
 	public void addElementBuilder() {
 		TextViewElementBuilder textBuilder = new TextViewElementBuilder().name( "textThree" ).text( "text three" );
 
@@ -84,7 +98,7 @@ public class TestContainerViewElementBuilder extends AbstractViewElementBuilderT
 		TextViewElementBuilder textThree = new TextViewElementBuilder().name( "textFour" ).text( "text 4" );
 
 		builder.sort( "textFour", "textTwo", "textThree", "textOne" )
-		       .add( textThree ).add( textOne, textTwo ).add( textFour );
+		       .add( textThree ).add( textOne, textTwo ).addFirst( textFour );
 
 		build();
 		assertEquals( 4, element.getChildren().size() );
