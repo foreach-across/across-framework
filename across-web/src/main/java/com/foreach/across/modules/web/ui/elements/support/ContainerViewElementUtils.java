@@ -18,10 +18,13 @@ package com.foreach.across.modules.web.ui.elements.support;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 /**
  * Contains a set of utility functions for manipulating {@link ContainerViewElement}s recursively.
@@ -33,6 +36,20 @@ import java.util.function.UnaryOperator;
 public final class ContainerViewElementUtils
 {
 	private ContainerViewElementUtils() {
+	}
+
+	/**
+	 * Find the first element with the given name in the container.  Will recursive through all children
+	 * that are also {@link ContainerViewElement} implementations.  Search will be top-down and the first
+	 * matching element will be returned.
+	 *
+	 * @param container   collection of elements
+	 * @param elementName name of the element
+	 * @return element if found
+	 */
+	public static Optional<ViewElement> findOrSelf( ContainerViewElement container,
+	                                                String elementName ) {
+		return findOrSelf( container, elementName, ViewElement.class );
 	}
 
 	/**
@@ -60,9 +77,9 @@ public final class ContainerViewElementUtils
 	 * @param requiredType type the element should have
 	 * @return element if found
 	 */
-	public static <V extends ViewElement> Optional<V> find( ContainerViewElement container,
-	                                                        String elementName,
-	                                                        Class<V> requiredType ) {
+	public static <V extends ViewElement> Optional<V> findOrSelf( ContainerViewElement container,
+	                                                              String elementName,
+	                                                              Class<V> requiredType ) {
 		if ( elementName == null ) {
 			return Optional.empty();
 		}
@@ -71,20 +88,114 @@ public final class ContainerViewElementUtils
 			return Optional.of( requiredType.cast( container ) );
 		}
 
-		for ( ViewElement element : container.getChildren() ) {
-			if ( StringUtils.equals( elementName, element.getName() ) && requiredType.isInstance( element ) ) {
-				return Optional.of( requiredType.cast( element ) );
-			}
-			else if ( element instanceof ContainerViewElement ) {
-				Optional<V> foundInChild = find( (ContainerViewElement) element, elementName, requiredType );
+		return find( container, elementName, requiredType );
+	}
 
-				if ( foundInChild.isPresent() ) {
-					return foundInChild;
-				}
-			}
+	/**
+	 * Find the first element with the given name that is also of the required type.
+	 * Will recursive through all children that are also {@link ContainerViewElement} implementations.
+	 * Search will be top-down and the first matching element will be returned.  If no element has that
+	 * name or it is not of the required type, {@link Optional#empty()} will be returned.
+	 *
+	 * @param container    collection of elements
+	 * @param elementName  name of the element
+	 * @param requiredType type the element should have
+	 * @return element if found
+	 */
+	public static <V extends ViewElement> Optional<V> find( ContainerViewElement container,
+	                                                        String elementName,
+	                                                        Class<V> requiredType ) {
+		if ( elementName == null ) {
+			return Optional.empty();
 		}
 
-		return Optional.empty();
+		return container.elementStream()
+		                .map( element -> {
+			                      if ( StringUtils.equals( elementName, element.getName() ) && requiredType.isInstance( element ) ) {
+				                      return requiredType.cast( element );
+			                      }
+			                      else if ( element instanceof ContainerViewElement ) {
+				                      Optional<V> foundInChild = find( (ContainerViewElement) element, elementName, requiredType );
+
+				                      if ( foundInChild.isPresent() ) {
+					                      return foundInChild.get();
+				                      }
+			                      }
+			                      return null;
+		                      }
+		                )
+		                .filter( Objects::nonNull )
+		                .findFirst();
+	}
+
+	/**
+	 * Creates a flattened stream of all elements in the container.
+	 * Will recurse top-down through all children that are also {@link ContainerViewElement} implementations.
+	 *
+	 * @param container collection of elements
+	 * @return flattened stream
+	 */
+	public static Stream<ViewElement> flatStream( ContainerViewElement container ) {
+		return findAll( container, e -> true );
+	}
+
+	/**
+	 * Find all elements in the container that are of the required type.
+	 * Will recurse top-down through all children that are also {@link ContainerViewElement} implementations.
+	 *
+	 * @param container    collection of elements
+	 * @param requiredType the elements should have
+	 * @param <V>          type
+	 * @return stream of matching elements
+	 */
+	@SuppressWarnings("unchecked")
+	public static <V extends ViewElement> Stream<V> findAll( ContainerViewElement container, Class<V> requiredType ) {
+		return (Stream<V>) findAll( container, requiredType::isInstance );
+	}
+
+	/**
+	 * Find all elements in the container that are of the required type and match the additional predicate.
+	 * Will recurse top-down through all children that are also {@link ContainerViewElement} implementations.
+	 *
+	 * @param container    collection of elements
+	 * @param requiredType the elements should have
+	 * @param predicate    additional predicate the elements should match
+	 * @param <V>          type
+	 * @return stream of matching elements
+	 */
+	@SuppressWarnings("unchecked")
+	public static <V extends ViewElement> Stream<V> findAll( ContainerViewElement container, Class<V> requiredType, Predicate<V> predicate ) {
+		Predicate typePredicate = requiredType::isInstance;
+		return (Stream<V>) findAll( container, typePredicate.and( predicate ) );
+	}
+
+	/**
+	 * Find all elements in the container that match the predicate.
+	 * Will recurse top-down through all children that are also {@link ContainerViewElement} implementations.
+	 *
+	 * @param container collection of elements
+	 * @param predicate additional predicate the elements should match
+	 * @return stream of matching elements
+	 */
+	public static Stream<ViewElement> findAll( ContainerViewElement container, Predicate<ViewElement> predicate ) {
+		Assert.notNull( container );
+		Assert.notNull( predicate );
+		Stream.Builder<ViewElement> stream = Stream.builder();
+		appendElementsToStream( container, predicate, stream );
+		return stream.build();
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void appendElementsToStream( ContainerViewElement container, Predicate predicate, Stream.Builder builder ) {
+		container.elementStream().forEach( child -> {
+			if ( predicate.test( child ) ) {
+				builder.accept( child );
+			}
+
+			if ( child instanceof ContainerViewElement ) {
+				appendElementsToStream( (ContainerViewElement) child, predicate, builder );
+			}
+		} );
 	}
 
 	/**
@@ -100,20 +211,24 @@ public final class ContainerViewElementUtils
 			return Optional.empty();
 		}
 
-		for ( ViewElement element : container.getChildren() ) {
-			if ( child.equals( element ) ) {
-				return Optional.of( container );
-			}
-			else if ( element instanceof ContainerViewElement ) {
-				Optional<ContainerViewElement> foundInChild = findParent( (ContainerViewElement) element, child );
+		return container.elementStream()
+		                .map( element -> {
+			                      if ( child.equals( element ) ) {
+				                      return container;
+			                      }
+			                      else if ( element instanceof ContainerViewElement ) {
+				                      Optional<ContainerViewElement> foundInChild = findParent( (ContainerViewElement) element, child );
 
-				if ( foundInChild.isPresent() ) {
-					return foundInChild;
-				}
-			}
-		}
+				                      if ( foundInChild.isPresent() ) {
+					                      return foundInChild.get();
+				                      }
+			                      }
 
-		return Optional.empty();
+			                      return null;
+		                      }
+		                )
+		                .filter( Objects::nonNull )
+		                .findFirst();
 	}
 
 	/**
@@ -195,6 +310,24 @@ public final class ContainerViewElementUtils
 		}
 
 		return element;
+	}
+
+	/**
+	 * Remove all elements with that name from the tree.
+	 * The container will be searched top-down recursively for elements with that name and they will all be removed.
+	 * The stream can hold fewer or more elements than the names that have been specified.
+	 * <p/>
+	 * Elements will be returned sorted according to the element names requested, and if more than one element has the
+	 * same name, in tree order.
+	 *
+	 * @param container to remove the element from
+	 * @return elements that have been removed
+	 */
+	public static Stream<ViewElement> removeAll( ContainerViewElement container, String... elementNames ) {
+		return Stream.of( elementNames )
+		             .flatMap( elementName -> findAll( container, element -> element.getName() != null && element.getName().equals( elementName ) ) )
+		             .map( e -> remove( container, e ) ? e : null )
+		             .filter( Objects::nonNull );
 	}
 
 	/**
@@ -300,7 +433,7 @@ public final class ContainerViewElementUtils
 
 	/**
 	 * Replace an element in the container hierarchy by another element.  If the element to replace is not
-	 * foundnothing will happen.  If the element is found, it will be passed  as an argument to the
+	 * found nothing will happen.  If the element is found, it will be passed as an argument to the
 	 * replacementFunction parameter.  The return value will be the replacement element.
 	 * If the replacement element is {@code null}, this operation is the same as
 	 * a {@link #remove(ContainerViewElement, ViewElement)}.

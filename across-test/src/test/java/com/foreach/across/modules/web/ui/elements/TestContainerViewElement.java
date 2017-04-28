@@ -186,6 +186,31 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 	}
 
 	@Test
+	public void moveElements() {
+		ContainerViewElement source = new ContainerViewElement();
+		ContainerViewElement members = new ContainerViewElement();
+		members.addChild( new TextViewElement( "one", "one" ) );
+		members.addChild( new TextViewElement( "three", "three" ) );
+		ContainerViewElement subMembers = new ContainerViewElement();
+		subMembers.addChild( new NodeViewElement( "two", "two" ) );
+		members.addChild( subMembers );
+		source.addChild( members );
+
+		ContainerViewElement target = new ContainerViewElement();
+
+		assertTrue( source.find( "one" ).isPresent() );
+		assertTrue( source.find( "two" ).isPresent() );
+		assertTrue( source.find( "three" ).isPresent() );
+
+		source.removeAllFromTree( "one", "two", "four" )
+		      .forEach( target::addChild );
+
+		assertTrue( target.find( "one" ).isPresent() );
+		assertTrue( target.find( "two" ).isPresent() );
+		assertTrue( source.find( "three" ).isPresent() );
+	}
+
+	@Test
 	public void customTemplateChild() {
 		ContainerViewElement container = new ContainerViewElement();
 		container.addChild( new TemplateViewElement( CUSTOM_TEMPLATE ) );

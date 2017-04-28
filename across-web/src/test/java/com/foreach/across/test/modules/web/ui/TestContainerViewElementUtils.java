@@ -24,8 +24,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils.find;
+import static com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils.findOrSelf;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
@@ -53,7 +56,8 @@ public class TestContainerViewElementUtils
 		TextViewElement text = new TextViewElement( "name", "text" );
 		container.addChild( text );
 
-		assertEquals( Optional.of( container ), find( container, "name" ) );
+		assertEquals( Optional.of( text ), find( container, "name" ) );
+		assertEquals( Optional.of( container ), findOrSelf( container, "name" ) );
 	}
 
 	@Test
@@ -103,6 +107,42 @@ public class TestContainerViewElementUtils
 		assertEquals( Optional.of( other ), find( container, "name", ContainerViewElement.class ) );
 		assertEquals( Optional.of( node ), find( container, "parent", NodeViewElement.class ) );
 		assertEquals( Optional.empty(), find( container, "parent", TextViewElement.class ) );
+	}
+
+	@Test
+	public void flatStream() {
+		TextViewElement text = new TextViewElement( "name", "text" );
+		NodeViewElement node = new NodeViewElement( "text", "n" );
+		NodeViewElement other = new NodeViewElement( "name", "sub" );
+		node.addChild( other );
+		container.addChild( text );
+		container.addChild( node );
+
+		assertEquals(
+				Arrays.asList( text, node, other ),
+				ContainerViewElementUtils.flatStream( container ).collect( Collectors.toList() )
+		);
+	}
+
+	@Test
+	public void findAll() {
+		TextViewElement text = new TextViewElement( "name", "text" );
+		NodeViewElement node = new NodeViewElement( "text", "n" );
+		NodeViewElement other = new NodeViewElement( "name", "sub" );
+		node.addChild( other );
+		container.addChild( text );
+		container.addChild( node );
+
+		assertEquals(
+				Arrays.asList( text, other ),
+				ContainerViewElementUtils.findAll( container, ve -> "name".equals( ve.getName() ) ).collect( Collectors.toList() )
+		);
+
+		Collection<NodeViewElement> found = ContainerViewElementUtils.findAll( container, NodeViewElement.class ).collect( Collectors.toList() );
+		assertEquals( Arrays.asList( node, other ), found );
+
+		found = ContainerViewElementUtils.findAll( container, NodeViewElement.class, n -> n.getChildren().isEmpty() ).collect( Collectors.toList() );
+		assertEquals( Collections.singletonList( other ), found );
 	}
 
 	@Test
@@ -247,6 +287,61 @@ public class TestContainerViewElementUtils
 		assertEquals( Optional.empty(), ContainerViewElementUtils.remove( container, "subOne" ) );
 
 		assertEquals( 1, two.getChildren().size() );
+	}
+
+	@Test
+	public void removeAll() {
+		ContainerViewElement container = new ContainerViewElement();
+		TextViewElement one = new TextViewElement( "one", "one" );
+		ContainerViewElement two = new ContainerViewElement( "two" );
+		TextViewElement subOne = new TextViewElement( "one", "subOne" );
+		two.addChild( subOne );
+
+		TextViewElement subTwo = new TextViewElement( "subTwo", "subTwo" );
+		two.addChild( subTwo );
+
+		container.addChild( one );
+		container.addChild( two );
+
+		assertEquals(
+				Arrays.asList( subTwo, one, subOne ),
+				ContainerViewElementUtils.removeAll( container, "subTwo", "one" ).collect( Collectors.toList() )
+		);
+
+		assertFalse( ContainerViewElementUtils.find( container, "one" ).isPresent() );
+		assertFalse( ContainerViewElementUtils.find( container, "subTwo" ).isPresent() );
+	}
+
+	@SuppressWarnings("all")
+	@Test
+	public void customElementStream() {
+		TextViewElement one = new TextViewElement( "one", "one" );
+
+		ContainerViewElement container = new ContainerViewElement()
+		{
+			@Override
+			public Stream<ViewElement> elementStream() {
+				return Stream.concat( Stream.of( one ), super.elementStream() );
+			}
+		};
+
+		ContainerViewElement two = new ContainerViewElement( "two" );
+		TextViewElement subOne = new TextViewElement( "one", "subOne" );
+		two.addChild( subOne );
+
+		TextViewElement subTwo = new TextViewElement( "subTwo", "subTwo" );
+		two.addChild( subTwo );
+
+		container.addChild( two );
+
+		assertSame( container, ContainerViewElementUtils.findParent( container, one ).get() );
+		assertEquals(
+				Arrays.asList( subTwo, subOne ),
+				ContainerViewElementUtils.removeAll( container, "subTwo", "one" ).collect( Collectors.toList() )
+		);
+
+		assertSame( one, ContainerViewElementUtils.find( container, "one" ).get() );
+		assertFalse( ContainerViewElementUtils.find( container, "subTwo" ).isPresent() );
 	}
 
 	@Test
