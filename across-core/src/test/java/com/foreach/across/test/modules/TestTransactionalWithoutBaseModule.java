@@ -26,7 +26,6 @@ import com.foreach.across.test.modules.hibernate1.ProductRepository;
 import com.foreach.across.test.modules.hibernate2.Hibernate2Module;
 import com.foreach.across.test.modules.hibernate2.User;
 import com.foreach.across.test.modules.hibernate2.UserRepository;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
