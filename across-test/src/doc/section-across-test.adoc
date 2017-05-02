@@ -19,25 +19,6 @@ Across Test builds on top of the Spring testing library.
 ----
 Thymeleaf integration: AcrossWebDialect
 
-#webapp.path('')
-across:view
-across:attributes
-
-Test module: WebTestModule
-
-test view element thymeleaf generation
-xml based generation testing
-
-AbstractViewElementTemplateTest
-
-test view element builder
-AbstractViewElementBuilderTest
-
-AcrossTestBuilders
-* single class and acrosscontext, multiple tests
-* single class, multiple context configurations
-* MockServletContext
-
 include::chap-base-test-classes.adoc[]
 
 include::chap-test-context-builders.adoc[]

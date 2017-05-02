@@ -30,7 +30,7 @@ This ensures that installers can always run against an actual datasource.
 
 If you want to change the fallback default datasource, you can do so by setting the *acossTest.datasource.default* property value.
 
-INFO: A common strategy is to run the integration tests multiple times with a different *acrossTest.datasource* property.
+NOTE: A common strategy is to run the integration tests multiple times with a different *acrossTest.datasource* property.
 The *standard-module-bom* automatically configures your maven build to run all unit test starting with *IT** in the integration-test phase.
 This is an efficient way to test for example installer compatibility for different database types.
 
