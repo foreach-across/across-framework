@@ -1,6 +1,6 @@
 == What's new in this version?
 
-=== 2.0.0-SNAPSHOT
+=== 2.0.0.RELEASE
 Upgrade to *Spring Platform Athens*, new major dependency versions:
 
 * Spring framework 4.3.x
