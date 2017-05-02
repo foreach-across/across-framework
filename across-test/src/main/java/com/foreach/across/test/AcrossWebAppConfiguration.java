@@ -33,8 +33,8 @@ import java.lang.annotation.*;
  * The combination of {@link com.foreach.across.test.AcrossWebAppConfiguration} and
  * {@link com.foreach.across.test.AcrossTestConfiguration} is a common setup for integration testing of Across modules.
  * <p>
- * This annotation has aliases for {@link org.springframework.test.context.ContextConfiguration#classes()} and
- * {@link org.springframework.test.context.ContextConfiguration#loader()}.  If you need more advanced customization
+ * This annotation has aliases for {@link org.springframework.test.context.ContextConfiguration} {@code classes()} and
+ * {@code loader()}.  If you need more advanced customization
  * you should revert to the manual combination of the annotations and adding the
  * {@link MockAcrossServletContextInitializer}.
  *
@@ -80,8 +80,7 @@ public @interface AcrossWebAppConfiguration
 	 * DelegatingSmartContextLoader} or
 	 * {@link org.springframework.test.context.web.WebDelegatingSmartContextLoader
 	 * WebDelegatingSmartContextLoader} depending on the absence or presence of
-	 * {@link org.springframework.test.context.web.WebAppConfiguration
-	 * &#064;WebAppConfiguration}. For further details on the default behavior
+	 * {@code org.springframework.test.context.web.WebAppConfiguration}. For further details on the default behavior
 	 * of various concrete {@code SmartContextLoaders}, check out the Javadoc for
 	 * {@link org.springframework.test.context.support.AbstractContextLoader AbstractContextLoader},
 	 * {@link org.springframework.test.context.support.GenericXmlContextLoader GenericXmlContextLoader},
