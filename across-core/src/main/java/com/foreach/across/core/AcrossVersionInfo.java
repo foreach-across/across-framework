@@ -147,7 +147,7 @@ public class AcrossVersionInfo
 
 				LOG.trace( "Loading manifest: {}", manifestPath );
 
-				try (InputStream is = new URL( manifestPath ).openStream()) {
+				try( InputStream is = new URL( manifestPath ).openStream() ) {
 					Manifest manifest = new Manifest( is );
 					Attributes attr = manifest.getMainAttributes();
 

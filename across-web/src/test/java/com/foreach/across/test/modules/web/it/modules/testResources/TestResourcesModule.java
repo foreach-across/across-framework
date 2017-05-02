@@ -39,6 +39,6 @@ public class TestResourcesModule extends AcrossModule
 
 	@Override
 	public String getDescription() {
-		return "Test module that contains some static resources.";
+		return "DevelopmentModeCondition module that contains some static resources.";
 	}
 }

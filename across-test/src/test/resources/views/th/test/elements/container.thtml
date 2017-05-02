@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:across="http://across.foreach.be">
+<body>
+
+<ul th:fragment="render(component)">
+	<li th:each="item: ${component.children}" th:text="${item.text}">item</li>
+</ul>
+
+<ol th:fragment="nested(component)">
+	<li th:each="item: ${component.children}">
+		<across:view element="${item}"/>
+	</li>
+</ol>
+
+</body>
+</html>

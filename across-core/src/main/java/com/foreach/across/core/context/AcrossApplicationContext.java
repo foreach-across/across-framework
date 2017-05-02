@@ -19,6 +19,9 @@ package com.foreach.across.core.context;
 import com.foreach.across.core.context.annotation.ModuleConfigurationBeanNameGenerator;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
+import com.foreach.across.core.events.EventHandlerBeanPostProcessor;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -87,6 +90,8 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	protected void registerBeanPostProcessors( ConfigurableListableBeanFactory beanFactory ) {
 		super.registerBeanPostProcessors( beanFactory );
 
+		registerEventHandlerBeanPostProcessor( beanFactory );
+
 		// Set the conversion service on the environment as well
 		ConfigurableEnvironment environment = getEnvironment();
 
@@ -95,6 +100,23 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 			environment.setConversionService(
 					beanFactory.getBean( CONVERSION_SERVICE_BEAN_NAME, ConfigurableConversionService.class )
 			);
+		}
+	}
+
+	/**
+	 * Adds an existing {@link EventHandlerBeanPostProcessor} bean to the bean factory.
+	 *
+	 * @param beanFactory to add the bean post processor to
+	 */
+	public static void registerEventHandlerBeanPostProcessor( ConfigurableListableBeanFactory beanFactory ) {
+		try {
+			EventHandlerBeanPostProcessor eventHandlerBeanPostProcessor
+					= BeanFactoryUtils.beanOfTypeIncludingAncestors( beanFactory, EventHandlerBeanPostProcessor.class );
+			eventHandlerBeanPostProcessor.registerExistingSingletons( beanFactory );
+
+			beanFactory.addBeanPostProcessor( eventHandlerBeanPostProcessor );
+		}
+		catch ( NoSuchBeanDefinitionException ignore ) {
 		}
 	}
 }

@@ -16,7 +16,6 @@
 
 package com.foreach.across.test.modules.module1;
 
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.test.modules.TestModuleEventListener;
 import com.foreach.across.test.modules.module2.ScannedBeanModule2;
@@ -27,7 +26,6 @@ import java.util.List;
 /**
  * This will be a proxy because of the Interceptor aspect.
  */
-@AcrossEventHandler
 public class ConstructedBeanModule1Impl extends TestModuleEventListener implements ConstructedBeanModule1
 {
 	private String text, otherText;

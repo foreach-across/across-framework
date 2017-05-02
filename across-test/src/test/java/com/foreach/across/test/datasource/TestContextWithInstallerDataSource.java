@@ -136,7 +136,7 @@ public class TestContextWithInstallerDataSource
 		}
 	}
 
-	@Installer(description = "Test installer", runCondition = InstallerRunCondition.AlwaysRun)
+	@Installer(description = "DevelopmentModeCondition installer", runCondition = InstallerRunCondition.AlwaysRun)
 	static class TestInstaller
 	{
 		@Autowired

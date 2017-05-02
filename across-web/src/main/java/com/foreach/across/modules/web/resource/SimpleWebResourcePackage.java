@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.resource;
 
 import org.springframework.util.Assert;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -27,6 +28,7 @@ import java.util.Collections;
 public class SimpleWebResourcePackage implements WebResourcePackage
 {
 	private Collection<WebResource> webResources = Collections.emptyList();
+	private String[] dependencies = new String[0];
 
 	protected SimpleWebResourcePackage() {
 	}
@@ -35,14 +37,28 @@ public class SimpleWebResourcePackage implements WebResourcePackage
 		setWebResources( webResources );
 	}
 
+	protected void setWebResources( WebResource... webResources ) {
+		setWebResources( Arrays.asList( webResources ) );
+	}
+
 	protected void setWebResources( Collection<WebResource> webResources ) {
 		Assert.notNull( webResources );
 		Assert.notEmpty( webResources );
 		this.webResources = webResources;
 	}
 
+	protected void setDependencies( Collection<String> packageNames ) {
+		setDependencies( packageNames.toArray( new String[packageNames.size()] ) );
+	}
+
+	protected void setDependencies( String... packageNames ) {
+		this.dependencies = packageNames;
+	}
+
 	@Override
 	public void install( WebResourceRegistry registry ) {
+		registry.addPackage( dependencies );
+
 		for ( WebResource webResource : webResources ) {
 			registry.add( webResource );
 		}

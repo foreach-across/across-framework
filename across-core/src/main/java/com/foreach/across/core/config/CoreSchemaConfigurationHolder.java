@@ -24,7 +24,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import java.util.Optional;
 
 /**
- * Bean that searches for the
+ * Bean that searches for the most appropriate {@link SchemaConfiguration}.
  *
  * @author Arne Vandamme
  */

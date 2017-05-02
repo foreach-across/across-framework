@@ -91,16 +91,16 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 	                        HttpServletResponse response,
 	                        Object handler,
 	                        ModelAndView modelAndView ) {
-		WebResourceRegistry registry = WebResourceUtils.getRegistry( request );
-
-		if ( registry != null && !webResourceTranslators.isEmpty() ) {
-			for ( WebResource resource : registry.getResources() ) {
-				for ( WebResourceTranslator translator : webResourceTranslators ) {
-					if ( translator.shouldTranslate( resource ) ) {
-						translator.translate( resource );
+		WebResourceUtils.getRegistry( request ).ifPresent( registry -> {
+			if ( !webResourceTranslators.isEmpty() ) {
+				for ( WebResource resource : registry.getResources() ) {
+					for ( WebResourceTranslator translator : webResourceTranslators ) {
+						if ( translator.shouldTranslate( resource ) ) {
+							translator.translate( resource );
+						}
 					}
 				}
 			}
-		}
+		} );
 	}
 }

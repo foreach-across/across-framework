@@ -20,12 +20,12 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
-import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.convert.StringToDateConverter;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.core.events.EventHandlerBeanPostProcessor;
 import com.foreach.across.core.events.MBassadorEventPublisher;
 import com.foreach.across.core.events.SpringContextRefreshedEventListener;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
@@ -35,6 +35,7 @@ import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockMa
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -42,6 +43,8 @@ import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.format.support.DefaultFormattingConversionService;
 
 import javax.sql.DataSource;
@@ -56,16 +59,13 @@ public class AcrossConfig
 
 	@Bean
 	public AcrossEventPublisher eventPublisher( ApplicationContext applicationContext ) {
-		MBassadorEventPublisher eventPublisher = new MBassadorEventPublisher();
+		return new MBassadorEventPublisher();
+	}
 
-		ApplicationContext toScan = applicationContext;
-		do {
-			AcrossContextUtils.autoRegisterEventHandlers( toScan, eventPublisher );
-			toScan = toScan.getParent();
-		}
-		while ( toScan != null );
-
-		return eventPublisher;
+	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	public EventHandlerBeanPostProcessor eventHandlerBeanPostProcessor( ConfigurableListableBeanFactory beanFactory ) {
+		return new EventHandlerBeanPostProcessor( beanFactory );
 	}
 
 	@Bean

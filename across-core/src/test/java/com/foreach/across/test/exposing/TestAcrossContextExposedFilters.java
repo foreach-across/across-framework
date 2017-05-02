@@ -33,7 +33,7 @@ import org.springframework.core.convert.ConversionService;
 import static org.junit.Assert.*;
 
 /**
- * Test @Exposed functionality within the AcrossContext.
+ * DevelopmentModeCondition @Exposed functionality within the AcrossContext.
  *
  * @author Arne Vandamme
  */
@@ -97,7 +97,8 @@ public class TestAcrossContextExposedFilters
 
 		assertFalse( parent.containsBean( "cacheManager" ) );
 		assertFalse( parent.containsBean( "conversionService" ) );
-		assertEquals( initialBeanCount, BeanFactoryUtils.countBeansIncludingAncestors( parent ) );
+		assertTrue( parent.containsBean( "autoConfigurationReport" ));
+		assertEquals( initialBeanCount + 1, BeanFactoryUtils.countBeansIncludingAncestors( parent ) );
 
 		ApplicationContext across = AcrossContextUtils.getApplicationContext( context );
 		assertTrue( across.containsBean( "cacheManager" ) );

@@ -19,7 +19,6 @@ package com.foreach.across.core.context;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.config.AcrossConfig;
@@ -31,22 +30,21 @@ import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.filters.AnnotatedMethodFilter;
-import com.foreach.across.core.filters.AnnotationBeanFilter;
-import com.foreach.across.core.filters.BeanFilter;
-import com.foreach.across.core.filters.BeanFilterComposite;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.aop.target.AbstractLazyCreationTargetSource;
+import org.springframework.aop.target.SimpleBeanTargetSource;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -61,23 +59,6 @@ public final class AcrossContextUtils
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextUtils.class );
 
 	private AcrossContextUtils() {
-	}
-
-	/**
-	 * Scans for all AcrossEventHandler instances inside the context specified, and will
-	 * register them with the AcrossEventPublisher.
-	 */
-	public static void autoRegisterEventHandlers( ApplicationContext applicationContext,
-	                                              AcrossEventPublisher publisher ) {
-		BeanFilter eventHandlerFilter =
-				new BeanFilterComposite( new AnnotationBeanFilter( true, true, AcrossEventHandler.class ),
-				                         new AnnotationBeanFilter( Controller.class ) );
-		Collection<Object> handlers =
-				ApplicationContextScanner.findSingletonsMatching( applicationContext, eventHandlerFilter ).values();
-
-		for ( Object handler : handlers ) {
-			publisher.subscribe( handler );
-		}
 	}
 
 	/**
@@ -100,7 +81,9 @@ public final class AcrossContextUtils
 
 					for ( Object singleton : refreshableBeans ) {
 						Object bean = AcrossContextUtils.getProxyTarget( singleton );
-						beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+						if ( bean != null ) {
+							beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
+						}
 					}
 
 					Map<String, Object> postRefreshBeans = ApplicationContextScanner.findSingletonsMatching(
@@ -109,21 +92,22 @@ public final class AcrossContextUtils
 
 					for ( Object singleton : postRefreshBeans.values() ) {
 						Object bean = AcrossContextUtils.getProxyTarget( singleton );
+						if ( bean != null ) {
+							Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
 
-						Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
-
-						for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
-							if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
-								if ( method.getParameterTypes().length != 0 ) {
-									LOG.error( "@PostRefresh method {} should be parameter-less", method );
-								}
-								else {
-									try {
-										method.setAccessible( true );
-										method.invoke( bean );
+							for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
+								if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
+									if ( method.getParameterTypes().length != 0 ) {
+										LOG.error( "@PostRefresh method {} should be parameter-less", method );
 									}
-									catch ( Exception e ) {
-										LOG.error( "Exception executing @PostRefresh method", e );
+									else {
+										try {
+											method.setAccessible( true );
+											method.invoke( bean );
+										}
+										catch ( Exception e ) {
+											LOG.error( "Exception executing @PostRefresh method", e );
+										}
 									}
 								}
 							}
@@ -321,6 +305,14 @@ public final class AcrossContextUtils
 
 	/**
 	 * Unwraps the target from a proxy (or multiple proxy) hierarchy.
+	 * If the proxy is a {@link AbstractLazyCreationTargetSource} then the target bean will only be
+	 * returned if it has been initialized.  We do not want calls to this method to force any kind
+	 * of initialization of the target.
+	 * <p/>
+	 * If the proxy is a {@link org.springframework.aop.target.SimpleBeanTargetSource}, then the target
+	 * bean name will be examined and if it is a scopedTarget, it will not be returned either.
+	 * <p/>
+	 * Meant for internal use in the Across framework.
 	 *
 	 * @param instance Bean that can be proxied or not.
 	 * @return Bean itself or final target of a set of proxies.
@@ -328,7 +320,32 @@ public final class AcrossContextUtils
 	public static Object getProxyTarget( Object instance ) {
 		try {
 			if ( AopUtils.isJdkDynamicProxy( instance ) ) {
-				return getProxyTarget( ( (Advised) instance ).getTargetSource().getTarget() );
+				TargetSource targetSource = ( (Advised) instance ).getTargetSource();
+
+				if ( targetSource instanceof AbstractLazyCreationTargetSource ) {
+					AbstractLazyCreationTargetSource lazyCreationTargetSource
+							= (AbstractLazyCreationTargetSource) targetSource;
+
+					if ( lazyCreationTargetSource.isInitialized() ) {
+						return getProxyTarget( lazyCreationTargetSource.getTarget() );
+					}
+
+					LOG.trace( "Attempt to retrieve uninitialized proxy target: {}",
+					           lazyCreationTargetSource.getTargetClass() );
+					return null;
+				}
+				else if ( targetSource instanceof SimpleBeanTargetSource ) {
+					SimpleBeanTargetSource beanTargetSource = (SimpleBeanTargetSource) targetSource;
+					String targetBeanName = beanTargetSource.getTargetBeanName();
+
+					if ( StringUtils.isEmpty( targetBeanName )
+							|| StringUtils.startsWith( targetBeanName, "scopedTarget." ) ) {
+						LOG.trace( "Refusing proxy target for a scoped target bean, might not be initialized." );
+						return null;
+					}
+				}
+
+				return getProxyTarget( targetSource.getTarget() );
 			}
 		}
 		catch ( Exception e ) {

@@ -80,7 +80,7 @@ public class ConversionServiceConfiguration
 	 * @author Arne Vandamme
 	 */
 	@Configuration
-	@OrderInModule(3)
+	@OrderInModule(4)
 	public static class ConversionServiceExposingInterceptorConfiguration extends PrefixingHandlerMappingConfigurerAdapter
 	{
 		@Autowired

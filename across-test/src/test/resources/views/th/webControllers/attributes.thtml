@@ -1,0 +1,35 @@
+<!--
+  ~ Copyright 2014 the original author or authors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<a href="fixed" th:href="original" across:static="/testResources/test.txt">auto static a</a>
+<link across:static="/testResources/test.txt">auto static link</link>
+<script across:static="/testResources/test.txt">auto static script</script>
+<image across:static="/testResources/test.txt">auto static image</image>
+<use across:static="/testResources/test.txt">auto static use</use>
+<a href="fixed" th:href="original" across:resource="/static/testResources/test.txt">auto resource a</a>
+<link across:resource="/static/testResources/test.txt">auto resource link</link>
+<script across:resource="/static/testResources/test.txt">auto resource script</script>
+<image across:resource="/static/testResources/test.txt">auto resource image</image>
+<use across:resource="/static/testResources/test.txt">auto resource use</use>
+
+<a across:static-xlink--href="/testResources/test.txt">manual static xlink</a>
+<span across:static-data-image-url="/testResources/test.txt">manual static data-image-url</span>
+<a across:resource-xlink--href="/static/testResources/test.txt">manual resource xlink</a>
+<span across:resource-data-image-url="/static/testResources/test.txt">manual resource data-image-url</span>
+
+<a across:static="${'/testResources/test.txt'}">dynamic static href</a>
+
+<a th:href="@{@resource:/static/testResources/test.txt}">manual resource url</a>
+<a th:other="@{@static:/testResources/test.txt}">manual static url</a>

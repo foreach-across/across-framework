@@ -51,7 +51,7 @@ public class WebResource
 	public static final String RELATIVE = "relative";
 
 	/**
-	 * Embedded resource in the views directory - these usually get translated into a path using a
+	 * Embedded resource in the views directory - these usually find translated into a path using a
 	 * {@link com.foreach.across.modules.web.resource.WebResourceTranslator}.
 	 */
 	public static final String VIEWS = "views";

@@ -16,10 +16,25 @@
 
 package com.foreach.across.modules.web.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
+import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.thymeleaf.AcrossWebDialect;
+import com.foreach.across.modules.web.thymeleaf.PrefixingSupportingLinkBuilder;
+import com.foreach.across.modules.web.ui.DefaultViewElementAttributeConverter;
+import com.foreach.across.modules.web.ui.StandardViewElements;
+import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.NodeViewElement;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
+import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.ContainerViewElementModelWriter;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.HtmlViewElementModelWriter;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.TextViewElementModelWriter;
+import com.foreach.across.modules.web.ui.elements.thymeleaf.ViewElementGeneratorModelWriter;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +46,7 @@ import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import org.thymeleaf.templateresolver.TemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -58,13 +73,14 @@ public class ThymeleafViewSupportConfiguration
 	@Bean
 	@Exposed
 	@Qualifier("springTemplateEngine")
-	public SpringTemplateEngine springTemplateEngine() {
+	public SpringTemplateEngine springTemplateEngine( PrefixingPathRegistry prefixingPathRegistry ) {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.addDialect( new AcrossWebDialect() );
 		engine.addTemplateResolver( templateResolver() );
+		engine.setLinkBuilder( new PrefixingSupportingLinkBuilder( prefixingPathRegistry ) );
 
 		if ( developmentMode.isActive() ) {
-			for ( TemplateResolver resolver : developmentResolvers() ) {
+			for ( ITemplateResolver resolver : developmentResolvers() ) {
 				engine.addTemplateResolver( resolver );
 			}
 		}
@@ -74,9 +90,38 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
-	public ThymeleafViewResolver thymeleafViewResolver() {
+	public ViewElementModelWriterRegistry thymeleafViewElementProcessorRegistry() {
+		ViewElementModelWriterRegistry registry = new ViewElementModelWriterRegistry();
+
+		registry.registerModelWriter( TextViewElement.class, new TextViewElementModelWriter() );
+		registry.registerModelWriter( StandardViewElements.TEXT, new TextViewElementModelWriter() );
+		registry.registerModelWriter( ContainerViewElement.class, new ContainerViewElementModelWriter() );
+		registry.registerModelWriter( StandardViewElements.CONTAINER, new ContainerViewElementModelWriter() );
+		registry.registerModelWriter( ViewElementGenerator.class, new ViewElementGeneratorModelWriter() );
+		registry.registerModelWriter( StandardViewElements.GENERATOR, new ViewElementGeneratorModelWriter() );
+		registry.registerModelWriter( NodeViewElement.class, new HtmlViewElementModelWriter() );
+		registry.registerModelWriter( StandardViewElements.NODE, new HtmlViewElementModelWriter() );
+
+		return registry;
+	}
+
+	@Bean
+	@Exposed
+	public ViewElementAttributeConverter viewElementAttributeConverter() {
+		return new DefaultViewElementAttributeConverter( viewElementAttributeObjectMapper() );
+	}
+
+	@Bean(ViewElementAttributeConverter.OBJECT_MAPPER_BEAN)
+	@Exposed
+	public ObjectMapper viewElementAttributeObjectMapper() {
+		return new ObjectMapper();
+	}
+
+	@Bean
+	@Exposed
+	public ThymeleafViewResolver thymeleafViewResolver( SpringTemplateEngine springTemplateEngine ) {
 		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-		resolver.setTemplateEngine( springTemplateEngine() );
+		resolver.setTemplateEngine( springTemplateEngine );
 		resolver.setOrder( 1 );
 		resolver.setCharacterEncoding( "UTF-8" );
 		resolver.setViewNames( new String[] {
@@ -88,8 +133,8 @@ public class ThymeleafViewSupportConfiguration
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<TemplateResolver> developmentResolvers() {
-		Collection<TemplateResolver> resolvers = new LinkedList<TemplateResolver>();
+	private Collection<ITemplateResolver> developmentResolvers() {
+		Collection<ITemplateResolver> resolvers = new LinkedList<>();
 
 		if ( developmentMode.isActive() ) {
 			Map<String, String> developmentViews = developmentMode.getDevelopmentLocations( "views" );
@@ -102,14 +147,15 @@ public class ThymeleafViewSupportConfiguration
 				LOG.info( "Registering development Thymeleaf lookup for {} with physical path {}", views.getKey(),
 				          views.getValue() );
 
-				TemplateResolver resolver = new SpringResourceTemplateResolver();
+				SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 				resolver.setOrder( 19 );
 				resolver.setCharacterEncoding( "UTF-8" );
-				resolver.setTemplateMode( "HTML5" );
+				resolver.setTemplateMode( "HTML" );
 				resolver.setCacheable( true );
 				resolver.setCacheTTLMs( 1000L );
 				resolver.setPrefix( prefix );
 				resolver.setSuffix( suffix );
+				resolver.setCheckExistence( true );
 
 				applicationContext.getAutowireCapableBeanFactory().initializeBean( resolver,
 				                                                                   "developmentResolver." + views
@@ -124,10 +170,10 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
-	public TemplateResolver templateResolver() {
-		TemplateResolver resolver = new SpringResourceTemplateResolver();
+	public ITemplateResolver templateResolver() {
+		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setCharacterEncoding( "UTF-8" );
-		resolver.setTemplateMode( "HTML5" );
+		resolver.setTemplateMode( "HTML" );
 		resolver.setCacheable( true );
 
 		if ( developmentMode.isActive() ) {

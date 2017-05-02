@@ -16,13 +16,11 @@
 
 package com.foreach.across.test.modules;
 
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Event;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AcrossEventHandler
 public class TestModuleEventListener
 {
 	private List<TestEvent> eventsReceived = new ArrayList<TestEvent>();

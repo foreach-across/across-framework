@@ -34,7 +34,7 @@ public interface InstallerActionResolver
 	 *
 	 * @param moduleName        Module that is running the installer.
 	 * @param installerMetaData Installer metadata.
-	 * @return Action or null if it delegates the decision back to the InstallerSettings.
+	 * @return Action or empty if it delegates the decision back to the InstallerSettings.
 	 * @see com.foreach.across.core.installers.InstallerSettings
 	 */
 	Optional<InstallerAction> resolve( String moduleName, InstallerMetaData installerMetaData );

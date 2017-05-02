@@ -41,7 +41,7 @@ import java.util.Collection;
  */
 @Configuration
 @ConditionalOnProperty(value = "acrossWebModule.templates.enabled", matchIfMissing = true)
-@OrderInModule(2)
+@OrderInModule(3)
 public class AcrossWebTemplateConfig extends PrefixingHandlerMappingConfigurerAdapter
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebTemplateConfig.class );

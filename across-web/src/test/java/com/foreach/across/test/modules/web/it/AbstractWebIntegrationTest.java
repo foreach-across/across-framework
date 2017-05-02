@@ -20,13 +20,16 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 
 /**
  * Base class for a fully bootstrapped webapplication in embedded tomcat.
@@ -36,8 +39,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Arne Vandamme
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest(randomPort = true)
-@SpringApplicationConfiguration(classes = AcrossWebApplicationConfiguration.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = AcrossWebApplicationConfiguration.class)
 public abstract class AbstractWebIntegrationTest
 {
 	@Autowired
@@ -71,5 +73,14 @@ public abstract class AbstractWebIntegrationTest
 			return HttpStatus.NOT_FOUND.equals( hcee.getStatusCode() );
 		}
 		return false;
+	}
+
+	protected static class NoOpResponseErrorHandler extends DefaultResponseErrorHandler
+	{
+		protected NoOpResponseErrorHandler() {
+		}
+
+		public void handleError( ClientHttpResponse response ) throws IOException {
+		}
 	}
 }

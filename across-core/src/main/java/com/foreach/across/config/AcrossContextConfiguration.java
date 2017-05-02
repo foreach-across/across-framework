@@ -20,6 +20,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
 import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.support.AcrossContextBuilder;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ import java.util.*;
  * <p>Creates an AcrossContext bean and will apply all AcrossContextConfigurer instances
  * before bootstrapping.  Depending on the settings imported from {@link EnableAcrossContext},
  * modules will be auto-configured and further configuration of the context delegated to the configurer beans.</p>
- * <p>A DataSource bean named acrossDataSource is required for installers to work.</p>
+ * <p>A single {@link DataSource} bean or one named <b>acrossDataSource</b> is required for installers to work.</p>
  */
 @Configuration
 public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
@@ -50,8 +51,11 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	static final String ANNOTATION_TYPE = EnableAcrossContext.class.getName();
 
 	@Autowired(required = false)
+	private List<DataSource> dataSources = Collections.emptyList();
+
+	@Autowired(required = false)
 	@Qualifier(AcrossContext.DATASOURCE)
-	private DataSource dataSource;
+	private DataSource acrossDataSource;
 
 	@Autowired(required = false)
 	@Qualifier(AcrossContext.INSTALLER_DATASOURCE)
@@ -82,7 +86,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 
 		AcrossContextBuilder contextBuilder = new AcrossContextBuilder()
 				.applicationContext( applicationContext )
-				.dataSource( dataSource )
+				.dataSource( selectAcrossDataSource() )
 				.installerDataSource( installerDataSource )
 				.developmentMode( isDevelopmentMode() )
 				.moduleConfigurationPackages( determineModuleConfigurationPackages( configuration ) )
@@ -94,6 +98,28 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		context.bootstrap();
 
 		return context;
+	}
+
+	private DataSource selectAcrossDataSource() {
+		if ( acrossDataSource != null ) {
+			return acrossDataSource;
+		}
+
+		if ( !dataSources.isEmpty() ) {
+			if ( dataSources.size() == 1 ) {
+				LOG.info( "Single datasource bean found - registering it as the AcrossContext datasource." );
+				return dataSources.get( 0 );
+			}
+			else {
+				LOG.warn(
+						"Unable to select AcrossContext datasource - multiple beans but none named 'acrossDataSource', " +
+								"please put an explicit qualifier on the correct datasource instance." );
+			}
+		}
+		else {
+			LOG.trace( "No datasource bean found - not autoconfiguring an across datasource." );
+		}
+		return null;
 	}
 
 	private void autoConfigureContextBuilder( AcrossContextBuilder contextBuilder,
@@ -166,7 +192,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 
 		if ( configurationPackageSet.isEmpty() ) {
 			try {
-				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
+				Class<?> importingClass = ClassLoadingUtils.loadClass( importMetadata.getClassName() );
 				Package importingClassPackage = importingClass.getPackage();
 
 				String base = "";
@@ -201,7 +227,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			modulePackageSet.add( AcrossContextBuilder.STANDARD_MODULES_PACKAGE );
 
 			try {
-				Class<?> importingClass = Class.forName( importMetadata.getClassName() );
+				Class<?> importingClass = ClassLoadingUtils.loadClass( importMetadata.getClassName() );
 				Package importingClassPackage = importingClass.getPackage();
 
 				if ( importingClassPackage != null ) {

@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Test property setting and spring expression language conditionals.
+ * DevelopmentModeCondition property setting and spring expression language conditionals.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestPropertyPlaceholders.Config.class)

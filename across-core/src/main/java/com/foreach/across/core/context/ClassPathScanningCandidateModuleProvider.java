@@ -16,6 +16,7 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +72,7 @@ public class ClassPathScanningCandidateModuleProvider
 
 					if ( isAcrossModuleClass( classMetadata, false ) ) {
 						try {
-							Class moduleClass = Class.forName( classMetadata.getClassName() );
+							Class moduleClass = ClassLoadingUtils.loadClass( classMetadata.getClassName() );
 
 							if ( hasParameterlessConstructor( moduleClass ) ) {
 								String moduleName = retrieveModuleName( moduleClass );

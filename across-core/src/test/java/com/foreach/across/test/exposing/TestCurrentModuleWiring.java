@@ -72,7 +72,7 @@ public class TestCurrentModuleWiring
 		assertNotNull( moduleOne );
 		ModuleConfig.BeanWithCurrentModules beanWithCurrentModules = beanRegistry.getBeanFromModule( "ModuleOne",
 		                                                                                             "beanWithCurrentModules" );
-		assertNull( beanWithCurrentModules.getParent() );
+		assertNotNull( beanWithCurrentModules.getParent() );
 		beanWithCurrentModules.assertCurrentModule( moduleOne.getModule() );
 
 		AcrossModuleInfo moduleTwo = contextInfo.getModuleInfo( "ModuleTwo" );

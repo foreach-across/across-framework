@@ -27,12 +27,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 /**
- * Initializes a single dispatchers servlet with a root Application context that is initialized upon creation.
+ * Initializes a single dispatcher servlet with a root Application context that is initialized upon creation.
  * This allows any modules in the root Application context to extend the ServletContext.
- * <p/>
+ * <p>
  * Servlet 3 environments only need to extend this initializer and configure the application context with
  * one or more configuration classes or locations.  Any AcrossContext bootstrapped in the ApplicationContext
- * will be able to extend the ServletContext.
+ * will be able to extend the ServletContext.</p>
  *
  * @author Arne Vandamme
  * @see
@@ -63,7 +63,7 @@ public abstract class AbstractAcrossServletInitializer extends AbstractDispatche
 	protected void registerContextLoaderListener( ServletContext servletContext ) {
 		WebApplicationContext rootAppContext = createRootApplicationContext();
 		if ( rootAppContext != null ) {
-			servletContext.setAttribute( DYNAMIC_INITIALIZER, this );
+			servletContext.setAttribute( DYNAMIC_INITIALIZER, true );
 
 			ContextLoaderListener listener = new ShutdownOnlyContextLoaderListener( rootAppContext );
 			listener.initWebApplicationContext( servletContext );

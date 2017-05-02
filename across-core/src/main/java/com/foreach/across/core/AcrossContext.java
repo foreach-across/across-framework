@@ -418,8 +418,8 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 			for ( AcrossModuleInfo moduleInfo : reverseList ) {
 				if ( moduleInfo.isBootstrapped() ) {
 					AcrossModule module = moduleInfo.getModule();
-					AcrossConfigurableApplicationContext applicationContext = AcrossContextUtils.getApplicationContext(
-							module );
+					AcrossConfigurableApplicationContext applicationContext
+							= AcrossContextUtils.getApplicationContext( module );
 
 					if ( applicationContext != null ) {
 						LOG.debug( "Destroying ApplicationContext for module {}", module.getName() );

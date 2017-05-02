@@ -31,8 +31,7 @@ import java.util.*;
  * property must be set on all submenus separately, as it is not inherited.  This means it is possible
  * to provide an inheritable Comparator on the menu, but sort the menu itself manually and only use
  * the Comparator for all submenus.</p>
- * <p/>
- * <strong>Note that sorting needs to be done explicitly, see {@link #sort()} method.</strong>
+ * <p><strong>Note that sorting needs to be done explicitly, see {@link #sort()} method.</strong></p>
  */
 public class Menu implements Ordered
 {
@@ -554,7 +553,7 @@ public class Menu implements Ordered
 	 * <li>Attributes from other are added or overwritten (merge of attribute map)</li>
 	 * <li>All sub items undergo a merge</li>
 	 * </ul>
-	 * A merge only looks downstream, the parent structure does not get modified.  The selected item
+	 * A merge only looks downstream, the parent structure does not find modified.  The selected item
 	 * however can be modified by the merge.
 	 * </p>
 	 *

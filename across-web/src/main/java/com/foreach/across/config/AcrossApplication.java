@@ -17,6 +17,8 @@ package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
@@ -27,6 +29,9 @@ import java.lang.annotation.*;
  * for web applications.  Supports most attributes that {@link EnableAcrossContext} does, but allows
  * for minimal configuration of an application.  Optionally adds support for dynamic modules based on the
  * {@link #enableDynamicModules()} value.
+ * <p />
+ * NOTE: Even though this class defines {@link EnableAutoConfiguration}, it will explicitly disable auto configuration
+ * in the {@link AcrossApplicationConfiguration}.  The annotation is added for better IDE support.
  *
  * @author Arne Vandamme
  */
@@ -35,8 +40,11 @@ import java.lang.annotation.*;
 @Documented
 @Import({ PropertyPlaceholderAutoConfiguration.class,
           AcrossApplicationConfiguration.class,
-          AcrossWebApplicationConfiguration.class })
+          AcrossWebApplicationConfiguration.class,
+          SpringBootDevToolsSupportingConfiguration.class})
 @EnableAcrossContext
+@SpringBootConfiguration
+@EnableAutoConfiguration
 public @interface AcrossApplication
 {
 	/**

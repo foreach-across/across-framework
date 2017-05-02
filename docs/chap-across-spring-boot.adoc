@@ -1,0 +1,5 @@
+[[across-spring-boot]]
+== Across and Spring Boot
+TODO
+
+See <<spring-boot-autoconfigure>> for the list of Spring Boot autoconfiguration classes directly supported by Across.

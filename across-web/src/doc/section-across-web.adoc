@@ -3,11 +3,10 @@
 
 :module-artifact: across-web
 :module-name: AcrossWebModule
-:module-url: https://foreach.atlassian.net/wiki/display/AX/Across+web+module
 
 include::chap-general-information.adoc[]
 
-include::chap-web-configurers.adoc[]
+include::chap-mvc-configuration.adoc[]
 
 include::chap-conversion-service.adoc[]
 
@@ -33,3 +32,4 @@ include::chap-http-encoding.adoc[]
 
 include::chap-webapp-path-resolver.adoc[]
 
+include::chap-thymeleaf-dialect.adoc[]

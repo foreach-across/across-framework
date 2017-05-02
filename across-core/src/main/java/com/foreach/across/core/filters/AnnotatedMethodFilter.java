@@ -16,6 +16,7 @@
 
 package com.foreach.across.core.filters;
 
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -66,7 +67,7 @@ public class AnnotatedMethodFilter implements BeanFilter
 
 			if ( bean == null && definition.getBeanClassName() != null ) {
 				try {
-					Class beanClass = Class.forName( definition.getBeanClassName() );
+					Class beanClass = ClassLoadingUtils.loadClass( definition.getBeanClassName() );
 
 					for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
 						if ( AnnotationUtils.getAnnotation( method, annotationClass ) != null ) {

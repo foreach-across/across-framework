@@ -19,12 +19,15 @@ import javax.servlet.MultipartConfigElement;
 import javax.servlet.annotation.MultipartConfig;
 
 /**
- * Custom implementation of {@link javax.servlet.MultipartConfigElement} to workaround an issue
+ * <p>Custom implementation of {@link javax.servlet.MultipartConfigElement} to workaround an issue
  * in JBoss 6.1 where the 3.0 servlet-api contains a broken MultipartConfigElement implementation that ignores
- * the location property.
- *
+ * the location property.</p>
+ * <p>
  * This appears to be fixed with their servlet spec 3.1:
+ * <a href="https://github.com/jboss/jboss-servlet-api_spec/commit/b09b4be60cfbcfdc55a96f41cc38f6e1f5fafe3c#diff-83ff4a7744a13e526dfbd84617da61cf">
  * https://github.com/jboss/jboss-servlet-api_spec/commit/b09b4be60cfbcfdc55a96f41cc38f6e1f5fafe3c#diff-83ff4a7744a13e526dfbd84617da61cf
+ * </a>
+ * </p>
  *
  * @author Arne Vandamme
  */

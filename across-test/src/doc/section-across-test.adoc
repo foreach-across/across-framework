@@ -17,6 +17,7 @@ Across Test builds on top of the Spring testing library.
 		</dependency>
 	</dependencies>
 ----
+Thymeleaf integration: AcrossWebDialect
 
 include::chap-base-test-classes.adoc[]
 

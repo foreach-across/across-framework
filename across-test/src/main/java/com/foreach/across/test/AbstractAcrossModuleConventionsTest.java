@@ -18,6 +18,7 @@ package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossModuleSettings;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import com.foreach.across.modules.web.AcrossWebModule;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -101,7 +102,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 		Class settingsClass = loadClass( settingsClassName );
 
 		if ( hasSettings() ) {
-			assertNotNull( "Test declares module has settings but class was not found: " + settingsClassName,
+			assertNotNull( "DevelopmentModeCondition declares module has settings but class was not found: " + settingsClassName,
 			               settingsClass );
 
 			if ( !AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
@@ -111,7 +112,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 		else if ( settingsClass != null ) {
 			if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
 				assertNull(
-						"Test declares module does not have settings but AcrossModuleSettings implementation was found",
+						"DevelopmentModeCondition declares module does not have settings but AcrossModuleSettings implementation was found",
 						settingsClass );
 			}
 		}
@@ -119,7 +120,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 
 	private Class loadClass( String className ) {
 		try {
-			return Class.forName( className );
+			return ClassLoadingUtils.loadClass( className );
 		}
 		catch ( Exception e ) {
 			return null;

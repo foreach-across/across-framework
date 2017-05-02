@@ -3,6 +3,7 @@
   <component name="ProjectCodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">
       <value>
+        <option name="RIGHT_MARGIN" value="160" />
         <option name="HTML_ATTRIBUTE_WRAP" value="0" />
         <option name="KEEP_LINE_BREAKS" value="false" />
         <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
@@ -36,9 +37,9 @@
         <option name="DOWHILE_BRACE_FORCE" value="3" />
         <option name="WHILE_BRACE_FORCE" value="3" />
         <option name="FOR_BRACE_FORCE" value="3" />
-        <MultiMarkdownCodeStyleSettings>
+        <MarkdownNavigatorCodeStyleSettings>
           <option name="RIGHT_MARGIN" value="72" />
-        </MultiMarkdownCodeStyleSettings>
+        </MarkdownNavigatorCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>

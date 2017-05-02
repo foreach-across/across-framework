@@ -247,5 +247,12 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		public Class<?> getDependencyType() {
 			return resolvableType.getRawClass();
 		}
+
+		@Override
+		public boolean equals( Object other ) {
+			return super.equals( other );
+		}
+
+
 	}
 }

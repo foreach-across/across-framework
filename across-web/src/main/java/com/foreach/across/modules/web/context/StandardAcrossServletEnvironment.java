@@ -17,7 +17,10 @@
 package com.foreach.across.modules.web.context;
 
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.web.context.support.StandardServletEnvironment;
+
+import java.util.Properties;
 
 /**
  * Servlet version of an Across environment.
@@ -34,6 +37,10 @@ public class StandardAcrossServletEnvironment extends StandardServletEnvironment
 		removeIfParentContains( parent, SERVLET_CONTEXT_PROPERTY_SOURCE_NAME );
 
 		super.merge( parent );
+
+		Properties properties = new Properties();
+		properties.put( "spring.http.encoding.force", true );
+		getPropertySources().addLast( new PropertiesPropertySource( "springHttpEncodingPropertySource", properties ) );
 	}
 
 	private void removeIfParentContains( ConfigurableEnvironment parent, String sourceName ) {

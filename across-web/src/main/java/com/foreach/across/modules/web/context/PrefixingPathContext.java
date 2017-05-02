@@ -70,7 +70,7 @@ public class PrefixingPathContext implements WebAppPathResolver
 
 	/**
 	 * Sets a collection of prefixing contexts with a name.  Any paths starting with {NAME} will
-	 * get re-routed to the named prefixer instead of handled by the current prefixing context.
+	 * find re-routed to the named prefixer instead of handled by the current prefixing context.
 	 *
 	 * @param namedPrefixers Map of namedPrefixers, should not be null.
 	 */

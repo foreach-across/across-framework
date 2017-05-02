@@ -28,6 +28,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * Applies a layout to a view, load resource packages and generate menu instances.
@@ -55,15 +56,14 @@ public class LayoutTemplateProcessorAdapterBean implements NamedWebTemplateProce
 
 	@Override
 	public void prepareForTemplate( HttpServletRequest request, HttpServletResponse response, Object handler ) {
-		WebResourceRegistry webResourceRegistry = WebResourceUtils.getRegistry( request );
-
-		if ( webResourceRegistry != null ) {
-			registerWebResources( webResourceRegistry );
-		}
+		Optional<WebResourceRegistry> webResourceRegistry = WebResourceUtils.getRegistry( request );
+		webResourceRegistry.ifPresent( this::registerWebResources );
 
 		buildMenus( menuFactory );
 
-		eventPublisher.publish( new BuildTemplateWebResourcesEvent( getName(), webResourceRegistry ) );
+		webResourceRegistry.ifPresent(
+				r -> eventPublisher.publish( new BuildTemplateWebResourcesEvent( getName(), r ) )
+		);
 	}
 
 	protected void registerWebResources( WebResourceRegistry registry ) {

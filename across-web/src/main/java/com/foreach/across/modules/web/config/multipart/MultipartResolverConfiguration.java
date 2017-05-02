@@ -17,6 +17,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.PathResource;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -37,12 +39,13 @@ import java.util.Map;
  * to multipart resolving in the {@link org.springframework.web.servlet.DispatcherServlet}.
  * <p>
  * If Commons FileUpload is not present on the classpath, the standard servlet resolver will
- * be used.  This requires the web container to support multipart resolving.
+ * be used.  This requires the web container to support multipart resolving.</p>
  *
  * @see org.springframework.web.multipart.support.StandardServletMultipartResolver
  * @see org.springframework.web.multipart.commons.CommonsMultipartResolver
  */
 @Configuration
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 @ConditionalOnProperty(value = "acrossWebModule.multipart.auto-configure", matchIfMissing = true)
 public class MultipartResolverConfiguration extends AcrossWebDynamicServletConfigurer
 {

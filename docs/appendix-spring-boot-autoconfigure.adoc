@@ -1,0 +1,8 @@
+[[spring-boot-autoconfigure]]
+== Spring Boot autoconfiguration
+TODO list autoconfiguration classes imported by AcossApplication
+
+The following Spring Boot autoconfiguration is supported by `@AcrossApplication`
+
+* dispatcher servlet and <<embedded-servlet-container,embedded servlet containers>>
+* devtools support

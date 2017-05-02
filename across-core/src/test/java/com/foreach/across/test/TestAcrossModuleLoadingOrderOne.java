@@ -14,29 +14,24 @@
  * limitations under the License.
  */
 
-package com.foreach.across.test.bootstrap;
+package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
-import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapOrderBuilder;
 import org.junit.Test;
 import org.springframework.core.Ordered;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
 
-public class TestModuleBootstrapOrderBuilder
+public class TestAcrossModuleLoadingOrderOne
 {
 	private ModuleOne one = new ModuleOne();
 	private ModuleTwo two = new ModuleTwo();
@@ -102,7 +97,7 @@ public class TestModuleBootstrapOrderBuilder
 		Collection<AcrossModule> added = list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
+		assertEquals( list( one, two, three, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
 	}
 
 	@Test
@@ -112,7 +107,7 @@ public class TestModuleBootstrapOrderBuilder
 		Collection<AcrossModule> added = list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
+		assertEquals( list( one, two, three, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
 	}
 
 	@Test(expected = RuntimeException.class)
@@ -131,7 +126,7 @@ public class TestModuleBootstrapOrderBuilder
 				list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three, infrastructureRequiringTwo );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, infrastructureRequiringTwo, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ),
+		assertEquals( list( two, infrastructureRequiringTwo, one, three, requiresTwoThreeAndOptionalOne, requiresTwo ),
 		              ordered );
 	}
 
@@ -153,7 +148,7 @@ public class TestModuleBootstrapOrderBuilder
 		moduleBootstrapOrderBuilder.setSourceModules( added );
 		Collection<AcrossModule> ordered = moduleBootstrapOrderBuilder.getOrderedModules();
 
-		assertEquals( list( two, infrastructureRequiringTwo, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ),
+		assertEquals( list( two, infrastructureRequiringTwo, one, three, requiresTwoThreeAndOptionalOne, requiresTwo ),
 		              ordered );
 
 		Collection<AcrossModule> dependencies = moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( one );
@@ -166,7 +161,7 @@ public class TestModuleBootstrapOrderBuilder
 		                                       one, requiresTwo, two, three, infrastructureRequiringTwo );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, infrastructureRequiringTwo, one, requiresTwo, three, postProcessor,
+		assertEquals( list( two, infrastructureRequiringTwo, three, requiresTwo, one, postProcessor,
 		                    postProcessorRequiringOther, postProcessorOptionalOther ), ordered );
 	}
 
@@ -174,62 +169,6 @@ public class TestModuleBootstrapOrderBuilder
 	public void missingRequiredDependencyWillBreak() {
 		Collection<AcrossModule> added = list( one, requiresTwo );
 		order( added );
-	}
-
-	@Test
-	public void dependenciesAreResolved() {
-		ModuleDependencyResolver resolver = mock( ModuleDependencyResolver.class );
-		when( resolver.resolveModule( anyString(), anyBoolean() ) ).thenReturn( Optional.empty() );
-
-		Collection<AcrossModule> added = list( requiresOneAndOptionalTwoNine );
-
-		try {
-			ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
-			moduleBootstrapOrderBuilder.setDependencyResolver( resolver );
-			moduleBootstrapOrderBuilder.setSourceModules( added );
-		}
-		catch ( Exception ignore ) {
-		}
-
-		verify( resolver ).resolveModule( "ModuleOne", true );
-		verify( resolver ).resolveModule( "ModuleTwo", false );
-		verify( resolver ).resolveModule( "ModuleNine", false );
-	}
-
-	@Test
-	public void resolveRequiredDependency() {
-		ModuleDependencyResolver resolver = mock( ModuleDependencyResolver.class );
-		Collection<AcrossModule> added = list( one, requiresTwo );
-
-		when( resolver.resolveModule( two.getName(), true ) ).thenReturn( Optional.of( two ) );
-
-		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
-		moduleBootstrapOrderBuilder.setDependencyResolver( resolver );
-		moduleBootstrapOrderBuilder.setSourceModules( added );
-
-		assertEquals(
-				list( one, two, requiresTwo ),
-				moduleBootstrapOrderBuilder.getOrderedModules()
-		);
-	}
-
-	@Test
-	public void resolveOptionalDependency() {
-		ModuleDependencyResolver resolver = mock( ModuleDependencyResolver.class );
-		Collection<AcrossModule> added = list( one, two, requiresOneAndOptionalTwoNine );
-
-		when( resolver.resolveModule( "ModuleNine", false ) )
-				.thenReturn( Optional.of( requiresTwoAndOptionalThreeTen ) );
-		when( resolver.resolveModule( "ModuleThree", false ) ).thenReturn( Optional.empty() );
-
-		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
-		moduleBootstrapOrderBuilder.setDependencyResolver( resolver );
-		moduleBootstrapOrderBuilder.setSourceModules( added );
-
-		assertEquals(
-				list( one, two, requiresOneAndOptionalTwoNine, requiresTwoAndOptionalThreeTen ),
-				moduleBootstrapOrderBuilder.getOrderedModules()
-		);
 	}
 
 	@Test(expected = RuntimeException.class)
@@ -245,7 +184,7 @@ public class TestModuleBootstrapOrderBuilder
 				list( requiresTwoAndOptionalThreeTen, requiresOneAndOptionalTwoNine, one, two, three );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, three, requiresTwoAndOptionalThreeTen, one, requiresOneAndOptionalTwoNine ), ordered );
+		assertEquals( list( three, two, one, requiresTwoAndOptionalThreeTen, requiresOneAndOptionalTwoNine ), ordered );
 	}
 
 	@Test(expected = RuntimeException.class)
@@ -295,10 +234,9 @@ public class TestModuleBootstrapOrderBuilder
 	}
 
 	private Collection<AcrossModule> order( Collection<AcrossModule> list ) {
-		ModuleBootstrapOrderBuilder moduleBootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
-		moduleBootstrapOrderBuilder.setSourceModules( list );
-
-		return moduleBootstrapOrderBuilder.getOrderedModules();
+		ModuleBootstrapOrderBuilder bootstrapOrderBuilder = new ModuleBootstrapOrderBuilder();
+		bootstrapOrderBuilder.setSourceModules( list );
+		return bootstrapOrderBuilder.getOrderedModules();
 	}
 
 	private Collection<AcrossModule> list( AcrossModule... modules ) {

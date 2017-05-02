@@ -16,6 +16,7 @@
 
 package com.foreach.across.core.filters;
 
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -73,7 +74,7 @@ public abstract class AbstractClassBasedBeanFilter<T> implements BeanFilter
 
 				try {
 					Method method = ReflectionUtils.findMethod(
-							ClassUtils.getUserClass( Class.forName( metadata.getDeclaringClassName() ) ),
+							ClassUtils.getUserClass( ClassLoadingUtils.loadClass( metadata.getDeclaringClassName() ) ),
 							metadata.getMethodName() );
 
 					for ( T allowed : allowedItems ) {

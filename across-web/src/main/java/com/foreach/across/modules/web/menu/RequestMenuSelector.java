@@ -17,7 +17,8 @@
 package com.foreach.across.modules.web.menu;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.util.UrlPathHelper;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -49,20 +50,27 @@ public class RequestMenuSelector implements MenuSelector
 	private final String servletPathWithQueryString;
 
 	public RequestMenuSelector( HttpServletRequest request ) {
-		UrlPathHelper urlPathHelper = new UrlPathHelper();
-		String url = request.getRequestURL().toString();
-		servletPath = urlPathHelper.getPathWithinApplication( request );
+		UriComponents uriComponents = ServletUriComponentsBuilder.fromRequest( request ).build();
+		servletPath = stripContextPath( request, uriComponents.getPath() );
+		String url = uriComponents.toUriString();
 		String pathWithQueryString = servletPath;
-
-		String qs = request.getQueryString();
+		String qs = uriComponents.getQuery();
 
 		if ( !StringUtils.isBlank( qs ) ) {
-			url += "?" + qs;
 			pathWithQueryString += "?" + qs;
 		}
 
 		fullUrl = url;
 		servletPathWithQueryString = pathWithQueryString;
+	}
+
+	private String stripContextPath( HttpServletRequest request, String path ) {
+		String contextPath = request.getContextPath();
+		if ( contextPath != null && contextPath.length() > 1 ) {
+			return StringUtils.removeStart( path, contextPath );
+		}
+
+		return path;
 	}
 
 	/**

@@ -121,28 +121,95 @@ public class ModuleBootstrapOrderBuilder
 			place( requiredStack, orderedModules, module );
 		}
 
-		// Shuffle optionals if possible
-		boolean shuffled;
+		optimizeOptionals( orderedByRole, orderedModules );
 
-		do {
-			shuffled = false;
+		verifyModuleList( orderedModules );
+	}
 
-			for ( AcrossModule module : orderedByRole ) {
-				AcrossModuleRole role = getModuleRole( module );
-				Collection<AcrossModule> optionalModules = getAppliedOptionalDependencies( module );
+	private void optimizeOptionals( List<AcrossModule> orderedByRole, LinkedList<AcrossModule> orderedModules ) {
+		List<AcrossModule> optionalsToMove = new ArrayList<>();
+		
+		for ( AcrossModule module : orderedByRole ) {
+			optionalsToMove.addAll( getAppliedOptionalDependencies( module ) );
+		}
 
-				for ( AcrossModule optional : optionalModules ) {
-					if ( hasModuleRole( optional, role )
-							&& !getAppliedOptionalDependencies( optional ).contains( module )
-							&& moveToIndexIfPossible( orderedModules, optional, orderedModules.indexOf( module ) ) ) {
-						shuffled = true;
+		Set<AcrossModule> optionalsMoved = new HashSet<>();
+
+		for ( AcrossModule optional : optionalsToMove ) {
+			moveModuleAsHighAsPossible( optional, optionalsMoved, orderedModules );
+		}
+	}
+
+	private void moveModuleAsHighAsPossible( AcrossModule moduleToMove,
+	                                         Set<AcrossModule> optionalsMoved,
+	                                         LinkedList<AcrossModule> orderedModules ) {
+		if ( !optionalsMoved.contains( moduleToMove ) ) {
+			optionalsMoved.add( moduleToMove );
+
+			// First move the other dependencies it has
+			for ( AcrossModule dependency : getAppliedRequiredDependencies( moduleToMove ) ) {
+				moveModuleAsHighAsPossible( dependency, optionalsMoved, orderedModules );
+			}
+
+			for ( AcrossModule dependency : getAppliedOptionalDependencies( moduleToMove ) ) {
+				moveModuleAsHighAsPossible( dependency, optionalsMoved, orderedModules );
+			}
+
+			// Find lowest required dependency
+			int earliestPossiblePosition = findEarliestPossiblePosition( moduleToMove, optionalsMoved, orderedModules );
+
+			// Attempt to move the module
+			if ( earliestPossiblePosition < orderedModules.indexOf( moduleToMove ) ) {
+				orderedModules.add( earliestPossiblePosition, moduleToMove );
+				orderedModules.removeLastOccurrence( moduleToMove );
+
+				for ( AcrossModule other : new ArrayList<>( orderedModules ) ) {
+					if ( getAppliedOptionalDependencies( other ).contains( moduleToMove ) ) {
+						moveModuleAsHighAsPossible( moduleToMove, optionalsMoved, orderedModules );
 					}
 				}
 			}
 		}
-		while ( shuffled );
+	}
 
-		verifyModuleList( orderedModules );
+	private int findEarliestPossiblePosition( AcrossModule moduleToMove,
+	                                          Set<AcrossModule> optionalsMoved,
+	                                          LinkedList<AcrossModule> orderedModules ) {
+		int index = -1;
+
+		// Find the required dependencies
+		for ( AcrossModule dependency : getAppliedRequiredDependencies( moduleToMove ) ) {
+			int i = orderedModules.indexOf( dependency );
+
+			index = Math.max( i, index );
+		}
+
+		// Find earliest position for modules in the same role without changing the fixed order
+		int currentIndex = orderedModules.indexOf( moduleToMove );
+
+		for ( int i = 0; i < orderedModules.size() && i < currentIndex; i++ ) {
+			AcrossModule module = orderedModules.get( i );
+
+			if ( getModuleRole( moduleToMove ) == getModuleRole( module ) ) {
+				if ( getRoleOrder( module ) < getRoleOrder( moduleToMove )
+						|| getOrderInRole( module ) < getOrderInRole( moduleToMove ) ) {
+					index = Math.max( i, index );
+				}
+			}
+			else {
+				index = Math.max( i, index );
+			}
+		}
+
+		// If any of the optionals of the current have already been moved,
+		// make sure we don't move in front of them either
+		for ( AcrossModule dependency : getAppliedOptionalDependencies( moduleToMove ) ) {
+			if ( optionalsMoved.contains( dependency ) ) {
+				index = Math.max( index, orderedModules.indexOf( dependency ) );
+			}
+		}
+
+		return index + 1;
 	}
 
 	private List<AcrossModule> applyRoleOrder( final List<AcrossModule> source ) {
@@ -171,32 +238,6 @@ public class ModuleBootstrapOrderBuilder
 
 	private boolean hasModuleRole( AcrossModule module, AcrossModuleRole role ) {
 		return getModuleRole( module ).equals( role );
-	}
-
-	private boolean moveToIndexIfPossible( LinkedList<AcrossModule> orderedModules,
-	                                       AcrossModule moduleToMove,
-	                                       int index ) {
-
-		// Only move if the module is after the index
-		if ( orderedModules.indexOf( moduleToMove ) > index ) {
-			// Only move if all required dependencies are already before that index
-			boolean requirementsMet = true;
-
-			for ( AcrossModule requirement : getAppliedRequiredDependencies( moduleToMove ) ) {
-				if ( orderedModules.indexOf( requirement ) >= index ) {
-					requirementsMet = false;
-				}
-			}
-
-			if ( requirementsMet ) {
-				orderedModules.add( index, moduleToMove );
-				orderedModules.removeLastOccurrence( moduleToMove );
-
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private void place( Map<AcrossModule, Boolean> requiredStack,

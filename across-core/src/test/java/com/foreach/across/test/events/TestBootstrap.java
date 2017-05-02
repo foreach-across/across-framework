@@ -3,7 +3,6 @@ package com.foreach.across.test.events;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.EmptyAcrossModule;
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import org.junit.Before;
@@ -17,7 +16,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test that checks that bootstrap fails if an exception occurs during event handling.
+ * DevelopmentModeCondition that checks that bootstrap fails if an exception occurs during event handling.
  */
 public class TestBootstrap
 {
@@ -85,7 +84,6 @@ public class TestBootstrap
 	}
 
 	@Configuration
-	@AcrossEventHandler
 	protected static class Config
 	{
 		@Event

@@ -19,8 +19,6 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.core.annotations.AcrossEventHandler;
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.modules.web.AcrossWebModule;
@@ -99,14 +97,13 @@ public class ITPrefixingRequestMappingHandlerMapping
 		RequestMappingHandlerMapping requestMappingHandlerMapping =
 				(RequestMappingHandlerMapping) ctx.getBean( "prefixingRequestMappingHandlerMapping" );
 		assertNotNull( requestMappingHandlerMapping );
-		MultiValueMap<String, LinkedList<?>>
-				urlMap = (MultiValueMap<String, LinkedList<?>>) ReflectionTestUtils.getField(
-				requestMappingHandlerMapping, "urlMap" );
-		assertNotNull( urlMap );
+		Object mappingRegistry = ReflectionTestUtils.getField( requestMappingHandlerMapping, "mappingRegistry" );
+		MultiValueMap<String, LinkedList<?>> urlLookup =
+				(MultiValueMap<String, LinkedList<?>>) ReflectionTestUtils.getField( mappingRegistry, "urlLookup" );
 		for ( String expectedPath : expectedPaths ) {
 
-			LinkedList<?> mappings = (LinkedList<?>) urlMap.get( expectedPath );
-			assertNotNull( "Could not find url " + expectedPath + " in urlMap", mappings );
+			LinkedList<?> mappings = (LinkedList<?>) urlLookup.get( expectedPath );
+			assertNotNull( "Could not find url " + expectedPath + " in urlLookup", mappings );
 			HttpServletRequest request = new MockHttpServletRequest( "GET", expectedPath );
 			HandlerExecutionChain chain = requestMappingHandlerMapping.getHandler( request );
 			assertNotNull( chain );
@@ -165,7 +162,6 @@ public class ITPrefixingRequestMappingHandlerMapping
 		}
 
 		@Bean(name = "prefixingRequestMappingHandlerMapping")
-		@Exposed
 		@Override
 		public PrefixingRequestMappingHandlerMapping controllerHandlerMapping() {
 			return super.controllerHandlerMapping();
@@ -206,7 +202,6 @@ public class ITPrefixingRequestMappingHandlerMapping
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Component
-	@AcrossEventHandler
 	public @interface PrefixingWebController
 	{
 	}

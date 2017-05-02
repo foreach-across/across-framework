@@ -168,10 +168,10 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	}
 
 	/**
+	 * Signature is subject to change in the future, only class instances should be returned.
+	 *
 	 * @return Array containing the installer classes in the order of which they should be run.
-	 * @deprecated Signature is subject to change in the future, only class instances should be returned.
 	 */
-	@Deprecated
 	public Object[] getInstallers() {
 		return new Object[0];
 	}

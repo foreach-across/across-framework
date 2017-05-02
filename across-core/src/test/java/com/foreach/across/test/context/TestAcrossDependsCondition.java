@@ -84,18 +84,18 @@ public class TestAcrossDependsCondition
 
 	@Test
 	public void classWithoutConditionAlwaysApplies() {
-		assertTrue( AcrossDependsCondition.applies( contextConfig, ClassWithoutCondition.class ) );
+		assertTrue( AcrossDependsCondition.applies( contextConfig, ClassWithoutCondition.class ).isMatch() );
 	}
 
 	@Test
 	public void classWithEmptyConditionAlwaysApplies() {
-		assertTrue( AcrossDependsCondition.applies( contextConfig, ClassWithEmptyCondition.class ) );
+		assertTrue( AcrossDependsCondition.applies( contextConfig, ClassWithEmptyCondition.class ).isMatch() );
 	}
 
 	@Test
 	public void classWithConditionDoesNotApplyIfNotMet() {
 		modules( "moduleOne", "moduleThree", "moduleFour" );
-		assertFalse( AcrossDependsCondition.applies( contextConfig, ClassWithCondition.class ) );
+		assertFalse( AcrossDependsCondition.applies( contextConfig, ClassWithCondition.class ).isMatch() );
 
 		// Check only the required have been checked (after that the condition failed)
 		verify( contextConfig ).hasModule( "moduleOne" );
@@ -104,13 +104,13 @@ public class TestAcrossDependsCondition
 		verify( contextConfig, never() ).hasModule( "moduleFour" );
 
 		modules( "moduleOne", "moduleTwo" );
-		assertFalse( AcrossDependsCondition.applies( contextConfig, ClassWithCondition.class ) );
+		assertFalse( AcrossDependsCondition.applies( contextConfig, ClassWithCondition.class ).isMatch() );
 	}
 
 	@Test
 	public void classWithConditionAppliesIfMet() {
 		modules( "moduleOne", "moduleTwo", "moduleThree", "moduleFour" );
-		assertTrue( AcrossDependsCondition.applies( contextConfig, ClassWithCondition.class ) );
+		assertTrue( AcrossDependsCondition.applies( contextConfig, ClassWithCondition.class ).isMatch() );
 
 		// Check both required and the first optional has been checked (after that the condition applied)
 		verify( contextConfig ).hasModule( "moduleOne" );
@@ -120,11 +120,11 @@ public class TestAcrossDependsCondition
 	}
 
 	private void assertConditionsMet( String[] required, String[] optional ) {
-		assertTrue( AcrossDependsCondition.applies( contextConfig, required, optional ) );
+		assertTrue( AcrossDependsCondition.applies( contextConfig, required, optional ).isMatch() );
 	}
 
 	private void assertConditionsNotMet( String[] required, String[] optional ) {
-		assertFalse( AcrossDependsCondition.applies( contextConfig, required, optional ) );
+		assertFalse( AcrossDependsCondition.applies( contextConfig, required, optional ).isMatch() );
 	}
 
 	// Alias method to improve test readability

@@ -123,6 +123,22 @@ public class TestMessageSourceBehavior
 		assertEquals( "module6", message( "module6.more.value" ) );
 	}
 
+	@Test
+	public void fallbackLookupShouldNotUseSystemLocale() {
+		Locale systemLocale = Locale.getDefault();
+		try {
+			Locale.setDefault( Locale.ENGLISH );
+
+			assertEquals( "modulesix", messageSource.getMessage( "module6.more.value", new Object[0], Locale.FRENCH ) );
+			assertEquals( "module6", messageSource.getMessage( "module6.more.value", new Object[0], Locale.ENGLISH ) );
+			assertEquals( "module6base", messageSource.getMessage( "module6.more.value", new Object[0], Locale.CHINA ) );
+
+		}
+		finally {
+			Locale.setDefault( systemLocale );
+		}
+	}
+
 	private String contextName( String module ) {
 		return beanRegistry.getBeanOfTypeFromModule( module, ModuleConfig.class ).getMessage( "context.name" );
 	}

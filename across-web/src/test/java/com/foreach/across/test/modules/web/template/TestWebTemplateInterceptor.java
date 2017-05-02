@@ -20,19 +20,22 @@ import com.foreach.across.modules.web.template.WebTemplateProcessor;
 import com.foreach.across.modules.web.template.WebTemplateRegistry;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 1.1.3
  */
+@RunWith(MockitoJUnitRunner.class)
 public class TestWebTemplateInterceptor
 {
 	@Mock
@@ -45,12 +48,39 @@ public class TestWebTemplateInterceptor
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks( this );
-
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();
 
 		interceptor = new WebTemplateInterceptor( templateRegistry );
+	}
+
+	@Test
+	public void preHandleShouldSetPartialParameters() {
+		interceptor.preHandle( request, response, null );
+		assertNull( request.getAttribute( WebTemplateInterceptor.PARTIAL_PARAMETER ) );
+		assertNull( request.getAttribute( WebTemplateInterceptor.RENDER_FRAGMENT ) );
+		assertNull( request.getAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT ) );
+
+		request = new MockHttpServletRequest();
+		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfrag" );
+		interceptor.preHandle( request, response, null );
+		assertEquals( "myfrag", request.getAttribute( WebTemplateInterceptor.PARTIAL_PARAMETER ) );
+		assertEquals( "myfrag", request.getAttribute( WebTemplateInterceptor.RENDER_FRAGMENT ) );
+		assertNull( request.getAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT ) );
+
+		request = new MockHttpServletRequest();
+		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "::myElement" );
+		interceptor.preHandle( request, response, null );
+		assertEquals( "::myElement", request.getAttribute( WebTemplateInterceptor.PARTIAL_PARAMETER ) );
+		assertEquals( "myElement", request.getAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT ) );
+		assertNull( request.getAttribute( WebTemplateInterceptor.RENDER_FRAGMENT ) );
+
+		request = new MockHttpServletRequest();
+		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfrag::myElement" );
+		interceptor.preHandle( request, response, null );
+		assertEquals( "myfrag::myElement", request.getAttribute( WebTemplateInterceptor.PARTIAL_PARAMETER ) );
+		assertEquals( "myfrag", request.getAttribute( WebTemplateInterceptor.RENDER_FRAGMENT ) );
+		assertEquals( "myElement", request.getAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT ) );
 	}
 
 	@Test
@@ -76,7 +106,7 @@ public class TestWebTemplateInterceptor
 	public void postHandleShouldSkipPartialIfTemplateProcessorIsPresent() {
 		WebTemplateProcessor template = mock( WebTemplateProcessor.class );
 		request.setAttribute( WebTemplateInterceptor.PROCESSOR_ATTRIBUTE, template );
-		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
+		request.setAttribute( WebTemplateInterceptor.RENDER_FRAGMENT, "myfragment" );
 
 		Object handler = new Object();
 		ModelAndView mav = mock( ModelAndView.class );
@@ -88,7 +118,7 @@ public class TestWebTemplateInterceptor
 
 	@Test
 	public void postHandleShouldAppendPartialFragmentToViewName() {
-		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
+		request.setAttribute( WebTemplateInterceptor.RENDER_FRAGMENT, "myfragment" );
 
 		ModelAndView mav = new ModelAndView( "myview" );
 		interceptor.postHandle( request, response, null, mav );
@@ -98,7 +128,7 @@ public class TestWebTemplateInterceptor
 
 	@Test
 	public void postHandleShouldNotAppendPartialFragmentIfViewNameAlreadyHasFragment() {
-		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
+		request.setAttribute( WebTemplateInterceptor.RENDER_FRAGMENT, "myfragment" );
 
 		ModelAndView mav = new ModelAndView( "myview :: otherfragment" );
 		interceptor.postHandle( request, response, null, mav );
@@ -108,7 +138,7 @@ public class TestWebTemplateInterceptor
 
 	@Test
 	public void postHandleShouldNotAppendPartialFragmentToRedirect() {
-		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
+		request.setAttribute( WebTemplateInterceptor.RENDER_FRAGMENT, "myfragment" );
 
 		ModelAndView mav = new ModelAndView( "forward:/bar" );
 		interceptor.postHandle( request, response, null, mav );
@@ -118,7 +148,7 @@ public class TestWebTemplateInterceptor
 
 	@Test
 	public void postHandleShouldNotAppendPartialFragmentToForward() {
-		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
+		request.setAttribute( WebTemplateInterceptor.RENDER_FRAGMENT, "myfragment" );
 
 		ModelAndView mav = new ModelAndView( "redirect:/foo" );
 		interceptor.postHandle( request, response, null, mav );
@@ -129,18 +159,8 @@ public class TestWebTemplateInterceptor
 	// AX-120 - NPE on partial view rendering
 	@Test
 	public void postHandleWithPartialShouldNotThrowErrorIfModelAndViewIsNull() {
-		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
+		request.setAttribute( WebTemplateInterceptor.RENDER_FRAGMENT, "myfragment" );
 
 		interceptor.postHandle( request, response, null, null );
-	}
-
-	// AX-131 no longer add fragment to redirect view in posthandle, but do add a request attribute in prehandle to make it easier for client code to add custom handling.  This is probably a temporary feature (until a more complete redirect handling is added), but this test ensures that we don't accidentally break compatibility...)
-	@Test
-	public void preHandleWithPartialShouldSetRequestAttribute() {
-		request.setParameter( WebTemplateInterceptor.PARTIAL_PARAMETER, "myfragment" );
-
-		interceptor.preHandle( request, response, null );
-
-		assertEquals( "myfragment", request.getAttribute( WebTemplateInterceptor.PARTIAL_PARAMETER ) );
 	}
 }

@@ -1,3 +1,4 @@
+[[menu-building]]
 == Building menus
 {module-name} provides some infrastructure to build a tree-like menu.
 The output class is a `Menu` instance that is created by the `MenuFactory` service.

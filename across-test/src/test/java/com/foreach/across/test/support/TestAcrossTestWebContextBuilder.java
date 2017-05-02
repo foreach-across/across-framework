@@ -112,7 +112,7 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 	@Configuration
 	public static class ServletConfigurer extends AcrossWebDynamicServletConfigurer
 	{
-		public Boolean allowed;
+		private Boolean allowed;
 
 		public Boolean getAllowed() {
 			return allowed;

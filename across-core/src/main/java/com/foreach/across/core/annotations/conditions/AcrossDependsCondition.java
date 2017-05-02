@@ -19,10 +19,10 @@ package com.foreach.across.core.annotations.conditions;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.context.annotation.Condition;
+import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
+import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
@@ -35,20 +35,12 @@ import java.util.Map;
  *
  * @see com.foreach.across.core.annotations.AcrossDepends
  */
-public class AcrossDependsCondition implements Condition
+public class AcrossDependsCondition extends SpringBootCondition
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossDependsCondition.class );
 
-	/**
-	 * Determine if the condition matches.
-	 *
-	 * @param context  the condition context
-	 * @param metadata metadata of the {@link org.springframework.core.type.AnnotationMetadata class}
-	 *                 or {@link org.springframework.core.type.MethodMetadata method} being checked.
-	 * @return {@code true} if the condition matches and the component can be registered
-	 * or {@code false} to veto registration.
-	 */
-	public boolean matches( ConditionContext context, AnnotatedTypeMetadata metadata ) {
+	@Override
+	public ConditionOutcome getMatchOutcome( ConditionContext context,
+	                                         AnnotatedTypeMetadata metadata ) {
 		Map<String, Object> attributes = metadata.getAnnotationAttributes( AcrossDepends.class.getName() );
 		String[] required = (String[]) attributes.get( "required" );
 		String[] optional = (String[]) attributes.get( "optional" );
@@ -58,9 +50,8 @@ public class AcrossDependsCondition implements Condition
 
 			return applies( acrossContext.getBootstrapConfiguration(), required, optional );
 		}
-		catch ( NoSuchBeanDefinitionException nsbe ) {
-			LOG.error( "Use of AcrossDepends outside of an AcrossContext - condition will always evaluate to true" );
-			return true;
+		catch ( NoSuchBeanDefinitionException ignore ) {
+			return ConditionOutcome.match( "user of AcrossDepends outside of an AcrossContext always matches" );
 		}
 	}
 
@@ -72,11 +63,14 @@ public class AcrossDependsCondition implements Condition
 	 * @return True if dependencies are met or no annotation was found.
 	 * @see com.foreach.across.core.annotations.AcrossDepends
 	 */
-	public static boolean applies( AcrossBootstrapConfig config, Class<?> classToCheck ) {
+	public static ConditionOutcome applies( AcrossBootstrapConfig config, Class<?> classToCheck ) {
 		AcrossDepends dependsAnnotation = classToCheck.getAnnotation( AcrossDepends.class );
 
-		return dependsAnnotation == null
-				|| applies( config, dependsAnnotation.required(), dependsAnnotation.optional() );
+		if ( dependsAnnotation == null ) {
+			return ConditionOutcome.match( "no @AcrossDepends arguments for AcrossDependsCondition present" );
+		}
+
+		return applies( config, dependsAnnotation.required(), dependsAnnotation.optional() );
 	}
 
 	/**
@@ -88,44 +82,33 @@ public class AcrossDependsCondition implements Condition
 	 * @return True if all required modules are present and at least one of the optionals (if any defined).
 	 * @see com.foreach.across.core.annotations.AcrossDepends
 	 */
-	public static boolean applies( AcrossBootstrapConfig config, String[] required, String[] optional ) {
-		boolean shouldLoad = true;
-
+	public static ConditionOutcome applies( AcrossBootstrapConfig config, String[] required, String[] optional ) {
 		if ( required.length > 0 || optional.length > 0 ) {
 			for ( String requiredModuleId : required ) {
 				if ( !config.hasModule( requiredModuleId ) ) {
-					LOG.trace(
-							"AcrossDependsCondition does not match because required module {} is not in the boostrap configuration",
-							requiredModuleId );
-					return false;
+					return ConditionOutcome.noMatch( "required module " + requiredModuleId + " is not present" );
 				}
 			}
 
 			// If all required modules are present, the condition is matched if there is no optional preference
-			shouldLoad = optional.length == 0;
+			boolean shouldLoad = optional.length == 0;
 
 			for ( String optionalModuleId : optional ) {
 				if ( config.hasModule( optionalModuleId ) ) {
-					LOG.trace( "AcrossDependsCondition matches because optional module {} is present",
-					           optionalModuleId );
-					shouldLoad = true;
-					break;
+					return ConditionOutcome.match( "optional module " + optionalModuleId + " is present" );
 				}
 			}
 
-			if ( LOG.isTraceEnabled() ) {
-				if ( !shouldLoad ) {
-					LOG.trace(
-							"AcrossDependsCondition does not match because none of the optional modules {} were present",
-							optional );
-				}
-				else if ( required.length > 0 ) {
-					LOG.trace( "AcrossDependsCondition matches because all required modules {} were present",
-					           required );
-				}
+			if ( !shouldLoad ) {
+				return ConditionOutcome.noMatch(
+						"none of the optional modules were present: " + StringUtils.join( optional, "," ) );
+			}
+			else if ( required.length > 0 ) {
+				return ConditionOutcome.match(
+						"all required modules were present: " + StringUtils.join( required, "," ) );
 			}
 		}
 
-		return shouldLoad;
+		return ConditionOutcome.match( "no required or optional modules were configured for the condition" );
 	}
 }

@@ -16,6 +16,7 @@
 package com.foreach.across.core.context.installers;
 
 import com.foreach.across.core.annotations.Installer;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -68,7 +69,7 @@ public class ClassPathScanningInstallerProvider
 
 						if ( classMetadata.isConcrete() ) {
 							try {
-								Class annotatedClass = Class.forName( classMetadata.getClassName() );
+								Class annotatedClass = ClassLoadingUtils.loadClass( classMetadata.getClassName() );
 
 								installers.add( annotatedClass );
 							}

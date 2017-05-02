@@ -16,13 +16,9 @@
 
 package com.foreach.across.core.events;
 
-import net.engio.mbassy.bus.MessagePublication;
 import net.engio.mbassy.bus.error.IPublicationErrorHandler;
-import net.engio.mbassy.bus.publication.SyncAsyncPostCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * <p>EventBus implementation for the AcrossContext.  Allows for publishing AcrossEvent
@@ -33,21 +29,41 @@ public interface AcrossEventPublisher
 {
 	Logger LOG = LoggerFactory.getLogger( AcrossEventPublisher.class );
 
+	/**
+	 * Remove a listener instance.  Safe to call even if the instance was never registered as a listener.
+	 *
+	 * @param listener instance to remove
+	 * @return true if the listener was registered
+	 */
 	boolean unsubscribe( Object listener );
 
+	/**
+	 * Add an object as an event listener, scans it for {@link com.foreach.across.core.annotations.Event}
+	 * annotated methods. Safe to call even if the instance has no such methods.
+	 *
+	 * @param listener instance
+	 */
 	void subscribe( Object listener );
 
-	MessagePublication publishAsync( AcrossEvent message );
+	/**
+	 * Publish an event.
+	 *
+	 * @param event to publish
+	 */
+	void publish( AcrossEvent event );
 
-	MessagePublication publishAsync( AcrossEvent message, long timeout, TimeUnit unit );
+	/**
+	 * Publish an event asynchronously.
+	 *
+	 * @param event to publish
+	 */
+	void publishAsync( AcrossEvent event );
 
-	void publish( AcrossEvent message );
-
-	SyncAsyncPostCommand<AcrossEvent> post( AcrossEvent message );
-
-	void shutdown();
-
-	boolean isListener( Object listener );
-
+	/**
+	 * Add an error handler that will be called whenever an event handler has thrown an error while
+	 * handling an event.  Note that if this happens, all other event handlers will still be called.
+	 *
+	 * @param errorHandler instance
+	 */
 	void addErrorHandler( IPublicationErrorHandler errorHandler );
 }

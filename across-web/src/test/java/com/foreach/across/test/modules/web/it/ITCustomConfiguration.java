@@ -17,17 +17,18 @@ package com.foreach.across.test.modules.web.it;
 
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
+import com.foreach.across.modules.web.context.WebAppPathResolver;
 import com.foreach.across.test.modules.web.it.modules.TestModules;
 import com.foreach.across.test.modules.web.it.modules.testResources.TestResourcesModule;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -37,6 +38,9 @@ import static org.junit.Assert.assertTrue;
                                    "acrossWebModule.views.thymeleaf.enabled=false" })
 public class ITCustomConfiguration extends AbstractWebIntegrationTest
 {
+	@Autowired
+	private WebAppPathResolver pathResolver;
+
 	@Test
 	public void staticResourcesShouldBeServedUnderConfiguredPath() {
 		String output = get( "/static/css/testResources/parent.css" );
@@ -51,6 +55,12 @@ public class ITCustomConfiguration extends AbstractWebIntegrationTest
 	@Test(expected = HttpClientErrorException.class)
 	public void thymeleafShouldBeDisabled() {
 		get( "/testResources" );
+	}
+
+	@Test
+	public void resourcePrefixesShouldBeRegistered() {
+		assertEquals( "/static/pdf/list.pdf", pathResolver.path( "@resource:/pdf/list.pdf" ) );
+		assertEquals( "/static/static/pdf/list.pdf", pathResolver.path( "@static:/pdf/list.pdf" ) );
 	}
 
 	@Configuration

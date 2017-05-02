@@ -18,6 +18,7 @@ package com.foreach.across.test.development;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import org.junit.Test;
@@ -48,12 +49,18 @@ public class TestActivateDevModeByProperty
 		assertTrue( beanRegistry.getBeanOfType( AcrossDevelopmentMode.class ).isActive() );
 	}
 
+	@Test
+	public void devModeOnlyBeanShouldBePresent() {
+		assertTrue( beanRegistry.containsBean( "devModeOnlyBean" ) );
+	}
+
 	@Configuration
 	@EnableAcrossContext
 	static class Config implements AcrossContextConfigurer
 	{
 		@Override
 		public void configure( AcrossContext context ) {
+			context.addModule( new EmptyAcrossModule( "devMode", DevModeOnlyBeanConfiguration.class ) );
 			assertTrue( context.isDevelopmentMode() );
 		}
 	}

@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web.context;
 
+import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.annotation.ModuleConfigurationBeanNameGenerator;
@@ -93,6 +94,8 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 	@Override
 	protected void registerBeanPostProcessors( ConfigurableListableBeanFactory beanFactory ) {
 		super.registerBeanPostProcessors( beanFactory );
+
+		AcrossApplicationContext.registerEventHandlerBeanPostProcessor( beanFactory );
 
 		// Set the conversion service on the environment as well
 		ConfigurableEnvironment environment = getEnvironment();
