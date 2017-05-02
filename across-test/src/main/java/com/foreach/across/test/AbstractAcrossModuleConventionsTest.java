@@ -129,8 +129,7 @@ public abstract class AbstractAcrossModuleConventionsTest
 
 	/**
 	 * @return True if settings file should be tested.
-	 * @deprecated use of {@link AcrossModuleSettings} is deprecated in
-	 * favor of {@link org.springframework.boot.context.properties.ConfigurationProperties}
+	 * @deprecated use of {@link AcrossModuleSettings} is deprecated in favor of Spring ConfigurationProperties
 	 */
 	@Deprecated
 	protected boolean hasSettings() {
