@@ -137,6 +137,7 @@ public class TestAttributeOverridingSupport
 		parent.setAttribute( Long.class, 500L );
 
 		attributes.setAttribute( "test2", "ba" );
+		attributes.setAttribute( Long.class, null );
 
 		assertTrue( attributes.hasAttribute( "test" ) );
 		assertTrue( attributes.hasAttribute( "test2" ) );
@@ -156,11 +157,11 @@ public class TestAttributeOverridingSupport
 		assertEquals( 3, map.size() );
 		assertEquals( "boe", map.get( "test" ) );
 		assertEquals( "ba", map.get( "test2" ) );
-		assertEquals( 500L, map.get( "java.lang.Long" ) );
+		assertNull( map.get( "java.lang.Long" ) );
 
 		assertEquals( "boe", attributes.getAttribute( "test" ) );
 		assertEquals( "ba", attributes.getAttribute( "test2", String.class ) );
-		assertEquals( Long.valueOf( 500L ), attributes.getAttribute( Long.class ) );
+		assertNull( attributes.getAttribute( Long.class ) );
 
 		attributes.removeAttribute( "test2" );
 		assertEquals( Integer.valueOf( 123 ), attributes.getAttribute( "test2", Integer.class ) );
