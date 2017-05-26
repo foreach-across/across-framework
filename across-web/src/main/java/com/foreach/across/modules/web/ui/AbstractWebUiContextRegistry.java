@@ -29,6 +29,7 @@ import org.springframework.beans.factory.FactoryBean;
  *
  * @param <T> Specific WebUiContext implementation (use interface).
  */
+@Deprecated
 public abstract class AbstractWebUiContextRegistry<T extends WebUiContext> implements FactoryBean<T>
 {
 	private T webUiContext;

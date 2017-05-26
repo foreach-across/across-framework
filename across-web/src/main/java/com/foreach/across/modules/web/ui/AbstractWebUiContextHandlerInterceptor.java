@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @param <T> Specific WebUiContext implementation (use interface).
  */
+@Deprecated
 public abstract class AbstractWebUiContextHandlerInterceptor<T extends WebUiContext> extends HandlerInterceptorAdapter
 {
 	@Autowired

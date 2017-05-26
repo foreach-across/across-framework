@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.table;
 
 import java.util.*;
 
+@Deprecated
 public class Table
 {
 	private String title;

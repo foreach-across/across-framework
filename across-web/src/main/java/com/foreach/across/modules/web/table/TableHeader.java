@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web.table;
 
+@Deprecated
 public class TableHeader extends TableRow
 {
 	public TableHeader( Object... fields ) {

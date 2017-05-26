@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
+@Deprecated
 public class TableRow
 {
 	private Collection<Object> fields = new LinkedList<Object>();
