@@ -19,6 +19,7 @@ package com.foreach.across.modules.web.resource;
 import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.context.WebAppPathResolver;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
@@ -43,6 +44,7 @@ public class WebResourceUtils
 	public static final String PATH_RESOLVER_ATTRIBUTE_KEY = WebAppPathResolver.class.getName();
 	public static final String LINK_BUILDER_ATTRIBUTE_KEY = WebAppLinkBuilder.class.getName();
 	public static final String VIEW_ELEMENT_BUILDER_CONTEXT_KEY = ViewElementBuilderContext.class.getName();
+	public static final String MESSAGE_SOURCE_KEY = MessageSource.class.getName();
 
 	protected WebResourceUtils() {
 	}
@@ -135,5 +137,28 @@ public class WebResourceUtils
 	public static Optional<ViewElementBuilderContext> getViewElementBuilderContext( HttpServletRequest request ) {
 		return Optional.ofNullable(
 				(ViewElementBuilderContext) request.getAttribute( VIEW_ELEMENT_BUILDER_CONTEXT_KEY ) );
+	}
+
+	/**
+	 * Store the primary message source on the request.
+	 */
+	public static void storeMessageSource( MessageSource messageSource, HttpServletRequest request ) {
+		request.setAttribute( MESSAGE_SOURCE_KEY, messageSource );
+	}
+
+	/**
+	 * @return primary message source attached to the request for the current thread
+	 */
+	public static Optional<MessageSource> currentMessageSource() {
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		return requestAttributes != null ? getMessageSource( requestAttributes ) : Optional.empty();
+	}
+
+	public static Optional<MessageSource> getMessageSource( RequestAttributes request ) {
+		return Optional.ofNullable( (MessageSource) request.getAttribute( MESSAGE_SOURCE_KEY, WebRequest.SCOPE_REQUEST ) );
+	}
+
+	public static Optional<MessageSource> getMessageSource( HttpServletRequest request ) {
+		return Optional.ofNullable( (MessageSource) request.getAttribute( MESSAGE_SOURCE_KEY ) );
 	}
 }

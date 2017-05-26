@@ -21,8 +21,13 @@ import com.foreach.across.core.support.ReadableAttributes;
 import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
+import com.foreach.across.modules.web.support.LocalizedTextResolver;
+import com.foreach.across.modules.web.support.MessageCodeSupportingLocalizedTextResolver;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.Model;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -100,10 +105,96 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 		return getAttribute( WebAppLinkBuilder.class );
 	}
 
+	/**
+	 * Set the {@link MessageSource} that should be used in this builder context.
+	 *
+	 * @param messageSource to use
+	 */
+	public void setMessageSource( MessageSource messageSource ) {
+		setAttribute( MessageSource.class, messageSource );
+	}
+
+	public MessageSource getMessageSource() {
+		return getAttribute( MessageSource.class );
+	}
+
+	/**
+	 * Set the {@link LocalizedTextResolver} to use in this builder context.
+	 *
+	 * @param textResolver to use
+	 */
+	public void setLocalizedTextResolver( LocalizedTextResolver textResolver ) {
+		setAttribute( LocalizedTextResolver.class, textResolver );
+	}
+
+	public LocalizedTextResolver getLocalizedTextResolver() {
+		return getAttribute( LocalizedTextResolver.class );
+	}
+
 	@Override
 	public String buildLink( String baseLink ) {
 		WebAppLinkBuilder linkBuilder = getWebAppLinkBuilder();
 		return linkBuilder != null ? linkBuilder.buildLink( baseLink ) : baseLink;
+	}
+
+	@Override
+	public String resolveText( String text ) {
+		return getLocalizedTextResolver().resolveText( text );
+	}
+
+	@Override
+	public String resolveText( String text, Locale locale ) {
+		return getLocalizedTextResolver().resolveText( text, locale );
+	}
+
+	@Override
+	public String resolveText( String text, String defaultValue ) {
+		return getLocalizedTextResolver().resolveText( text, defaultValue );
+	}
+
+	@Override
+	public String resolveText( String text, String defaultValue, Locale locale ) {
+		return getLocalizedTextResolver().resolveText( text, defaultValue, locale );
+	}
+
+	@Override
+	public String getMessage( String code ) {
+		return getMessage( code, code );
+	}
+
+	@Override
+	public String getMessage( String code, Locale locale ) {
+		return getMessage( code, code, locale );
+	}
+
+	@Override
+	public String getMessage( String code, String defaultMessage ) {
+		return getMessage( code, code, LocaleContextHolder.getLocale() );
+	}
+
+	@Override
+	public String getMessage( String code, String defaultMessage, Locale locale ) {
+		return getMessage( code, new Object[0], defaultMessage, locale );
+	}
+
+	@Override
+	public String getMessage( String code, Object[] args ) {
+		return getMessage( code, args, code );
+	}
+
+	@Override
+	public String getMessage( String code, Object[] args, Locale locale ) {
+		return getMessage( code, args, code, locale );
+	}
+
+	@Override
+	public String getMessage( String code, Object[] args, String defaultMessage ) {
+		return getMessage( code, args, defaultMessage, LocaleContextHolder.getLocale() );
+	}
+
+	@Override
+	public String getMessage( String code, Object[] args, String defaultMessage, Locale locale ) {
+		return getMessageSource().getMessage( code, args, defaultMessage, locale );
 	}
 
 	private static class AttributesMapWrapper extends AttributeSupport
@@ -120,6 +211,8 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 	 * <ul>
 	 * <li>{@link WebResourceRegistry}</li>
 	 * <li>{@link WebAppLinkBuilder}</li>
+	 * <li>{@link MessageSource}</li>
+	 * <li>{@link LocalizedTextResolver} (created if a {@link MessageSource} is present)</li>
 	 * </ul>
 	 *
 	 * @param builderContext to add the attributes to
@@ -134,6 +227,17 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 			WebResourceUtils.currentLinkBuilder().ifPresent(
 					lb -> builderContext.setAttribute( WebAppLinkBuilder.class, lb )
 			);
+		}
+		if ( !builderContext.hasAttribute( MessageSource.class ) ) {
+			WebResourceUtils.currentMessageSource().ifPresent(
+					lb -> builderContext.setAttribute( MessageSource.class, lb )
+			);
+		}
+		if ( !builderContext.hasAttribute( LocalizedTextResolver.class ) ) {
+			MessageSource messageSource = builderContext.getAttribute( MessageSource.class );
+			if ( messageSource != null ) {
+				builderContext.setAttribute( LocalizedTextResolver.class, new MessageCodeSupportingLocalizedTextResolver( messageSource ) );
+			}
 		}
 	}
 }

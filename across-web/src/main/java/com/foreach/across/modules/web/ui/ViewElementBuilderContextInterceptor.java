@@ -17,7 +17,9 @@ package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
+import com.foreach.across.modules.web.support.LocalizedTextResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +37,15 @@ import javax.servlet.http.HttpServletResponse;
 public class ViewElementBuilderContextInterceptor extends HandlerInterceptorAdapter
 {
 	private WebAppLinkBuilder webAppLinkBuilder;
+	private MessageSource messageSource;
+	private LocalizedTextResolver localizedTextResolver;
 
 	@Override
 	public final boolean preHandle( HttpServletRequest request,
 	                                HttpServletResponse response,
 	                                Object handler ) throws Exception {
+		WebResourceUtils.storeMessageSource( messageSource, request );
+
 		ViewElementBuilderContext builderContext = createDefaultViewElementBuilderContext( request );
 		WebResourceUtils.storeViewElementBuilderContext( builderContext, request );
 		ViewElementBuilderContextHolder.setViewElementBuilderContext( builderContext );
@@ -50,6 +56,8 @@ public class ViewElementBuilderContextInterceptor extends HandlerInterceptorAdap
 	protected ViewElementBuilderContext createDefaultViewElementBuilderContext( HttpServletRequest request ) {
 		DefaultViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 		builderContext.setWebAppLinkBuilder( webAppLinkBuilder );
+		builderContext.setMessageSource( messageSource );
+		builderContext.setLocalizedTextResolver( localizedTextResolver );
 		return builderContext;
 	}
 
@@ -64,5 +72,15 @@ public class ViewElementBuilderContextInterceptor extends HandlerInterceptorAdap
 	@Autowired
 	protected void setWebAppLinkBuilder( WebAppLinkBuilder webAppLinkBuilder ) {
 		this.webAppLinkBuilder = webAppLinkBuilder;
+	}
+
+	@Autowired
+	protected void setMessageSource( MessageSource messageSource ) {
+		this.messageSource = messageSource;
+	}
+
+	@Autowired
+	protected void setLocalizedTextResolver( LocalizedTextResolver localizedTextResolver ) {
+		this.localizedTextResolver = localizedTextResolver;
 	}
 }

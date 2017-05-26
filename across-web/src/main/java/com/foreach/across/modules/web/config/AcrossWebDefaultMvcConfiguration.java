@@ -30,6 +30,7 @@ import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.mvc.*;
 import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
+import com.foreach.across.modules.web.support.MessageCodeSupportingLocalizedTextResolver;
 import com.foreach.across.modules.web.template.LayoutSupportingExceptionHandlerExceptionResolver;
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -502,6 +504,11 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		return handlerMapping;
 	}
 
+	@Bean
+	@Exposed
+	public MessageCodeSupportingLocalizedTextResolver localizedTextResolver( MessageSource messageSource ) {
+		return new MessageCodeSupportingLocalizedTextResolver( messageSource );
+	}
 
 	@Bean
 	@Exposed
@@ -567,7 +574,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	/**
 	 * Inherited in order to expose properties.
 	 */
-	@SuppressWarnings( "all" )
+	@SuppressWarnings("all")
 	static final class DelayedAsyncSupportConfigurer extends AsyncSupportConfigurer
 	{
 		@Override

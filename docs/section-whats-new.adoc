@@ -1,5 +1,11 @@
 == What's new in this version?
 
+=== 2.1.0-SNAPSHOT
+*AcrossWebModule*
+
+* added `LocalizedTextResolver` for <<localized-text,generic localization of text snippets>>
+** `ViewElementBuilderContext` also implements text and message code resolving (see {bootstrap-ui-module-url}[BootstrapUiModule] documentation)
+
 === 2.0.0.RELEASE
 Upgrade to *Spring Platform Athens*, new major dependency versions:
 
