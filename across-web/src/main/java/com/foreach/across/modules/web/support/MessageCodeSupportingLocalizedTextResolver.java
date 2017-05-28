@@ -16,10 +16,12 @@
 package com.foreach.across.modules.web.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Attempts to localize a text snippet.  An actual piece of text will simply be returned as is.
@@ -32,15 +34,25 @@ import java.util.Locale;
  * <li><strong>#{message.code}</strong> : will return the resolved message code value or the message code itself if unresolvable</li>
  * <li><strong>#{message.code=Some text}</strong> : will return the resolved message code value or <em>Some text</em> if unresolvable</li>
  * </ul>
+ * <p/>
+ * A message source is not strictly required, if none is set, message codes will still be replaced by their default values or by just the message code.
  *
  * @author Arne Vandamme
  * @since 2.1.0
  */
 public final class MessageCodeSupportingLocalizedTextResolver implements LocalizedTextResolver
 {
-	private final MessageSource messageSource;
+	private MessageSource messageSource;
+
+	public MessageCodeSupportingLocalizedTextResolver() {
+	}
 
 	public MessageCodeSupportingLocalizedTextResolver( MessageSource messageSource ) {
+		this.messageSource = messageSource;
+	}
+
+	@Autowired
+	public void setMessageSource( MessageSource messageSource ) {
 		this.messageSource = messageSource;
 	}
 
@@ -62,7 +74,9 @@ public final class MessageCodeSupportingLocalizedTextResolver implements Localiz
 
 			if ( codeElements != null ) {
 				String actualDefault = StringUtils.defaultString( defaultValue != null ? defaultValue : codeElements[1], codeElements[0] );
-				return messageSource.getMessage( codeElements[0], new Object[0], actualDefault, locale );
+				return messageSource != null
+						? messageSource.getMessage( codeElements[0], new Object[0], actualDefault, locale )
+						: actualDefault;
 			}
 
 			return text;
@@ -79,5 +93,22 @@ public final class MessageCodeSupportingLocalizedTextResolver implements Localiz
 					new String[] { text.substring( 2, text.length() - 1 ), null };
 		}
 		return null;
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
+		MessageCodeSupportingLocalizedTextResolver that = (MessageCodeSupportingLocalizedTextResolver) o;
+		return Objects.equals( messageSource, that.messageSource );
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( messageSource );
 	}
 }

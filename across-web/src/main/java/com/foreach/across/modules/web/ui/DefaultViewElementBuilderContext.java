@@ -29,6 +29,7 @@ import org.springframework.ui.Model;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * <p>Standard implementation of a {@link ViewElementBuilderContext} that optionally allows a parent set of attributes
@@ -207,17 +208,29 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 	/**
 	 * Registers default attributes in the builder context if they are not yet present.  If they are present
 	 * - either directly or in the parent - they will be skipped.
-	 * The following request-bound attributes are registered by default if present:
+	 * <p>
+	 * If there is a global {@link ViewElementBuilderContext}, the default attributes will be fetched from there.
+	 * Otherwise request-bound values will be looked for:
 	 * <ul>
 	 * <li>{@link WebResourceRegistry}</li>
 	 * <li>{@link WebAppLinkBuilder}</li>
 	 * <li>{@link MessageSource}</li>
-	 * <li>{@link LocalizedTextResolver} (created if a {@link MessageSource} is present)</li>
+	 * <li>{@link LocalizedTextResolver}: always created if none found, either using the {@link MessageSource}, either</li>
 	 * </ul>
 	 *
 	 * @param builderContext to add the attributes to
 	 */
 	public static void registerMissingDefaultAttributes( ViewElementBuilderContext builderContext ) {
+		ViewElementBuilderContext
+				.retrieveGlobalBuilderContext()
+				.filter( global -> global != builderContext )
+				.ifPresent( globalContext -> {
+					Stream.of( WebResourceRegistry.class, WebAppLinkBuilder.class, MessageSource.class, LocalizedTextResolver.class )
+					      .filter( c -> !builderContext.hasAttribute( c ) )
+					      .forEach( c -> builderContext.setAttribute( (Class<Object>) c, (Object) globalContext.getAttribute( c ) ) );
+				} );
+
+		// fallback to request if attributes still are missing
 		if ( !builderContext.hasAttribute( WebResourceRegistry.class ) ) {
 			WebResourceUtils.currentRegistry().ifPresent(
 					r -> builderContext.setAttribute( WebResourceRegistry.class, r )
@@ -235,9 +248,8 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 		}
 		if ( !builderContext.hasAttribute( LocalizedTextResolver.class ) ) {
 			MessageSource messageSource = builderContext.getAttribute( MessageSource.class );
-			if ( messageSource != null ) {
-				builderContext.setAttribute( LocalizedTextResolver.class, new MessageCodeSupportingLocalizedTextResolver( messageSource ) );
-			}
+			// Does not matter if messageSource is null, then the text resolver will simply remove message codes
+			builderContext.setAttribute( LocalizedTextResolver.class, new MessageCodeSupportingLocalizedTextResolver( messageSource ) );
 		}
 	}
 }

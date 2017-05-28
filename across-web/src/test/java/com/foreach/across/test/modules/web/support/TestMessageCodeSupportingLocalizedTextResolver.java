@@ -76,6 +76,22 @@ public class TestMessageCodeSupportingLocalizedTextResolver
 	public void customDefaultValueTakesPrecedenceOverTokenBased() {
 		when( messageSource.getMessage( "my.code", new Object[0], "custom-default", Locale.US ) ).thenReturn( "custom-default" );
 		assertEquals( "custom-default", textResolver.resolveText( "#{my.code=default}", "custom-default", Locale.US ) );
+	}
 
+	@Test
+	public void nullMessageSourceDoesNotFail() {
+		textResolver.setMessageSource( null );
+
+		assertEquals( "my text", textResolver.resolveText( "my text" ) );
+		assertEquals( null, textResolver.resolveText( null ) );
+		assertEquals( "", textResolver.resolveText( "", "empty" ) );
+		assertEquals( "empty", textResolver.resolveText( null, "empty" ) );
+		assertEquals( "#{", textResolver.resolveText( "#{" ) );
+		assertEquals( "my.code", textResolver.resolveText( "#{my.code}", Locale.US ) );
+		assertEquals( "default", textResolver.resolveText( "#{my.other}", "default", Locale.US ) );
+		assertEquals( "", textResolver.resolveText( "#{}" ) );
+		assertEquals( "default", textResolver.resolveText( "#{my.code=default}", Locale.US ) );
+		assertEquals( "", textResolver.resolveText( "#{my.code=}", Locale.US ) );
+		assertEquals( "custom-default", textResolver.resolveText( "#{my.code=default}", "custom-default", Locale.US ) );
 	}
 }
