@@ -23,8 +23,8 @@ src/main/resources
          img/logo.png
      th/
        MyModule/
-         controller.thtml
-         user-profile.thtml
+         controller.html
+         user-profile.html
 ----
 
 The relative path under which the static resources are available is determined by the *acrossWebModule.resources.path* property.

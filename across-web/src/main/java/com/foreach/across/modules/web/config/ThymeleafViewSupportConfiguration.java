@@ -51,9 +51,10 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
- * Creates Thymeleaf view resolver.
+ * Registers Thymeleaf support for all files with .html or .thtml extension.
  */
 @Configuration
 @ConditionalOnProperty(value = "acrossWebModule.views.thymeleaf.enabled", matchIfMissing = true)
@@ -77,6 +78,7 @@ public class ThymeleafViewSupportConfiguration
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.addDialect( new AcrossWebDialect() );
 		engine.addTemplateResolver( templateResolver() );
+		engine.addTemplateResolver( thtmlTemplateResolver() );
 		engine.setLinkBuilder( new PrefixingSupportingLinkBuilder( prefixingPathRegistry ) );
 
 		if ( developmentMode.isActive() ) {
@@ -140,29 +142,29 @@ public class ThymeleafViewSupportConfiguration
 			Map<String, String> developmentViews = developmentMode.getDevelopmentLocations( "views" );
 			developmentViews.putAll( settings.getDevelopmentViews() );
 
-			for ( Map.Entry<String, String> views : developmentViews.entrySet() ) {
-				String prefix = "file:" + views.getValue() + "/";
-				String suffix = ".thtml";
+			developmentViews.forEach( ( resourceKey, path ) -> {
+				Stream.of( ".html", ".thtml" )
+				      .forEach( suffix -> {
+					      String prefix = "file:" + path + "/";
 
-				LOG.info( "Registering development Thymeleaf lookup for {} with physical path {}", views.getKey(),
-				          views.getValue() );
+					      LOG.info( "Registering development Thymeleaf lookup for {} with physical path {}", resourceKey, path );
 
-				SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-				resolver.setOrder( 19 );
-				resolver.setCharacterEncoding( "UTF-8" );
-				resolver.setTemplateMode( "HTML" );
-				resolver.setCacheable( true );
-				resolver.setCacheTTLMs( 1000L );
-				resolver.setPrefix( prefix );
-				resolver.setSuffix( suffix );
-				resolver.setCheckExistence( true );
+					      SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+					      resolver.setOrder( 19 );
+					      resolver.setCharacterEncoding( "UTF-8" );
+					      resolver.setTemplateMode( "HTML" );
+					      resolver.setCacheable( true );
+					      resolver.setCacheTTLMs( 1000L );
+					      resolver.setPrefix( prefix );
+					      resolver.setSuffix( suffix );
+					      resolver.setCheckExistence( true );
 
-				applicationContext.getAutowireCapableBeanFactory().initializeBean( resolver,
-				                                                                   "developmentResolver." + views
-						                                                                   .getKey() );
+					      applicationContext.getAutowireCapableBeanFactory()
+					                        .initializeBean( resolver, "developmentResolver." + resourceKey + suffix );
 
-				resolvers.add( resolver );
-			}
+					      resolvers.add( resolver );
+				      } );
+			} );
 		}
 
 		return resolvers;
@@ -181,8 +183,28 @@ public class ThymeleafViewSupportConfiguration
 		}
 
 		resolver.setPrefix( "classpath:/views/" );
-		resolver.setSuffix( ".thtml" );
+		resolver.setSuffix( ".html" );
+		resolver.setCheckExistence( true );
 		resolver.setOrder( 20 );
+
+		return resolver;
+	}
+
+	@Bean
+	@Exposed
+	public ITemplateResolver thtmlTemplateResolver() {
+		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+		resolver.setCharacterEncoding( "UTF-8" );
+		resolver.setTemplateMode( "HTML" );
+		resolver.setCacheable( true );
+
+		if ( developmentMode.isActive() ) {
+			resolver.setCacheTTLMs( 1000L );
+		}
+
+		resolver.setPrefix( "classpath:/views/" );
+		resolver.setSuffix( ".thtml" );
+		resolver.setOrder( 21 );
 
 		return resolver;
 	}

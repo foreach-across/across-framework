@@ -5,6 +5,9 @@
 
 * added `LocalizedTextResolver` for <<localized-text,generic localization of text snippets>>
 ** `ViewElementBuilderContext` also implements text and message code resolving (see {bootstrap-ui-module-url}[BootstrapUiModule] documentation)
+* the default Thymeleaf resolvers now support templates with **.html* suffix
+** _.html_ extension is now preferred as text editors will automatically recognize the template as html
+** _.thtml_ extension is still fully supported but support may be removed in a future major release
 
 === 2.0.0.RELEASE
 Upgrade to *Spring Platform Athens*, new major dependency versions:
