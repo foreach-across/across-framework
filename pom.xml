@@ -141,6 +141,7 @@
 					<doctype>book</doctype>
 					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
 					<backend>html</backend>
+					<sourceHighlighter>coderay</sourceHighlighter>
 					<attributes>
 						<stylesheet>across.css</stylesheet>
 					</attributes>
