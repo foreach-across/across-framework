@@ -40,16 +40,12 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 {
 	// The current module (owning the ApplicationContext) can always be referenced under this qualifier
 	public static final String CURRENT_MODULE = "across.currentModule";
-
-	private AcrossContext context;
-
-	private BeanFilter exposeFilter = defaultExposeFilter();
-	private ExposedBeanDefinitionTransformer exposeTransformer = null;
 	private final Set<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
 	private final Set<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
-
 	private final Set<String> runtimeDependencies = new HashSet<>();
-
+	private AcrossContext context;
+	private BeanFilter exposeFilter = defaultExposeFilter();
+	private ExposedBeanDefinitionTransformer exposeTransformer = null;
 	private boolean enabled = true;
 
 	private InstallerSettings installerSettings;
@@ -57,6 +53,16 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	public AcrossModule() {
 		registerDefaultApplicationContextConfigurers( applicationContextConfigurers );
 		registerDefaultInstallerContextConfigurers( installerContextConfigurers );
+	}
+
+	/**
+	 * By default all @Service and @Controller beans are exposed, along with any other beans
+	 * annotated explicitly with @Exposed or created through an @Exposed BeanFactory.
+	 */
+	@SuppressWarnings("unchecked")
+	public static BeanFilter defaultExposeFilter() {
+		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class ),
+		                                new AnnotationBeanFilter( true, true, Exposed.class ) );
 	}
 
 	public AcrossContext getContext() {
@@ -357,16 +363,6 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	public void shutdown() {
 	}
 
-	/**
-	 * By default all @Service and @Controller beans are exposed, along with any other beans
-	 * annotated explicitly with @Exposed or created through an @Exposed BeanFactory.
-	 */
-	@SuppressWarnings("unchecked")
-	public static BeanFilter defaultExposeFilter() {
-		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class ),
-		                                new AnnotationBeanFilter( true, true, Exposed.class ) );
-	}
-
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {
@@ -387,5 +383,10 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	@Override
 	public AcrossVersionInfo getVersionInfo() {
 		return AcrossVersionInfo.load( getClass() );
+	}
+
+	@Override
+	public String toString() {
+		return "AcrossModule{" + getName() + "}";
 	}
 }

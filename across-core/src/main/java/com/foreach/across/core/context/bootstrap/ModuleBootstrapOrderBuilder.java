@@ -128,7 +128,7 @@ public class ModuleBootstrapOrderBuilder
 
 	private void optimizeOptionals( List<AcrossModule> orderedByRole, LinkedList<AcrossModule> orderedModules ) {
 		List<AcrossModule> optionalsToMove = new ArrayList<>();
-		
+
 		for ( AcrossModule module : orderedByRole ) {
 			optionalsToMove.addAll( getAppliedOptionalDependencies( module ) );
 		}
@@ -146,13 +146,19 @@ public class ModuleBootstrapOrderBuilder
 		if ( !optionalsMoved.contains( moduleToMove ) ) {
 			optionalsMoved.add( moduleToMove );
 
-			// First move the other dependencies it has
+			AcrossModuleRole currentRole = getModuleRole( moduleToMove );
+
+			// First move the other dependencies it has if they have the same role
 			for ( AcrossModule dependency : getAppliedRequiredDependencies( moduleToMove ) ) {
-				moveModuleAsHighAsPossible( dependency, optionalsMoved, orderedModules );
+				if ( getModuleRole( dependency ) == currentRole ) {
+					moveModuleAsHighAsPossible( dependency, optionalsMoved, orderedModules );
+				}
 			}
 
 			for ( AcrossModule dependency : getAppliedOptionalDependencies( moduleToMove ) ) {
-				moveModuleAsHighAsPossible( dependency, optionalsMoved, orderedModules );
+				if ( getModuleRole( dependency ) == currentRole ) {
+					moveModuleAsHighAsPossible( dependency, optionalsMoved, orderedModules );
+				}
 			}
 
 			// Find lowest required dependency
