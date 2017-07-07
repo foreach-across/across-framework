@@ -208,6 +208,31 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
+	public void movingOnlyMovesNestedPath() {
+		builder.item( "/list/business", "Business" ).and()
+		       .item( "/list/business/details", "Details" ).and()
+		       .item( "/list/businessDescription", "Business description" );
+
+		Menu menu = builder.build();
+		assertEquals( 2, menu.size() );
+
+		verify( menu.getItems().get( 0 ), "/list/business", "Business", "/list/business" );
+		verify( menu.getItems().get( 0 ).getFirstItem(), "/list/business/details", "Details", "/list/business/details" );
+		verify( menu.getItems().get( 1 ), "/list/businessDescription", "Business description", "/list/businessDescription" );
+
+		builder.group( "/mybusiness", "My Business" ).and()
+		       .move( "/list/business", "/mybusiness/business" );
+
+		menu = builder.build();
+		assertEquals( 2, menu.size() );
+
+		verify( menu.getItems().get( 0 ), "/list/businessDescription", "Business description", "/list/businessDescription" );
+		verify( menu.getItems().get( 1 ), "/mybusiness", "My Business", "/mybusiness" );
+		verify( menu.getItems().get( 1 ).getItems().get( 0 ), "/list/business", "Business", "/list/business" );
+		verify( menu.getItems().get( 1 ).getItems().get( 0 ).getFirstItem(), "/list/business/details", "Details", "/list/business/details" );
+	}
+
+	@Test
 	public void itemProcessors() {
 		builder = new PathBasedMenuBuilder( new PrefixTitleProcessor( "processed:" ) );
 
