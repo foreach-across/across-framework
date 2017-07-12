@@ -132,7 +132,7 @@ public class AcrossConfig
 	@DependsOn({ "sqlBasedDistributedLockManager" })
 	public DistributedLockRepository distributedLockRepository( SqlBasedDistributedLockManager sqlBasedDistributedLockManager, AcrossContext acrossContext ) {
 		String ownerId =
-				StringUtils.substring( acrossContext.getDisplayName() + "@" + StringUtils.defaultString( getHostNameFromServer(), "unknown-host" ), 0, 100 )
+				StringUtils.substring( acrossContext.getDisplayName() + "@" + StringUtils.defaultString( getHostNameFromServer(), "unknown-host" ), 0, 80 )
 						+ "[" + UUID.randomUUID().toString() + "]";
 
 		LOG.info( "Creating distributed lock owner id: {}", ownerId );
