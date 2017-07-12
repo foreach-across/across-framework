@@ -100,7 +100,13 @@ public class AcrossBootstrapInstallerRegistry
 
 				if ( shouldCheckRunCondition( action ) ) {
 					if ( shouldPerformAction( action, moduleConfig.getModule(), metadata ) ) {
-						performInstallerAction( action, moduleConfig.getModule(), metadata, installerInstance );
+						takeBootstrapLock();
+						try {
+							performInstallerAction( action, moduleConfig.getModule(), metadata, installerInstance );
+						}
+						finally {
+							releaseBootstrapLock();
+						}
 					}
 					else {
 						LOG.debug( "Skipping installer {} because action {} should not be performed.",
@@ -172,8 +178,9 @@ public class AcrossBootstrapInstallerRegistry
 				LOG.trace( "Finished execution of installer {} for module {}", installer.getClass(), module.getName() );
 			}
 			else {
-				LOG.debug( "Skipping installer {} for modules {} - instance could not be retrieved (dependencies not met)",
-				           installerMetaData.getName(), module.getName() );
+				LOG.debug(
+						"Skipping installer {} for modules {} - instance could not be retrieved (dependencies not met)",
+						installerMetaData.getName(), module.getName() );
 			}
 		}
 		else {
@@ -235,10 +242,6 @@ public class AcrossBootstrapInstallerRegistry
 	private boolean shouldPerformAction( InstallerAction action,
 	                                     AcrossModule module,
 	                                     InstallerMetaData installerMetaData ) {
-		// Get the installer repository because now we need to perform version lookups
-		// and possibly register on execution.  This will also install the core schema if necessary.
-		AcrossInstallerRepository repository = getInstallerRepository();
-
 		if ( action == InstallerAction.FORCE ) {
 			return true;
 		}
@@ -248,15 +251,36 @@ public class AcrossBootstrapInstallerRegistry
 				LOG.debug( "Performing action {} for installer {} because it is set to always run", action,
 				           installerMetaData.getInstallerClass() );
 				return true;
-			case VersionDifferent:
+			case VersionDifferent: {
+				// Get the installer repository because now we need to perform version lookups
+				// and possibly register on execution.  This will also install the core schema if necessary.
+				AcrossInstallerRepository repository = getInstallerRepository();
+
 				int installedVersion = repository.getInstalledVersion( module.getName(), installerMetaData.getName() );
+
 				if ( installerMetaData.getVersion() > installedVersion ) {
-					LOG.debug( "Performing action {} for installer {} because version {} is higher than installed {}",
-					           action, installerMetaData.getInstallerClass(), installerMetaData.getVersion(),
-					           installedVersion );
-					return true;
+					// Double check - check again after we have acquired bootstrap lock
+					takeBootstrapLock();
+					installedVersion = repository.getInstalledVersion( module.getName(), installerMetaData.getName() );
+					if ( installerMetaData.getVersion() > installedVersion ) {
+						LOG.debug(
+								"Performing action {} for installer {} because version {} is higher than installed {}",
+								action, installerMetaData.getInstallerClass(), installerMetaData.getVersion(),
+								installedVersion );
+						return true;
+					}
+					else {
+						LOG.trace(
+								"Skipping action {} for installers {} because version {} was not higher than {} after acquiring bootstrap lock",
+								action, installerMetaData.getInstallerClass(), installerMetaData.getVersion(),
+								installedVersion );
+						LOG.trace(
+								"Performing an early release of the bootstrap lock since no installer needs executing" );
+						releaseBootstrapLock();
+					}
 				}
 				break;
+			}
 			default:
 				break;
 		}
@@ -264,17 +288,23 @@ public class AcrossBootstrapInstallerRegistry
 		return false;
 	}
 
+	private void releaseBootstrapLock() {
+		if ( bootstrapLockManager != null ) {
+			bootstrapLockManager.ensureUnlocked();
+		}
+	}
+
+	private void takeBootstrapLock() {
+		if ( bootstrapLockManager != null ) {
+			bootstrapLockManager.ensureLocked();
+		}
+	}
+
 	private AcrossInstallerRepository getInstallerRepository() {
 		if ( installerRepository == null ) {
 			installerRepository = AcrossContextUtils
 					.getBeanRegistry( contextConfig.getContext() )
 					.getBeanOfType( AcrossInstallerRepository.class );
-
-			// As soon as we have retrieved the installer registry, and there is a lock manager,
-			// make sure we lock for the remainder of the bootstrap
-			if ( bootstrapLockManager != null ) {
-				bootstrapLockManager.ensureLocked();
-			}
 		}
 
 		return installerRepository;
