@@ -1,6 +1,10 @@
 == What's new in this version?
 
 === 2.1.0-SNAPSHOT
+*Across Core*
+
+* the bootstrap lock is now taken and released per installer instead of once for the entire bootstrap phase
+
 *AcrossWebModule*
 
 * added `LocalizedTextResolver` for <<localized-text,generic localization of text snippets>>

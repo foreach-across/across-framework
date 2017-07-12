@@ -42,7 +42,7 @@ This allows for installers to execute only if they have not yet been executed (s
 
 In addition, installer execution is synchronized for multiple applications connecting on the same database.
 This is done through the `DistributedLockRepository` that is created in the core schema.
-A lock will be taken on the datasource as soon as a single installer wishes to execute, and will only be released once bootstrapping is fully done.
+A lock will be taken on the database as soon as a single installer wishes to execute, and will be released once that installer has finished executing.
 
 Because of tracking and synchronization, a <<installer-datasource,datasource>> is required in order to execute installers.
 
