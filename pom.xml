@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>1.1.3.RELEASE</version>
+	<version>1.1.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -48,7 +48,7 @@
 	</developers>
 
 	<properties>
-		<across.version>1.1.3.RELEASE</across.version>
+		<across.version>1.1.4-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.platform.version>1.1.5.RELEASE</spring.platform.version>
 		<foreach.common.version>0.12</foreach.common.version>

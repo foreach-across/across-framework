@@ -215,6 +215,7 @@ public class AcrossBootstrapper
 				installerRegistry.destroy();
 			}
 			finally {
+				// Safe guard - ensure bootstrap released
 				bootstrapLockManager.ensureUnlocked();
 			}
 
