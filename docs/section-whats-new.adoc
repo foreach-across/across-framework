@@ -3,10 +3,14 @@
 === 2.1.0-SNAPSHOT
 *Across Core*
 
-* the bootstrap lock is now taken and released per installer instead of once for the entire bootstrap phase
+* bootstrap locking changes
+** the bootstrap lock is now taken and released per installer instead of once for the entire bootstrap phase
+** lock owner id is prefixed with both the `AcrossContext#displayName` and the hostname of the server
 
 *AcrossWebModule*
 
+* `@AcrossApplication` has a `displayName` attribute to configure the context display name
+** if empty, the property value of *across.displayName* will be considered instead
 * added `LocalizedTextResolver` for <<localized-text,generic localization of text snippets>>
 ** `ViewElementBuilderContext` also implements text and message code resolving (see {bootstrap-ui-module-url}[BootstrapUiModule] documentation)
 * the default Thymeleaf resolvers now support templates with **.html* suffix

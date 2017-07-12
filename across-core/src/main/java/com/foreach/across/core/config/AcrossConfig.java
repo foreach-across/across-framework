@@ -48,6 +48,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.format.support.DefaultFormattingConversionService;
 
 import javax.sql.DataSource;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.UUID;
 
 /**
  * Installs the common beans that are always available.
@@ -127,8 +130,13 @@ public class AcrossConfig
 	@Bean
 	@Lazy
 	@DependsOn({ "sqlBasedDistributedLockManager" })
-	public DistributedLockRepository distributedLockRepository( SqlBasedDistributedLockManager sqlBasedDistributedLockManager ) {
-		return new DistributedLockRepositoryImpl( sqlBasedDistributedLockManager );
+	public DistributedLockRepository distributedLockRepository( SqlBasedDistributedLockManager sqlBasedDistributedLockManager, AcrossContext acrossContext ) {
+		String ownerId =
+				StringUtils.substring( acrossContext.getDisplayName() + "@" + StringUtils.defaultString( getHostNameFromServer(), "unknown-host" ), 0, 100 )
+						+ "[" + UUID.randomUUID().toString() + "]";
+
+		LOG.info( "Creating distributed lock owner id: {}", ownerId );
+		return new DistributedLockRepositoryImpl( sqlBasedDistributedLockManager, ownerId );
 	}
 
 	@Bean(destroyMethod = "close")
@@ -163,5 +171,30 @@ public class AcrossConfig
 	@Lazy
 	public CoreSchemaConfigurationHolder schemaConfigurationHolder() {
 		return new CoreSchemaConfigurationHolder();
+	}
+
+	private String getHostNameFromServer() {
+		try {
+			String result = InetAddress.getLocalHost().getHostName();
+			if ( StringUtils.isNotEmpty( result ) ) {
+				return result;
+			}
+		}
+		catch ( UnknownHostException e ) {
+			// failed;  try alternate means.
+		}
+
+		// try environment properties.
+		String host = System.getenv( "COMPUTERNAME" );
+		if ( host != null ) {
+			return host;
+		}
+		host = System.getenv( "HOSTNAME" );
+		if ( host != null ) {
+			return host;
+		}
+
+		// undetermined.
+		return null;
 	}
 }

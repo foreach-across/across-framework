@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -36,10 +37,16 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @ContextConfiguration
+@TestPropertySource(properties = "across.displayName=My Application")
 public class TestDefaultDynamicModules
 {
 	@Autowired
 	private AcrossContextInfo contextInfo;
+
+	@Test
+	public void displayNameShouldBeSetFromProperties() {
+		assertEquals( "My Application", contextInfo.getDisplayName() );
+	}
 
 	@Test
 	public void infrastructureModuleShouldBeAdded() {

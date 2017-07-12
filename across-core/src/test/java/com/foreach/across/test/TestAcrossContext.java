@@ -29,6 +29,28 @@ import static org.junit.Assert.*;
 public class TestAcrossContext
 {
 	@Test
+	public void withinSameJvmIdChanges() {
+		String firstId = new AcrossContext().getId();
+		String secondId = new AcrossContext().getId();
+
+		assertNotNull( firstId );
+		assertNotNull( secondId );
+		assertNotEquals( firstId, secondId );
+	}
+
+	@Test
+	public void displayNameAndId() {
+		AcrossContext ctx = new AcrossContext();
+		String id = ctx.getId();
+		assertNotNull( id );
+		assertEquals( id, ctx.getDisplayName() );
+		ctx.setDisplayName( "My Application" );
+		assertNotEquals( "My Application", ctx.getId() );
+		assertEquals( id, ctx.getId() );
+		assertEquals( "My Application", ctx.getDisplayName() );
+	}
+
+	@Test
 	public void getModuleByName() {
 		TestModule1 module = new TestModule1();
 		ExposingModule other = new ExposingModule( "my module" );
