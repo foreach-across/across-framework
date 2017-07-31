@@ -170,9 +170,9 @@ By default all exceptions will be logged in the `AcrossEventPublisher` logger.
 === Event handler ordering
 Event handlers can be ordered, although the support is limited.
 Events are handled in module bootstrap order, with handlers from the same AcrossModule having a random order.
-You can force an event handler order by assigning an `@Order` annotation on either the bean that declares the handler method, or on the handler method itself.
+You can force an event handler order by assigning an `@Order` or `@OrderInModule` annotation on either the bean that declares the handler method, or on the handler method itself.
 
-The default ordering should be sufficient for most use cases: you can relly on event handlers from previous modules having been executed.
+The default ordering should be sufficient for most use cases: you can rely on event handlers from previous modules having been executed.
 
 WARNING: Ordering event handlers is only supported on a class-level.
 This is a limitation of the current implementation.
