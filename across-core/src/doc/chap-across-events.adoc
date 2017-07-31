@@ -163,8 +163,17 @@ Events do not bubble up to the publisher.
 This means if an exception occurs within a handler, that will not impact the original publisher in anyway and the next handler will simply execute.
 However, when an exception occurs that is not handled within the handler method, a new `PublicationError` message is publishes that can be picked up with a custom `IPublicationErrorHandler` implementation added to the underlying `MBassadorEventPublisher` using `addErrorHandler()`.
 By default all exceptions will be logged in the `AcrossEventPublisher` logger.
-There is no defined order in which an event is sent to the handlers.
-Your event handlers should not depend on other event handlers having run.
 
-=== Event limitations
-Ordering event handlers is currently not supported.
+
+[discrete]
+[[event-handler-ordering]]
+=== Event handler ordering
+Event handlers can be ordered, although the support is limited.
+Events are handled in module bootstrap order, with handlers from the same AcrossModule having a random order.
+You can force an event handler order by assigning an `@Order` annotation on either the bean that declares the handler method, or on the handler method itself.
+
+The default ordering should be sufficient for most use cases: you can relly on event handlers from previous modules having been executed.
+
+WARNING: Ordering event handlers is only supported on a class-level.
+This is a limitation of the current implementation.
+This means that multiple beans from the same class will get the same order assigned!

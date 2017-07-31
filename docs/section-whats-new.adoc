@@ -6,6 +6,8 @@
 * bootstrap locking changes
 ** the bootstrap lock is now taken and released per installer instead of once for the entire bootstrap phase
 ** lock owner id is prefixed with both the `AcrossContext#displayName` and the hostname of the server
+* <<event-handler-ordering,event handlers are now executed in module bootstrap order>>: event handlers from a previous module will have been executed when yours is called
+** this removes an old limitation of event handling in Across
 
 *AcrossWebModule*
 

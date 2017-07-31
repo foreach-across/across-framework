@@ -16,15 +16,17 @@
 package com.foreach.across.test.events;
 
 import com.foreach.across.core.annotations.Event;
-import com.foreach.across.core.events.AcrossEvent;
-import com.foreach.across.core.events.AcrossEventPublisher;
-import com.foreach.across.core.events.MBassadorEventPublisher;
+import com.foreach.across.core.annotations.OrderInModule;
+import com.foreach.across.core.events.*;
+import net.engio.mbassy.listener.Filter;
+import net.engio.mbassy.listener.Handler;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.AbstractLazyCreationTargetSource;
+import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +45,8 @@ import static org.mockito.Mockito.mock;
 public class TestMBassadorEventPublisher
 {
 	private AcrossEventPublisher eventPublisher;
+
+	private List<Object> handled = new ArrayList<>();
 
 	@Before
 	public void setUp() {
@@ -72,6 +76,45 @@ public class TestMBassadorEventPublisher
 	}
 
 	@Test
+	public void eventsArePublishedInOrder() {
+		Unordered unordered = new Unordered();
+		Ordered ordered = new Ordered();
+		MethodOrdered methodOrdered = new MethodOrdered();
+
+		eventPublisher.subscribe( unordered );
+		eventPublisher.subscribe( ordered );
+		eventPublisher.subscribe( methodOrdered );
+
+		eventPublisher.publish( mock( AcrossEvent.class ) );
+
+		assertEquals( Arrays.asList( "method-ordered-one", ordered, "method-ordered-two", unordered ), handled );
+	}
+
+	@Test
+	public void moduleAndBootstrapInfluenceOrder() {
+		Ordered ordered = new Ordered();
+		// Use concrete classes - dynamic ordering is not supported
+		Unordered one = new Unordered();
+		Unordered two = new Unordered2();
+		Unordered three = new Unordered3();
+		Unordered four = new Unordered4();
+
+		eventPublisher.subscribe( one );
+		eventPublisher.publish( mock( AcrossModuleBeforeBootstrapEvent.class ) );
+		eventPublisher.subscribe( two );
+		eventPublisher.publish( mock( AcrossModuleBeforeBootstrapEvent.class ) );
+		eventPublisher.subscribe( three );
+		eventPublisher.publish( mock( AcrossContextBootstrappedEvent.class ) );
+		eventPublisher.subscribe( four );
+		eventPublisher.subscribe( ordered );
+
+		handled.clear();
+		eventPublisher.publish( mock( AcrossEvent.class ) );
+
+		assertEquals( Arrays.asList( ordered, one, two, three, four ), handled );
+	}
+
+	@Test
 	public void subscribeWithLazyProxyDoesNotNullPointerAndDoesNotEagerlyInstantiate() throws Exception {
 		AtomicReference<EventHandlerProxy> lazyEventHandlerProxy = new AtomicReference<>();
 		eventPublisher.subscribe( createLazyProxy( lazyEventHandlerProxy, EventHandlerProxy.class ) );
@@ -94,19 +137,30 @@ public class TestMBassadorEventPublisher
 		return proxy;
 	}
 
+	protected interface EventHandlerProxy
+	{
+	}
+
+	private static class EventHandler implements EventHandlerProxy
+	{
+		public final List<AcrossEvent> received = new ArrayList<>();
+
+		@Event
+		public void handle( AcrossEvent event ) {
+			received.add( event );
+		}
+	}
+
 	private class PassthruAdvice implements MethodInterceptor
 	{
-
 		@Override
 		public Object invoke( MethodInvocation invocation ) throws Throwable {
 			return invocation.proceed();
 		}
-
 	}
 
 	private class ReferenceTargetSource<T> extends AbstractLazyCreationTargetSource
 	{
-
 		private AtomicReference<T> reference;
 
 		public ReferenceTargetSource( AtomicReference<T> reference ) {
@@ -120,19 +174,48 @@ public class TestMBassadorEventPublisher
 		}
 	}
 
-	protected interface EventHandlerProxy
+	private class Unordered
 	{
-
-	}
-
-	private static class EventHandler implements EventHandlerProxy
-	{
-		public final List<AcrossEvent> received = new ArrayList<>();
-
-		@Event
-		public void handle( AcrossEvent event ) {
-			received.add( event );
+		@Handler(filters = { @Filter(ParameterizedAcrossEventFilter.class), @Filter(EventNameFilter.class) })
+		public void handlerUnordered( AcrossEvent event ) {
+			handled.add( this );
 		}
 	}
 
+	private class Unordered2 extends Unordered
+	{
+	}
+
+	private class Unordered3 extends Unordered
+	{
+	}
+
+	private class Unordered4 extends Unordered
+	{
+	}
+
+	@Order(1)
+	private class Ordered
+	{
+		@Handler(filters = { @Filter(ParameterizedAcrossEventFilter.class), @Filter(EventNameFilter.class) })
+		public void handlerOrdered( AcrossEvent event ) {
+			handled.add( this );
+		}
+	}
+
+	@Order(2)
+	private class MethodOrdered
+	{
+		@Order(-1)
+		@Handler(filters = { @Filter(ParameterizedAcrossEventFilter.class), @Filter(EventNameFilter.class) })
+		public void methodGlobalOrdered( AcrossEvent event ) {
+			handled.add( "method-ordered-one" );
+		}
+
+		@OrderInModule(1)
+		@Handler(filters = { @Filter(ParameterizedAcrossEventFilter.class), @Filter(EventNameFilter.class) })
+		public void methodModuleOrdered( AcrossEvent event ) {
+			handled.add( "method-ordered-two" );
+		}
+	}
 }
