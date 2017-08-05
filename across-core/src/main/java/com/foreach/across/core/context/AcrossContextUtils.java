@@ -39,6 +39,7 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.target.AbstractLazyCreationTargetSource;
+import org.springframework.aop.target.LazyInitTargetSource;
 import org.springframework.aop.target.SimpleBeanTargetSource;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -332,6 +333,10 @@ public final class AcrossContextUtils
 
 					LOG.trace( "Attempt to retrieve uninitialized proxy target: {}",
 					           lazyCreationTargetSource.getTargetClass() );
+					return null;
+				}
+				else if ( targetSource instanceof LazyInitTargetSource ) {
+					LOG.trace( "Skipping LazyInitTargetSource - unable to access proxy target without possible throwing exception" );
 					return null;
 				}
 				else if ( targetSource instanceof SimpleBeanTargetSource ) {
