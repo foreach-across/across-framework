@@ -17,11 +17,109 @@ package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.core.support.WritableAttributes;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
+import com.foreach.across.modules.web.support.LocalizedTextResolver;
 
+import java.util.Locale;
 import java.util.Optional;
 
-public interface ViewElementBuilderContext extends WritableAttributes
+public interface ViewElementBuilderContext extends WritableAttributes, LocalizedTextResolver
 {
+	/**
+	 * Try to resolve the message. Return the message code no message was found.
+	 *
+	 * @param code the code to lookup up, such as 'calculator.noRateSet'
+	 * @return the resolved message if the lookup was successful, otherwise the code itself
+	 * @see java.text.MessageFormat
+	 */
+	String getMessage( String code );
+
+	/**
+	 * Try to resolve the message. Return default message if no message was found.
+	 *
+	 * @param code   the code to lookup up, such as 'calculator.noRateSet'
+	 * @param locale the Locale in which to do the lookup
+	 * @return the resolved message if the lookup was successful;  otherwise the code itself
+	 * @see java.text.MessageFormat
+	 */
+	String getMessage( String code, Locale locale );
+
+	/**
+	 * Try to resolve the message. Return default message if no message was found.
+	 *
+	 * @param code           the code to lookup up, such as 'calculator.noRateSet'
+	 * @param defaultMessage String to return if the lookup fails
+	 * @return the resolved message if the lookup was successful;
+	 * otherwise the default message passed as a parameter
+	 * @see java.text.MessageFormat
+	 */
+	String getMessage( String code, String defaultMessage );
+
+	/**
+	 * Try to resolve the message. Return default message if no message was found.
+	 *
+	 * @param code           the code to lookup up, such as 'calculator.noRateSet'
+	 * @param defaultMessage String to return if the lookup fails
+	 * @param locale         the Locale in which to do the lookup
+	 * @return the resolved message if the lookup was successful;
+	 * otherwise the default message passed as a parameter
+	 * @see java.text.MessageFormat
+	 */
+	String getMessage( String code, String defaultMessage, Locale locale );
+
+	/**
+	 * Try to resolve the message. Return message code if no message was found.
+	 *
+	 * @param code the code to lookup up, such as 'calculator.noRateSet'
+	 * @param args array of arguments that will be filled in for params within
+	 *             the message (params look like "{0}", "{1,date}", "{2,time}" within a message),
+	 *             or {@code null} if none.
+	 * @return the resolved message if the lookup was successful; otherwise the message code
+	 * @see java.text.MessageFormat
+	 */
+	String getMessage( String code, Object[] args );
+
+	/**
+	 * Try to resolve the message. Return message code if no message was found.
+	 *
+	 * @param code   the code to lookup up, such as 'calculator.noRateSet'
+	 * @param args   array of arguments that will be filled in for params within
+	 *               the message (params look like "{0}", "{1,date}", "{2,time}" within a message),
+	 *               or {@code null} if none.
+	 * @param locale the Locale in which to do the lookup
+	 * @return the resolved message if the lookup was successful; otherwise the message code
+	 * @see java.text.MessageFormat
+	 */
+	String getMessage( String code, Object[] args, Locale locale );
+
+	/**
+	 * Try to resolve the message. Return default message if no message was found.
+	 *
+	 * @param code           the code to lookup up, such as 'calculator.noRateSet'
+	 * @param args           array of arguments that will be filled in for params within
+	 *                       the message (params look like "{0}", "{1,date}", "{2,time}" within a message),
+	 *                       or {@code null} if none.
+	 * @param defaultMessage String to return if the lookup fails
+	 * @return the resolved message if the lookup was successful;
+	 * otherwise the default message passed as a parameter
+	 * @see java.text.MessageFormat
+	 */
+	String getMessage( String code, Object[] args, String defaultMessage );
+
+	/**
+	 * Try to resolve the message. Return default message if no message was found.
+	 *
+	 * @param code           the code to lookup up, such as 'calculator.noRateSet'
+	 * @param args           array of arguments that will be filled in for params within
+	 *                       the message (params look like "{0}", "{1,date}", "{2,time}" within a message),
+	 *                       or {@code null} if none.
+	 * @param defaultMessage String to return if the lookup fails
+	 * @param locale         the Locale in which to do the lookup
+	 * @return the resolved message if the lookup was successful;
+	 * otherwise the default message passed as a parameter
+	 * @see java.text.MessageFormat
+	 */
+	String getMessage( String code, Object[] args, String defaultMessage, Locale locale );
+
 	/**
 	 * Will build a link using the {@link com.foreach.across.modules.web.context.WebAppLinkBuilder} attribute
 	 * that is present on this context.  If none is present, the baseLink will remain unmodified.

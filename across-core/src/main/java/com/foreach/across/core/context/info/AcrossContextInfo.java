@@ -39,6 +39,11 @@ public interface AcrossContextInfo extends AcrossEntity
 	String getId();
 
 	/**
+	 * @return The display name of the AcrossContext.
+	 */
+	String getDisplayName();
+
+	/**
 	 * @return The original AcrossContext.
 	 */
 	AcrossContext getContext();

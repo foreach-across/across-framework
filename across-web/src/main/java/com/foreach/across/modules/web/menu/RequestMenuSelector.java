@@ -21,8 +21,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -41,13 +41,11 @@ public class RequestMenuSelector implements MenuSelector
 	 * Value should be a collection of strings.
 	 */
 	public static final String ATTRIBUTE_MATCHERS = RequestMenuSelector.class.getCanonicalName() + ".MATCHERS";
-
-	private int maxScore = 0;
-	private Menu itemFound = null;
-
 	private final String fullUrl;
 	private final String servletPath;
 	private final String servletPathWithQueryString;
+	private int maxScore = 0;
+	private Menu itemFound = null;
 
 	public RequestMenuSelector( HttpServletRequest request ) {
 		UriComponents uriComponents = ServletUriComponentsBuilder.fromRequest( request ).build();
@@ -64,15 +62,6 @@ public class RequestMenuSelector implements MenuSelector
 		servletPathWithQueryString = pathWithQueryString;
 	}
 
-	private String stripContextPath( HttpServletRequest request, String path ) {
-		String contextPath = request.getContextPath();
-		if ( contextPath != null && contextPath.length() > 1 ) {
-			return StringUtils.removeStart( path, contextPath );
-		}
-
-		return path;
-	}
-
 	/**
 	 * @param fullUrl                    Full url - including schema and querystring.
 	 * @param servletPath                Path within the application, excluding the querystring.
@@ -82,6 +71,15 @@ public class RequestMenuSelector implements MenuSelector
 		this.fullUrl = fullUrl;
 		this.servletPath = servletPath;
 		this.servletPathWithQueryString = servletPathWithQueryString;
+	}
+
+	private String stripContextPath( HttpServletRequest request, String path ) {
+		String contextPath = request.getContextPath();
+		if ( contextPath != null && contextPath.length() > 1 ) {
+			return StringUtils.removeStart( path, contextPath );
+		}
+
+		return path;
 	}
 
 	public synchronized Menu find( Menu menu ) {
@@ -105,9 +103,13 @@ public class RequestMenuSelector implements MenuSelector
 
 		AtomicInteger score = new AtomicInteger( calculated );
 
-		Collection<String> stringsToMatch = new LinkedList<>();
-		stringsToMatch.add( menu.getUrl() );
-		stringsToMatch.add( menu.getPath() );
+		Collection<String> stringsToMatch = new ArrayList<>( 3 );
+		if ( menu.hasUrl() ) {
+			stringsToMatch.add( menu.getUrl() );
+		}
+		if ( StringUtils.isNotEmpty( menu.getPath() ) ) {
+			stringsToMatch.add( menu.getPath() );
+		}
 
 		Collection<String> additionalStringsToMatch = menu.getAttribute( ATTRIBUTE_MATCHERS );
 

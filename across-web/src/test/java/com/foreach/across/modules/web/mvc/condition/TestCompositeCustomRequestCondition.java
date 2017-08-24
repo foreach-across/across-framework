@@ -23,6 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -145,9 +146,14 @@ public class TestCompositeCustomRequestCondition
 		CompositeCustomRequestCondition left = new CompositeCustomRequestCondition( Collections.singleton( one ) );
 		CompositeCustomRequestCondition right = new CompositeCustomRequestCondition( Arrays.asList( two, one ) );
 
-		assertEquals( -1, left.compareTo( right, request ) );
-		assertEquals( 1, right.compareTo( left, request ) );
+		assertEquals( 1, left.compareTo( right, request ) );
+		assertEquals( -1, right.compareTo( left, request ) );
 		verify( one, never() ).compareTo( any(), any() );
+
+		List<CompositeCustomRequestCondition> conditions = Arrays.asList( left, right );
+		conditions.sort( ( l, r ) -> l.compareTo( r, null ) );
+
+		assertEquals( Arrays.asList( right, left ), conditions );
 	}
 
 	interface CustomOne extends CustomRequestCondition<CustomOne>

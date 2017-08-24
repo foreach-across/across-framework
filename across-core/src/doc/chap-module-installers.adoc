@@ -42,7 +42,9 @@ This allows for installers to execute only if they have not yet been executed (s
 
 In addition, installer execution is synchronized for multiple applications connecting on the same database.
 This is done through the `DistributedLockRepository` that is created in the core schema.
-A lock will be taken on the datasource as soon as a single installer wishes to execute, and will only be released once bootstrapping is fully done.
+A lock will be taken on the database as soon as a single installer wishes to execute, and will be released once that installer has finished executing.
+
+The lock owner will contain the hostname of the computer running the application, as well as the `displayName` of the `AcrossContext`.
 
 Because of tracking and synchronization, a <<installer-datasource,datasource>> is required in order to execute installers.
 
@@ -85,6 +87,9 @@ The installer will only execute if the _version_ attribute is higher than the ve
 
 In addition to the standard run conditions, you can use <<installer-conditionals, `@Conditional` annotations on installer classes>>.
 This includes for example the use of `@AcrossDepends` to execute installers if certain modules are active.
+
+WARNING: Using *AlwaysRun* installers will always cause the bootstrap lock to be taken.
+ This might cause a slowdown when starting multiple applications on the same datasource simultaneously.
 
 ==== Installer group
 In addition to the standard `@Installer` attributes, an `@InstallerGroup` annotation can be specified.
@@ -188,7 +193,8 @@ package my.package;
 public class LiquibaseInstaller extends AcrossLiquibaseInstaller
 {
     // Will execute the resource file 'my/package/LiquibaseInstaller.xml'
-    // As liquibase has its own locking mechanism (slower than Across!), we can safely always run
+    // As liquibase has its own locking mechanism, we can safely always run (even though you should avoid this when possible)
+
 }
 ----
 

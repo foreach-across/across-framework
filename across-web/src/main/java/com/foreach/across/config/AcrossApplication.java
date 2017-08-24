@@ -29,7 +29,7 @@ import java.lang.annotation.*;
  * for web applications.  Supports most attributes that {@link EnableAcrossContext} does, but allows
  * for minimal configuration of an application.  Optionally adds support for dynamic modules based on the
  * {@link #enableDynamicModules()} value.
- * <p />
+ * <p/>
  * NOTE: Even though this class defines {@link EnableAutoConfiguration}, it will explicitly disable auto configuration
  * in the {@link AcrossApplicationConfiguration}.  The annotation is added for better IDE support.
  *
@@ -41,12 +41,18 @@ import java.lang.annotation.*;
 @Import({ PropertyPlaceholderAutoConfiguration.class,
           AcrossApplicationConfiguration.class,
           AcrossWebApplicationConfiguration.class,
-          SpringBootDevToolsSupportingConfiguration.class})
+          SpringBootDevToolsSupportingConfiguration.class })
 @EnableAcrossContext
 @SpringBootConfiguration
 @EnableAutoConfiguration
 public @interface AcrossApplication
 {
+	/**
+	 * Display name that should be used for the context.  If empty, the property value of <strong>across.displayName</strong>
+	 * will be used instead.  If no property value is specified, the simple class name of the class that holds the annotation will be used.
+	 */
+	String displayName() default "";
+
 	/**
 	 * If enabled, this will register a {@link AcrossDynamicModulesConfiguration} and will scan for dynamic modules
 	 * based on the package of the importing class.

@@ -51,30 +51,23 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AcrossContext extends AbstractAcrossEntity implements DisposableBean
 {
-	private static final AtomicInteger ID_GENERATOR = new AtomicInteger( 1 );
-
 	public static final String BEAN = "acrossContext";
 	public static final String DATASOURCE = "acrossDataSource";
 	public static final String INSTALLER_DATASOURCE = "acrossInstallerDataSource";
-
+	private static final AtomicInteger ID_GENERATOR = new AtomicInteger( 1 );
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContext.class );
-
+	private final String id;
 	private DataSource dataSource;
 	private DataSource installerDataSource;
-
 	// By default no installers are allowed
 	private InstallerSettings installerSettings = new InstallerSettings( InstallerAction.DISABLED );
-
 	private Map<ApplicationContextConfigurer, ConfigurerScope> applicationContextConfigurers =
 			new LinkedHashMap<>();
 	private List<ApplicationContextConfigurer> installerContextConfigurers = new ArrayList<>();
-
 	private Map<String, AcrossModule> modules = new LinkedHashMap<>();
-
 	private boolean developmentMode;
 	private boolean disableNoOpCacheManager = false;
 	private boolean isBootstrapped = false;
-	private final String id;
 	private ApplicationContext parentApplicationContext;
 	private boolean failBootstrapOnEventPublicationErrors = true;
 
@@ -82,6 +75,8 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private ModuleDependencyResolver moduleDependencyResolver = null;
 
 	private String[] moduleConfigurationScanPackages = new String[0];
+
+	private String displayName;
 
 	/**
 	 * Constructs a new AcrossContext in its own ApplicationContext.
@@ -101,6 +96,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	public AcrossContext( ApplicationContext parentContext ) {
 		id = "AcrossContext-" + ID_GENERATOR.getAndIncrement();
 		parentApplicationContext = parentContext;
+		displayName = id;
 	}
 
 	/**
@@ -117,12 +113,12 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		return AcrossVersionInfo.load( AcrossContext.class );
 	}
 
-	public void setParentApplicationContext( ApplicationContext parentApplicationContext ) {
-		this.parentApplicationContext = parentApplicationContext;
-	}
-
 	public ApplicationContext getParentApplicationContext() {
 		return parentApplicationContext;
+	}
+
+	public void setParentApplicationContext( ApplicationContext parentApplicationContext ) {
+		this.parentApplicationContext = parentApplicationContext;
 	}
 
 	public DataSource getDataSource() {
@@ -145,12 +141,33 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		return modules.values();
 	}
 
+	public void setModules( Collection<AcrossModule> modules ) {
+		this.modules.clear();
+		modules.forEach( this::addModule );
+	}
+
 	public boolean isDevelopmentMode() {
 		return developmentMode;
 	}
 
 	public void setDevelopmentMode( boolean developmentMode ) {
 		this.developmentMode = developmentMode;
+	}
+
+	/**
+	 * @return display name for the context (usually application name or something like that)
+	 */
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	/**
+	 * Set the display name for this Across context.
+	 *
+	 * @param displayName for the context
+	 */
+	public void setDisplayName( String displayName ) {
+		this.displayName = StringUtils.defaultString( displayName, id );
 	}
 
 	/**
@@ -170,6 +187,10 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		this.disableNoOpCacheManager = disableNoOpCacheManager;
 	}
 
+	public boolean isFailBootstrapOnEventPublicationErrors() {
+		return failBootstrapOnEventPublicationErrors;
+	}
+
 	/**
 	 * Should the bootstrap fail if event publication errors occur during the bootstrapping.
 	 * Defaults to true as this is usually the wanted behavior.
@@ -178,15 +199,6 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 */
 	public void setFailBootstrapOnEventPublicationErrors( boolean failBootstrapOnEventPublicationErrors ) {
 		this.failBootstrapOnEventPublicationErrors = failBootstrapOnEventPublicationErrors;
-	}
-
-	public boolean isFailBootstrapOnEventPublicationErrors() {
-		return failBootstrapOnEventPublicationErrors;
-	}
-
-	public void setModules( Collection<AcrossModule> modules ) {
-		this.modules.clear();
-		modules.forEach( this::addModule );
 	}
 
 	public void addModule( AcrossModule module ) {
@@ -261,21 +273,21 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	}
 
 	/**
-	 * Shortcut method to set the default action on the InstallerSettings attached to the context.
-	 *
-	 * @param defaultAction InstallerAction to set as default.
-	 */
-	public void setInstallerAction( InstallerAction defaultAction ) {
-		installerSettings.setDefaultAction( defaultAction );
-	}
-
-	/**
 	 * Shortcut method that returns the default action on the InstallerSettings attached to the context.
 	 *
 	 * @return InstallerAction that is the default for the entire context.
 	 */
 	public InstallerAction getInstallerAction() {
 		return installerSettings.getDefaultAction();
+	}
+
+	/**
+	 * Shortcut method to set the default action on the InstallerSettings attached to the context.
+	 *
+	 * @param defaultAction InstallerAction to set as default.
+	 */
+	public void setInstallerAction( InstallerAction defaultAction ) {
+		installerSettings.setDefaultAction( defaultAction );
 	}
 
 	public Map<ApplicationContextConfigurer, ConfigurerScope> getApplicationContextConfigurers() {
@@ -327,6 +339,13 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	}
 
 	/**
+	 * @return The instance that is being used for resolving the module dependencies.
+	 */
+	public ModuleDependencyResolver getModuleDependencyResolver() {
+		return moduleDependencyResolver;
+	}
+
+	/**
 	 * Sets the instance to be used for resolving the module dependencies.  If none is configured all
 	 * modules will have to be added explicitly.
 	 *
@@ -334,13 +353,6 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 */
 	public void setModuleDependencyResolver( ModuleDependencyResolver moduleDependencyResolver ) {
 		this.moduleDependencyResolver = moduleDependencyResolver;
-	}
-
-	/**
-	 * @return The instance that is being used for resolving the module dependencies.
-	 */
-	public ModuleDependencyResolver getModuleDependencyResolver() {
-		return moduleDependencyResolver;
 	}
 
 	/**
@@ -398,7 +410,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 			try {
 				new AcrossBootstrapper( this ).bootstrap();
 			}
-			catch ( Exception ignore ){
+			catch ( Exception ignore ) {
 				isBootstrapped = false;
 				throw ignore;
 			}

@@ -1,0 +1,20 @@
+[[localized-text]]
+== Localizing text
+Text message codes can be translated into text messages via the `MessageSource`.
+AcrossWebModule also provides a utility bean that wraps the `MessageSource` for optional resolving of message codes.
+
+=== LocalizedTextResolver
+The `LocalizedTextResolver` can be used to localize text snippets.
+A text snippet can either be the final text, or a message code construct.
+
+If the snippet is a message code construct, the message code will be resolved and the return value used.
+Otherwise the original text will be used.
+This makes the `LocalizedTextResolver` useful for integrating with previously existing code where fixed text has been provided.
+
+NOTE: `LocalizedTextResolver` is a simple generic interface.
+You could easily plug in another implementation by registering another implementation as the primary bean.
+
+.Examples of text snippet resolving
+* *Some text* will always return _Some text_
+* *#{message.code}* will resolve _message.code_ and either return the resolved message or the unresolved code
+* *#{message.code=Default message}* will resolve _message.code_ and return the resolved message or _Default message_ if unresolvable

@@ -30,6 +30,7 @@ import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.mvc.*;
 import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
+import com.foreach.across.modules.web.support.MessageCodeSupportingLocalizedTextResolver;
 import com.foreach.across.modules.web.template.LayoutSupportingExceptionHandlerExceptionResolver;
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import org.slf4j.Logger;
@@ -502,6 +503,11 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 		return handlerMapping;
 	}
 
+	@Bean
+	@Exposed
+	public MessageCodeSupportingLocalizedTextResolver localizedTextResolver() {
+		return new MessageCodeSupportingLocalizedTextResolver();
+	}
 
 	@Bean
 	@Exposed
@@ -567,7 +573,7 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	/**
 	 * Inherited in order to expose properties.
 	 */
-	@SuppressWarnings( "all" )
+	@SuppressWarnings("all")
 	static final class DelayedAsyncSupportConfigurer extends AsyncSupportConfigurer
 	{
 		@Override

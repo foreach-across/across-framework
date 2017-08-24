@@ -62,6 +62,11 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	}
 
 	@Override
+	public String getDisplayName() {
+		return context.getDisplayName();
+	}
+
+	@Override
 	public Collection<AcrossModuleInfo> getConfiguredModules() {
 		return configuredModules;
 	}

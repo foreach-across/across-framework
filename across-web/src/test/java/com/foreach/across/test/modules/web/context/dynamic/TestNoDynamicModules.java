@@ -25,6 +25,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -37,6 +38,11 @@ public class TestNoDynamicModules
 {
 	@Autowired
 	private AcrossContextInfo contextInfo;
+
+	@Test
+	public void displayNameShouldBeGenerated() {
+		assertEquals( "TestNoDynamicModules$SampleApplication", contextInfo.getDisplayName() );
+	}
 
 	@Test
 	public void noModulesShouldBeLoaded() {

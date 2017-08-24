@@ -343,4 +343,17 @@ public class TestMenu
 		assertSame( mockComparator, modified.getComparator() );
 		assertTrue( modified.isComparatorInheritable() );
 	}
+
+	@Test
+	public void menuHasUrlIfUrlIsNotEmpty() {
+		Menu menu = new Menu( "/path" );
+		assertEquals( "/path", menu.getUrl() );
+		assertFalse( menu.hasUrl() );
+		menu.setUrl( "" );
+		assertFalse( menu.hasUrl() );
+		assertEquals( "/path", menu.getUrl() );
+		menu.setUrl( " " );
+		assertTrue( menu.hasUrl() );
+		assertEquals( " ", menu.getUrl() );
+	}
 }

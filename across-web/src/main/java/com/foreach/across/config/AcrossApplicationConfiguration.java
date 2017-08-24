@@ -37,6 +37,16 @@ public class AcrossApplicationConfiguration implements ImportSelector, Environme
 {
 	private ConfigurableEnvironment environment;
 
+	private static Map<String, Object> getOrAdd( MutablePropertySources sources,
+	                                             String name ) {
+		if ( sources.contains( name ) ) {
+			return (Map<String, Object>) sources.get( name ).getSource();
+		}
+		Map<String, Object> map = new HashMap<>();
+		sources.addFirst( new MapPropertySource( name, map ) );
+		return map;
+	}
+
 	@Override
 	public String[] selectImports( AnnotationMetadata importingClassMetadata ) {
 		if ( environment.getProperty( EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY ) == null ) {
@@ -49,25 +59,14 @@ public class AcrossApplicationConfiguration implements ImportSelector, Environme
 
 		if ( (Boolean) importingClassMetadata.getAnnotationAttributes( AcrossApplication.class.getName() )
 		                                     .getOrDefault( "enableDynamicModules", true ) ) {
-			return new String[] { AcrossDynamicModulesConfiguration.class.getName() };
+			return new String[] { DisplayNameConfiguration.class.getName(), AcrossDynamicModulesConfiguration.class.getName() };
 		}
-		return new String[0];
+		return new String[] { DisplayNameConfiguration.class.getName() };
 	}
 
 	@Override
 	public void setEnvironment( Environment environment ) {
 		Assert.isInstanceOf( ConfigurableEnvironment.class, environment );
 		this.environment = (ConfigurableEnvironment) environment;
-
-	}
-
-	private static Map<String, Object> getOrAdd( MutablePropertySources sources,
-	                                             String name ) {
-		if ( sources.contains( name ) ) {
-			return (Map<String, Object>) sources.get( name ).getSource();
-		}
-		Map<String, Object> map = new HashMap<>();
-		sources.addFirst( new MapPropertySource( name, map ) );
-		return map;
 	}
 }

@@ -216,12 +216,22 @@ public class PathBasedMenuBuilder
 			}
 		}
 
-		return StringUtils.replaceOnce( path, prefix, destination );
+		if ( StringUtils.equals( path, prefix ) ) {
+			return destination;
+		}
+
+		String pathPrefix = StringUtils.removeEnd( prefix, "/" ) + "/";
+
+		if ( StringUtils.startsWith( path, pathPrefix )) {
+			return StringUtils.replaceOnce( path, prefix, destination );
+		}
+
+		return path;
 	}
 
 	public PathBasedMenuBuilder move( String path, String destinationPath ) {
 		Assert.notNull( path, "A valid path must be specified." );
-		Assert.notNull( destinationPath, "Cant move to null destination path" );
+		Assert.notNull( destinationPath, "Can't move to null destination path" );
 		moves.put( path, destinationPath );
 		return this;
 	}

@@ -228,7 +228,7 @@ public class Menu implements Ordered
 	}
 
 	public boolean hasUrl() {
-		return url != null;
+		return StringUtils.isNotEmpty( url );
 	}
 
 	public void setTitle( String title ) {

@@ -100,6 +100,7 @@ public class AcrossBootstrapper
 			ConfigurableAcrossContextInfo contextInfo = buildContextAndModuleInfo();
 			Collection<AcrossModuleInfo> modulesInOrder = contextInfo.getModules();
 
+			LOG.info( "AcrossContext: {} ({})", context.getDisplayName(), context.getId() );
 			LOG.info( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
 			for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
 				LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
@@ -217,6 +218,7 @@ public class AcrossBootstrapper
 				installerRegistry.destroy();
 			}
 			finally {
+				// Safe guard - ensure bootstrap released
 				bootstrapLockManager.ensureUnlocked();
 			}
 

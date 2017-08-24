@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.ui;
+package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
-import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.support.LocalizedTextResolver;
+import com.foreach.across.modules.web.support.MessageCodeSupportingLocalizedTextResolver;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
@@ -45,7 +45,7 @@ public class TestDefaultViewElementBuilderContext
 
 	@Test
 	public void withoutParent() {
-		DefaultViewElementBuilderContext ctx = new DefaultViewElementBuilderContext();
+		DefaultViewElementBuilderContext ctx = new DefaultViewElementBuilderContext( false );
 		assertFalse( ctx.hasAttribute( "test" ) );
 
 		ctx.setAttribute( "test", "one" );
@@ -83,9 +83,10 @@ public class TestDefaultViewElementBuilderContext
 		assertEquals( 2, map.size() );
 		assertFalse( map.containsAttribute( "three" ) );
 
-		assertArrayEquals( new String[] { "one", "three", "two" }, ctx.attributeNames() );
+		assertArrayEquals( new String[] { LocalizedTextResolver.class.getName(), "one", "three", "two" }, ctx.attributeNames() );
 
 		Map<String, Object> expected = new HashMap<>();
+		expected.put( LocalizedTextResolver.class.getName(), new MessageCodeSupportingLocalizedTextResolver() );
 		expected.put( "one", 1 );
 		expected.put( "two", "two" );
 		expected.put( "three", 3 );

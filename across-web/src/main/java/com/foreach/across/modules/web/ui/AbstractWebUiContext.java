@@ -30,6 +30,7 @@ import java.util.Locale;
  *
  * @param <T> Implementation for the user making the request.
  */
+@Deprecated
 public abstract class AbstractWebUiContext<T> implements WebUiContext<T>
 {
 	protected HttpServletRequest request;

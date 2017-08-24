@@ -161,7 +161,7 @@ public class TestAcrossModuleLoadingOrderOne
 		                                       one, requiresTwo, two, three, infrastructureRequiringTwo );
 		Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, infrastructureRequiringTwo, three, requiresTwo, one, postProcessor,
+		assertEquals( list( two, infrastructureRequiringTwo, one, requiresTwo, three, postProcessor,
 		                    postProcessorRequiringOther, postProcessorOptionalOther ), ordered );
 	}
 

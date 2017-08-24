@@ -113,6 +113,8 @@ public final class CompositeCustomRequestCondition extends AbstractRequestCondit
 	/**
 	 * If one instance is empty, the other "wins". If both instances have
 	 * conditions, compare them in the order  in which they were provided.
+	 * A condition with more members always has precedence over one with fewer,
+	 * as it is considered to be a more specific match.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -127,7 +129,7 @@ public final class CompositeCustomRequestCondition extends AbstractRequestCondit
 			return -1;
 		}
 		else {
-			int result = Integer.compare( conditionMap.size(), other.conditionMap.size() );
+			int result = -Integer.compare( conditionMap.size(), other.conditionMap.size() );
 
 			if ( result != 0 ) {
 				return result;
