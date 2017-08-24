@@ -1,6 +1,6 @@
 == What's new in this version?
 
-=== 2.1.0-SNAPSHOT
+=== 2.1.0.RELEASE
 *Across Core*
 
 * bootstrap locking changes
