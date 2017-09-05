@@ -33,6 +33,7 @@ import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Deprecated configuration for creating an {@link AcrossContext} with the default test datasource that will also
@@ -68,7 +69,7 @@ public class AcrossTestContextConfiguration implements EnvironmentAware
 		System.out.println( "Creating Across test datasource with profile: " + dsName );
 
 		if ( StringUtils.equals( "auto", dsName ) ) {
-			dataSource = HikariDataSourceHelper.create(  "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:/hsql-mem/across-test", "sa", StringUtils.EMPTY );
+			dataSource = HikariDataSourceHelper.create(  "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:/hsql-mem/ax-" + UUID.randomUUID().toString(), "sa", StringUtils.EMPTY );
 		}
 		else {
 			dataSource = HikariDataSourceHelper.create( environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".driver" ),

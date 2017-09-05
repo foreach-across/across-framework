@@ -1,5 +1,11 @@
 == What's new in this version?
 
+=== 2.1.1-SNAPSHOT
+*Across Test*
+
+* bug fixes:
+** test datasource is generated with a unique name - this improves the re-use of the main `ApplicationContext` without the need for `@DirtiesContext`
+
 === 2.1.0.RELEASE
 *Across Core*
 
