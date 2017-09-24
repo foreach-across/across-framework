@@ -18,6 +18,7 @@ package com.foreach.across.core.context.installers;
 import com.foreach.across.core.installers.InstallerMetaData;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.OrderUtils;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -29,7 +30,17 @@ import java.util.*;
  */
 public class InstallerSetBuilder
 {
+	private final ClassPathScanningInstallerProvider scanningInstallerProvider;
+
 	private Map<String, Object> candidateMap = new LinkedHashMap<>();
+
+	public InstallerSetBuilder() {
+		this( new ClassPathScanningInstallerProvider( new PathMatchingResourcePatternResolver() ) );
+	}
+
+	public InstallerSetBuilder( ClassPathScanningInstallerProvider scanningInstallerProvider ) {
+		this.scanningInstallerProvider = scanningInstallerProvider;
+	}
 
 	/**
 	 * Add one or more installers either as instance or class.
@@ -48,7 +59,7 @@ public class InstallerSetBuilder
 	 * @param basePackages to scan
 	 */
 	public void scan( String... basePackages ) {
-		new ClassPathScanningInstallerProvider().scan( basePackages ).forEach( this::validateAndAddCandidate );
+		scanningInstallerProvider.scan( basePackages ).forEach( this::validateAndAddCandidate );
 	}
 
 	/**
@@ -85,7 +96,7 @@ public class InstallerSetBuilder
 	}
 
 	private void validateAndAddCandidate( Object candidate ) {
-		Assert.notNull( candidate );
+		Assert.notNull( candidate, "candidate class should never be null" );
 
 		if ( !candidateMap.containsValue( candidate ) ) {
 			Class<?> installerClass = installerClass( candidate );

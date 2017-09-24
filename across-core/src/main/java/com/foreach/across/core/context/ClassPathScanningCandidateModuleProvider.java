@@ -21,10 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.type.ClassMetadata;
-import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
@@ -45,16 +43,20 @@ import java.util.function.Supplier;
  *
  * @author Arne Vandamme
  */
-public class ClassPathScanningCandidateModuleProvider
+public class ClassPathScanningCandidateModuleProvider extends AbstractClassPathScanningProvider
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ClassPathScanningCandidateModuleProvider.class );
 
-	private static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
 	private static final String MODULE_CLASS = AcrossModule.class.getName();
 
-	private final ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-	private final MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(
-			resourcePatternResolver );
+	public ClassPathScanningCandidateModuleProvider( ResourcePatternResolver resourcePatternResolver ) {
+		super( resourcePatternResolver );
+	}
+
+	public ClassPathScanningCandidateModuleProvider( ResourcePatternResolver resourcePatternResolver,
+	                                                 MetadataReaderFactory metadataReaderFactory ) {
+		super( resourcePatternResolver, metadataReaderFactory );
+	}
 
 	public Map<String, Supplier<AcrossModule>> findCandidateModules( String... basePackages ) {
 		Map<String, Supplier<AcrossModule>> candidates = new HashMap<>();
@@ -64,10 +66,10 @@ public class ClassPathScanningCandidateModuleProvider
 					ClassUtils.convertClassNameToResourcePath( basePackage ) + "/" + DEFAULT_RESOURCE_PATTERN;
 
 			try {
-				Resource[] resources = resourcePatternResolver.getResources( packageSearchPath );
+				Resource[] resources = getResources( packageSearchPath );
 
 				for ( Resource resource : resources ) {
-					MetadataReader metadataReader = metadataReaderFactory.getMetadataReader( resource );
+					MetadataReader metadataReader = getMetadataReader( resource );
 					ClassMetadata classMetadata = metadataReader.getClassMetadata();
 
 					if ( isAcrossModuleClass( classMetadata, false ) ) {
@@ -157,7 +159,7 @@ public class ClassPathScanningCandidateModuleProvider
 			}
 			else {
 				try {
-					MetadataReader metadataReader = metadataReaderFactory.getMetadataReader( superClassName );
+					MetadataReader metadataReader = getMetadataReader( superClassName );
 					ClassMetadata parentClassMetadata = metadataReader.getClassMetadata();
 
 					return isAcrossModuleClass( parentClassMetadata, true );

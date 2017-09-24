@@ -24,6 +24,7 @@ import com.foreach.across.test.scan.moduleExtendingValidModule.extensions.SameBe
 import com.foreach.across.test.scan.packageOne.ValidModule;
 import com.foreach.across.test.scan.packageTwo.OtherValidModule;
 import org.junit.Test;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import static org.junit.Assert.*;
 
@@ -32,9 +33,11 @@ import static org.junit.Assert.*;
  */
 public class TestClassPathScanningModuleConfigurationProvider
 {
+	private ClassPathScanningModuleConfigurationProvider provider
+			= new ClassPathScanningModuleConfigurationProvider( new PathMatchingResourcePatternResolver() );
+
 	@Test
 	public void noAnnotatedClasses() {
-		ClassPathScanningModuleConfigurationProvider provider = new ClassPathScanningModuleConfigurationProvider();
 		ModuleConfigurationSet configurationSet = provider.scan( "illegal" );
 
 		assertNotNull( configurationSet );
@@ -45,7 +48,6 @@ public class TestClassPathScanningModuleConfigurationProvider
 
 	@Test
 	public void annotatedClassForAllModulesExceptOne() {
-		ClassPathScanningModuleConfigurationProvider provider = new ClassPathScanningModuleConfigurationProvider();
 		ModuleConfigurationSet configurationSet = provider.scan(
 				"com.foreach.across.test.scan.moduleExtendingValidModule.config"
 		);
@@ -68,7 +70,6 @@ public class TestClassPathScanningModuleConfigurationProvider
 
 	@Test
 	public void multiplePackages() {
-		ClassPathScanningModuleConfigurationProvider provider = new ClassPathScanningModuleConfigurationProvider();
 		ModuleConfigurationSet configurationSet = provider.scan(
 				"com.foreach.across.test.scan.moduleExtendingValidModule.config",
 				"com.foreach.across.test.scan.moduleExtendingValidModule.extensions"

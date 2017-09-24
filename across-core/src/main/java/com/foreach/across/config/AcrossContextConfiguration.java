@@ -17,14 +17,21 @@ package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.ClassPathScanningCandidateModuleProvider;
 import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
 import com.foreach.across.core.context.ModuleDependencyResolver;
+import com.foreach.across.core.context.SharedMetadataReaderFactory;
 import com.foreach.across.core.support.AcrossContextBuilder;
 import com.foreach.across.core.util.ClassLoadingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +40,7 @@ import org.springframework.context.annotation.ImportAware;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
 
 import javax.sql.DataSource;
 import java.util.*;
@@ -44,7 +52,7 @@ import java.util.*;
  * <p>A single {@link DataSource} bean or one named <b>acrossDataSource</b> is required for installers to work.</p>
  */
 @Configuration
-public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
+public class AcrossContextConfiguration implements ImportAware, EnvironmentAware, BeanFactoryAware, BeanClassLoaderAware
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextConfiguration.class );
 
@@ -69,6 +77,8 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 
 	private AnnotationMetadata importMetadata;
 	private Environment environment;
+	private BeanFactory beanFactory;
+	private ClassLoader beanClassLoader;
 
 	@Override
 	public void setImportMetadata( AnnotationMetadata importMetadata ) {
@@ -78,6 +88,16 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	@Override
 	public void setEnvironment( Environment environment ) {
 		this.environment = environment;
+	}
+
+	@Override
+	public void setBeanFactory( BeanFactory beanFactory ) {
+		this.beanFactory = beanFactory;
+	}
+
+	@Override
+	public void setBeanClassLoader( ClassLoader classLoader ) {
+		this.beanClassLoader = classLoader;
 	}
 
 	@Bean
@@ -126,7 +146,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	                                          Map<String, Object> configuration ) {
 		if ( configuration != null ) {
 			if ( Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
-				contextBuilder.moduleDependencyResolver( moduleDependencyResolver() )
+				contextBuilder.moduleDependencyResolver( beanFactory.getBean( ModuleDependencyResolver.class ) )
 				              .modules( namedModulesToConfigure( configuration ) )
 				              .modules( moduleBeans.toArray( new AcrossModule[moduleBeans.size()] ) );
 			}
@@ -155,11 +175,19 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		return modules.toArray( new String[modules.size()] );
 	}
 
+	@Bean(SharedMetadataReaderFactory.BEAN_NAME)
+	public ConcurrentReferenceCachingMetadataReaderFactory sharedMetadataReaderFactory() {
+		return new ConcurrentReferenceCachingMetadataReaderFactory( beanClassLoader );
+	}
+
 	@Bean
 	@Lazy
-	public ModuleDependencyResolver moduleDependencyResolver() {
-		ClassPathScanningModuleDependencyResolver moduleDependencyResolver
-				= new ClassPathScanningModuleDependencyResolver();
+	public ModuleDependencyResolver moduleDependencyResolver( ApplicationContext applicationContext ) {
+		final ClassPathScanningCandidateModuleProvider candidateModuleProvider = new ClassPathScanningCandidateModuleProvider(
+				applicationContext, applicationContext.getBean( SharedMetadataReaderFactory.BEAN_NAME, MetadataReaderFactory.class )
+		);
+
+		ClassPathScanningModuleDependencyResolver moduleDependencyResolver = new ClassPathScanningModuleDependencyResolver( candidateModuleProvider );
 
 		Map<String, Object> configuration = importMetadata.getAnnotationAttributes( ANNOTATION_TYPE );
 		if ( configuration != null ) {

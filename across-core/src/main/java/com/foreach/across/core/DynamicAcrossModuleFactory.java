@@ -21,24 +21,37 @@ import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
 /**
  * Factory bean that creates a {@link DynamicAcrossModule} instance based on a root package and the parameters
  * passed in.  If a package is all that is provided, the name of the module will be derived from the lowest package
  * name and all default sub packages will be scanned.
+ * <p/>
+ * This class is not thread-safe.
  *
  * @author Arne Vandamme
  */
 public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModule>
 {
-	private final ClassPathScanningChildPackageProvider packageProvider = new ClassPathScanningChildPackageProvider();
-
+	private ClassPathScanningChildPackageProvider packageProvider;
 	private AcrossModuleRole moduleRole = AcrossModuleRole.APPLICATION;
 	private String moduleName, resourcesKey;
 	private String basePackage, shortPackageName;
 	private Integer order;
 	private boolean fullComponentScan = true;
+
+	/**
+	 * Set the package provider that should be used.
+	 *
+	 * @param packageProvider instance
+	 * @return self
+	 */
+	public DynamicAcrossModuleFactory setPackageProvider( ClassPathScanningChildPackageProvider packageProvider ) {
+		this.packageProvider = packageProvider;
+		return this;
+	}
 
 	/**
 	 * Set the module role that the generated module should have, defaults to {@link AcrossModuleRole#APPLICATION}.
@@ -117,7 +130,7 @@ public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModu
 	 * @return self
 	 */
 	public DynamicAcrossModuleFactory setBasePackage( String basePackage ) {
-		Assert.notNull( basePackage );
+		Assert.notNull( basePackage, "basePackage is required" );
 
 		this.basePackage = basePackage;
 
@@ -146,12 +159,14 @@ public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModu
 	}
 
 	private String[] buildComponentScanPackages() {
+		if ( packageProvider == null ) {
+			packageProvider = new ClassPathScanningChildPackageProvider( new PathMatchingResourcePatternResolver() );
+		}
+
 		if ( basePackage != null ) {
 			if ( fullComponentScan ) {
-				synchronized ( packageProvider ) {
-					packageProvider.setExcludedChildPackages( "installers", "extensions" );
-					return packageProvider.findChildren( basePackage );
-				}
+				packageProvider.setExcludedChildPackages( "installers", "extensions" );
+				return packageProvider.findChildren( basePackage );
 			}
 			else {
 				return new String[] { basePackage + ".config" };

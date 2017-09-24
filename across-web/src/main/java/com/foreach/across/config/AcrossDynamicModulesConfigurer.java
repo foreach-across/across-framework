@@ -26,6 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
 
 import java.util.Optional;
 
@@ -50,7 +54,12 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossDynamicModulesConfiguration.class );
 
+	private boolean metadataReaderFactoryConfigured = false;
+	private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+	private MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory( resourcePatternResolver );
+
 	private String basePackage, baseModuleName;
+	private ClassPathScanningChildPackageProvider packageProvider;
 
 	public AcrossDynamicModulesConfigurer() {
 	}
@@ -97,14 +106,36 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 		baseModuleName = baseModuleName( clazz );
 	}
 
+	/**
+	 * Set the {@link ResourcePatternResolver} that should be used for classpath scanning.
+	 * Defaults to a {@link PathMatchingResourcePatternResolver}.
+	 *
+	 * @param resourcePatternResolver resolver
+	 */
+	public void setResourcePatternResolver( ResourcePatternResolver resourcePatternResolver ) {
+		this.resourcePatternResolver = resourcePatternResolver;
+	}
+
+	/**
+	 * Set the {@link MetadataReaderFactory} that should be used by the classpath scanner.
+	 * Defaults to a new instance of {@link CachingMetadataReaderFactory}.
+	 *
+	 * @param metadataReaderFactory to use
+	 */
+	public void setMetadataReaderFactory( MetadataReaderFactory metadataReaderFactory ) {
+		metadataReaderFactoryConfigured = true;
+		this.metadataReaderFactory = metadataReaderFactory;
+	}
+
 	@Override
-	public void configure( AcrossContext context ) {
+	public synchronized void configure( AcrossContext context ) {
 		if ( basePackage == null || baseModuleName == null ) {
 			throw new AcrossException(
 					"Unable to add dynamic modules as no basePackage and no baseModuleName have been configured" );
 		}
 
-		ClassPathScanningChildPackageProvider packageProvider = new ClassPathScanningChildPackageProvider();
+		packageProvider = new ClassPathScanningChildPackageProvider( resourcePatternResolver, metadataReaderFactory );
+
 		String[] children = packageProvider.findChildren( basePackage );
 
 		// always add the application module
@@ -115,6 +146,10 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 		}
 		if ( hasPackage( children, "postprocessor" ) ) {
 			configurePostProcessorModule( context, basePackage + ".postprocessor", baseModuleName );
+		}
+
+		if ( !metadataReaderFactoryConfigured && metadataReaderFactory instanceof CachingMetadataReaderFactory ) {
+			( (CachingMetadataReaderFactory) metadataReaderFactory ).clearCache();
 		}
 	}
 
@@ -192,6 +227,7 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 		          moduleRole.name(), moduleName, resourcesKey, moduleBasePackage );
 
 		DynamicAcrossModuleFactory factory = new DynamicAcrossModuleFactory()
+				.setPackageProvider( packageProvider )
 				.setModuleRole( moduleRole )
 				.setModuleName( moduleName )
 				.setResourcesKey( resourcesKey )

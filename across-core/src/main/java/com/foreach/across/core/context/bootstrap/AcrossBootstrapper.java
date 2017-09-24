@@ -28,6 +28,7 @@ import com.foreach.across.core.context.beans.SingletonBean;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
+import com.foreach.across.core.context.installers.ClassPathScanningInstallerProvider;
 import com.foreach.across.core.context.installers.InstallerSetBuilder;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
@@ -54,6 +55,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionEvaluationRepor
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Modifier;
@@ -203,7 +205,7 @@ public class AcrossBootstrapper
 				LOG.info( "Bootstrapping {} modules - finished", modulesInOrder.size() );
 
 				if ( pushExposedToParentContext ) {
-					pushExposedBeansToParent( exposedBeanRegistry, rootContext.getParent() );
+					pushExposedBeansToParent( exposedBeanRegistry, rootContext );
 				}
 
 				// Refresh beans
@@ -220,6 +222,8 @@ public class AcrossBootstrapper
 			finally {
 				// Safe guard - ensure bootstrap released
 				bootstrapLockManager.ensureUnlocked();
+
+				SharedMetadataReaderFactory.clearCachedMetadata( rootContext );
 			}
 
 			// Bootstrap finished - publish the event
@@ -269,10 +273,10 @@ public class AcrossBootstrapper
 	}
 
 	private void pushExposedBeansToParent( ExposedContextBeanRegistry exposedContextBeanRegistry,
-	                                       ApplicationContext applicationContext ) {
+	                                       ApplicationContext rootContext ) {
 		if ( !exposedContextBeanRegistry.isEmpty() ) {
-			ConfigurableApplicationContext currentApplicationContext =
-					(ConfigurableApplicationContext) applicationContext;
+			ApplicationContext parentContext = rootContext.getParent();
+			ConfigurableApplicationContext currentApplicationContext = (ConfigurableApplicationContext) parentContext;
 			ConfigurableListableBeanFactory currentBeanFactory = currentApplicationContext.getBeanFactory();
 
 			ConfigurableListableBeanFactory beanFactory = currentBeanFactory;
@@ -292,6 +296,12 @@ public class AcrossBootstrapper
 			if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
 				AcrossConfigurableApplicationContext parentApplicationContext =
 						applicationContextFactory.createApplicationContext();
+				ProvidedBeansMap providedBeansMap = new ProvidedBeansMap();
+				providedBeansMap.put(
+						SharedMetadataReaderFactory.BEAN_NAME,
+						rootContext.getBean( SharedMetadataReaderFactory.BEAN_NAME )
+				);
+				parentApplicationContext.provide( providedBeansMap );
 				parentApplicationContext.refresh();
 				parentApplicationContext.start();
 
@@ -397,13 +407,18 @@ public class AcrossBootstrapper
 	private AcrossBootstrapConfig createBootstrapConfiguration( ConfigurableAcrossContextInfo contextInfo ) {
 		List<ModuleBootstrapConfig> configs = new LinkedList<>();
 
+		ApplicationContext applicationContext = contextInfo.getApplicationContext();
+		MetadataReaderFactory metadataReaderFactory
+				= applicationContext.getBean( SharedMetadataReaderFactory.BEAN_NAME, MetadataReaderFactory.class );
+		ClassPathScanningInstallerProvider installerProvider = new ClassPathScanningInstallerProvider( applicationContext, metadataReaderFactory );
+
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 			AcrossModule module = moduleInfo.getModule();
 			ModuleBootstrapConfig config = new ModuleBootstrapConfig( module, moduleInfo.getIndex() );
 			config.setExposeFilter( module.getExposeFilter() );
 			config.setExposeTransformer( module.getExposeTransformer() );
 			config.setInstallerSettings( module.getInstallerSettings() );
-			config.getInstallers().addAll( buildInstallerSet( module ) );
+			config.getInstallers().addAll( buildInstallerSet( module, installerProvider ) );
 
 			// Provide the current module beans
 			ProvidedBeansMap providedSingletons = new ProvidedBeansMap();
@@ -493,8 +508,8 @@ public class AcrossBootstrapper
 		}
 	}
 
-	private Collection<Object> buildInstallerSet( AcrossModule module ) {
-		InstallerSetBuilder installerSetBuilder = new InstallerSetBuilder();
+	private Collection<Object> buildInstallerSet( AcrossModule module, ClassPathScanningInstallerProvider installerProvider ) {
+		InstallerSetBuilder installerSetBuilder = new InstallerSetBuilder( installerProvider );
 		installerSetBuilder.add( module.getInstallers() );
 		installerSetBuilder.scan( module.getInstallerScanPackages() );
 
@@ -502,6 +517,10 @@ public class AcrossBootstrapper
 	}
 
 	private ModuleConfigurationSet buildModuleConfigurationSet( AcrossContextInfo contextInfo ) {
+		ApplicationContext applicationContext = contextInfo.getApplicationContext();
+		MetadataReaderFactory metadataReaderFactory
+				= applicationContext.getBean( SharedMetadataReaderFactory.BEAN_NAME, MetadataReaderFactory.class );
+
 		Set<String> basePackages = new LinkedHashSet<>();
 
 		contextInfo.getModules()
@@ -514,7 +533,7 @@ public class AcrossBootstrapper
 
 		Collections.addAll( basePackages, contextInfo.getContext().getModuleConfigurationScanPackages() );
 
-		return new ClassPathScanningModuleConfigurationProvider()
+		return new ClassPathScanningModuleConfigurationProvider( applicationContext, metadataReaderFactory )
 				.scan( basePackages.toArray( new String[basePackages.size()] ) );
 	}
 

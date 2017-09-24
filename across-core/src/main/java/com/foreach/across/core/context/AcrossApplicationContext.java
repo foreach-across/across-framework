@@ -24,6 +24,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -84,6 +85,13 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 		}
 
 		super.initMessageSource();
+	}
+
+	@Override
+	protected void prepareBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
+		super.prepareBeanFactory( beanFactory );
+
+		SharedMetadataReaderFactory.registerAnnotationProcessors( (BeanDefinitionRegistry) beanFactory );
 	}
 
 	@Override
