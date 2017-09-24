@@ -1,6 +1,10 @@
 == What's new in this version?
 
 === 2.1.1-SNAPSHOT
+*Across Core*
+
+* minor performance improvements
+
 *Across Test*
 
 * bug fixes:
