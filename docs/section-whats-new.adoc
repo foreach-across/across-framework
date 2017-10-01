@@ -4,6 +4,9 @@
 *Across Core*
 
 * minor performance improvements
+* `@PostRefresh` now supports method arguments, behaving as an equivalent of `@Autowired` but after the Across context has bootstrapped
+** it is also possible to indicate that dependencies are not required, if dependencies are not met, the method will not be executed
+** `@PostRefresh` methods can be called more than once if a parent `ApplicationContext` refreshes
 
 *Across Test*
 
