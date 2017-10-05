@@ -28,6 +28,12 @@ import static org.junit.Assert.assertEquals;
 public class TestPrefixingPathContext
 {
 	@Test
+	public void hashSignOnlyIsNeverPrefixed() {
+		assertEquals( "#", new PrefixingPathContext( StringUtils.EMPTY ).path( "#" ) );
+		assertEquals( "#hello", new PrefixingPathContext( "boe" ).path( "#hello" ) );
+	}
+
+	@Test
 	public void cleanedPathPrefix() {
 		assertEquals( "/boe", new PrefixingPathContext( "/boe" ).getPathPrefix() );
 		assertEquals( "/boe", new PrefixingPathContext( "/boe/" ).getPathPrefix() );
@@ -46,7 +52,7 @@ public class TestPrefixingPathContext
 		PrefixingPathContext ctx = new PrefixingPathContext( "/boe" );
 
 		assertEquals( "/boe/test/path", ctx.path( "test/path" ) );
-		assertEquals( "/boe/test/path", ctx.path( "/test/path" ) );
+		assertEquals( "/boe/test/path?test=key#check", ctx.path( "/test/path?test=key#check" ) );
 		assertEquals( "http://www.google.be", ctx.path( "http://www.google.be" ) );
 		assertEquals( "~/test/path", ctx.path( "~/test/path" ) );
 		assertEquals( "redirect:/boe/test/path", ctx.path( "redirect:test/path" ) );
