@@ -37,7 +37,7 @@ public @interface ModuleConfiguration
 
 	/**
 	 * List of module names where this configuration should not be imported.
-	 * Takes precedence over {@link #value()} and is mainly useful is {@link #value()} empty which
+	 * Takes precedence over {@link #value()} and is mainly useful if {@link #value()} is empty which
 	 * would imply the configuration would be added to all modules (including the module providing the configuration).
 	 */
 	String[] exclude() default {};
