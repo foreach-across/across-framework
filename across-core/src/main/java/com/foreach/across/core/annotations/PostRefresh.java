@@ -19,8 +19,13 @@ package com.foreach.across.core.annotations;
 import java.lang.annotation.*;
 
 /**
- * Methods with this annotation will be executed if the bean they belong to is refreshed.
- * Note that for a refresh to happen the bean must be annotated with @Refreshable.
+ * Marks a method as to be autowired by Spring's dependency injection facilities,
+ * <u>after</u> the Across context has been bootstrapped.  This is pretty much an
+ * equivalent of {@link org.springframework.beans.factory.annotation.Autowired} but
+ * specifying a different time-frame for wiring.
+ * <p/>
+ * It's perfectly possible to use both {@link org.springframework.beans.factory.annotation.Autowired}
+ * and {@link PostRefresh} on the same method, in which case it will execute twice.
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -28,4 +33,9 @@ import java.lang.annotation.*;
 @Inherited
 public @interface PostRefresh
 {
+	/**
+	 * Declares whether the annotated dependency is required.
+	 * <p>Defaults to {@code true}.
+	 */
+	boolean required() default true;
 }

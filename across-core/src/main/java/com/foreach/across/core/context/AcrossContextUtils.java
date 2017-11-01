@@ -41,9 +41,15 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.target.AbstractLazyCreationTargetSource;
 import org.springframework.aop.target.LazyInitTargetSource;
 import org.springframework.aop.target.SimpleBeanTargetSource;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.TypeConverter;
+import org.springframework.beans.factory.InjectionPoint;
+import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.util.ClassUtils;
@@ -91,29 +97,56 @@ public final class AcrossContextUtils
 							moduleContext,
 							new AnnotatedMethodFilter( PostRefresh.class ) );
 
-					for ( Object singleton : postRefreshBeans.values() ) {
+					postRefreshBeans.forEach( ( beanName, singleton ) -> {
 						Object bean = AcrossContextUtils.getProxyTarget( singleton );
 						if ( bean != null ) {
 							Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
 
 							for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
-								if ( AnnotationUtils.getAnnotation( method, PostRefresh.class ) != null ) {
-									if ( method.getParameterTypes().length != 0 ) {
-										LOG.error( "@PostRefresh method {} should be parameter-less", method );
-									}
-									else {
+								PostRefresh postRefresh = AnnotationUtils.getAnnotation( method, PostRefresh.class );
+								if ( postRefresh != null ) {
+									boolean required = postRefresh.required();
+									Class<?>[] paramTypes = method.getParameterTypes();
+									Object[] arguments = new Object[paramTypes.length];
+									Set<String> autowiredBeans = new LinkedHashSet<>( paramTypes.length );
+									TypeConverter typeConverter = beanFactory.getTypeConverter();
+
+									for ( int i = 0; i < arguments.length; i++ ) {
+										MethodParameter methodParam = new MethodParameter( method, i );
+										DependencyDescriptor currDesc = new DependencyDescriptor( methodParam, required );
+										currDesc.setContainingClass( bean.getClass() );
+
 										try {
-											method.setAccessible( true );
-											method.invoke( bean );
+											Object arg = beanFactory.resolveDependency( currDesc, beanName, autowiredBeans, typeConverter );
+
+											if ( arg == null && !required ) {
+												arguments = null;
+												break;
+											}
+
+											arguments[i] = arg;
 										}
-										catch ( Exception e ) {
-											LOG.error( "Exception executing @PostRefresh method", e );
+										catch ( BeansException ex ) {
+											throw new UnsatisfiedDependencyException( null, beanName, new InjectionPoint( methodParam ), ex );
+										}
+									}
+
+									if ( arguments != null ) {
+										try {
+											ReflectionUtils.makeAccessible( method );
+											method.invoke( bean, arguments );
+										}
+										catch ( RuntimeException rte ) {
+											throw rte;
+										}
+										catch ( Exception ex ) {
+											throw new RuntimeException( ex );
 										}
 									}
 								}
 							}
 						}
-					}
+					} );
 				}
 			}
 		}

@@ -18,20 +18,44 @@ package com.foreach.across.test.modules.module1;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.PostRefresh;
+import com.foreach.across.test.modules.module2.ScannedBeanModule2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 @Exposed
 public class BeanWithOnlyPostRefresh
 {
-	public boolean refreshed = false;
+	private boolean refreshed = false;
+	private boolean unknownBeanSet = false;
+	private ScannedBeanModule2 scannedBeanFromLaterModule;
+
+	public ScannedBeanModule2 getScannedBeanFromLaterModule() {
+		return scannedBeanFromLaterModule;
+	}
 
 	public boolean isRefreshed() {
 		return refreshed;
 	}
 
+	public boolean isUnknownBeanSet() {
+		return unknownBeanSet;
+	}
+
 	@PostRefresh
 	public void refresh() {
 		refreshed = true;
+	}
+
+	@Autowired(required = false)
+	@PostRefresh(required = false)
+	private void setScannedBeanFromLaterModule( ScannedBeanModule2 scannedBeanFromLaterModule ) {
+		this.scannedBeanFromLaterModule = scannedBeanFromLaterModule;
+	}
+
+	@PostRefresh(required = false)
+	void setReallyUnknownBean( @Qualifier("someUnknownBean") ScannedBeanModule1 beanModule1 ) {
+		this.unknownBeanSet = true;
 	}
 }
