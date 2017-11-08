@@ -133,15 +133,18 @@
 			<plugin>
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.0</version>
+				<version>1.5.5</version>
 				<inherited>false</inherited>
 				<configuration>
 					<sourceDirectory>docs</sourceDirectory>
+					<!--
 					<sourceDocumentName>index.adoc</sourceDocumentName>
-					<doctype>book</doctype>
+					--><!--
+					<doctype>book</doctype>-->
 					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
 					<backend>html</backend>
 					<sourceHighlighter>coderay</sourceHighlighter>
+					<preserveDirectories>true</preserveDirectories>
 					<attributes>
 						<stylesheet>across.css</stylesheet>
 					</attributes>

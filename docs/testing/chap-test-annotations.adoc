@@ -1,0 +1,85 @@
+[[test-annotations]]
+== Annotations
+
+The Across Test library also provides a set of Across-specific annotations that extend the default Spring Testing annotations (eg `@ContextConfiguration`) to support `AcrossContext` setups.
+
+[[annotation-across-test-configuration]]
+=== @AcrossTestConfiguration
+Class-level annotation to be used as an alternative to `<<enableacrosscontext,@EnableAcrossContext>>`.
+Like `@EnableAcrossContext` this annotation will configure and bootstrap an `AcrossContext` but also add support for:
+
+* <<test-datasources,test datasources>>
+* resetting the database before bootstrap
+* creating a `MockMvc` bean instantiated with all dynamically registered filters from the context, when used in a `<<acrosswebappconfiguration,@AcrossWebAppConfiguration>>` test class
+
+When using either `@EnableAcrossContext` or `@AcrossTestConfiguration`, all beans exposed can be wired directly in the unit test class.
+
+.Example using @AcrossTestConfiguration
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext
+@ContextConfiguration
+public class TestSample
+{
+	@Autowired
+	private MyExposedBean myExposedBean;
+
+	@Test
+	public void doSomethingWithMyExposedBean() {
+		...
+	}
+
+	@AcrossTestConfiguration(modules = { MyModule.NAME })
+	protected static class Config
+	{
+	}
+}
+----
+
+[[acrosswebappconfiguration]]
+=== @AcrossWebAppConfiguration
+Class-level annotation that sets up a `@WebAppConfiguration` test that uses a `<<mock-across-servlet-context,MockAcrossServletContext>>` for initialization.
+`@AcrossWebAppConfiguration` contains a `@ContextConfiguration` annotation, unless additional annotations are specified, it will load static innter `@Configuration` classes of the annotated test class.
+
+When using this annotation on a test class the `MockAcrossServletContext` instance can be autowired for introspection.
+In combination with an inner static `@AcrossTestConfiguration` class, this will support a `MockMvc` instance initialized with all dynamically registered filters.
+
+.Example combining @AcrossWebAppConfiguration and @AcrossTestConfiguration
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext
+@AcrossWebAppConfiguration
+@TestPropertySource( properties = "acrossWebModule.resources.versioning.enabled=false" )
+public class TestSample
+{
+    @Autowired
+    private MockAcrossServletContext servletContext;
+
+	@Autowired
+	private MockMvc mvc;
+
+	@Test
+	public void resourceUrlEncodingFilterShouldNotBeRegistered() {
+        assertNull( servletContext.getFilterRegistration( ResourceUrlEncodingFilterConfiguration.FILTER_NAME ) );
+	}
+
+	@Test
+	public void staticResourceShouldBeReturned() {
+	    mvc.perform( get( "/across/resources/static/testResources/test.txt" ) )
+           .andExpect( status().isOk() )
+	}
+
+	@AcrossTestConfiguration(modules = { AcrossWebModule.NAME })
+	protected static class Config
+	{
+	}
+}
+----
+
+
+
+

@@ -1,0 +1,34 @@
+== Partial rendering
+Apart from <<web-templates,layout templates>>, AcrossWebModule also activates support for partial rendering: rendering only a specific fragment of a (Thymeleaf) template, or even a single `ViewElement`.
+This can be done by simply specifying the fragment to render as a *_partial* request parameter.
+
+Partial rendering is done by specifying the Thymeleaf fragment name in the *_partial* request parameter.
+If you want to render a single `ViewElement`, you should specify the `ViewElement` name prefixed with *::*.
+
+If a partial fragment is specified, the entire `WebTemplateProcessor` will be skipped, only the target view will be rendered.
+All other controller code will still be executed, all markup will still be built, but only the markup of the selected elements will be written to the response.
+
+.Example
+Assume we create a single `ViewElement` with a specific name.
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@GetMapping("/render")
+String get() {
+  model.addAttribute( "myViewElement", new TextViewElement( "myViewElement", "some text" ) );
+}
+----
+And we render it in the following snippet:
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+<h1>title</h1>
+<div th:fragment="mycontent">
+	<across:view element="${myViewElement}" />
+</div>
+----
+
+* _/render_ would output _<h1>title</h1><div>some text</div>_
+* _/render?_partial=mycontent_ would output _<div>some text</div>_
+* _/render?_partial=::myViewElement_ would output _some text_
+* _/render?_partial=mycontent::myViewElement_ would also output _some text_

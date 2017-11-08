@@ -1,0 +1,39 @@
+== Base test classes
+Across Test offers some base classes for related unit or integration tests.
+
+[discrete]
+=== AbstractAcrossModuleConventionsTest
+Across Test comes with a base unit test class that can be used to verify an `AcrossModule` implementation adheres to the <<module-conventions,conventions>>.
+All you have to do is extend from `AbstractAcrossModuleConventionsTest` and implement the `createModule()` method.
+
+.Basic implementation of a module conventions test
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+public class TestAcrossWebModuleConventions extends AbstractAcrossModuleConventionsTest
+{
+	@Override
+	protected AcrossModule createModule() {
+		return new AcrossWebModule();
+	}
+}
+----
+
+[discrete]
+=== AbstractViewElementTemplateTest
+Base integration test class for testing the rendering of a `ViewElement`.
+Provides useful methods for rendering and inspecting the generated output.
+
+.Example ViewElement rendering test
+[source,java]
+----
+public class TestNodeViewElement extends AbstractViewElementTemplateTest
+{
+	@Test
+	public void simpleNodeWithoutContentOrAttributes() {
+		NodeViewElement node = new NodeViewElement( "div" );
+
+		renderAndExpect( node, "<div></div>" );
+	}
+}
+----

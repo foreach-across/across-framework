@@ -1,5 +1,5 @@
 [[across-web]]
-= III. Across Web
+= AcrossWebModule
 
 :module-artifact: across-web
 :module-name: AcrossWebModule

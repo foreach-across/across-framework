@@ -1,0 +1,97 @@
+[[thymeleaf-dialect]]
+== Thymeleaf dialect
+{module-name} also registers a custom Thymeleaf dialect.
+The Thymeleaf dialect uses the prefix *across* and offers a number of utility elements, attributes and expression objects.
+
+=== Element processors
+The `AcrossWebDialect` adds the following elements that can be used in HTML templates:
+[cols="1,3,2",options=header]
+|===
+
+| Name
+| Description
+| Attributes
+
+|*across:view*
+|Takes a `ViewElement` as _element_ attribute and will be replaced by the rendering of that `ViewElement`.
+|_element_ : `ViewElement` instance
+
+|===
+
+=== Attribute processors
+The `AcrossWebDialect` adds the following attributes that can be used in HTML templates:
+
+[cols="2,3,3",options=header]
+|===
+
+| Name
+| Description
+| Examples
+
+|*across:resource*
+|Takes a relative path to a static resource.
+Will generate a valid url path to that static resource and will write the value as a new attribute.
+The name of the attribute that will be written depends on the element the attribute is used on.
+
+All HTML5 elements supporting *src* or *href* attributes are supported, along with _image_ and _use_ elements
+|_<a across:resource="/img"/>_ +
+output: _<a href="/res/img">_
+
+_<script across:resource="/js/my.js"/>_ +
+output: _<script src="/res/js/my.js"/>_
+
+_<image across:resource="/img"/>_ +
+output: _<image xlink:href="/res/img"/>_
+
+|*across:static*
+|Takes a relative path to a resource in the _static_ subfolder.
+Using _across:static="/img"_ would be the same as using _across:resource="/static/img"_.
+Supports the same elements as _across:resource_.
+|_<a across:static="/img"/>_ +
+ output: _<a href="/res/static/img">_
+
+|*across:resource-attr-name*
+|Same as *across:resource* except the resulting attribute name will be _attr-name_. +
+Any double dash (--) will be replaced by a colon (:).
+|_<a across:resource-data-url="/img"/>_ +
+ output: _<a data-url="/res/img">_
+
+|*across:static-attr-name*
+|Same as *across:static* except the resulting attribute name will be _attr-name_. +
+Any double dash (--) will be replaced by a colon (:).
+|_<a across:static-data-url="/img"/>_ +
+ output: _<a data-url="/res/static/img">_
+
+|===
+
+=== Expression objects
+The `AcrossWebDialect` makes the following expression objects available for script execution:
+
+[cols="1,1,3",options=header]
+|===
+
+| Name
+| Value
+| Description
+
+|*#webapp*
+|`WebAppPathResolver`
+|Used for generating prefixed links based on a relative path.
+For example to static resources.
+
+These links can still be processed by the Thymeleaf link builder (`@{..}`).
+Usually not necessary to use the `#webapp` however, see the <<url-support,URL support section>>.
+
+|*#htmlIdStore*
+|`HtmlIdStore`
+|Holds the generated HTML id attribute for a `ViewElement`.
+
+|===
+
+[[url-support]]
+=== URL support
+Apart from the availability of *#webapp*, {module-name} activates transparent support for the <<web-app-path-resolver,`WebAppPathResolver`>> on Thymeleaf URL generation. +
+
+Example:
+_<img th:src="@{@static:/img}">_ would produce _<img src="/res/static/img">_
+

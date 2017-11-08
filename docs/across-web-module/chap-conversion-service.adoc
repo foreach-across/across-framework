@@ -1,0 +1,25 @@
+== AcrossWebModule and ConversionService
+AcrossWebModule requires a `FormattingConversionService` bean named *mvcConversionService* to be present.
+If there is none, one will be created and exposed.  By default the parent *conversionService* bean will be reused if
+it implements the right interface.  If you want to manage the *mvcConversionService* separately, simply create
+ a `FormattingConversionService` with the right name in the parent context.
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Configuration
+public class ManualConversionServiceConfiguration
+{
+	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
+	public FormattingConversionService mvcConversionService() {
+	    return new FormattingConversionService();
+	}
+}
+----
+
+The *mvcConversionService* will be passed to all `WebMvcConfigurer` instances in order to add formatters.  It is also
+the default `ConversionService` attached to the `WebDataBinder`.
+
+NOTE: There will be at least 2 `ConversionService` beans in the across context when `AcrossWebModule` is enabled:
+*conversionService* and *mvcConversionService*.  If you have duplicate bean exceptions due to unqualified autowiring,
+you should make one of both primary.

@@ -1,0 +1,20 @@
+[[mock-across-servlet-context]]
+== MockAcrossServletContext
+
+The `MockAcrossServletContext` is an extension of the `MockServletContext` from Spring Test.
+It adds an implementation that keeps track of all registered servlets, filters and listeners.
+
+Unlike the `MockServletContext` this implementation does not throw an `UnsupportedOperationException` on registration operations.
+For common operations like servlet and filter registration this implementation will behave as an actual `ServletContext` from a web container.
+The actual registrations that occurred can be retrieved - in order - from the `MockAcrossServletContext`.
+
+`MockAcrossServletContext` can also mimic initialization of the `ServletContext`.
+When `initialize()` is called, the `init()` methods of the servlet/filter instances will be called with the registration parameters.
+Note that `initialize()` can be called only once, and afterwards all registration operations will throw an `IllegalStateException`.
+
+Using a `MockAcrossServletContext` can be used for unit testing `AcrossWebDynamicServletConfigurer` implementations or for integration tests needing web functionality.
+`MockAcrossServletContext` is used automatically behind the scenes when using the <<test-builders,test builders>> or <<test-annotations,annotations>>.
+In an integration test scenario, the implementation can either be wired as a bean (when using the <<test-annotations,annotations>>) or retrieved from the resulting `AcrossTestWebContext`.
+
+Please refer to the javadoc for `MockAcrossServletContext` for more information.
+

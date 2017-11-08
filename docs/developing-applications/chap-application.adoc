@@ -1,0 +1,82 @@
+[[across-application]]
+== TODO: @AcrossApplication
+`@AcrossApplication` annotation can be used as an alternative for `@EnableAcrossContext` and `@SpringBootApplication` when defining an application.
+In addition to default context configuration options, it also adds selected <<spring-boot-autoconfigure,Spring Boot autoconfiguration classes>> and enables <<dynamic-across-modules,dynamic modules>>.
+
+Using `@AcrossApplication` is probably the easiest way to setup a simple (Spring Boot based) application backed by an AcrossContext.
+
+WARNING: Using `@EnableAutoConfiguration` and Spring Boot starters directly with Across is currently not supported.
+Only a selected number of starters have support directly built into Across.
+See <<across-spring-boot>> for more background information.
+
+[[embedded-servlet-container]]
+=== Embedded servlet container
+Using `@AcrossApplication` adds the necessary Spring Boot auto configuration classes for embedded servlet containers.
+If you have for example *spring-boot-starter-tomcat* on the classpath, you can run an Across based application inside an embedded Tomcat using `SpringApplication`.
+
+.Minimal example of a Spring Boot based Across application
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@AcrossApplication(modules = { MyModule.NAME, MyOtherModule.NAME })
+public class MyApplication
+{
+	public static void main( String[] args ) {
+		SpringApplication.run( MyApplication.class, args );
+	}
+}
+----
+
+[[dynamic-across-modules]]
+=== Dynamic Across modules
+Using `@AcrossApplication` on a class will automatically enable dynamic Across modules on that class.
+Before bootstrapping the context, the configurator will attempt to find an application specific infrastructure, application or postprocessor module.
+The name of the expected module is generated based on the name of the importing class.
+If no module with that name can be resolved, the configurator will see if a child package is present relative to the package of the importing class.
+Depending on the child package name, a dynamic module will be generated.
+
+|===
+
+|*Importing class* |MyApplication |MyConfiguration
+
+|*Infrastructure module* +
+package: _infrastructure_
+|MyApplicationInfrastructureModule +
+resources: myApplicationInfrastructure
+|MyConfigurationInfrastructureModule +
+resources: myConfigurationInfrastructure
+
+|*Application module* +
+package: _application_
+|MyApplicationModule +
+resources: *my*
+|MyConfigurationApplicationModule +
+resources: *myConfiguration*
+
+|*PostProcessor module* +
+package: _postprocessor_
+|MyApplicationPostProcessorModule +
+resources: myApplicationPostProcessor
+|MyConfigurationPostProcessorModule +
+resources: myConfigurationPostProcessor
+
+|===
+
+.Example package structure for application modules
+[source,text,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+com.mypackage
+  MyApplication.class
+  application.config
+    MyApplicationModuleConfiguration.class
+  infrastructure.installers
+    SchemaInstallerToRunBeforeAnyOtherModule.class
+----
+
+Disabling dynamic modules on an `@AcrossApplication` can be done through the *enableDynamicModules* attribute.
+
+WARNING: Dynamic modules perform an automatic component scan of all their child packages with the exception of _installers_ and _extensions_.
+If you want the default behavior of scanning only the _config_ child package, you must provide an `AcrossModule` implementation.
+
+NOTE: If you want to manually add dynamic modules, please see the javadoc for `AcrossDynamicModulesConfigurer` and `AcrossDynamicModulesConfiguration`.

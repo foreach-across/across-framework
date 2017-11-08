@@ -1,0 +1,179 @@
+
+== Events
+Every Across context creates an `AcrossEventPublisher` bean.
+This bean can be wired in any module to dispatch events.
+The default implementation of the event publisher uses MBassador.
+
+[discrete]
+=== Publishing events
+Publishing an event can be done from anywhere by simply creating an instance of the AcrossEvent interface.
+This is a marker interface not defining any additional methods.
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+public static class SomeEvent implements AcrossEvent {
+}
+
+@Autowired
+private AcrossEventPublisher eventBus;
+
+public void sendEvent() {
+  eventBus.publish( new SomeEvent() );
+}
+----
+
+[discrete]
+=== Subscribing to events
+Event handlers must not implement any special interface, event handler methods must declare themselves as handling an event by specifying the @Event annotation.
+A single object can have many handler methods.
+All beans created in the `ApplicationContext` are automatically scanned for event handler methods.
+
+.Example component with an event handling method
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+@Component
+public class MyHandler {
+    @Event
+    public void handle( SomeEvent event ) {
+        // Called whenever an event of type SomeEvent is published
+    }
+}
+----
+
+WARNING: Take special care when combining AOP with event handlers, as the event publisher only has limited support for AOP proxies.
+Depending on the strategy used (CGlib or JDK proxy) the actual proxy (CGlib) or the proxy target (in case of JDK proxy) will be registered as the event handler.
+In the latter case the event will still be fired but the actual handle method will not be intercepted.
+
+==== Manual subscription
+Any object can register itself as listener by subscribing to the `AcrossEventPublisher`.
+
+.Example of a non-managed object manually subscribing to the AcrossEventPublisher
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+private AcrossEventPublisher eventBus;
+
+public void startListening() {
+    // Subscribe ourselves to the event bus
+    eventBus.subscribe( this );
+}
+
+public void stopListening() {
+    // Remove ourselves from the event bus
+    eventBus.unsubscribe( this );
+}
+
+@Event
+public void handle( SomeEvent event ) {
+    // Called whenever an event of type SomeEvent is published
+}
+----
+
+[discrete]
+=== Filtering events
+Depending on the interface an event implements a handler can be specific about which events it wants to receive.
+
+|===
+|Event implements |Filtering
+
+|AcrossEvent
+|Is only done on the class of the event. All instances of the specific event class (or subclasses) will be handled.
+
+|NamedAcrossEvent
+|Is done on the class of the event as well as the name of the event if an @EventName annotation is present on the handler method.
+WARNING: If the handler method defines an @EventName only events matching one of the names and implementing NamedAcrossEvent will be handled.
+
+|ParameterizedAcrossEvent
+|Is done on the class of the event as well as on the defined generic parameters.
+All instances matching the specific event class and the specific generic class (or subclasses) will be handled.
+To support complex generic type filtering, implementations must specify their generic parameters as Spring ResolvableType instances.
+Multiple generic parameters as well as nested generics are supported.
+
+|===
+
+Filters can be combined: it is possible to filter an event on both event name and generic parameter.
+An event must pass all filters before it is handled.
+
+.Examples of custom events
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+
+/**
+ * Named events.
+ */
+class MyNamedEvent implements NamedAcrossEvent {
+  @Override
+  public String getEventName() {
+    return "MyNamedEvent";
+  }
+}
+
+@Event
+public void handle( @EventName({"MyNamedEvent","MyOtherNamedEvent"}) NamedAcrossEvent event ) {
+    // do something
+}
+
+/**
+ * Event with generic parameters.
+ */
+class MyListEvent<T> implements ParameterizedAcrossEvent {
+  private final ResolvableType[] genericTypes;
+
+
+  public MyListEvent( Class memberClass ) {
+    genericTypes = new ResolvableType[] {
+      ResolvableType.forClassWithGenerics( List.class, memberClass )
+    };
+  }
+
+
+  @Override
+  public ResolvableType[] getEventGenericTypes() {
+    return genericTypes;
+  }
+}
+
+@Event
+public void handle( MyListEvent<List<Integer>> event ) {
+  // would match against: new MyListEvent<List<Integer>>( Integer.class );
+}
+----
+
+[discrete]
+=== Bootstrap events
+The following bootstrap events are being published by the AcrossContext:
+
+AcrossModuleBeforeBootstrapEvent::
+Sent for each module, right before the bootstrapping of that module starts.
+This is the very last point in time in which the ModuleBootstrapConfig can still be modified.
+
+AcrossModuleBootstrappedEvent::
+Sent for each module, right after the module has bootstrapped.
+
+AcrossContextBootstrappedEvent::
+Sent once for every AcrossContext, after the entire bootstrap phase has finished.
+
+[discrete]
+=== Exceptions in events
+When dispatching an event through its handlers, each handler is executed in isolation from the others.
+Events do not bubble up to the publisher.
+This means if an exception occurs within a handler, that will not impact the original publisher in anyway and the next handler will simply execute.
+However, when an exception occurs that is not handled within the handler method, a new `PublicationError` message is publishes that can be picked up with a custom `IPublicationErrorHandler` implementation added to the underlying `MBassadorEventPublisher` using `addErrorHandler()`.
+By default all exceptions will be logged in the `AcrossEventPublisher` logger.
+
+
+[discrete]
+[[event-handler-ordering]]
+=== Event handler ordering
+Event handlers can be ordered, although the support is limited.
+Events are handled in module bootstrap order, with handlers from the same AcrossModule having a random order.
+You can force an event handler order by assigning an `@Order` or `@OrderInModule` annotation on either the bean that declares the handler method, or on the handler method itself.
+
+The default ordering should be sufficient for most use cases: you can rely on event handlers from previous modules having been executed.
+
+WARNING: Ordering event handlers is only supported on a class-level.
+This is a limitation of the current implementation.
+This means that multiple beans from the same class will get the same order assigned!

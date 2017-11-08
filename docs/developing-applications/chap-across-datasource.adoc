@@ -1,0 +1,8 @@
+[[across-datasource]]
+== TODO: Across datasource
+An AcrossContext supports the configuration of a DataSource instance.
+The datasource will be available for all modules as bean named *acrossDataSource*.
+Additionally a second datasource can be configured that will be available as the *acrossInstallerDataSource*.
+If no separate installer datasource is specified, the default across datasource will be used.
+
+TODO: if you want to run installers, you need a datasource (distributedlock repository, installer tracking)

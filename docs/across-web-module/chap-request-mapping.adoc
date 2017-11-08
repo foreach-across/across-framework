@@ -1,0 +1,114 @@
+[[extended-request-mapping]]
+== @RequestMapping extensions
+AcrossWebModule adds several extensions to the out-of-the-box Spring MVC functionality.
+
+[[customrequestcondition]]
+=== @CustomRequestMapping
+Default `@RequestMapping` implementations can be further specified by adding custom request conditions using `@CustomRequestMapping` annotations.
+The latter allows you to restrict a `@RequestMapping` on any annotation attribute value on the handler method, or even any attribute value that is available on the `HttpServletRequest`.
+
+A `@CustomRequestMapping` allows you to specify a number of `CustomRequestCondition` classes.
+When building the request mapping info, AcrossWebModule will create beans of every `CustomRequestCondition` and will supply them with the `AnnotatedElement` that represents the handler method or handler type they were configured on.
+Multiple `CustomRequestCondition` classes can be specified and they can be combined on both handler type and handler method, just like the regular `@RequestMapping`.
+
+You can also use `@CustomRequestMapping` as a meta-annotation, which is often much easier in use.
+
+NOTE: When adding multiple `CustomRequestCondition` to a mapping, the mapping will only be applied if *all* conditions match.
+
+.Example @CustomRequestMapping
+The following example creates an additional request mapping condition that will only use that mapping if the request has a specific referrer header value.
+
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+@Controller
+public class TestController {
+    /**
+     * Example mapping that accepts only GET requests made to the
+     * fromGoogle path if the request referrer header contains
+     * http://www.google.com.
+     */
+    @GetMapping("/fromGoogle")
+    @ReferrerMapping("http://www.google.com")
+    public String google() {
+        ...
+    }
+}
+
+/**
+ * Custom mapping that will only match if any of the referrers are set.
+ * If both type and method level annotation is present, the method level annotation
+ * attributes will replace the type level attributes.  This is taken care of in the
+ * combine() method of the ReferrerRequestCondition.
+ */
+@Target({ ElementType.METHOD, ElementType.TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@CustomRequestMapping(ReferrerRequestCondition.class)
+private @interface ReferrerMapping
+{
+    // possible header values - the mapping will apply if the request
+    // referrer has any of these values
+    String[] value();
+}
+
+/**
+ * Condition implementation.  This will be instantiated as a bean,
+ * so wiring other components is possible as well as long as they are
+ * visible in the AcrossWebModule context.
+ */
+private static class ReferrerRequestCondition extends AbstractCustomRequestCondition<ReferrerRequestCondition>
+{
+    private String[] referrers = new String[0];
+
+    // get the configured headers from the annotation
+    @Override
+    public void setAnnotatedElement( AnnotatedElement element ) {
+        referrers = AnnotatedElementUtils.findMergedAnnotation( element, ReferrerMapping.class )
+                                         .value();
+    }
+
+    @Override
+    protected Collection<String> getContent() {
+        return Arrays.asList( referrers );
+    }
+
+    @Override
+    protected String getToStringInfix() {
+        return " || ";
+    }
+
+    // no relevant combination - other simply replaces this one
+    @Override
+    public ReferrerRequestCondition combine( ReferrerRequestCondition other ) {
+        return other;
+    }
+
+    // return self if headers matches, else there is no matching condition
+    @Override
+    public ReferrerRequestCondition getMatchingCondition( HttpServletRequest request ) {
+        if ( StringUtils.containsAny( request.getHeader( HttpHeaders.REFERER ), referrers ) ) {
+            return this;
+        }
+        return null;
+    }
+
+    // always consider them equal
+    // there is no relevant ordering if headers are different
+    @Override
+    public int compareTo( ReferrerRequestCondition other, HttpServletRequest request ) {
+        return 0;
+    }
+}
+----
+
+[[prefix-request-mappings]]
+=== Prefixed request mappings
+AcrossWebModule contains a `PrefixingRequestMappingHandlerMapping` implementation.
+The `PrefixingRequestMappingHandlerMapping` allows request mappings to be prefixed at runtime.
+Core infrastructure is the `PrefixingRequestMappingHandlerMapping` and the `PrefixingHandlerMappingConfigurer`.
+The latter can be used to add interceptors only to request mappings attached to a specific `PrefixingRequestMappingHandlerMapping` instance.
+
+`PrefixingRequestMappingHandlerMapping` also fully supports <<customrequestcondition,custom request conditions>>.
+
+Examples of prefixing request mappings can be found in the {admin-web-module-url}[AdminWebModule] and {debug-web-module-url}[DebugWebModule].

@@ -1,0 +1,11 @@
+[[across-bootstrap-order]]
+== TODO: Across Bootstrap order
+
+order modules based on dependencies
+run installers in the different phases
+publish events
+
+prepareForBootstrap
+AcrossBootstrapConfig / ModuleBootstrapConfig
+extendModule
+AcrossContextInfo and AcrossModuleInfo - modifying bootstrap configuration from within a module

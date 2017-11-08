@@ -1,0 +1,36 @@
+[[dynamic-servlet-registration]]
+== Registering servlets and filters
+It is possible to register `Servlet` and `Filter` instances from within an Across module by providing `ServletContextInitializer` beans.
+During bootstrap, {module-name} will detect these beans and execute them <<ordering-beans,in order>>.
+
+For the `ServletContext` to be customized, the `AcrossContext` must be bootstrapped during the `ServletContext` initialization.
+This is the default when you use `@AcrossApplication` with an embedded container (Spring Boot application).
+When deploying to a separate container, you can use `AbstractAcrossServletInitializer` to achieve the same.
+
+.Conditionals
+`@ConditionalOnConfigurableServletContext` can be used to verify that the context is being bootstrapped in a web configuration where the `ServletContext` allows customization.
+Likewise `@ConditionalOnNotConfigurableServletContext` can be used to check the opposite is true.
+
+.Example registering the resourceUrlEncodingFilter after all other filters
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+@Bean
+@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
+@ConditionalOnConfigurableServletContext
+public FilterRegistrationBean resourceUrlEncodingFilterRegistration() {
+    FilterRegistrationBean registration = new FilterRegistrationBean();
+    registration.setName( RESOURCE_URL_ENCODING_FILTER );
+    registration.setFilter( new ResourceUrlEncodingFilter() );
+    registration.setAsyncSupported( true );
+    registration.setMatchAfter( true );
+    registration.setUrlPatterns( Collections.singletonList( "/*" ) );
+    registration.setDispatcherTypes( DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.ASYNC );
+    registration.setOrder( Ordered.LOWEST_PRECEDENCE );
+
+    return registration;
+}
+----
+
+WARNING: `ServletContextInitializer` beans can be ordered but the order between initializers defined inside the Across context and outside the context (on application configuration level) is _non deterministic_.
+To enforce overall ordering, it might be easiest to add those initializers to a module using `@ModuleConfiguration`.

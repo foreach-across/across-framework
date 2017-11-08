@@ -1,0 +1,43 @@
+== Across core components
+The following is a listing of the default components (beans) that are created by the Across context.
+These beans are always available and accessible in every module.
+
+
+.Core components
+[cols="1,3"]
+|===
+|Component type |Description
+
+|`AcrossContextInfo`
+|Root context information of the Across context.
+Gives access to the actual modules started in the context and their underlying configuration or `ApplicationContext`.
+
+|`AcrossContextBeanRegistry`
+|Central registry allowing you to query to the entire `ApplicationContext` hierarchy that makes up the Across context.
+Allows retrieval of module internal components.
+
+|`AcrossInstallerRepository`
+|The repository for accessing tracked installer information or manually manipulating the installer records.
+
+|`ConversionService`
+|The default `ConversionService` used by Across.
+
+|`DistributedLockRepository`
+|A service component for creating locks that use the underlying RDBMS for synchronization.
+This is a simple locking mechanism that can be used for distributed locks in a multi server deploy.
+The lock repository is also used by the installer tracking mechanism.
+
+|`AcrossDevelopmentMode`
+|Utility bean that can be used to verify if <<development-mode,development mode>> is active, and to get development locations for resources files.
+
+|`MessageSource`
+|The default Across `MessageSource` bean that represents the module based message source hierarchy.
+See the chapter on <<message-source,Message sources>> for more information.
+
+|`CacheManager`
+|Exposes the `AcrossCompositeCacheManager`.
+A default `CacheManager` implementation where additional `CacheManager` instances can be registered.
+A `Cache` instance will always be returned, defaulting to a `NoOpCache` if no actual managers have been added.
+
+|===
+

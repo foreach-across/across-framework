@@ -21,6 +21,11 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 
 import java.util.Collection;
 
+/**
+ * Event published after the AcrossContext has bootstrapped.
+ * That means full initialization has happened: all modules are started and all installers
+ * have been executed, including those registered {@link com.foreach.across.core.installers.InstallerPhase#AfterContextBootstrap}.
+ */
 public class AcrossContextBootstrappedEvent implements AcrossEvent
 {
 	private final AcrossContextInfo contextInfo;

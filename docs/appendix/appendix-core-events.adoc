@@ -1,0 +1,22 @@
+== Across core events
+
+The following is a listing of all events published by Across core when starting the application.
+
+.Core events
+[cols="1,3"]
+|===
+|Event type |Description
+
+|`AcrossModuleBeforeBootstrapEvent`
+|Event that is sent right before the module is bootstrapped.
+The configuration of the module can still be modified at this point.
+
+|`AcrossModuleBootstrappedEvent`
+|Event published when a module has bootstrapped.
+That means the module itself has started, but installers attached to the `AfterModuleBootstrap` phase have not yet been executed.
+
+|`AcrossContextBootstrappedEvent`
+|Event published after the AcrossContext has bootstrapped.
+That means full initialization has happened: all modules are started and all installers have been executed.
+
+|===

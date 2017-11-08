@@ -1,0 +1,86 @@
+== Core concepts
+At the heart of Across are a couple of concepts you should understand.  The terms related tot these concepts are used
+throughout all Across documentation, consider them part of the Across http://en.wikipedia.org/wiki/Domain-specific_language[DSL].
+
+=== Application/Context/Module
+
+==== Across application
+
+==== Across context
+An Across context is a configured set of Across modules and usually represents a single application.
+A single Across context is represented by the `AcrossContext` class but usually created by using <<yrdy,`@EnableAcrossContext`>> or <<yrer,`@AcrossApplication`>>.
+
+Compared to a single Spring `ApplicationContext`, an `AcrossContext` represents an entire hierarchy of `ApplicationContext` instances.
+The `AcrossContext` itself is an `ApplicationContext` that can have optionally have a parent `ApplicationContext`.
+However every single module loaded in the Across context also is a separate `ApplicationContext` with the Across context as parent.
+
+==== Across module
+An Across module represents a grouped set of beans and services that provide application logic and that often other modules can use.
+Every module is uniquely identified by its name and is defined by <<creating a descriptor class>> that extends from the `AcrossModule` class.
+
+The `AcrossModule` implementation defines how the module contents should be loaded in the Across context.
+If a module adheres to a set of <<conventions>>, required configuration can be kept at a minimum.
+For simple applications, it is even possible to define <<package based dynamic modules>> that require no separate descriptor.
+
+// TODO: module descriptor
+
+=== Module dependencies
+Modules can depend on other modules.
+If module B depends on module A, B states explicitly that it wishes to make use of the functionality that A will provide.
+The module dependencies will determine the loading order of the modules in the configured Across context.
+
+Modules have two types of dependencies on other modules:
+
+* explicit dependencies usually configured with <<`@AcrossDepends`>>
+* implicit dependencies defined by the <<module role>>
+
+// TODO: ordering of components
+NOTE: Order is very important.
+
+=== Bootstrapping
+An Across context is configured by dermining which modules should be loaded.
+The actual creation of the module beans is only done when the Across context <<bootstraps>>.
+Bootstrapping an Across context involves the creation of the backing Spring `ApplicationContext` instances.
+Every single module will have an `ApplicationContext` configured according to the `AcrossModule` descriptor.
+During bootstrapping, all modules are bootstrapped sequentially and in the order determined through their dependencies.
+
+An `AcrossContext` is only successfully bootstrapped if all modules have bootstrapped successfully.
+A general `AcrossContext` and `AcrossModule` lifecycle has a start (bootstrap) and stop (shutdown) phase.
+In most applications these are managed transparently through the use of `@EnableAcrossContext` or `@AcrossApplication`.
+
+=== Exposing beans
+Module B can only use a service of module A if module A has explicitly exposed that service.
+A service is usually provided through one or more beans, so that means that module A must expose those beans to its owning Across context.
+If that has been done, beans from module B can simply wire the beans from module A directly.
+Exposing is the means through which module collaboration is defined.
+
+==== Refreshing beans
+Sometimes it is not possible to define explicit dependencies between modules.
+For example where module B depends on module A but creates a bean that A should use.
+Because circular dependencies are not allowed the only solution for this would be to use <<refreshable beans>>.
+
+Specially demarcated beans can be refreshed after the entire Across context has finished bootstrapped.
+These beans will have their dependencies updated based on the now fully populated `AcrossContext`.
+The valid use cases for refreshable beans are limited, and if unsure explicit dependencies or the use of events is preferred.
+
+=== Events
+An Across context creates a central event bus that every module has access to.
+Any bean can publish events on the bus, and special listeners can catch and handle the events published.
+
+Using events is a common way for modules to provide extensions points to other modules, without forcing dependencies.
+
+=== Installers
+An Across module can define any number of installer beans.
+Installers are special beans that will only exist:
+
+* during the bootstrapping of the Across context
+* if all conditions for the installers apply
+
+Installers can be used to setup the necessary infrastructure for the services that a module provides.
+Common use cases for installers include:
+
+* installing a database schema
+* inserting (test) data
+* running migration tasks
+
+Across itself provides the mechanism for defining installers and optimizing (conditional) installer execution.

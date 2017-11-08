@@ -1,0 +1,48 @@
+[[fundamentals]]
+= Fundamentals
+:toc:
+:numbered:
+
+This chapter explains the terminology and fundamental concepts involved with developing Across applications and modules.
+Understanding these terms and concepts is a prerequisite for working with Across.
+
+== Required knowledge
+To be able to develop with Across, you need a good grasp of Java (8) and Spring Framework.
+Spring MVC experience is strongly advised, and some Spring Boot knowledge might be helpful.
+
+At the very least you should be familiar with Spring’s approach for dependency injection, the `ApplicationContext` and java-based configuration.
+
+Other commonly used libraries that are useful to know are Hibernate, Spring Data, Liquibase and Thymeleaf.
+
+== Technical requirements
+
+[discrete]
+=== Across and Spring framework
+{spring-url}[Spring framework] is a de facto industry standard for building Java (web) applications.  It was a logical
+ choice to use it as the foundation for Across.  Across extends or even customizes some aspects of Spring, but still supports
+ most if not all common Spring functions out of the box.  To use Across optimally, a good knowledge of Spring is required.
+
+<<across-core>> and <<across-web>> build on top of the common Spring framework, while other <<across-standard-modules,standard modules>> integrate different
+Spring libraries like {spring-data-url}[Spring Data], {spring-batch-url}[Spring Batch] or {spring-security-url}[Spring security].
+
+== Across Framework
+
+[[across-platform]]
+== Across Platform
+Across platform provides a single BOM pom that has a curated list of dependencies for both Across core and Across Standard Modules.
+Using the platform is advised for Across based applications as the platform will ensure different module versions play together nicely.
+
+[[across-standard-modules]]
+== Across Standard Modules
+Apart from the Across framework itself, a different project maintains a set of Across standard modules.  These modules aim
+ to be productivity enhancers by providing you with a common set of functionality that can be used as the foundation
+ for your applications or even for an entire web cms.
+
+There are standard modules that provide you with the set-up for an administrative web interface, secured with
+ {spring-security-url}[Spring security] and built on top of an entire roles and permissions management domain layer.
+ Other modules generate web forms at runtime for persistent entities you have declared in your application.
+
+Across framework provides only a ground layer, the real win is in re-using well-defined modules that have already
+been built.  The standard modules projects aims to do exactly that: bring some best of breed modules to the open source Across landscape.
+
+include::./concepts.adoc[]

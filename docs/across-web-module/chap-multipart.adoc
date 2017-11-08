@@ -1,0 +1,35 @@
+[[multipart-config]]
+== Multipart support
+By default {module-name} will attempt to automatically configure a `MultipartFilter` to support multipart form data.
+When correctly configured, this will enable multipart support for all servlets and web requests.
+
+.Servlet container support
+By default a `StandardServletMultipartFilter` is being added, that builds on top of the Servlet 3.0 specification.
+Servlets will still need a `MultipartConfigElement` set for multipart data to be handled correctly.
+The latter is done automatically for the `DispatcherServlet`.
+
+.Customizing the multipart configuration
+Common settings (eg. max file size) can be customized by providing a `MultipartConfigElement` bean.
+This bean will be automatically picked up for the configuration.
+If none is present, {module-name} will create a default bean.
+
+.Apache Commons support
+If <<commons-fileupload-url,Apache Commons FileUpload>> is available on the classpath, the filter will be configured using a `CommonsMultipartResolver` instead.
+
+.Manually creating a MultipartResolver
+It is also possible to manually create a `MultipartResolver` bean.
+The bean name will determine how multipart resolving is applied:
+
+*filterMultipartResolver*::
+Will still enable the `MultipartFilter` to be registered but will use the configured bean as its internal resolver.
+
+*multipartResolver*::
+Will disable the `MultipartFilter` registration, but will register the resolver on the `DispatcherServlet`.
+Multipart support will only be enabled on requests made through the `DispatcherServlet`.
+
+WARNING: Spring Boot will automatically rename any `MultipartResolver` bean to *multipartResolver* so it will be picked up by the `DispatcherServlet`.
+If you want to use the `MultipartFilter` but want to customize the `MultipartResolver` it uses, you should ensure that the resolver bean is injected in the {module-name} and not exposed.
+
+.Disabling multipart configuration
+Disabling the automatic multipart resolving configuration can be done by setting *acrossWebModule.multipart.auto-configure* to `false`.
+

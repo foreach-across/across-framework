@@ -1,0 +1,42 @@
+[[test-datasources]]
+== Test datasources
+
+When using the Across Test <<test-annotations,annotations>> or <<test-builders,builders>>, default support for test datasources is activated.
+If no specific datasource is configured on the `AcrossContext` a default test datasource will be detected.
+
+.Test datasource detection
+Test datasources can be configured in a specific property file, located at *${user.home}/dev-configs/across-test.properties*.
+That file is automatically loaded and can contain multiple datasource sections, where every datasource has a unique *NAME* and its properties are prefixed with *acrossTest.datasource.NAME*.
+Required properties for a valid datasource are:
+
+ * acrossTest.datasource.NAME.driver
+ * acrossTest.datasource.NAME.url
+ * acrossTest.datasource.NAME.username
+ * acrossTest.datasource.NAME.password
+
+.Example across-test.properties file
+[source,properties,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+acrossTest.datasource.mysql.driver=com.mysql.jdbc.Driver
+acrossTest.datasource.mysql.url=jdbc:mysql://127.0.0.1:3306/testdb
+acrossTest.datasource.mysql.username=testdb_user
+acrossTest.datasource.mysql.password=testdb_pwd
+----
+
+When configuring the context, the environment property *acrossTest.datasource* will be checked to determine the *NAME* of the actual datasource that shoul be used.
+If that property does not exist or holds the value *auto*, an embedded HSQLDB is automatically added instead.
+This ensures that installers can always run against an actual datasource.
+
+If you want to change the fallback default datasource, you can do so by setting the *acossTest.datasource.default* property value.
+
+NOTE: A common strategy is to run the integration tests multiple times with a different *acrossTest.datasource* property.
+The *standard-module-bom* automatically configures your maven build to run all unit test starting with *IT** in the integration-test phase.
+This is an efficient way to test for example installer compatibility for different database types.
+
+If you want to manually add support for test datasources, you should add a `TestDataSourceConfigurer` for configuring the `AcrossContext`.
+
+.Database reset
+When using test datasources it is usually wanted behaviour to drop the database content before bootstrapping the `AcrossContext`.
+This is done automatically when you are using the Across Test annotations or builders.
+If you want to add this manually, you should add a `ResetDatabaseConfigurer` to the context configuration.

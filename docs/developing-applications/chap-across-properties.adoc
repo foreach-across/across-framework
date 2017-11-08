@@ -1,0 +1,148 @@
+== Properties
+Both AcrossModule and AcrossContext have a collection of Properties.
+These can be accessed directly from the instance, but will also be registered as `PropertySource` in the bootstrapping `ApplicationContext`.
+Across favours the PropertySource/Environment approach over the concept of multiple PropertyPlaceholderConfigurer.
+Reasoning behind this is https://jira.spring.io/browse/SPR-8539?focusedCommentId=75569&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-75569[explained here as a comment on a Spring issue].
+
+[discrete]
+=== Registering additional PropertySources
+Apart from the Properties directly on AcrossModule and AcrossContext instances, there are methods to register additional PropertySources to a module or context.
+PropertySources or properties configured on a module, will only be available within that module; whereas PropertySources or properties on the context will be available in all modules.
+Because PropertySource is most often based on an actual Resource file, the addPropertySources() methods allow direct usage of Resource instances.
+If the Resource does not exist, it is simply ignored.
+
+[discrete]
+=== PropertySource priority
+Within the context or module, the order in which PropertySources have been registered determines the order of looking for the property values.
+In a context/module hierarchy, the following order is used:
+
+. properties set directly on the current AcrossModule
+. PropertySources attached to the current AcrossModule (last one added first)
+. properties set directly on the AcrossContext
+. PropertySources attached to the AcrossContext (last one added first)
+. PropertySources registered in the parent ApplicationContext
+
+[discrete]
+=== Accessing properties in modules
+Accessing properties in modules is no different than in standard Spring.
+By default all properties can be accessed using the Environment.
+
+.Example using Environment
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Configuration
+public class Config
+{
+    @Bean
+    public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+        AcrossContext context = new AcrossContext( applicationContext );
+        context.setDataSource( acrossDataSource() );
+        context.setAllowInstallers( true );
+
+        // Configure some properties
+        context.setProperty( "directProperty", 789 );
+        context.addPropertySources( new ClassPathResource("my.properties") );
+
+        context.addModule( testModule1() );
+        context.addModule( testModule2() );
+        return context;
+    }
+}
+
+@Configuration
+public class ConfigInModule{
+    @Autowired
+    private Environment environment;
+
+    @Bean
+    public MyBean myBean() {
+        return new MyBean( environment.getProperty( "my.property" ) );
+    }
+}
+----
+
+If you want to use placeholders you must add a PropertySourcesPlaceholderConfigurer to every module where you want placeholders to be resolved.
+Because of the way BeanFactoryPostProcessors and PropertyPlaceholderConfigurers work, it is best to configure a new instance in every module, instead of passing a shared postprocessor to all modules.
+A default ApplicationContextConfigurer is available in the PropertyPlaceholderSupportConfigurer class.
+In practice however: it should be the responsibility of the module to configure a PropertyPlaceholderConfigurer if it uses placeholders!
+
+.Example using PropertySources and simple property placeholder resolving
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Configuration
+public class Config
+{
+    @Bean
+    public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+        AcrossContext context = new AcrossContext( applicationContext );
+        context.setDataSource( acrossDataSource() );
+        context.setAllowInstallers( true );
+
+        // Configure some properties
+        context.setProperty( "directProperty", 789 );
+        context.addPropertySources( new ClassPathResource("my.properties") );
+
+        // Register the property placeholder resolving in every module
+        context.addApplicationContextConfigurer( new PropertyPlaceholderSupportConfigurer(),
+                                                 ConfigurerScope.CONTEXT_AND_MODULES );
+
+        context.addModule( testModule1() );
+        context.addModule( testModule2() );
+        return context;
+    }
+}
+
+@Configuration
+public class ConfigInModule {
+    @Bean
+    public MyBean myBean( @Value("${my.property}") String myProperty ) {
+        return new MyBean( environment.getProperty( myProperty  ) );
+    }
+}
+----
+
+.Example using custom property placeholder resolving
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+// Import inner class to make resolver available both in parent as in Across context
+@Configuration
+@Import(CustomPropertyConfig.class)
+public class Config
+{
+    @Configuration
+    public static class CustomPropertyConfig
+    {
+        @Bean
+        public static PropertySourcesPlaceholderConfigurer properties() {
+            PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+            configurer.setLocation( new ClassPathResource( "my.properties" ) );
+            return configurer;
+        }
+    }
+
+    @Bean
+    public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+        AcrossContext context = new AcrossContext( applicationContext );
+        context.setDataSource( acrossDataSource() );
+        context.setAllowInstallers( true );
+
+        // Register the property placeholder resolving in every module
+        context.addApplicationContextConfigurer( new AnnotatedClassConfigurer( CustomPropertyConfig.class ),
+                                                 ConfigurerScope.CONTEXT_AND_MODULES );
+
+
+        context.addModule( testModule1() );
+        context.addModule( testModule2() );
+        return context;
+    }
+}
+
+@Component
+public class SomeBeanInModule {
+    @Value("${my.property}")
+    private String someValueFromProperty;
+}
+----

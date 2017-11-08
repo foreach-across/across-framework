@@ -1,0 +1,80 @@
+[[test-builders]]
+== Test context builders
+
+Across Test comes with a set of helpers for integration testing an Across module with all its dependencies.
+Main access point is the `AcrossTestBuilders` class that will provide you with either an `AcrossTestContextBuilder` or `AcrossTestWebContextBuilder`.
+The latter should be used if you want to simulate a web container environment.
+
+Both builder implementations provide a fluent api for easily configuring an `AcrossContext` and setting application properties.
+See the javadoc for all different configuration options.
+Upon building the `AcrossContext` will be bootstrapped and an instance of `AcrossTestContext` will be returned.
+`AcrossTestContext` (and the extending `AcrossTestWebContext`) wraps around the bootstrapped `AcrossContext` and provides easy querying of the bootstrapped context.
+In addition `AcrossTestContext` implements `Closeable` that shuts down the context, easy for using with try-with-resources.
+
+.Simple text context builder example
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	@Test
+    public void verifySomeBeanIsExposed() {
+        try (
+                AcrossTestContext ctx = AcrossTestBuilders.standard()
+                        .modules( SomeModule.NAME )
+                        .build()
+        ) {
+            // SomeBean should be available in the root context
+            assertNotNull( ctx.getBeanOfType( SomeBean.class ) );
+        }
+    }
+----
+
+Using the builders will by default load the <<test-datasources,test datasources>> and will execute a reset of the databases before bootstrapping.
+Both options can be configured separately on the builder.
+
+WARNING: You should obviously make sure you are not dropping the databases when connecting to an existing database.
+
+.Example connecting to existing datasource
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	@Test
+    public void doSomethingOnExisting() {
+        try (
+                AcrossTestContext ignore = AcrossTestBuilders.standard()
+                        .useTestDataSource( false )
+                        .dropFirst( false )
+                        .dataSource( ds )
+                        .build()
+        ) {
+            ...
+        }
+    }
+----
+
+In a web scenario the `AcrossTestWebContextBuilder` should be used.
+This will ensure a `<<mock-across-servlet-context,MockAcrossServletContext>>` is being used and return an `AcrossTestWebContext`.
+The `AcrossTestWebContext` provides access to the `MockAcrossServletContext` and a `MockMvc` bean that is instantiated with all filters registered by the modules.
+
+.Example web context builder with mock mvc call
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	@Test
+    public void filterNotRegisteredButResourceStillWorks() {
+        try (
+                AcrossTestWebContext ctx = AcrossTestBuilders.web()
+                        .property( "acrossWebModule.resources.versioning.enabled", "false" )
+                        .modules( AcrossWebModule.NAME )
+                        .build()
+        ) {
+            // URL encoding filter should not be registered
+            MockAcrossServletContext servletContext = ctx.getServletContext();
+            assertNull( servletContext.getFilterRegistration( ResourceUrlEncodingFilterConfiguration.FILTER_NAME ) );
+
+            // Static resource should still be returned
+            MockMvc mvc = ctx.mockMvc();
+            mvc.perform( get( "/across/resources/static/testResources/test.txt" ) )
+                .andExpect( status().isOk() )
+        }
+    }
+----
