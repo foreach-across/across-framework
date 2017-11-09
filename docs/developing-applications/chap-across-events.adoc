@@ -1,4 +1,4 @@
-
+[[events]]
 == Events
 Every Across context creates an `AcrossEventPublisher` bean.
 This bean can be wired in any module to dispatch events.
@@ -143,6 +143,7 @@ public void handle( MyListEvent<List<Integer>> event ) {
 ----
 
 [discrete]
+[[bootstrap-events]]
 === Bootstrap events
 The following bootstrap events are being published by the AcrossContext:
 

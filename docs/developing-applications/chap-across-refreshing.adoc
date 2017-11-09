@@ -1,3 +1,4 @@
+[[refreshing]]
 == Refreshing
 The AcrossContext is refreshed once, right before it is fully bootstrapped.
 Refresh happens after all individual modules have bootstrapped and all beans have been exposed, but before the after-bootstrap installers have run.

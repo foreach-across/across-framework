@@ -1,3 +1,4 @@
+[[exposing-beans]]
 == Exposing beans
 A module can share its beans with other modules by *exposing* them.
 All exposed beans from a module are pushed upwards into the parent `ApplicationContext` of the `AcrossContext` itself.
