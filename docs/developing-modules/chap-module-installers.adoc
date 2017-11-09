@@ -30,6 +30,7 @@ Only relevant if the run condition is `VersionDifferent`.
 
 |===
 
+[discrete]
 === Installer detection
 By default installers are detected from the classpath by scanning the *installers* package relative to the package of the `AcrossModule`.
 Changing the packages to scan for installers can be done by overriding the `getInstallerScanPackages()` method on `AcrossModule`.
@@ -37,6 +38,7 @@ Changing the packages to scan for installers can be done by overriding the `getI
 NOTE:  If you manually want to specify a list of installers, you can do so by overriding the `getInstallers()` method.
 Though still possible for compatibility reasons, installers should be specified with their `Class`.
 
+[discrete]
 === Installer tracking and synchronization
 The execution of installers is tracked using the `AcrossInstallerRepository`.
 This allows for installers to execute only if they have not yet been executed (see <<installer-run-conditions,run conditions>>).
@@ -53,6 +55,7 @@ NOTE: The `AcrossInstallerRepository` can be wired as a bean in installers.
 This can be helpful in migration trajectories for example to rename installers.
 
 [[installer-bootstrap-phases]]
+[discrete]
 === Bootstrap phases
 Installers are executed during a specific phase of the context bootstrap.
 This phase should be specified for every installer.
@@ -77,6 +80,7 @@ The installer is executed after all modules have bootstrapped, but before the `A
 All beans from all modules are available.
 
 [[installer-run-conditions]]
+[discrete]
 === Run conditions
 The following run conditions are supported for an installer:
 
@@ -92,10 +96,12 @@ This includes for example the use of `@AcrossDepends` to execute installers if c
 WARNING: Using *AlwaysRun* installers will always cause the bootstrap lock to be taken.
  This might cause a slowdown when starting multiple applications on the same datasource simultaneously.
 
+[discrete]
 === Installer group
 In addition to the standard `@Installer` attributes, an `@InstallerGroup` annotation can be specified.
 This allows grouping types of installers together (for example schema) and overruling their execution using <<installer-settings,`InstallerSettings`>>.
 
+[discrete]
 === Installer execution order
 If all conditions are fulfilled, installers will be executed in a predetermined order:
 
@@ -107,6 +113,7 @@ WARNING: Installers without an `@Order` annotation behave as if they have an ord
 In that case the installer registration order will be used as a fallback, with installers specified through `getInstallers()` having a higher precedence.
 
 [[installer-datasource]]
+[discrete]
 === Datasources and installers
 An `AcrossContext` requires at least one datasource if modules need to run installers.
 Certain core features like the `DistributedLockRepository` also require the core schema to be installed and will require a valid datasource to be configured.
@@ -121,6 +128,7 @@ It is not possible to configure only an installer datasource as the distributed 
 The installer datasource is the default datasource used for all `AcrossLiquibaseInstaller` instances.
 
 [[installer-applicationcontext]]
+[discrete]
 === Installer ApplicationContext
 If installers need to be run for a module, a specific `ApplicationContext` is created in which the installers will be wired as beans.
 This `ApplicationContext` can exist before the actual module `ApplicationContext` does.
@@ -179,6 +187,7 @@ You can use any Spring `@Conditional` annotations to suppress installer executio
 NOTE: When registering bean definitions to the installer context, a good practice is to demarcate beans as `@Lazy`.
  In that case they will never get created if the installer conditionals fail.
 
+[discrete]
 === AcrossLiquibaseInstaller
 Across core comes with an `AcrossLiquibaseInstaller` class.
 This is an abstract base class for executing liquibase XML resources.
@@ -199,6 +208,7 @@ public class LiquibaseInstaller extends AcrossLiquibaseInstaller
 }
 ----
 
+[discrete]
 ==== SchemaConfiguration
 An `AcrossLiquibaseInstaller` will use a `SchemaConfiguration` bean to configure its default schema and pass configuration properties.
 A `SchemaConfiguration` for the current module will be looked up first, if none is found a default bean will be used if it exists.
@@ -265,6 +275,7 @@ public class SpecialSchemaInstaller extends AcrossLiquibaseInstaller
 ----
 
 [[installer-settings]]
+[discrete]
 === InstallerSettings
 For advanced configuration, both `AcrossContext` and `AcrossModule` allow `InstallerSettings` to be set.
 `InstallerSettings` can be used to set the action (eg. force executed, skip) to be performed for one or more installers or installer groups.

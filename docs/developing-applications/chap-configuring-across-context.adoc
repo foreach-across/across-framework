@@ -1,6 +1,3 @@
-
-== Configuring an AcrossContext
-
 [[enableacrosscontext]]
 === @EnableAcrossContext
 Usually your application will consist of a single `AcrossContext` that is configured in the main Spring `ApplicationContext`.
@@ -112,22 +109,3 @@ public class WebConfiguration implements AcrossContextConfigurer
 }
 ----
 
-[discrete]
-=== Manual configuration
-An `AcrossContext` can be also configured manually and is started using the `bootstrap()` method, and stopped using `shutdown()`.
-These methods take care of the Spring `ApplicationContext` lifecycle of all modules configured in the context.
-
-[source,java,indent=0]
-[subs="verbatim,quotes,attributes"]
-----
-AcrossContext context = new AcrossContext();
-context.setParentApplicationContext( optionalParentContext );
-context.setDataSource( someDataSource );
-context.addModule( new SomeModule() );
-
-// Start the context
-context.bootstrap();
-
-// Stop the context
-context.shutdown();
-----

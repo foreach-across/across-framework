@@ -2,11 +2,11 @@
 = Developing Across modules
 include::chap-module-create-a-module.adoc[]
 
-include::chap-module-settings.adoc[]
+//include::chap-module-settings.adoc[]
 
 include::chap-module-dependencies.adoc[]
 
-include::chap-module-roles.adoc[]
+//include::chap-module-roles.adoc[]
 
 include::chap-module-bootstrap.adoc[]
 

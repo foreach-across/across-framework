@@ -1,5 +1,5 @@
 [[ordering-beans]]
-== Ordering beans
+== Bean order
 In an Across based application, the primary order of bean interaction should be defined by the module dependencies.
 When scanning for beans in all modules (eg. when using a `RefreshableRegistry` or `@RefreshableCollection`), the beans will be returned according to the module order: beans from earlier bootstrapped modules will be before beans from later modules.
 The reasoning is simple: _if I depend on module A, i can rely on module A having done its things before I will_.

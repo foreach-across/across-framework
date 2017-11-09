@@ -31,13 +31,13 @@ WARNING: When not specifying any module on a `@ModuleConfiguration`, the configu
 By default the sub-packages *config* and *extensions* of an `AcrossModule` will be scanned to detect classes annotated with `@ModuleConfiguration`.
 A module can configure these packages by overriding the `getModuleConfigurationScanPackages()` method.
 
-=== TODO: Subscribe to events
+=== Subscribe to events
+A module can interact with the configuration of other modules by subscribing to one of the <<bootstrap-events,bootstrap events>>.
+This can only be done *during* bootstrap.
 
-=== TODO: prepareForBootstrap
-A third approach for customizing module configuration is implementing prepareForBootstrap() on the AcrossModule.
-This is the last point in time were any module can modify the bootstrap configuration of any other module (adding configurers, modifying expose filter etc).
-
-todo: ModuleConfigurationSet
+=== Customizing your module descriptor
+A third approach for customizing module configuration is implementing `prepareForBootstrap()` on you `AcrossModule` module descriptor.
+This method is called before the actual bootstrapping of modules happens, which is the last point in time when the configuration of all modules can be modified.
 
 .Example of a prepareForBootstrap
 [source,java,indent=0]

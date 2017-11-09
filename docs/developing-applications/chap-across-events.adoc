@@ -46,6 +46,7 @@ WARNING: Take special care when combining AOP with event handlers, as the event 
 Depending on the strategy used (CGlib or JDK proxy) the actual proxy (CGlib) or the proxy target (in case of JDK proxy) will be registered as the event handler.
 In the latter case the event will still be fired but the actual handle method will not be intercepted.
 
+[discrete]
 ==== Manual subscription
 Any object can register itself as listener by subscribing to the `AcrossEventPublisher`.
 
