@@ -15,8 +15,8 @@
  */
 package com.foreach.across.config;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
@@ -33,12 +33,12 @@ import java.util.Map;
  *
  * @author Arne Vandamme
  */
-public class AcrossApplicationConfiguration implements ImportSelector, EnvironmentAware
+@Configuration
+public class ApplicationModuleImportSelector implements ImportSelector, EnvironmentAware
 {
 	private ConfigurableEnvironment environment;
 
-	private static Map<String, Object> getOrAdd( MutablePropertySources sources,
-	                                             String name ) {
+	private static Map<String, Object> getOrAdd( MutablePropertySources sources, String name ) {
 		if ( sources.contains( name ) ) {
 			return (Map<String, Object>) sources.get( name ).getSource();
 		}
@@ -49,6 +49,7 @@ public class AcrossApplicationConfiguration implements ImportSelector, Environme
 
 	@Override
 	public String[] selectImports( AnnotationMetadata importingClassMetadata ) {
+		/*
 		if ( environment.getProperty( EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY ) == null ) {
 			MutablePropertySources sources = environment.getPropertySources();
 			Map<String, Object> map = getOrAdd( sources, "across" );
@@ -56,7 +57,7 @@ public class AcrossApplicationConfiguration implements ImportSelector, Environme
 				map.put( EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY, false );
 			}
 		}
-
+*/
 		if ( (Boolean) importingClassMetadata.getAnnotationAttributes( AcrossApplication.class.getName() )
 		                                     .getOrDefault( "enableDynamicModules", true ) ) {
 			return new String[] { DisplayNameConfiguration.class.getName(), AcrossDynamicModulesConfiguration.class.getName() };

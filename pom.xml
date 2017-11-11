@@ -48,11 +48,11 @@
 	</developers>
 
 	<properties>
-		<across.version>2.1.1-SNAPSHOT</across.version>
+		<across.version>3.0.0-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.platform.version>Brussels-SR5</spring.platform.version>
 		<foreach.common.version>1.1</foreach.common.version>
-		<thymeleaf.version>3.0.7.RELEASE</thymeleaf.version>
+		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
 		<thymeleaf-extras.springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras.springsecurity4.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 	</properties>

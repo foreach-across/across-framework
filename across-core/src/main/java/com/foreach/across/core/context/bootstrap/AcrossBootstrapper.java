@@ -102,12 +102,14 @@ public class AcrossBootstrapper
 			ConfigurableAcrossContextInfo contextInfo = buildContextAndModuleInfo();
 			Collection<AcrossModuleInfo> modulesInOrder = contextInfo.getModules();
 
+			LOG.info( "---" );
 			LOG.info( "AcrossContext: {} ({})", context.getDisplayName(), context.getId() );
 			LOG.info( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
 			for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
 				LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
 				          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
 			}
+			LOG.info( "---" );
 
 			runModuleBootstrapperCustomizations( modulesInOrder );
 
@@ -148,6 +150,10 @@ public class AcrossBootstrapper
 
 				exposedBeanRegistry.add( AcrossContextInfo.BEAN );
 
+				LOG.info( "" );
+				LOG.info( "--- Starting module bootstrap" );
+				LOG.info( "" );
+
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo =
 							(ConfigurableAcrossModuleInfo) moduleInfo;
@@ -158,7 +164,8 @@ public class AcrossBootstrapper
 							moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName() )
 					);
 
-					LOG.debug( "Bootstrapping {} module", config.getModuleName() );
+					LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
+					          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
 
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
 
@@ -200,9 +207,12 @@ public class AcrossBootstrapper
 					}
 
 					failOnEventErrors();
+
+					LOG.info( "" );
 				}
 
-				LOG.info( "Bootstrapping {} modules - finished", modulesInOrder.size() );
+				LOG.info( "--- Module bootstrap finished: {} modules started", modulesInOrder.size() );
+				LOG.info( "" );
 
 				if ( pushExposedToParentContext ) {
 					pushExposedBeansToParent( exposedBeanRegistry, rootContext );

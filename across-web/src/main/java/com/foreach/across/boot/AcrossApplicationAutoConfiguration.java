@@ -15,11 +15,11 @@
  */
 package com.foreach.across.boot;
 
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import com.foreach.across.config.AcrossConfigurationLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Arne Vandamme
@@ -27,30 +27,63 @@ import java.util.Set;
  */
 public class AcrossApplicationAutoConfiguration
 {
-	public enum Scope {
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossApplicationAutoConfiguration.class );
+
+	public static final String ENABLED_AUTO_CONFIGURATION = "com.foreach.across.AutoConfigurationEnabled";
+	public static final String DISABLED_AUTO_CONFIGURATION = "com.foreach.across.AutoConfigurationDisabled";
+
+	public boolean notExcluded( String className ) {
+		return !excluded.contains( className );
+	}
+
+	public enum Scope
+	{
 		Application,
 		AcrossContext,
-		AcrossModule
+		AcrossModule;
 	}
 
-	private Set<String> excluded = new HashSet<>();
-	private Set<String> requested = new HashSet<>();
+	private final Set<String> excluded = new HashSet<>();
 
-	public AcrossApplicationAutoConfiguration() {
-		exclude( LiquibaseAutoConfiguration.class.getName() );
+	private final Map<String, String> allowed = new HashMap<>();
+	private final Set<String> requested = new HashSet<>();
+	private final Set<String> unknownSupport = new LinkedHashSet<>();
+
+	public AcrossApplicationAutoConfiguration( ClassLoader classLoader ) {
+		allowed.putAll( AcrossConfigurationLoader.loadMapValues( ENABLED_AUTO_CONFIGURATION, classLoader ) );
+		excluded.addAll( AcrossConfigurationLoader.loadValues( DISABLED_AUTO_CONFIGURATION, classLoader ) );
 	}
 
-	public void exclude( String autoConfigurationClass ) {
-		excluded.add( autoConfigurationClass );
-	}
-
-	public boolean requestAutoConfiguration( String autoConfigurationClass ) {
+	public String requestAutoConfiguration( String autoConfigurationClass ) {
 		requested.add( autoConfigurationClass );
 
-		if ( WebMvcAutoConfiguration.class.getName().equals( autoConfigurationClass )) {
-			return true;
+		String actualClass = allowed.get( autoConfigurationClass );
+		boolean disabled = excluded.contains( autoConfigurationClass );
+
+		if ( actualClass == null && !disabled ) {
+			unknownSupport.add( autoConfigurationClass );
 		}
 
-		return false;
+		if ( actualClass != null && !autoConfigurationClass.equals( actualClass ) ) {
+			LOG.trace( "Resolved AutoConfiguration class {} to {} adapter", autoConfigurationClass, actualClass );
+		}
+
+		if ( disabled ) {
+			LOG.trace( "Disallowed AutoConfiguration class {}", autoConfigurationClass );
+		}
+
+		return disabled ? null : actualClass;
+	}
+
+	void printAutoConfigurationReport() {
+		if ( !unknownSupport.isEmpty() ) {
+			LOG.warn( "" );
+			LOG.warn( "--- Across AutoConfiguration Report ---" );
+			LOG.warn( "The following auto-configuration classes have unknown Across support and were not added:" );
+			unknownSupport.forEach( className -> LOG.warn( "- {}", className ) );
+			 LOG.warn( "Consider adding them to a META-INF/across.configuration." );
+			LOG.warn( "--- End Across AutoConfiguration Report ---" );
+			LOG.warn( "" );
+		}
 	}
 }

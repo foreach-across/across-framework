@@ -15,41 +15,31 @@
  */
 package com.foreach.across.test.application;
 
+import com.foreach.across.config.AcrossWebApplicationAutoConfiguration;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.test.application.app.DummyApplication;
+import com.foreach.across.test.application.app.OtherDummyApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.*;
 
-/**
- * Full stack bootstrap with embedded tomcat.
- *
- * @author Arne Vandamme
- * @since 1.1.2
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DummyApplication.class)
-public class TestSpringBootWebIntegration
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { OtherDummyApplication.class,
+                                                                                        AcrossWebApplicationAutoConfiguration.class })
+public class TestNonAutoConfigurationApplication
 {
-	private final TestRestTemplate restTemplate = new TestRestTemplate();
-
-	@Value("${local.server.port}")
-	private int port;
-
 	@Autowired
 	private AcrossContextInfo contextInfo;
 
@@ -60,33 +50,14 @@ public class TestSpringBootWebIntegration
 	public void modulesShouldBeRegistered() {
 		assertTrue( contextInfo.hasModule( "emptyModule" ) );
 		assertTrue( contextInfo.hasModule( AcrossWebModule.NAME ) );
-		assertTrue( contextInfo.hasModule( "DummyApplicationModule" ) );
-		assertTrue( contextInfo.hasModule( "DummyInfrastructureModule" ) );
+		assertTrue( contextInfo.hasModule( "OtherDummyApplicationModule" ) );
+		assertTrue( contextInfo.hasModule( "OtherDummyInfrastructureModule" ) );
 
-		assertFalse( contextInfo.hasModule( "DummyPostProcessorModule" ) );
+		assertFalse( contextInfo.hasModule( "OtherDummyPostProcessorModule" ) );
 	}
 
-	@Test
-	public void controllersShouldSayHello() {
-		assertEquals( "application says hello", get( "/application" ) );
-		assertEquals( "infrastructure says hello", get( "/infrastructure" ) );
-	}
-
-	@Test
-	public void versionedResourceShouldBeReturned() {
-		assertEquals( "hùllµ€", get( "/res/static/boot-1.0/testResources/test.txt" ) );
-	}
-
-	@Test
+	@Test(expected = NoSuchBeanDefinitionException.class)
 	public void configurationPropertiesBeanShouldNotExist() {
-		assertNotNull( BeanFactoryUtils.beanOfType( beanFactory, ConfigurationPropertiesAutoConfiguration.class ) );
-	}
-
-	private String get( String relativePath ) {
-		return restTemplate.getForEntity( url( relativePath ), String.class ).getBody();
-	}
-
-	private String url( String relativePath ) {
-		return "http://localhost:" + port + relativePath;
+		assertNull( BeanFactoryUtils.beanOfType( beanFactory, ConfigurationPropertiesAutoConfiguration.class ) );
 	}
 }

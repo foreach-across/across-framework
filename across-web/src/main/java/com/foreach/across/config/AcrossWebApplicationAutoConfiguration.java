@@ -23,26 +23,25 @@ import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfigurat
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 /**
  * Supports Spring Boot configuration of an {@link AcrossContext}, ensures bootstrap of the
- * {@link AcrossContext} is done before the webserver starts.
+ * {@link AcrossContext} is done before the web server starts.
  *
  * @author Arne Vandamme
  * @see AcrossApplication
  * @since 1.1.2
  */
-@Import({ DispatcherServletAutoConfiguration.class,
-          EmbeddedServletContainerAutoConfiguration.class,
-          ServerPropertiesAutoConfiguration.class })
-public class AcrossWebApplicationConfiguration
+@Configuration
+@Import({ DispatcherServletAutoConfiguration.class, EmbeddedServletContainerAutoConfiguration.class, ServerPropertiesAutoConfiguration.class })
+public class AcrossWebApplicationAutoConfiguration
 {
-	@ConditionalOnBean({ EmbeddedServletContainerFactory.class, SpringBootServletInitializer.class })
 	@Bean
-	public AcrossServletContextInitializer acrossServletContextInitializer( ConfigurableWebApplicationContext webApplicationContext ) {
+	@ConditionalOnBean({ EmbeddedServletContainerFactory.class, SpringBootServletInitializer.class })
+	public static AcrossServletContextInitializer embeddedAcrossServletContextInitializer( ConfigurableWebApplicationContext webApplicationContext ) {
 		return new AcrossServletContextInitializer( webApplicationContext );
 	}
 }
-

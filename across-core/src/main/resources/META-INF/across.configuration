@@ -13,7 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# List of AutoConfiguration classes that are supported on the application level, this will always be allowed
+#
+# List of AutoConfiguration classes that should never be allowed.
+# Once a class has been added here, it can only ever be added manually to the application.
+#
+com.foreach.across.AutoConfigurationDisabled=\
+org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+#
+#
+# List of AutoConfiguration classes that are supported on the application level, these will always be allowed.
+# Optionally an adapter class name can be specified, if that is the case, the original class will not be directly
+# imported, but the adapter configuration will.
+#
 com.foreach.across.AutoConfigurationEnabled=\
 org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration,\
 org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration,\
@@ -22,7 +33,10 @@ org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration,\
 org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration,\
 org.springframework.boot.devtools.autoconfigure.DevToolsDataSourceAutoConfiguration,\
 org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration,\
-org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration
+org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration,\
+org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration,\
+org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration,
+
 #org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
 #org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
 #org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,\
@@ -30,7 +44,6 @@ org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration
 #org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,\
 #org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration,\
 #org.springframework.boot.autoconfigure.cloud.CloudAutoConfiguration,\
-#org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration,\
 #org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration,\
 #org.springframework.boot.autoconfigure.couchbase.CouchbaseAutoConfiguration,\
 #org.springframework.boot.autoconfigure.dao.PersistenceExceptionTranslationAutoConfiguration,\
@@ -78,7 +91,6 @@ org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration
 #org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration,\
 #org.springframework.boot.autoconfigure.ldap.embedded.EmbeddedLdapAutoConfiguration,\
 #org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration,\
-#org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration,\
 #org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration,\
 #org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration,\
 #org.springframework.boot.autoconfigure.mobile.DeviceResolverAutoConfiguration,\
@@ -108,7 +120,6 @@ org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration
 #org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration,\
 #org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration,\
 #org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration,\
-#org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration,\
 #org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration,\
 #org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration,\
 #org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfiguration,\

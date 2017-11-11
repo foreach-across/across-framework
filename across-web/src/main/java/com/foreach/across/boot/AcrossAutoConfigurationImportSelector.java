@@ -15,12 +15,17 @@
  */
 package com.foreach.across.boot;
 
+import com.foreach.across.config.AcrossApplication;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigurationImportSelector;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Defers the actual import selection to Across.
@@ -31,22 +36,43 @@ import java.util.stream.Stream;
 public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImportSelector
 {
 	@Override
-	public String[] selectImports( AnnotationMetadata annotationMetadata ) {
+	protected Class<?> getAnnotationClass() {
+		return AcrossApplication.class;
+	}
+
+	@Override
+	protected List<String> getCandidateConfigurations( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
 		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
 
-		return Stream.of( super.selectImports( annotationMetadata ) )
-		             .filter( registry::requestAutoConfiguration )
-		             .collect( Collectors.toList() )
-		             .toArray( new String[0] );
+		boolean autoConfiguration = (boolean) attributes.get( "autoConfiguration" );
+
+		if ( !autoConfiguration ) {
+			return Collections.emptyList();
+		}
+
+		return super.getCandidateConfigurations( metadata, attributes )
+		            .stream()
+		            .map( registry::requestAutoConfiguration )
+		            .filter( Objects::nonNull )
+		            .filter( registry::notExcluded )
+		            .collect( Collectors.toList() );
+	}
+
+	@Override
+	protected Set<String> getExclusions( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
+		retrieveAutoConfigurationRegistry().printAutoConfigurationReport();
+		return Collections.emptySet();
 	}
 
 	private AcrossApplicationAutoConfiguration retrieveAutoConfigurationRegistry() {
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+
 		AcrossApplicationAutoConfiguration registry = (AcrossApplicationAutoConfiguration) beanFactory.getSingleton(
-				AcrossApplicationAutoConfiguration.class.getName() );
+				AcrossApplicationAutoConfiguration.class.getName()
+		);
 
 		if ( registry == null ) {
-			registry = new AcrossApplicationAutoConfiguration();
+			registry = new AcrossApplicationAutoConfiguration( getBeanClassLoader() );
 			beanFactory.registerSingleton( AcrossApplicationAutoConfiguration.class.getName(), registry );
 		}
 
