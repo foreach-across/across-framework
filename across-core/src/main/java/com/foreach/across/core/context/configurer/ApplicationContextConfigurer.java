@@ -19,6 +19,7 @@ package com.foreach.across.core.context.configurer;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.core.env.PropertySources;
+import org.springframework.core.type.filter.TypeFilter;
 
 public interface ApplicationContextConfigurer
 {
@@ -53,6 +54,13 @@ public interface ApplicationContextConfigurer
 	 * @return Array of post processor instances.
 	 */
 	BeanFactoryPostProcessor[] postProcessors();
+
+	/**
+	 * @return set of excludedTypeFilters
+	 */
+	default TypeFilter[] excludedTypeFilters() {
+		return new TypeFilter[0];
+	}
 
 	/**
 	 * Returns a PropertySources instance with configured property sources to make available.

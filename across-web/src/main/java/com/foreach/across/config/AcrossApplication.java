@@ -19,7 +19,6 @@ import com.foreach.across.boot.AcrossAutoConfigurationImportSelector;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
@@ -41,7 +40,7 @@ import java.lang.annotation.*;
 @Documented
 @EnableAcrossContext
 @SpringBootConfiguration
-@AutoConfigurationPackage
+@EnableAutoConfiguration
 @Import({ ApplicationModuleImportSelector.class, AcrossAutoConfigurationImportSelector.class })
 public @interface AcrossApplication
 {

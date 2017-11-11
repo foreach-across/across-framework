@@ -25,9 +25,13 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.context.annotation.ScopeMetadataResolver;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.type.filter.TypeFilter;
 
 import java.util.Map;
 
@@ -41,6 +45,9 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	public AcrossApplicationContext() {
 		this( new AcrossListableBeanFactory() );
 	}
+
+	private BeanNameGenerator beanNameGenerator;
+	private ScopeMetadataResolver scopeMetadataResolver;
 
 	protected AcrossApplicationContext( AcrossListableBeanFactory beanFactory ) {
 		super( beanFactory );
@@ -60,6 +67,18 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	 */
 	public void setInstallerMode( boolean installerMode ) {
 		this.installerMode = installerMode;
+	}
+
+	@Override
+	public void setBeanNameGenerator( BeanNameGenerator beanNameGenerator ) {
+		super.setBeanNameGenerator( beanNameGenerator );
+		this.beanNameGenerator = beanNameGenerator;
+	}
+
+	@Override
+	public void setScopeMetadataResolver( ScopeMetadataResolver scopeMetadataResolver ) {
+		super.setScopeMetadataResolver( scopeMetadataResolver );
+		this.scopeMetadataResolver = scopeMetadataResolver;
 	}
 
 	/**
@@ -126,5 +145,18 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 		}
 		catch ( NoSuchBeanDefinitionException ignore ) {
 		}
+	}
+
+	public void scan( String[] basePackages, TypeFilter[] excludedTypes ) {
+		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner( this, true, getEnvironment(), this );
+		scanner.setBeanNameGenerator( beanNameGenerator );
+		scanner.setScopeMetadataResolver( scopeMetadataResolver );
+		scanner.setResourcePattern( "**/*.class" );
+
+		for ( TypeFilter filter : excludedTypes ) {
+			scanner.addExcludeFilter( filter );
+		}
+
+		scanner.scan( basePackages );
 	}
 }

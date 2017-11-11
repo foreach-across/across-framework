@@ -30,7 +30,7 @@
 		configuration files. Every module defines its own Spring application context and can share one or more beans
 		with other modules.
 	</description>
-	<url>https://foreach.atlassian.net/wiki/display/AX</url>
+	<url>https://across.foreach.be</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>

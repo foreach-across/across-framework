@@ -21,7 +21,6 @@ import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
 /**
@@ -150,7 +149,7 @@ public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModu
 		module.setName( getModuleName() );
 		module.setResourcesKey( getResourcesKey() );
 
-		module.addApplicationContextConfigurer( new ComponentScanConfigurer( buildComponentScanPackages() ) );
+		module.addApplicationContextConfigurer( buildComponentScanConfigurer() );
 		module.addInstallerContextConfigurer( new ComponentScanConfigurer( basePackage + ".installers.config" ) );
 
 		module.setInstallerScanPackages( basePackage + ".installers" );
@@ -158,22 +157,17 @@ public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModu
 		return module;
 	}
 
-	private String[] buildComponentScanPackages() {
-		if ( packageProvider == null ) {
-			packageProvider = new ClassPathScanningChildPackageProvider( new PathMatchingResourcePatternResolver() );
-		}
-
+	private ComponentScanConfigurer buildComponentScanConfigurer() {
 		if ( basePackage != null ) {
 			if ( fullComponentScan ) {
-				packageProvider.setExcludedChildPackages( "installers", "extensions" );
-				return packageProvider.findChildren( basePackage );
+				return ComponentScanConfigurer.forAcrossModulePackage( basePackage );
 			}
 			else {
-				return new String[] { basePackage + ".config" };
+				return new ComponentScanConfigurer( basePackage + ".config" );
 			}
 		}
 
-		return new String[0];
+		return new ComponentScanConfigurer( new String[0] );
 	}
 
 	private DynamicAcrossModule createWithOrder() {

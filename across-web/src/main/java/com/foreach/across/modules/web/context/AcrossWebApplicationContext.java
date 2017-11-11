@@ -27,11 +27,14 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigUtils;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -44,6 +47,7 @@ import java.util.Map;
 public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationContext implements AcrossConfigurableApplicationContext
 {
 	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
+	private final Map<String[], TypeFilter[]> packagesToScan = new HashMap<>();
 
 	public AcrossWebApplicationContext() {
 		setBeanNameGenerator( new ModuleConfigurationBeanNameGenerator() );
@@ -72,6 +76,10 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 		}
 	}
 
+	public void scan( String[] basePackages, TypeFilter[] excludedTypes ) {
+		packagesToScan.put( basePackages, excludedTypes );
+	}
+
 	@Override
 	protected void loadBeanDefinitions( DefaultListableBeanFactory beanFactory ) {
 		for ( ProvidedBeansMap providedBeans : providedBeansMaps ) {
@@ -87,6 +95,21 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 		SharedMetadataReaderFactory.registerAnnotationProcessors( beanFactory );
 
 		super.loadBeanDefinitions( beanFactory );
+
+		packagesToScan.forEach(
+				( packages, filters ) -> {
+					ClassPathBeanDefinitionScanner scanner = getClassPathBeanDefinitionScanner( beanFactory );
+					scanner.setBeanNameGenerator( getBeanNameGenerator() );
+					scanner.setScopeMetadataResolver( getScopeMetadataResolver() );
+					scanner.setResourcePattern( "**/*.class" );
+
+					for ( TypeFilter filter : filters ) {
+						scanner.addExcludeFilter( filter );
+					}
+
+					scanner.scan( packages );
+				}
+		);
 	}
 
 	@Override

@@ -154,7 +154,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 			}
 
 			if ( !ArrayUtils.isEmpty( configurer.componentScanPackages() ) ) {
-				context.scan( configurer.componentScanPackages() );
+				context.scan( configurer.componentScanPackages(), configurer.excludedTypeFilters() );
 			}
 
 			if ( !ArrayUtils.isEmpty( configurer.annotatedClasses() ) ) {
