@@ -16,6 +16,7 @@
 
 package com.foreach.across.core.context.bootstrap;
 
+import com.foreach.across.config.AcrossConfigurationLoader;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
@@ -45,8 +46,11 @@ import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import com.foreach.across.core.util.ClassLoadingUtils;
 import net.engio.mbassy.bus.error.IPublicationErrorHandler;
 import net.engio.mbassy.bus.error.PublicationError;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
@@ -420,12 +424,15 @@ public class AcrossBootstrapper
 		ApplicationContext applicationContext = contextInfo.getApplicationContext();
 		MetadataReaderFactory metadataReaderFactory
 				= applicationContext.getBean( SharedMetadataReaderFactory.BEAN_NAME, MetadataReaderFactory.class );
+
 		ClassPathScanningInstallerProvider installerProvider = new ClassPathScanningInstallerProvider( applicationContext, metadataReaderFactory );
+
+		BeanFilter defaultExposeFilter = buildDefaultExposeFilter( applicationContext.getClassLoader() );
 
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 			AcrossModule module = moduleInfo.getModule();
 			ModuleBootstrapConfig config = new ModuleBootstrapConfig( module, moduleInfo.getIndex() );
-			config.setExposeFilter( module.getExposeFilter() );
+			config.setExposeFilter( new BeanFilterComposite( defaultExposeFilter, module.getExposeFilter() ) );
 			config.setExposeTransformer( module.getExposeTransformer() );
 			config.setInstallerSettings( module.getInstallerSettings() );
 			config.getInstallers().addAll( buildInstallerSet( module, installerProvider ) );
@@ -476,9 +483,51 @@ public class AcrossBootstrapper
 		);
 		contextConfig.setExposeTransformer( contextInfo.getContext().getExposeTransformer() );
 
+		Map<String, AcrossBootstrapConfigurer> bootstrapConfigurers = BeanFactoryUtils.beansOfTypeIncludingAncestors(
+				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory(), AcrossBootstrapConfigurer.class
+		);
+		bootstrapConfigurers.forEach( ( beanName, configurer ) -> configurer.configureContext( contextConfig ) );
+		contextConfig.getModules()
+		             .forEach( moduleBootstrapConfig ->
+				                       bootstrapConfigurers.forEach( ( beanName, configurer ) -> configurer.configureModule( moduleBootstrapConfig ) )
+		             );
+
 		contextInfo.setBootstrapConfiguration( contextConfig );
 
 		return contextConfig;
+	}
+
+	private BeanFilter buildDefaultExposeFilter( ClassLoader classLoader ) {
+		final List<String> exposedItems = AcrossConfigurationLoader
+				.loadValues( "com.foreach.across.Exposed", classLoader );
+
+		Class<?>[] classesOrAnnotations = exposedItems
+				.stream()
+				.filter( s -> !s.endsWith( ".*" ) )
+				.filter( className -> ClassUtils.isPresent( className, classLoader ) )
+				.map( className -> {
+					try {
+						return ClassUtils.forName( className, classLoader );
+					}
+					catch ( Exception e ) {
+						LOG.error( "Unable to load Exposed class or annotation: {}", className, e );
+						return null;
+					}
+				} )
+				.filter( Objects::nonNull )
+				.toArray( Class<?>[]::new );
+
+		String[] packageNames = exposedItems
+				.stream()
+				.filter( s -> s.endsWith( ".*" ) )
+				.map( s -> StringUtils.removeEnd( s, ".*" ) )
+				.toArray( String[]::new );
+
+		return new BeanFilterComposite(
+				BeanFilter.instances( classesOrAnnotations ),
+				BeanFilter.annotations( classesOrAnnotations ),
+				BeanFilter.packages( packageNames )
+		);
 	}
 
 	private void registerSettings( AcrossModule module, ProvidedBeansMap beansMap, boolean compatibility ) {

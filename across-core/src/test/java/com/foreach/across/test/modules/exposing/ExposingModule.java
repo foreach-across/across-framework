@@ -17,17 +17,27 @@
 package com.foreach.across.test.modules.exposing;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
+import com.foreach.across.core.filters.BeanFilter;
 
 import java.util.Set;
 
 public class ExposingModule extends AcrossModule
 {
 	private String name;
+	private boolean filterAdjusted = false;
 
 	public ExposingModule( String name ) {
 		this.name = name;
+	}
+
+	@Override
+	public void setExposeFilter( BeanFilter exposeFilter ) {
+		super.setExposeFilter( exposeFilter );
+		filterAdjusted = true;
 	}
 
 	/**
@@ -49,6 +59,14 @@ public class ExposingModule extends AcrossModule
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 		contextConfigurers.add( new ComponentScanConfigurer( getClass().getPackage().getName() ) );
+	}
+
+	@Override
+	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
+		// Replace the entire expose filter
+		if ( filterAdjusted ) {
+			currentModule.setExposeFilter( getExposeFilter() );
+		}
 	}
 }
 

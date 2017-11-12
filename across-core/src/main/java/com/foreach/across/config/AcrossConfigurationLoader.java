@@ -78,7 +78,9 @@ public abstract class AcrossConfigurationLoader
 				String factoryClassNames = properties.getProperty( key );
 				result.addAll( Arrays.asList( StringUtils.commaDelimitedListToStringArray( factoryClassNames ) ) );
 			}
-			return result;
+			return result.stream()
+			             .map( org.apache.commons.lang3.StringUtils::trim )
+			             .collect( Collectors.toList() );
 		}
 		catch ( IOException ex ) {
 			throw new IllegalArgumentException( "Unable to load [" + key + "] from location [" + CONFIGURATION_RESOURCE_LOCATION + "]", ex );

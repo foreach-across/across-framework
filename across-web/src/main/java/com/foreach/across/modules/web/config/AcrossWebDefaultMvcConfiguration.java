@@ -510,13 +510,11 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	}
 
 	@Bean
-	@Exposed
 	public SimpleUrlHandlerMapping resourceHandlerMapping() {
 		return new SimpleUrlHandlerMapping();
 	}
 
 	@Bean
-	@Exposed
 	public ReloadableRequestMappingHandlerAdapter requestMappingHandlerAdapter() {
 		ReloadableRequestMappingHandlerAdapter adapter = new ReloadableRequestMappingHandlerAdapter();
 		adapter.setWebBindingInitializer( getConfigurableWebBindingInitializer() );
@@ -524,13 +522,11 @@ public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware
 	}
 
 	@Bean
-	@Exposed
 	public HttpRequestHandlerAdapter httpRequestHandlerAdapter() {
 		return new HttpRequestHandlerAdapter();
 	}
 
 	@Bean
-	@Exposed
 	public HandlerExceptionResolverComposite handlerExceptionResolver() {
 		HandlerExceptionResolverComposite composite = new HandlerExceptionResolverComposite();
 		composite.setOrder( currentModuleInfo.getIndex() );

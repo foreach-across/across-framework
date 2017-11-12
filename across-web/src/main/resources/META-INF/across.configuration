@@ -13,5 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+com.foreach.across.Exposed=\
+org.springframework.web.servlet.HandlerMapping,\
+org.springframework.web.servlet.HandlerAdapter,\
+org.springframework.web.servlet.HandlerExceptionResolver
+
 com.foreach.across.AutoConfigurationEnabled=\
 com.foreach.across.config.AcrossWebApplicationAutoConfiguration

@@ -23,6 +23,9 @@ import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.servlet.AcrossMultipartFilter;
 import org.junit.Test;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.HandlerAdapter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 import javax.servlet.DispatcherType;
@@ -39,6 +42,15 @@ import static org.junit.Assert.*;
  */
 public class TestAcrossWebModuleBootstrap
 {
+	@Test
+	public void acrossWebModuleDefaultExposed() {
+		try (AcrossTestWebContext ctx = web().modules( AcrossWebModule.NAME ).build()) {
+			assertFalse( ctx.getBeansOfType( HandlerMapping.class ).isEmpty() );
+			assertFalse( ctx.getBeansOfType( HandlerAdapter.class ).isEmpty() );
+			assertFalse( ctx.getBeansOfType( HandlerExceptionResolver.class ).isEmpty() );
+		}
+	}
+
 	@Test
 	public void acrossWebModuleDefaultFilters() {
 		try (AcrossTestWebContext ctx = web().modules( AcrossWebModule.NAME ).build()) {

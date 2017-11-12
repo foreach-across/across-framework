@@ -155,7 +155,6 @@ public class TestCustomExposeFilter
 		@Bean
 		public ExposingModule controllerModule() {
 			ExposingModule module = new ExposingModule( "controller" );
-			module.setExposeFilter( null );
 			module.expose( Controller.class );
 			module.expose( "lazyExposedBean" );
 

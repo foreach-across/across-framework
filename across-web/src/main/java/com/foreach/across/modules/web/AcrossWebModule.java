@@ -17,17 +17,14 @@
 package com.foreach.across.modules.web;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.bootstrap.BootstrapAdapter;
-import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.web.config.AcrossWebConfig;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import com.foreach.across.modules.web.menu.Menu;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.Set;
 
@@ -104,11 +101,5 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	 */
 	public void customizeBootstrapper( AcrossBootstrapper bootstrapper ) {
 		bootstrapper.setApplicationContextFactory( new WebBootstrapApplicationContextFactory() );
-	}
-
-	@Override
-	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
-		// expose all HandlerMappings from all modules
-		contextConfig.getModules().forEach( m -> m.expose( HandlerMapping.class ) );
 	}
 }
