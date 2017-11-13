@@ -36,7 +36,7 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	private final AcrossModule module;
 
 	private final String moduleName;
-	private final boolean enabled;
+	private boolean enabled;
 
 	private AcrossModuleRole moduleRole = AcrossModuleRole.APPLICATION;
 	private ModuleBootstrapStatus bootstrapStatus;
@@ -57,6 +57,10 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 		moduleName = module.getName();
 		enabled = module.isEnabled();
 		bootstrapStatus = enabled ? ModuleBootstrapStatus.AwaitingBootstrap : ModuleBootstrapStatus.Disabled;
+	}
+
+	public void setEnabled( boolean enabled ) {
+		this.enabled = enabled;
 	}
 
 	@Override

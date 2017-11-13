@@ -42,6 +42,8 @@ public class ModuleBootstrapConfig
 	private Collection<Object> installers = new LinkedList<>();
 	private InstallerSettings installerSettings;
 
+	private boolean hasComponents = false;
+
 	public ModuleBootstrapConfig( AcrossModule module, int bootstrapIndex ) {
 		this.module = module;
 		this.bootstrapIndex = bootstrapIndex;
@@ -121,23 +123,42 @@ public class ModuleBootstrapConfig
 	}
 
 	public Set<ApplicationContextConfigurer> getApplicationContextConfigurers() {
-		return applicationContextConfigurers;
+		return Collections.unmodifiableSet( applicationContextConfigurers );
 	}
 
+	@Deprecated
 	public void setApplicationContextConfigurers( Set<ApplicationContextConfigurer> applicationContextConfigurers ) {
-		this.applicationContextConfigurers = applicationContextConfigurers;
+		this.applicationContextConfigurers.clear();
+		this.hasComponents = false;
+		addApplicationContextConfigurers( applicationContextConfigurers );
 	}
 
 	public void addApplicationContextConfigurer( Class<?>... annotatedClasses ) {
 		addApplicationContextConfigurer( new AnnotatedClassConfigurer( annotatedClasses ) );
 	}
 
+	public void addApplicationContextConfigurer( boolean optional, Class<?>... annotatedClasses ) {
+		addApplicationContextConfigurer( optional, new AnnotatedClassConfigurer( annotatedClasses ) );
+	}
+
 	public void addApplicationContextConfigurer( ApplicationContextConfigurer... configurers ) {
 		addApplicationContextConfigurers( Arrays.asList( configurers ) );
 	}
 
+	public void addApplicationContextConfigurer( boolean optional, ApplicationContextConfigurer... configurers ) {
+		addApplicationContextConfigurers( optional, Arrays.asList( configurers ) );
+	}
+
 	public void addApplicationContextConfigurers( Collection<ApplicationContextConfigurer> configurers ) {
+		addApplicationContextConfigurers( false, configurers );
+	}
+
+	public void addApplicationContextConfigurers( boolean optional, Collection<ApplicationContextConfigurer> configurers ) {
 		applicationContextConfigurers.addAll( configurers );
+
+		if ( !optional && configurers.stream().anyMatch( ApplicationContextConfigurer::hasComponents ) ) {
+			hasComponents = true;
+		}
 	}
 
 	public Set<ApplicationContextConfigurer> getInstallerContextConfigurers() {
@@ -174,5 +195,9 @@ public class ModuleBootstrapConfig
 
 	public void setInstallers( Collection<Object> installers ) {
 		this.installers = installers;
+	}
+
+	public boolean isEmpty() {
+		return installers.isEmpty() && !hasComponents;
 	}
 }

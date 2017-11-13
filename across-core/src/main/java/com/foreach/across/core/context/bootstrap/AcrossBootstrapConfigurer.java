@@ -31,6 +31,8 @@ package com.foreach.across.core.context.bootstrap;
  */
 public interface AcrossBootstrapConfigurer
 {
+	String CONTEXT_POSTPROCESSOR_MODULE = "AcrossContextPostProcessorModule";
+
 	/**
 	 * Change the bootstrap configuration of the {@link com.foreach.across.core.AcrossContext} itself.
 	 *

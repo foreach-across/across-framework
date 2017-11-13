@@ -17,10 +17,7 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.config.AcrossConfigurationLoader;
-import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossException;
-import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.AcrossModuleSettings;
+import com.foreach.across.core.*;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.*;
 import com.foreach.across.core.context.beans.PrimarySingletonBean;
@@ -122,7 +119,7 @@ public class AcrossBootstrapper
 
 			createdApplicationContexts.push( rootContext );
 
-			AcrossBootstrapConfig contextBoostrapConfig = createBootstrapConfiguration( contextInfo );
+			AcrossBootstrapConfig contextBootstrapConfig = createBootstrapConfiguration( contextInfo );
 			prepareForBootstrap( contextInfo );
 
 			BootstrapLockManager bootstrapLockManager = new BootstrapLockManager( contextInfo );
@@ -132,7 +129,7 @@ public class AcrossBootstrapper
 				eventPublisher.addErrorHandler( new BootstrapEventErrorHandler() );
 			}
 
-			ModuleConfigurationSet moduleConfigurationSet = contextBoostrapConfig.getModuleConfigurationSet();
+			ModuleConfigurationSet moduleConfigurationSet = contextBootstrapConfig.getModuleConfigurationSet();
 
 			try {
 				AcrossBootstrapInstallerRegistry installerRegistry =
@@ -164,9 +161,7 @@ public class AcrossBootstrapper
 					ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
 
 					// Add scanned (or edited) module configurations
-					config.addApplicationContextConfigurer(
-							moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName() )
-					);
+					config.addApplicationContextConfigurer( moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName() ) );
 
 					LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
 					          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
@@ -174,6 +169,13 @@ public class AcrossBootstrapper
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
 
 					eventPublisher.publish( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
+
+					if ( config.isEmpty() ) {
+						LOG.info( "Nothing to be done - disabling module" );
+						configurableAcrossModuleInfo.setEnabled( false );
+						configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Disabled );
+						continue;
+					}
 
 					// Run installers before bootstrapping this particular module
 					installerRegistry.runInstallersForModule( moduleInfo.getName(),
@@ -215,7 +217,7 @@ public class AcrossBootstrapper
 					LOG.info( "" );
 				}
 
-				LOG.info( "--- Module bootstrap finished: {} modules started", modulesInOrder.size() );
+				LOG.info( "--- Module bootstrap finished: {} modules started", contextInfo.getModules().size() );
 				LOG.info( "" );
 
 				if ( pushExposedToParentContext ) {
@@ -376,10 +378,12 @@ public class AcrossBootstrapper
 		int row = 1;
 		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
 			ConfigurableAcrossModuleInfo moduleInfo = new ConfigurableAcrossModuleInfo( contextInfo, module, row++ );
-			//moduleInfo.setSettings( createModuleSettings( module.getClass() ) );
-
 			configured.add( moduleInfo );
 		}
+
+		configured.add(
+				new ConfigurableAcrossModuleInfo( contextInfo, new AcrossContextConfigurationModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ), row )
+		);
 
 		contextInfo.setConfiguredModules( configured );
 
@@ -463,10 +467,13 @@ public class AcrossBootstrapper
 
 			registerSettings( module, providedSingletons, false );
 
-			config.addApplicationContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
-			config.addApplicationContextConfigurers(
-					AcrossContextUtils.getApplicationContextConfigurers( context, module )
-			);
+			// Provided singletons do not influence initial load
+			config.addApplicationContextConfigurer( true, new ProvidedBeansConfigurer( providedSingletons ) );
+
+			if ( !isContextModule( config ) ) {
+				// Only add default configurations if not a core module
+				config.addApplicationContextConfigurers( AcrossContextUtils.getApplicationContextConfigurers( context, module ) );
+			}
 
 			// create installer application context
 			config.addInstallerContextConfigurer( new ProvidedBeansConfigurer( providedSingletons ) );
@@ -495,6 +502,10 @@ public class AcrossBootstrapper
 		contextInfo.setBootstrapConfiguration( contextConfig );
 
 		return contextConfig;
+	}
+
+	private boolean isContextModule( ModuleBootstrapConfig config ) {
+		return config.getModule() instanceof AcrossContextConfigurationModule;
 	}
 
 	private BeanFilter buildDefaultExposeFilter( ClassLoader classLoader ) {

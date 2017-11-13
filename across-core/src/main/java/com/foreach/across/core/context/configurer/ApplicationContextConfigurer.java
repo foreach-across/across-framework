@@ -17,6 +17,7 @@
 package com.foreach.across.core.context.configurer;
 
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.type.filter.TypeFilter;
@@ -68,4 +69,17 @@ public interface ApplicationContextConfigurer
 	 * @return PropertySources instance or null.
 	 */
 	PropertySources propertySources();
+
+	/**
+	 * Checks if the configurer contains any actual components (beans) that would get created.
+	 *
+	 * @return true if any components need to be created
+	 */
+	default boolean hasComponents() {
+		ProvidedBeansMap providedBeans = providedBeans();
+		return !ArrayUtils.isEmpty( componentScanPackages() )
+				|| !ArrayUtils.isEmpty( annotatedClasses() )
+				|| !ArrayUtils.isEmpty( postProcessors() )
+				|| ( providedBeans != null && !providedBeans.isEmpty() );
+	}
 }

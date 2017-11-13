@@ -44,7 +44,7 @@ public class TestComponentScanOfModules
 	@Test
 	public void moduleShouldBeScanned() {
 		assertTrue( contextInfo.isBootstrapped() );
-		assertEquals( 1, contextInfo.getModules().size() );
+		assertEquals( 2, contextInfo.getModules().size() );
 		assertTrue( contextInfo.hasModule( "someName" ) );
 	}
 

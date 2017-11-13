@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.foreach.across.core;
 
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
@@ -21,31 +20,15 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import java.util.Set;
 
 /**
- * Default empty AcrossModule with a configurable name. This module does not do anything by default,
- * but can be used to inject in an AcrossContext to satisfy dependencies.
- * <p/>
- * Optionally a set of annotated classes can be added that should be loaded in this module.
- *
  * @author Arne Vandamme
- * @since 2.0.0
+ * @since 3.0.0
  */
-public final class EmptyAcrossModule extends AcrossModule
+public final class AcrossContextConfigurationModule extends AcrossModule
 {
 	private final String name;
 
-	public EmptyAcrossModule( String name, Class<?>... annotatedClasses ) {
-		this( name, false, annotatedClasses );
-	}
-
-	protected EmptyAcrossModule( String name, boolean optional, Class<?>[] annotatedClasses ) {
+	public AcrossContextConfigurationModule( String name ) {
 		this.name = name;
-
-		if ( annotatedClasses.length > 0 ) {
-			addApplicationContextConfigurer( annotatedClasses );
-		}
-		else if ( !optional ) {
-			addApplicationContextConfigurer( Object.class );
-		}
 	}
 
 	/**
@@ -79,13 +62,4 @@ public final class EmptyAcrossModule extends AcrossModule
 		return new String[0];
 	}
 
-	/**
-	 * Creates an empty module that will not be bootstrapped unless any actual configuration with components is added.
-	 *
-	 * @param moduleName name of the module
-	 * @return module
-	 */
-	public static EmptyAcrossModule optional( String moduleName ) {
-		return new EmptyAcrossModule( moduleName, true, new Class[0] );
-	}
 }

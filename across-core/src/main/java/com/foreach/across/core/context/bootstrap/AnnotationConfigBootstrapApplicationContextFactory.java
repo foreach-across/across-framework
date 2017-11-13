@@ -100,8 +100,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	@Override
 	public void loadApplicationContext( AcrossContext across, AcrossApplicationContextHolder context ) {
 		AcrossConfigurableApplicationContext root = context.getApplicationContext();
-		Collection<ApplicationContextConfigurer> configurers
-				= AcrossContextUtils.getApplicationContextConfigurers( across );
+		Collection<ApplicationContextConfigurer> configurers = AcrossContextUtils.getApplicationContextConfigurers( across );
 
 		loadApplicationContext( root, configurers );
 	}
@@ -117,8 +116,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	public void loadApplicationContext( AcrossContext across,
 	                                    ModuleBootstrapConfig moduleBootstrapConfig,
 	                                    AcrossApplicationContextHolder context ) {
-		AcrossConfigurableApplicationContext child =
-				(AcrossConfigurableApplicationContext) context.getApplicationContext();
+		AcrossConfigurableApplicationContext child = context.getApplicationContext();
 
 		loadApplicationContext( child, moduleBootstrapConfig.getApplicationContextConfigurers() );
 	}

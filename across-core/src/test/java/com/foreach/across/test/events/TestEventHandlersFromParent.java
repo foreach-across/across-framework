@@ -51,7 +51,7 @@ public class TestEventHandlersFromParent
 	@Test
 	public void eventsShouldHaveBeenIntercepted() {
 		assertEquals(
-				Arrays.asList( "before:named", "after:named", "bootstrapped" ),
+				Arrays.asList( "before:named", "after:named", "before:AcrossContextPostProcessorModule", "bootstrapped" ),
 				config.eventsReceived
 		);
 	}
@@ -79,7 +79,7 @@ public class TestEventHandlersFromParent
 
 		@Bean
 		public AcrossModule namedModule() {
-			return new EmptyAcrossModule( "named" );
+			return new EmptyAcrossModule( "named", Object.class );
 		}
 	}
 }
