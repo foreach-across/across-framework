@@ -26,8 +26,8 @@ import java.util.Map;
 
 public abstract class TestInstaller
 {
-	public static List<Class<?>> EXECUTED = new LinkedList<>();
-	public static Map<Class<?>, String> WIRED_VALUES = new HashMap<>();
+	public static final List<Class<?>> EXECUTED = new LinkedList<>();
+	public static final Map<Class<?>, String> WIRED_VALUES = new HashMap<>();
 
 	@Autowired(required = false)
 	public void setSomeBean( String someBean ) {

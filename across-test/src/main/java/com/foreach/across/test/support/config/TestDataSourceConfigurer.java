@@ -34,6 +34,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
+import java.util.UUID;
 
 /**
  * Adds support for test datasource detection to an {@link AcrossContext}.
@@ -63,9 +64,14 @@ public class TestDataSourceConfigurer implements EnvironmentAware, AcrossContext
 	private static final Logger LOG = LoggerFactory.getLogger( TestDataSourceConfigurer.class );
 
 	private Environment environment;
+	private String dataSourceName = "/hsql-mem/ax-" + UUID.randomUUID().toString();
 
 	public void setEnvironment( Environment environment ) {
 		this.environment = environment;
+	}
+
+	public void setDataSourceName( String dataSourceName ) {
+		this.dataSourceName = dataSourceName;
 	}
 
 	@Override
@@ -95,7 +101,7 @@ public class TestDataSourceConfigurer implements EnvironmentAware, AcrossContext
 
 		if ( StringUtils.equals( "auto", dsName ) ) {
 			dataSource = HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver",
-			                                            "jdbc:hsqldb:mem:/hsql-mem/across-test", "sa",
+			                                            "jdbc:hsqldb:mem:" + dataSourceName, "sa",
 			                                            StringUtils.EMPTY );
 		}
 		else {

@@ -1,0 +1,74 @@
+== Generating URLs
+
+[[web-app-path-resolver]]
+=== WebAppPathResolver and path prefixing
+{module-name} introduces the `<<prefix-request-mappings,PrefixingRequestMappingHandlerMapping>>`.
+This allows `@RequestMapping` methods to be prefixed at runtime, based on configuration.
+
+Some standard Across modules like AdminWebModule and DebugWebModule make use of this functionality.
+
+Because the actual relative path of a controller is then not known during development, you can define a relative path with a prefix.
+If you provide your path to the `WebAppPathResolver` bean, the prefix will then be replaced at runtime by the final path.
+
+The <<thymeleaf-dialect,{module-name} Thymeleaf dialect>> integrates with the `WebAppPathResolver` so prefix based paths are supported directly in templates.
+
+NOTE: If you want to ensure your relative path is never prefixed, start it with an exclamation mark (!).
+
+==== Default prefixes
+{module-name} registers default prefixers for static resources:
+
+[cols="1,3",options=header]
+|===
+
+| Name
+| Target
+
+|*@resource*
+|Static resources in the root resources folder.
+
+|*@static*
+|Static resources in the _static_ subfolder.
+This is a short-hand for _@resource:/static/<path>_
+
+|===
+
+==== Path resolving examples
+The examples assume that _res_ is the configured *acrossWebModule.resources.path*:
+
+[cols="1,3",options=header]
+|===
+
+| Input
+| Output
+
+|_/my/path_
+|_/my/path_
+
+|_@resource:/my/path_
+|_/res/my/path_
+
+|_@static:/my/path?id=10#home_
+|_/res/static/my/path?id=10#home_
+
+|_redirect:@resource/my/path_
+|_redirect:/res/my.path_
+
+|_!@resource/my/path_
+|_@resource/my/path_
+
+|===
+
+==== Registering your own prefixing handler mapping and resolver
+See `PrefixingHandlerMappingConfiguration` and `PrefixingPathContext`.
+
+=== WebAppLinkBuilder
+The `WebAppPathResolver` will only replace the relative path prefix, but to generate a valid application link you would still need to prepend the possible context path as wel as encode the URL.
+If you want to generate a complete link from code, you can use the `WebAppLinkBuilder` bean.
+
+WARNING: You should only use the the `WebAppLinkBuilder` if your links will not be processed additionally.
+To generate redirect paths, or links for a `spring:url` or Thymeleaf link builder `@{}`, use the `WebAppPathResolver`. +
+ +
+Otherwise you could end up with links having the context path added twice.
+
+
+

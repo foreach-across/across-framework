@@ -19,12 +19,14 @@ package com.foreach.across.modules.web.context;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
+import com.foreach.across.core.context.SharedMetadataReaderFactory;
 import com.foreach.across.core.context.annotation.ModuleConfigurationBeanNameGenerator;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -80,6 +82,9 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 				beanFactory.registerSingleton( singleton.getKey(), singleton.getValue() );
 			}
 		}
+
+		AnnotationConfigUtils.registerAnnotationConfigProcessors( beanFactory );
+		SharedMetadataReaderFactory.registerAnnotationProcessors( beanFactory );
 
 		super.loadBeanDefinitions( beanFactory );
 	}

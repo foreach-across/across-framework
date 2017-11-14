@@ -22,6 +22,7 @@ import com.foreach.across.test.dynamic.pkg.controllers.PkgController;
 import com.foreach.across.test.dynamic.pkg.extensions.PkgExtensionConfig;
 import com.foreach.across.test.dynamic.pkg.installers.PkgInstaller;
 import org.junit.Test;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import static org.junit.Assert.*;
 
@@ -30,9 +31,10 @@ import static org.junit.Assert.*;
  */
 public class TestClassPathScanningChildPackageProvider
 {
+	private ClassPathScanningChildPackageProvider packageProvider = new ClassPathScanningChildPackageProvider( new PathMatchingResourcePatternResolver() );
+
 	@Test
 	public void noChildren() {
-		ClassPathScanningChildPackageProvider packageProvider = new ClassPathScanningChildPackageProvider();
 		String[] children = packageProvider.findChildren( "ksdjflksdjklsdjds" );
 
 		assertNotNull( children );
@@ -41,7 +43,6 @@ public class TestClassPathScanningChildPackageProvider
 
 	@Test
 	public void noExcludes() {
-		ClassPathScanningChildPackageProvider packageProvider = new ClassPathScanningChildPackageProvider();
 		String[] children = packageProvider.findChildren( PkgMember.class.getPackage().getName() );
 
 		assertArrayEquals(
@@ -56,7 +57,6 @@ public class TestClassPathScanningChildPackageProvider
 
 	@Test
 	public void excludes() {
-		ClassPathScanningChildPackageProvider packageProvider = new ClassPathScanningChildPackageProvider();
 		packageProvider.setExcludedChildPackages( "installers", "extensions" );
 
 		String[] children = packageProvider.findChildren( PkgMember.class.getPackage().getName() );

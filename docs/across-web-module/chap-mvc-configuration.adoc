@@ -1,0 +1,11 @@
+== Spring MVC configuration
+AcrossWebModule sets up Spring MVC configuration including a single `DispatcherServlet` and default `HandlerMapping` beans.
+In addition to the standard Spring MVC configuration, AcrossWebModule configures extra:
+
+* <<static-resources,static resource resolving and versioning>>
+* support for <<extended-request-mapping,custom request conditions and prefixed request mappings>>
+
+AcrossWebModule activates support for `WebMvcConfigurer` beans in other modules.
+Any `WebMvcConfigurer`(often an extension of `WebMvcConfigurerAdapter`) will be detected and used to configure the mvc support.
+Note that `WebMvcConfigurer` beans do not need to be exposed.
+

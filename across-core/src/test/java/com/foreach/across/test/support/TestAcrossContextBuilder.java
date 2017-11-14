@@ -26,13 +26,16 @@ import com.foreach.across.core.support.AcrossContextBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -70,9 +73,11 @@ public class TestAcrossContextBuilder
 	}
 
 	@Test
-	public void applicationContext() {
+	public void applicationContext() throws IOException {
 		ApplicationContext applicationContext = mock( ApplicationContext.class );
 		builder.applicationContext( applicationContext );
+
+		when( applicationContext.getResources( any() ) ).thenReturn( new Resource[0] );
 
 		build();
 		assertSame( applicationContext, context.getParentApplicationContext() );

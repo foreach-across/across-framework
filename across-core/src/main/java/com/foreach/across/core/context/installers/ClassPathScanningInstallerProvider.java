@@ -16,15 +16,14 @@
 package com.foreach.across.core.context.installers;
 
 import com.foreach.across.core.annotations.Installer;
+import com.foreach.across.core.context.AbstractClassPathScanningProvider;
 import com.foreach.across.core.util.ClassLoadingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.ClassMetadata;
-import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
@@ -39,16 +38,20 @@ import java.util.Set;
  *
  * @author Arne Vandamme
  */
-public class ClassPathScanningInstallerProvider
+public class ClassPathScanningInstallerProvider extends AbstractClassPathScanningProvider
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ClassPathScanningInstallerProvider.class );
 
-	private static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
 	private static final String ANNOTATION_NAME = Installer.class.getName();
 
-	private final ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-	private final MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(
-			resourcePatternResolver );
+	public ClassPathScanningInstallerProvider( ResourcePatternResolver resourcePatternResolver ) {
+		super( resourcePatternResolver );
+	}
+
+	public ClassPathScanningInstallerProvider( ResourcePatternResolver resourcePatternResolver,
+	                                           MetadataReaderFactory metadataReaderFactory ) {
+		super( resourcePatternResolver, metadataReaderFactory );
+	}
 
 	public Set<Class<?>> scan( String... basePackages ) {
 		Set<Class<?>> installers = new HashSet<>();
@@ -58,10 +61,10 @@ public class ClassPathScanningInstallerProvider
 					ClassUtils.convertClassNameToResourcePath( basePackage ) + "/" + DEFAULT_RESOURCE_PATTERN;
 
 			try {
-				Resource[] resources = resourcePatternResolver.getResources( packageSearchPath );
+				Resource[] resources = getResources( packageSearchPath );
 
 				for ( Resource resource : resources ) {
-					MetadataReader metadataReader = metadataReaderFactory.getMetadataReader( resource );
+					MetadataReader metadataReader = getMetadataReader( resource );
 					AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
 
 					if ( annotationMetadata.hasAnnotation( ANNOTATION_NAME ) ) {

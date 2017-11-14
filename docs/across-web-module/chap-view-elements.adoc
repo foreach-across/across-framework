@@ -1,0 +1,100 @@
+[[view-elements]]
+== ViewElement infrastructure
+AcrossWebModule provides a programmatic model for rendering UI components.
+A single UI component in this context is called a `ViewElement`.
+
+=== ViewElement
+`ViewElement` implementations usually correspond to one or more HTML nodes.
+{module-name} comes with a default set `ViewElement` implementation for rendering Bootstrap markup elements.
+This is done through a collection of Thymeleaf processors for rendering `ViewElement` components.
+
+You can render a `ViewElement` available on the model anywhere in a Thymeleaf template by using the _across:view_ tag.
+
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<across:view element="${myViewElement}" />
+----
+
+WARNING: You usually do not want to cache and reuse `ViewElement` components.
+It is better to cache `ViewElementBuilder`.
+
+=== Default properties
+In its most simple form, a `ViewElement` has the following properties:
+
+[cols="1,3"]
+|===
+
+|*name*
+|An optional internal name of the element.
+This name can be used to retrieve the element from a `ContainerViewElement`.
+Use `ContainerViewElementUtils` to query and modify containers.
+
+See <<development-mode,development mode rendering>> for more information to retrieve generated view names.
+
+|*elementType*
+|A *required* type identification for the element.
+
+|*customTemplate*
+|An optional template name.
+If a custom template is specified, it will be used to render the `ViewElement` instead of the default processor.
+By default only Thymeleaf templates are supported.
+
+|===
+
+==== Custom template
+Every `ViewElement` allows you to configure a *customTemplate*.
+Only Thymeleaf fragments are supported, if you specify a Thymeleaf template without a fragment, a *render(component)* fragment will be appended.
+The *component* variable will always contain the `ViewElement` instance that is being rendered.
+
+You can use a different input variable by specifying the *${component}* manually in your template specification.
+
+.Examples:
+
+* `th/mymodule/mytemplate` results in `th/mymodule/mytemplate :: render(component)`
+* `th/mymodule/mytemplate :: myfragment` results in `th/mymodule/mytemplate :: myfragment(component)`
+* `th/mymodule/mytemplate :: myfragment(${someModelAttribute},${component})` results in `th/mymodule/mytemplate :: myfragment(attributeValue,component)`
+
+NOTE: You should only use model attributes that are sure to be available when the template is being rendered.
+It is usually best to pass the required values as attributes on the `ViewElement` itself.
+
+You can use the `TemplateViewElement` if you only want to render a custom template and optionally pass it some attributes.
+
+=== ViewElementBuilder
+A `ViewElementBuilder` is a simple API for creating a `ViewElement` instance based on a configuration and a given `ViewElementBuilderContext`.
+
+The `ViewElementBuilderContext` represents the runtime context when creating the element.
+It is a way to pass attributes required for building the elements, and it also gives access to default request related beans like the `WebResourceRegistry` or the `WebAppLinkBuilder`.
+
+{module-name} comes with a number of default `ViewElementBuilder` implementations for both simple elements and more complex components.
+
+==== Global ViewElementBuilderContext
+Most `ViewElementBuilder` implementations extend `GlobalContextSupportingViewElementBuilder`.
+This class provides a parameterless `build()` method that will attempt to retrieve a `ViewElementBuilderContext` from the current thread, or from the request attached to the thread.
+If no global `ViewElementBuilderContext` is registered however, calls to `build()` will throw an exception.
+
+See the `ViewElementBuilderContextInterceptor` for an interceptor that creates a global `ViewElementBuilderContext`.
+
+==== ViewElementBuilderContext in controllers
+If there is a global `ViewElementBuilderContext` available, you can also `ViewElementBuilderContext` as a method argument in web controller methods.
+
+==== Creating application links
+The `ViewElementBuilderContext` provides a `buildLink(String)` method that will resolve a link using the `WebAppLinkBuilder` attribute that is available on the builder context.
+By default the request-bound `WebAppLinkBuilder` is already set.
+
+[[dev-mode-rendering]]
+=== Development mode rendering
+If development mode is active, all `ViewElement` names will be rendered in the markup.
+Start and end of the element rendering will be marked by a HTML comment.
+If the `ViewElement` is a node (xml-type element) it will also have a data attribute *data-ax-dev-view-element* containing the name.
+
+.Example markup when rendered in development mode
+[source,html,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+<!--[ax:title]-->
+<input name="entity.title" id="entity.title" data-ax-dev-view-element="title" type="text" class="form-control" value="" required="required" />
+<!--[/ax:title]-->
+----
+
+NOTE: It is not required for a `ViewElement` to have a name, nor is it required for that name to be unique.

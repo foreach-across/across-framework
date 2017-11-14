@@ -1,0 +1,19 @@
+== Module dependencies
+
+There are several ways to influence the beans that are being bootstrapped with a module, by passing information from the configuration to the actual module ApplicationContext.
+
+=== @AcrossDepends
+
+[discrete]
+==== Using @AcrossDepends on a module
+
+Using AcrossDepends annotation on a component class you can avoid beans or Configurations from being created based on the presence of other modules.
+required modules: the component will only be created if all required modules are present
+optional modules: the component will only be created if at least one of the optional modules is present
+
+[discrete]
+==== Using @AcrossDepends on component classes
+expression will be evaluated against the module context - as usual - beans from earlier modules will be available
+
+=== Conditionals
+Any Spring conditional can be used to determine of a bean should be created.

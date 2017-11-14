@@ -23,6 +23,7 @@ import com.foreach.across.test.scan.packageTwo.OtherValidModule;
 import com.foreach.across.test.scan.packageTwo.ReplacementValidModule;
 import com.foreach.across.test.scan.packageTwo.YetAnotherValidModule;
 import org.junit.Test;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -34,9 +35,10 @@ import static org.junit.Assert.*;
  */
 public class TestClassPathScanningCandidateModuleProvider
 {
+	private ClassPathScanningCandidateModuleProvider moduleProvider = new ClassPathScanningCandidateModuleProvider( new PathMatchingResourcePatternResolver() );
+
 	@Test
 	public void noModules() {
-		ClassPathScanningCandidateModuleProvider moduleProvider = new ClassPathScanningCandidateModuleProvider();
 		Map<String, Supplier<AcrossModule>> candidates
 				= moduleProvider.findCandidateModules( "illegal" );
 
@@ -46,7 +48,6 @@ public class TestClassPathScanningCandidateModuleProvider
 
 	@Test
 	public void modulesFromPackageOne() {
-		ClassPathScanningCandidateModuleProvider moduleProvider = new ClassPathScanningCandidateModuleProvider();
 		Map<String, Supplier<AcrossModule>> candidates
 				= moduleProvider.findCandidateModules( "com.foreach.across.test.scan.packageOne" );
 
@@ -64,7 +65,6 @@ public class TestClassPathScanningCandidateModuleProvider
 
 	@Test
 	public void packageTwoOverridesPackageOne() {
-		ClassPathScanningCandidateModuleProvider moduleProvider = new ClassPathScanningCandidateModuleProvider();
 		Map<String, Supplier<AcrossModule>> candidates = moduleProvider.findCandidateModules(
 				"com.foreach.across.test.scan.packageOne",
 				"com.foreach.across.test.scan.packageTwo"
@@ -85,7 +85,6 @@ public class TestClassPathScanningCandidateModuleProvider
 
 	@Test
 	public void packageOneOverridesPackageTwo() {
-		ClassPathScanningCandidateModuleProvider moduleProvider = new ClassPathScanningCandidateModuleProvider();
 		Map<String, Supplier<AcrossModule>> candidates = moduleProvider.findCandidateModules(
 				"com.foreach.across.test.scan.packageTwo",
 				"com.foreach.across.test.scan.packageOne"

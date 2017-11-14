@@ -1,4 +1,18 @@
+[[whats-new]]
 == What's new in this version?
+
+=== 2.1.1.RELEASE
+*Across Core*
+
+* minor performance improvements
+* `@PostRefresh` now supports method arguments, behaving as an equivalent of `@Autowired` but after the Across context has bootstrapped
+** it is also possible to indicate that dependencies are not required, if dependencies are not met, the method will not be executed
+** `@PostRefresh` methods can be called more than once if a parent `ApplicationContext` refreshes
+
+*Across Test*
+
+* bug fixes:
+** test datasource is generated with a unique name - this improves the re-use of the main `ApplicationContext` without the need for `@DirtiesContext`
 
 === 2.1.0.RELEASE
 *Across Core*

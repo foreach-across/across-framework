@@ -1,0 +1,31 @@
+= Framework artifacts
+Across framework itself consists of 3 library artifacts (`across-core`, `across-web` and `across-test`) and one bill-of-material pom (`standard-module-bom`).
+
+across-core:: Supports the configuration of an Across context and provides all necessary infrastructure to define and execute modules.
+across-web:: Provides an `AcrossModule` that supports configuration of a web application using Across with the Spring `DispatcherServlet` as the most common scenario.
+across-test:: Supports integration testing of your Across modules, both web and non-web related.  Builds on top of `spring-test`.
+standard-module-bom:: BOM pom for creating an Across Standard Module or any module wishing to adhere to the standard module conventions.
+
+There is also a separate {platform-bom-url}[platform-bom] project that provides a bill-of-material for applications built on Across and the Across Standard Modules.
+
+.Common dependencies
+Across is directly tied to Spring framework and all artifacts come with a set of curated dependencies.
+Across itself uses the http://platform.spring.io/platform/[Spring IO platform] as a basis for all its dependencies.
+
+.Artifact repositories
+All Across related artifacts - both release and snapshot versions - can be fetched from the Foreach Nexus repository.
+This also includes the set of <<across-standard-modules>>.
+
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+<repositories>
+    <repository>
+        <id>foreach-nexus</id>
+        <name>Foreach nexus</name>
+        <url>http://repository.foreach.be/nexus/repository/public/</url>
+    </repository>
+</repositories>
+----
+
+Release versions are also available in Maven Central.

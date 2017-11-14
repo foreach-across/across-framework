@@ -1,0 +1,44 @@
+[[refreshing]]
+== Refreshing
+The AcrossContext is refreshed once, right before it is fully bootstrapped.
+Refresh happens after all individual modules have bootstrapped and all beans have been exposed, but before the after-bootstrap installers have run.
+
+There are several ways to hook into the refresh phase:
+
+=== @Refreshable
+Any bean annotated with `@Refreshable` will be autowired twice.
+Once when it gets created, and once when the AcrossContext is refreshed.
+You can use this for optional dependencies where the value might be exposed by a later module.
+
+WARNING: Although the functionality is there, you should probably avoid using `@Refreshable` and prefer `@PostRefresh` or subscribing to one of the bootstrap related events.
+
+=== @PostRefresh
+Much like `@PostConstruct`, a bean can have one or more `@PostRefresh` methods.
+These will be executed when the AcrossContext is refreshed.
+
+=== @RefreshableCollection
+`@RefreshableCollection` is an annotation to qualify dependencies being autowired.
+It can only be used on dependencies of type `Collection`.
+
+When using `@RefreshableCollection`, instead of a regular collection of beans, a `<<RefreshableRegistry>>` will be wired.
+The behaviour and type of the `RefreshableRegistry` can be determined through the annotation attributes.
+
+.Example autowiring collection that will contain all MyBean instances from all modules, even if not exposed
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Autowired
+public void setMyBeans( @RefreshableCollection(includeModuleInternals=true) Collection<MyBean> myBeans ) {
+    this.myBeans = myBeans;
+}
+----
+
+[[RefreshableRegistry]]
+=== RefreshableRegistry
+A `RefreshableRegistry` is a collection of beans of a specified class that updates itself once when the AcrossContext is refreshed.
+A `RefreshableRegistry` can also scan for beans inside the other modules in the running context, without the need for those beans to be exposed.
+This allows other modules to pick up extensions or configurations from other modules that bootstrap later.
+
+The value of a `RefreshableRegistry` are also ordered according to the <<ordering-beans,Across module order hierarchy>>.
+
+`IncrementalRefreshableRegistry` is a specialization that updates its values every time a module has bootstrapped.

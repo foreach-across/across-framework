@@ -103,7 +103,6 @@ public class ITDistributedLockRepository
 		}
 	}
 
-
 	protected class ExecutorBatch implements Callable<Integer>
 	{
 		private final int startDelay;
@@ -165,7 +164,7 @@ public class ITDistributedLockRepository
 	private DataSource uniqueDataSource() {
 		TestDataSourceConfigurer factory = new TestDataSourceConfigurer();
 		factory.setEnvironment( environment );
-
+		factory.setDataSourceName( "it-distributed-lock-repository" );
 		return factory.testDataSource();
 	}
 
@@ -231,5 +230,9 @@ public class ITDistributedLockRepository
 	@AcrossTestConfiguration
 	protected static class Config
 	{
+		@Autowired
+		public void setDataSourceName( TestDataSourceConfigurer testDataSourceConfigurer ) {
+			testDataSourceConfigurer.setDataSourceName( "it-distributed-lock-repository" );
+		}
 	}
 }

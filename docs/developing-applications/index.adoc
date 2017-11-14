@@ -1,0 +1,102 @@
+[[across-core]]
+[[developing-across-applications]]
+= Developing Across applications
+
+Across Core is the main dependency that is required for bootstrapping an `AcrossContext`.
+If you want to use `@AcrossApplication` however, you should use *across-web* instead.
+[discrete]
+== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across</groupId>
+			<artifactId>across-core</artifactId>
+			<version>{across-version}</version>
+		</dependency>
+		<dependency>
+            <groupId>com.foreach.across</groupId>
+            <artifactId>across-web</artifactId>
+            <version>{across-version}</version>
+        </dependency>
+	</dependencies>
+----
+
+== Creating an Across application
+
+Usually an Across application is created for a web scenario and `@AcrossApplication`.
+This configures your application and starts it up as a Spring Boot application.
+
+Behind the scenes, `@AcrossApplication` uses `@EnableAcrossContext`.
+The latter can also be used for defining an Across context on a configuration class, but without the Spring Boot application support.
+
+include::chap-configuring-across-context.adoc[]
+
+include::chap-application.adoc[]
+
+[discrete]
+=== Manual configuration
+An `AcrossContext` can be also configured manually and is started using the `bootstrap()` method, and stopped using `shutdown()`.
+These methods take care of the Spring `ApplicationContext` lifecycle of all modules configured in the context.
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+AcrossContext context = new AcrossContext();
+context.setParentApplicationContext( optionalParentContext );
+context.setDataSource( someDataSource );
+context.addModule( new SomeModule() );
+
+// Start the context
+context.bootstrap();
+
+// Stop the context
+context.shutdown();
+----
+
+== Module configuration
+Apart from module settings, an application can also define a number of `<<moduleconfiguration,@ModuleConfiguration>>` classes to be added to the bootstrapping modules.
+When using the `@EnableAcrossContext`, the packages to scan for these can be set using attributes, but by default the sub-packages *config* and *extensions* of the importing class will be used.
+
+Alternatively the packages to scan can be controlled via the `moduleConfigurationScanPackages` property on `AcrossContext`.
+
+include::chap-across-bootstrap.adoc[]
+
+include::chap-across-properties.adoc[]
+
+include::chap-across-datasource.adoc[]
+
+include::chap-across-events.adoc[]
+
+include::chap-across-refreshing.adoc[]
+
+include::chap-across-ordering-beans.adoc[]
+
+== ConversionService
+An AcrossContext requires a valid `ConversionService` bean named *conversionService* to be present.
+If there is none, a `DefaultFormattingConversionService` will be created and exposed.
+If you want to manage the `ConversionService` yourself, simply create a `ConversionService` with the right name in the parent `ApplicationContext`.
+
+The default *conversionService* will also be attached to the `ApplicationContext` environment of every module.
+This means property fetching using `Environment.getProperty()` methods will perform type conversion using the `ConversionService` (eg. useful for date property parsing).
+
+.Date conversion
+Apart from the `ConversionService` itself, an `AcrossContext` creates a default `StringToDateConverter` bean named *defaultDateConverter*.
+This converter supports converting a string to a corresponding date in many common date patterns.
+The `StringToDateConverter` assumes a fixed locale that can be configured (default: `US`).
+
+WARNING: If you manage the `ConversionService` outside of the `AcrossContext` the default `StringToDateConverter` will not be registered either.
+
+include::chap-across-development-mode.adoc[]
+
+// TODO mention somewhere the default beans and link to it
+
+// TODO mention the message source
+
+// TODO move to right spot
+
+
+
+
+

@@ -20,6 +20,7 @@ import com.foreach.across.test.installers.examples.InstallerThree;
 import com.foreach.across.test.installers.scan.installers.InstallerOne;
 import com.foreach.across.test.installers.scan.installers.InstallerTwo;
 import org.junit.Test;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,9 +33,10 @@ import static org.junit.Assert.*;
  */
 public class TestClassPathScanningInstallerProvider
 {
+	private ClassPathScanningInstallerProvider provider = new ClassPathScanningInstallerProvider( new PathMatchingResourcePatternResolver() );
+
 	@Test
 	public void noInstallers() {
-		ClassPathScanningInstallerProvider provider = new ClassPathScanningInstallerProvider();
 		Set<Class<?>> installers = provider.scan( "illegal" );
 
 		assertNotNull( installers );
@@ -43,7 +45,6 @@ public class TestClassPathScanningInstallerProvider
 
 	@Test
 	public void singlePackage() {
-		ClassPathScanningInstallerProvider provider = new ClassPathScanningInstallerProvider();
 		Set<Class<?>> installers = provider.scan( "com.foreach.across.test.installers.scan.installers" );
 
 		assertNotNull( installers );
@@ -56,7 +57,6 @@ public class TestClassPathScanningInstallerProvider
 
 	@Test
 	public void multiPackagesAtOnce() {
-		ClassPathScanningInstallerProvider provider = new ClassPathScanningInstallerProvider();
 		Set<Class<?>> installers = provider.scan(
 				"com.foreach.across.test.installers.scan.installers",
 				"com.foreach.across.test.installers.examples"

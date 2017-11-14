@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>2.1.0.RELEASE</version>
+	<version>2.1.1.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -48,12 +48,12 @@
 	</developers>
 
 	<properties>
-		<across.version>2.1.0.RELEASE</across.version>
+		<across.version>2.1.1.RELEASE</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>Athens-SR2</spring.platform.version>
+		<spring.platform.version>Athens-SR6</spring.platform.version>
 		<foreach.common.version>1.1</foreach.common.version>
-		<thymeleaf.version>3.0.3.RELEASE</thymeleaf.version>
-		<thymeleaf-extras.springsecurity4.version>3.0.1.RELEASE</thymeleaf-extras.springsecurity4.version>
+		<thymeleaf.version>3.0.7.RELEASE</thymeleaf.version>
+		<thymeleaf-extras.springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras.springsecurity4.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 	</properties>
 
@@ -133,15 +133,18 @@
 			<plugin>
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.0</version>
+				<version>1.5.5</version>
 				<inherited>false</inherited>
 				<configuration>
 					<sourceDirectory>docs</sourceDirectory>
+					<!--
 					<sourceDocumentName>index.adoc</sourceDocumentName>
-					<doctype>book</doctype>
+					--><!--
+					<doctype>book</doctype>-->
 					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
 					<backend>html</backend>
 					<sourceHighlighter>coderay</sourceHighlighter>
+					<preserveDirectories>true</preserveDirectories>
 					<attributes>
 						<stylesheet>across.css</stylesheet>
 					</attributes>

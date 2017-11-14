@@ -1,3 +1,0 @@
-== TODO: Published events
-
-The following is a listing of all events published by Across core or `AcrossWebModule`.

@@ -16,6 +16,7 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.AcrossModule;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -28,16 +29,26 @@ import java.util.function.Supplier;
  */
 public class ClassPathScanningModuleDependencyResolver implements ModuleDependencyResolver
 {
+	private final ClassPathScanningCandidateModuleProvider candidateModuleProvider;
+
 	private boolean resolveRequired = true;
 	private boolean resolveOptional = false;
 	private Set<String> excludedModules = new HashSet<>();
 	private Map<String, Supplier<AcrossModule>> candidates = Collections.emptyMap();
 
+	public ClassPathScanningModuleDependencyResolver() {
+		this( new ClassPathScanningCandidateModuleProvider( new PathMatchingResourcePatternResolver() ) );
+	}
+
+	public ClassPathScanningModuleDependencyResolver( ClassPathScanningCandidateModuleProvider candidateModuleProvider ) {
+		this.candidateModuleProvider = candidateModuleProvider;
+	}
+
 	/**
 	 * @param basePackages that should be scanned
 	 */
 	public void setBasePackages( String... basePackages ) {
-		candidates = new ClassPathScanningCandidateModuleProvider().findCandidateModules( basePackages );
+		candidates = candidateModuleProvider.findCandidateModules( basePackages );
 	}
 
 	/**

@@ -18,11 +18,13 @@ package com.foreach.across.core.support;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.ClassPathScanningCandidateModuleProvider;
 import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
 import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.context.support.ModuleSetBuilder;
 import com.foreach.across.core.installers.InstallerAction;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
 import java.util.Collections;
@@ -235,7 +237,7 @@ public class AcrossContextBuilder
 		context.setInstallerDataSource( installerDataSource );
 		context.setInstallerAction( installerDataSource != null ? InstallerAction.EXECUTE : InstallerAction.DISABLED );
 
-		ModuleDependencyResolver dependencyResolver = moduleDependencyResolver();
+		ModuleDependencyResolver dependencyResolver = moduleDependencyResolver( applicationContext );
 		context.setModuleDependencyResolver( dependencyResolver );
 
 		configureModules( context, dependencyResolver );
@@ -249,10 +251,13 @@ public class AcrossContextBuilder
 		return context;
 	}
 
-	protected ModuleDependencyResolver moduleDependencyResolver() {
+	protected ModuleDependencyResolver moduleDependencyResolver( ApplicationContext applicationContext ) {
 		if ( moduleDependencyResolver == null ) {
-			ClassPathScanningModuleDependencyResolver dependencyResolver
-					= new ClassPathScanningModuleDependencyResolver();
+			ClassPathScanningModuleDependencyResolver dependencyResolver = new ClassPathScanningModuleDependencyResolver(
+					new ClassPathScanningCandidateModuleProvider(
+							applicationContext != null ? applicationContext : new PathMatchingResourcePatternResolver()
+					)
+			);
 			dependencyResolver.setBasePackages( moduleScanPackages.toArray( new String[moduleScanPackages.size()] ) );
 
 			return dependencyResolver;

@@ -19,10 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.type.ClassMetadata;
-import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
@@ -38,17 +36,20 @@ import java.util.Set;
  *
  * @author Arne Vandamme
  */
-public class ClassPathScanningChildPackageProvider
+public class ClassPathScanningChildPackageProvider extends AbstractClassPathScanningProvider
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ClassPathScanningChildPackageProvider.class );
 
-	private static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
-
-	private final ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-	private final MetadataReaderFactory metadataReaderFactory
-			= new CachingMetadataReaderFactory( resourcePatternResolver );
-
 	private final Set<String> excluded = new HashSet<>();
+
+	public ClassPathScanningChildPackageProvider( ResourcePatternResolver resourcePatternResolver ) {
+		super( resourcePatternResolver );
+	}
+
+	public ClassPathScanningChildPackageProvider( ResourcePatternResolver resourcePatternResolver,
+	                                              MetadataReaderFactory metadataReaderFactory ) {
+		super( resourcePatternResolver, metadataReaderFactory );
+	}
 
 	/**
 	 * Set one or more child package names that should be excluded.
@@ -73,10 +74,10 @@ public class ClassPathScanningChildPackageProvider
 				ClassUtils.convertClassNameToResourcePath( basePackage ) + "/" + DEFAULT_RESOURCE_PATTERN;
 
 		try {
-			Resource[] resources = resourcePatternResolver.getResources( packageSearchPath );
+			Resource[] resources = getResources( packageSearchPath );
 
 			for ( Resource resource : resources ) {
-				MetadataReader metadataReader = metadataReaderFactory.getMetadataReader( resource );
+				MetadataReader metadataReader = getMetadataReader( resource );
 				ClassMetadata classMetadata = metadataReader.getClassMetadata();
 
 				String packageName = StringUtils.substringBeforeLast( classMetadata.getClassName(), "." );

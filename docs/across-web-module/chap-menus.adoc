@@ -1,0 +1,10 @@
+[[menu-building]]
+== Building menus
+{module-name} provides some infrastructure to build a tree-like menu.
+The output class is a `Menu` instance that is created by the `MenuFactory` service.
+
+When building a menu, a `BuildMenuEvent` is published with the menu instance, the name of the menu will be the name of the event.
+The `BuildMenuEvent` provides access to a `PathBasedMenuBuilder` that allows asynchronous registering of menu items with a unique hierarchical path.
+After the event handling the actual menu will be built and path structure will be used for the tree hierarchy.
+
+It is still up to the developer to actually output the `Menu` in some fashion, for example by rendering it in the Thymeleaf template.

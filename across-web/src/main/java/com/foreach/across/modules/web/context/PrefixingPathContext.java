@@ -92,6 +92,10 @@ public class PrefixingPathContext implements WebAppPathResolver
 
 	@Override
 	public String path( String path ) {
+		if ( StringUtils.startsWith( path, "#" ) ) {
+			return path;
+		}
+
 		for ( String ignoredPrefix : ignoredPrefixes ) {
 			if ( path.startsWith( ignoredPrefix ) ) {
 				return ignoredPrefix + prefix( path.substring( ignoredPrefix.length() ) );

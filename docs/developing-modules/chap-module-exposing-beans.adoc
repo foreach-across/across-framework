@@ -1,0 +1,41 @@
+[[exposing-beans]]
+== Exposing beans
+A module can share its beans with other modules by *exposing* them.
+All exposed beans from a module are pushed upwards into the parent `ApplicationContext` of the `AcrossContext` itself.
+Likewise, at the end of the context bootstrap, all exposed beans are pushed into the `ApplicationContext` that is - optionally - configured as the parent of the `AcrossContext`.
+
+Which beans are exposed is determined by the `exposeFilter` property on an `AcrossModule`.
+By default all beans annotated with `@Exposed` or `@Service` will be exposed.
+See the `com.foreach.across.core.filters.BeanFilter` implementations for standard filters.
+
+When pushing beans to the parent `ApplicationContext` it is possible to run into name conflicts or duplicate bean types.
+You can use an `ExposedBeanDefinitionTransformer` to modify the bean definitions that are pushed to the parent.
+Common examples for this are changing the bean names or marking the beans as primary.
+You can set the transformer to use through the `exposeTransformer` property on an `AcrossModule` or the `AcrossContext`.
+
+ExposedBeanDefinitionTransformer on AcrossModule:: will be applied when pushing beans from the module into the `AcrossContext`
+ExposedBeanDefinitionTransformer on AcrossModule:: will be applied when pushing beans from the `AcrossContext` into the parent `ApplicationContext`
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+public class SomeModule extends AcrossModule
+{
+	/**
+	 * Only expose specific beans from this module and ensure that
+	 * they have a prefixed bean name for the other modules.
+	 */
+	public SomeModule() {
+		setExposeFilter( new ClassBeanFilter( PlatformTransactionManager.class, SessionFactory.class ) );
+		setExposeTransformer( new BeanPrefixingTransformer( "someModule" ) );
+	}
+}
+----
+
+Beans created directly in the `AcrossContext` scope - and not inside one of the modules - will only be exposed if they are annotated explicitly with `@Exposed`.
+The `AcrossContext` does not support a custom `exposeFilter` but you can supply an additional `exposeTransformer` on the context level.
+If you want to avoid an `AcrossContext` to push the exposed beans further upwards into its parent `ApplicationContext`, you should configure the `ExposedBeanDefinitionTransformer.REMOVE_ALL` as `exposeTransformer` on the `AcrossContext` itself.
+For an `AcrossModule` using the `REMOVE_ALL` transformer would be the same as putting `null` as `exposeFilter`.
+
+.Manually exposing beans
+In addition to setting the _exposeFilter_ property, `AcrossModule` has `expose(...)` methods that allow you to quickly expose one or more beans based on bean name or type.

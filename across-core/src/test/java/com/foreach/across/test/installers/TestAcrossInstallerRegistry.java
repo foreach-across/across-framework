@@ -61,6 +61,8 @@ public class TestAcrossInstallerRegistry
 
 	@Before
 	public void setup() {
+		clean();
+
 		installerRepository = mock( AcrossInstallerRepository.class );
 
 		BootstrapApplicationContextFactory applicationContextFactory

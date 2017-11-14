@@ -20,11 +20,9 @@ import com.foreach.across.core.util.ClassLoadingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.ClassMetadata;
-import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
@@ -38,16 +36,20 @@ import java.util.Map;
  *
  * @author Arne Vandamme
  */
-public class ClassPathScanningModuleConfigurationProvider
+public class ClassPathScanningModuleConfigurationProvider extends AbstractClassPathScanningProvider
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ClassPathScanningCandidateModuleProvider.class );
 
-	private static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
 	private static final String ANNOTATION_NAME = ModuleConfiguration.class.getName();
 
-	private final ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-	private final MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(
-			resourcePatternResolver );
+	public ClassPathScanningModuleConfigurationProvider( ResourcePatternResolver resourcePatternResolver ) {
+		super( resourcePatternResolver );
+	}
+
+	public ClassPathScanningModuleConfigurationProvider( ResourcePatternResolver resourcePatternResolver,
+	                                                     MetadataReaderFactory metadataReaderFactory ) {
+		super( resourcePatternResolver, metadataReaderFactory );
+	}
 
 	public ModuleConfigurationSet scan( String... basePackages ) {
 		ModuleConfigurationSet moduleConfigurationSet = new ModuleConfigurationSet();
@@ -57,10 +59,10 @@ public class ClassPathScanningModuleConfigurationProvider
 					ClassUtils.convertClassNameToResourcePath( basePackage ) + "/" + DEFAULT_RESOURCE_PATTERN;
 
 			try {
-				Resource[] resources = resourcePatternResolver.getResources( packageSearchPath );
+				Resource[] resources = getResources( packageSearchPath );
 
 				for ( Resource resource : resources ) {
-					MetadataReader metadataReader = metadataReaderFactory.getMetadataReader( resource );
+					MetadataReader metadataReader = getMetadataReader( resource );
 					AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
 
 					if ( annotationMetadata.hasAnnotation( ANNOTATION_NAME ) ) {
