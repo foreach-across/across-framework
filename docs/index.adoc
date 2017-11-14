@@ -3,7 +3,7 @@ Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :toc: left
 :toclevels: 2
 :sectanchors:
-:across-version: 2.1.1-SNAPSHOT
+:across-version: 2.1.1.RELEASE
 :across-url: http://across.foreach.be
 :spring-url: http://projects.spring.io/spring-framework/
 :spring-data-url: http://projects.spring.io/spring-data/
