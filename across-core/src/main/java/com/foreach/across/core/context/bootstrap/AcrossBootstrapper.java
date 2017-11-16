@@ -155,10 +155,13 @@ public class AcrossBootstrapper
 				LOG.info( "--- Starting module bootstrap" );
 				LOG.info( "" );
 
+				List<ConfigurableAcrossModuleInfo> bootstrappedModules = new ArrayList<>(  );
+
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo =
 							(ConfigurableAcrossModuleInfo) moduleInfo;
 					ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
+					bootstrappedModules.forEach( previous -> config.addPreviouslyExposedBeans( previous.getExposedBeanRegistry() ) );
 
 					// Add scanned (or edited) module configurations
 					config.addApplicationContextConfigurer( moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName() ) );
@@ -211,6 +214,8 @@ public class AcrossBootstrapper
 					if ( pushExposedToParentContext ) {
 						exposedBeanRegistry.addAll( configurableAcrossModuleInfo.getExposedBeanDefinitions() );
 					}
+
+					bootstrappedModules.add( configurableAcrossModuleInfo );
 
 					failOnEventErrors();
 

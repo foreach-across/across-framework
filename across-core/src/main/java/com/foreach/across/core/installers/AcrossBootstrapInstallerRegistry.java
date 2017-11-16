@@ -33,6 +33,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -360,7 +361,7 @@ public class AcrossBootstrapInstallerRegistry
 
 		if ( created ) {
 			applicationContextFactory.loadApplicationContext(
-					installerContext, contextConfig.getModule( module.getName() ).getInstallerContextConfigurers()
+					installerContext, contextConfig.getModule( module.getName() ).getInstallerContextConfigurers(), Collections.emptyList()
 			);
 		}
 

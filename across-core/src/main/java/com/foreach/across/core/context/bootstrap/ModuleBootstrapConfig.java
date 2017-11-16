@@ -17,6 +17,7 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
@@ -41,6 +42,7 @@ public class ModuleBootstrapConfig
 	private Set<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
 	private Collection<Object> installers = new LinkedList<>();
 	private InstallerSettings installerSettings;
+	private Collection<ExposedModuleBeanRegistry> previouslyExposedBeans = new ArrayList<>();
 
 	private boolean hasComponents = false;
 
@@ -199,5 +201,17 @@ public class ModuleBootstrapConfig
 
 	public boolean isEmpty() {
 		return installers.isEmpty() && !hasComponents;
+	}
+
+	public Collection<ExposedModuleBeanRegistry> getPreviouslyExposedBeans() {
+		return previouslyExposedBeans;
+	}
+
+	public void setPreviouslyExposedBeans( Collection<ExposedModuleBeanRegistry> previouslyExposedBeans ) {
+		this.previouslyExposedBeans = previouslyExposedBeans;
+	}
+
+	public void addPreviouslyExposedBeans( ExposedModuleBeanRegistry moduleBeanRegistry ) {
+		this.previouslyExposedBeans.add( moduleBeanRegistry );
 	}
 }

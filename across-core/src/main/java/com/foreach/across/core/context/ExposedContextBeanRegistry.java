@@ -97,13 +97,13 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 
 	@Override
 	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory,
-	                                    BeanDefinitionRegistry beanDefinitionRegistry ) {
+	                                    BeanDefinitionRegistry beanDefinitionRegistry, boolean ignoreExistingBeanName ) {
 		if ( !exposedDefinitions.isEmpty() ) {
 			// Make sure the registry is present in the parent context
 			beanFactory.registerSingleton( contextBeanRegistry.getFactoryName(), contextBeanRegistry );
 		}
 
-		super.copyBeanDefinitions( beanFactory, beanDefinitionRegistry );
+		super.copyBeanDefinitions( beanFactory, beanDefinitionRegistry, ignoreExistingBeanName );
 	}
 
 	@Override

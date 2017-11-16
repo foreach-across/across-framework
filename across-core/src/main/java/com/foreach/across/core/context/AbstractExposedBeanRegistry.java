@@ -103,10 +103,14 @@ public abstract class AbstractExposedBeanRegistry
 	 * Copies the BeanDefinitions to the BeanFactory provided (if possible).
 	 */
 	public void copyTo( ConfigurableListableBeanFactory beanFactory ) {
+		copyTo( beanFactory, true );
+	}
+
+	public void copyTo( ConfigurableListableBeanFactory beanFactory, boolean ignoreExistingBeanName ) {
 		if ( beanFactory instanceof BeanDefinitionRegistry ) {
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
 
-			copyBeanDefinitions( beanFactory, registry );
+			copyBeanDefinitions( beanFactory, registry, ignoreExistingBeanName );
 		}
 		else {
 			LOG.warn(
@@ -120,7 +124,7 @@ public abstract class AbstractExposedBeanRegistry
 		return exposedDefinitions.isEmpty();
 	}
 
-	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry registry ) {
+	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry registry, boolean ignoreExistingBeanName ) {
 		for ( Map.Entry<String, ExposedBeanDefinition> definition : exposedDefinitions.entrySet() ) {
 			LOG.debug( "Exposing bean {}: {}", definition.getKey(), definition.getValue().getBeanClassName() );
 
@@ -128,11 +132,16 @@ public abstract class AbstractExposedBeanRegistry
 
 			String beanName = beanDefinition.getPreferredBeanName();
 
-			if ( beanFactory.containsBean( beanName ) ) {
-				LOG.trace(
-						"BeanDefinitionRegistry already contains a bean with name {}, using fully qualified name for exposing",
-						beanName );
-				beanName = beanDefinition.getFullyQualifiedBeanName();
+			if ( beanFactory.containsLocalBean( beanName ) ) {
+				if ( ignoreExistingBeanName ) {
+					LOG.trace(
+							"BeanDefinitionRegistry already contains a bean with name {}, using fully qualified name for exposing",
+							beanName );
+					beanName = beanDefinition.getFullyQualifiedBeanName();
+				}
+				else {
+					continue;
+				}
 			}
 
 			registry.registerBeanDefinition( beanName, beanDefinition );

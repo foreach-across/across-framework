@@ -157,9 +157,8 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		AcrossListableBeanFactory beanFactory = beanFactory( contextInfo.getApplicationContext() );
 
 		resolver.setBeanFactory( beanFactory );
-		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory,
-		                                                                        resolvableType.getRawClass() )
-		                                        .keySet() ) {
+
+		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory, resolvableType.getRawClass() ).keySet() ) {
 
 			if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
 				boolean isExposedNonSingleton = !beanFactory.isSingleton( beanName )
@@ -186,11 +185,13 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 
 					for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
 						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
-							Object bean = beanFactory.getBean( beanName );
-							comparator.register( bean, module.getIndex() );
+							if ( !( beanFactory.getBeanDefinition( beanName ) instanceof ExposedBeanDefinition ) ) {
+								Object bean = beanFactory.getBean( beanName );
+								comparator.register( bean, module.getIndex() );
 
-							beans.add( (T) bean );
-							beanNames.put( (T) bean, module.getName() + ":" + beanName );
+								beans.add( (T) bean );
+								beanNames.put( (T) bean, module.getName() + ":" + beanName );
+							}
 						}
 					}
 				}
@@ -252,7 +253,6 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		public boolean equals( Object other ) {
 			return super.equals( other );
 		}
-
 
 	}
 }
