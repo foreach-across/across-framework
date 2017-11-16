@@ -112,7 +112,7 @@ public class AcrossBootstrapper
 			}
 			LOG.info( "---" );
 
-			runModuleBootstrapperCustomizations( modulesInOrder );
+			runModuleBootstrapperCustomizations( modulesInOrder, context.getParentApplicationContext() );
 
 			AcrossApplicationContextHolder root = createRootContext( contextInfo );
 			AcrossConfigurableApplicationContext rootContext = root.getApplicationContext();
@@ -382,7 +382,8 @@ public class AcrossBootstrapper
 		}
 
 		configured.add(
-				new ConfigurableAcrossModuleInfo( contextInfo, new AcrossContextConfigurationModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ), row )
+				new ConfigurableAcrossModuleInfo( contextInfo, new AcrossContextConfigurationModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ),
+				                                  row )
 		);
 
 		contextInfo.setConfiguredModules( configured );
@@ -624,7 +625,13 @@ public class AcrossBootstrapper
 		}
 	}
 
-	private void runModuleBootstrapperCustomizations( Collection<AcrossModuleInfo> modules ) {
+	private void runModuleBootstrapperCustomizations( Collection<AcrossModuleInfo> modules, ApplicationContext applicationContext ) {
+		if ( applicationContext != null ) {
+			Map<String, BootstrapAdapter> adapterMap = BeanFactoryUtils.beansOfTypeIncludingAncestors(
+					(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory(), BootstrapAdapter.class
+			);
+			adapterMap.forEach( ( beanName, adapter ) -> adapter.customizeBootstrapper( this ) );
+		}
 		for ( AcrossModuleInfo moduleInfo : modules ) {
 			if ( moduleInfo.getModule() instanceof BootstrapAdapter ) {
 				( (BootstrapAdapter) moduleInfo.getModule() ).customizeBootstrapper( this );
