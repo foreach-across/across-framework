@@ -18,6 +18,7 @@ package com.foreach.across.test.support;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestConfiguration;
@@ -65,9 +66,10 @@ public class TestAcrossTestConfiguration
 
 	@Test
 	public void modulesShouldBePresent() {
-		assertEquals( 2, contextInfo.getModules().size() );
+		assertEquals( 3, contextInfo.getModules().size() );
 		assertTrue( contextInfo.hasModule( AcrossWebModule.NAME ) );
 		assertTrue( contextInfo.hasModule( "named" ) );
+		assertTrue( contextInfo.hasModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ) );
 	}
 
 	private void assertTestQueryFails( DataSource dataSource ) {

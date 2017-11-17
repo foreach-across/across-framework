@@ -27,10 +27,12 @@ import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public abstract class AcrossModule extends AbstractAcrossEntity implements AcrossModuleEntity
 {
@@ -115,11 +117,28 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	 * @param classOrAnnotations to match
 	 */
 	public void expose( Class<?>... classOrAnnotations ) {
-		setExposeFilter( BeanFilter.composite(
-				getExposeFilter(),
-				BeanFilter.instances( classOrAnnotations ),
-				BeanFilter.annotations( classOrAnnotations )
-		) );
+		if ( classOrAnnotations.length > 0 ) {
+			setExposeFilter( BeanFilter.composite(
+					getExposeFilter(),
+					BeanFilter.instances( classOrAnnotations ),
+					BeanFilter.annotations( classOrAnnotations )
+			) );
+		}
+	}
+
+	/**
+	 * Expose beans matching any of the classes or annotations.
+	 * If the class specified is not present on the classpath, it will be ignored.
+	 *
+	 * @param classNames to add
+	 */
+	public void exposeClass( String... classNames ) {
+		expose(
+				Stream.of( classNames )
+				      .map( ClassLoadingUtils::resolveClass )
+				      .filter( Objects::nonNull )
+				      .toArray( Class[]::new )
+		);
 	}
 
 	/**

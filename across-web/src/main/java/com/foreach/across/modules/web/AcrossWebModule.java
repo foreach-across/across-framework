@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
 import com.foreach.across.core.context.bootstrap.BootstrapAdapter;
@@ -25,6 +26,9 @@ import com.foreach.across.modules.web.config.AcrossWebConfig;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import com.foreach.across.modules.web.menu.Menu;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.util.Set;
 
@@ -42,6 +46,11 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 
 	// AcrossWebModule is the special case providing root resources
 	public static final String RESOURCES = "";
+
+	public AcrossWebModule() {
+		expose( RestTemplateBuilder.class, HttpMessageConverters.class, ObjectMapper.class, Jackson2ObjectMapperBuilder.class );
+		exposeClass( "com.google.gson.Gson" );
+	}
 
 	/**
 	 * Set the base url path that will be used to access views.
@@ -81,7 +90,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 
 	@Override
 	public String getDescription() {
-		return "Base Across web functionality based on spring mvc";
+		return "Sets up module-based Spring MVC support.  Allows other modules to provide Spring MVC configuration.";
 	}
 
 	/**

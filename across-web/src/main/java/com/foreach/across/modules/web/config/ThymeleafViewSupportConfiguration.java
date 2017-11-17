@@ -109,14 +109,8 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
-	public ViewElementAttributeConverter viewElementAttributeConverter() {
-		return new DefaultViewElementAttributeConverter( viewElementAttributeObjectMapper() );
-	}
-
-	@Bean(ViewElementAttributeConverter.OBJECT_MAPPER_BEAN)
-	@Exposed
-	public ObjectMapper viewElementAttributeObjectMapper() {
-		return new ObjectMapper();
+	public ViewElementAttributeConverter viewElementAttributeConverter( ObjectMapper objectMapper ) {
+		return new DefaultViewElementAttributeConverter( objectMapper );
 	}
 
 	@Bean

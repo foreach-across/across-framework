@@ -23,8 +23,10 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import com.foreach.across.core.util.ClassLoadingUtils;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Represents the actual bootstrap configuration of an AcrossModule.
@@ -88,6 +90,21 @@ public class ModuleBootstrapConfig
 		}
 
 		setExposeFilter( BeanFilter.composite( members ) );
+	}
+
+	/**
+	 * Expose beans matching any of the classes or annotations.
+	 * If the class specified is not present on the classpath, it will be ignored.
+	 *
+	 * @param classNames to add
+	 */
+	public void exposeClass( String... classNames ) {
+		expose(
+				Stream.of( classNames )
+				      .map( ClassLoadingUtils::resolveClass )
+				      .filter( Objects::nonNull )
+				      .toArray( Class[]::new )
+		);
 	}
 
 	/**

@@ -13,31 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.core.util;
+package com.foreach.across.modules.web.extensions;
 
-import org.springframework.util.ClassUtils;
+import com.foreach.across.core.annotations.ModuleConfiguration;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 
 /**
  * @author Arne Vandamme
+ * @since 3.0.0
  */
-public abstract class ClassLoadingUtils
+@ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
+/*@Import(
+		CharacterEncodingConfiguration.class
+)*/
+public class EnableWebMvcConfiguration
 {
-	private ClassLoadingUtils() {
-	}
-
-	public static Class loadClass( String className ) throws ClassNotFoundException {
-		return Class.forName( className, true, Thread.currentThread().getContextClassLoader() );
-	}
-
-	/**
-	 * @return null if class can't be resolved
-	 */
-	public static Class resolveClass( String className ) {
-		try {
-			return ClassUtils.forName( className, Thread.currentThread().getContextClassLoader() );
-		}
-		catch ( ClassNotFoundException cnfe ) {
-			return null;
-		}
-	}
 }

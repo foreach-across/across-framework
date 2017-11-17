@@ -18,14 +18,16 @@ package com.foreach.across.boot;
 import com.foreach.across.config.AcrossConfigurationLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Arne Vandamme
  * @since 3.0.0
  */
-public class AcrossApplicationAutoConfiguration
+public final class AcrossApplicationAutoConfiguration
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossApplicationAutoConfiguration.class );
 
@@ -46,21 +48,39 @@ public class AcrossApplicationAutoConfiguration
 	private final Set<String> excluded = new HashSet<>();
 
 	private final Map<String, String> allowed = new HashMap<>();
+	private final Map<String, String> extendModules = new HashMap<>();
 	private final Set<String> requested = new HashSet<>();
 	private final Set<String> unknownSupport = new LinkedHashSet<>();
 
 	public AcrossApplicationAutoConfiguration( ClassLoader classLoader ) {
-		allowed.putAll( AcrossConfigurationLoader.loadMapValues( ENABLED_AUTO_CONFIGURATION, classLoader ) );
+		AcrossConfigurationLoader
+				.loadValues( ENABLED_AUTO_CONFIGURATION, classLoader )
+				.forEach( this::registerEnabledAutoConfiguration );
 		excluded.addAll( AcrossConfigurationLoader.loadValues( DISABLED_AUTO_CONFIGURATION, classLoader ) );
+	}
+
+	private void registerEnabledAutoConfiguration( String classTransform ) {
+		if ( classTransform.contains( ":" ) ) {
+			String[] parts = classTransform.split( ":" );
+			allowed.put( parts[0], parts[1] );
+		}
+		else if ( classTransform.contains( "->" ) ) {
+			String[] parts = classTransform.split( "->" );
+			extendModules.put( parts[0], parts[1] );
+		}
+		else {
+			allowed.put( classTransform, classTransform );
+		}
 	}
 
 	public String requestAutoConfiguration( String autoConfigurationClass ) {
 		requested.add( autoConfigurationClass );
 
 		String actualClass = allowed.get( autoConfigurationClass );
+		String extendModule = extendModules.get( autoConfigurationClass );
 		boolean disabled = excluded.contains( autoConfigurationClass );
 
-		if ( actualClass == null && !disabled ) {
+		if ( actualClass == null && !disabled && extendModule == null ) {
 			unknownSupport.add( autoConfigurationClass );
 		}
 
@@ -72,7 +92,18 @@ public class AcrossApplicationAutoConfiguration
 			LOG.trace( "Disallowed AutoConfiguration class {}", autoConfigurationClass );
 		}
 
+		if ( extendModule != null ) {
+			LOG.trace( "Resolved AutoConfiguration class {} to extend module {}", autoConfigurationClass, extendModule );
+			return null;
+		}
+
 		return disabled ? null : actualClass;
+	}
+
+	public Map<String, List<String>> getModuleExtensions() {
+		return requested.stream()
+		                .filter( extendModules::containsKey )
+		                .collect( Collectors.groupingBy( extendModules::get ) );
 	}
 
 	void printAutoConfigurationReport() {
@@ -81,9 +112,26 @@ public class AcrossApplicationAutoConfiguration
 			LOG.warn( "--- Across AutoConfiguration Report ---" );
 			LOG.warn( "The following auto-configuration classes have unknown Across support and were not added:" );
 			unknownSupport.forEach( className -> LOG.warn( "- {}", className ) );
-			 LOG.warn( "Consider adding them to a META-INF/across.configuration." );
+			LOG.warn( "Consider adding them to a META-INF/across.configuration." );
 			LOG.warn( "--- End Across AutoConfiguration Report ---" );
 			LOG.warn( "" );
 		}
+	}
+
+	/**
+	 * Retrieve (or register) the single instance of the Across auto-configuration.
+	 *
+	 * @param beanFactory to request for the instance
+	 * @param classLoader to use when creating
+	 * @return instance
+	 */
+	public static AcrossApplicationAutoConfiguration retrieve( ConfigurableListableBeanFactory beanFactory, ClassLoader classLoader ) {
+		if ( !beanFactory.containsBean( AcrossApplicationAutoConfiguration.class.getName() ) ) {
+			AcrossApplicationAutoConfiguration registry = new AcrossApplicationAutoConfiguration( classLoader );
+			beanFactory.registerSingleton( AcrossApplicationAutoConfiguration.class.getName(), registry );
+			return registry;
+		}
+
+		return beanFactory.getBean( AcrossApplicationAutoConfiguration.class.getName(), AcrossApplicationAutoConfiguration.class );
 	}
 }

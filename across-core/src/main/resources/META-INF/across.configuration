@@ -17,31 +17,43 @@
 # Default classes, interfaces and annotations that should result in component being exposed.
 #
 com.foreach.across.Exposed=\
-org.springframework.stereotype.Service,\
-com.foreach.across.core.annotations.Exposed
+  org.springframework.stereotype.Service,\
+  com.foreach.across.core.annotations.Exposed,\
+  org.springframework.web.servlet.HandlerMapping,\
+  org.springframework.web.servlet.HandlerAdapter,\
+  org.springframework.web.servlet.HandlerExceptionResolver,\
+  org.springframework.stereotype.Controller,\
+  org.springframework.web.bind.annotation.ControllerAdvice,\
+  javax.servlet.Servlet,\
+  javax.servlet.Filter
 #
 # List of AutoConfiguration classes that should never be allowed.
 # Once a class has been added here, it can only ever be added manually to the application.
 #
 com.foreach.across.AutoConfigurationDisabled=\
-org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+  org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
 #
 #
-# List of AutoConfiguration classes that are supported on the application level, these will always be allowed.
+# List of AutoConfiguration classes that are supported on the application level, these will be allowed unless disabled.
 # Optionally an adapter class name can be specified, if that is the case, the original class will not be directly
 # imported, but the adapter configuration will.
 #
 com.foreach.across.AutoConfigurationEnabled=\
-org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration,\
-org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration,\
-org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,\
-org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration,\
-org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration,\
-org.springframework.boot.devtools.autoconfigure.DevToolsDataSourceAutoConfiguration,\
-org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration,\
-org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration,\
-org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration,\
-org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration
+  org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration,\
+  org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration,\
+  org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration,\
+  org.springframework.boot.devtools.autoconfigure.DevToolsDataSourceAutoConfiguration,\
+  org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration,\
+  org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration,\
+  org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration,\
+  org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration,\
+  org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration
 
 #org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
 #org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
@@ -74,13 +86,11 @@ org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration
 #org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration,\
 #org.springframework.boot.autoconfigure.elasticsearch.jest.JestAutoConfiguration,\
 #org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration,\
-#org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration,\
 #org.springframework.boot.autoconfigure.hateoas.HypermediaAutoConfiguration,\
 #org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration,\
 #org.springframework.boot.autoconfigure.hazelcast.HazelcastJpaDependencyAutoConfiguration,\
 #org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration,\
 #org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration,\
-#org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration,\
 #org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration,\
 #org.springframework.boot.autoconfigure.jdbc.JndiDataSourceAutoConfiguration,\
 #org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration,\
@@ -122,12 +132,6 @@ org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration
 #org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration,\
 #org.springframework.boot.autoconfigure.transaction.jta.JtaAutoConfiguration,\
 #org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration,\
-#org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration,\
-#org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration,\
-#org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration,\
-#org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration,\
-#org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration,\
-#org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration,\
 #org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfiguration,\
 #org.springframework.boot.autoconfigure.websocket.WebSocketMessagingAutoConfiguration,\
 #org.springframework.boot.autoconfigure.webservices.WebServicesAutoConfiguration

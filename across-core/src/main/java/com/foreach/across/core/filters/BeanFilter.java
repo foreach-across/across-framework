@@ -16,10 +16,12 @@
 
 package com.foreach.across.core.filters;
 
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import java.lang.annotation.Annotation;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -135,7 +137,7 @@ public interface BeanFilter
 	 * instances will simply be ignored.
 	 *
 	 * @param beanFilters to combine
-	 * @return composite filter - non null
+	 * @return composite filter - never null
 	 */
 	static BeanFilter composite( BeanFilter... beanFilters ) {
 		return new BeanFilterComposite(
@@ -143,5 +145,26 @@ public interface BeanFilter
 				      .filter( b -> b != null )
 				      .toArray( BeanFilter[]::new )
 		);
+	}
+
+	/**
+	 * Creates a {@link BeanFilterComposite} for the given class names: if a class is present on the classpath and
+	 * is not an annotation, it will be checked for instance.  If it is an annotation it will check if the annotation
+	 * is present either on the class or on the factory method that created it.
+	 *
+	 * @param classNames to add
+	 * @return composite filter - never null
+	 */
+	static BeanFilter classNames( String... classNames ) {
+		Class[] classesOrAnnotations = Stream.of( classNames )
+		                                     .map( ClassLoadingUtils::resolveClass )
+		                                     .filter( Objects::nonNull )
+		                                     .toArray( Class[]::new );
+
+		if ( classesOrAnnotations.length > 0 ) {
+			return new BeanFilterComposite( instances( classesOrAnnotations ), annotations( classesOrAnnotations ) );
+		}
+
+		return empty();
 	}
 }

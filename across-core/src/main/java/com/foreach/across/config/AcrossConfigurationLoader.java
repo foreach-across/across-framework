@@ -53,6 +53,7 @@ public abstract class AcrossConfigurationLoader
 	 * @param classLoader to fetch the resources
 	 * @return map of values
 	 */
+	@Deprecated
 	public static Map<String, String> loadMapValues( String key, ClassLoader classLoader ) {
 		return loadValues( key, classLoader )
 				.stream()
