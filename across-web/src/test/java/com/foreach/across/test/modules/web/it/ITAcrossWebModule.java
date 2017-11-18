@@ -17,7 +17,10 @@ package com.foreach.across.test.modules.web.it;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.config.EnableAcrossContext;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,13 +29,18 @@ import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.validation.SmartValidator;
+import org.springframework.validation.Validator;
+import org.springframework.web.method.support.UriComponentsContributor;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.ServletContext;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -46,6 +54,9 @@ public class ITAcrossWebModule extends AbstractWebIntegrationTest
 	private ApplicationContext applicationContext;
 
 	@Autowired
+	private AcrossContextBeanRegistry beanRegistry;
+
+	@Autowired
 	private ServletContext servletContext;
 
 	@Test
@@ -54,6 +65,25 @@ public class ITAcrossWebModule extends AbstractWebIntegrationTest
 		assertExposed( HttpMessageConverters.class );
 		assertExposed( ObjectMapper.class );
 		assertExposed( Jackson2ObjectMapperBuilder.class );
+
+		// Exposed from the post-processor
+		assertExposed( UriComponentsContributor.class );
+	}
+
+	@Test
+	public void mvcConversionServiceCreatedInAcrossWebModule() {
+		FormattingConversionService acrossWebConversionService
+				= applicationContext.getBean( AcrossWebModule.CONVERSION_SERVICE_BEAN, FormattingConversionService.class );
+		assertSame( acrossWebConversionService, beanRegistry.getBeanFromModule( AcrossWebModule.NAME, AcrossWebModule.CONVERSION_SERVICE_BEAN ) );
+		FormattingConversionService autoConfiguredConversionService
+				= beanRegistry.getBeanFromModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE, AcrossWebModule.CONVERSION_SERVICE_BEAN );
+		assertSame( acrossWebConversionService, autoConfiguredConversionService );
+	}
+
+	@Test
+	public void validatorShouldBeInitialized() {
+		Validator validator = applicationContext.getBean( Validator.class );
+		assertTrue( validator instanceof SmartValidator );
 	}
 
 	@Test
@@ -64,6 +94,13 @@ public class ITAcrossWebModule extends AbstractWebIntegrationTest
 	@Test
 	public void registeredFilters() {
 		assertNotNull( servletContext.getFilterRegistration( "characterEncodingFilter" ) );
+	}
+
+	@Test
+	public void defaultRequestMappingIsExpectedToBePrefixedVariant() {
+		RequestMappingHandlerMapping handlerMapping = applicationContext.getBean( RequestMappingHandlerMapping.class );
+		assertTrue( handlerMapping instanceof PrefixingRequestMappingHandlerMapping );
+		assertEquals( 0, handlerMapping.getOrder() );
 	}
 
 	private void assertExposed( Class<?> type ) {

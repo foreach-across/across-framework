@@ -44,6 +44,12 @@ import java.util.Collection;
  */
 public abstract class PrefixingHandlerMappingConfiguration
 {
+	/**
+	 * Default order of the fallback handler mapping is 0.  Prefixing mappings should come before that,
+	 * preferably in module order.  The offset is the number that is subtracted from the module index.
+	 */
+	public static final int DEFAULT_ORDER_OFFSET = 100;
+
 	@Autowired
 	@Module(AcrossModule.CURRENT_MODULE)
 	private AcrossModuleInfo currentModule;
@@ -83,10 +89,10 @@ public abstract class PrefixingHandlerMappingConfiguration
 	protected abstract ClassFilter getHandlerMatcher();
 
 	/**
-	 * @return order for the handler mapping - defaults to module bootstrap incdex
+	 * @return order for the handler mapping - defaults to module bootstrap index
 	 */
 	protected int getHandlerMappingOrder() {
-		return currentModule.getIndex();
+		return currentModule.getIndex() - DEFAULT_ORDER_OFFSET;
 	}
 
 	/**

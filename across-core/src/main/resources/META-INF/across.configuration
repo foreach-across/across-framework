@@ -25,13 +25,17 @@ com.foreach.across.Exposed=\
   org.springframework.stereotype.Controller,\
   org.springframework.web.bind.annotation.ControllerAdvice,\
   javax.servlet.Servlet,\
-  javax.servlet.Filter
+  javax.servlet.Filter,\
+  org.springframework.web.servlet.config.annotation.WebMvcConfigurer,\
+  org.springframework.boot.autoconfigure.web.WebMvcRegistrations
 #
 # List of AutoConfiguration classes that should never be allowed.
 # Once a class has been added here, it can only ever be added manually to the application.
 #
 com.foreach.across.AutoConfigurationDisabled=\
-  org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+  org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration,\
+  org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration
 #
 #
 # List of AutoConfiguration classes that are supported on the application level, these will be allowed unless disabled.

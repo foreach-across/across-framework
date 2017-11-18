@@ -20,7 +20,9 @@ com.foreach.across.Exposed=\
   org.springframework.stereotype.Controller,\
   org.springframework.web.bind.annotation.ControllerAdvice,\
   javax.servlet.Servlet,\
-  javax.servlet.Filter
+  javax.servlet.Filter,\
+  org.springframework.web.servlet.config.annotation.WebMvcConfigurer,\
+  org.springframework.boot.autoconfigure.web.WebMvcRegistrations
 #
 com.foreach.across.AutoConfigurationEnabled=\
   com.foreach.across.config.AcrossWebApplicationAutoConfiguration
@@ -31,8 +33,8 @@ com.foreach.across.AutoConfigurationDisabled=\
   org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration,\
   org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration,\
   org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration,\
-  org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration
+  org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration
 
 #org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration,\
 #org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration,\
-#,\#org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration,

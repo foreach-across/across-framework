@@ -15,11 +15,14 @@
  */
 package com.foreach.across.modules.web.config;
 
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.extensions.EnableWebMvcConfiguration;
+import com.foreach.across.modules.web.support.MessageCodeSupportingLocalizedTextResolver;
 import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -37,4 +40,9 @@ import org.springframework.context.annotation.Import;
 @Import({ HttpMessageConvertersAutoConfiguration.class, JacksonAutoConfiguration.class, GsonAutoConfiguration.class, WebClientAutoConfiguration.class })
 class AcrossWebConfiguration
 {
+	@Bean
+	@Exposed
+	public MessageCodeSupportingLocalizedTextResolver localizedTextResolver() {
+		return new MessageCodeSupportingLocalizedTextResolver();
+	}
 }

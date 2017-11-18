@@ -44,6 +44,7 @@ import java.util.List;
 @Configuration
 @Exposed
 @OrderInModule(1)
+@Deprecated
 public class AcrossWebConfig extends WebMvcConfigurerAdapter implements PrefixingHandlerMappingConfigurer
 {
 	@Autowired

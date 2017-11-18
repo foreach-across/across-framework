@@ -18,8 +18,7 @@ package com.foreach.across.modules.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
-import com.foreach.across.core.context.bootstrap.BootstrapAdapter;
+import com.foreach.across.core.context.bootstrap.*;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.web.config.AcrossWebConfig;
@@ -29,6 +28,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.validation.Validator;
+import org.springframework.web.method.support.UriComponentsContributor;
 
 import java.util.Set;
 
@@ -101,6 +102,12 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 		contextConfigurers.add( new ComponentScanConfigurer( AcrossWebConfig.class, Menu.class ) );
+	}
+
+	@Override
+	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
+		contextConfig.getModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE )
+		             .expose( Validator.class, UriComponentsContributor.class );
 	}
 
 	/**

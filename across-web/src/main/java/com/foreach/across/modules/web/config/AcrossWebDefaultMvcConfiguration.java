@@ -44,7 +44,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.format.support.FormattingConversionService;
@@ -103,7 +102,8 @@ import java.util.*;
  *
  * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport
  */
-@Configuration
+//@Configuration
+@Deprecated
 public class AcrossWebDefaultMvcConfiguration implements ApplicationContextAware, ServletContextAware
 {
 	private static final boolean jaxb2Present =
