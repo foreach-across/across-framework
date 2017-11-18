@@ -20,10 +20,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
-import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
-import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import com.foreach.across.modules.web.template.NamedWebTemplateProcessor;
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.modules.web.template.WebTemplateRegistry;
@@ -33,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.Collection;
 
@@ -42,7 +41,7 @@ import java.util.Collection;
 @Configuration
 @ConditionalOnProperty(value = "acrossWebModule.templates.enabled", matchIfMissing = true)
 @OrderInModule(3)
-public class AcrossWebTemplateConfig extends PrefixingHandlerMappingConfigurerAdapter
+public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebTemplateConfig.class );
 
@@ -51,11 +50,6 @@ public class AcrossWebTemplateConfig extends PrefixingHandlerMappingConfigurerAd
 
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
-
-	@Override
-	public boolean supports( String mapperName ) {
-		return AcrossWebModule.NAME.equals( mapperName );
-	}
 
 	@Override
 	public void addInterceptors( InterceptorRegistry registry ) {

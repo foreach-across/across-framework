@@ -22,6 +22,7 @@ import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.ApplicationContext;
@@ -114,6 +115,16 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		}
 
 		return contextInfo.getConfigurableModuleInfo( moduleName ).getApplicationContext().getBean( requiredType );
+	}
+
+	@Override
+	public <T> Optional<T> findBeanOfTypeFromModule( String moduleName, Class<T> requiredType ) {
+		try {
+			return Optional.ofNullable( getBeanOfTypeFromModule( moduleName, requiredType ) );
+		}
+		catch ( BeansException be ) {
+			return Optional.empty();
+		}
 	}
 
 	@Override

@@ -34,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@Ignore("fix prefixing")
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @AcrossWebAppConfiguration(classes = TestDefaultTemplate.Config.class)
@@ -51,6 +50,7 @@ public class TestViewElementBuilderContextWebArgument
 		   .andExpect( content().string( containsString( "[model:modelA,modelB,modelC]" ) ) );
 	}
 
+	@Ignore("fix ordering")
 	@Test
 	public void customAttributesShouldOnlyBeVisibleInTheBuilderContext() throws Exception {
 		mvc.perform( get( "/viewElementBuilderContext" ) )

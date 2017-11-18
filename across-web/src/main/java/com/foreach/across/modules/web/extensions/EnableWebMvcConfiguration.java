@@ -20,6 +20,10 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
+import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
+import com.foreach.across.modules.web.template.LayoutSupportingExceptionHandlerExceptionResolver;
+import com.foreach.across.modules.web.template.WebTemplateInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebMvcRegistrationsAdapter;
@@ -28,6 +32,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.List;
@@ -44,8 +49,11 @@ import java.util.List;
  */
 @ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
 @Import(WebMvcAutoConfiguration.class)
+@RequiredArgsConstructor
 public class EnableWebMvcConfiguration extends WebMvcRegistrationsAdapter
 {
+	private final AcrossContextBeanRegistry beanRegistry;
+
 	/**
 	 * Create custom request mapping handler mapping that only matches on @Controller instead of anything with @RequestMapping.
 	 *
@@ -54,6 +62,23 @@ public class EnableWebMvcConfiguration extends WebMvcRegistrationsAdapter
 	@Override
 	public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
 		return new PrefixingRequestMappingHandlerMapping( new AnnotationClassFilter( Controller.class, true ) );
+	}
+
+	/**
+	 * Create custom layout supporting handler exception resolver.
+	 *
+	 * @return exception resolver instance
+	 */
+	@Override
+	public ExceptionHandlerExceptionResolver getExceptionHandlerExceptionResolver() {
+		LayoutSupportingExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new LayoutSupportingExceptionHandlerExceptionResolver();
+
+		beanRegistry.findBeanOfTypeFromModule( AcrossWebModule.NAME, WebResourceRegistryInterceptor.class )
+		            .ifPresent( exceptionHandlerExceptionResolver::setWebResourceRegistryInterceptor );
+		beanRegistry.findBeanOfTypeFromModule( AcrossWebModule.NAME, WebTemplateInterceptor.class )
+		            .ifPresent( exceptionHandlerExceptionResolver::setWebTemplateInterceptor );
+
+		return exceptionHandlerExceptionResolver;
 	}
 
 	/**

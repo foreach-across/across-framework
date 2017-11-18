@@ -128,7 +128,7 @@ public class AcrossBootstrapConfig
 	public boolean extendModule( String moduleName, String... classNames ) {
 		return extendModule(
 				moduleName,
-				Stream.of( classNames )
+				(Class[]) Stream.of( classNames )
 				      .map( ClassLoadingUtils::resolveClass )
 				      .filter( Objects::nonNull )
 				      .toArray( Class[]::new )

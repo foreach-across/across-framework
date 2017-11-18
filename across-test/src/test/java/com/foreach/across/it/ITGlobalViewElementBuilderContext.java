@@ -18,7 +18,6 @@ package com.foreach.across.it;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
 import com.foreach.across.test.AcrossTestWebContext;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@Ignore("fix prefixing")
 public class ITGlobalViewElementBuilderContext
 {
 	@Test

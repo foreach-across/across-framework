@@ -19,9 +19,7 @@ package com.foreach.across.modules.web.config;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.registry.RefreshableRegistry;
-import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.resources.ResourceConfigurationProperties;
-import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurer;
 import com.foreach.across.modules.web.context.AcrossWebArgumentResolver;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.menu.MenuBuilder;
@@ -37,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.List;
@@ -45,7 +44,7 @@ import java.util.List;
 @Exposed
 @OrderInModule(1)
 @Deprecated
-public class AcrossWebConfig extends WebMvcConfigurerAdapter implements PrefixingHandlerMappingConfigurer
+public class AcrossWebConfig extends WebMvcConfigurerAdapter
 {
 	@Autowired
 	private PrefixingPathRegistry prefixingPathRegistry;
@@ -54,12 +53,7 @@ public class AcrossWebConfig extends WebMvcConfigurerAdapter implements Prefixin
 	private ResourceConfigurationProperties resourceConfigurationProperties;
 
 	@Override
-	public boolean supports( String mapperName ) {
-		return AcrossWebModule.NAME.equals( mapperName );
-	}
-
-	@Override
-	public void addInterceptors( com.foreach.across.modules.web.mvc.InterceptorRegistry registry ) {
+	public void addInterceptors( InterceptorRegistry registry ) {
 		registry.addInterceptor( new WebAppPathResolverExposingInterceptor( prefixingPathRegistry ) );
 		registry.addInterceptor( webResourceRegistryInterceptor() );
 	}

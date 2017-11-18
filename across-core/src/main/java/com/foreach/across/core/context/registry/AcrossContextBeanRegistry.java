@@ -20,6 +20,7 @@ import org.springframework.core.ResolvableType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Provides access to all BeanFactories present in an AcrossContext.
@@ -118,6 +119,17 @@ public interface AcrossContextBeanRegistry
 	 * @return Bean found.  Exception is thrown if none is found.
 	 */
 	<T> T getBeanOfTypeFromModule( String moduleName, Class<T> requiredType );
+
+	/**
+	 * Searches the ApplicationContext of the specific module for a bean of the given type.
+	 * Returns an empty optional if no unique bean could be found.
+	 *
+	 * @param moduleName   Unique name of the module.
+	 * @param requiredType Type the bean should match.
+	 * @param <T>          Type of the matching bean.
+	 * @return optional containing the bean found
+	 */
+	<T> Optional<T> findBeanOfTypeFromModule( String moduleName, Class<T> requiredType );
 
 	/**
 	 * <p>Collect all beans of a given type that are visible inside this bean registry.

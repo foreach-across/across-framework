@@ -134,10 +134,10 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	 */
 	public void exposeClass( String... classNames ) {
 		expose(
-				Stream.of( classNames )
-				      .map( ClassLoadingUtils::resolveClass )
-				      .filter( Objects::nonNull )
-				      .toArray( Class[]::new )
+				(Class[]) Stream.of( classNames )
+				                .map( ClassLoadingUtils::resolveClass )
+				                .filter( Objects::nonNull )
+				                .toArray( Class[]::new )
 		);
 	}
 

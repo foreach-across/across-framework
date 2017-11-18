@@ -100,10 +100,10 @@ public class ModuleBootstrapConfig
 	 */
 	public void exposeClass( String... classNames ) {
 		expose(
-				Stream.of( classNames )
-				      .map( ClassLoadingUtils::resolveClass )
-				      .filter( Objects::nonNull )
-				      .toArray( Class[]::new )
+				(Class<?>[]) Stream.of( classNames )
+				                   .map( ClassLoadingUtils::resolveClass )
+				                   .filter( Objects::nonNull )
+				                   .toArray( Class[]::new )
 		);
 	}
 

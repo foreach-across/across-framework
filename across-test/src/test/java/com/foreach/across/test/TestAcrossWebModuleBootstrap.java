@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  */
 public class TestAcrossWebModuleBootstrap
 {
-	@Ignore("fix prefixing")
+	@Ignore("fix ordering")
 	@Test
 	public void acrossWebModuleDefaultExposed() {
 		try (AcrossTestWebContext ctx = web().modules( AcrossWebModule.NAME ).build()) {
