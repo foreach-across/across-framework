@@ -23,6 +23,7 @@ import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
@@ -166,6 +167,10 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	@Override
 	public ApplicationContext getApplicationContext() {
 		return AcrossContextUtils.getApplicationContext( module );
+	}
+
+	public ConfigurableListableBeanFactory getBeanFactory() {
+		return (ConfigurableListableBeanFactory) getApplicationContext().getAutowireCapableBeanFactory();
 	}
 
 	@Override

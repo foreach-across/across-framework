@@ -78,17 +78,23 @@ public class TestModuleBeanOrdering
 		assertBeans(
 				moduleOne.getBeansOfType( MyComponent.class ),
 				// first the module internal beans should be returned in module order
-				"moduleOneComponentOne", "moduleOneComponentTwo"
+				"moduleOneComponentOne", "moduleOneComponentTwo",
 				// next the exposed bean from module two
+				"moduleTwoComponentOne"
 		);
 		//assertBeans( moduleOne.getBeansOfType( MyComponent.class ), "moduleOneComponentOne", "moduleOneComponentTwo" );
 	}
 
+	@Ignore("fix ordering")
 	@Test
-	@Ignore
 	public void moduleTwoIncludesAllExposedBeansAsWell() {
-		assertBeans( moduleTwo.getBeansOfType( MyComponent.class ),
-		             "moduleOneComponentTwo", "moduleTwoComponentTwo", "moduleTwoComponentOne" );
+		assertBeans(
+				moduleTwo.getBeansOfType( MyComponent.class ),
+				// first module one exposed bean
+				"moduleOneComponentTwo",
+				// next module 2 beans in module order
+				"moduleTwoComponentTwo", "moduleTwoComponentOne"
+		);
 	}
 
 	@Test

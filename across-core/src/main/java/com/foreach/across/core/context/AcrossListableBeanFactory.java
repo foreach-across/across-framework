@@ -213,11 +213,50 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		return null;
 	}
 
+	/**
+	 * Supports exposed bean definitions, a local - non-exposed bean definition is primary versus an exposed bean definition.
+	 */
+	@Override
+	protected String determinePrimaryCandidate( Map<String, Object> candidates, Class<?> requiredType ) {
+		String primaryBeanName = determineNonExposedCandidate( candidates );
+
+		if ( primaryBeanName == null ) {
+			primaryBeanName = super.determinePrimaryCandidate( candidates, requiredType );
+		}
+
+		return primaryBeanName;
+	}
+
+	/**
+	 * Returns the single non-exposed candidate bean definition.
+	 */
+	private String determineNonExposedCandidate( Map<String, Object> candidates ) {
+		String nonExposedCandidateBean = null;
+		for ( Map.Entry<String, Object> entry : candidates.entrySet() ) {
+			String candidateBeanName = entry.getKey();
+			if ( containsBeanDefinition( candidateBeanName ) ) {
+				if ( !( getBeanDefinition( candidateBeanName ) instanceof ExposedBeanDefinition ) ) {
+					if ( nonExposedCandidateBean == null ) {
+						nonExposedCandidateBean = candidateBeanName;
+					}
+					else {
+						// more than one non-exposed - fallback to regular behaviour
+						return null;
+					}
+				}
+			}
+			else {
+				// not all local beans - fallback to regular behaviour
+				return null;
+			}
+		}
+		return nonExposedCandidateBean;
+	}
+
 	@Override
 	public void registerBeanDefinition( String beanName,
 	                                    BeanDefinition beanDefinition ) throws BeanDefinitionStoreException {
 		destroySingleton( beanName );
-
 		super.registerBeanDefinition( beanName, beanDefinition );
 	}
 }

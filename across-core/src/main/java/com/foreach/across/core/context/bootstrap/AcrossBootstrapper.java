@@ -143,19 +143,19 @@ public class AcrossBootstrapper
 				installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
 
 				boolean pushExposedToParentContext = shouldPushExposedBeansToParent( contextInfo );
-				ExposedContextBeanRegistry exposedBeanRegistry = new ExposedContextBeanRegistry(
+				ExposedContextBeanRegistry contextExposedBeans = new ExposedContextBeanRegistry(
 						AcrossContextUtils.getBeanRegistry( contextInfo ),
 						rootContext.getBeanFactory(),
 						contextInfo.getBootstrapConfiguration().getExposeTransformer()
 				);
 
-				exposedBeanRegistry.add( AcrossContextInfo.BEAN );
+				contextExposedBeans.add( AcrossContextInfo.BEAN );
 
 				LOG.info( "" );
 				LOG.info( "--- Starting module bootstrap" );
 				LOG.info( "" );
 
-				List<ConfigurableAcrossModuleInfo> bootstrappedModules = new ArrayList<>(  );
+				List<ConfigurableAcrossModuleInfo> bootstrappedModules = new ArrayList<>();
 
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo =
@@ -212,8 +212,14 @@ public class AcrossBootstrapper
 					             rootContext );
 
 					if ( pushExposedToParentContext ) {
-						exposedBeanRegistry.addAll( configurableAcrossModuleInfo.getExposedBeanDefinitions() );
+						contextExposedBeans.addAll( configurableAcrossModuleInfo.getExposedBeanDefinitions() );
 					}
+
+					// Push the currently exposed beans to the previously bootstrapped modules
+					ExposedModuleBeanRegistry moduleExposedBeans = configurableAcrossModuleInfo.getExposedBeanRegistry();
+					bootstrappedModules.stream()
+					                   .map( ConfigurableAcrossModuleInfo::getBeanFactory )
+					                   .forEach( bf -> moduleExposedBeans.copyTo( bf, false ) );
 
 					bootstrappedModules.add( configurableAcrossModuleInfo );
 
@@ -226,7 +232,7 @@ public class AcrossBootstrapper
 				LOG.info( "" );
 
 				if ( pushExposedToParentContext ) {
-					pushExposedBeansToParent( exposedBeanRegistry, rootContext );
+					pushExposedBeansToParent( contextExposedBeans, rootContext );
 				}
 
 				// Refresh beans

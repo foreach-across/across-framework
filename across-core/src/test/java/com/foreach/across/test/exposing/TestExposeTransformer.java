@@ -40,8 +40,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +75,7 @@ public class TestExposeTransformer
 	}
 
 	@Test
-	public void configurationIsFromPrimaryModule() {
+	public void configurationIsFromPrimaryModuleBecauseLocalBeanDefinitionTakesPrecedenceOverExposed() {
 		assertNotNull( exposingConfiguration );
 		assertSame( exposingConfiguration,
 		            AcrossContextUtils.getApplicationContext( primaryModule ).getBean( ExposingConfiguration.class ) );
@@ -134,7 +134,7 @@ public class TestExposeTransformer
 			Map<String, String> rename = new HashMap<String, String>();
 			rename.put( "myService", "someService" );
 
-			Collection<String> primaries = Arrays.asList( "myController" );
+			Collection<String> primaries = Collections.singletonList( "myController" );
 			module.setExposeTransformer(
 					new BeanDefinitionTransformerComposite( new PrimaryBeanTransformer( primaries ),
 					                                        new BeanRenameTransformer( rename, false ) ) );
@@ -146,7 +146,7 @@ public class TestExposeTransformer
 		public ExposingModule prefixedModule() {
 			ExposingModule module = new ExposingModule( "prefixed" );
 
-			Collection<String> primaries = Arrays.asList( "myService" );
+			Collection<String> primaries = Collections.singletonList( "myService" );
 			module.setExposeTransformer(
 					new BeanDefinitionTransformerComposite( new PrimaryBeanTransformer( primaries ),
 					                                        new BeanPrefixingTransformer( "prefix" ) ) );
