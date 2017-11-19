@@ -119,6 +119,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	                                    ModuleBootstrapConfig moduleBootstrapConfig,
 	                                    AcrossApplicationContextHolder context ) {
 		AcrossConfigurableApplicationContext child = context.getApplicationContext();
+		child.setModuleIndex( moduleBootstrapConfig.getBootstrapIndex() );
 
 		loadApplicationContext( child, moduleBootstrapConfig.getApplicationContextConfigurers(), moduleBootstrapConfig.getPreviouslyExposedBeans() );
 	}

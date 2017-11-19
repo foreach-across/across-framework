@@ -21,6 +21,7 @@ import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
+import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -179,7 +180,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 				// with double entries
 				if ( !includeModuleInternals || !isExposedNonSingleton ) {
 					Object bean = beanFactory.getBean( beanName );
-					comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
+					comparator.register( bean, AcrossOrderSpecifier.builder().moduleIndex( Ordered.HIGHEST_PRECEDENCE ).build() );
 
 					beans.add( (T) bean );
 					beanNames.put( (T) bean, beanName );

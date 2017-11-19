@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.core.context;
+package com.foreach.across.core.context.support;
 
 import com.foreach.across.core.AcrossModuleSettings;
 import com.foreach.across.core.AcrossModuleSettingsRegistry;

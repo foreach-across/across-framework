@@ -16,8 +16,6 @@
 
 package com.foreach.across.core;
 
-import org.springframework.core.Ordered;
-
 /**
  * Interface that defines the order of an instance within the AcrossModule.  Useful if multiple instances
  * of the same type need to have a specific order within the module, but without influencing the order
@@ -30,11 +28,6 @@ import org.springframework.core.Ordered;
  */
 public interface OrderedInModule
 {
-	/**
-	 * Default order assigned if no order is specified.
-	 */
-	int DEFAULT_ORDER = Ordered.LOWEST_PRECEDENCE - 1000;
-
 	/**
 	 * @return The order in the module.
 	 */

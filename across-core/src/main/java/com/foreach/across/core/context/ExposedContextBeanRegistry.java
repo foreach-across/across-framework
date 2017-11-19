@@ -41,7 +41,7 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 	public ExposedContextBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry,
 	                                   ConfigurableListableBeanFactory beanFactory,
 	                                   ExposedBeanDefinitionTransformer transformer ) {
-		super( contextBeanRegistry, null, transformer );
+		super( contextBeanRegistry, null, 0, transformer );
 
 		this.beanFactory = beanFactory;
 

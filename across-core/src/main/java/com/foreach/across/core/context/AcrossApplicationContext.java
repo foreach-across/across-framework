@@ -55,6 +55,11 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	}
 
 	@Override
+	public void setModuleIndex( Integer moduleIndex ) {
+		( (AcrossListableBeanFactory) getBeanFactory() ).setModuleIndex( moduleIndex );
+	}
+
+	@Override
 	protected ConfigurableEnvironment createEnvironment() {
 		return new StandardAcrossEnvironment();
 	}

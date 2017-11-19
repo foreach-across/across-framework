@@ -18,6 +18,8 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.context.support.AcrossOrderSpecifier;
+import com.foreach.across.core.context.support.AcrossOrderUtils;
 import com.foreach.across.core.registry.IncrementalRefreshableRegistry;
 import com.foreach.across.core.registry.RefreshableRegistry;
 import org.springframework.beans.BeansException;
@@ -38,6 +40,8 @@ import org.springframework.core.annotation.AnnotationUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Extends a {@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
@@ -51,6 +55,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	private Set<String> exposedBeanNames = new HashSet<>();
 
 	private BeanFactory parentBeanFactory;
+	private Integer moduleIndex;
 
 	public AcrossListableBeanFactory() {
 	}
@@ -100,6 +105,9 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		return super.getMergedBeanDefinition( beanName, bd, containingBd );
 	}
 
+	/**
+	 * Overridden to make public.
+	 */
 	@Override
 	public boolean isAutowireCandidate( String beanName,
 	                                    DependencyDescriptor descriptor,
@@ -199,15 +207,49 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		if ( dependencyDescriptor.getMethodParameter() != null ) {
 			Method method = dependencyDescriptor.getMethodParameter().getMethod();
 			if ( method != null ) {
-				Annotation annotation = AnnotationUtils.findAnnotation(
-						method, RefreshableCollection.class
-				);
+				Annotation annotation = AnnotationUtils.findAnnotation( method, RefreshableCollection.class );
 
 				if ( annotation != null ) {
-					return AnnotatedElementUtils.getMergedAnnotationAttributes( method,
-					                                                            RefreshableCollection.class.getName() );
+					return AnnotatedElementUtils.getMergedAnnotationAttributes( method, RefreshableCollection.class.getName() );
 				}
 			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public <T> Map<String, T> getBeansOfType( Class<T> type, boolean includeNonSingletons, boolean allowEagerInit ) throws BeansException {
+		Map<String, T> beansOfType = super.getBeansOfType( type, includeNonSingletons, allowEagerInit );
+
+		Map<T, String> nameForBean = new IdentityHashMap<>();
+		ModuleBeanOrderComparator orderComparator = new ModuleBeanOrderComparator();
+		beansOfType.forEach( ( beanName, bean ) -> {
+			AcrossOrderSpecifier specifier = retrieveOrderSpecifier( beanName );
+			if ( specifier != null ) {
+				orderComparator.register( bean, specifier );
+			}
+			nameForBean.put( bean, beanName );
+		} );
+
+		return nameForBean.keySet()
+		                  .stream()
+		                  .sorted( orderComparator )
+		                  .collect( Collectors.toMap( nameForBean::get, Function.identity(), ( v1, v2 ) -> v1, LinkedHashMap::new ) );
+	}
+
+	private AcrossOrderSpecifier retrieveOrderSpecifier( String beanName ) {
+		if ( containsBeanDefinition( beanName ) ) {
+			BeanDefinition beanDefinition = getMergedLocalBeanDefinition( beanName );
+			Object existing = beanDefinition.getAttribute( AcrossOrderSpecifier.class.getName() );
+
+			if ( existing != null ) {
+				return (AcrossOrderSpecifier) existing;
+			}
+
+			AcrossOrderSpecifier specifier = AcrossOrderUtils.createOrderSpecifier( beanDefinition, moduleIndex );
+			beanDefinition.setAttribute( AcrossOrderSpecifier.class.getName(), specifier );
+			return specifier;
 		}
 
 		return null;
@@ -258,5 +300,13 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	                                    BeanDefinition beanDefinition ) throws BeanDefinitionStoreException {
 		destroySingleton( beanName );
 		super.registerBeanDefinition( beanName, beanDefinition );
+	}
+
+	public void setModuleIndex( Integer moduleIndex ) {
+		this.moduleIndex = moduleIndex;
+	}
+
+	public Integer getModuleIndex() {
+		return moduleIndex;
 	}
 }

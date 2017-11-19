@@ -49,13 +49,25 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
 	private final Map<String[], TypeFilter[]> packagesToScan = new HashMap<>();
 
+	private Integer moduleIndex;
+
 	public AcrossWebApplicationContext() {
 		setBeanNameGenerator( new ModuleConfigurationBeanNameGenerator() );
 	}
 
 	@Override
+	public void setModuleIndex( Integer moduleIndex ) {
+		this.moduleIndex = moduleIndex;
+		if ( hasBeanFactory() ) {
+			( (AcrossListableBeanFactory) getBeanFactory() ).setModuleIndex( moduleIndex );
+		}
+	}
+
+	@Override
 	protected DefaultListableBeanFactory createBeanFactory() {
-		return new AcrossListableBeanFactory( getInternalParentBeanFactory() );
+		AcrossListableBeanFactory beanFactory = new AcrossListableBeanFactory( getInternalParentBeanFactory() );
+		beanFactory.setModuleIndex( moduleIndex );
+		return beanFactory;
 	}
 
 	@Override

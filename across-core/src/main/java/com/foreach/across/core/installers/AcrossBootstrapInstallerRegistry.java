@@ -341,6 +341,7 @@ public class AcrossBootstrapInstallerRegistry
 		if ( !installerContexts.containsKey( module ) ) {
 			AcrossConfigurableApplicationContext context = applicationContextFactory.createInstallerContext();
 			context.setDisplayName( "Installer context: " + module.getName() );
+			context.setModuleIndex( contextConfig.getModule( module.getName() ).getBootstrapIndex() );
 			installerContexts.put( module, context );
 
 			created = true;

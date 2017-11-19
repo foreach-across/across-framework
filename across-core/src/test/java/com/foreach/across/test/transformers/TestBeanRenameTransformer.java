@@ -35,12 +35,12 @@ public class TestBeanRenameTransformer
 
 	public TestBeanRenameTransformer() {
 		definitions.put( "sessionFactory",
-		                 new ExposedBeanDefinition( mock( AcrossContextBeanRegistry.class ), "module", "sessionFactory",
-		                                            Object.class, new String[0] ) );
+		                 new ExposedBeanDefinition( mock( AcrossContextBeanRegistry.class ), "module", 0,
+		                                            "sessionFactory", Object.class, new String[0] ) );
 		definitions.put( "transactionManager",
-		                 new ExposedBeanDefinition( mock( AcrossContextBeanRegistry.class ), "module",
-		                                            "transactionManager", Object.class,
-		                                            new String[] { "currentTransactionManager" } ) );
+		                 new ExposedBeanDefinition( mock( AcrossContextBeanRegistry.class ), "module", 0,
+		                                            "transactionManager",
+		                                            Object.class, new String[] { "currentTransactionManager" } ) );
 	}
 
 	@Test

@@ -28,6 +28,8 @@ import org.springframework.core.type.filter.TypeFilter;
  */
 public interface AcrossConfigurableApplicationContext extends ConfigurableApplicationContext
 {
+	void setModuleIndex( Integer moduleIndex );
+
 	ConfigurableEnvironment getEnvironment();
 
 	void provide( ProvidedBeansMap... beans );

@@ -21,7 +21,6 @@ import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.ordering.one.ModuleOne;
 import com.foreach.across.test.ordering.two.ModuleTwo;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -85,7 +85,6 @@ public class TestModuleBeanOrdering
 		//assertBeans( moduleOne.getBeansOfType( MyComponent.class ), "moduleOneComponentOne", "moduleOneComponentTwo" );
 	}
 
-	@Ignore("fix ordering")
 	@Test
 	public void moduleTwoIncludesAllExposedBeansAsWell() {
 		assertBeans(
@@ -135,9 +134,7 @@ public class TestModuleBeanOrdering
 
 	private void assertBeans( Map<String, MyComponent> beans, String... expected ) {
 		assertEquals( expected.length, beans.size() );
-
-		AtomicInteger position = new AtomicInteger();
-		beans.keySet()
-		     .forEach( beanName -> assertEquals( expected[position.getAndIncrement()], beanName ) );
+		String[] beanNames = beans.keySet().toArray( new String[beans.size()] );
+		assertArrayEquals( "Bean names: " + Arrays.toString( beanNames ), expected, beanNames );
 	}
 }

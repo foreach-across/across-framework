@@ -16,13 +16,8 @@
 
 package com.foreach.across.core.context;
 
-import com.foreach.across.core.OrderedInModule;
-import com.foreach.across.core.annotations.OrderInModule;
-import org.springframework.aop.framework.AopProxyUtils;
+import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.annotation.Order;
-import org.springframework.util.ClassUtils;
 
 import java.util.*;
 
@@ -40,68 +35,49 @@ import java.util.*;
  */
 public class ModuleBeanOrderComparator implements Comparator<Object>
 {
+	private static final AcrossOrderSpecifier DEFAULT_SPECIFIER = AcrossOrderSpecifier.builder().build();
 	/**
 	 * If no order specified, the default is less than lowest priority so it would be
 	 * possible to define beans that need to come after all module beans.
 	 */
-	public static final int DEFAULT_ORDER_IF_UNSPECIFIED = OrderedInModule.DEFAULT_ORDER;
+	private static final int DEFAULT_ORDER_IF_UNSPECIFIED = Ordered.LOWEST_PRECEDENCE - 1000;
 
-	private Map<Object, Integer> moduleIndexMap = new HashMap<>();
-	private Map<Object, Integer> orderMap = new HashMap<>();
-	private Map<Object, Integer> orderInModuleMap = new HashMap<>();
+	private final Map<Object, AcrossOrderSpecifier> orderSpecifierMap = new IdentityHashMap<>();
 
+	@Deprecated
 	public void register( Object bean, int moduleIndex ) {
-		moduleIndexMap.put( bean, moduleIndex );
-		orderMap.put( bean, lookupOrder( bean ) );
-		orderInModuleMap.put( bean, lookupOrderInModule( bean ) );
+		register( bean, AcrossOrderSpecifier.forSources( Collections.singletonList( bean ) ).moduleIndex( moduleIndex ).build() );
 	}
 
-	private int lookupOrder( Object bean ) {
-		if ( bean instanceof Ordered ) {
-			return ( (Ordered) bean ).getOrder();
-		}
-		if ( bean != null ) {
-			Class<?> clazz = ClassUtils.getUserClass(
-					bean instanceof Class ? (Class<?>) bean : AopProxyUtils.ultimateTargetClass( bean ) );
-			Order order = AnnotationUtils.findAnnotation( clazz, Order.class );
-			if ( order != null ) {
-				return order.value();
-			}
-		}
-		return DEFAULT_ORDER_IF_UNSPECIFIED;
-	}
-
-	private int lookupOrderInModule( Object bean ) {
-		if ( bean instanceof OrderedInModule ) {
-			return ( (OrderedInModule) bean ).getOrderInModule();
-		}
-		if ( bean != null ) {
-			Class<?> clazz = ClassUtils.getUserClass(
-					bean instanceof Class ? (Class<?>) bean : AopProxyUtils.ultimateTargetClass( bean ) );
-			OrderInModule order = AnnotationUtils.findAnnotation( clazz, OrderInModule.class );
-			if ( order != null ) {
-				return order.value();
-			}
-		}
-		return OrderedInModule.DEFAULT_ORDER;
+	/**
+	 * Add the order specifier for a particular object.
+	 *
+	 * @param obj       to add the specifier for
+	 * @param specifier specifier
+	 */
+	public void register( Object obj, AcrossOrderSpecifier specifier ) {
+		orderSpecifierMap.put( obj, specifier );
 	}
 
 	@Override
 	public int compare( Object left, Object right ) {
-		Integer leftOrder = orderMap.get( left );
-		Integer rightOrder = orderMap.get( right );
+		AcrossOrderSpecifier leftSpecifier = orderSpecifierMap.getOrDefault( left, DEFAULT_SPECIFIER );
+		AcrossOrderSpecifier rightSpecifier = orderSpecifierMap.getOrDefault( right, DEFAULT_SPECIFIER );
+
+		Integer leftOrder = leftSpecifier.getOrder( left, DEFAULT_ORDER_IF_UNSPECIFIED );
+		Integer rightOrder = rightSpecifier.getOrder( right, DEFAULT_ORDER_IF_UNSPECIFIED );
 
 		int comparison = leftOrder.compareTo( rightOrder );
 
 		if ( comparison == 0 ) {
-			Integer leftModuleIndex = moduleIndexMap.get( left );
-			Integer rightModuleIndex = moduleIndexMap.get( right );
+			Integer leftModuleIndex = leftSpecifier.getModuleIndex( 0 );
+			Integer rightModuleIndex = rightSpecifier.getModuleIndex( 0 );
 
 			comparison = leftModuleIndex.compareTo( rightModuleIndex );
 
 			if ( comparison == 0 ) {
-				Integer leftOrderInModule = orderInModuleMap.get( left );
-				Integer rightOrderInModule = orderInModuleMap.get( right );
+				Integer leftOrderInModule = leftSpecifier.getOrderInModule( left, Ordered.LOWEST_PRECEDENCE );
+				Integer rightOrderInModule = rightSpecifier.getOrderInModule( right, Ordered.LOWEST_PRECEDENCE );
 
 				comparison = leftOrderInModule.compareTo( rightOrderInModule );
 			}
@@ -117,7 +93,7 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 	 */
 	public void sort( List<?> beans ) {
 		if ( beans.size() > 1 ) {
-			Collections.sort( beans, this );
+			beans.sort( this );
 		}
 	}
 }

@@ -16,7 +16,8 @@
 package com.foreach.across.test.events;
 
 import com.foreach.across.core.annotations.Event;
-import com.foreach.across.core.annotations.OrderInModule;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
+import com.foreach.across.core.context.info.ConfigurableAcrossModuleInfo;
 import com.foreach.across.core.events.*;
 import net.engio.mbassy.listener.Filter;
 import net.engio.mbassy.listener.Handler;
@@ -37,6 +38,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Arne Vandamme
@@ -100,9 +102,9 @@ public class TestMBassadorEventPublisher
 		Unordered four = new Unordered4();
 
 		eventPublisher.subscribe( one );
-		eventPublisher.publish( mock( AcrossModuleBeforeBootstrapEvent.class ) );
+		eventPublisher.publish( startModule( 1 ) );
 		eventPublisher.subscribe( two );
-		eventPublisher.publish( mock( AcrossModuleBeforeBootstrapEvent.class ) );
+		eventPublisher.publish( startModule( 2 ) );
 		eventPublisher.subscribe( three );
 		eventPublisher.publish( mock( AcrossContextBootstrappedEvent.class ) );
 		eventPublisher.subscribe( four );
@@ -112,6 +114,14 @@ public class TestMBassadorEventPublisher
 		eventPublisher.publish( mock( AcrossEvent.class ) );
 
 		assertEquals( Arrays.asList( ordered, one, two, three, four ), handled );
+	}
+
+	private AcrossModuleBeforeBootstrapEvent startModule( int index ) {
+		AcrossModuleBeforeBootstrapEvent bootstrapEvent = mock( AcrossModuleBeforeBootstrapEvent.class );
+		AcrossModuleInfo moduleInfo = mock( ConfigurableAcrossModuleInfo.class );
+		when( moduleInfo.getIndex() ).thenReturn( index );
+		when( bootstrapEvent.getModule() ).thenReturn( moduleInfo );
+		return bootstrapEvent;
 	}
 
 	@Test
@@ -212,7 +222,6 @@ public class TestMBassadorEventPublisher
 			handled.add( "method-ordered-one" );
 		}
 
-		@OrderInModule(1)
 		@Handler(filters = { @Filter(ParameterizedAcrossEventFilter.class), @Filter(EventNameFilter.class) })
 		public void methodModuleOrdered( AcrossEvent event ) {
 			handled.add( "method-ordered-two" );

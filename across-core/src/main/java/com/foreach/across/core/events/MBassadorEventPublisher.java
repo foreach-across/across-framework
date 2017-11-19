@@ -16,10 +16,9 @@
 
 package com.foreach.across.core.events;
 
-import com.foreach.across.core.OrderedInModule;
 import com.foreach.across.core.annotations.Event;
-import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import net.engio.mbassy.bus.BusRuntime;
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.bus.config.BusConfiguration;
@@ -29,14 +28,12 @@ import net.engio.mbassy.bus.error.MessageBusException;
 import net.engio.mbassy.listener.MessageHandler;
 import net.engio.mbassy.subscription.Subscription;
 import net.engio.mbassy.subscription.SubscriptionContext;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.annotation.Order;
 import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.PreDestroy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * <p>EventBus implementation for the AcrossContext.  Allows for publishing AcrossEvent
@@ -51,7 +48,7 @@ public class MBassadorEventPublisher implements AcrossEventPublisher
 {
 	private final MBassador<AcrossEvent> mbassador;
 
-	private int defaultPriority = 1000;
+	private int moduleIndex = 0;
 
 	public MBassadorEventPublisher() {
 		BusConfiguration defaultConfig = new BusConfiguration();
@@ -102,12 +99,12 @@ public class MBassadorEventPublisher implements AcrossEventPublisher
 
 	@Event
 	void handleModuleBootstrapStart( AcrossModuleBeforeBootstrapEvent beforeModuleBootstrappedEvent ) {
-		defaultPriority += 1000;
+		moduleIndex = beforeModuleBootstrappedEvent.getModule().getIndex();
 	}
 
 	@Event
 	void handleContextBootstrapped( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
-		defaultPriority += 1000;
+		moduleIndex += 1;
 	}
 
 	private class SubscriptionFactory extends net.engio.mbassy.subscription.SubscriptionFactory
@@ -140,39 +137,10 @@ public class MBassadorEventPublisher implements AcrossEventPublisher
 		}
 
 		private int calculatePriority( Method method ) {
-			Order order = AnnotationUtils.findAnnotation( method, Order.class );
-			OrderInModule orderInModule = null;
-
-			if ( order == null ) {
-				orderInModule = AnnotationUtils.findAnnotation( method, OrderInModule.class );
-
-				if ( orderInModule == null ) {
-					order = AnnotationUtils.findAnnotation( method.getDeclaringClass(), Order.class );
-
-					if ( order == null ) {
-						orderInModule = AnnotationUtils.findAnnotation( method.getDeclaringClass(), OrderInModule.class );
-					}
-				}
-			}
-
-			if ( order == null && orderInModule == null ) {
-				if ( Ordered.class.isAssignableFrom( method.getDeclaringClass() ) ) {
-					LOG.warn( "Listener implements Ordered interface which is not supported for event handler ordering." );
-				}
-				else if ( OrderedInModule.class.isAssignableFrom( method.getDeclaringClass() ) ) {
-					LOG.warn( "Listener implements OrderedInModule interface which is not supported for event handler ordering." );
-				}
-			}
-			else {
-				if ( order != null ) {
-					return -order.value();
-				}
-				else {
-					return -( defaultPriority + orderInModule.value() );
-				}
-			}
-
-			return -( defaultPriority + 100 );
+			return -1 * AcrossOrderSpecifier.forSources( Arrays.asList( method, method.getDeclaringClass() ) )
+			                           .moduleIndex( moduleIndex )
+			                           .build()
+			                           .toPriority();
 		}
 	}
 }

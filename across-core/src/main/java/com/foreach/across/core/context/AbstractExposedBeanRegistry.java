@@ -35,6 +35,7 @@ public abstract class AbstractExposedBeanRegistry
 	private final Logger LOG = LoggerFactory.getLogger( getClass() );
 
 	protected final String moduleName;
+	protected final Integer moduleIndex;
 	protected final AcrossContextBeanRegistry contextBeanRegistry;
 	protected final ExposedBeanDefinitionTransformer transformer;
 
@@ -42,8 +43,10 @@ public abstract class AbstractExposedBeanRegistry
 
 	protected AbstractExposedBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry,
 	                                       String moduleName,
+	                                       Integer moduleIndex,
 	                                       ExposedBeanDefinitionTransformer transformer ) {
 		this.moduleName = moduleName;
+		this.moduleIndex = moduleIndex;
 		this.contextBeanRegistry = contextBeanRegistry;
 		this.transformer = transformer;
 	}
@@ -61,11 +64,11 @@ public abstract class AbstractExposedBeanRegistry
 				ExposedBeanDefinition exposed = new ExposedBeanDefinition(
 						contextBeanRegistry,
 						moduleName,
+						moduleIndex,
 						definition.getKey(),
 						original,
 						contextBeanRegistry.getBeanTypeFromModule( moduleName, definition.getKey() ),
-				        getAliases( definition.getKey() )
-				);
+						getAliases( definition.getKey() ) );
 
 				candidates.put( definition.getKey(), exposed );
 			}
@@ -79,10 +82,10 @@ public abstract class AbstractExposedBeanRegistry
 				ExposedBeanDefinition exposed = new ExposedBeanDefinition(
 						contextBeanRegistry,
 						moduleName,
+						moduleIndex,
 						singleton.getKey(),
 						contextBeanRegistry.getBeanTypeFromModule( moduleName, singleton.getKey() ),
-				        getAliases( singleton.getKey() )
-				);
+						getAliases( singleton.getKey() ) );
 
 				candidates.put( singleton.getKey(), exposed );
 			}
