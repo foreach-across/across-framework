@@ -16,8 +16,12 @@
 package com.foreach.across.test.ordering.one;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import java.util.Set;
 
@@ -25,6 +29,7 @@ import java.util.Set;
  * @author Arne Vandamme
  * @since 3.0.0
  */
+@Configuration
 public class ModuleOne extends AcrossModule
 {
 	@Override
@@ -35,5 +40,17 @@ public class ModuleOne extends AcrossModule
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 		contextConfigurers.add( ComponentScanConfigurer.forAcrossModule( ModuleOne.class ) );
+	}
+
+	@Bean
+	@OrderInModule(3)
+	public ModuleOneComponentOne moduleOneComponentThree() {
+		return new ModuleOneComponentOne();
+	}
+
+	@Bean
+	@Order
+	public ModuleOneComponentTwo moduleOneComponentFour() {
+		return new ModuleOneComponentTwo();
 	}
 }

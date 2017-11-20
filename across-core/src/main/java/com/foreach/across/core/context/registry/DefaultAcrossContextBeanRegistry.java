@@ -21,14 +21,12 @@ import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
-import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.Field;
@@ -171,7 +169,6 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		resolver.setBeanFactory( beanFactory );
 
 		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory, resolvableType.getRawClass() ).keySet() ) {
-
 			if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
 				boolean isExposedNonSingleton = !beanFactory.isSingleton( beanName )
 						&& beanFactory.getBeanDefinition( beanName ) instanceof ExposedBeanDefinition;
@@ -180,7 +177,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 				// with double entries
 				if ( !includeModuleInternals || !isExposedNonSingleton ) {
 					Object bean = beanFactory.getBean( beanName );
-					comparator.register( bean, AcrossOrderSpecifier.builder().moduleIndex( Ordered.HIGHEST_PRECEDENCE ).build() );
+					comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
 					beans.add( (T) bean );
 					beanNames.put( (T) bean, beanName );
@@ -199,7 +196,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
 							if ( !( beanFactory.getBeanDefinition( beanName ) instanceof ExposedBeanDefinition ) ) {
 								Object bean = beanFactory.getBean( beanName );
-								comparator.register( bean, module.getIndex() );
+								comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
 								beans.add( (T) bean );
 								beanNames.put( (T) bean, module.getName() + ":" + beanName );

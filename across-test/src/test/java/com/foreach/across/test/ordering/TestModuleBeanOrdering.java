@@ -44,10 +44,13 @@ import static org.junit.Assert.assertEquals;
  * module one:
  * - component one: OiM = 1, not exposed
  * - component two: OiM = 2, exposed
+ * - component three: OiM = 3, not exposed
+ * - component four: O = LP, exposed
  * <p>
  * module two - depends on 1:
  * - component one: OiM = 2, exposed
  * - component two: OiM = 1, not exposed
+ * - component three: O = HP, exposed
  *
  * @author Arne Vandamme
  * @since 3.0.0
@@ -64,7 +67,6 @@ public class TestModuleBeanOrdering
 	@Autowired
 	private AcrossContextInfo contextInfo;
 
-	private ApplicationContext parentContext;
 	private ApplicationContext moduleOne, moduleTwo;
 
 	@Before
@@ -77,22 +79,29 @@ public class TestModuleBeanOrdering
 	public void moduleOneIncludesAllExposedBeans() {
 		assertBeans(
 				moduleOne.getBeansOfType( MyComponent.class ),
-				// first the module internal beans should be returned in module order
-				"moduleOneComponentOne", "moduleOneComponentTwo",
+				// first exposed ordered bean from module two
+				"moduleTwoComponentThree",
+				// then the module internal beans should be returned in module order
+				"moduleOneComponentOne", "moduleOneComponentTwo", "moduleOneComponentThree",
 				// next the exposed bean from module two
-				"moduleTwoComponentOne"
+				"moduleTwoComponentOne",
+				// lastly the lower priority ordering exposed bean from module one
+				"moduleOneComponentFour"
 		);
-		//assertBeans( moduleOne.getBeansOfType( MyComponent.class ), "moduleOneComponentOne", "moduleOneComponentTwo" );
 	}
 
 	@Test
 	public void moduleTwoIncludesAllExposedBeansAsWell() {
 		assertBeans(
 				moduleTwo.getBeansOfType( MyComponent.class ),
-				// first module one exposed bean
+				// first exposed ordered bean from module two
+				"moduleTwoComponentThree",
+				// then module one exposed beans
 				"moduleOneComponentTwo",
 				// next module 2 beans in module order
-				"moduleTwoComponentTwo", "moduleTwoComponentOne"
+				"moduleTwoComponentTwo", "moduleTwoComponentOne",
+				// lastly the lower priority ordering exposed bean from module one
+				"moduleOneComponentFour"
 		);
 	}
 
@@ -100,10 +109,15 @@ public class TestModuleBeanOrdering
 	public void contextWithoutInternalsReturnsAllExposedBeansInOrder() {
 		assertBeans(
 				beanRegistry.getBeansOfTypeAsMap( MyComponent.class, false ),
-				// first module one exposed beans
+				// explicitly ordered module two bean
+				"moduleTwoComponentThree",
+				// regular module one exposed beans
 				"moduleOneComponentTwo",
-				// second module two exposed beans
-				"moduleTwoComponentOne"
+				// regular ordered module two exposed bean
+				"moduleTwoComponentOne",
+				// explicitly ordered module one bean
+				"moduleOneComponentFour"
+
 		);
 	}
 
@@ -111,10 +125,14 @@ public class TestModuleBeanOrdering
 	public void contextWithInternalsReturnsAlsoNonExposedBeansInOrder() {
 		assertBeans(
 				beanRegistry.getBeansOfTypeAsMap( MyComponent.class, true ),
-				// first module beans in module order
-				"ModuleOne:moduleOneComponentOne", "ModuleOne:moduleOneComponentTwo",
-				// second module two beans in module order
-				"ModuleTwo:moduleTwoComponentTwo", "ModuleTwo:moduleTwoComponentOne"
+				// module two bean explicitly ordered
+				"ModuleTwo:moduleTwoComponentThree",
+				// module one beans in module order
+				"ModuleOne:moduleOneComponentOne", "ModuleOne:moduleOneComponentTwo", "ModuleOne:moduleOneComponentThree",
+				// module two beans in module order
+				"ModuleTwo:moduleTwoComponentTwo", "ModuleTwo:moduleTwoComponentOne",
+				// module one bean explicitly ordered
+				"ModuleOne:moduleOneComponentFour"
 		);
 	}
 

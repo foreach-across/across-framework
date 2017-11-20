@@ -19,7 +19,10 @@ package com.foreach.across.core.context;
 import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import org.springframework.core.Ordered;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -31,7 +34,7 @@ import java.util.*;
  * <li>order of the bean in the module (@OrderInModule if any)</li>
  * </ul>
  * </p>
- * <p>To achieve the sorting, the comparator must hold the index values for all the beans.</p>
+ * <p>To achieve the sorting, the comparator must hold {@link AcrossOrderSpecifier} references for all objects being sorted.</p>
  */
 public class ModuleBeanOrderComparator implements Comparator<Object>
 {
@@ -44,11 +47,6 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 
 	private final Map<Object, AcrossOrderSpecifier> orderSpecifierMap = new IdentityHashMap<>();
 
-	@Deprecated
-	public void register( Object bean, int moduleIndex ) {
-		register( bean, AcrossOrderSpecifier.forSources( Collections.singletonList( bean ) ).moduleIndex( moduleIndex ).build() );
-	}
-
 	/**
 	 * Add the order specifier for a particular object.
 	 *
@@ -56,7 +54,9 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 	 * @param specifier specifier
 	 */
 	public void register( Object obj, AcrossOrderSpecifier specifier ) {
-		orderSpecifierMap.put( obj, specifier );
+		if ( specifier != null ) {
+			orderSpecifierMap.put( obj, specifier );
+		}
 	}
 
 	@Override

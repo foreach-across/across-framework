@@ -19,8 +19,10 @@ import com.foreach.across.config.AcrossServletContextInitializer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.annotations.Event;
+import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
 import org.slf4j.Logger;
@@ -31,7 +33,6 @@ import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -53,8 +54,7 @@ public class DynamicServletConfiguration
 	private final AcrossContextInfo contextInfo;
 
 	@Autowired
-	public DynamicServletConfiguration( ServletContext servletContext,
-	                                    AcrossContextInfo contextInfo ) {
+	public DynamicServletConfiguration( ServletContext servletContext, AcrossContextInfo contextInfo ) {
 		this.servletContext = servletContext;
 		this.contextInfo = contextInfo;
 	}
@@ -89,19 +89,22 @@ public class DynamicServletConfiguration
 					if ( !( v instanceof AcrossServletContextInitializer ) && !initializerBeans.contains( v ) ) {
 						initializers.put( v, new InitializerEntry( contextInfo.getId(), k, v ) );
 						initializerBeans.add( v );
-						comparator.register( v, Ordered.HIGHEST_PRECEDENCE );
+						comparator.register( v, AcrossOrderSpecifier.forSources( Collections.singletonList( v ) ).moduleIndex( 0 ).build() );
 					}
 				} );
 
 		contextInfo.getModules().forEach(
-				m -> m.getApplicationContext().getBeansOfType( ServletContextInitializer.class )
-				      .forEach( ( k, v ) -> {
-					      if ( !initializerBeans.contains( v ) ) {
-						      initializers.put( v, new InitializerEntry( m.getName(), k, v ) );
-						      initializerBeans.add( v );
-						      comparator.register( v, m.getIndex() );
-					      }
-				      } )
+				m -> {
+					AcrossListableBeanFactory beanFactory = (AcrossListableBeanFactory) m.getApplicationContext().getAutowireCapableBeanFactory();
+					beanFactory.getBeansOfType( ServletContextInitializer.class )
+					           .forEach( ( beanName, bean ) -> {
+						           if ( !initializerBeans.contains( bean ) ) {
+							           initializers.put( bean, new InitializerEntry( m.getName(), beanName, bean ) );
+							           initializerBeans.add( bean );
+							           comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
+						           }
+					           } );
+				}
 		);
 
 		comparator.sort( initializerBeans );

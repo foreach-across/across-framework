@@ -238,7 +238,14 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		                  .collect( Collectors.toMap( nameForBean::get, Function.identity(), ( v1, v2 ) -> v1, LinkedHashMap::new ) );
 	}
 
-	private AcrossOrderSpecifier retrieveOrderSpecifier( String beanName ) {
+	/**
+	 * Retrieve an {@link AcrossOrderSpecifier} for a local bean or singleton.
+	 * If neither is present with that name, {@code null} will be returned.
+	 *
+	 * @param beanName bean name
+	 * @return order specifier
+	 */
+	public AcrossOrderSpecifier retrieveOrderSpecifier( String beanName ) {
 		if ( containsBeanDefinition( beanName ) ) {
 			BeanDefinition beanDefinition = getMergedLocalBeanDefinition( beanName );
 			Object existing = beanDefinition.getAttribute( AcrossOrderSpecifier.class.getName() );
@@ -250,6 +257,10 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 			AcrossOrderSpecifier specifier = AcrossOrderUtils.createOrderSpecifier( beanDefinition, moduleIndex );
 			beanDefinition.setAttribute( AcrossOrderSpecifier.class.getName(), specifier );
 			return specifier;
+		}
+
+		if ( containsSingleton( beanName ) ) {
+			return AcrossOrderSpecifier.forSources( Collections.singletonList( getSingleton( beanName ) ) ).moduleIndex( moduleIndex ).build();
 		}
 
 		return null;
