@@ -16,6 +16,7 @@
 
 package com.foreach.across.core.context.registry;
 
+import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import org.springframework.core.ResolvableType;
 
 import java.util.List;
@@ -139,7 +140,7 @@ public interface AcrossContextBeanRegistry
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
 	 * @return List of bean instances.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -154,7 +155,7 @@ public interface AcrossContextBeanRegistry
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
 	 * @return Map of bean instances with their bean name and/or module information.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -168,7 +169,7 @@ public interface AcrossContextBeanRegistry
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
 	 * @return List of bean instances.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -187,7 +188,7 @@ public interface AcrossContextBeanRegistry
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
 	 * @return Map of bean instances with their bean name and/or module information.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -202,7 +203,7 @@ public interface AcrossContextBeanRegistry
 	 * @param resolvableType Type of bean to look for.
 	 * @param <T>            Specific bean type.
 	 * @return List of bean instances.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -222,7 +223,7 @@ public interface AcrossContextBeanRegistry
 	 * @param resolvableType Type of bean to look for.
 	 * @param <T>            Specific bean type.
 	 * @return Map of bean instances with their bean name and/or module information.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */

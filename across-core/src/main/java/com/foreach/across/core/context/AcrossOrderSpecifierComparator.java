@@ -19,10 +19,8 @@ package com.foreach.across.core.context;
 import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import org.springframework.core.Ordered;
 
-import java.util.Comparator;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * <p>
@@ -36,9 +34,10 @@ import java.util.Map;
  * </p>
  * <p>To achieve the sorting, the comparator must hold {@link AcrossOrderSpecifier} references for all objects being sorted.</p>
  */
-public class ModuleBeanOrderComparator implements Comparator<Object>
+public class AcrossOrderSpecifierComparator implements Comparator<Object>
 {
-	private static final AcrossOrderSpecifier DEFAULT_SPECIFIER = AcrossOrderSpecifier.builder().build();
+	private static final Function<Object, AcrossOrderSpecifier> DEFAULT_SPECIFIER = x -> AcrossOrderSpecifier.forSources( Collections.singletonList( x ) )
+	                                                                                                         .build();
 	/**
 	 * If no order specified, the default is less than lowest priority so it would be
 	 * possible to define beans that need to come after all module beans.
@@ -61,8 +60,8 @@ public class ModuleBeanOrderComparator implements Comparator<Object>
 
 	@Override
 	public int compare( Object left, Object right ) {
-		AcrossOrderSpecifier leftSpecifier = orderSpecifierMap.getOrDefault( left, DEFAULT_SPECIFIER );
-		AcrossOrderSpecifier rightSpecifier = orderSpecifierMap.getOrDefault( right, DEFAULT_SPECIFIER );
+		AcrossOrderSpecifier leftSpecifier = orderSpecifierMap.computeIfAbsent( left, DEFAULT_SPECIFIER );
+		AcrossOrderSpecifier rightSpecifier = orderSpecifierMap.computeIfAbsent( right, DEFAULT_SPECIFIER );
 
 		Integer leftOrder = leftSpecifier.getOrder( left, DEFAULT_ORDER_IF_UNSPECIFIED );
 		Integer rightOrder = rightSpecifier.getOrder( right, DEFAULT_ORDER_IF_UNSPECIFIED );

@@ -16,7 +16,7 @@
 
 package com.foreach.across.test.context;
 
-import com.foreach.across.core.context.ModuleBeanOrderComparator;
+import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import java.util.List;
 import static com.foreach.across.core.context.support.AcrossOrderSpecifier.builder;
 import static org.junit.Assert.assertEquals;
 
-public class TestModuleBeanOrderComparator
+public class TestAcrossOrderSpecifierComparator
 {
 	private final Object one = new Object();
 	private final Object two = new Object();
@@ -36,7 +36,7 @@ public class TestModuleBeanOrderComparator
 	private final Object six = new Object();
 
 	private List<Object> beans = new ArrayList<>();
-	private ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
+	private AcrossOrderSpecifierComparator comparator = new AcrossOrderSpecifierComparator();
 
 	@Test
 	public void beansAccordingToModuleIndex() {

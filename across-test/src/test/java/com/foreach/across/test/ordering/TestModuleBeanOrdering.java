@@ -76,6 +76,33 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
+	public void wiredComponentListOnModuleOneIncludesOnlyModuleOneBeansInOrder() {
+		assertEquals(
+				Arrays.asList(
+						moduleOne.getBean( "moduleOneComponentOne" ),
+						moduleOne.getBean( "moduleOneComponentTwo" ),
+						moduleOne.getBean( "moduleOneComponentThree" ),
+						moduleOne.getBean( "moduleOneComponentFour" )
+				),
+				moduleOne.getBean( "componentList" )
+		);
+	}
+
+	@Test
+	public void wiredComponentListOnModuleTwoIncludesModuleOneExposedBeans() {
+		assertEquals(
+				Arrays.asList(
+						moduleTwo.getBean( "moduleTwoComponentThree" ),
+						moduleOne.getBean( "moduleOneComponentTwo" ),
+						moduleTwo.getBean( "moduleTwoComponentTwo" ),
+						moduleTwo.getBean( "moduleTwoComponentOne" ),
+						moduleOne.getBean( "moduleOneComponentFour" )
+				),
+				moduleTwo.getBean( "componentList" )
+		);
+	}
+
+	@Test
 	public void moduleOneIncludesAllExposedBeans() {
 		assertBeans(
 				moduleOne.getBeansOfType( MyComponent.class ),

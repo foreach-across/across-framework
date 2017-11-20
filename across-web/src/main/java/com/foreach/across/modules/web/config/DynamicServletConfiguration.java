@@ -20,7 +20,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
-import com.foreach.across.core.context.ModuleBeanOrderComparator;
+import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
@@ -82,7 +82,7 @@ public class DynamicServletConfiguration
 		List<ServletContextInitializer> initializerBeans = new ArrayList<>();
 		Map<ServletContextInitializer, InitializerEntry> initializers = new HashMap<>();
 
-		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
+		AcrossOrderSpecifierComparator comparator = new AcrossOrderSpecifierComparator();
 
 		retrieveInitializersFromParent()
 				.forEach( ( k, v ) -> {

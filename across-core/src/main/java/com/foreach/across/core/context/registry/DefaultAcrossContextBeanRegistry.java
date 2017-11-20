@@ -17,8 +17,8 @@
 package com.foreach.across.core.context.registry;
 
 import com.foreach.across.core.context.AcrossListableBeanFactory;
+import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import com.foreach.across.core.context.ExposedBeanDefinition;
-import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -158,7 +158,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	@SuppressWarnings("unchecked")
 	public <T> Map<String, T> getBeansOfTypeAsMap( ResolvableType resolvableType, boolean includeModuleInternals ) {
 		Set<T> beans = new LinkedHashSet<>();
-		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
+		AcrossOrderSpecifierComparator comparator = new AcrossOrderSpecifierComparator();
 
 		Map<T, String> beanNames = new HashMap<>();
 

@@ -22,6 +22,7 @@ import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import com.foreach.across.core.context.support.AcrossOrderUtils;
 import com.foreach.across.core.registry.IncrementalRefreshableRegistry;
 import com.foreach.across.core.registry.RefreshableRegistry;
+import lombok.SneakyThrows;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -33,11 +34,14 @@ import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.core.OrderComparator;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
@@ -56,6 +60,8 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 
 	private BeanFactory parentBeanFactory;
 	private Integer moduleIndex;
+
+	private final AcrossOrderComparator acrossOrderComparator = new AcrossOrderComparator();
 
 	public AcrossListableBeanFactory() {
 	}
@@ -223,7 +229,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		Map<String, T> beansOfType = super.getBeansOfType( type, includeNonSingletons, allowEagerInit );
 
 		Map<T, String> nameForBean = new IdentityHashMap<>();
-		ModuleBeanOrderComparator orderComparator = new ModuleBeanOrderComparator();
+		AcrossOrderSpecifierComparator orderComparator = new AcrossOrderSpecifierComparator();
 		beansOfType.forEach( ( beanName, bean ) -> {
 			AcrossOrderSpecifier specifier = retrieveOrderSpecifier( beanName );
 			if ( specifier != null ) {
@@ -313,11 +319,43 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		super.registerBeanDefinition( beanName, beanDefinition );
 	}
 
+	@Override
+	public Comparator<Object> getDependencyComparator() {
+		return acrossOrderComparator;
+	}
+
 	public void setModuleIndex( Integer moduleIndex ) {
 		this.moduleIndex = moduleIndex;
 	}
 
 	public Integer getModuleIndex() {
 		return moduleIndex;
+	}
+
+	/**
+	 * Custom {@link OrderComparator} in order to replace the default ordering logic with AcrossSpecifier based.
+	 * Uses reflection to retrieve private values from the source provider as otherwise custom implementation
+	 * on the entire autowiring would be required.
+	 */
+	private class AcrossOrderComparator extends OrderComparator
+	{
+		private Field instancesField;
+
+		@SneakyThrows
+		@SuppressWarnings( "unchecked" )
+		@Override
+		public Comparator<Object> withSourceProvider( OrderSourceProvider sourceProvider ) {
+			if ( instancesField == null ) {
+				instancesField = ReflectionUtils.findField( sourceProvider.getClass(), "instancesToBeanNames" );
+				instancesField.setAccessible( true );
+			}
+
+			Map<Object, String> instancesToBeanNames = (Map<Object, String>) instancesField.get( sourceProvider );
+
+			AcrossOrderSpecifierComparator comparator = new AcrossOrderSpecifierComparator();
+			instancesToBeanNames.forEach( (bean, beanName) -> comparator.register( bean, retrieveOrderSpecifier( beanName ) ) );
+
+			return comparator;
+		}
 	}
 }

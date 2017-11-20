@@ -16,6 +16,7 @@
 package com.foreach.across.core.context.support;
 
 import com.foreach.across.core.OrderedInModule;
+import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.core.Ordered;
@@ -28,7 +29,7 @@ import java.util.List;
  * if not the module index will apply and within a same module index the module order will be used.
  *
  * @author Arne Vandamme
- * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+ * @see AcrossOrderSpecifierComparator
  * @since 3.0.0
  */
 @Builder

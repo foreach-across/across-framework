@@ -19,10 +19,12 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
+import com.foreach.across.test.ordering.MyComponent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,6 +42,11 @@ public class ModuleOne extends AcrossModule
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
 		contextConfigurers.add( ComponentScanConfigurer.forAcrossModule( ModuleOne.class ) );
+	}
+
+	@Bean
+	public List<MyComponent> componentList( List<MyComponent> components ) {
+		return components;
 	}
 
 	@Bean
