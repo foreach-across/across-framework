@@ -36,8 +36,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.SmartValidator;
 import org.springframework.validation.Validator;
 import org.springframework.web.method.support.UriComponentsContributor;
+import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
 
 import static org.junit.Assert.*;
@@ -65,6 +67,9 @@ public class ITAcrossWebModule extends AbstractWebIntegrationTest
 		assertExposed( HttpMessageConverters.class );
 		assertExposed( ObjectMapper.class );
 		assertExposed( Jackson2ObjectMapperBuilder.class );
+
+		assertExposed( MultipartResolver.class );
+		assertExposed( MultipartConfigElement.class );
 
 		// Exposed from the post-processor
 		assertExposed( UriComponentsContributor.class );
@@ -94,6 +99,7 @@ public class ITAcrossWebModule extends AbstractWebIntegrationTest
 	@Test
 	public void registeredFilters() {
 		assertNotNull( servletContext.getFilterRegistration( "characterEncodingFilter" ) );
+		assertNotNull( servletContext.getFilterRegistration( "multipartFilter" ) );
 	}
 
 	@Test

@@ -16,7 +16,6 @@
 package com.foreach.across.test;
 
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.config.CharacterEncodingConfiguration;
 import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
 import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
@@ -127,7 +126,7 @@ public class TestAcrossWebModuleBootstrap
 	public void dynamicConfigurationButDisabledThroughProperties() {
 		try (
 				AcrossTestWebContext ctx = web()
-						.property( AcrossWebModuleSettings.MULTIPART_AUTO_CONFIGURE, "false" )
+						.property( "spring.http.multipart.enabled", "false" )
 						.property( "spring.http.encoding.enabled", "false" )
 						.property( "acrossWebModule.resources.versioning.enabled", "false" )
 						.modules( AcrossWebModule.NAME )

@@ -15,9 +15,9 @@
  */
 package com.foreach.across.test;
 
-import com.foreach.across.modules.web.config.multipart.MultipartConfiguration;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.Servlet;
@@ -136,7 +136,7 @@ public class TestMockServletRegistration
 
 	@Test
 	public void multipartConfig() {
-		MultipartConfigElement multipartConfigElement = new MultipartConfiguration( "" );
+		MultipartConfigElement multipartConfigElement = new MultipartConfigFactory().createMultipartConfig();
 		MockServletRegistration registration = new MockServletRegistration( servletContext, "name", Servlet.class );
 		assertNull( registration.getMultipartConfig() );
 		registration.setMultipartConfig( multipartConfigElement );

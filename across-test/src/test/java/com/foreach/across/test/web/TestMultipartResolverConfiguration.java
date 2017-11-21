@@ -16,7 +16,6 @@
 package com.foreach.across.test.web;
 
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.config.multipart.MultipartConfiguration;
 import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
 import com.foreach.across.test.AcrossTestWebContext;
 import com.foreach.across.test.MockFilterRegistration;
@@ -50,13 +49,11 @@ public class TestMultipartResolverConfiguration
 
 			assertNotNull( registration );
 
-			MultipartResolver multipartResolver
-					= ctx.getBeanFromModule( AcrossWebModule.NAME, "filterMultipartResolver" );
+			MultipartResolver multipartResolver = ctx.getBeanFromModule( AcrossWebModule.NAME, "filterMultipartResolver" );
 			assertNotNull( multipartResolver );
 
 			MultipartConfigElement configElement = ctx.getBeanOfType( MultipartConfigElement.class );
 			assertNotNull( configElement );
-			assertTrue( configElement instanceof MultipartConfiguration );
 
 			assertSame(
 					configElement,
@@ -72,7 +69,6 @@ public class TestMultipartResolverConfiguration
 		                                     .build()) {
 			MultipartConfigElement configElement = ctx.getBeanOfType( MultipartConfigElement.class );
 			assertNotNull( configElement );
-			assertFalse( configElement instanceof MultipartConfiguration );
 
 			assertSame(
 					configElement,
