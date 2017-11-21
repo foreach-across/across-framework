@@ -41,8 +41,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import java.util.List;
 
 @Configuration
-@Exposed
 @OrderInModule(1)
+@Exposed
 @Deprecated
 public class AcrossWebConfig extends WebMvcConfigurerAdapter
 {

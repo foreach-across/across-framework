@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.Assert.assertFalse;
@@ -58,6 +59,7 @@ public class ITGlobalViewElementBuilderContext
 		                                     .modules( AcrossWebModule.NAME )
 		                                     .property( "acrossWebModule.registerGlobalBuilderContext", "true" )
 		                                     .build()) {
+			ctx.getBeansOfTypeAsMap( WebMvcConfigurer.class );
 			assertTrue(
 					ctx.moduleContainsLocalBean( AcrossWebModule.NAME, "viewElementBuilderContextInterceptor" )
 			);

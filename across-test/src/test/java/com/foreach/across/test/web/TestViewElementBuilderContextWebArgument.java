@@ -16,7 +16,6 @@
 package com.foreach.across.test.web;
 
 import com.foreach.across.test.AcrossWebAppConfiguration;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,6 @@ public class TestViewElementBuilderContextWebArgument
 		   .andExpect( content().string( containsString( "[model:modelA,modelB,modelC]" ) ) );
 	}
 
-	@Ignore("fix ordering")
 	@Test
 	public void customAttributesShouldOnlyBeVisibleInTheBuilderContext() throws Exception {
 		mvc.perform( get( "/viewElementBuilderContext" ) )

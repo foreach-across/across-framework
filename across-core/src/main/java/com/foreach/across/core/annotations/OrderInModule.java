@@ -18,10 +18,7 @@ package com.foreach.across.core.annotations;
 
 import org.springframework.core.Ordered;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Annotation that defines ordering inside the AcrossModule. The value is optional, and represents order value
@@ -41,6 +38,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
+@Documented
 public @interface OrderInModule
 {
 	/**

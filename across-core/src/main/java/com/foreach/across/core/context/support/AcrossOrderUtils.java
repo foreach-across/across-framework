@@ -73,8 +73,14 @@ public abstract class AcrossOrderUtils
 			return order;
 		}
 
-		if ( obj instanceof Method || obj instanceof Class ) {
-			OrderInModule ann = AnnotationUtils.findAnnotation( (AnnotatedElement) obj, OrderInModule.class );
+		if ( obj instanceof Class ) {
+			OrderInModule ann = AnnotationUtils.findAnnotation( (Class) obj, OrderInModule.class );
+			if ( ann != null ) {
+				return ann.value();
+			}
+		}
+		else if ( obj instanceof Method ) {
+			OrderInModule ann = AnnotationUtils.findAnnotation( (Method) obj, OrderInModule.class );
 			if ( ann != null ) {
 				return ann.value();
 			}

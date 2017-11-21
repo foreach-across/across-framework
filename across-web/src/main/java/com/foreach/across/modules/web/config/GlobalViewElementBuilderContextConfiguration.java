@@ -30,7 +30,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @since 2.0.0
  */
 @ConditionalOnProperty(value = "acrossWebModule.registerGlobalBuilderContext")
-@OrderInModule(2)
+@OrderInModule(3)
 @Configuration
 public class GlobalViewElementBuilderContextConfiguration extends WebMvcConfigurerAdapter
 {

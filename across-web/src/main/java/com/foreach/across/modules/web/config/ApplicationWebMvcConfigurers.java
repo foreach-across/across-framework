@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
  * @since 3.0.0
  */
 @Component
+@Deprecated
 public final class ApplicationWebMvcConfigurers
 {
 }

@@ -40,7 +40,7 @@ import java.util.Collection;
  */
 @Configuration
 @ConditionalOnProperty(value = "acrossWebModule.templates.enabled", matchIfMissing = true)
-@OrderInModule(3)
+@OrderInModule(2)
 public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebTemplateConfig.class );
