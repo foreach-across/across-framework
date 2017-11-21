@@ -15,7 +15,7 @@
  */
 package com.foreach.across.test;
 
-import org.springframework.util.Assert;
+import lombok.NonNull;
 
 import javax.servlet.Registration;
 import java.util.*;
@@ -34,9 +34,7 @@ public abstract class AbstractMockRegistration implements Registration.Dynamic
 
 	private boolean asyncSupported;
 
-	protected AbstractMockRegistration( MockAcrossServletContext servletContext, String name, String className ) {
-		Assert.notNull( name );
-
+	protected AbstractMockRegistration( MockAcrossServletContext servletContext, @NonNull String name, String className ) {
 		this.servletContext = servletContext;
 		this.name = name;
 		this.className = className;

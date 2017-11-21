@@ -17,7 +17,7 @@ package com.foreach.across.modules.web.mvc;
 
 import com.foreach.across.modules.web.context.WebAppPathResolver;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
-import org.springframework.util.Assert;
+import lombok.NonNull;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.ServletException;
@@ -37,8 +37,7 @@ public class WebAppPathResolverExposingInterceptor extends HandlerInterceptorAda
 {
 	private final WebAppPathResolver webAppPathResolver;
 
-	public WebAppPathResolverExposingInterceptor( WebAppPathResolver webAppPathResolver ) {
-		Assert.notNull( webAppPathResolver );
+	public WebAppPathResolverExposingInterceptor( @NonNull WebAppPathResolver webAppPathResolver ) {
 		this.webAppPathResolver = webAppPathResolver;
 	}
 

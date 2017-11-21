@@ -21,9 +21,9 @@ import com.foreach.across.core.events.ParameterizedAcrossEvent;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.MenuSelector;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ResolvableType;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -50,9 +50,7 @@ public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent, Paramet
 		this( menu, menuBuilder, ResolvableType.forClass( ClassUtils.getUserClass( menu.getClass() ) ) );
 	}
 
-	public BuildMenuEvent( T menu, PathBasedMenuBuilder menuBuilder, ResolvableType menuResolvableType ) {
-		Assert.notNull( menu );
-
+	public BuildMenuEvent( @NonNull T menu, PathBasedMenuBuilder menuBuilder, ResolvableType menuResolvableType ) {
 		genericTypes = new ResolvableType[] { menuResolvableType };
 
 		this.menu = menu;

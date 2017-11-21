@@ -15,8 +15,8 @@
  */
 package com.foreach.across.modules.web.context;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,10 +43,7 @@ public class PrefixingPathRegistry implements WebAppPathResolver
 	 * @param name    name that can be used to refer to this context
 	 * @param context implementation
 	 */
-	public void add( String name, PrefixingPathContext context ) {
-		Assert.notNull( name );
-		Assert.notNull( context );
-
+	public void add( @NonNull String name, @NonNull PrefixingPathContext context ) {
 		namedPrefixes.put( name, context );
 		context.setNamedPrefixMap( namedPrefixes );
 	}

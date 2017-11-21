@@ -23,10 +23,10 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ExposedContextBeanRegistry;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
-import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -153,14 +153,12 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	}
 
 	@Override
-	public int getModuleIndex( AcrossModule module ) {
-		Assert.notNull( module );
+	public int getModuleIndex( @NonNull AcrossModule module ) {
 		return getModuleIndex( module.getName() );
 	}
 
 	@Override
-	public int getModuleIndex( AcrossModuleInfo moduleInfo ) {
-		Assert.notNull( moduleInfo );
+	public int getModuleIndex( @NonNull AcrossModuleInfo moduleInfo ) {
 		return getModuleIndex( moduleInfo.getName() );
 	}
 

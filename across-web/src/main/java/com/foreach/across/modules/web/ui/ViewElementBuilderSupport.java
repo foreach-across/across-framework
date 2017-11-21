@@ -135,7 +135,8 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 		public static Collection<ElementOrBuilder> wrap( Iterable<?> viewElements ) {
 			List<ElementOrBuilder> wrapped = new ArrayList<>();
 			for ( Object viewElement : viewElements ) {
-				Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder );
+				Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder,
+				               "viewElement should be an instance of ViewElement of ViewElementBuilder" );
 				wrapped.add( new ElementOrBuilder( viewElement ) );
 			}
 

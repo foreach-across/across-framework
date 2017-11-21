@@ -16,9 +16,9 @@
 package com.foreach.across.modules.web.config.resources;
 
 import com.foreach.across.modules.web.AcrossWebModule;
+import lombok.NonNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 /**
  * Contains the different settings for the default resource configuration (path, folders, versioning and caching).
@@ -41,8 +41,7 @@ public class ResourceConfigurationProperties
 		return folders.clone();
 	}
 
-	public void setFolders( String[] folders ) {
-		Assert.notNull( folders );
+	public void setFolders( @NonNull String[] folders ) {
 		this.folders = folders.clone();
 	}
 

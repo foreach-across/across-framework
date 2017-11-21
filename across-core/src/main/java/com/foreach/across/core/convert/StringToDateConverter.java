@@ -15,10 +15,10 @@
  */
 package com.foreach.across.core.convert;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.util.Assert;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -93,8 +93,7 @@ public class StringToDateConverter implements Converter<String, Date>
 		this.locale = locale;
 	}
 
-	public void setPatterns( String[] patterns ) {
-		Assert.notNull( patterns );
+	public void setPatterns( @NonNull String[] patterns ) {
 		this.patterns = patterns.clone();
 	}
 

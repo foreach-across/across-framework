@@ -31,6 +31,7 @@ import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,8 +202,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		this.failBootstrapOnEventPublicationErrors = failBootstrapOnEventPublicationErrors;
 	}
 
-	public void addModule( AcrossModule module ) {
-		Assert.notNull( module );
+	public void addModule( @NonNull AcrossModule module ) {
 		Assert.notNull( module.getName(), "An AcrossModule must have a valid unique name." );
 
 		if ( module.getContext() != null ) {
