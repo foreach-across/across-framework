@@ -20,4 +20,5 @@
 
 	<logger name="com.foreach.across.it" level="debug" />
 	<logger name="com.foreach.across.test" level="debug" />
+	<logger name="com.foreach.across.core.context.ExposedModuleBeanRegistry" level="warn"/>
 </configuration>

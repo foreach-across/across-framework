@@ -27,6 +27,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractExposedBeanRegistry
@@ -39,7 +40,7 @@ public abstract class AbstractExposedBeanRegistry
 	protected final AcrossContextBeanRegistry contextBeanRegistry;
 	protected final ExposedBeanDefinitionTransformer transformer;
 
-	protected final Map<String, ExposedBeanDefinition> exposedDefinitions = new HashMap<>();
+	protected final Map<String, ExposedBeanDefinition> exposedDefinitions = new LinkedHashMap<>();
 
 	protected AbstractExposedBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry,
 	                                       String moduleName,
@@ -128,8 +129,9 @@ public abstract class AbstractExposedBeanRegistry
 	}
 
 	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry registry, boolean ignoreExistingBeanName ) {
+		LOG.trace( "Exposing beans to bean factory {}", beanFactory );
 		for ( Map.Entry<String, ExposedBeanDefinition> definition : exposedDefinitions.entrySet() ) {
-			LOG.debug( "Exposing bean {}: {}", definition.getKey(), definition.getValue().getBeanClassName() );
+			LOG.trace( "Exposing bean {}: {}", definition.getKey(), definition.getValue().getBeanClassName() );
 
 			ExposedBeanDefinition beanDefinition = definition.getValue();
 
