@@ -60,7 +60,7 @@ import java.util.stream.Stream;
 @ConditionalOnProperty(value = "acrossWebModule.views.thymeleaf.enabled", matchIfMissing = true)
 public class ThymeleafViewSupportConfiguration
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfiguration.class );
 
 	@Autowired
 	private ApplicationContext applicationContext;

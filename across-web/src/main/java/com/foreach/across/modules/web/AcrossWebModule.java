@@ -21,7 +21,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.bootstrap.*;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
-import com.foreach.across.modules.web.config.AcrossWebConfig;
+import com.foreach.across.modules.web.config.AcrossWebModuleDevSettings;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import com.foreach.across.modules.web.menu.Menu;
 import org.apache.commons.lang3.ArrayUtils;
@@ -101,7 +101,7 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	 */
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-		contextConfigurers.add( new ComponentScanConfigurer( AcrossWebConfig.class, Menu.class ) );
+		contextConfigurers.add( new ComponentScanConfigurer( AcrossWebModuleDevSettings.class, Menu.class ) );
 	}
 
 	@Override
