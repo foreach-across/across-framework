@@ -39,4 +39,4 @@ com.foreach.across.AutoConfigurationDisabled=\
   org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration,\
   org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration
 
-#org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration,\
+#org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration,

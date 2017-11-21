@@ -30,10 +30,7 @@ import com.foreach.across.core.context.installers.ClassPathScanningInstallerProv
 import com.foreach.across.core.context.installers.InstallerSetBuilder;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
-import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
-import com.foreach.across.core.events.AcrossEventPublisher;
-import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
-import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
+import com.foreach.across.core.events.*;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.filters.NamedBeanFilter;
@@ -95,6 +92,8 @@ public class AcrossBootstrapper
 	 * Bootstraps all modules in the context.
 	 */
 	public void bootstrap() {
+		ApplicationContext parentApplicationContext = context.getParentApplicationContext();
+
 		try {
 			bootstrapEventError = null;
 
@@ -259,11 +258,21 @@ public class AcrossBootstrapper
 			failOnEventErrors();
 
 			createdApplicationContexts.clear();
+
+			AcrossContextReadyEvent contextReadyEvent = new AcrossContextReadyEvent( context );
+			eventPublisher.publish( contextReadyEvent );
+			if ( parentApplicationContext != null ) {
+				parentApplicationContext.publishEvent( contextReadyEvent );
+			}
 		}
 		catch ( RuntimeException e ) {
 			LOG.debug( "Exception during bootstrapping, destroying all created ApplicationContext instances" );
 
 			destroyAllCreatedApplicationContexts();
+
+			if ( parentApplicationContext != null ) {
+				parentApplicationContext.publishEvent( new AcrossContextFailedEvent( context, e ) );
+			}
 
 			throw new AcrossException( "Across bootstrap failed", e );
 		}

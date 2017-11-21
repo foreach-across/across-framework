@@ -233,6 +233,7 @@
 		<module>across-core</module>
 		<module>across-web</module>
 		<module>across-test</module>
+		<module>across-live-boot</module>
 	</modules>
 
 	<scm>

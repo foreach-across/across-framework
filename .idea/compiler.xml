@@ -19,16 +19,20 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="across-core" />
+        <module name="across-live-boot" />
         <module name="across-test" />
         <module name="across-web" />
+        <module name="across-web-bootstrap" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="across" target="1.8" />
       <module name="across-base" target="1.8" />
       <module name="across-core" target="1.8" />
+      <module name="across-live-boot" target="1.8" />
       <module name="across-test" target="1.8" />
       <module name="across-web" target="1.8" />
+      <module name="across-web-bootstrap" target="1.8" />
       <module name="platform-bom" target="1.7" />
     </bytecodeTargetLevel>
   </component>
