@@ -57,6 +57,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionEvaluationRepor
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
@@ -165,7 +166,7 @@ public class AcrossBootstrapper
 					bootstrappedModules.forEach( previous -> config.addPreviouslyExposedBeans( previous.getExposedBeanRegistry() ) );
 
 					// Add scanned (or edited) module configurations
-					config.addApplicationContextConfigurer( moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName() ) );
+					config.addApplicationContextConfigurer( moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName(), moduleInfo.getAliases() ) );
 
 					LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
 					          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
@@ -507,14 +508,16 @@ public class AcrossBootstrapper
 		);
 		contextConfig.setExposeTransformer( contextInfo.getContext().getExposeTransformer() );
 
-		Map<String, AcrossBootstrapConfigurer> bootstrapConfigurers = BeanFactoryUtils.beansOfTypeIncludingAncestors(
-				(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory(), AcrossBootstrapConfigurer.class
+		List<AcrossBootstrapConfigurer> bootstrapConfigurers = new ArrayList<>(
+				BeanFactoryUtils.beansOfTypeIncludingAncestors(
+						(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory(), AcrossBootstrapConfigurer.class
+				).values()
 		);
-		bootstrapConfigurers.forEach( ( beanName, configurer ) -> configurer.configureContext( contextConfig ) );
+		bootstrapConfigurers.sort( AnnotationAwareOrderComparator.INSTANCE );
+		bootstrapConfigurers.forEach( configurer -> configurer.configureContext( contextConfig ) );
+
 		contextConfig.getModules()
-		             .forEach( moduleBootstrapConfig ->
-				                       bootstrapConfigurers.forEach( ( beanName, configurer ) -> configurer.configureModule( moduleBootstrapConfig ) )
-		             );
+		             .forEach( moduleBootstrapConfig -> bootstrapConfigurers.forEach( configurer -> configurer.configureModule( moduleBootstrapConfig ) ) );
 
 		contextInfo.setBootstrapConfiguration( contextConfig );
 

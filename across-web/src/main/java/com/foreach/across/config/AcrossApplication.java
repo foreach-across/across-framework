@@ -42,7 +42,8 @@ import java.lang.annotation.*;
 @EnableAcrossContext
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@Import({ ApplicationModuleImportSelector.class, AcrossAutoConfigurationImportSelector.class, ExtendModuleAutoConfiguration.class })
+@Import({ ApplicationModuleImportSelector.class, AcrossAutoConfigurationImportSelector.class, ExtendModuleAutoConfiguration.class,
+          ApplicationAutoConfigurationPackage.class })
 public @interface AcrossApplication
 {
 	/**

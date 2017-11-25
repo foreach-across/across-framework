@@ -16,7 +16,6 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.context.AcrossModuleRole;
-import com.foreach.across.core.context.ClassPathScanningChildPackageProvider;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
@@ -34,23 +33,11 @@ import org.springframework.util.Assert;
  */
 public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModule>
 {
-	private ClassPathScanningChildPackageProvider packageProvider;
 	private AcrossModuleRole moduleRole = AcrossModuleRole.APPLICATION;
 	private String moduleName, resourcesKey;
 	private String basePackage, shortPackageName;
 	private Integer order;
 	private boolean fullComponentScan = true;
-
-	/**
-	 * Set the package provider that should be used.
-	 *
-	 * @param packageProvider instance
-	 * @return self
-	 */
-	public DynamicAcrossModuleFactory setPackageProvider( ClassPathScanningChildPackageProvider packageProvider ) {
-		this.packageProvider = packageProvider;
-		return this;
-	}
 
 	/**
 	 * Set the module role that the generated module should have, defaults to {@link AcrossModuleRole#APPLICATION}.

@@ -44,6 +44,11 @@ public interface AcrossModuleInfo extends AcrossModuleEntity
 	String getName();
 
 	/**
+	 * @return Optional list of alias names for the module - only used for registration of classes.
+	 */
+	String[] getAliases();
+
+	/**
 	 * @return Key for the resources of the AcrossModule.
 	 */
 	String getResourcesKey();

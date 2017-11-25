@@ -18,6 +18,7 @@ package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossVersionInfo;
+import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
@@ -37,6 +38,7 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	private final AcrossModule module;
 
 	private final String moduleName;
+	private final String[] aliases;
 	private boolean enabled;
 
 	private AcrossModuleRole moduleRole = AcrossModuleRole.APPLICATION;
@@ -57,6 +59,7 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 
 		moduleName = module.getName();
 		enabled = module.isEnabled();
+		aliases = module instanceof DynamicAcrossModule ? new String[] { module.getClass().getSimpleName() } : new String[0];
 		bootstrapStatus = enabled ? ModuleBootstrapStatus.AwaitingBootstrap : ModuleBootstrapStatus.Disabled;
 	}
 
@@ -77,6 +80,11 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	@Override
 	public String getName() {
 		return moduleName;
+	}
+
+	@Override
+	public String[] getAliases() {
+		return aliases;
 	}
 
 	@Override

@@ -24,6 +24,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * Tracks requested auto-configuration classes and determines which action should be taken:
+ * - allow the auto-configuration class (on the application level)
+ * - inject the auto-configuration class in another module instead
+ * - inject another configuration class instead of the one requested
+ * - simply reject it
+ * <p/>
+ * Checks the across.configuration file for the auto-configuration class rules:
+ * - com.foreach.across.AutoConfigurationDisabled contains the classes to reject
+ * - com.foreach.across.AutoConfigurationEnabled contains the classes allowed and their corresponding actions
+ * <p/>
+ * Possible entries for AutoConfigurationEnabled:
+ * - A will allow class A on the application level
+ * - A:B will add class B on the application level when A is requested
+ * - A->ModuleName will inject class A in module ModuleName, when A is requested
+ * <p/>
+ * Note: once a class has been excluded using AutoConfigurationDisabled, it will never be added automatically,
+ * even if there are AutoConfigurationEnabled rules.
+ *
  * @author Arne Vandamme
  * @since 3.0.0
  */
@@ -34,24 +52,13 @@ public final class AcrossApplicationAutoConfiguration
 	public static final String ENABLED_AUTO_CONFIGURATION = "com.foreach.across.AutoConfigurationEnabled";
 	public static final String DISABLED_AUTO_CONFIGURATION = "com.foreach.across.AutoConfigurationDisabled";
 
-	public boolean notExcluded( String className ) {
-		return !excluded.contains( className );
-	}
-
-	public enum Scope
-	{
-		Application,
-		AcrossContext,
-		AcrossModule;
-	}
-
 	private final Set<String> excluded = new HashSet<>();
 
 	private final Map<String, String> allowed = new HashMap<>();
+
 	private final Map<String, String> extendModules = new HashMap<>();
 	private final Set<String> requested = new HashSet<>();
 	private final Set<String> unknownSupport = new LinkedHashSet<>();
-
 	public AcrossApplicationAutoConfiguration( ClassLoader classLoader ) {
 		AcrossConfigurationLoader
 				.loadValues( ENABLED_AUTO_CONFIGURATION, classLoader )
@@ -98,6 +105,10 @@ public final class AcrossApplicationAutoConfiguration
 		}
 
 		return disabled ? null : actualClass;
+	}
+
+	public boolean notExcluded( String className ) {
+		return !excluded.contains( className );
 	}
 
 	public Map<String, List<String>> getModuleExtensions() {

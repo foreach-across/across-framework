@@ -32,8 +32,11 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
+ * Registers extensions determined by auto-configuration classes that have been requested.
+ *
  * @author Arne Vandamme
  * @since 3.0.0
+ * @see AcrossApplicationAutoConfiguration
  */
 @Configuration
 public class ExtendModuleAutoConfiguration implements AcrossBootstrapConfigurer, BeanClassLoaderAware, BeanFactoryAware

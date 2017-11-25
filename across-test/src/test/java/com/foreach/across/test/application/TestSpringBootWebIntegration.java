@@ -24,12 +24,15 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -80,6 +83,20 @@ public class TestSpringBootWebIntegration
 	@Test
 	public void configurationPropertiesBeanShouldNotExist() {
 		assertNotNull( BeanFactoryUtils.beanOfType( beanFactory, ConfigurationPropertiesAutoConfiguration.class ) );
+	}
+
+	@Test
+	public void defaultAutoConfigurationPackageShouldNotBeRegisteredInMainContext() {
+		assertEquals( Collections.emptyList(), AutoConfigurationPackages.get( beanFactory ) );
+	}
+
+	@Test
+	public void autoConfigurationPackageShouldBeApplicationModule() {
+		String applicationModulePackage = DummyApplication.class.getPackage().getName() + ".application";
+		assertEquals(
+				Collections.singletonList( applicationModulePackage ),
+				AutoConfigurationPackages.get( contextInfo.getModuleInfo( "DummyApplicationModule" ).getApplicationContext() )
+		);
 	}
 
 	private String get( String relativePath ) {
