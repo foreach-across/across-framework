@@ -23,6 +23,7 @@ import com.foreach.across.core.context.SharedMetadataReaderFactory;
 import com.foreach.across.core.context.annotation.ModuleConfigurationBeanNameGenerator;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
+import com.foreach.across.modules.web.support.ApplicationContextIdNameGenerator;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -52,6 +53,7 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 	private Integer moduleIndex;
 
 	public AcrossWebApplicationContext() {
+		setId( ApplicationContextIdNameGenerator.forContext( this ) );
 		setBeanNameGenerator( new ModuleConfigurationBeanNameGenerator() );
 	}
 

@@ -46,6 +46,7 @@ import net.engio.mbassy.bus.error.PublicationError;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -334,12 +335,16 @@ public class AcrossBootstrapper
 
 				ConfigurableListableBeanFactory parentBeanFactory = parentApplicationContext.getBeanFactory();
 
-				parentBeanFactory.setParentBeanFactory( currentBeanFactory.getParentBeanFactory() );
-				parentApplicationContext.setParent( currentApplicationContext.getParent() );
-
-				currentApplicationContext.setParent( parentApplicationContext );
-				currentBeanFactory.setParentBeanFactory( parentBeanFactory );
-
+				BeanFactory parentBf = currentApplicationContext.getParentBeanFactory();
+				if ( parentBf == null ) {
+					currentApplicationContext.setParent( parentApplicationContext );
+					currentBeanFactory.setParentBeanFactory( parentBeanFactory );
+				}
+				else {
+					ConfigurableApplicationContext parent = (ConfigurableApplicationContext) currentApplicationContext.getParent();
+					parent.setParent( parentApplicationContext );
+					parent.getBeanFactory().setParentBeanFactory( parentBeanFactory );
+				}
 				beanFactory = parentApplicationContext.getBeanFactory();
 			}
 

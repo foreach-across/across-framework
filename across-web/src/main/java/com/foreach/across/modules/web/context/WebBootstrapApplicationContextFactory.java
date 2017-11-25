@@ -21,6 +21,7 @@ import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.bootstrap.AnnotationConfigBootstrapApplicationContextFactory;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.modules.web.support.ApplicationContextIdNameGenerator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.WebApplicationContext;
@@ -41,7 +42,8 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 		if ( parentApplicationContext == null || parentApplicationContext instanceof WebApplicationContext ) {
 			WebApplicationContext parentWebContext = (WebApplicationContext) parentApplicationContext;
 			AcrossWebApplicationContext applicationContext = createApplicationContext();
-			applicationContext.setDisplayName( "[" + across.getId() + "]" );
+			applicationContext.setDisplayName( across.getId() );
+			applicationContext.setId( ApplicationContextIdNameGenerator.forContext( applicationContext ) );
 
 			if ( parentApplicationContext != null ) {
 				applicationContext.setParent( parentApplicationContext );
@@ -68,6 +70,7 @@ public class WebBootstrapApplicationContextFactory extends AnnotationConfigBoots
 			AcrossWebApplicationContext child = createApplicationContext();
 
 			child.setDisplayName( moduleBootstrapConfig.getModuleName() );
+			child.setId( ApplicationContextIdNameGenerator.forModule( moduleBootstrapConfig ) );
 			child.setServletContext( parentWebContext.getServletContext() );
 			child.setParent( parentContext.getApplicationContext() );
 			child.getEnvironment().merge( parentContext.getApplicationContext().getEnvironment() );
