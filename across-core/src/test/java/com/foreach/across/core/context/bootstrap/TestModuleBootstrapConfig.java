@@ -16,6 +16,7 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.EmptyAcrossModule;
+import com.foreach.across.core.context.info.ConfigurableAcrossModuleInfo;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -29,7 +30,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestModuleBootstrapConfig
 {
-	private ModuleBootstrapConfig config = new ModuleBootstrapConfig( new EmptyAcrossModule( "myModule" ), 1 );
+	private ModuleBootstrapConfig config = new ModuleBootstrapConfig( new ConfigurableAcrossModuleInfo( null, new EmptyAcrossModule( "myModule" ), 1 ) );
 
 	@Test
 	public void configIsEmptyIfNoInstallerOrApplicationContextConfigurers() {

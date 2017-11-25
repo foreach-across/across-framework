@@ -23,6 +23,8 @@ import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
@@ -35,7 +37,8 @@ import org.springframework.core.type.AnnotationMetadata;
 @Import(ApplicationModuleAutoConfigurationPackageRegistrar.Registrar.class)
 class ApplicationModuleAutoConfigurationPackageRegistrar
 {
-	static class Registrar implements ImportBeanDefinitionRegistrar
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	final static class Registrar implements ImportBeanDefinitionRegistrar
 	{
 		@Override
 		public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {

@@ -18,6 +18,7 @@ package com.foreach.across.test.modules.web.support;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.info.ConfigurableAcrossModuleInfo;
 import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
 import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import com.foreach.across.modules.web.support.ApplicationContextIdNameGenerator;
@@ -31,9 +32,12 @@ public class TestApplicationContextIdNameGenerator
 {
 	@Test
 	public void moduleNamePrefixedByIndex() throws Exception {
-		assertEquals( "[AX_02] Primary", ApplicationContextIdNameGenerator.forModule( new ModuleBootstrapConfig( new EmptyAcrossModule( "Primary" ), 2 ) ) );
-		assertEquals( "[AX_69] Pink Module",
-		              ApplicationContextIdNameGenerator.forModule( new ModuleBootstrapConfig( new EmptyAcrossModule( "Pink Module" ), 69 ) ) );
+		assertEquals( "[AX_02] Primary", ApplicationContextIdNameGenerator.forModule( module( "Primary", 2 ) ) );
+		assertEquals( "[AX_69] Pink Module", ApplicationContextIdNameGenerator.forModule( module( "Pink Module", 69 ) ) );
+	}
+
+	private ModuleBootstrapConfig module( String moduleName, int bootstrapIndex ) {
+		return new ModuleBootstrapConfig( new ConfigurableAcrossModuleInfo( null, new EmptyAcrossModule( moduleName ), bootstrapIndex ) );
 	}
 
 	@Test

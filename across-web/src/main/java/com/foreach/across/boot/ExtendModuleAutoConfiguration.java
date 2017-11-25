@@ -15,8 +15,10 @@
  */
 package com.foreach.across.boot;
 
-import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -26,17 +28,16 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
  * Registers extensions determined by auto-configuration classes that have been requested.
  *
  * @author Arne Vandamme
- * @since 3.0.0
  * @see AcrossApplicationAutoConfiguration
+ * @since 3.0.0
  */
 @Configuration
 public class ExtendModuleAutoConfiguration implements AcrossBootstrapConfigurer, BeanClassLoaderAware, BeanFactoryAware
@@ -59,32 +60,23 @@ public class ExtendModuleAutoConfiguration implements AcrossBootstrapConfigurer,
 	}
 
 	@Override
-	public void configureContext( AcrossBootstrapConfig contextConfiguration ) {
-		AcrossApplicationAutoConfiguration
-				.retrieve( beanFactory, beanClassLoader )
-				.getModuleExtensions()
-				.forEach( ( moduleName, classNames ) -> {
-					Class[] classes = classNames
-							.stream()
-							.filter( c -> ClassUtils.isPresent( c, beanClassLoader ) )
-							.map( c -> {
-								try {
-									return ClassUtils.forName( c, beanClassLoader );
-								}
-								catch ( ClassNotFoundException cnfe ) {
-									LOG.error( "Unable to instantiate class {}", c );
-									return null;
-								}
-							} )
-							.filter( Objects::nonNull )
-							.toArray( Class[]::new );
+	public void configureModule( ModuleBootstrapConfig moduleConfiguration ) {
+		String moduleName = moduleConfiguration.getModuleName();
+		Map<String, List<String>> moduleExtensions = AcrossApplicationAutoConfiguration.retrieve( beanFactory, beanClassLoader ).getModuleExtensions();
 
-					if ( LOG.isTraceEnabled() ) {
-						Stream.of( classes )
-						      .forEach( annotatedClass -> LOG.trace( "Extending module {} with class {}", moduleName, annotatedClass.getName() ) );
-					}
+		Set<String> classNames = new LinkedHashSet<>();
+		Stream.of( moduleConfiguration.getAllModuleNames() )
+		      .forEach( name -> classNames.addAll( moduleExtensions.getOrDefault( name, Collections.emptyList() ) ) );
 
-					contextConfiguration.extendModule( moduleName, classes );
-				} );
+		if ( !classNames.isEmpty() ) {
+			classNames.forEach( annotatedClass -> LOG.trace( "Extending module {} with class {}", moduleName, annotatedClass ) );
+
+			AutoConfigurationModuleExtension moduleExtension = new AutoConfigurationModuleExtension( classNames );
+			ProvidedBeansMap beans = new ProvidedBeansMap();
+			beans.put( AutoConfigurationModuleExtension.BEAN, moduleExtension );
+
+			moduleConfiguration.addApplicationContextConfigurer( new ProvidedBeansConfigurer( beans ) );
+			moduleConfiguration.addApplicationContextConfigurer( AutoConfigurationModuleExtension.Registrar.class );
+		}
 	}
 }

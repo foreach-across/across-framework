@@ -129,9 +129,9 @@ public class AcrossBootstrapConfig
 		return extendModule(
 				moduleName,
 				(Class[]) Stream.of( classNames )
-				      .map( ClassLoadingUtils::resolveClass )
-				      .filter( Objects::nonNull )
-				      .toArray( Class[]::new )
+				                .map( ClassLoadingUtils::resolveClass )
+				                .filter( Objects::nonNull )
+				                .toArray( Class[]::new )
 		);
 	}
 
@@ -161,9 +161,7 @@ public class AcrossBootstrapConfig
 	 * @param moduleName  Unique name of the module in the context.
 	 * @param configurers Configurers to add to the bootstrap.
 	 * @return True if the module was present.
-	 * @deprecated use {@link #extendModule(String, Class[])} instead
 	 */
-	@Deprecated
 	public boolean extendModule( String moduleName, ApplicationContextConfigurer... configurers ) {
 		if ( hasModule( moduleName ) ) {
 			getModule( moduleName ).addApplicationContextConfigurer( configurers );

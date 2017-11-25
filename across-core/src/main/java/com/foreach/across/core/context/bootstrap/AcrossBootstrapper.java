@@ -453,7 +453,7 @@ public class AcrossBootstrapper
 
 		for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 			AcrossModule module = moduleInfo.getModule();
-			ModuleBootstrapConfig config = new ModuleBootstrapConfig( module, moduleInfo.getIndex() );
+			ModuleBootstrapConfig config = new ModuleBootstrapConfig( moduleInfo );
 			config.setExposeFilter( new BeanFilterComposite( defaultExposeFilter, module.getExposeFilter() ) );
 			config.setExposeTransformer( module.getExposeTransformer() );
 			config.setInstallerSettings( module.getInstallerSettings() );

@@ -20,10 +20,12 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import com.foreach.across.core.util.ClassLoadingUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -35,8 +37,7 @@ import java.util.stream.Stream;
  */
 public class ModuleBootstrapConfig
 {
-	private final int bootstrapIndex;
-	private final AcrossModule module;
+	private final AcrossModuleInfo moduleInfo;
 
 	private BeanFilter exposeFilter;
 	private ExposedBeanDefinitionTransformer exposeTransformer;
@@ -48,17 +49,23 @@ public class ModuleBootstrapConfig
 
 	private boolean hasComponents = false;
 
-	public ModuleBootstrapConfig( AcrossModule module, int bootstrapIndex ) {
-		this.module = module;
-		this.bootstrapIndex = bootstrapIndex;
+	public ModuleBootstrapConfig( AcrossModuleInfo moduleInfo ) {
+		this.moduleInfo = moduleInfo;
 	}
 
 	public AcrossModule getModule() {
-		return module;
+		return moduleInfo.getModule();
 	}
 
 	public String getModuleName() {
-		return module.getName();
+		return moduleInfo.getName();
+	}
+
+	/**
+	 * @return module name as well as possible aliases
+	 */
+	public String[] getAllModuleNames() {
+		return ArrayUtils.addAll( new String[] { getModuleName() }, moduleInfo.getAliases() );
 	}
 
 	public BeanFilter getExposeFilter() {
@@ -70,7 +77,7 @@ public class ModuleBootstrapConfig
 	}
 
 	public int getBootstrapIndex() {
-		return bootstrapIndex;
+		return moduleInfo.getIndex();
 	}
 
 	/**

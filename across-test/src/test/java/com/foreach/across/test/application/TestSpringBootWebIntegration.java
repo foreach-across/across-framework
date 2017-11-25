@@ -99,6 +99,12 @@ public class TestSpringBootWebIntegration
 		);
 	}
 
+	@Test
+	public void dummyAutoConfigurationShouldHaveBeenAddedToApplicationModule() {
+		assertFalse( contextInfo.getApplicationContext().containsBean( "dummyDecimal" ) );
+		assertTrue( contextInfo.getModuleInfo( "DummyApplicationModule" ).getApplicationContext().containsBean( "dummyDecimal" ) );
+	}
+
 	private String get( String relativePath ) {
 		return restTemplate.getForEntity( url( relativePath ), String.class ).getBody();
 	}
