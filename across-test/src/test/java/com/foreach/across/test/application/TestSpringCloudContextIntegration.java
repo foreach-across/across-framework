@@ -29,10 +29,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Full stack bootstrap with embedded tomcat.
+ * Test bootstrap with additional parent context being created.
  *
- * @author Arne Vandamme
- * @since 1.1.2
+ * @author Marc Vanbrabant
+ * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
 @DirtiesContext

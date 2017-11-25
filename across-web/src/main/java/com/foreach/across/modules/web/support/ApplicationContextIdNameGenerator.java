@@ -19,10 +19,6 @@ import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * A utility class that generates an easily readable String for use in
  *
@@ -46,11 +42,5 @@ public abstract class ApplicationContextIdNameGenerator
 		else {
 			return PREFIX + SUFFIX + applicationContext.getDisplayName();
 		}
-	}
-
-	public static void main( String[] args ) {
-		List<String> items = Arrays.asList( "[AX] AcrossContext", "[AX_01] Test", "[AX_02] A" );
-		Collections.sort( items );
-		System.out.println( items );
 	}
 }

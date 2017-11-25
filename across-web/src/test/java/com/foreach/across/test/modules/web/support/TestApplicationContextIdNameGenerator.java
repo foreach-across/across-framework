@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestApplicationContextIdNameGenerator
 {
@@ -40,7 +41,7 @@ public class TestApplicationContextIdNameGenerator
 		AcrossContext acrossContext = new AcrossContext();
 		acrossContext.bootstrap();
 		ApplicationContext applicationContext = new WebBootstrapApplicationContextFactory().createApplicationContext( acrossContext, null );
-		assertEquals( "[AX] AcrossContext-1", ApplicationContextIdNameGenerator.forContext( applicationContext ) );
+		assertTrue( ApplicationContextIdNameGenerator.forContext( applicationContext ).startsWith( "[AX] AcrossContext-" ) );
 	}
 
 	@Test

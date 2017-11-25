@@ -36,9 +36,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class SpringCloudApplication
 {
 	@Bean
-	public AcrossModule emptyModule() {
-		return new SpringCloudApplicationModule()
+	public AcrossModule cloudApplicationModule() {
+		return new AcrossModule()
 		{
+			@Override
+			public String getName() {
+				return "SpringCloudApplicationModule";
+			}
+
 			@Override
 			public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
 				AcrossContext acrossContext = contextConfig.getContext();
@@ -52,18 +57,7 @@ public class SpringCloudApplication
 
 				springCloudBootstrapContext.refresh();
 				springCloudBootstrapContext.start();
-
-				super.prepareForBootstrap( currentModule, contextConfig );
 			}
 		};
-	}
-
-	public static class SpringCloudApplicationModule extends AcrossModule
-	{
-
-		@Override
-		public String getName() {
-			return "SpringCloudApplicationModule";
-		}
 	}
 }
