@@ -76,6 +76,12 @@ public class TestSpringBootWebIntegration
 	}
 
 	@Test
+	public void requestMappingsWithDateTimeFormatPattnerWorkCorrectly() {
+		assertEquals( "Wed Nov 29 00:00:00 CET 2017", get( "/stringToDateConverterWithoutAnnotationPattern?time=2017-11-29" ) );
+		assertEquals( "Fri Dec 29 17:59:00 CET 2017", get( "/stringToDateConverterWithAnnotationPattern?time=2017-12-29T16:59:00+0000" ) );
+	}
+
+	@Test
 	public void versionedResourceShouldBeReturned() {
 		assertEquals( "hùllµ€", get( "/res/static/boot-1.0/testResources/test.txt" ) );
 	}
