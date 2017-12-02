@@ -36,6 +36,7 @@ import org.springframework.context.expression.StandardBeanExpressionResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
+@Deprecated
 public class AcrossConditionCondition implements Condition
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossConditionCondition.class );

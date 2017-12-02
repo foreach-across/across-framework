@@ -40,6 +40,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Conditional(AcrossConditionCondition.class)
+@Deprecated
 public @interface AcrossCondition
 {
 	/**
