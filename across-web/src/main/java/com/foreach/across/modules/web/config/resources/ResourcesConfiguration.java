@@ -16,7 +16,6 @@
 package com.foreach.across.modules.web.config.resources;
 
 import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
-import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
@@ -116,7 +115,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	 * @param resourceHandlerRegistry containing the registered resources
 	 * @param applicationContext      triggering the reload
 	 */
-	@PostRefresh
+	// todo: fix resources! @PostRefresh
 	public void reload( com.foreach.across.modules.web.mvc.ResourceHandlerRegistry resourceHandlerRegistry,
 	                    ApplicationContext applicationContext,
 	                    Map<String, CorsConfiguration> corsConfigurations ) {
