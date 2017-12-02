@@ -1,0 +1,19 @@
+[[developing-across-modules]]
+= Developing Across modules
+include::chap-module-create-a-module.adoc[]
+
+//include::chap-module-settings.adoc[]
+
+include::chap-module-dependencies.adoc[]
+
+//include::chap-module-roles.adoc[]
+
+include::chap-module-bootstrap.adoc[]
+
+include::chap-module-exposing-beans.adoc[]
+
+include::chap-module-messages.adoc[]
+
+include::chap-module-installers.adoc[]
+
+include::chap-module-version.adoc[]

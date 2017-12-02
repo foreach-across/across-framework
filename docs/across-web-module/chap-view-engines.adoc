@@ -1,0 +1,41 @@
+== View engines
+
+=== Thymeleaf support
+AcrossWebModule automatically activates http://www.thymeleaf.org[Thymeleaf] support for server-side templating.
+Thymeleaf is a powerful templating language that allows its templates to be embedded inside the JAR files (something that is more cumbersome with regular JSP).
+
+AcrossWebModule itself - as well as many other modules - use Thymeleaf extensively and add additional features for it (like <<thymeleaf-dialect,custom dialects>>).
+
+The Thymeleaf templates embedded in modules are expected to be located in the *views/th/__moduleResourceKey__* resources folder.
+The supported file extension is **.html*.
+See the chapter on <<static-resources-conventions,static resource conventions>> for an example project layout.
+
+=== JSP support
+Support for regular JSP/JSTL can be enabled by setting the property *acrossWebModule.views.jsp.enabled* to `true`.
+
+==== Combining JSP and Thymeleaf
+If both JSP and Thymeleaf support are enabled, you can easily use both view types at the same time.
+The AcrossWebModule also provides a JSP tag that can be used to import Thymeleaf templates or fragments in a JSP rendering pipeline.
+The same model (request attributes) should be available in the Thymeleaf template as in the calling JSP.
+
+[source,html,indent=0]
+----
+<%@ taglib prefix="across" uri="http://across.foreach.com/tags" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>JSP including a Thymeleaf template</title>
+</head>
+<body>
+	<across:thymeleaf template="th/mymodule/thymeleaf-from-jsp-include" />
+	<div class="child">
+		<across:thymeleaf template="th/mymodule/thymeleaf-from-jsp-include :: fragment" />
+	</div>
+</body>
+</html>
+----
+
+[discrete]
+=== Using other templating engines
+It is still possible to use additional templating engines.
+You can do so by extending the AcrossWebModule configuration and registering custom Spring `ViewResolver` beans.

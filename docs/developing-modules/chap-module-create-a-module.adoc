@@ -1,0 +1,46 @@
+[[creating-an-acrossmodule]]
+== Creating an AcrossModule
+Creating a new Across module is done by extending `AcrossModule` and providing a valid name and description.
+An `AcrossModule` is in essence a configuration class.
+It uniquely identifies the module and holds all configuration parameters required to bootstrap the module.
+It also allows you to alter settings of how beans should be shared with other modules.
+
+A module name should be unique and as a best practice also be available as a public static final *NAME* field on the `AcrossModule` implementation.
+
+.Minimal AcrossModule
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+public class ValidModule extends AcrossModule
+{
+	public static final String NAME = "ValidModule";
+
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
+	@Override
+	public String getDescription() {
+		return "ValidModule exposes some valid beans.";
+	}
+}
+----
+
+.Making an AcrossModule autoconfigurable
+For an Across module to be autoconfigurable it must adhere to the following conventions:
+
+* the module name must be available in the public static final *NAME* field
+* the module must have public constructor without any parameters
+
+.Definining beans
+Upon bootstrap a module will create its own `ApplicationContext` with the `AcrossContext` as parent.
+The beans created in the module `ApplicationContext` are configured using `ApplicationContextConfigurer` instances.
+
+By default a scan for `@Configuration` classes will happen on the *config* package below the package of the `AcrossModule` implementation.
+If you want more explicit control, you can override the `registerDefaultApplicationContextConfigurers()` method.
+
+.Module resources
+Most modules will also define one or more resources in a location determined on the _resources key_ of the module.
+By default the resources key or a module is the same as the module name.
+You can change this by overriding the `getResourcesKey()` method.

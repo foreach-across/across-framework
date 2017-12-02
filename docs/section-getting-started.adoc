@@ -1,0 +1,11 @@
+=== Getting started
+The reference documentation is split up into several parts:
+
+* <<whats-new,What's new in this version>> lists the release notes of the Across framework
+* <<fundamentals,Fundamentals>> explains the fundamental concepts of Across, things you should really understand when building Across applications or modules
+* <<developing-across-applications,Developing Across applications>> goes into some more detail about the steps involved in developing application with Across modules, as well as some of the features you can use
+* <<developing-across-modules,Developing Across modules>> is more geared towards developers interested in creating shared modules - although the information is generally useful
+* <<across-web,AcrossWebModule>> gives an overview of the web specific additions that Across core brings
+* <<across-test,Testing>> explains how developers can integration test their modules or applications
+
+Through the {across-url}[Across website] you can find a lot more information like frequently asked questions, tutorials and available modules (with their respective documentation).

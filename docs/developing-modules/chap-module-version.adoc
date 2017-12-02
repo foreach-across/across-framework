@@ -1,0 +1,45 @@
+== Module version information
+Across modules have version information attached in the form of an `AcrossVersionInfo` property.
+This object provides information like the current version and time when it was built.
+By default this information is fetched automatically from the *META-INF/MANIFEST.MF* resource.
+The following attributes are required for a fully configured `AcrossVersionInfo` instance:
+
+.MANIFEST attributes
+|===
+|Attribute |Example|Description
+
+|*Implementation-Title*
+|across-web
+|Name of the project the class (`AcrossModule`) belongs to. Often also the JAR name.
+
+|*Implementation-Version*
+|{across-version}
+|Build version of the `AcrossModule`.
+
+|*Build-Time*
+|20150831-1011
+|Timestamp when the version was built (in *yyyyMMdd-HHmm* format).
+
+|===
+
+Using Maven a valid MANIFEST file can automatically be created using the following plugin configuration:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+            <archive>
+                <manifest>
+                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+                <manifestEntries>
+                    <Build-Time>${maven.build.timestamp}</Build-Time>
+                </manifestEntries>
+            </archive>
+        </configuration>
+    </plugin>
+----

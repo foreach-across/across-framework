@@ -1,8 +1,10 @@
 = Across framework
 Arne Vandamme, Marc Vanbrabant, Andy Debrouwer
 :toc: left
+:toclevels: 2
 :sectanchors:
-:across-version: 2.1.1-SNAPSHOT
+:across-version: 2.1.1.RELEASE
+:across-url: http://across.foreach.be
 :spring-url: http://projects.spring.io/spring-framework/
 :spring-data-url: http://projects.spring.io/spring-data/
 :spring-batch-url: http://projects.spring.io/spring-batch/
@@ -19,17 +21,22 @@ Copyright (C) 2014-2017 +
 [small]#Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.#
 --
 
+include::section-getting-started.adoc[]
+
 include::section-whats-new.adoc[]
 
-:numbered!:
-[abstract]
 include::section-nutshell.adoc[]
 
-:numbered:
-include::section-about-across.adoc[]
+include::fundamentals/index.adoc[]
 
-include::../across-core/src/doc/section-across-core.adoc[]
-include::../across-web/src/doc/section-across-web.adoc[]
-include::../across-test/src/doc/section-across-test.adoc[]
+include::section-artifacts.adoc[]
 
-include::section-appendices.adoc[]
+include::developing-applications/index.adoc[]
+
+include::developing-modules/index.adoc[]
+
+include::across-web-module/index.adoc[]
+
+include::testing/index.adoc[]
+
+include::appendix/index.adoc[]

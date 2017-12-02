@@ -1,0 +1,154 @@
+[[static-resources]]
+== Static resources
+{module-name} automatically enables serving of static resources bundled with modules.
+With the default settings static resources will be configured with <<resource-url-versioning,versioned urls>> and <<client-side-caching,client-side caching>>.
+
+[[static-resources-conventions]]
+=== Conventions
+The default resources are served from the */views* folder on the classpath.
+By default {module-name} will serve resources from _/views/static_.
+Additional subfolders can be configured with the *acrossWebModule.resources.folders* property.
+
+By convention (and for best development mode support) module specific resources should be located in a subfolder with the `resourcesKey` of the module.
+
+.Example resources layout for MyModule
+[source,text,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+src/main/resources
+   views/
+     static/
+       MyModule/
+         js/controller.js
+         css/my-module.css
+         img/logo.png
+     th/
+       MyModule/
+         controller.html
+         user-profile.html
+----
+
+The relative path under which the static resources are available is determined by the *acrossWebModule.resources.path* property.
+
+[[client-side-caching]]
+=== Client-side caching
+By default static resources will be cached on the client-side for a period of 1 year.
+Disabling client-side caching is done with the *acrossWebModule.resources.caching.enabled* property.
+If client-side caching is disabled, no cache headers will be sent to the client.
+
+Configuring the caching period is done separately with the *acrossWebModule.resources.caching.period* property.
+Setting the value to *0* with caching enabled will sent *no-cache* headers.
+This is also the default if development mode is active.
+
+[[resource-url-versioning]]
+=== Resource URL versioning
+By default {module-name} enables link:http://docs.spring.io/spring-framework/docs/current/spring-framework-reference/html/mvc.html#mvc-config-static-resources[Spring versioning of static resources].
+This will generate versioned URLs, create a `ResourceUrlProvider` bean and add a `ResourceUrlEncodingFilter` and `ResourceUrlProviderExposingInterceptor` to the request handlers.
+
+Using versioned resource URLs is transparent:
+
+* in Thymeleaf all relative links added with `@{/relative/path}` will be rewritten if necessary
+* in JSP the equivalent is the `<spring:url value="/relative/path" var="url"/>` tag
+
+Using these will work both with or without resource versioning.
+
+WARNING: If versioning is disabled, the `ResourceUrlProvider` will not be available on the request.
+Modules using accessing the `ResourceUrlProvider` directly should built-in support for this.
+
+==== Fixed version strategy
+{module-name} supports automatic configuration of resource versioning using a single fixed version.
+When enabled this means that resources of the form */across/resources/static/mymodule/mymodule.css* will get rewritten to */across/resources/static/VERSION/mymodule/mymodule.css*.
+
+The fixed version used is determined as follows:
+
+. *acrossWebModule.resources.versioning.version* property
+. *build.number* property
+. version of the {module-name}
+
+Using the fixed version strategy works well for relative includes in both CSS and JS files, avoiding the need to rewrite URLs inside those files.
+
+==== Customizing the version strategy
+It is possible to keep configuration of the default resources active but only change the version strategy used.
+This can be done by injecting your own `VersionResourceResolver` bean named *versionResourceResolver* the {module-name} context.
+
+.Example providing custom version strategy
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+@ModuleConfiguration(AcrossWebModule.NAME)
+public static class CustomVersionResourceResolver
+{
+	@Bean
+	public VersionResourceResolver versionResourceResolver() {
+		return new VersionResourceResolver()
+				.addVersionStrategy( new FixedVersionStrategy( "1.0" ), "/**/*.css" )
+				.addVersionStrategy( new FixedVersionStrategy( "2.0" ), "/**" );
+	}
+}
+----
+
+NOTE: Because of limitations of the `CssLinkTransformer` in combination with a fixed version strategy, {module-name} does not rewrite links inside css files.
+If you absolutely need this in your application, you will have to disable the automatic resource versioning and configure it yourself.
+
+[[WebResourceRegistry]]
+=== WebResourceRegistry
+{module-name} allows for programatically registering web resources through the use of a `WebResourceRegistry`.
+A new `WebResourceRegistry` is attached to every request and can be accessed as a request attribute or a handler method parameter.
+
+Resources can be added in a group (eg: css, javascript) and with a specific location (eg: relative, views, external).
+The groups can be used for retrieval of related resources, the location determines the `WebResourceTranslator` that will be used.
+Web resource translating happens before the actual view is rendered and allows for the data to be converted into a more appropriate format for the view rendering.
+Using the `WebResource.VIEWS` location for a web resource will have the relative path prefixed with the configured across web views resources prefix.
+
+Resources can be identified with a unique key, ensuring they are added only once.
+
+.Example controller registering specific web resources
+[source,java,indent=0]
+----
+@Controller
+public class MyController
+{
+  @ModelAttribute
+  public void registerWebResources( WebResourceRegistry webResourceRegistry ) {
+    webResourceRegistry.add( WebResource.CSS, "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css", WebResource.EXTERNAL );
+    webResourceRegistry.add( WebResource.CSS, "/static/mymodule/css/main.css", WebResource.VIEWS );
+  }
+}
+----
+
+NOTE: Views can access the `WebResourceRegistry` under the *webResourceRegistry* attribute.
+It is however the view implementation that will determine how resources are handled: for example the Thymeleaf template rendering them in the head section of a page.
+
+==== WebResourcePackage
+To avoid adding single items, web resources can be bundled into a `WebResourcePackage` and registered with the `WebResourcePackageManager`.
+Adding an entire package can then be done by calling `WebResourceRegistry#addPackage` with the right package name.
+
+.Example creating a WebResourcePackage
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+@Component
+public class BootstrapUiWebResources extends SimpleWebResourcePackage
+{
+  public static final String VERSION = "3.3.5";
+  public static final String NAME = "bootstrap";
+
+  public BootstrapUiWebResources() {
+    setDependencies( JQueryWebResources.NAME );     // Install the jquery package first
+    setWebResources(
+      new WebResource( WebResource.CSS, NAME,
+                       "//maxcdn.bootstrapcdn.com/bootstrap/" + VERSION + "/css/bootstrap.min.css",
+                       WebResource.EXTERNAL ),
+      new WebResource( WebResource.JAVASCRIPT_PAGE_END, NAME,
+                       "//maxcdn.bootstrapcdn.com/bootstrap/" + VERSION + "/js/bootstrap.min.js",
+                       WebResource.EXTERNAL )
+      );
+  }
+
+  @Autowired
+  public void registerPackage( WebResourcePackageManager packageManager ) {
+    packageManager.register( NAME, this );
+  }
+}
+----
+

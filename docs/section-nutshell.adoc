@@ -1,18 +1,24 @@
 == Across in a nutshell
-Across is a Java framework that aims to facilitate module based development for Java (web) applications.
-It builds heavily on Spring framework and allows defining a module consisting of a number of classes and configuration files.
-Every module defines its own Spring application context and can share one or more beans with other modules.
+Across is a Java framework for developing your application using a modular approach.
+It is built on top of Spring framework and provides a way to define application modules as well as the infrastructure to run the entire application.
 
-Across modules can contain any set of functionality: low-level add-ons like facilities to activate caching or end user
-functionality including web controllers and their views.  Across provides the basic infrastructure to define modules and
-make them depend on each other.  A module will most often be a separate jar, but this is in no way a requirement.
+*An Across module*
 
-The general principle is that every Across module can depend on others, but is responsible for its own installation and
-start-up procedures.  To this end, a module can define its own installers.
+* bundles technical or business domain functionality,
+* explicitly depends on zero or more other modules,
+* exposes components like services or repositories for other modules to use,
+* uses exposed components from other modules,
+* has zero or more installers taking care of things like initial data creation or schema migrations,
+* is a single Spring `ApplicationContext`.
 
-.Getting started
-This is the reference documentation,
+*An Across application*
 
-* release overview
-* samples and tutorials
-* appendices list events and overview of conventions
+* specifies the modules to use,
+* sets up common infrastructure (eg. the event bus),
+* ensures modules are ordered according to their dependencies and bootstrapped in that same order,
+* runs as a Spring Boot application.
+
+Across applications force you to use the modular approach as much as possible.
+
+Across is free and open source, published under an Apache 2.0 license.
+

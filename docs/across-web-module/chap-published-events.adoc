@@ -1,0 +1,24 @@
+== Published events
+The following is a listing of possible events published by the AcrossWebModule or one of its components.
+
+.Core events
+[cols="1,3"]
+|===
+|Event type |Description
+
+|`BuildMenuEvent<>`
+|Event fired by the `MenuFactory` whenever a menu is being generated.
+Allows configuring the menu using the `PathBasedMenuBuilder`.
+Event discriminator is the menu name or custom menu type.
+
+|`BuildMenuFinishedEvent`
+|Event fired by the `MenuFactory` whenever a menu has been build, sorted and the corresponding item has been selected.
+Can be used to modify the menu after build has completed.
+Event discriminator is the menu name.
+
+|`BuildTemplateWebResourcesEvent`
+|Event published by a `LayoutTemplateProcessorAdapterBean` after a named template has been prepared.
+Allows event handlers to register additional web resources for that template.
+Event discriminator is the template name.
+
+|===

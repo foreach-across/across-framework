@@ -1,0 +1,12 @@
+== Troubleshooting
+
+=== Module not found
+By default modules are resolved using a `ClassPathScanningModuleDependencyResolver`.
+If a module can't be resolved the reason is usually one of the following:
+
+* the package containing the module has not been added for module scanning
+* there is no `public static final String NAME` field containing the unique module name
+* there is no public constructor without parameters
+
+You can configure more verbose logging by setting the logger level for `com.foreach.across.core.context.ClassPathScanningCandidateModuleProvider` to `TRACE`.
+This will output all candidate modules that have been considered during scanning.

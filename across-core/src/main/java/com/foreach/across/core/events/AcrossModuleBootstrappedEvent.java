@@ -19,6 +19,11 @@ package com.foreach.across.core.events;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 
+/**
+ * Event published when a module has bootstrapped.
+ * That means the module itself has started, but installers registered to {@link com.foreach.across.core.installers.InstallerPhase#AfterModuleBootstrap}
+ * have not yet been executed.
+ */
 public class AcrossModuleBootstrappedEvent implements AcrossEvent
 {
 	private final AcrossModuleInfo module;

@@ -1,0 +1,55 @@
+[[fundamentals]]
+= Fundamentals
+:toc:
+:numbered:
+
+This chapter explains the terminology and fundamental concepts involved with developing Across applications and modules.
+Understanding these terms and concepts is a prerequisite for working with Across.
+
+== Required knowledge
+To be able to develop with Across, you need a good grasp of Java (8) and Spring Framework.
+Spring MVC experience is strongly advised, and some Spring Boot knowledge might be helpful.
+
+At the very least you should be familiar with Spring’s approach for dependency injection, the `ApplicationContext` and java-based configuration.
+
+Other commonly used libraries that are useful to know are http://hibernate.org/orm/[Hibernate], http://projects.spring.io/spring-data/[Spring Data], http://www.liquibase.org/[Liquibase] and http://www.thymeleaf.org[Thymeleaf].
+
+== Technical requirements
+
+[discrete]
+=== Across and Spring framework
+{spring-url}[Spring framework] is a de facto industry standard for building Java (web) applications.
+It was a logical choice to use it as the foundation for Across.
+Across extends or even customizes some aspects of Spring, but still supports most if not all common Spring functions out of the box.
+To optimally use Across, a good knowledge of Spring is required.
+
+Across is primarily built on top of Spring framework, but also includes some https://projects.spring.io/spring-boot/[Spring Boot] dependencies.
+Some features of Spring Boot are being used but an Across application is structured differently from a regular Spring Boot application, and as such compatibility is limited.
+Most notable is the fact auto-configuration using Spring Boot starters is not supported.
+
+Other modules often integrate different packages from the Spring ecosystem.
+In the <<across-standard-modules,standard modules>> for example, there are modules building on top of {spring-data-url}[Spring Data], {spring-batch-url}[Spring Batch] and {spring-security-url}[Spring security].
+
+== Across Framework
+Across Framework is the actual Java library providing all the infrastructure necessary to build Across modules and to run applications based on them.
+
+[[across-platform]]
+== Across Platform
+Across Platform is a set of curated dependencies and Across modules that play well together and help developers assemble applications.
+It is provided as a bill-of-material POM, extending the Spring IO platform BOM.
+
+Across applications usually use the Across Platform BOM as a basis, to ensure that both third-party libraries as well as common Across modules are compatible.
+
+[[across-standard-modules]]
+== Across Standard Modules
+Apart from the Across framework itself, there is a set of Across Standard Modules.
+These modules are usually maintained by the Across core team.
+They provide a common set of functionality that can be used as the foundation for your application.
+
+There are standard modules that provide you with the set-up for an administrative web interface, secured with {spring-security-url}[Spring security] and built on top of an entire roles and permissions management domain layer.
+Other modules generate web forms at runtime for persistent entities you have declared in your application.
+
+Across framework provides only a ground layer, the real win is in re-using well-defined modules that have already been built.
+The standard modules projects aims to do exactly that: bring some generic base modules to the open source Across landscape.
+
+include::./concepts.adoc[]

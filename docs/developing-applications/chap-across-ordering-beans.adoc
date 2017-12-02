@@ -1,0 +1,23 @@
+[[ordering-beans]]
+== Bean order
+In an Across based application, the primary order of bean interaction should be defined by the module dependencies.
+When scanning for beans in all modules (eg. when using a `RefreshableRegistry` or `@RefreshableCollection`), the beans will be returned according to the module order: beans from earlier bootstrapped modules will be before beans from later modules.
+The reasoning is simple: _if I depend on module A, i can rely on module A having done its things before I will_.
+If you need more sophisticated ordering, there are two extension points to the default behavior:
+
+.Order annotation and Ordered interface
+Core Spring classes.
+If you define these on beans, these will take precedence over the order of the modules themselves.
+The `Ordered` interface takes precedence over an `@Order` annotation, if both are present.
+Using global ordering should be avoided as much as possible, but using for example `Ordered.LOWEST_PRECEDENCE` you can ensure that a bean comes after all other context created beans in the list.
+
+.OrderInModule annotation and OrderedInModule interface
+The equivalent of `@Order` and `Ordered`, but they only apply within a single module.
+Use these if you have multiple beans (eg security configurers) of the same type in a single module, and it is important they follow a sequence.
+
+NOTE: Unless a specific order is given either through the interface or annotation, a default order of `Ordered.LOWEST_PRECEDENCE - 1000` is applied.
+This way you can still force beans to be ordered behind beans without an explicit order.
+
+WARNING: The current version of Across does not apply the module order hierarchy to event handlers.
+If event handlers need an order, it should be defined explicitly and you cannot rely that event handlers from other modules you depend on will have been executed before you.
+This is an important work in progress for one of the next versions of Across.

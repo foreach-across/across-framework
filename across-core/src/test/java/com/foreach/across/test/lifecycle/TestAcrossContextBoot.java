@@ -198,6 +198,12 @@ public class TestAcrossContextBoot
 	@Test
 	public void postRefreshShouldBeCalledOnBeansWithoutRefreshable() {
 		assertTrue( beanWithOnlyPostRefresh.isRefreshed() );
+		assertSame( scannedBeanModule2, beanWithOnlyPostRefresh.getScannedBeanFromLaterModule() );
+	}
+
+	@Test
+	public void postRefreshShouldNotBeCalledIfDependenciesNotFound() {
+		assertFalse( beanWithOnlyPostRefresh.isUnknownBeanSet() );
 	}
 
 	@Configuration
