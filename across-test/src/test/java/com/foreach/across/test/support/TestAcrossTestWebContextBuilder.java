@@ -15,6 +15,7 @@
  */
 package com.foreach.across.test.support;
 
+import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
 import com.foreach.across.test.AcrossTestWebContext;
@@ -50,7 +51,7 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 		try (
 				AcrossTestWebContext ctx = new AcrossTestWebContextBuilder()
 						.modules( AcrossWebModule.NAME )
-						.register( ServletConfigurer.class )
+						.modules( new EmptyAcrossModule( "Servlet configuration", ServletConfigurer.class ) )
 						.build()
 		) {
 			assertTrue( ctx.getServletContext().isInitialized() );
@@ -67,14 +68,14 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 				AcrossTestWebContext ctx = new AcrossTestWebContextBuilder()
 						.dynamicServletContext( false )
 						.modules( AcrossWebModule.NAME )
-						.register( ServletConfigurer.class )
+						.modules( new EmptyAcrossModule( "Servlet configuration", ServletConfigurer.class ) )
 						.build()
 		) {
 			assertTrue( ctx.getServletContext().isInitialized() );
 
 			ServletConfigurer configurer = ctx.getBeanOfType( ServletConfigurer.class );
 			assertNotNull( configurer );
-			assertEquals( Boolean.FALSE, configurer.getAllowed() );
+			assertNull( configurer.getAllowed() );
 		}
 	}
 

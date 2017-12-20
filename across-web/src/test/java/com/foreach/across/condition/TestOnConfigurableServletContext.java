@@ -16,15 +16,15 @@
 package com.foreach.across.condition;
 
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
 
@@ -47,17 +47,22 @@ public class TestOnConfigurableServletContext
 	@Mock
 	private ConditionContext context;
 
+	@Mock
+	private ConfigurableListableBeanFactory beanFactory;
+
+	@Before
+	public void returnBeanFactory() {
+		when( context.getBeanFactory() ).thenReturn( beanFactory );
+	}
+
 	@Test
 	public void dynamicNotRequiredAndNoWebApplicationContextShouldMatch() {
-		when( context.getResourceLoader() ).thenReturn( mock( ApplicationContext.class ) );
 		match( "no dynamic ServletContext found" );
 	}
 
 	@Test
 	public void dynamicRequiredButNoWebApplicationContextShouldNotMatch() {
 		require();
-		when( context.getResourceLoader() ).thenReturn( mock( ApplicationContext.class ) );
-
 		noMatch( "no dynamic ServletContext found" );
 	}
 
@@ -92,9 +97,8 @@ public class TestOnConfigurableServletContext
 		if ( dynamic ) {
 			when( sc.getAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER ) ).thenReturn( true );
 		}
-		WebApplicationContext wac = mock( WebApplicationContext.class );
-		when( wac.getServletContext() ).thenReturn( sc );
-		when( context.getResourceLoader() ).thenReturn( wac );
+		when( beanFactory.containsBean( "servletContext" ) ).thenReturn( true );
+		when( beanFactory.getBean( "servletContext", ServletContext.class ) ).thenReturn( sc );
 	}
 
 	private void match( String message ) {

@@ -31,6 +31,7 @@ import javax.servlet.DispatcherType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Map;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.Assert.*;
@@ -67,9 +68,10 @@ public class TestAcrossWebModuleBootstrap
 			);
 
 			// Resource url encoding must be last
+			Map<String, MockFilterRegistration> filterRegistrations = servletContext.getFilterRegistrations();
 			assertEquals(
 					ResourcesConfiguration.RESOURCE_URL_ENCODING_FILTER,
-					new ArrayList<>( servletContext.getFilterRegistrations().keySet() ).get( 2 )
+					new ArrayList<>( filterRegistrations.keySet() ).get( filterRegistrations.size() - 1 )
 			);
 		}
 	}
