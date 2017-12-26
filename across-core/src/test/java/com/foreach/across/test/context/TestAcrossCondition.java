@@ -20,7 +20,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.annotations.AcrossCondition;
-import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
@@ -206,7 +206,7 @@ public class TestAcrossCondition
 	}
 
 	@Configuration
-	@AcrossDepends(required = "moduleFour")
+	@ConditionalOnAcrossModule(allOf = "moduleFour")
 	@AcrossCondition("#{currentModule.name == 'moduleOne'}")
 	static class ConditionAndDependsConfig
 	{

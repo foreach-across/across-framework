@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.foreach.across.core.annotations.conditions;
+package com.foreach.across.core.annotations;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossModuleSettings;
-import com.foreach.across.core.annotations.AcrossCondition;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

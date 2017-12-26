@@ -16,7 +16,6 @@
 
 package com.foreach.across.core.annotations;
 
-import com.foreach.across.core.annotations.conditions.AcrossConditionCondition;
 import org.springframework.context.annotation.Conditional;
 
 import java.lang.annotation.ElementType;
