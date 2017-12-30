@@ -15,61 +15,54 @@
  */
 package com.foreach.across.modules.web.config;
 
-import com.foreach.across.config.AcrossServletContextInitializer;
-import com.foreach.across.core.AcrossContext;
+import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
 import com.foreach.across.core.AcrossException;
-import com.foreach.across.core.annotations.Event;
-import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
-import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.context.ApplicationContext;
+import org.springframework.boot.web.servlet.ServletContextInitializerBeans;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
+import org.springframework.context.event.EventListener;
 
+import javax.servlet.Filter;
+import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 /**
- * Responsible for executing the {@link AcrossWebDynamicServletConfigurer} instances
- * found throughout the {@link AcrossContext}.
+ * Registers all {@link ServletContextInitializer} beans created in any module or in the Across context itself. Picks up any
+ * {@link Servlet} and {@link Filter} beans and converts them to registrations using {@link ServletContextInitializerBeans}.
+ * <p/>
+ * Any initializers created in the parent context should be registered by the Spring Boot {@link EmbeddedWebApplicationContext},
+ * or manually in a non-embedded configuration.
  *
  * @author Arne Vandamme
+ * @see ServletContextInitializerBeans
  */
+@Slf4j
 @Configuration
+@RequiredArgsConstructor
+@ConditionalOnConfigurableServletContext
 public class DynamicServletConfiguration
 {
-	private static final Logger LOG = LoggerFactory.getLogger( DynamicServletConfiguration.class );
-
 	private final ServletContext servletContext;
-	private final AcrossContextInfo contextInfo;
 
-	@Autowired
-	public DynamicServletConfiguration( ServletContext servletContext,
-	                                    AcrossContextInfo contextInfo ) {
-		this.servletContext = servletContext;
-		this.contextInfo = contextInfo;
-	}
-
-	@Event
+	@EventListener
 	public void registerServletsAndFilters( AcrossContextBootstrappedEvent bootstrappedEvent ) {
-		Collection<InitializerEntry> initializers = retrieveInitializers();
+		Collection<ServletContextInitializer> initializers = retrieveInitializersCreatedInAcrossContextOrAnyChildModule( bootstrappedEvent.getContext() );
 
 		try {
 			if ( !initializers.isEmpty() ) {
 				LOG.info( "Found {} ServletContextInitializer beans found in the Across context", initializers.size() );
 
-				for ( InitializerEntry i : initializers ) {
-					LOG.debug( "ServletContextInitializer {}: {} - {}", i.moduleName, i.beanName, i.initializerBean );
-					i.initializerBean.onStartup( servletContext );
+				for ( ServletContextInitializer i : initializers ) {
+					LOG.debug( "Registering ServletContextInitializer - {}", i );
+					i.onStartup( servletContext );
 				}
 			}
 		}
@@ -78,71 +71,9 @@ public class DynamicServletConfiguration
 		}
 	}
 
-	private Collection<InitializerEntry> retrieveInitializers() {
-		List<ServletContextInitializer> initializerBeans = new ArrayList<>();
-		Map<ServletContextInitializer, InitializerEntry> initializers = new HashMap<>();
-
-		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
-
-		retrieveInitializersFromParent()
-				.forEach( ( k, v ) -> {
-					if ( !( v instanceof AcrossServletContextInitializer ) && !initializerBeans.contains( v ) ) {
-						initializers.put( v, new InitializerEntry( contextInfo.getId(), k, v ) );
-						initializerBeans.add( v );
-						comparator.register( v, Ordered.HIGHEST_PRECEDENCE );
-					}
-				} );
-
-		contextInfo.getModules().forEach(
-				m -> m.getApplicationContext().getBeansOfType( ServletContextInitializer.class )
-				      .forEach( ( k, v ) -> {
-					      if ( !initializerBeans.contains( v ) ) {
-						      initializers.put( v, new InitializerEntry( m.getName(), k, v ) );
-						      initializerBeans.add( v );
-						      comparator.register( v, m.getIndex() );
-					      }
-				      } )
+	private Collection<ServletContextInitializer> retrieveInitializersCreatedInAcrossContextOrAnyChildModule( AcrossContextInfo contextInfo ) {
+		return new ServletContextInitializerBeans(
+				(ListableBeanFactory) contextInfo.getApplicationContext().getAutowireCapableBeanFactory()
 		);
-
-		comparator.sort( initializerBeans );
-
-		return initializerBeans.stream()
-		                       .map( initializers::get )
-		                       .collect( Collectors.toList() );
-	}
-
-	private Map<String, ServletContextInitializer> retrieveInitializersFromParent() {
-		ApplicationContext applicationContext = contextInfo.getApplicationContext();
-
-		if ( hasEmbeddedApplicationContextAsParent( applicationContext ) ) {
-			// An embedded application context will initialize its own
-			return applicationContext.getBeansOfType( ServletContextInitializer.class );
-		}
-
-		return BeanFactoryUtils.beansOfTypeIncludingAncestors( applicationContext,
-		                                                       ServletContextInitializer.class );
-	}
-
-	private boolean hasEmbeddedApplicationContextAsParent( ApplicationContext applicationContext ) {
-		if ( applicationContext instanceof EmbeddedWebApplicationContext ) {
-			return true;
-		}
-
-		ApplicationContext parent = applicationContext.getParent();
-		return parent != null && hasEmbeddedApplicationContextAsParent( parent );
-	}
-
-	private static class InitializerEntry
-	{
-		final String moduleName, beanName;
-		final ServletContextInitializer initializerBean;
-
-		InitializerEntry( String moduleName,
-		                  String beanName,
-		                  ServletContextInitializer initializerBean ) {
-			this.moduleName = moduleName;
-			this.beanName = beanName;
-			this.initializerBean = initializerBean;
-		}
 	}
 }

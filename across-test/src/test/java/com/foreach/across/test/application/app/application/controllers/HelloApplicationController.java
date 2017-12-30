@@ -15,9 +15,13 @@
  */
 package com.foreach.across.test.application.app.application.controllers;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Date;
 
 /**
  * @author Arne Vandamme
@@ -30,5 +34,17 @@ public class HelloApplicationController
 	@ResponseBody
 	public String hello() {
 		return "application says hello";
+	}
+
+	@RequestMapping("/stringToDateConverterWithoutAnnotationPattern")
+	@ResponseBody
+	public String dateConversion( @RequestParam Date time ) {
+		return time.toString();
+	}
+
+	@RequestMapping("/stringToDateConverterWithAnnotationPattern")
+	@ResponseBody
+	public String dateConversionWithPattern( @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date time ) {
+		return time.toString();
 	}
 }

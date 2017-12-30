@@ -19,7 +19,7 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.annotations.AcrossCondition;
-import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
@@ -188,13 +188,13 @@ public class TestInstallerConditionals
 	{
 	}
 
-	@AcrossDepends(required = "ModuleNotPresent")
+	@ConditionalOnAcrossModule(allOf = "ModuleNotPresent")
 	@Installer(description = "Should not be registered as module is not configured.")
 	static class ModuleMissingInstaller extends BaseInstaller
 	{
 	}
 
-	@AcrossDepends(required = "DummyModule")
+	@ConditionalOnAcrossModule(allOf = "DummyModule")
 	@Installer(description = "Should be registered as module is configured.")
 	static class ModulePresentInstaller extends BaseInstaller
 	{

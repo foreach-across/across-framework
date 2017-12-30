@@ -17,16 +17,16 @@
 package com.foreach.across.core.context.registry;
 
 import com.foreach.across.core.context.AcrossListableBeanFactory;
+import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import com.foreach.across.core.context.ExposedBeanDefinition;
-import com.foreach.across.core.context.ModuleBeanOrderComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.Field;
@@ -117,6 +117,16 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	}
 
 	@Override
+	public <T> Optional<T> findBeanOfTypeFromModule( String moduleName, Class<T> requiredType ) {
+		try {
+			return Optional.ofNullable( getBeanOfTypeFromModule( moduleName, requiredType ) );
+		}
+		catch ( BeansException be ) {
+			return Optional.empty();
+		}
+	}
+
+	@Override
 	public <T> List<T> getBeansOfType( Class<T> beanClass ) {
 		return getBeansOfType( beanClass, false );
 	}
@@ -148,7 +158,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	@SuppressWarnings("unchecked")
 	public <T> Map<String, T> getBeansOfTypeAsMap( ResolvableType resolvableType, boolean includeModuleInternals ) {
 		Set<T> beans = new LinkedHashSet<>();
-		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
+		AcrossOrderSpecifierComparator comparator = new AcrossOrderSpecifierComparator();
 
 		Map<T, String> beanNames = new HashMap<>();
 
@@ -157,10 +167,8 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		AcrossListableBeanFactory beanFactory = beanFactory( contextInfo.getApplicationContext() );
 
 		resolver.setBeanFactory( beanFactory );
-		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory,
-		                                                                        resolvableType.getRawClass() )
-		                                        .keySet() ) {
 
+		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory, resolvableType.getRawClass() ).keySet() ) {
 			if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
 				boolean isExposedNonSingleton = !beanFactory.isSingleton( beanName )
 						&& beanFactory.getBeanDefinition( beanName ) instanceof ExposedBeanDefinition;
@@ -169,7 +177,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 				// with double entries
 				if ( !includeModuleInternals || !isExposedNonSingleton ) {
 					Object bean = beanFactory.getBean( beanName );
-					comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
+					comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
 					beans.add( (T) bean );
 					beanNames.put( (T) bean, beanName );
@@ -186,11 +194,13 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 
 					for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
 						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
-							Object bean = beanFactory.getBean( beanName );
-							comparator.register( bean, module.getIndex() );
+							if ( !( beanFactory.getBeanDefinition( beanName ) instanceof ExposedBeanDefinition ) ) {
+								Object bean = beanFactory.getBean( beanName );
+								comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-							beans.add( (T) bean );
-							beanNames.put( (T) bean, module.getName() + ":" + beanName );
+								beans.add( (T) bean );
+								beanNames.put( (T) bean, module.getName() + ":" + beanName );
+							}
 						}
 					}
 				}
@@ -252,7 +262,6 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		public boolean equals( Object other ) {
 			return super.equals( other );
 		}
-
 
 	}
 }

@@ -98,7 +98,7 @@ public class TestInstallerPhases
 
 		@Bean
 		public AcrossModule dummyModule() {
-			return new EmptyAcrossModule( "DummyModule" );
+			return new EmptyAcrossModule( "DummyModule", Object.class );
 		}
 
 		@Bean

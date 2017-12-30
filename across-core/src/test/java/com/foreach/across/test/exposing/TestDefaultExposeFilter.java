@@ -75,8 +75,8 @@ public class TestDefaultExposeFilter
 	}
 
 	@Test
-	public void controllerIsNotExposedByDefault() {
-		assertNull( myController );
+	public void controllerIsExposedByDefault() {
+		assertNotNull( myController );
 	}
 
 	@Test

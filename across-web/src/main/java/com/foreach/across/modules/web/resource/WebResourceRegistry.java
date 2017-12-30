@@ -17,8 +17,8 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.core.AcrossException;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -65,8 +65,7 @@ public class WebResourceRegistry
 	 *
 	 * @param webResource WebResource instance to add.
 	 */
-	public void add( WebResource webResource ) {
-		Assert.notNull( webResource );
+	public void add( @NonNull WebResource webResource ) {
 		addWithKey( webResource.getType(), webResource.getKey(), webResource.getData(), webResource.getLocation() );
 	}
 

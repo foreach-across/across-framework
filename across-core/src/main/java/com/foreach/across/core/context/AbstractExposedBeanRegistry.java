@@ -27,6 +27,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractExposedBeanRegistry
@@ -35,15 +36,18 @@ public abstract class AbstractExposedBeanRegistry
 	private final Logger LOG = LoggerFactory.getLogger( getClass() );
 
 	protected final String moduleName;
+	protected final Integer moduleIndex;
 	protected final AcrossContextBeanRegistry contextBeanRegistry;
 	protected final ExposedBeanDefinitionTransformer transformer;
 
-	protected final Map<String, ExposedBeanDefinition> exposedDefinitions = new HashMap<>();
+	protected final Map<String, ExposedBeanDefinition> exposedDefinitions = new LinkedHashMap<>();
 
 	protected AbstractExposedBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry,
 	                                       String moduleName,
+	                                       Integer moduleIndex,
 	                                       ExposedBeanDefinitionTransformer transformer ) {
 		this.moduleName = moduleName;
+		this.moduleIndex = moduleIndex;
 		this.contextBeanRegistry = contextBeanRegistry;
 		this.transformer = transformer;
 	}
@@ -61,11 +65,11 @@ public abstract class AbstractExposedBeanRegistry
 				ExposedBeanDefinition exposed = new ExposedBeanDefinition(
 						contextBeanRegistry,
 						moduleName,
+						moduleIndex,
 						definition.getKey(),
 						original,
 						contextBeanRegistry.getBeanTypeFromModule( moduleName, definition.getKey() ),
-				        getAliases( definition.getKey() )
-				);
+						getAliases( definition.getKey() ) );
 
 				candidates.put( definition.getKey(), exposed );
 			}
@@ -79,10 +83,10 @@ public abstract class AbstractExposedBeanRegistry
 				ExposedBeanDefinition exposed = new ExposedBeanDefinition(
 						contextBeanRegistry,
 						moduleName,
+						moduleIndex,
 						singleton.getKey(),
 						contextBeanRegistry.getBeanTypeFromModule( moduleName, singleton.getKey() ),
-				        getAliases( singleton.getKey() )
-				);
+						getAliases( singleton.getKey() ) );
 
 				candidates.put( singleton.getKey(), exposed );
 			}
@@ -103,10 +107,14 @@ public abstract class AbstractExposedBeanRegistry
 	 * Copies the BeanDefinitions to the BeanFactory provided (if possible).
 	 */
 	public void copyTo( ConfigurableListableBeanFactory beanFactory ) {
+		copyTo( beanFactory, true );
+	}
+
+	public void copyTo( ConfigurableListableBeanFactory beanFactory, boolean ignoreExistingBeanName ) {
 		if ( beanFactory instanceof BeanDefinitionRegistry ) {
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
 
-			copyBeanDefinitions( beanFactory, registry );
+			copyBeanDefinitions( beanFactory, registry, ignoreExistingBeanName );
 		}
 		else {
 			LOG.warn(
@@ -120,19 +128,25 @@ public abstract class AbstractExposedBeanRegistry
 		return exposedDefinitions.isEmpty();
 	}
 
-	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry registry ) {
+	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry registry, boolean ignoreExistingBeanName ) {
+		LOG.trace( "Exposing beans to bean factory {}", beanFactory );
 		for ( Map.Entry<String, ExposedBeanDefinition> definition : exposedDefinitions.entrySet() ) {
-			LOG.debug( "Exposing bean {}: {}", definition.getKey(), definition.getValue().getBeanClassName() );
+			LOG.trace( "Exposing bean {}: {}", definition.getKey(), definition.getValue().getBeanClassName() );
 
 			ExposedBeanDefinition beanDefinition = definition.getValue();
 
 			String beanName = beanDefinition.getPreferredBeanName();
 
-			if ( beanFactory.containsBean( beanName ) ) {
-				LOG.trace(
-						"BeanDefinitionRegistry already contains a bean with name {}, using fully qualified name for exposing",
-						beanName );
-				beanName = beanDefinition.getFullyQualifiedBeanName();
+			if ( beanFactory.containsLocalBean( beanName ) ) {
+				if ( ignoreExistingBeanName ) {
+					LOG.trace(
+							"BeanDefinitionRegistry already contains a bean with name {}, using fully qualified name for exposing",
+							beanName );
+					beanName = beanDefinition.getFullyQualifiedBeanName();
+				}
+				else {
+					continue;
+				}
 			}
 
 			registry.registerBeanDefinition( beanName, beanDefinition );

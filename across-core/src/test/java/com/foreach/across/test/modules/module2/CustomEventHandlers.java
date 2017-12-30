@@ -18,7 +18,9 @@ package com.foreach.across.test.modules.module2;
 
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.EventName;
+import org.springframework.context.event.EventListener;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class CustomEventHandlers
@@ -30,6 +32,10 @@ public class CustomEventHandlers
 	private Set<SimpleEvent> receivedTypedLongMap = new HashSet<>();
 	private Set<SimpleEvent> receivedTypedIntegerList = new HashSet<>();
 	private Set<SimpleEvent> receivedTypedNumberCollection = new HashSet<>();
+
+	private Set<SingleGenericEvent> receivedSingleNumber = new HashSet<>();
+	private Set<SingleGenericEvent> receivedSingleInteger = new HashSet<>();
+	private Set<SingleGenericEvent> receivedSingleDecimal = new HashSet<>();
 
 	public Set<SimpleEvent> getReceivedAll() {
 		return receivedAll;
@@ -55,6 +61,18 @@ public class CustomEventHandlers
 		return receivedTypedNumberCollection;
 	}
 
+	public Set<SingleGenericEvent> getReceivedSingleNumber() {
+		return receivedSingleNumber;
+	}
+
+	public Set<SingleGenericEvent> getReceivedSingleInteger() {
+		return receivedSingleInteger;
+	}
+
+	public Set<SingleGenericEvent> getReceivedSingleDecimal() {
+		return receivedSingleDecimal;
+	}
+
 	@Event
 	public void allEvents( SimpleEvent event ) {
 		receivedAll.add( event );
@@ -65,23 +83,38 @@ public class CustomEventHandlers
 		receivedOne.add( event );
 	}
 
-	@Event
-	public void namedTwo( @EventName({ "two", "three" }) NamedEvent event ) {
+	@EventListener(condition = "#event.eventName == 'two' or #event.eventName == 'three'")
+	public void namedTwo( NamedEvent event ) {
 		receivedTwo.add( event );
 	}
 
 	@Event
-	public void typedLongMap( GenericEvent<Long, Map> event ) {
+	public void typedLongMap( GenericEvent<Long, ? extends Map> event ) {
 		receivedTypedLongMap.add( event );
 	}
 
-	@Event
-	public void typedIntegerList( GenericEvent<Integer, List<Integer>> event ) {
+	@EventListener
+	public void typedIntegerList( GenericEvent<Integer, ? extends List<Integer>> event ) {
 		receivedTypedIntegerList.add( event );
 	}
 
 	@Event
-	public void typedNumberCollection( GenericEvent<Number, Collection> event ) {
+	public void typedNumberCollection( GenericEvent<? extends Number, ? extends Collection> event ) {
 		receivedTypedNumberCollection.add( event );
+	}
+
+	@Event
+	public void singleNumber( SingleGenericEvent<? extends Number> number ) {
+		receivedSingleNumber.add( number );
+	}
+
+	@EventListener
+	public void singleInteger( SingleGenericEvent<Integer> number ) {
+		receivedSingleInteger.add( number );
+	}
+
+	@EventListener
+	public void singleDecimal( SingleGenericEvent<BigDecimal> number ) {
+		receivedSingleDecimal.add( number );
 	}
 }

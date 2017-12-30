@@ -17,6 +17,7 @@
 package com.foreach.across.core.filters;
 
 import com.foreach.across.core.util.ClassLoadingUtils;
+import lombok.NonNull;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.MethodMetadata;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -41,16 +41,13 @@ public class AnnotationBeanFilter implements BeanFilter
 	private boolean useRecursiveSearch = false;
 	private Class<? extends Annotation>[] annotations;
 
-	public AnnotationBeanFilter( Class<? extends Annotation>... annotations ) {
-		Assert.notNull( annotations );
+	public AnnotationBeanFilter( @NonNull Class<? extends Annotation>... annotations ) {
 		this.annotations = annotations.clone();
 	}
 
 	public AnnotationBeanFilter( boolean matchIfBeanFactoryApplies,
 	                             boolean useRecursiveSearch,
-	                             Class<? extends Annotation>... annotations ) {
-		Assert.notNull( annotations );
-
+	                             @NonNull Class<? extends Annotation>... annotations ) {
 		this.matchIfBeanFactoryApplies = matchIfBeanFactoryApplies;
 		this.useRecursiveSearch = useRecursiveSearch;
 		this.annotations = annotations.clone();
@@ -60,8 +57,7 @@ public class AnnotationBeanFilter implements BeanFilter
 		return annotations.clone();
 	}
 
-	public void setAnnotations( Class<? extends Annotation>[] annotations ) {
-		Assert.notNull( annotations );
+	public void setAnnotations( @NonNull Class<? extends Annotation>[] annotations ) {
 		this.annotations = annotations.clone();
 	}
 

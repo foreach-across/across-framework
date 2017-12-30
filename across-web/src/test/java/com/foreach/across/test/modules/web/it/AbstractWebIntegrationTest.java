@@ -15,7 +15,7 @@
  */
 package com.foreach.across.test.modules.web.it;
 
-import com.foreach.across.config.AcrossWebApplicationConfiguration;
+import com.foreach.across.config.AcrossWebApplicationAutoConfiguration;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ import java.io.IOException;
  * @author Arne Vandamme
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = AcrossWebApplicationConfiguration.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = AcrossWebApplicationAutoConfiguration.class)
 public abstract class AbstractWebIntegrationTest
 {
 	@Autowired

@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.mvc;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.mvc.condition.CompositeCustomRequestCondition;
@@ -27,6 +26,7 @@ import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ClassUtils;
@@ -98,7 +98,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 		setInterceptors( interceptor );
 	}
 
-	@Event
+	@EventListener
 	protected void rescan( AcrossContextBootstrappedEvent event ) {
 		for ( AcrossModuleInfo moduleInfo : event.getModules() ) {
 			scan( moduleInfo.getApplicationContext(), false );

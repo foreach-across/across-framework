@@ -16,7 +16,6 @@
 
 package com.foreach.across.core.annotations;
 
-import com.foreach.across.core.annotations.conditions.AcrossConditionCondition;
 import org.springframework.context.annotation.Conditional;
 
 import java.lang.annotation.ElementType;
@@ -36,10 +35,13 @@ import java.lang.annotation.Target;
  * </ul>
  * </p>
  * <p><strong>Note:</strong> Only usable on beans & configurations, not on AcrossModule classes.</p>
+ *
+ * @deprecated use regular spring {@link org.springframework.boot.autoconfigure.condition.ConditionalOnExpression} instead.
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Conditional(AcrossConditionCondition.class)
+@Deprecated
 public @interface AcrossCondition
 {
 	/**

@@ -21,12 +21,15 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.type.filter.TypeFilter;
 
 /**
  * Interface the ApplicationContext must implement for Across to be able to use it.
  */
 public interface AcrossConfigurableApplicationContext extends ConfigurableApplicationContext
 {
+	void setModuleIndex( Integer moduleIndex );
+
 	ConfigurableEnvironment getEnvironment();
 
 	void provide( ProvidedBeansMap... beans );
@@ -38,6 +41,8 @@ public interface AcrossConfigurableApplicationContext extends ConfigurableApplic
 	void register( Class<?>... annotatedClasses );
 
 	void scan( String... basePackages );
+
+	void scan( String[] basePackages, TypeFilter[] excludedTypeFilters );
 
 	void refresh();
 

@@ -34,4 +34,6 @@ public interface ConstructedBeanModule1
 	ScannedBeanModule2 getScannedBeanModule2();
 
 	List<TestEvent> getEventsReceived();
+
+	void receiveEvent( TestEvent event );
 }

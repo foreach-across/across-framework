@@ -16,7 +16,7 @@
 
 package com.foreach.across.test.modules;
 
-import com.foreach.across.core.annotations.Event;
+import org.springframework.context.event.EventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class TestModuleEventListener
 		return eventsReceived;
 	}
 
-	@Event
+	@EventListener
 	public void receiveEvent( TestEvent event ) {
 		eventsReceived.add( event );
 	}

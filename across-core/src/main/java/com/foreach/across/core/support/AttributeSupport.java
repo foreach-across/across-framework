@@ -15,6 +15,7 @@
  */
 package com.foreach.across.core.support;
 
+import lombok.NonNull;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;
@@ -45,15 +46,12 @@ public abstract class AttributeSupport implements WritableAttributes
 	}
 
 	@Override
-	public <Y> void setAttribute( Class<Y> attributeType, Y attributeValue ) {
-		Assert.notNull( attributeType );
-
+	public <Y> void setAttribute( @NonNull Class<Y> attributeType, Y attributeValue ) {
 		setAttribute( attributeType.getName(), attributeValue );
 	}
 
 	@Override
-	public void setAttributes( Map<String, Object> attributes ) {
-		Assert.notNull( attributes );
+	public void setAttributes( @NonNull Map<String, Object> attributes ) {
 		for ( Map.Entry<String, Object> attribute : attributes.entrySet() ) {
 			setAttribute( attribute.getKey(), attribute.getValue() );
 		}
@@ -61,15 +59,13 @@ public abstract class AttributeSupport implements WritableAttributes
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <Y> Y removeAttribute( Class<Y> attributeType ) {
-		Assert.notNull( attributeType );
+	public <Y> Y removeAttribute( @NonNull Class<Y> attributeType ) {
 		return (Y) attributes.remove( attributeType.getName() );
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <Y, V extends Y> V getAttribute( Class<Y> attributeType ) {
-		Assert.notNull( attributeType );
+	public <Y, V extends Y> V getAttribute( @NonNull Class<Y> attributeType ) {
 		return (V) getAttribute( attributeType.getName() );
 	}
 

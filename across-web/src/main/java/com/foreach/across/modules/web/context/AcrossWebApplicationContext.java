@@ -16,22 +16,28 @@
 
 package com.foreach.across.modules.web.context;
 
-import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.SharedMetadataReaderFactory;
 import com.foreach.across.core.context.annotation.ModuleConfigurationBeanNameGenerator;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
+import com.foreach.across.core.events.AcrossContextApplicationEventMulticaster;
+import com.foreach.across.modules.web.support.ApplicationContextIdNameGenerator;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigUtils;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -44,14 +50,28 @@ import java.util.Map;
 public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationContext implements AcrossConfigurableApplicationContext
 {
 	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
+	private final Map<String[], TypeFilter[]> packagesToScan = new HashMap<>();
+
+	private Integer moduleIndex;
 
 	public AcrossWebApplicationContext() {
+		setId( ApplicationContextIdNameGenerator.forContext( this ) );
 		setBeanNameGenerator( new ModuleConfigurationBeanNameGenerator() );
 	}
 
 	@Override
+	public void setModuleIndex( Integer moduleIndex ) {
+		this.moduleIndex = moduleIndex;
+		if ( hasBeanFactory() ) {
+			( (AcrossListableBeanFactory) getBeanFactory() ).setModuleIndex( moduleIndex );
+		}
+	}
+
+	@Override
 	protected DefaultListableBeanFactory createBeanFactory() {
-		return new AcrossListableBeanFactory( getInternalParentBeanFactory() );
+		AcrossListableBeanFactory beanFactory = new AcrossListableBeanFactory( getInternalParentBeanFactory() );
+		beanFactory.setModuleIndex( moduleIndex );
+		return beanFactory;
 	}
 
 	@Override
@@ -72,6 +92,10 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 		}
 	}
 
+	public void scan( String[] basePackages, TypeFilter[] excludedTypes ) {
+		packagesToScan.put( basePackages, excludedTypes );
+	}
+
 	@Override
 	protected void loadBeanDefinitions( DefaultListableBeanFactory beanFactory ) {
 		for ( ProvidedBeansMap providedBeans : providedBeansMaps ) {
@@ -87,6 +111,21 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 		SharedMetadataReaderFactory.registerAnnotationProcessors( beanFactory );
 
 		super.loadBeanDefinitions( beanFactory );
+
+		packagesToScan.forEach(
+				( packages, filters ) -> {
+					ClassPathBeanDefinitionScanner scanner = getClassPathBeanDefinitionScanner( beanFactory );
+					scanner.setBeanNameGenerator( getBeanNameGenerator() );
+					scanner.setScopeMetadataResolver( getScopeMetadataResolver() );
+					scanner.setResourcePattern( "**/*.class" );
+
+					for ( TypeFilter filter : filters ) {
+						scanner.addExcludeFilter( filter );
+					}
+
+					scanner.scan( packages );
+				}
+		);
 	}
 
 	@Override
@@ -100,8 +139,6 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 	protected void registerBeanPostProcessors( ConfigurableListableBeanFactory beanFactory ) {
 		super.registerBeanPostProcessors( beanFactory );
 
-		AcrossApplicationContext.registerEventHandlerBeanPostProcessor( beanFactory );
-
 		// Set the conversion service on the environment as well
 		ConfigurableEnvironment environment = getEnvironment();
 
@@ -111,5 +148,22 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 					beanFactory.getBean( CONVERSION_SERVICE_BEAN_NAME, ConfigurableConversionService.class )
 			);
 		}
+	}
+
+	@Override
+	protected void initApplicationEventMulticaster() {
+		// if parent context is also an AcrossApplicationContext - use its multicaster and re-register it
+		final ApplicationContext parent = getParent();
+		if ( parent instanceof AcrossConfigurableApplicationContext && !containsLocalBean( APPLICATION_EVENT_MULTICASTER_BEAN_NAME ) ) {
+			final ApplicationEventMulticaster multicaster = parent.getBean( APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class );
+			if ( multicaster instanceof AcrossContextApplicationEventMulticaster ) {
+				getBeanFactory().registerSingleton(
+						APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
+						( (AcrossContextApplicationEventMulticaster) multicaster ).createModuleMulticaster( moduleIndex, getBeanFactory() )
+				);
+			}
+		}
+
+		super.initApplicationEventMulticaster();
 	}
 }

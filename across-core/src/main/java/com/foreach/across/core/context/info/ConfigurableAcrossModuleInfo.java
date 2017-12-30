@@ -18,11 +18,13 @@ package com.foreach.across.core.context.info;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.AcrossVersionInfo;
+import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
@@ -36,7 +38,8 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	private final AcrossModule module;
 
 	private final String moduleName;
-	private final boolean enabled;
+	private final String[] aliases;
+	private boolean enabled;
 
 	private AcrossModuleRole moduleRole = AcrossModuleRole.APPLICATION;
 	private ModuleBootstrapStatus bootstrapStatus;
@@ -56,7 +59,12 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 
 		moduleName = module.getName();
 		enabled = module.isEnabled();
+		aliases = module instanceof DynamicAcrossModule ? new String[] { module.getClass().getSimpleName() } : new String[0];
 		bootstrapStatus = enabled ? ModuleBootstrapStatus.AwaitingBootstrap : ModuleBootstrapStatus.Disabled;
+	}
+
+	public void setEnabled( boolean enabled ) {
+		this.enabled = enabled;
 	}
 
 	@Override
@@ -72,6 +80,11 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	@Override
 	public String getName() {
 		return moduleName;
+	}
+
+	@Override
+	public String[] getAliases() {
+		return aliases;
 	}
 
 	@Override
@@ -162,6 +175,10 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	@Override
 	public ApplicationContext getApplicationContext() {
 		return AcrossContextUtils.getApplicationContext( module );
+	}
+
+	public ConfigurableListableBeanFactory getBeanFactory() {
+		return (ConfigurableListableBeanFactory) getApplicationContext().getAutowireCapableBeanFactory();
 	}
 
 	@Override

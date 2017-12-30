@@ -17,7 +17,7 @@
 package com.foreach.across.core.transformers;
 
 import com.foreach.across.core.context.ExposedBeanDefinition;
-import org.springframework.util.Assert;
+import lombok.NonNull;
 
 import java.util.Collection;
 import java.util.Map;
@@ -38,8 +38,7 @@ public class PrimaryBeanTransformer implements ExposedBeanDefinitionTransformer
 		this.beanNames = beanNames;
 	}
 
-	public void setBeanNames( Collection<String> beanNames ) {
-		Assert.notNull( beanNames );
+	public void setBeanNames( @NonNull Collection<String> beanNames ) {
 		this.beanNames = beanNames;
 	}
 

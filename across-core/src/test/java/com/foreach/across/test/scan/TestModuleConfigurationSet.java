@@ -66,6 +66,18 @@ public class TestModuleConfigurationSet
 	}
 
 	@Test
+	public void aliasing() {
+		set.register( One.class, "moduleTwo" );
+		set.register( One.class, "aliasOne" );
+		set.register( Three.class, "aliasOne" );
+		set.register( Two.class, "aliasTwo" );
+
+		Class<?>[] annotatedClasses = set.getAnnotatedClasses( "moduleOne", "aliasOne", "aliasTwo" );
+		assertEquals( 3, annotatedClasses.length );
+		assertArrayEquals( new Class[] { One.class, Three.class, Two.class }, annotatedClasses );
+	}
+
+	@Test
 	public void specificExcludes() {
 		set.register( One.class );
 		set.exclude( One.class, "moduleOne" );

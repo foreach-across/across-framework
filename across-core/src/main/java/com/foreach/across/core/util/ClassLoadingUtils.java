@@ -15,6 +15,8 @@
  */
 package com.foreach.across.core.util;
 
+import org.springframework.util.ClassUtils;
+
 /**
  * @author Arne Vandamme
  */
@@ -25,5 +27,17 @@ public abstract class ClassLoadingUtils
 
 	public static Class loadClass( String className ) throws ClassNotFoundException {
 		return Class.forName( className, true, Thread.currentThread().getContextClassLoader() );
+	}
+
+	/**
+	 * @return null if class can't be resolved
+	 */
+	public static Class resolveClass( String className ) {
+		try {
+			return ClassUtils.forName( className, Thread.currentThread().getContextClassLoader() );
+		}
+		catch ( ClassNotFoundException cnfe ) {
+			return null;
+		}
 	}
 }

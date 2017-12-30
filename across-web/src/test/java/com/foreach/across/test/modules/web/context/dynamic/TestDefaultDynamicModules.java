@@ -18,6 +18,7 @@ package com.foreach.across.test.modules.web.context.dynamic;
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.test.modules.web.context.dynamic.application.RootComponent;
 import com.foreach.across.test.modules.web.context.dynamic.postprocessor.config.SamplePostProcessorModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -63,6 +63,9 @@ public class TestDefaultDynamicModules
 		assertEquals( "sample", contextInfo.getModuleInfo( "SampleApplicationModule" ).getResourcesKey() );
 		assertTrue( contextInfo.getModuleInfo( "SampleApplicationModule" )
 		                       .getModule() instanceof DynamicAcrossModule );
+		assertNotNull( contextInfo.getModuleInfo( "SampleApplicationModule" ).getApplicationContext().getBean( RootComponent.class ) );
+		assertFalse( contextInfo.getModuleInfo( "SampleApplicationModule" ).getApplicationContext().containsBean( "extensionComponent" ) );
+		assertFalse( contextInfo.getModuleInfo( "SampleApplicationModule" ).getApplicationContext().containsBean( "installerComponent" ) );
 	}
 
 	@Test

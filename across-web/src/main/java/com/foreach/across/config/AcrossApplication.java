@@ -15,11 +15,12 @@
  */
 package com.foreach.across.config;
 
+import com.foreach.across.boot.AcrossAutoConfigurationImportSelector;
+import com.foreach.across.boot.ExtendModuleAutoConfiguration;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -31,20 +32,18 @@ import java.lang.annotation.*;
  * {@link #enableDynamicModules()} value.
  * <p/>
  * NOTE: Even though this class defines {@link EnableAutoConfiguration}, it will explicitly disable auto configuration
- * in the {@link AcrossApplicationConfiguration}.  The annotation is added for better IDE support.
+ * in the {@link ApplicationModuleImportSelector}.  The annotation is added for better IDE support.
  *
  * @author Arne Vandamme
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import({ PropertyPlaceholderAutoConfiguration.class,
-          AcrossApplicationConfiguration.class,
-          AcrossWebApplicationConfiguration.class,
-          SpringBootDevToolsSupportingConfiguration.class })
 @EnableAcrossContext
 @SpringBootConfiguration
 @EnableAutoConfiguration
+@Import({ ApplicationModuleImportSelector.class, AcrossAutoConfigurationImportSelector.class, ExtendModuleAutoConfiguration.class,
+          ApplicationAutoConfigurationPackage.class })
 public @interface AcrossApplication
 {
 	/**
@@ -58,6 +57,11 @@ public @interface AcrossApplication
 	 * based on the package of the importing class.
 	 */
 	boolean enableDynamicModules() default true;
+
+	/**
+	 * If enabled, Spring Boot auto-configuration will be attempted.
+	 */
+	boolean autoConfiguration() default true;
 
 	/**
 	 * Array of {@link AcrossModule} names that should be configured if auto configuration is enabled.

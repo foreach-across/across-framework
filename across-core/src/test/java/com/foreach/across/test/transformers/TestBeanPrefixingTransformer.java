@@ -37,19 +37,19 @@ public class TestBeanPrefixingTransformer
 		definitions.put( "sessionFactory", new ExposedBeanDefinition(
 				                 mock( AcrossContextBeanRegistry.class ),
 				                 "module",
+				                 0,
 				                 "sessionFactory",
 				                 Object.class,
-				                 new String[0]
-		                 )
+				                 new String[0] )
 		);
 		definitions.put( "transactionManager",
 		                 new ExposedBeanDefinition(
 				                 mock( AcrossContextBeanRegistry.class ),
 				                 "module",
+				                 0,
 				                 "transactionManager",
 				                 Object.class,
-				                 new String[] { "myTransactionManager" }
-		                 )
+				                 new String[] { "myTransactionManager" } )
 		);
 	}
 

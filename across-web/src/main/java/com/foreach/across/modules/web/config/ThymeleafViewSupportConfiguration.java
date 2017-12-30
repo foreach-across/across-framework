@@ -60,7 +60,7 @@ import java.util.stream.Stream;
 @ConditionalOnProperty(value = "acrossWebModule.views.thymeleaf.enabled", matchIfMissing = true)
 public class ThymeleafViewSupportConfiguration
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfiguration.class );
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -109,14 +109,8 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
-	public ViewElementAttributeConverter viewElementAttributeConverter() {
-		return new DefaultViewElementAttributeConverter( viewElementAttributeObjectMapper() );
-	}
-
-	@Bean(ViewElementAttributeConverter.OBJECT_MAPPER_BEAN)
-	@Exposed
-	public ObjectMapper viewElementAttributeObjectMapper() {
-		return new ObjectMapper();
+	public ViewElementAttributeConverter viewElementAttributeConverter( ObjectMapper objectMapper ) {
+		return new DefaultViewElementAttributeConverter( objectMapper );
 	}
 
 	@Bean

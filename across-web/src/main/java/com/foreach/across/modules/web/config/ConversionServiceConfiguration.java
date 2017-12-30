@@ -75,7 +75,7 @@ public class ConversionServiceConfiguration
 	}
 
 	/**
-	 * Exposes the ConversionService to all mappers by default.
+	 * Exposes the ConversionService to all prefixing mappers by default.
 	 *
 	 * @author Arne Vandamme
 	 */

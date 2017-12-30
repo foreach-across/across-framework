@@ -22,11 +22,14 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Represents the global bootstrap configuration for the AcrossContext.
@@ -116,6 +119,26 @@ public class AcrossBootstrapConfig
 	 * Method to add one or more configuration classes to a module bootstrap configuration.
 	 * The module is identified by its name.  This method is safe to use in all circumstances:
 	 * if the module is not configured in the context only the return value will be false but no
+	 * exception will occur.  If the class with the name is not present on the classpath, it will be skipped.
+	 *
+	 * @param moduleName Unique name of the module in the context.
+	 * @param classNames Annotated class names.
+	 * @return True if the module was present.
+	 */
+	public boolean extendModule( String moduleName, String... classNames ) {
+		return extendModule(
+				moduleName,
+				(Class[]) Stream.of( classNames )
+				                .map( ClassLoadingUtils::resolveClass )
+				                .filter( Objects::nonNull )
+				                .toArray( Class[]::new )
+		);
+	}
+
+	/**
+	 * Method to add one or more configuration classes to a module bootstrap configuration.
+	 * The module is identified by its name.  This method is safe to use in all circumstances:
+	 * if the module is not configured in the context only the return value will be false but no
 	 * exception will occur.
 	 *
 	 * @param moduleName           Unique name of the module in the context.
@@ -138,9 +161,7 @@ public class AcrossBootstrapConfig
 	 * @param moduleName  Unique name of the module in the context.
 	 * @param configurers Configurers to add to the bootstrap.
 	 * @return True if the module was present.
-	 * @deprecated use {@link #extendModule(String, Class[])} instead
 	 */
-	@Deprecated
 	public boolean extendModule( String moduleName, ApplicationContextConfigurer... configurers ) {
 		if ( hasModule( moduleName ) ) {
 			getModule( moduleName ).addApplicationContextConfigurer( configurers );

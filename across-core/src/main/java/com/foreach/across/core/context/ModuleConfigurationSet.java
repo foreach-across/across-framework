@@ -15,7 +15,10 @@
  */
 package com.foreach.across.core.context;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Represents a collection of classes annotated with {@link @ModuleConfiguration},
@@ -27,16 +30,25 @@ public class ModuleConfigurationSet
 {
 	private final Map<Class<?>, ModuleConfigurationScope> scopedAnnotatedClasses = new LinkedHashMap<>();
 
-	public Class<?>[] getAnnotatedClasses( String moduleName ) {
+	/**
+	 * Get the annotated classes registered to the module specified by name.
+	 * Optionally a number of module name aliases can be specified - usually used by dynamic modules.
+	 */
+	public Class<?>[] getAnnotatedClasses( String moduleName, String... aliases ) {
+		String[] moduleNames = ArrayUtils.addAll( aliases, moduleName );
 		List<Class<?>> annotatedClasses = new ArrayList<>();
 		scopedAnnotatedClasses.forEach( ( annotatedClass, modules ) -> {
-			if ( !modules.excludedModules.contains( moduleName )
-					&& ( modules.addToAll || modules.includedModules.contains( moduleName ) ) ) {
+			if ( !containsAny( modules.excludedModules, moduleNames )
+					&& ( modules.addToAll || containsAny( modules.includedModules, moduleNames ) ) ) {
 				annotatedClasses.add( annotatedClass );
 			}
 		} );
 
 		return annotatedClasses.toArray( new Class[annotatedClasses.size()] );
+	}
+
+	private boolean containsAny( Set<String> moduleNameSet, String... moduleName ) {
+		return Stream.of( moduleName ).anyMatch( moduleNameSet::contains );
 	}
 
 	/**

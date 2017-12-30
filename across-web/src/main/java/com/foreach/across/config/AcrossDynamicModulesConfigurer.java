@@ -227,7 +227,6 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 		          moduleRole.name(), moduleName, resourcesKey, moduleBasePackage );
 
 		DynamicAcrossModuleFactory factory = new DynamicAcrossModuleFactory()
-				.setPackageProvider( packageProvider )
 				.setModuleRole( moduleRole )
 				.setModuleName( moduleName )
 				.setResourcesKey( resourcesKey )

@@ -20,13 +20,19 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.application.app.DummyApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
+import org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -50,6 +56,9 @@ public class TestSpringBootWebIntegration
 	@Autowired
 	private AcrossContextInfo contextInfo;
 
+	@Autowired
+	private ListableBeanFactory beanFactory;
+
 	@Test
 	public void modulesShouldBeRegistered() {
 		assertTrue( contextInfo.hasModule( "emptyModule" ) );
@@ -67,8 +76,39 @@ public class TestSpringBootWebIntegration
 	}
 
 	@Test
+	public void requestMappingsWithDateTimeFormatPattnerWorkCorrectly() {
+		assertEquals( "Wed Nov 29 00:00:00 CET 2017", get( "/stringToDateConverterWithoutAnnotationPattern?time=2017-11-29" ) );
+		assertEquals( "Fri Dec 29 17:59:00 CET 2017", get( "/stringToDateConverterWithAnnotationPattern?time=2017-12-29T16:59:00+0000" ) );
+	}
+
+	@Test
 	public void versionedResourceShouldBeReturned() {
 		assertEquals( "hùllµ€", get( "/res/static/boot-1.0/testResources/test.txt" ) );
+	}
+
+	@Test
+	public void configurationPropertiesBeanShouldNotExist() {
+		assertNotNull( BeanFactoryUtils.beanOfType( beanFactory, ConfigurationPropertiesAutoConfiguration.class ) );
+	}
+
+	@Test
+	public void defaultAutoConfigurationPackageShouldNotBeRegisteredInMainContext() {
+		assertEquals( Collections.emptyList(), AutoConfigurationPackages.get( beanFactory ) );
+	}
+
+	@Test
+	public void autoConfigurationPackageShouldBeApplicationModule() {
+		String applicationModulePackage = DummyApplication.class.getPackage().getName() + ".application";
+		assertEquals(
+				Collections.singletonList( applicationModulePackage ),
+				AutoConfigurationPackages.get( contextInfo.getModuleInfo( "DummyApplicationModule" ).getApplicationContext() )
+		);
+	}
+
+	@Test
+	public void dummyAutoConfigurationShouldHaveBeenAddedToApplicationModule() {
+		assertFalse( contextInfo.getApplicationContext().containsBean( "dummyDecimal" ) );
+		assertTrue( contextInfo.getModuleInfo( "DummyApplicationModule" ).getApplicationContext().containsBean( "dummyDecimal" ) );
 	}
 
 	private String get( String relativePath ) {

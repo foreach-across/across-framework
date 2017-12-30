@@ -25,7 +25,6 @@ import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.test.dynamic.pkg.PkgMember;
 import com.foreach.across.test.dynamic.pkg.config.PkgConfig;
-import com.foreach.across.test.dynamic.pkg.controllers.PkgController;
 import com.foreach.across.test.dynamic.pkg.extensions.PkgExtensionConfig;
 import com.foreach.across.test.dynamic.pkg.installers.PkgInstaller;
 import com.foreach.across.test.dynamic.pkg.installers.config.PkgInstallerConfig;
@@ -147,8 +146,7 @@ public class TestDynamicAcrossModuleFactory
 		Set<ApplicationContextConfigurer> configurers = module.getApplicationContextConfigurers();
 		assertEquals( 1, configurers.size() );
 		assertArrayEquals(
-				new String[] { PkgConfig.class.getPackage().getName(), PkgController.class.getPackage().getName(),
-				               PkgMember.class.getPackage().getName() + ".util" },
+				new String[] { PkgMember.class.getPackage().getName() },
 				configurers.iterator().next().componentScanPackages()
 		);
 

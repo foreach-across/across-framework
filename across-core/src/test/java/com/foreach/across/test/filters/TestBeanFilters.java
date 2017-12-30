@@ -16,14 +16,10 @@
 
 package com.foreach.across.test.filters;
 
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.context.ApplicationContextScanner;
-import com.foreach.across.core.filters.AnnotationBeanFilter;
-import com.foreach.across.core.filters.BeanFilter;
-import com.foreach.across.core.filters.ClassBeanFilter;
-import com.foreach.across.core.filters.PackageBeanFilter;
+import com.foreach.across.core.filters.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,8 +161,12 @@ public class TestBeanFilters
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void filterOnServiceAndExposedAnnotation() {
-		BeanFilter filter = AcrossModule.defaultExposeFilter();
+		BeanFilter filter = new BeanFilterComposite(
+				new AnnotationBeanFilter( Service.class ),
+				new AnnotationBeanFilter( true, true, Exposed.class )
+		);
 
 		Map<String, Object> beans = ApplicationContextScanner.findSingletonsMatching( applicationContext, filter );
 		assertEquals( 4, beans.size() );

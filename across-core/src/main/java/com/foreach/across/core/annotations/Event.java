@@ -1,23 +1,22 @@
 package com.foreach.across.core.annotations;
 
-import com.foreach.across.core.events.EventNameFilter;
-import com.foreach.across.core.events.ParameterizedAcrossEventFilter;
-import net.engio.mbassy.listener.Filter;
-import net.engio.mbassy.listener.Handler;
+import org.springframework.context.event.EventListener;
 
 import java.lang.annotation.*;
 
 /**
  * Default handler annotation for events fired on the AcrossEventPublisher.
+ * As of 3.0.0 this annotation is no longer required. It will be removed in a future release.
+ * Use the Spring {@link EventListener} annotation instead.
  *
- * @see com.foreach.across.core.events.AcrossEvent
- * @see com.foreach.across.core.annotations.AcrossEventHandler
+ * @deprecated use the Spring standard {@link EventListener} instead
  */
 @Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Handler(filters = { @Filter(ParameterizedAcrossEventFilter.class), @Filter(EventNameFilter.class) })
+@EventListener
+@Deprecated
 public @interface Event
 {
 }

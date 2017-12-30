@@ -67,7 +67,7 @@ public class PathBasedMenuBuilder
 	 * @return A new builder with the specified processor.
 	 */
 	public PathBasedMenuBuilder builder( MenuItemBuilderProcessor processor ) {
-		Assert.notNull( "A processor must be specified - try using NoOpProcessor if you want to clear it." );
+		Assert.notNull( processor, "A processor must be specified - try using NoOpProcessor if you want to clear it." );
 		return new PathBasedMenuBuilder( this, processor );
 	}
 
@@ -79,7 +79,7 @@ public class PathBasedMenuBuilder
 	}
 
 	public PathBasedMenuItemBuilder root( String rootPath ) {
-		Assert.notNull( "Root path must not be null." );
+		Assert.notNull( rootPath, "Root path must not be null." );
 		rootBuilder.path = rootPath;
 		return rootBuilder;
 	}

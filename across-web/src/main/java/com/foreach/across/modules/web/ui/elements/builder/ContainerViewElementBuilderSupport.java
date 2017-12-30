@@ -61,7 +61,8 @@ public abstract class ContainerViewElementBuilderSupport<T extends ContainerView
 	@SuppressWarnings("unchecked")
 	public SELF addAll( Iterable<?> viewElements ) {
 		for ( Object viewElement : viewElements ) {
-			Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder );
+			Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder,
+			               "viewElement should be an instance of ViewElement of ViewElementBuilder" );
 			children.add( viewElement );
 		}
 		return (SELF) this;

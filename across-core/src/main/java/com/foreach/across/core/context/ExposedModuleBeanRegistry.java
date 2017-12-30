@@ -40,7 +40,7 @@ public class ExposedModuleBeanRegistry extends AbstractExposedBeanRegistry
 	                                  ConfigurableApplicationContext child,
 	                                  BeanFilter filter,
 	                                  ExposedBeanDefinitionTransformer transformer ) {
-		super( contextBeanRegistry, moduleInfo.getName(), transformer );
+		super( contextBeanRegistry, moduleInfo.getName(), moduleInfo.getIndex(), transformer );
 
 		if ( child instanceof BeanDefinitionRegistry ) {
 			beanDefinitionRegistry = (BeanDefinitionRegistry) child;

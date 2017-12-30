@@ -16,13 +16,12 @@
 package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.annotations.OrderInModule;
-import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
-import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContextInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * Responsible for adding the {@link com.foreach.across.modules.web.ui.ViewElementBuilderContextInterceptor}.
@@ -31,18 +30,13 @@ import org.springframework.context.annotation.Configuration;
  * @since 2.0.0
  */
 @ConditionalOnProperty(value = "acrossWebModule.registerGlobalBuilderContext")
-@OrderInModule(2)
+@OrderInModule(3)
 @Configuration
-public class GlobalViewElementBuilderContextConfiguration extends PrefixingHandlerMappingConfigurerAdapter
+public class GlobalViewElementBuilderContextConfiguration extends WebMvcConfigurerAdapter
 {
 	@Override
-	public boolean supports( String mapperName ) {
-		return AcrossWebModule.NAME.equals( mapperName );
-	}
-
-	@Override
-	public void addInterceptors( InterceptorRegistry interceptorRegistry ) {
-		interceptorRegistry.addInterceptor( viewElementBuilderContextInterceptor() );
+	public void addInterceptors( InterceptorRegistry registry ) {
+		registry.addInterceptor( viewElementBuilderContextInterceptor() );
 	}
 
 	@Bean

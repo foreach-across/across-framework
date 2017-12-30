@@ -54,6 +54,9 @@ public final class ApplicationContextScanner
 		                               filter );
 	}
 
+	/**
+	 * Does not consider exposed bean definitions.
+	 */
 	public static Map<String, Object> findSingletonsMatching( ConfigurableListableBeanFactory beanFactory,
 	                                                          BeanFilter filter ) {
 		Map<String, Object> beanMap = new HashMap<String, Object>();
@@ -63,10 +66,13 @@ public final class ApplicationContextScanner
 		for ( String singletonName : beanFactory.getSingletonNames() ) {
 			BeanDefinition definition =
 					definitions.contains( singletonName ) ? beanFactory.getBeanDefinition( singletonName ) : null;
-			Object bean = beanFactory.getSingleton( singletonName );
 
-			if ( filter.apply( beanFactory, singletonName, bean, definition ) ) {
-				beanMap.put( singletonName, bean );
+			if ( !( definition instanceof ExposedBeanDefinition ) ) {
+				Object bean = beanFactory.getSingleton( singletonName );
+
+				if ( filter.apply( beanFactory, singletonName, bean, definition ) ) {
+					beanMap.put( singletonName, bean );
+				}
 			}
 		}
 
@@ -81,18 +87,22 @@ public final class ApplicationContextScanner
 		                                    filter );
 	}
 
+	/**
+	 * Does not consider exposed bean definitions.
+	 */
 	public static Map<String, BeanDefinition> findBeanDefinitionsMatching( ConfigurableListableBeanFactory beanFactory,
 	                                                                       BeanFilter filter ) {
 		Map<String, BeanDefinition> definitionMap = new HashMap<String, BeanDefinition>();
 
 		for ( String defName : beanFactory.getBeanDefinitionNames() ) {
 			BeanDefinition def = beanFactory.getMergedBeanDefinition( defName );
-			Object bean = beanFactory.getSingleton( defName );
+			if ( !( def instanceof ExposedBeanDefinition ) ) {
+				Object bean = beanFactory.getSingleton( defName );
 
-			if ( filter.apply( beanFactory, defName, bean, def ) ) {
-				definitionMap.put( defName, def );
+				if ( filter.apply( beanFactory, defName, bean, def ) ) {
+					definitionMap.put( defName, def );
+				}
 			}
-
 		}
 
 		return definitionMap;

@@ -27,10 +27,10 @@ import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossEvent;
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +69,6 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	private boolean disableNoOpCacheManager = false;
 	private boolean isBootstrapped = false;
 	private ApplicationContext parentApplicationContext;
-	private boolean failBootstrapOnEventPublicationErrors = true;
 
 	private ExposedBeanDefinitionTransformer exposeTransformer = null;
 	private ModuleDependencyResolver moduleDependencyResolver = null;
@@ -187,22 +186,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		this.disableNoOpCacheManager = disableNoOpCacheManager;
 	}
 
-	public boolean isFailBootstrapOnEventPublicationErrors() {
-		return failBootstrapOnEventPublicationErrors;
-	}
-
-	/**
-	 * Should the bootstrap fail if event publication errors occur during the bootstrapping.
-	 * Defaults to true as this is usually the wanted behavior.
-	 *
-	 * @param failBootstrapOnEventPublicationErrors true if bootstrap should fail on event handler errors
-	 */
-	public void setFailBootstrapOnEventPublicationErrors( boolean failBootstrapOnEventPublicationErrors ) {
-		this.failBootstrapOnEventPublicationErrors = failBootstrapOnEventPublicationErrors;
-	}
-
-	public void addModule( AcrossModule module ) {
-		Assert.notNull( module );
+	public void addModule( @NonNull AcrossModule module ) {
 		Assert.notNull( module.getName(), "An AcrossModule must have a valid unique name." );
 
 		if ( module.getContext() != null ) {
@@ -400,7 +384,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 * @param event Event instance that will be published.
 	 */
 	public void publishEvent( AcrossEvent event ) {
-		AcrossContextUtils.getBeanRegistry( this ).getBeanOfType( AcrossEventPublisher.class ).publish( event );
+		AcrossContextUtils.getApplicationContext( this ).publishEvent( event );
 	}
 
 	public void bootstrap() {
@@ -423,8 +407,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 
 			// Shutdown all modules in reverse order - note that it is quite possible that beans might have been destroyed
 			// already by Spring in the meantime
-			List<AcrossModuleInfo> reverseList =
-					new ArrayList<>( AcrossContextUtils.getContextInfo( this ).getModules() );
+			List<AcrossModuleInfo> reverseList = new ArrayList<>( AcrossContextUtils.getContextInfo( this ).getModules() );
 			Collections.reverse( reverseList );
 
 			for ( AcrossModuleInfo moduleInfo : reverseList ) {

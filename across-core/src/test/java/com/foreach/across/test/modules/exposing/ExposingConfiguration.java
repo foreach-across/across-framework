@@ -31,8 +31,8 @@ public class ExposingConfiguration
 {
 	@Autowired
 	public void wireInternals( AtomicReference<Integer> integerReference, AtomicReference<String> stringReference ) {
-		Assert.notNull( integerReference );
-		Assert.notNull( stringReference );
+		Assert.notNull( integerReference, "integerReference cannot be null" );
+		Assert.notNull( stringReference, "stringReference cannot be null" );
 	}
 
 	@Bean

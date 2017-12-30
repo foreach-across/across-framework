@@ -16,8 +16,7 @@
 
 package com.foreach.across.core.annotations;
 
-import com.foreach.across.core.annotations.conditions.AcrossDependsCondition;
-import org.springframework.context.annotation.Conditional;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -58,16 +57,18 @@ import java.lang.annotation.Target;
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@Conditional(AcrossDependsCondition.class)
+@ConditionalOnAcrossModule
 public @interface AcrossDepends
 {
 	/**
 	 * Set of module identifiers that are required.
 	 */
+	@AliasFor(annotation = ConditionalOnAcrossModule.class, attribute = "allOf")
 	String[] required() default { };
 
 	/**
 	 * Set of module identifiers that are optional.
 	 */
+	@AliasFor(annotation = ConditionalOnAcrossModule.class, attribute = "anyOf")
 	String[] optional() default { };
 }

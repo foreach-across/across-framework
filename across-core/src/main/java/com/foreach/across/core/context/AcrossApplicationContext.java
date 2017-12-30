@@ -19,15 +19,20 @@ package com.foreach.across.core.context;
 import com.foreach.across.core.context.annotation.ModuleConfigurationBeanNameGenerator;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
-import com.foreach.across.core.events.EventHandlerBeanPostProcessor;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import com.foreach.across.core.events.AcrossContextApplicationEventMulticaster;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.context.annotation.ScopeMetadataResolver;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.type.filter.TypeFilter;
 
 import java.util.Map;
 
@@ -37,14 +42,24 @@ import java.util.Map;
 public class AcrossApplicationContext extends AnnotationConfigApplicationContext implements AcrossConfigurableApplicationContext
 {
 	private boolean installerMode = false;
+	private Integer moduleIndex;
 
 	public AcrossApplicationContext() {
 		this( new AcrossListableBeanFactory() );
 	}
 
+	private BeanNameGenerator beanNameGenerator;
+	private ScopeMetadataResolver scopeMetadataResolver;
+
 	protected AcrossApplicationContext( AcrossListableBeanFactory beanFactory ) {
 		super( beanFactory );
 		setBeanNameGenerator( new ModuleConfigurationBeanNameGenerator() );
+	}
+
+	@Override
+	public void setModuleIndex( Integer moduleIndex ) {
+		this.moduleIndex = moduleIndex;
+		( (AcrossListableBeanFactory) getBeanFactory() ).setModuleIndex( moduleIndex );
 	}
 
 	@Override
@@ -60,6 +75,18 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	 */
 	public void setInstallerMode( boolean installerMode ) {
 		this.installerMode = installerMode;
+	}
+
+	@Override
+	public void setBeanNameGenerator( BeanNameGenerator beanNameGenerator ) {
+		super.setBeanNameGenerator( beanNameGenerator );
+		this.beanNameGenerator = beanNameGenerator;
+	}
+
+	@Override
+	public void setScopeMetadataResolver( ScopeMetadataResolver scopeMetadataResolver ) {
+		super.setScopeMetadataResolver( scopeMetadataResolver );
+		this.scopeMetadataResolver = scopeMetadataResolver;
 	}
 
 	/**
@@ -95,10 +122,13 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	}
 
 	@Override
+	protected void publishEvent( Object event, ResolvableType eventType ) {
+		super.publishEvent( event, eventType );
+	}
+
+	@Override
 	protected void registerBeanPostProcessors( ConfigurableListableBeanFactory beanFactory ) {
 		super.registerBeanPostProcessors( beanFactory );
-
-		registerEventHandlerBeanPostProcessor( beanFactory );
 
 		// Set the conversion service on the environment as well
 		ConfigurableEnvironment environment = getEnvironment();
@@ -111,20 +141,35 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 		}
 	}
 
-	/**
-	 * Adds an existing {@link EventHandlerBeanPostProcessor} bean to the bean factory.
-	 *
-	 * @param beanFactory to add the bean post processor to
-	 */
-	public static void registerEventHandlerBeanPostProcessor( ConfigurableListableBeanFactory beanFactory ) {
-		try {
-			EventHandlerBeanPostProcessor eventHandlerBeanPostProcessor
-					= BeanFactoryUtils.beanOfTypeIncludingAncestors( beanFactory, EventHandlerBeanPostProcessor.class );
-			eventHandlerBeanPostProcessor.registerExistingSingletons( beanFactory );
+	@Override
+	protected void initApplicationEventMulticaster() {
+		if ( !installerMode ) {
+			// if parent context is also an AcrossApplicationContext - use its multicaster and re-register it
+			final ApplicationContext parent = getParent();
+			if ( parent instanceof AcrossApplicationContext && !containsLocalBean( APPLICATION_EVENT_MULTICASTER_BEAN_NAME ) ) {
+				final ApplicationEventMulticaster multicaster = parent.getBean( APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class );
+				if ( multicaster instanceof AcrossContextApplicationEventMulticaster ) {
+					getBeanFactory().registerSingleton(
+							APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
+							( (AcrossContextApplicationEventMulticaster) multicaster ).createModuleMulticaster( moduleIndex, getBeanFactory() )
+					);
+				}
+			}
+		}
 
-			beanFactory.addBeanPostProcessor( eventHandlerBeanPostProcessor );
+		super.initApplicationEventMulticaster();
+	}
+
+	public void scan( String[] basePackages, TypeFilter[] excludedTypes ) {
+		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner( this, true, getEnvironment(), this );
+		scanner.setBeanNameGenerator( beanNameGenerator );
+		scanner.setScopeMetadataResolver( scopeMetadataResolver );
+		scanner.setResourcePattern( "**/*.class" );
+
+		for ( TypeFilter filter : excludedTypes ) {
+			scanner.addExcludeFilter( filter );
 		}
-		catch ( NoSuchBeanDefinitionException ignore ) {
-		}
+
+		scanner.scan( basePackages );
 	}
 }

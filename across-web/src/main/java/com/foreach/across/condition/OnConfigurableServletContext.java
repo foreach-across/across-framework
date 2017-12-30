@@ -40,15 +40,17 @@ import javax.servlet.ServletContext;
 @Order(Ordered.LOWEST_PRECEDENCE - 10)
 class OnConfigurableServletContext extends SpringBootCondition
 {
+	private static final String SERVLET_CONTEXT_BEAN = "servletContext";
+
 	@Override
 	public ConditionOutcome getMatchOutcome( ConditionContext context,
 	                                         AnnotatedTypeMetadata metadata ) {
 		boolean dynamicServletContextRequired
 				= metadata.isAnnotated( ConditionalOnConfigurableServletContext.class.getName() );
+		boolean hasServletContext = context.getBeanFactory().containsBean( SERVLET_CONTEXT_BEAN );
 
-		if ( context.getResourceLoader() instanceof WebApplicationContext ) {
-			WebApplicationContext wac = (WebApplicationContext) context.getResourceLoader();
-			ServletContext servletContext = wac.getServletContext();
+		if ( hasServletContext ) {
+			ServletContext servletContext = context.getBeanFactory().getBean( SERVLET_CONTEXT_BEAN, ServletContext.class );
 
 			if ( servletContext != null && isDynamicServletContext( servletContext ) ) {
 				return dynamicServletContextRequired
