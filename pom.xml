@@ -131,35 +131,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.asciidoctor</groupId>
-				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.5</version>
-				<inherited>false</inherited>
-				<configuration>
-					<sourceDirectory>docs</sourceDirectory>
-					<!--
-					<sourceDocumentName>index.adoc</sourceDocumentName>
-					--><!--
-					<doctype>book</doctype>-->
-					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
-					<backend>html</backend>
-					<sourceHighlighter>coderay</sourceHighlighter>
-					<preserveDirectories>true</preserveDirectories>
-					<attributes>
-						<stylesheet>across.css</stylesheet>
-					</attributes>
-				</configuration>
-				<executions>
-					<execution>
-						<id>output-html</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>process-asciidoc</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.6</version>
@@ -181,7 +152,7 @@
 				<configuration>
 					<finalName>${project.artifactId}</finalName>
 					<descriptors>
-						<descriptor>docs/assembly.xml</descriptor>
+						<descriptor>assembly.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>
