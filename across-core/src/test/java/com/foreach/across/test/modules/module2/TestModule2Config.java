@@ -17,6 +17,8 @@
 package com.foreach.across.test.modules.module2;
 
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.test.modules.EventPubSub;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -39,5 +41,10 @@ public class TestModule2Config
 	@Exposed
 	public CustomEventHandlers customEventHandlers() {
 		return new CustomEventHandlers();
+	}
+
+	@Bean
+	public EventPubSub publisherModuleTwo( AcrossEventPublisher eventPublisher ) {
+		return new EventPubSub( "moduleTwo", eventPublisher );
 	}
 }

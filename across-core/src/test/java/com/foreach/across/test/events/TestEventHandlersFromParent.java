@@ -18,8 +18,8 @@ package com.foreach.across.test.events;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
+import com.foreach.across.core.events.AcrossLifecycleListener;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import org.junit.Test;
@@ -58,22 +58,22 @@ public class TestEventHandlersFromParent
 
 	@Configuration
 	@EnableAcrossContext
-	protected static class Config
+	protected static class Config implements AcrossLifecycleListener
 	{
-		public final List<String> eventsReceived = new ArrayList<>();
+		private final List<String> eventsReceived = new ArrayList<>();
 
-		@Event
-		public void beforeModuleBootstrapEvent( AcrossModuleBeforeBootstrapEvent moduleBeforeBootstrapEvent ) {
-			eventsReceived.add( "before:" + moduleBeforeBootstrapEvent.getModule().getName() );
+		@Override
+		public void onAcrossModuleBeforeBootstrapEvent( AcrossModuleBeforeBootstrapEvent event ) {
+			eventsReceived.add( "before:" + event.getModule().getName() );
 		}
 
-		@Event
-		public void afterModuleBootstrapEvent( AcrossModuleBootstrappedEvent moduleBootstrappedEvent ) {
-			eventsReceived.add( "after:" + moduleBootstrappedEvent.getModule().getName() );
+		@Override
+		public void onAcrossModuleBootstrappedEvent( AcrossModuleBootstrappedEvent event ) {
+			eventsReceived.add( "after:" + event.getModule().getName() );
 		}
 
-		@Event
-		public void contextBootstrappedEvent( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
+		@Override
+		public void onAcrossContextBootstrappedEvent( AcrossContextBootstrappedEvent event ) {
 			eventsReceived.add( "bootstrapped" );
 		}
 

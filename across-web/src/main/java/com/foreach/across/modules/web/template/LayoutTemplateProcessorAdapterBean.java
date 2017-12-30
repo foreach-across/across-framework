@@ -16,13 +16,13 @@
 
 package com.foreach.across.modules.web.template;
 
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.web.events.BuildTemplateWebResourcesEvent;
 import com.foreach.across.modules.web.menu.MenuFactory;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
@@ -40,7 +40,7 @@ public class LayoutTemplateProcessorAdapterBean implements NamedWebTemplateProce
 	private MenuFactory menuFactory;
 
 	@Autowired
-	private AcrossEventPublisher eventPublisher;
+	private ApplicationEventPublisher eventPublisher;
 
 	private final String name, layout;
 
@@ -62,7 +62,7 @@ public class LayoutTemplateProcessorAdapterBean implements NamedWebTemplateProce
 		buildMenus( menuFactory );
 
 		webResourceRegistry.ifPresent(
-				r -> eventPublisher.publish( new BuildTemplateWebResourcesEvent( getName(), r ) )
+				r -> eventPublisher.publishEvent( new BuildTemplateWebResourcesEvent( getName(), r ) )
 		);
 	}
 

@@ -18,11 +18,11 @@ package com.foreach.across.test.events;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.EmptyAcrossModule;
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -74,34 +74,10 @@ public class TestBootstrap
 		assertTrue( caught );
 	}
 
-	@Test
-	public void bootstrapShouldNotFailOnEventHandlingIfSoConfigured() {
-		AcrossContext ctx = new AcrossContext();
-		ctx.setFailBootstrapOnEventPublicationErrors( false );
-
-		EmptyAcrossModule one = new EmptyAcrossModule( "one" );
-		one.addApplicationContextConfigurer( Config.class );
-
-		EmptyAcrossModule two = new EmptyAcrossModule( "two" );
-		two.addApplicationContextConfigurer( Config.class );
-
-		EmptyAcrossModule three = new EmptyAcrossModule( "three" );
-		three.addApplicationContextConfigurer( Config.class );
-
-		ctx.addModule( one );
-		ctx.addModule( two );
-		ctx.addModule( three );
-
-		ctx.bootstrap();
-
-		assertTrue( events.contains( "two" ) );
-		assertTrue( events.contains( "three" ) );
-	}
-
 	@Configuration
 	protected static class Config
 	{
-		@Event
+		@EventListener
 		protected void moduleBootstrapEvent( AcrossModuleBootstrappedEvent event ) {
 			events.add( event.getModule().getName() );
 

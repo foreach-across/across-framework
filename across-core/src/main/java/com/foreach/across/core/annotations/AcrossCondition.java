@@ -35,6 +35,8 @@ import java.lang.annotation.Target;
  * </ul>
  * </p>
  * <p><strong>Note:</strong> Only usable on beans & configurations, not on AcrossModule classes.</p>
+ *
+ * @deprecated use regular spring {@link org.springframework.boot.autoconfigure.condition.ConditionalOnExpression} instead.
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

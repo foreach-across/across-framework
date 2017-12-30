@@ -16,12 +16,12 @@
 
 package com.foreach.across.modules.web.menu;
 
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.web.events.BuildMenuEvent;
 import com.foreach.across.modules.web.events.BuildMenuFinishedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +33,7 @@ public class MenuFactory
 	private static final Logger LOG = LoggerFactory.getLogger( MenuFactory.class );
 
 	@Autowired
-	private AcrossEventPublisher publisher;
+	private ApplicationEventPublisher publisher;
 
 	private Map<Class, MenuStore> menuStoreMap = new HashMap<Class, MenuStore>();
 	private Map<Class, MenuBuilder> menuBuilderMap = new HashMap<Class, MenuBuilder>();
@@ -119,7 +119,7 @@ public class MenuFactory
 		B builder = (B) getMenuBuilder( menu.getClass() );
 
 		E buildMenuEvent = builder.buildEvent( menu );
-		publisher.publish( buildMenuEvent );
+		publisher.publishEvent( buildMenuEvent );
 
 		// Merge the menu from the builder in the current
 		buildMenuEvent.builder().merge( menu );
@@ -154,7 +154,7 @@ public class MenuFactory
 		menu.setName( name );
 
 		E buildMenuEvent = builder.buildEvent( menu );
-		publisher.publish( buildMenuEvent );
+		publisher.publishEvent( buildMenuEvent );
 
 		// Merge the menu from the builder in the current
 		buildMenuEvent.builder().merge( menu );
@@ -163,7 +163,7 @@ public class MenuFactory
 		menu.sort();
 		menu.select( buildMenuEvent.getSelector() );
 
-		publisher.publish( new BuildMenuFinishedEvent( menu, buildMenuEvent.getSelector() ) );
+		publisher.publishEvent( new BuildMenuFinishedEvent( menu, buildMenuEvent.getSelector() ) );
 
 		return menu;
 	}

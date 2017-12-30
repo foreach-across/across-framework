@@ -19,9 +19,10 @@ package com.foreach.across.test.events;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.database.support.HikariDataSourceHelper;
+import com.foreach.across.test.modules.EventPubSub;
 import com.foreach.across.test.modules.module1.TestModule1;
 import com.foreach.across.test.modules.module2.*;
-import com.zaxxer.hikari.HikariDataSource;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,13 +37,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestEventFilters.Config.class)
@@ -54,6 +51,21 @@ public class TestEventFilters
 
 	@Autowired
 	private CustomEventHandlers eventHandlers;
+
+	@Autowired
+	private EventPubSub publisherModuleOne;
+
+	@Autowired
+	private EventPubSub publisherModuleTwo;
+
+	@Test
+	public void eventsAreReceivedByAllModules() {
+		val event = publisherModuleOne.publish( "event1" );
+		assertEquals( Arrays.asList( "moduleOne", "moduleTwo" ), event.getReceivedBy() );
+
+		val event2 = publisherModuleTwo.publish( "event2" );
+		assertEquals( Arrays.asList( "moduleOne", "moduleTwo" ), event2.getReceivedBy() );
+	}
 
 	@Test
 	public void simpleEventIsNotReceivedByNamedHandlers() {
@@ -102,6 +114,33 @@ public class TestEventFilters
 		assertTrue( eventHandlers.getReceivedAll().contains( event ) );
 		assertFalse( eventHandlers.getReceivedOne().contains( event ) );
 		assertFalse( eventHandlers.getReceivedTwo().contains( event ) );
+	}
+
+	@Test
+	public void singleGenericParameter() {
+		SingleGenericEvent<Integer> integer = new SingleGenericEvent<>( Integer.class );
+		context.publishEvent( integer );
+		assertTrue( eventHandlers.getReceivedSingleInteger().contains( integer ) );
+		assertFalse( eventHandlers.getReceivedSingleDecimal().contains( integer ) );
+		assertTrue( eventHandlers.getReceivedSingleNumber().contains( integer ) );
+
+		SingleGenericEvent<String> string = new SingleGenericEvent<>( String.class );
+		context.publishEvent( string );
+		assertFalse( eventHandlers.getReceivedSingleInteger().contains( string ) );
+		assertFalse( eventHandlers.getReceivedSingleDecimal().contains( string ) );
+		assertFalse( eventHandlers.getReceivedSingleNumber().contains( string ) );
+
+		SingleGenericEvent<BigDecimal> decimal = new SingleGenericEvent<>( BigDecimal.class );
+		context.publishEvent( decimal );
+		assertFalse( eventHandlers.getReceivedSingleInteger().contains( decimal ) );
+		assertTrue( eventHandlers.getReceivedSingleDecimal().contains( decimal ) );
+		assertTrue( eventHandlers.getReceivedSingleNumber().contains( decimal ) );
+
+		SingleGenericEvent<Long> longNumber = new SingleGenericEvent<>( Long.class );
+		context.publishEvent( longNumber );
+		assertFalse( eventHandlers.getReceivedSingleInteger().contains( longNumber ) );
+		assertFalse( eventHandlers.getReceivedSingleDecimal().contains( longNumber ) );
+		assertTrue( eventHandlers.getReceivedSingleNumber().contains( longNumber ) );
 	}
 
 	@SuppressWarnings("unchecked")

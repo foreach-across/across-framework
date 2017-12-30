@@ -18,6 +18,8 @@ package com.foreach.across.test.modules.module1;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.Refreshable;
+import com.foreach.across.core.events.AcrossEventPublisher;
+import com.foreach.across.test.modules.EventPubSub;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -46,5 +48,10 @@ public class TestModule1Config
 	@Bean
 	public Interceptor interceptor() {
 		return new Interceptor();
+	}
+
+	@Bean
+	public EventPubSub publisherModuleOne( AcrossEventPublisher eventPublisher ) {
+		return new EventPubSub( "moduleOne", eventPublisher );
 	}
 }

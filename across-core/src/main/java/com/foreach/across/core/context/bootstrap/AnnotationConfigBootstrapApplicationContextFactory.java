@@ -22,6 +22,7 @@ import com.foreach.across.core.context.*;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
+import com.foreach.across.core.events.NonExposedEventListenerMethodProcessor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -131,6 +132,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 		ConfigurableEnvironment environment = context.getEnvironment();
 
 		context.register( CommonModuleConfiguration.class );
+		context.addBeanFactoryPostProcessor( new NonExposedEventListenerMethodProcessor.Registrar() );
 
 		for ( ApplicationContextConfigurer configurer : configurers ) {
 			// First register property sources

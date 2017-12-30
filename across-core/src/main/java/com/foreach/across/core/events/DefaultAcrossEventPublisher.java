@@ -13,24 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.foreach.across.core.events;
 
-package com.foreach.across.test.modules;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Async;
 
-import org.springframework.context.event.EventListener;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class TestContextEventListener
+/**
+ * @author Arne Vandamme
+ * @since 3.0.0
+ */
+@RequiredArgsConstructor
+public final class DefaultAcrossEventPublisher implements AcrossEventPublisher
 {
-	public List<TestEvent> eventsReceived = new ArrayList<TestEvent>();
+	private final ApplicationEventPublisher eventPublisher;
 
-	public List<TestEvent> getEventsReceived() {
-		return eventsReceived;
+	@Override
+	public void publish( AcrossEvent event ) {
+		eventPublisher.publishEvent( event );
 	}
 
-	@EventListener
-	public void onApplicationEvent( TestEvent event ) {
-		eventsReceived.add( event );
+	@Async
+	@Override
+	public void publishAsync( AcrossEvent event ) {
+		publish( event );
 	}
 }

@@ -17,7 +17,6 @@ package com.foreach.across.modules.web.config;
 
 import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
 import com.foreach.across.core.AcrossException;
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletContextInitializerBeans;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
@@ -52,7 +52,7 @@ public class DynamicServletConfiguration
 {
 	private final ServletContext servletContext;
 
-	@Event
+	@EventListener
 	public void registerServletsAndFilters( AcrossContextBootstrappedEvent bootstrappedEvent ) {
 		Collection<ServletContextInitializer> initializers = retrieveInitializersCreatedInAcrossContextOrAnyChildModule( bootstrappedEvent.getContext() );
 

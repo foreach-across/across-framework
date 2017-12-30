@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.foreach.across.test.modules.module2;
 
-package com.foreach.across.test.modules;
+import com.foreach.across.core.events.AcrossEvent;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.ResolvableTypeProvider;
 
-import org.springframework.context.event.EventListener;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class TestContextEventListener
+/**
+ * @author arne
+ * @since 2.0.0
+ */
+public class SingleGenericEvent<T> implements AcrossEvent, ResolvableTypeProvider
 {
-	public List<TestEvent> eventsReceived = new ArrayList<TestEvent>();
+	private final Class<T> type;
 
-	public List<TestEvent> getEventsReceived() {
-		return eventsReceived;
+	public SingleGenericEvent( Class<T> type ) {
+		this.type = type;
 	}
 
-	@EventListener
-	public void onApplicationEvent( TestEvent event ) {
-		eventsReceived.add( event );
+	@Override
+	public ResolvableType getResolvableType() {
+		return ResolvableType.forClassWithGenerics( getClass(), ResolvableType.forType( type ) );
 	}
 }

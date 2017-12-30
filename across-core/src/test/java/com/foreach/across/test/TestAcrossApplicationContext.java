@@ -22,8 +22,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 
 /**
  * @author Arne Vandamme
@@ -42,6 +45,47 @@ public class TestAcrossApplicationContext
 		ctx.stop();
 		ctx.close();
 		ctx = null;
+	}
+
+	@Test
+	public void installerModeAcrossApplicationContextInitializesItsOwnEventMulticaster() {
+		AcrossApplicationContext parent = new AcrossApplicationContext();
+		parent.refresh();
+		parent.start();
+
+		ctx.setInstallerMode( true );
+		ctx.setParent( parent );
+		ctx.refresh();
+		ctx.start();
+
+		assertNotSame(
+				parent.getBean( AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME ),
+				ctx.getBean( AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME )
+		);
+	}
+
+	@Test
+	public void acrossApplicationContextInitializesItsOwnEventMulticasterIfThereIsNoParent() {
+		ctx.refresh();
+		ctx.start();
+
+		assertNotNull( ctx.getBean( AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME ) );
+	}
+
+	@Test
+	public void acrossApplicationContextInitializesItsOwnEventMulticasterIfParentIsNotAcross() {
+		GenericApplicationContext parent = new GenericApplicationContext();
+		parent.refresh();
+		parent.start();
+
+		ctx.setParent( parent );
+		ctx.refresh();
+		ctx.start();
+
+		assertNotSame(
+				parent.getBean( AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME ),
+				ctx.getBean( AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME )
+		);
 	}
 
 	@Test
@@ -104,7 +148,7 @@ public class TestAcrossApplicationContext
 
 	static class BeanReference
 	{
-		public final SomeBean someBean;
+		final SomeBean someBean;
 
 		@Autowired
 		public BeanReference( SomeBean someBean ) {

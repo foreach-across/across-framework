@@ -24,15 +24,18 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 /**
  * Event that is sent right before the module is bootstrapped.
  * The ModuleBootstrapConfig can still be modified at this point.
+ * <p/>
+ * Source of this event is the {@link AcrossContextInfo} where the module is being created.
  *
  * @see com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig
  */
-public class AcrossModuleBeforeBootstrapEvent implements AcrossEvent
+public final class AcrossModuleBeforeBootstrapEvent extends AcrossLifecycleEvent
 {
 	private final AcrossContextInfo context;
 	private final AcrossModuleInfo module;
 
 	public AcrossModuleBeforeBootstrapEvent( AcrossContextInfo context, AcrossModuleInfo module ) {
+		super( context );
 		this.context = context;
 		this.module = module;
 	}
@@ -50,11 +53,29 @@ public class AcrossModuleBeforeBootstrapEvent implements AcrossEvent
 	}
 
 	/**
+	 * @return the Across context where the module is being bootstrapped
+	 */
+	@Override
+	public AcrossContextInfo getSource() {
+		return (AcrossContextInfo) super.getSource();
+	}
+
+	/**
 	 * Add any number of configurers to the module being bootstrapped.
 	 *
 	 * @param configurers One or more ApplicationContextConfigurer instances to add.
+	 * @deprecated use {@link #getBootstrapConfig()} to alter the bootstrap configuration
 	 */
+	@Deprecated
 	public void addApplicationContextConfigurers( ApplicationContextConfigurer... configurers ) {
 		getBootstrapConfig().addApplicationContextConfigurer( configurers );
+	}
+
+	@Override
+	public String toString() {
+		return "AcrossModuleBeforeBootstrapEvent{" +
+				"context=" + context.getDisplayName() +
+				", module=" + module.getName() +
+				'}';
 	}
 }

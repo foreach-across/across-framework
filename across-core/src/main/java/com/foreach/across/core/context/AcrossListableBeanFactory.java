@@ -333,6 +333,13 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	}
 
 	/**
+	 * Check if a bean with a given name is an exposed bean.
+	 */
+	public boolean isExposedBean( String beanName ) {
+		return containsBeanDefinition( beanName ) && getBeanDefinition( beanName ) instanceof ExposedBeanDefinition;
+	}
+
+	/**
 	 * Custom {@link OrderComparator} in order to replace the default ordering logic with AcrossSpecifier based.
 	 * Uses reflection to retrieve private values from the source provider as otherwise custom implementation
 	 * on the entire autowiring would be required.
@@ -342,7 +349,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		private Field instancesField;
 
 		@SneakyThrows
-		@SuppressWarnings( "unchecked" )
+		@SuppressWarnings("unchecked")
 		@Override
 		public Comparator<Object> withSourceProvider( OrderSourceProvider sourceProvider ) {
 			if ( instancesField == null ) {
@@ -353,7 +360,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 			Map<Object, String> instancesToBeanNames = (Map<Object, String>) instancesField.get( sourceProvider );
 
 			AcrossOrderSpecifierComparator comparator = new AcrossOrderSpecifierComparator();
-			instancesToBeanNames.forEach( (bean, beanName) -> comparator.register( bean, retrieveOrderSpecifier( beanName ) ) );
+			instancesToBeanNames.forEach( ( bean, beanName ) -> comparator.register( bean, retrieveOrderSpecifier( beanName ) ) );
 
 			return comparator;
 		}

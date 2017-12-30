@@ -288,6 +288,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<!-- Mbassador kept for version compatibility for now -->
 			<dependency>
 				<groupId>net.engio</groupId>
 				<artifactId>mbassador</artifactId>

@@ -17,13 +17,13 @@
 package com.foreach.across.modules.web.events;
 
 import com.foreach.across.core.events.NamedAcrossEvent;
-import com.foreach.across.core.events.ParameterizedAcrossEvent;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.MenuSelector;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.ResolvableTypeProvider;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -34,7 +34,7 @@ import org.springframework.util.ClassUtils;
  * @see com.foreach.across.modules.web.menu.MenuFactory
  * @see com.foreach.across.modules.web.menu.MenuBuilder
  */
-public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent, ParameterizedAcrossEvent
+public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent, ResolvableTypeProvider
 {
 	private final T menu;
 	private final PathBasedMenuBuilder menuBuilder;
@@ -58,8 +58,8 @@ public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent, Paramet
 	}
 
 	@Override
-	public final ResolvableType[] getEventGenericTypes() {
-		return genericTypes.clone();
+	public ResolvableType getResolvableType() {
+		return ResolvableType.forClassWithGenerics( getClass(), genericTypes );
 	}
 
 	public PathBasedMenuBuilder builder() {

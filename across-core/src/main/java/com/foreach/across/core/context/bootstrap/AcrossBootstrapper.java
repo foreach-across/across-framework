@@ -31,7 +31,6 @@ import com.foreach.across.core.context.installers.InstallerSetBuilder;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.core.filters.BeanFilter;
@@ -41,8 +40,6 @@ import com.foreach.across.core.installers.AcrossBootstrapInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import com.foreach.across.core.util.ClassLoadingUtils;
-import net.engio.mbassy.bus.error.IPublicationErrorHandler;
-import net.engio.mbassy.bus.error.PublicationError;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +74,6 @@ public class AcrossBootstrapper
 	private BootstrapApplicationContextFactory applicationContextFactory;
 
 	private final Deque<ConfigurableApplicationContext> createdApplicationContexts = new ArrayDeque<>();
-	private Throwable bootstrapEventError;
 
 	public AcrossBootstrapper( AcrossContext context ) {
 		this.context = context;
@@ -98,8 +94,6 @@ public class AcrossBootstrapper
 	 */
 	public void bootstrap() {
 		try {
-			bootstrapEventError = null;
-
 			checkBootstrapIsPossible();
 
 			ConfigurableAcrossContextInfo contextInfo = buildContextAndModuleInfo();
@@ -125,11 +119,6 @@ public class AcrossBootstrapper
 			prepareForBootstrap( contextInfo );
 
 			BootstrapLockManager bootstrapLockManager = new BootstrapLockManager( contextInfo );
-
-			AcrossEventPublisher eventPublisher = rootContext.getBean( AcrossEventPublisher.class );
-			if ( context.isFailBootstrapOnEventPublicationErrors() ) {
-				eventPublisher.addErrorHandler( new BootstrapEventErrorHandler() );
-			}
 
 			ModuleConfigurationSet moduleConfigurationSet = contextBootstrapConfig.getModuleConfigurationSet();
 
@@ -173,7 +162,7 @@ public class AcrossBootstrapper
 
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
 
-					eventPublisher.publish( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
+					rootContext.publishEvent( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
 
 					if ( config.isEmpty() ) {
 						LOG.info( "Nothing to be done - disabling module" );
@@ -203,7 +192,7 @@ public class AcrossBootstrapper
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Bootstrapped );
 
 					// Send event that this module has bootstrapped
-					eventPublisher.publish( new AcrossModuleBootstrappedEvent( moduleInfo ) );
+					rootContext.publishEvent( new AcrossModuleBootstrappedEvent( moduleInfo ) );
 
 					// Run installers after module itself has bootstrapped
 					installerRegistry.runInstallersForModule( moduleInfo.getName(),
@@ -224,8 +213,6 @@ public class AcrossBootstrapper
 					                   .forEach( bf -> moduleExposedBeans.copyTo( bf, false ) );
 
 					bootstrappedModules.add( configurableAcrossModuleInfo );
-
-					failOnEventErrors();
 
 					LOG.info( "" );
 				}
@@ -256,9 +243,7 @@ public class AcrossBootstrapper
 			}
 
 			// Bootstrap finished - publish the event
-			eventPublisher.publish( new AcrossContextBootstrappedEvent( contextInfo ) );
-
-			failOnEventErrors();
+			rootContext.publishEvent( new AcrossContextBootstrappedEvent( contextInfo ) );
 
 			createdApplicationContexts.clear();
 		}
@@ -268,12 +253,6 @@ public class AcrossBootstrapper
 			destroyAllCreatedApplicationContexts();
 
 			throw new AcrossException( "Across bootstrap failed", e );
-		}
-	}
-
-	private void failOnEventErrors() {
-		if ( context.isFailBootstrapOnEventPublicationErrors() && bootstrapEventError != null ) {
-			throw new RuntimeException( bootstrapEventError );
 		}
 	}
 
@@ -719,13 +698,5 @@ public class AcrossBootstrapper
 		applicationContextFactory.loadApplicationContext( context, root );
 
 		return root;
-	}
-
-	class BootstrapEventErrorHandler implements IPublicationErrorHandler
-	{
-		@Override
-		public void handleError( PublicationError error ) {
-			bootstrapEventError = error.getCause();
-		}
 	}
 }

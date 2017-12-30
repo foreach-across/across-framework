@@ -16,9 +16,9 @@
 
 package com.foreach.across.modules.web.resource;
 
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.BuildRegistryEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -36,7 +36,7 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 	private final WebResourcePackageManager webResourcePackageManager;
 
 	@Autowired
-	private AcrossEventPublisher eventBus;
+	private ApplicationEventPublisher eventPublisher;
 
 	private WebResourceRegistry defaultRegistry;
 
@@ -76,7 +76,7 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 		WebResourceRegistry registry = new WebResourceRegistry( webResourcePackageManager );
 		registry.merge( defaultRegistry );
 
-		eventBus.publish( new BuildRegistryEvent<>( registry ) );
+		eventPublisher.publishEvent( new BuildRegistryEvent<>( registry ) );
 
 		WebResourceUtils.storeRegistry( registry, request );
 
