@@ -20,6 +20,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.EventPubSub;
+import com.foreach.across.test.modules.module1.ReplyEvent;
 import com.foreach.across.test.modules.module1.TestModule1;
 import com.foreach.across.test.modules.module2.*;
 import lombok.val;
@@ -65,6 +66,17 @@ public class TestEventFilters
 
 		val event2 = publisherModuleTwo.publish( "event2" );
 		assertEquals( Arrays.asList( "moduleOne", "moduleTwo" ), event2.getReceivedBy() );
+	}
+
+	@Test
+	public void replyIsAlsoReceivedByAllModules() {
+		val original = new ReplyEvent();
+		assertNull( original.getByName() );
+
+		context.publishEvent( original );
+
+		assertNotNull( original.getByName() );
+		assertEquals( Arrays.asList( "moduleOne", "moduleTwo" ), original.getByName().getReceivedBy() );
 	}
 
 	@Test
@@ -189,6 +201,20 @@ public class TestEventFilters
 		assertFalse( eventHandlers.getReceivedTypedLongMap().contains( decimalSet ) );
 		assertFalse( eventHandlers.getReceivedTypedIntegerList().contains( decimalSet ) );
 		assertTrue( eventHandlers.getReceivedTypedNumberCollection().contains( decimalSet ) );
+	}
+
+	@Test
+	public void listenerWithoutArguments() {
+		eventHandlers.reset();
+
+		context.publishEvent( new GenericEvent<>(
+				Integer.class,
+				ResolvableType.forClassWithGenerics( ArrayList.class, Integer.class )
+		) );
+
+		context.publishEvent( new SingleGenericEvent<>( Long.class ) );
+
+		assertEquals( 2, eventHandlers.getGenericsReceivedCounter() );
 	}
 
 	@Configuration

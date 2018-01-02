@@ -26,7 +26,6 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
-import com.foreach.across.core.events.AcrossEvent;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
@@ -383,7 +382,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	 *
 	 * @param event Event instance that will be published.
 	 */
-	public void publishEvent( AcrossEvent event ) {
+	public void publishEvent( Object event ) {
 		AcrossContextUtils.getApplicationContext( this ).publishEvent( event );
 	}
 

@@ -136,16 +136,19 @@ public final class AcrossContextApplicationEventMulticaster extends SimpleApplic
 		ReflectionUtils.setField( ORDER_FIELD, listenerMethodAdapter, order );
 
 		// convert the old EventName annotation to a custom condition
-		for ( Annotation annotation : method.getParameterAnnotations()[0] ) {
-			if ( annotation instanceof EventName ) {
-				String condition = StringUtils.defaultString( (String) ReflectionUtils.getField( CONDITION_FIELD, listenerMethodAdapter ) );
+		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+		if ( parameterAnnotations.length > 0 ) {
+			for ( Annotation annotation : parameterAnnotations[0] ) {
+				if ( annotation instanceof EventName ) {
+					String condition = StringUtils.defaultString( (String) ReflectionUtils.getField( CONDITION_FIELD, listenerMethodAdapter ) );
 
-				EventName eventNames = (EventName) annotation;
-				String namesCondition = "(" + Stream.of( eventNames.value() )
-				                                    .map( n -> "#event.eventName == '" + n + "'" )
-				                                    .collect( Collectors.joining( " or " ) ) + ")";
-				condition = condition.isEmpty() ? namesCondition : "(" + condition + ") and " + namesCondition;
-				ReflectionUtils.setField( CONDITION_FIELD, listenerMethodAdapter, condition );
+					EventName eventNames = (EventName) annotation;
+					String namesCondition = "(" + Stream.of( eventNames.value() )
+					                                    .map( n -> "#event.eventName == '" + n + "'" )
+					                                    .collect( Collectors.joining( " or " ) ) + ")";
+					condition = condition.isEmpty() ? namesCondition : "(" + condition + ") and " + namesCondition;
+					ReflectionUtils.setField( CONDITION_FIELD, listenerMethodAdapter, condition );
+				}
 			}
 		}
 	}

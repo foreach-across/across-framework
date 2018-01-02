@@ -18,6 +18,7 @@ package com.foreach.across.test.modules.module2;
 
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.EventName;
+import lombok.Getter;
 import org.springframework.context.event.EventListener;
 
 import java.math.BigDecimal;
@@ -36,6 +37,9 @@ public class CustomEventHandlers
 	private Set<SingleGenericEvent> receivedSingleNumber = new HashSet<>();
 	private Set<SingleGenericEvent> receivedSingleInteger = new HashSet<>();
 	private Set<SingleGenericEvent> receivedSingleDecimal = new HashSet<>();
+
+	@Getter
+	private int genericsReceivedCounter;
 
 	public Set<SimpleEvent> getReceivedAll() {
 		return receivedAll;
@@ -116,5 +120,14 @@ public class CustomEventHandlers
 	@EventListener
 	public void singleDecimal( SingleGenericEvent<BigDecimal> number ) {
 		receivedSingleDecimal.add( number );
+	}
+
+	@EventListener({ GenericEvent.class, SingleGenericEvent.class })
+	public void handleGenericEvent() {
+		genericsReceivedCounter++;
+	}
+
+	public void reset() {
+		genericsReceivedCounter = 0;
 	}
 }
