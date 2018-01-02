@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-@Configuration
+@Configuration("exposingConfiguration")
 @Exposed
 public class ExposingConfiguration
 {

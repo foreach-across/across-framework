@@ -80,9 +80,9 @@ public class TestContextScanning
 		beansWithName = registry.getBeansOfTypeAsMap( MyBeanConfig.class, true );
 		assertEquals( 3, beansWithName.size() );
 
-		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:testContextScanning.MyBeanConfig" ).getModule() );
-		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:testContextScanning.MyBeanConfig" ).getModule() );
-		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:testContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:com.foreach.across.test.context.TestContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:com.foreach.across.test.context.TestContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:com.foreach.across.test.context.TestContextScanning.MyBeanConfig" ).getModule() );
 	}
 
 	@Test
@@ -240,9 +240,7 @@ public class TestContextScanning
 		assertEquals( "ModuleOne", beans.get( 1 ).getModule() );
 		assertEquals( "ModuleTwo", beans.get( 2 ).getModule() );
 
-		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:testContextScanning.MyBeanConfig" ).getModule() );
-		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:testContextScanning.MyBeanConfig" ).getModule() );
-		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:testContextScanning.MyBeanConfig" ).getModule() );
+		beansWithName.forEach( ( beanName, bean ) -> assertTrue( beanName.startsWith( bean.getModule() + ":" ) ) );
 	}
 
 	@Test
@@ -278,9 +276,9 @@ public class TestContextScanning
 		assertEquals( "ModuleOne", beans.get( 3 ).getModule() );
 
 		assertEquals( "ApplicationContext", beansWithName.get( "fixed-config" ).getModule() );
-		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:testContextScanning.MyBeanConfig" ).getModule() );
-		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:testContextScanning.MyBeanConfig" ).getModule() );
-		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:testContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleThree", beansWithName.get( "ModuleThree:com.foreach.across.test.context.TestContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleTwo", beansWithName.get( "ModuleTwo:com.foreach.across.test.context.TestContextScanning.MyBeanConfig" ).getModule() );
+		assertEquals( "ModuleOne", beansWithName.get( "ModuleOne:com.foreach.across.test.context.TestContextScanning.MyBeanConfig" ).getModule() );
 
 		List<String> namesInOrder = new ArrayList<>();
 
@@ -289,9 +287,9 @@ public class TestContextScanning
 		}
 
 		assertEquals( Arrays.asList( "fixed-config",
-		                             "ModuleThree:testContextScanning.MyBeanConfig",
-		                             "ModuleTwo:testContextScanning.MyBeanConfig",
-		                             "ModuleOne:testContextScanning.MyBeanConfig" ),
+		                             "ModuleThree:com.foreach.across.test.context.TestContextScanning.MyBeanConfig",
+		                             "ModuleTwo:com.foreach.across.test.context.TestContextScanning.MyBeanConfig",
+		                             "ModuleOne:com.foreach.across.test.context.TestContextScanning.MyBeanConfig" ),
 		              namesInOrder
 		);
 

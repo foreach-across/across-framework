@@ -59,6 +59,7 @@ public final class AcrossApplicationAutoConfiguration
 	private final Map<String, String> extendModules = new HashMap<>();
 	private final Set<String> requested = new HashSet<>();
 	private final Set<String> unknownSupport = new LinkedHashSet<>();
+
 	public AcrossApplicationAutoConfiguration( ClassLoader classLoader ) {
 		AcrossConfigurationLoader
 				.loadValues( ENABLED_AUTO_CONFIGURATION, classLoader )

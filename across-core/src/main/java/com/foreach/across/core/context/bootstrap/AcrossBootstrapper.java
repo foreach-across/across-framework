@@ -72,6 +72,7 @@ public class AcrossBootstrapper
 
 	private final AcrossContext context;
 	private BootstrapApplicationContextFactory applicationContextFactory;
+	private List<AcrossBootstrapConfigurer> bootstrapConfigurers;
 
 	private final Deque<ConfigurableApplicationContext> createdApplicationContexts = new ArrayDeque<>();
 
@@ -149,13 +150,13 @@ public class AcrossBootstrapper
 				List<ConfigurableAcrossModuleInfo> bootstrappedModules = new ArrayList<>();
 
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
-					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo =
-							(ConfigurableAcrossModuleInfo) moduleInfo;
+					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
 					ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
 					bootstrappedModules.forEach( previous -> config.addPreviouslyExposedBeans( previous.getExposedBeanRegistry() ) );
 
-					// Add scanned (or edited) module configurations
+					// Add scanned (or edited) module configurations - first registered on the context, then on module itself
 					config.addApplicationContextConfigurer( moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName(), moduleInfo.getAliases() ) );
+					bootstrapConfigurers.forEach( configurer -> configurer.configureModule( config ) );
 
 					LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
 					          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
@@ -487,16 +488,13 @@ public class AcrossBootstrapper
 		);
 		contextConfig.setExposeTransformer( contextInfo.getContext().getExposeTransformer() );
 
-		List<AcrossBootstrapConfigurer> bootstrapConfigurers = new ArrayList<>(
+		bootstrapConfigurers = new ArrayList<>(
 				BeanFactoryUtils.beansOfTypeIncludingAncestors(
 						(ListableBeanFactory) applicationContext.getAutowireCapableBeanFactory(), AcrossBootstrapConfigurer.class
 				).values()
 		);
 		bootstrapConfigurers.sort( AnnotationAwareOrderComparator.INSTANCE );
 		bootstrapConfigurers.forEach( configurer -> configurer.configureContext( contextConfig ) );
-
-		contextConfig.getModules()
-		             .forEach( moduleBootstrapConfig -> bootstrapConfigurers.forEach( configurer -> configurer.configureModule( moduleBootstrapConfig ) ) );
 
 		contextInfo.setBootstrapConfiguration( contextConfig );
 
