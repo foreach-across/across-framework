@@ -17,6 +17,7 @@
 package com.foreach.across.test.installers;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
@@ -405,6 +406,90 @@ public class TestAcrossInstallerRegistry
 	}
 
 	@Test
+	public void parameterizedInstallerMethodsShouldExecute() {
+		installers( MethodWithParametersInstaller.class );
+
+		AcrossApplicationContext applicationContext = new AcrossApplicationContext();
+		applicationContext.refresh();
+		applicationContext.start();
+		applicationContext.getBeanFactory().registerSingleton( "someBean", new SomeBean() );
+		applicationContext.getBeanFactory().registerSingleton( "someOtherBean", new SomeOtherBean() );
+		applicationContext.getBeanFactory().registerSingleton( "anotherBean", new AnotherBean() );
+
+		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
+				AcrossApplicationContextHolder.class );
+		when( moduleAcrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
+		when( moduleAcrossApplicationContextHolder.getBeanFactory() )
+				.thenReturn( (AcrossListableBeanFactory) applicationContext.getBeanFactory() );
+
+		when( module.hasApplicationContext() ).thenReturn( true );
+		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
+
+		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
+
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
+
+		// The order does not matter for this test
+		Set<Class<?>> expected = new HashSet<>( Arrays.asList( AnotherBean.class, MethodWithParametersInstaller.class, SomeBean.class, SomeOtherBean.class ) );
+		Set<Class<?>> actual = new HashSet<>( TestInstaller.EXECUTED );
+
+		assertEquals( expected, actual );
+	}
+
+	@Test
+	public void parameterizedInstallerMethodsOptionalDependencyNotPresentShouldExecute() {
+		installers( MethodWithParametersInstaller.class );
+
+		AcrossApplicationContext applicationContext = new AcrossApplicationContext();
+		applicationContext.refresh();
+		applicationContext.start();
+		applicationContext.getBeanFactory().registerSingleton( "someBean", new SomeBean() );
+		applicationContext.getBeanFactory().registerSingleton( "anotherBean", new AnotherBean() );
+
+		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
+				AcrossApplicationContextHolder.class );
+		when( moduleAcrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
+		when( moduleAcrossApplicationContextHolder.getBeanFactory() )
+				.thenReturn( (AcrossListableBeanFactory) applicationContext.getBeanFactory() );
+
+		when( module.hasApplicationContext() ).thenReturn( true );
+		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
+
+		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
+
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
+
+		// The order does not matter for this test
+		Set<Class<?>> expected = new HashSet<>( Arrays.asList( AnotherBean.class, MethodWithParametersInstaller.class, SomeBean.class ) );
+		Set<Class<?>> actual = new HashSet<>( TestInstaller.EXECUTED );
+
+		assertEquals( expected, actual );
+	}
+
+	@Test(expected = AcrossException.class)
+	public void parameterizedInstallerMethodsRequiredDependencyNotPresentShouldExecute() {
+		installers( MethodWithParametersInstaller.class );
+
+		AcrossApplicationContext applicationContext = new AcrossApplicationContext();
+		applicationContext.refresh();
+		applicationContext.start();
+		applicationContext.getBeanFactory().registerSingleton( "anotherBean", new AnotherBean() );
+
+		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
+				AcrossApplicationContextHolder.class );
+		when( moduleAcrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
+		when( moduleAcrossApplicationContextHolder.getBeanFactory() )
+				.thenReturn( (AcrossListableBeanFactory) applicationContext.getBeanFactory() );
+
+		when( module.hasApplicationContext() ).thenReturn( true );
+		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
+
+		when( contextSettings.shouldRun( anyString(), anyObject() ) ).thenReturn( InstallerAction.EXECUTE );
+
+		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
+	}
+
+	@Test
 	public void installerShouldNotExecuteIfDependencyNotMet() {
 		InstallerMetaData meta = InstallerMetaData.forClass( AlwaysRunWithDependencyInstaller.class );
 
@@ -457,5 +542,17 @@ public class TestAcrossInstallerRegistry
 
 	private void assertExecuted( Class... installerClasses ) {
 		assertArrayEquals( installerClasses, TestInstaller.executed() );
+	}
+
+	public class SomeBean
+	{
+	}
+
+	public class SomeOtherBean
+	{
+	}
+
+	public class AnotherBean
+	{
 	}
 }

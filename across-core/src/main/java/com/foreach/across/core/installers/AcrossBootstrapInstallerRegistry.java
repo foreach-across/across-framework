@@ -18,25 +18,32 @@ package com.foreach.across.core.installers;
 
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.AcrossEntity;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.BootstrapApplicationContextFactory;
 import com.foreach.across.core.context.bootstrap.BootstrapLockManager;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Builds the list of all installers in a configured AcrossContext.
@@ -156,11 +163,33 @@ public class AcrossBootstrapInstallerRegistry
 				if ( action == InstallerAction.EXECUTE || action == InstallerAction.FORCE ) {
 					LOG.info( "Executing installer {} for module {}", installerMetaData.getName(), module.getName() );
 
+					ConfigurableListableBeanFactory beanFactory = getBeanFactory( module );
 					for ( Method method : installerMetaData.getInstallerMethods() ) {
 						try {
-							method.setAccessible( true );
-							method.invoke( target );
+							Class<?>[] paramTypes = method.getParameterTypes();
+							Object[] arguments = new Object[paramTypes.length];
+							if ( method.getParameterCount() > 0 && beanFactory != null ) {
+								boolean required = method.getDeclaredAnnotation( InstallerMethod.class ).required();
+								Set<String> autowiredBeans = new LinkedHashSet<>( paramTypes.length );
+								TypeConverter typeConverter = beanFactory.getTypeConverter();
 
+								for ( int i = 0; i < arguments.length; i++ ) {
+									MethodParameter methodParam = new MethodParameter( method, i );
+									DependencyDescriptor currDesc = new DependencyDescriptor( methodParam, required );
+									currDesc.setContainingClass( target.getClass() );
+									String beanName = target.getClass().getName();
+									try {
+										Object arg = beanFactory.resolveDependency( currDesc, beanName, autowiredBeans, typeConverter );
+										arguments[i] = arg;
+									}
+									catch ( BeansException ex ) {
+										throw new UnsatisfiedDependencyException( null, beanName, new InjectionPoint( methodParam ), ex );
+									}
+								}
+
+							}
+							ReflectionUtils.makeAccessible( method );
+							method.invoke( target, arguments );
 							installed = true;
 						}
 						catch ( Exception e ) {
@@ -203,6 +232,12 @@ public class AcrossBootstrapInstallerRegistry
 		if ( installed ) {
 			repository.setInstalled( module.getName(), installerMetaData );
 		}
+
+	}
+
+	private ConfigurableListableBeanFactory getBeanFactory( AcrossEntity contextOrModule ) {
+		AcrossApplicationContextHolder applicationContextHolder = AcrossContextUtils.getAcrossApplicationContextHolder( contextOrModule );
+		return applicationContextHolder != null ? applicationContextHolder.getBeanFactory() : null;
 	}
 
 	private Optional<Object> prepareInstaller( AcrossModule module,

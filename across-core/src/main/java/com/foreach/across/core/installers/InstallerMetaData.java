@@ -112,8 +112,7 @@ public class InstallerMetaData
 		List<Method> methods = new ArrayList<>();
 
 		for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( installerClass ) ) {
-			if ( AnnotationUtils.findAnnotation( method, InstallerMethod.class ) != null
-					&& method.getParameterCount() == 0 ) {
+			if ( AnnotationUtils.findAnnotation( method, InstallerMethod.class ) != null ) {
 				methods.add( method );
 			}
 		}
