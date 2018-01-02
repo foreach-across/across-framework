@@ -467,7 +467,7 @@ public class TestAcrossInstallerRegistry
 	}
 
 	@Test(expected = AcrossException.class)
-	public void parameterizedInstallerMethodsRequiredDependencyNotPresentShouldExecute() {
+	public void parameterizedInstallerMethodsRequiredDependencyNotPresentShouldNotExecute() {
 		installers( MethodWithParametersInstaller.class );
 
 		AcrossApplicationContext applicationContext = new AcrossApplicationContext();
