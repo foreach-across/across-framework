@@ -252,10 +252,10 @@ public class ModuleBootstrapConfig
 	 */
 	public void exclude( String... classNames ) {
 		exclude(
-				Stream.of( classNames )
-				      .map( ClassLoadingUtils::resolveClass )
-				      .filter( Objects::nonNull )
-				      .toArray( Class[]::new )
+				(Class[]) Stream.of( classNames )
+				                .map( ClassLoadingUtils::resolveClass )
+				                .filter( Objects::nonNull )
+				                .toArray( Class[]::new )
 		);
 	}
 
