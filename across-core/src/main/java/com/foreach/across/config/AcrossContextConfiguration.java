@@ -251,7 +251,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			modulePackageSet.add( modulePackageClass.getPackage().getName() );
 		}
 
-		if ( modulePackageSet.isEmpty() ) {
+		if ( !modulePackageSet.contains( "." ) ) {
 			modulePackageSet.add( AcrossContextBuilder.STANDARD_MODULES_PACKAGE );
 
 			try {
@@ -267,6 +267,10 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			}
 			catch ( ClassNotFoundException ignore ) {
 			}
+		}
+		else {
+			LOG.info( "Not registering default packages for Across module scanning" );
+			modulePackageSet.remove( "." );
 		}
 
 		return modulePackageSet.toArray( new String[modulePackageSet.size()] );

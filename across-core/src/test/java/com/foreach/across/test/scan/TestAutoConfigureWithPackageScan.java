@@ -57,7 +57,7 @@ public class TestAutoConfigureWithPackageScan
 	@EnableAcrossContext(
 			modules = { ExtendedValidModule.NAME, ThirdValidModule.NAME },
 			scanForOptionalModules = true,
-			modulePackages = "com.foreach.across.test.scan.packageOne",
+			modulePackages = { ".", "com.foreach.across.test.scan.packageOne" },
 			modulePackageClasses = ThirdValidModule.class
 	)
 	static class Config
