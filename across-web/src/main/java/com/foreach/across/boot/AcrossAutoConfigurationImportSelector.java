@@ -47,6 +47,9 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 	protected List<String> getCandidateConfigurations( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
 		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
 
+		String[] excludedAutoConfigurations = attributes.getStringArray( "excludeAutoConfigurations" );
+		registry.addExcludedAutoConfigurations( excludedAutoConfigurations );
+
 		boolean autoConfiguration = (boolean) attributes.get( "autoConfiguration" );
 
 		if ( !autoConfiguration ) {

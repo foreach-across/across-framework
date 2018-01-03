@@ -81,6 +81,10 @@ public final class AcrossApplicationAutoConfiguration
 		}
 	}
 
+	public void addExcludedAutoConfigurations( String... excludedConfigurationClasses ) {
+		excluded.addAll( Arrays.asList( excludedConfigurationClasses ) );
+	}
+
 	public String requestAutoConfiguration( String autoConfigurationClass ) {
 		requested.add( autoConfigurationClass );
 

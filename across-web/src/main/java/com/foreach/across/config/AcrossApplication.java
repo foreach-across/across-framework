@@ -120,4 +120,12 @@ public @interface AcrossApplication
 	 * that serves no purpose other than being referenced by this attribute.</p>
 	 */
 	Class<?>[] moduleConfigurationPackageClasses() default {};
+
+	/**
+	 * Array of AutoConfiguration classes that should not be enabled.
+	 * The provided classes will be excluded in addition to the exclusions defined in the META-INF/across.configuration file.
+	 *
+	 * @see com.foreach.across.boot.AcrossApplicationAutoConfiguration
+	 */
+	Class<?>[] excludeAutoConfigurations() default {};
 }
