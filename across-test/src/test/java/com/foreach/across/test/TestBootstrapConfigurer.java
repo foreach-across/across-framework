@@ -48,6 +48,21 @@ public class TestBootstrapConfigurer
 		}
 	}
 
+	@Test
+	public void configurationsExcluded() {
+		try (AcrossTestContext ctx = standard()
+				.register( BootstrapConfigurer.class, ExcludedConfigurationConfigurer.class )
+				.modules( new EmptyAcrossModule( "one" ), new EmptyAcrossModule( "two" ) )
+				.build()) {
+
+			assertFalse( ctx.containsBean( "moduleBean" ) );
+			assertFalse( ctx.moduleContainsLocalBean( "one", "moduleBean" ) );
+
+			assertFalse( ctx.containsBean( "contextBean" ) );
+			assertFalse( ctx.moduleContainsLocalBean( "two", "contextBean" ) );
+		}
+	}
+
 	@Component
 	static class BootstrapConfigurer implements AcrossBootstrapConfigurer
 	{
@@ -61,6 +76,22 @@ public class TestBootstrapConfigurer
 			if ( "one".equals( moduleConfiguration.getModuleName() ) ) {
 				moduleConfiguration.expose( "moduleBean" );
 				moduleConfiguration.addApplicationContextConfigurer( ModuleConfiguration.class );
+			}
+		}
+	}
+
+	@Component
+	static class ExcludedConfigurationConfigurer implements AcrossBootstrapConfigurer
+	{
+		@Override
+		public void configureContext( AcrossBootstrapConfig contextConfiguration ) {
+			contextConfiguration.excludeFromModule( "one", ModuleConfiguration.class.getName() );
+		}
+
+		@Override
+		public void configureModule( ModuleBootstrapConfig moduleConfiguration ) {
+			if ( "two".equals( moduleConfiguration.getModuleName() ) ) {
+				moduleConfiguration.exclude( ContextConfiguration.class );
 			}
 		}
 	}

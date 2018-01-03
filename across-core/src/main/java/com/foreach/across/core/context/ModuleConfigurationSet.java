@@ -47,6 +47,22 @@ public class ModuleConfigurationSet
 		return annotatedClasses.toArray( new Class[annotatedClasses.size()] );
 	}
 
+	/**
+	 * Get the explicitly excluded annotated classes registered to the module specified by name.
+	 * Optionally a number of module name aliases can be specified - usually used by dynamic modules.
+	 */
+	public Class<?>[] getExcludedAnnotatedClasses( String moduleName, String... aliases ) {
+		String[] moduleNames = ArrayUtils.addAll( aliases, moduleName );
+		List<Class<?>> annotatedClasses = new ArrayList<>();
+		scopedAnnotatedClasses.forEach( ( annotatedClass, modules ) -> {
+			if ( containsAny( modules.excludedModules, moduleNames ) ) {
+				annotatedClasses.add( annotatedClass );
+			}
+		} );
+
+		return annotatedClasses.toArray( new Class[annotatedClasses.size()] );
+	}
+
 	private boolean containsAny( Set<String> moduleNameSet, String... moduleName ) {
 		return Stream.of( moduleName ).anyMatch( moduleNameSet::contains );
 	}

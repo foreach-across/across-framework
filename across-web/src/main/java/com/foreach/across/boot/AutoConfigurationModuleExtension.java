@@ -28,7 +28,7 @@ import java.util.Collection;
 
 /**
  * Holds the list of auto-configuration classes that have been moved to this module.
- * The {@link Importer} can be used to inject the
+ * The {@link Importer} can be used to inject them into a current {@link org.springframework.context.ApplicationContext}.
  *
  * @author Arne Vandamme
  * @see ExtendModuleAutoConfiguration
@@ -45,7 +45,6 @@ class AutoConfigurationModuleExtension
 		this.classNames = classNames.toArray( new String[classNames.size()] );
 	}
 
-	//@Configuration
 	@Import(Importer.class)
 	static class Registrar
 	{

@@ -84,6 +84,8 @@ public class TestModuleConfigurationSet
 
 		assertEquals( 0, set.getAnnotatedClasses( "moduleOne" ).length );
 		assertArrayEquals( new Class[] { One.class }, set.getAnnotatedClasses( "moduleTwo" ) );
+		assertArrayEquals( new Class[] { One.class }, set.getExcludedAnnotatedClasses( "moduleOne" ) );
+		assertEquals( 0, set.getExcludedAnnotatedClasses( "moduleTwo" ).length );
 	}
 
 	@Test
@@ -98,10 +100,13 @@ public class TestModuleConfigurationSet
 	@Test
 	public void removeRegistrations() {
 		set.register( One.class, "moduleOne", "moduleTwo" );
+		set.exclude( One.class, "moduleTwo" );
 		set.remove( One.class );
 
 		assertEquals( 0, set.getAnnotatedClasses( "moduleOne" ).length );
 		assertEquals( 0, set.getAnnotatedClasses( "moduleTwo" ).length );
+		assertEquals( 0, set.getExcludedAnnotatedClasses( "moduleOne" ).length );
+		assertEquals( 0, set.getExcludedAnnotatedClasses( "moduleTwo" ).length );
 	}
 
 	@Test

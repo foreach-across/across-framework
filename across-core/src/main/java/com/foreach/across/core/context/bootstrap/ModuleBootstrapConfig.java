@@ -43,6 +43,7 @@ public class ModuleBootstrapConfig
 	private ExposedBeanDefinitionTransformer exposeTransformer;
 	private Set<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
 	private Set<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
+	private Set<Class<?>> excludedAnnotatedClasses = new LinkedHashSet<>();
 	private Collection<Object> installers = new LinkedList<>();
 	private InstallerSettings installerSettings;
 	private Collection<ExposedModuleBeanRegistry> previouslyExposedBeans = new ArrayList<>();
@@ -152,7 +153,6 @@ public class ModuleBootstrapConfig
 		return Collections.unmodifiableSet( applicationContextConfigurers );
 	}
 
-	@Deprecated
 	public void setApplicationContextConfigurers( Set<ApplicationContextConfigurer> applicationContextConfigurers ) {
 		this.applicationContextConfigurers.clear();
 		this.hasComponents = false;
@@ -237,5 +237,36 @@ public class ModuleBootstrapConfig
 
 	public void addPreviouslyExposedBeans( ExposedModuleBeanRegistry moduleBeanRegistry ) {
 		this.previouslyExposedBeans.add( moduleBeanRegistry );
+	}
+
+	public Set<Class<?>> getExcludedAnnotatedClasses() {
+		return excludedAnnotatedClasses;
+	}
+
+	/**
+	 * Explicitly exclude an annotated class from being added. If it has been configured previously, it will still be ignored.
+	 * <p>
+	 * <p>NOTE: this only applies to the application context, not the installer context.</p>
+	 *
+	 * @param classNames to exclude
+	 */
+	public void exclude( String... classNames ) {
+		exclude(
+				Stream.of( classNames )
+				      .map( ClassLoadingUtils::resolveClass )
+				      .filter( Objects::nonNull )
+				      .toArray( Class[]::new )
+		);
+	}
+
+	/**
+	 * Explicitly exclude an annotated class from being added. If it has been configured previously, it will still be ignored.
+	 * <p>
+	 * <p>NOTE: this only applies to the application context, not the installer context.</p>
+	 *
+	 * @param annotatedClasses to exclude
+	 */
+	public void exclude( Class<?>... annotatedClasses ) {
+		excludedAnnotatedClasses.addAll( Arrays.asList( annotatedClasses ) );
 	}
 }

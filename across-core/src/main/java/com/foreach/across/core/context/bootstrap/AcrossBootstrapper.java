@@ -23,6 +23,8 @@ import com.foreach.across.core.context.*;
 import com.foreach.across.core.context.beans.PrimarySingletonBean;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.beans.SingletonBean;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurerAdapter;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
@@ -40,6 +42,7 @@ import com.foreach.across.core.installers.AcrossBootstrapInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import com.foreach.across.core.util.ClassLoadingUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +50,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -55,7 +59,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.core.env.PropertySources;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
+import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Modifier;
@@ -172,6 +178,8 @@ public class AcrossBootstrapper
 						continue;
 					}
 
+					filterApplicationContextConfigurers( moduleInfo, config, moduleConfigurationSet );
+
 					// Run installers before bootstrapping this particular module
 					installerRegistry.runInstallersForModule( moduleInfo.getName(),
 					                                          InstallerPhase.BeforeModuleBootstrap );
@@ -255,6 +263,69 @@ public class AcrossBootstrapper
 
 			throw new AcrossException( "Across bootstrap failed", e );
 		}
+	}
+
+	/**
+	 * Create a new set of {@link com.foreach.across.core.context.configurer.ApplicationContextConfigurer} that no longer
+	 * contains any explicitly excluded annotated classes.
+	 */
+	private void filterApplicationContextConfigurers( AcrossModuleInfo moduleInfo,
+	                                                  ModuleBootstrapConfig config,
+	                                                  ModuleConfigurationSet moduleConfigurationSet ) {
+		Set<Class<?>> notAllowedAnnotatedClasses = new LinkedHashSet<>(
+				Arrays.asList( moduleConfigurationSet.getExcludedAnnotatedClasses( moduleInfo.getName(), moduleInfo.getAliases() ) )
+		);
+		notAllowedAnnotatedClasses.addAll( config.getExcludedAnnotatedClasses() );
+
+		Set<ApplicationContextConfigurer> filtered = new LinkedHashSet<>();
+
+		config.getApplicationContextConfigurers()
+		      .forEach( configurer -> {
+			      if ( ArrayUtils.isEmpty( configurer.annotatedClasses() ) ) {
+				      filtered.add( configurer );
+			      }
+			      else {
+				      List<Class> filteredClasses = new ArrayList<>( Arrays.asList( configurer.annotatedClasses() ) );
+				      filteredClasses.removeAll( notAllowedAnnotatedClasses );
+
+				      filtered.add(
+						      new ApplicationContextConfigurerAdapter()
+						      {
+							      @Override
+							      public ProvidedBeansMap providedBeans() {
+								      return configurer.providedBeans();
+							      }
+
+							      @Override
+							      public Class[] annotatedClasses() {
+								      return filteredClasses.toArray( new Class[filteredClasses.size()] );
+							      }
+
+							      @Override
+							      public String[] componentScanPackages() {
+								      return configurer.componentScanPackages();
+							      }
+
+							      @Override
+							      public BeanFactoryPostProcessor[] postProcessors() {
+								      return configurer.postProcessors();
+							      }
+
+							      @Override
+							      public PropertySources propertySources() {
+								      return configurer.propertySources();
+							      }
+
+							      @Override
+							      public TypeFilter[] excludedTypeFilters() {
+								      return configurer.excludedTypeFilters();
+							      }
+						      }
+				      );
+			      }
+		      } );
+
+		config.setApplicationContextConfigurers( filtered );
 	}
 
 	private void destroyAllCreatedApplicationContexts() {

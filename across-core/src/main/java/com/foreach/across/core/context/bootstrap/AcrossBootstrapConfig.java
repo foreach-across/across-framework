@@ -116,6 +116,41 @@ public class AcrossBootstrapConfig
 	}
 
 	/**
+	 * Method to exclude one or more annotated classes from a module bootstrap configuration.
+	 * If the configuration class has been added previously at any point during bootstrap configuration,
+	 * it will be removed again. This method is safe to use even if the classes are not present on the classpath.
+	 *
+	 * @param moduleName Unique name of the module in the context.
+	 * @param classNames Annotated class names.
+	 * @return True if the module was present.
+	 */
+	public boolean excludeFromModule( String moduleName, String... classNames ) {
+		return excludeFromModule(
+				moduleName,
+				(Class[]) Stream.of( classNames )
+				                .map( ClassLoadingUtils::resolveClass )
+				                .filter( Objects::nonNull )
+				                .toArray( Class[]::new )
+		);
+	}
+
+	/**
+	 * Method to exclude one or more annotated classes from a module bootstrap configuration.
+	 * If the configuration class has been added previously at any point during bootstrap configuration,
+	 * it will be removed again.
+	 *
+	 * @param moduleName       Unique name of the module in the context.
+	 * @param annotatedClasses Annotated classes.
+	 * @return True if the module was present.
+	 */
+	public boolean excludeFromModule( String moduleName, Class... annotatedClasses ) {
+		for ( Class configurationClass : annotatedClasses ) {
+			moduleConfigurationSet.exclude( configurationClass, moduleName );
+		}
+		return hasModule( moduleName );
+	}
+
+	/**
 	 * Method to add one or more configuration classes to a module bootstrap configuration.
 	 * The module is identified by its name.  This method is safe to use in all circumstances:
 	 * if the module is not configured in the context only the return value will be false but no
