@@ -33,6 +33,7 @@ import java.lang.annotation.*;
  * <p/>
  * NOTE: Even though this class defines {@link EnableAutoConfiguration}, it will explicitly disable auto configuration
  * in the {@link ApplicationModuleImportSelector}.  The annotation is added for better IDE support.
+ * Actual auto-configuration is done by the {@link AcrossAutoConfigurationImportSelector}.
  *
  * @author Arne Vandamme
  */

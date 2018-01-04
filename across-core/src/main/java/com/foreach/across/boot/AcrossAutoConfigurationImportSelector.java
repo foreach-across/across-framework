@@ -16,8 +16,6 @@
 package com.foreach.across.boot;
 
 import com.foreach.across.config.AcrossApplication;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigurationImportSelector;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
@@ -36,8 +34,6 @@ import java.util.stream.Collectors;
  */
 public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImportSelector
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossAutoConfigurationImportSelector.class );
-
 	@Override
 	protected Class<?> getAnnotationClass() {
 		return AcrossApplication.class;

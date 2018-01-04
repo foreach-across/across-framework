@@ -13,14 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.context.dynamic.application.config;
+package com.foreach.across.boot.postprocessor.config;
 
-import org.springframework.context.annotation.Configuration;
+import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.AcrossRole;
+import com.foreach.across.core.context.AcrossModuleRole;
 
 /**
  * @author Arne Vandamme
  */
-@Configuration
-public class AppConfig
+@AcrossRole(AcrossModuleRole.POSTPROCESSOR)
+public class SamplePostProcessorModule extends AcrossModule
 {
+	public static final String NAME = "SamplePostProcessorModule";
+
+	@Override
+	public String getName() {
+		return NAME;
+	}
 }

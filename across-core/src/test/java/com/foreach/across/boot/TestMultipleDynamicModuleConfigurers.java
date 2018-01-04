@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.context.dynamic;
+package com.foreach.across.boot;
 
+import com.foreach.across.boot.postprocessor.config.SamplePostProcessorModule;
 import com.foreach.across.config.AcrossDynamicModulesConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
-import com.foreach.across.test.modules.web.context.dynamic.postprocessor.config.SamplePostProcessorModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -57,8 +57,12 @@ com.foreach.across.AutoConfigurationEnabled=\
   org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration,\
   org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration,\
   org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration,\
-  org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration
+  org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration,\
+  org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration,\
+  org.springframework.boot.autoconfigure.jdbc.JndiDataSourceAutoConfiguration,\
+  org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration
 
+#org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
 #org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
 #org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
 #org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,\
@@ -95,10 +99,6 @@ com.foreach.across.AutoConfigurationEnabled=\
 #org.springframework.boot.autoconfigure.hazelcast.HazelcastJpaDependencyAutoConfiguration,\
 #org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration,\
 #org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration,\
-#org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration,\
-#org.springframework.boot.autoconfigure.jdbc.JndiDataSourceAutoConfiguration,\
-#org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration,\
-#org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration,\
 #org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration,\
 #org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration,\
 #org.springframework.boot.autoconfigure.jms.JndiConnectionFactoryAutoConfiguration,\

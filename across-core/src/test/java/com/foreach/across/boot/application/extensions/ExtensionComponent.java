@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.context.dynamic.application.extensions;
+package com.foreach.across.boot.application.extensions;
 
 import org.springframework.stereotype.Component;
 

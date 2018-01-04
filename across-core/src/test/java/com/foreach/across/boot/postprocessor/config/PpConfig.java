@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.context.dynamic.application.installers;
+package com.foreach.across.boot.postprocessor.config;
 
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Arne Vandamme
- * @since 3.0.0
  */
-@Component
-public class InstallerComponent
+@Configuration
+public class PpConfig
 {
 }

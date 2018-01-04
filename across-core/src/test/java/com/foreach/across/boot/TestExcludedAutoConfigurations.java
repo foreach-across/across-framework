@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.context.dynamic;
+package com.foreach.across.boot;
 
-import com.foreach.across.boot.AcrossApplicationAutoConfiguration;
 import com.foreach.across.config.AcrossApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;

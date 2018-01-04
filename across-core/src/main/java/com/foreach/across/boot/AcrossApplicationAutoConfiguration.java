@@ -126,7 +126,7 @@ public final class AcrossApplicationAutoConfiguration
 		if ( !unknownSupport.isEmpty() ) {
 			LOG.warn( "" );
 			LOG.warn( "--- Across AutoConfiguration Report ---" );
-			LOG.warn( "The following auto-configuration classes have unknown Across support and were not added:" );
+			LOG.warn( "The following {} auto-configuration classes have unknown Across support and were not added:", unknownSupport.size() );
 			unknownSupport.forEach( className -> LOG.warn( "- {}", className ) );
 			LOG.warn( "Consider adding them to a META-INF/across.configuration." );
 			LOG.warn( "--- End Across AutoConfiguration Report ---" );

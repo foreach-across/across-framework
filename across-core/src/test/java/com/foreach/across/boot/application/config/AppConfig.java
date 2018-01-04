@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.context.dynamic.infrastructure.config;
+package com.foreach.across.boot.application.config;
 
 import org.springframework.context.annotation.Configuration;
 
@@ -21,6 +21,6 @@ import org.springframework.context.annotation.Configuration;
  * @author Arne Vandamme
  */
 @Configuration
-public class InfraConfig
+public class AppConfig
 {
 }
