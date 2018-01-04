@@ -180,6 +180,8 @@ public class TestInstallerConditionals
 	@Installer(description = "Should not be registered, profile not active.")
 	static class BadProfileInstaller extends BaseInstaller
 	{
+		public BadProfileInstaller() {
+		}
 	}
 
 	@Profile("dev")

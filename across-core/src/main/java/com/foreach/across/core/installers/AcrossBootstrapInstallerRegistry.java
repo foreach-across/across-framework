@@ -107,7 +107,8 @@ public class AcrossBootstrapInstallerRegistry
 				LOG.trace( "Determined action {} for installer {}.", action, metadata.getName() );
 
 				if ( shouldCheckRunCondition( action ) ) {
-					if ( shouldPerformAction( action, moduleConfig.getModule(), metadata ) ) {
+					if ( conditionalsMet( moduleConfig.getModule(), installerClass, installerInstance )
+							&& shouldPerformAction( action, moduleConfig.getModule(), metadata ) ) {
 						takeBootstrapLock();
 						try {
 							performInstallerAction( action, moduleConfig.getModule(), metadata, installerInstance );
@@ -117,7 +118,7 @@ public class AcrossBootstrapInstallerRegistry
 						}
 					}
 					else {
-						LOG.debug( "Skipping installer {} because action {} should not be performed.",
+						LOG.debug( "Skipping installer {} because action {} should not be performed due to bean or run conditions not met.",
 						           metadata.getName(), action );
 					}
 				}
@@ -134,6 +135,27 @@ public class AcrossBootstrapInstallerRegistry
 		LOG.trace( "Finished {} installers for module {}", phase.name(), moduleConfig.getModuleName() );
 	}
 
+	/**
+	 * Registers the installer bean and checks if the bean definition has been created.
+	 */
+	private boolean conditionalsMet( AcrossModule module, Class<?> installerClass, Optional<Object> installerInstance ) {
+		if ( installerInstance.isPresent() ) {
+			// if an instance is passed, regular conditionals do not exist
+			return true;
+		}
+
+		AcrossConfigurableApplicationContext installerContext = getInstallerContext( module );
+		installerContext.register( installerClass );
+
+		// if bean definition is present - conditions have been met
+		if ( installerContext.getBeanNamesForType( installerClass, true, false ).length > 0 ) {
+			return true;
+		}
+
+		LOG.trace( "Skipping installer {} as one or more conditionals have not been met", installerClass );
+		return false;
+	}
+
 	private void performInstallerAction( InstallerAction action,
 	                                     AcrossModule module,
 	                                     InstallerMetaData installerMetaData,
@@ -144,8 +166,7 @@ public class AcrossBootstrapInstallerRegistry
 		boolean registerOnly = false;
 
 		if ( action != InstallerAction.REGISTER ) {
-			Optional<Object> installer
-					= prepareInstaller( module, installerMetaData.getInstallerClass(), installerInstance );
+			Optional<Object> installer = prepareInstaller( module, installerMetaData.getInstallerClass(), installerInstance );
 
 			if ( installer.isPresent() ) {
 				Object target = installer.get();
@@ -246,8 +267,6 @@ public class AcrossBootstrapInstallerRegistry
 		AcrossConfigurableApplicationContext installerContext = getInstallerContext( module );
 
 		if ( !installerInstance.isPresent() ) {
-			installerContext.register( installerClass );
-
 			try {
 				return Optional.ofNullable( BeanFactoryUtils.beanOfType( installerContext, installerClass ) );
 			}
@@ -259,7 +278,8 @@ public class AcrossBootstrapInstallerRegistry
 			// For compatibility reasons
 			LOG.warn(
 					"Installer {} for module {} was passed as an instance - this functionality will be removed in future releases.",
-					installerClass.getName(), module.getName() );
+					installerClass.getName(), module.getName()
+			);
 
 			Object installer = installerInstance.get();
 			AutowireCapableBeanFactory beanFactory = installerContext.getAutowireCapableBeanFactory();
