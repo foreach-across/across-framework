@@ -5,7 +5,7 @@ import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 /**
  * Interface used for configuring separate
  * {@link com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping} instances.
-  */
+ */
 public interface PrefixingHandlerMappingConfigurer
 {
 	/**

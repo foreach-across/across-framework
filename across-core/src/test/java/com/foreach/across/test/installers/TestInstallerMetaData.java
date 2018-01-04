@@ -121,7 +121,7 @@ public class TestInstallerMetaData
 		}
 
 		@InstallerMethod
-		public void methodOne(){
+		public void methodOne() {
 		}
 	}
 

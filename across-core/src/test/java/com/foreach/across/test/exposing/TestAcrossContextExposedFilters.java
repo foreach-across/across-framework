@@ -97,7 +97,7 @@ public class TestAcrossContextExposedFilters
 
 		assertFalse( parent.containsBean( "cacheManager" ) );
 		assertFalse( parent.containsBean( "conversionService" ) );
-		assertTrue( parent.containsBean( "autoConfigurationReport" ));
+		assertTrue( parent.containsBean( "autoConfigurationReport" ) );
 		assertEquals( initialBeanCount + 1, BeanFactoryUtils.countBeansIncludingAncestors( parent ) );
 
 		ApplicationContext across = AcrossContextUtils.getApplicationContext( context );

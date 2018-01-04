@@ -17,11 +17,7 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossVersionInfo;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

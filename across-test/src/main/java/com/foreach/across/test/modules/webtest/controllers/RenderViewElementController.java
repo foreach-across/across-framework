@@ -57,7 +57,8 @@ public class RenderViewElementController
 		return "th/WebTestModule/renderViewElement";
 	}
 
-	public interface Callback {
+	public interface Callback
+	{
 		void prepareModel( ModelMap model );
 	}
 }

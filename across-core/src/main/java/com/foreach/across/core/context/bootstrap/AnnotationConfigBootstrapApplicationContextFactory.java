@@ -22,6 +22,7 @@ import com.foreach.across.core.context.*;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
+import com.foreach.across.core.context.support.ApplicationContextIdNameGenerator;
 import com.foreach.across.core.events.NonExposedEventListenerMethodProcessor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeansException;
@@ -67,6 +68,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	                                                                      ApplicationContext parentApplicationContext ) {
 		AcrossConfigurableApplicationContext applicationContext = createApplicationContext();
 		applicationContext.setDisplayName( "[" + across.getId() + "]" );
+		applicationContext.setId( ApplicationContextIdNameGenerator.forContext( applicationContext ) );
 
 		if ( parentApplicationContext != null ) {
 			applicationContext.setParent( parentApplicationContext );
@@ -89,6 +91,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	                                                                      AcrossApplicationContextHolder parentContext ) {
 		AcrossConfigurableApplicationContext child = createApplicationContext();
 		child.setDisplayName( moduleBootstrapConfig.getModuleName() );
+		child.setId( ApplicationContextIdNameGenerator.forModule( moduleBootstrapConfig ) );
 		child.setParent( parentContext.getApplicationContext() );
 
 		return child;

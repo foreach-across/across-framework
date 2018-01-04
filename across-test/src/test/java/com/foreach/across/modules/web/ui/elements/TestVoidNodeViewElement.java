@@ -81,7 +81,7 @@ public class TestVoidNodeViewElement extends AbstractViewElementTemplateTest
 
 		String jsonString = HtmlEscape.escapeHtml4Xml(
 				"{\"name\":\"myname 'for' you\",\"age\":34,\"nested\":{\"name\":\"inside\",\"time\":666}}" );
-		String jsonExtra = HtmlEscape.escapeHtml4Xml("{\"name\":\"extra\",\"time\":123456789}");
+		String jsonExtra = HtmlEscape.escapeHtml4Xml( "{\"name\":\"extra\",\"time\":123456789}" );
 		renderAndExpect(
 				node,
 				"<hr " +

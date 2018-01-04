@@ -35,12 +35,12 @@ public class TestBeanPrefixingTransformer
 
 	public TestBeanPrefixingTransformer() {
 		definitions.put( "sessionFactory", new ExposedBeanDefinition(
-				                 mock( AcrossContextBeanRegistry.class ),
-				                 "module",
-				                 0,
-				                 "sessionFactory",
-				                 Object.class,
-				                 new String[0] )
+				mock( AcrossContextBeanRegistry.class ),
+				"module",
+				0,
+				"sessionFactory",
+				Object.class,
+				new String[0] )
 		);
 		definitions.put( "transactionManager",
 		                 new ExposedBeanDefinition(

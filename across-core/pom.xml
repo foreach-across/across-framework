@@ -86,6 +86,16 @@
 			<artifactId>HikariCP</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Hibernate Validator 5.0 requires an ExpressionLanguage: http://hibernate.org/validator/documentation/getting-started/ -->
 		<dependency>

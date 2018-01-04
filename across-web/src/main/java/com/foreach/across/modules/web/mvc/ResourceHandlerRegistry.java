@@ -86,27 +86,27 @@ public class ResourceHandlerRegistry extends org.springframework.web.servlet.con
 							AppCacheManifestTransformer appCacheTransformer = new AppCacheManifestTransformer();
 							VersionResourceResolver versionResolver = new VersionResourceResolver()
 									.addVersionStrategy( new FixedVersionStrategy( version ), "*//**" );
-							handler.setResourceResolvers( Arrays.asList( versionResolver,
-							                                             new PathResourceResolver() ) );
-							handler.setResourceTransformers( Arrays.asList( appCacheTransformer,
-							                                                new CssLinkResourceTransformer() ) );
-							try {
-								handler.afterPropertiesSet();
-							}
-							catch ( Exception e ) {
-								throw new BeanInitializationException( "Failed to init ResourceHttpRequestHandler", e );
-							}
-						}
-					}
-				}
-				return entries;
-			}
-			else {
-				return ( (SimpleUrlHandlerMapping) mapping ).getUrlMap();
-			}
+ handler.setResourceResolvers( Arrays.asList( versionResolver,
+ new PathResourceResolver() ) );
+ handler.setResourceTransformers( Arrays.asList( appCacheTransformer,
+ new CssLinkResourceTransformer() ) );
+ try {
+ handler.afterPropertiesSet();
+ }
+ catch ( Exception e ) {
+ throw new BeanInitializationException( "Failed to init ResourceHttpRequestHandler", e );
+ }
+ }
+ }
+ }
+ return entries;
+ }
+ else {
+ return ( (SimpleUrlHandlerMapping) mapping ).getUrlMap();
+ }
 
-		}
+ }
 
-		return Collections.emptyMap();
-	}*/
+ return Collections.emptyMap();
+ }*/
 }

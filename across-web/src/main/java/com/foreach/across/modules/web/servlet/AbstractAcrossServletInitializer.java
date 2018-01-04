@@ -16,7 +16,8 @@
 
 package com.foreach.across.modules.web.servlet;
 
-import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
+import com.foreach.across.config.AcrossServletContextInitializer;
+import com.foreach.across.core.context.web.AcrossWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
@@ -35,15 +36,10 @@ import javax.servlet.ServletRegistration;
  * will be able to extend the ServletContext.</p>
  *
  * @author Arne Vandamme
- * @see
  */
 public abstract class AbstractAcrossServletInitializer extends AbstractDispatcherServletInitializer
 {
-	/**
-	 * Attribute set on the {@link ServletContext} during the initialization phase.  Can be used to detect
-	 * if it is still possible to register servlets or filters on the context.
-	 */
-	public static final String DYNAMIC_INITIALIZER = "com.foreach.across.modules.web.servlet.AcrossServletInitializer";
+	public static final String DYNAMIC_INITIALIZER = AcrossServletContextInitializer.DYNAMIC_INITIALIZER;
 	public static final String ATTRIBUTE_DYNAMIC_MULTIPART_CONFIG =
 			"com.foreach.across.modules.web.servlet.AcrossServletInitializer.MultiPartConfigElement";
 
@@ -58,7 +54,7 @@ public abstract class AbstractAcrossServletInitializer extends AbstractDispatche
 		extendServletContext( servletContext );
 	}
 
-	@SuppressWarnings( "all" )
+	@SuppressWarnings("all")
 	@Override
 	protected void registerContextLoaderListener( ServletContext servletContext ) {
 		WebApplicationContext rootAppContext = createRootApplicationContext();

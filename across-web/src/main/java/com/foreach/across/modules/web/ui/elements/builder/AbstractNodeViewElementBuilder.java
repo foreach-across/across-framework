@@ -34,7 +34,6 @@ public abstract class AbstractNodeViewElementBuilder<T extends AbstractNodeViewE
 	private String htmlId;
 	private Map<String, Object> attributes = new HashMap<>();
 
-
 	@SuppressWarnings("unchecked")
 	public SELF htmlId( String htmlId ) {
 		this.htmlId = htmlId;

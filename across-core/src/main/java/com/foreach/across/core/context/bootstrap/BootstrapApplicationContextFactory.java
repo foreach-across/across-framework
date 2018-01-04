@@ -90,8 +90,9 @@ public interface BootstrapApplicationContextFactory
 
 	/**
 	 * Loads a set of configurers into an {@link ApplicationContext}.
-	 *  @param context     Configurable application context
-	 * @param configurers Configurers to apply
+	 *
+	 * @param context               Configurable application context
+	 * @param configurers           Configurers to apply
 	 * @param exposedBeanRegistries
 	 */
 	void loadApplicationContext( AcrossConfigurableApplicationContext context,

@@ -21,7 +21,7 @@ import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerRunCondition;
 
 @Installer(description = "Installer that will always run and has 3 installer methods.",
-           runCondition = InstallerRunCondition.AlwaysRun)
+		runCondition = InstallerRunCondition.AlwaysRun)
 public class MultipleMethodInstaller extends TestInstaller
 {
 	@InstallerMethod

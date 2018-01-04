@@ -34,6 +34,8 @@ public class BeanFourAndFiveConfiguration
 	public static class BeanFiveConfiguration
 	{
 		@Bean
-		public String beanFive() { return "beanFive"; }
+		public String beanFive() {
+			return "beanFive";
+		}
 	}
 }
