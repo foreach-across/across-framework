@@ -18,7 +18,7 @@ package com.foreach.across.test;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
-import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
+import com.foreach.across.core.context.web.AcrossWebApplicationContext;
 import com.foreach.across.test.support.AcrossMockMvcBuilders;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.web.servlet.MockMvc;

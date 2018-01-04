@@ -17,7 +17,7 @@
 package com.foreach.across.modules.web.servlet;
 
 import com.foreach.across.config.AcrossServletContextInitializer;
-import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
+import com.foreach.across.core.context.web.AcrossWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;

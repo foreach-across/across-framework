@@ -18,11 +18,12 @@ package com.foreach.across.modules.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.context.bootstrap.*;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.web.config.AcrossWebModuleDevSettings;
-import com.foreach.across.modules.web.context.WebBootstrapApplicationContextFactory;
 import com.foreach.across.modules.web.menu.Menu;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
@@ -33,7 +34,7 @@ import org.springframework.web.method.support.UriComponentsContributor;
 
 import java.util.Set;
 
-public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
+public class AcrossWebModule extends AcrossModule
 {
 	public static final String DEFAULT_VIEWS_RESOURCES_PATH = "/across/resources";
 
@@ -108,14 +109,5 @@ public class AcrossWebModule extends AcrossModule implements BootstrapAdapter
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
 		contextConfig.getModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE )
 		             .expose( Validator.class, UriComponentsContributor.class );
-	}
-
-	/**
-	 * Customize the AcrossBootstrapper involved.
-	 *
-	 * @param bootstrapper AcrossBootstrapper instance.
-	 */
-	public void customizeBootstrapper( AcrossBootstrapper bootstrapper ) {
-		bootstrapper.setApplicationContextFactory( new WebBootstrapApplicationContextFactory() );
 	}
 }

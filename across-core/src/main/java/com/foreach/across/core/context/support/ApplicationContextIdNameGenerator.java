@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.support;
+package com.foreach.across.core.context.support;
 
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import org.apache.commons.lang3.StringUtils;

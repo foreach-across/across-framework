@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.web.context;
+package com.foreach.across.core.context.web;
 
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -24,6 +24,7 @@ import java.util.Properties;
 
 /**
  * Servlet version of an Across environment.
+ * Note this environment fixes a Spring Boot property: always sets the spring.http.encoding.force to {@code true}.
  *
  * @author Arne Vandamme
  * @see com.foreach.across.core.context.StandardAcrossEnvironment

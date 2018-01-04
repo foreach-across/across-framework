@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.web.context;
+package com.foreach.across.core.context.web;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.bootstrap.AnnotationConfigBootstrapApplicationContextFactory;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
-import com.foreach.across.modules.web.support.ApplicationContextIdNameGenerator;
+import com.foreach.across.core.context.support.ApplicationContextIdNameGenerator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.WebApplicationContext;

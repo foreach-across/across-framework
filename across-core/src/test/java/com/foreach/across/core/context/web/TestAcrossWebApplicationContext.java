@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.modules.web.context;
+package com.foreach.across.core.context.web;
 
 import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
-import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

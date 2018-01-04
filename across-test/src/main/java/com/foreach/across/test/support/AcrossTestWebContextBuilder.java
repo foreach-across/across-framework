@@ -16,12 +16,13 @@
 package com.foreach.across.test.support;
 
 import com.foreach.across.config.AcrossContextConfigurer;
+import com.foreach.across.config.AcrossContextWebConfiguration;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ModuleDependencyResolver;
-import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
+import com.foreach.across.core.context.web.AcrossWebApplicationContext;
 import com.foreach.across.test.AcrossTestWebContext;
 import com.foreach.across.test.MockAcrossServletContext;
 import org.springframework.core.env.PropertySource;
@@ -47,6 +48,10 @@ import java.util.Properties;
 public class AcrossTestWebContextBuilder extends AcrossTestContextBuilder
 {
 	private boolean dynamicServletContext = true;
+
+	public AcrossTestWebContextBuilder() {
+		register( AcrossContextWebConfiguration.class );
+	}
 
 	/**
 	 * Should the configured {@link MockAcrossServletContext} allow for dynamic registration of servlets

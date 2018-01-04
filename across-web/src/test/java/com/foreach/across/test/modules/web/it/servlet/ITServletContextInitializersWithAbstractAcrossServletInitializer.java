@@ -17,8 +17,8 @@ package com.foreach.across.test.modules.web.it.servlet;
 
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
+import com.foreach.across.core.context.web.AcrossWebApplicationContext;
 import com.foreach.across.modules.web.config.CharacterEncodingConfiguration;
-import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
 import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
 import com.foreach.across.test.modules.web.it.modules.TestModules;

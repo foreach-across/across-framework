@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.web.context;
+package com.foreach.across.core.context.web;
 
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.SharedMetadataReaderFactory;
 import com.foreach.across.core.context.annotation.ModuleConfigurationBeanNameGenerator;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import com.foreach.across.core.context.support.ApplicationContextIdNameGenerator;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.events.AcrossContextApplicationEventMulticaster;
-import com.foreach.across.modules.web.support.ApplicationContextIdNameGenerator;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
