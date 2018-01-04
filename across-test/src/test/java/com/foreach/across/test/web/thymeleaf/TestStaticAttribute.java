@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @AcrossWebAppConfiguration(classes = TestDefaultTemplate.Config.class)
-@TestPropertySource(properties="build.number=fixed")
+@TestPropertySource(properties = "build.number=fixed")
 public class TestStaticAttribute
 {
 	@Autowired

@@ -222,7 +222,7 @@ public class PathBasedMenuBuilder
 
 		String pathPrefix = StringUtils.removeEnd( prefix, "/" ) + "/";
 
-		if ( StringUtils.startsWith( path, pathPrefix )) {
+		if ( StringUtils.startsWith( path, pathPrefix ) ) {
 			return StringUtils.replaceOnce( path, prefix, destination );
 		}
 

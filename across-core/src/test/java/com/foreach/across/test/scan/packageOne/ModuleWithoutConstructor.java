@@ -24,7 +24,7 @@ public class ModuleWithoutConstructor extends AcrossModule
 {
 	public static final String NAME = "ModuleWithoutConstructor";
 
-	@SuppressWarnings( "all" )
+	@SuppressWarnings("all")
 	private boolean something;
 
 	public ModuleWithoutConstructor( boolean something ) {

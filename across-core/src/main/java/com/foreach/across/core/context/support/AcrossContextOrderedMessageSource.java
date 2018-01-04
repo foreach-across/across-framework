@@ -16,21 +16,17 @@
 package com.foreach.across.core.context.support;
 
 import org.springframework.context.HierarchicalMessageSource;
-import org.springframework.context.MessageSourceResolvable;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.DelegatingMessageSource;
-
-import java.util.Locale;
 
 /**
  * Custom {@link org.springframework.context.support.DelegatingMessageSource} that allows
  * subscribing additional MessageSources.  These will be added in reverse order for lookups:
  * the last added MessageSource will be used first and will have the previous message source
  * as parent.
- *
+ * <p>
  * The message sources are not added to this message source, but to the endpoint, which is assumed
  * to be in the parents of the current message source.
- *
+ * <p>
  * For internal use only.
  *
  * @author Arne Vandamme

@@ -30,8 +30,8 @@ public interface ModuleDependencyResolver
 	 * Attempts to resolve the module by name.  The success of a resolving a module might depend on the required
 	 * parameter, as a resolver could be configured to return required but not optional modules.
 	 *
-	 * @param moduleName Name of the module.
-	 * @param requiredModule   If this is a required dependency.
+	 * @param moduleName     Name of the module.
+	 * @param requiredModule If this is a required dependency.
 	 * @return module instance
 	 */
 	Optional<AcrossModule> resolveModule( String moduleName, boolean requiredModule );

@@ -21,8 +21,8 @@ import com.foreach.across.core.annotations.InstallerGroup;
 import com.foreach.across.core.installers.InstallerRunCondition;
 
 @Installer(description = "Installer that will run if version is higher.",
-           runCondition = InstallerRunCondition.VersionDifferent,
-           version = VersionBasedInstaller.VERSION)
+		runCondition = InstallerRunCondition.VersionDifferent,
+		version = VersionBasedInstaller.VERSION)
 @InstallerGroup(VersionBasedInstaller.GROUP)
 public class VersionBasedInstaller extends TestInstaller
 {

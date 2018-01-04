@@ -64,11 +64,11 @@ public @interface AcrossDepends
 	 * Set of module identifiers that are required.
 	 */
 	@AliasFor(annotation = ConditionalOnAcrossModule.class, attribute = "allOf")
-	String[] required() default { };
+	String[] required() default {};
 
 	/**
 	 * Set of module identifiers that are optional.
 	 */
 	@AliasFor(annotation = ConditionalOnAcrossModule.class, attribute = "anyOf")
-	String[] optional() default { };
+	String[] optional() default {};
 }

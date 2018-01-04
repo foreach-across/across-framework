@@ -22,7 +22,7 @@ import com.foreach.across.core.installers.InstallerRunCondition;
 
 @ConditionalOnAcrossModule(allOf = "requiredModule")
 @Installer(description = "Installer that will always run if dependency is met.",
-           runCondition = InstallerRunCondition.AlwaysRun)
+		runCondition = InstallerRunCondition.AlwaysRun)
 public class AlwaysRunWithDependencyInstaller extends TestInstaller
 {
 }
