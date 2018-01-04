@@ -27,7 +27,9 @@ com.foreach.across.Exposed=\
   javax.servlet.Servlet,\
   javax.servlet.Filter,\
   org.springframework.web.servlet.config.annotation.WebMvcConfigurer,\
-  org.springframework.boot.autoconfigure.web.WebMvcRegistrations
+  org.springframework.boot.autoconfigure.web.WebMvcRegistrations,\
+  javax.servlet.MultipartConfigElement,\
+  org.springframework.web.multipart.MultipartResolver
 #
 # List of AutoConfiguration classes that should never be allowed.
 # Once a class has been added here, it can only ever be added manually to the application.
@@ -43,6 +45,7 @@ com.foreach.across.AutoConfigurationDisabled=\
 # imported, but the adapter configuration will.
 #
 com.foreach.across.AutoConfigurationEnabled=\
+  com.foreach.across.config.AcrossWebApplicationAutoConfiguration,\
   org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration,\
   org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration,\
   org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,\
@@ -61,8 +64,7 @@ com.foreach.across.AutoConfigurationEnabled=\
   org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration,\
   org.springframework.boot.autoconfigure.jdbc.JndiDataSourceAutoConfiguration,\
   org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration
-
-#org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+#org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration,\
 #org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
 #org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
 #org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,\

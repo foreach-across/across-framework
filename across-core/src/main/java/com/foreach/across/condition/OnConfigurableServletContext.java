@@ -15,7 +15,7 @@
  */
 package com.foreach.across.condition;
 
-import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
+import com.foreach.across.config.AcrossServletContextInitializer;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.Condition;
@@ -30,7 +30,7 @@ import javax.servlet.ServletContext;
 /**
  * {@link Condition} that checks for the presence of a {@link WebApplicationContext} and a {@link ServletContext}
  * that is not yet fully initialized.  The latter is determined by the presence of the
- * {@link AbstractAcrossServletInitializer#DYNAMIC_INITIALIZER} attribute on the {@link ServletContext}.
+ * {@link com.foreach.across.config.AcrossServletContextInitializer#DYNAMIC_INITIALIZER} attribute on the {@link ServletContext}.
  *
  * @author Arne Vandamme
  * @see ConditionalOnConfigurableServletContext
@@ -66,7 +66,7 @@ class OnConfigurableServletContext extends SpringBootCondition
 
 	private boolean isDynamicServletContext( ServletContext servletContext ) {
 		return Boolean.TRUE.equals(
-				servletContext.getAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER )
+				servletContext.getAttribute( AcrossServletContextInitializer.DYNAMIC_INITIALIZER )
 		);
 	}
 }

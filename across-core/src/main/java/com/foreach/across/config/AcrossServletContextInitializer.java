@@ -17,7 +17,6 @@ package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -35,15 +34,21 @@ import javax.servlet.ServletException;
 
 /**
  * {@link ServletContextInitializer} that ensures that the {@link AcrossContext} is bootstrapped before the
- * {@link ServletContext} is fully initialized.  This is required for
- * {@link com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer} instances to work.
+ * {@link ServletContext} is fully initialized.  This is required for dynamic registration of filters and servlets.
  *
  * @author Arne Vandamme
+ * @see com.foreach.across.condition.OnConfigurableServletContext
  * @since 1.1.2
  */
 public class AcrossServletContextInitializer
 		implements ServletContextInitializer, BeanDefinitionRegistryPostProcessor, ApplicationListener<ContextRefreshedEvent>, Ordered
 {
+	/**
+	 * Attribute set on the {@link ServletContext} during the initialization phase.  Can be used to detect
+	 * if it is still possible to register servlets or filters on the context.
+	 */
+	public static final String DYNAMIC_INITIALIZER = "com.foreach.across.boot.config.AcrossServletInitializer";
+
 	public static final int LISTENER_ORDER = Ordered.LOWEST_PRECEDENCE - 10;
 
 	private final ConfigurableApplicationContext applicationContext;
@@ -70,12 +75,12 @@ public class AcrossServletContextInitializer
 
 	@Override
 	public void onStartup( ServletContext servletContext ) throws ServletException {
-		servletContext.setAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER, true );
+		servletContext.setAttribute( DYNAMIC_INITIALIZER, true );
 
 		// Ensure the AcrossContext has bootstrapped while the ServletContext can be modified
 		applicationContext.getBean( AcrossContext.class );
 
-		servletContext.removeAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER );
+		servletContext.removeAttribute( DYNAMIC_INITIALIZER );
 	}
 
 	@Override

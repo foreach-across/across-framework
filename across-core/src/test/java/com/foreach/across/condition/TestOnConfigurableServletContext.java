@@ -15,7 +15,7 @@
  */
 package com.foreach.across.condition;
 
-import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
+import com.foreach.across.config.AcrossServletContextInitializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,7 +95,7 @@ public class TestOnConfigurableServletContext
 	private void servletContext( boolean dynamic ) {
 		ServletContext sc = mock( ServletContext.class );
 		if ( dynamic ) {
-			when( sc.getAttribute( AbstractAcrossServletInitializer.DYNAMIC_INITIALIZER ) ).thenReturn( true );
+			when( sc.getAttribute( AcrossServletContextInitializer.DYNAMIC_INITIALIZER ) ).thenReturn( true );
 		}
 		when( beanFactory.containsBean( "servletContext" ) ).thenReturn( true );
 		when( beanFactory.getBean( "servletContext", ServletContext.class ) ).thenReturn( sc );

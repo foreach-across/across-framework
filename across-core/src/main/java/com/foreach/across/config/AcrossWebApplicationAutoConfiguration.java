@@ -16,7 +16,9 @@
 package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
@@ -35,7 +37,9 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
  * @see AcrossApplication
  * @since 1.1.2
  */
+@ConditionalOnWebApplication
 @Configuration
+@AutoConfigureAfter(EmbeddedServletContainerAutoConfiguration.class)
 @Import({ DispatcherServletAutoConfiguration.class, EmbeddedServletContainerAutoConfiguration.class, ServerPropertiesAutoConfiguration.class })
 public class AcrossWebApplicationAutoConfiguration
 {
@@ -45,3 +49,5 @@ public class AcrossWebApplicationAutoConfiguration
 		return new AcrossServletContextInitializer( webApplicationContext );
 	}
 }
+
+
