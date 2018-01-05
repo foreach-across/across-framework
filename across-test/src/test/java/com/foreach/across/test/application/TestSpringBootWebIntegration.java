@@ -28,6 +28,10 @@ import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -87,6 +91,21 @@ public class TestSpringBootWebIntegration
 	}
 
 	@Test
+	public void customErrorViewForRuntimeExceptions() {
+		assertTrue( getAsHtml( "/exception" ).contains( "something broke" ) );
+	}
+
+	@Test
+	public void detectedErrorTemplateForUnauthorized() {
+		assertTrue( getAsHtml( "/unauthorized" ).contains( "you are not authorized" ) );
+	}
+
+	@Test
+	public void pageNotFound() {
+		assertTrue( getAsHtml( "/page-does-not-exist" ).contains( "no explicit mapping" ) );
+	}
+
+	@Test
 	public void configurationPropertiesBeanShouldNotExist() {
 		assertNotNull( BeanFactoryUtils.beanOfType( beanFactory, ConfigurationPropertiesAutoConfiguration.class ) );
 	}
@@ -113,6 +132,14 @@ public class TestSpringBootWebIntegration
 
 	private String get( String relativePath ) {
 		return restTemplate.getForEntity( url( relativePath ), String.class ).getBody();
+	}
+
+	private String getAsHtml( String relativePath ) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept( Collections.singletonList( MediaType.TEXT_HTML ) );
+		HttpEntity<?> entity = new HttpEntity<>( headers );
+
+		return restTemplate.exchange( url( relativePath ), HttpMethod.GET, entity, String.class ).getBody();
 	}
 
 	private String url( String relativePath ) {

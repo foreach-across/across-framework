@@ -25,6 +25,13 @@ import com.foreach.across.modules.web.template.LayoutSupportingExceptionHandlerE
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebMvcRegistrationsAdapter;
 import org.springframework.context.annotation.Bean;
@@ -48,7 +55,7 @@ import java.util.List;
  * @since 3.0.0
  */
 @ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
-@Import(WebMvcAutoConfiguration.class)
+@Import({ WebMvcAutoConfiguration.class, ErrorMvcAutoConfiguration.class })
 @RequiredArgsConstructor
 public class EnableWebMvcConfiguration extends WebMvcRegistrationsAdapter
 {
@@ -96,5 +103,37 @@ public class EnableWebMvcConfiguration extends WebMvcRegistrationsAdapter
 		FormattingConversionService conversionService = beanRegistry.getBeanFromModule( AcrossWebModule.NAME, AcrossWebModule.CONVERSION_SERVICE_BEAN );
 		configurers.forEach( c -> c.addFormatters( conversionService ) );
 		return conversionService;
+	}
+
+	/**
+	 * Inject {@link ServerProperties} for {@link ErrorMvcAutoConfiguration} to work.
+	 *
+	 * @return ServerProperties.
+	 */
+	@Bean
+	@ConditionalOnMissingBean
+	ServerProperties serverProperties() {
+		return new ServerProperties();
+	}
+
+	/**
+	 * Remove bean definitions of beans that work in a regular Spring Boot application, but not from within an Across module.
+	 *
+	 * @return post processor
+	 */
+	@Bean
+	static BeanDefinitionRegistryPostProcessor uselessBeansRemover() {
+		return new BeanDefinitionRegistryPostProcessor()
+		{
+			@Override
+			public void postProcessBeanDefinitionRegistry( BeanDefinitionRegistry registry ) throws BeansException {
+				registry.removeBeanDefinition( "errorPageCustomizer" );
+			}
+
+			@Override
+			public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) throws BeansException {
+
+			}
+		};
 	}
 }

@@ -13,22 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+#
 com.foreach.across.Exposed=\
-  org.springframework.web.servlet.HandlerMapping,\
-  org.springframework.web.servlet.HandlerAdapter,\
-  org.springframework.web.servlet.HandlerExceptionResolver,\
-  org.springframework.stereotype.Controller,\
-  org.springframework.web.bind.annotation.ControllerAdvice,\
-  javax.servlet.Servlet,\
-  javax.servlet.Filter,\
-  org.springframework.boot.web.servlet.ServletContextInitializer,\
-  org.springframework.web.servlet.config.annotation.WebMvcConfigurer,\
-  org.springframework.boot.autoconfigure.web.WebMvcRegistrations,\
-  javax.servlet.MultipartConfigElement,\
-  org.springframework.web.multipart.MultipartResolver
+  org.springframework.boot.autoconfigure.web.ErrorViewResolver,\
+  org.springframework.boot.autoconfigure.web.ErrorController,\
+  org.springframework.boot.autoconfigure.web.ErrorAttributes
 #
 com.foreach.across.AutoConfigurationEnabled=\
-  com.foreach.across.config.AcrossWebApplicationAutoConfiguration
+  com.foreach.across.autoconfigure.AcrossWebModuleAutoConfiguration
 #
 # Disabled auto-configuration classes - usually because AcrossWebModule adds them manually
 com.foreach.across.AutoConfigurationDisabled=\
@@ -39,6 +31,5 @@ com.foreach.across.AutoConfigurationDisabled=\
   org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration,\
   org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration,\
   org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration,\
-  org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration
-
-#org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration,\
+  org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration

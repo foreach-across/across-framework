@@ -26,6 +26,9 @@ com.foreach.across.Exposed=\
   org.springframework.web.bind.annotation.ControllerAdvice,\
   javax.servlet.Servlet,\
   javax.servlet.Filter,\
+  org.springframework.boot.web.servlet.ServletContextInitializer,\
+  org.springframework.web.servlet.View,\
+  org.springframework.web.servlet.ViewResolver,\
   org.springframework.web.servlet.config.annotation.WebMvcConfigurer,\
   org.springframework.boot.autoconfigure.web.WebMvcRegistrations,\
   javax.servlet.MultipartConfigElement,\

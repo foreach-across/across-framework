@@ -25,6 +25,9 @@ import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ErrorAttributes;
+import org.springframework.boot.autoconfigure.web.ErrorController;
+import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationContext;
@@ -38,6 +41,7 @@ import org.springframework.validation.Validator;
 import org.springframework.web.method.support.UriComponentsContributor;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.servlet.view.BeanNameViewResolver;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
@@ -107,6 +111,17 @@ public class TestAcrossWebModuleBootstrap extends AbstractWebIntegrationTest
 		RequestMappingHandlerMapping handlerMapping = applicationContext.getBean( RequestMappingHandlerMapping.class );
 		assertTrue( handlerMapping instanceof PrefixingRequestMappingHandlerMapping );
 		assertEquals( 0, handlerMapping.getOrder() );
+	}
+
+	@Test
+	public void errorPageAttributes() {
+		assertExposed( ErrorAttributes.class );
+		assertExposed( BeanNameViewResolver.class );
+		assertExposed( ErrorViewResolver.class );
+		assertExposed( ErrorController.class );
+
+		// error page customizer should be suppressed as it is useless from within a module
+		assertFalse( beanRegistry.moduleContainsLocalBean( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE, "errorPageCustomizer" ) );
 	}
 
 	private void assertExposed( Class<?> type ) {

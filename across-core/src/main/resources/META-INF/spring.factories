@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.foreach.across.autoconfigure.AcrossWebModuleAutoConfiguration
+com.foreach.across.config.AcrossWebApplicationAutoConfiguration
