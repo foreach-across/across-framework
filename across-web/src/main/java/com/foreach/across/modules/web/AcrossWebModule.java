@@ -24,7 +24,7 @@ import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.web.config.AcrossWebModuleDevSettings;
-import com.foreach.across.modules.web.error.AcrossModuleDefaultThymeleafErrorViewResolver;
+import com.foreach.across.modules.web.error.AcrossModuleDefaultErrorViewResolver;
 import com.foreach.across.modules.web.menu.Menu;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
@@ -108,7 +108,7 @@ public class AcrossWebModule extends AcrossModule
 
 	@Override
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
-		contextConfig.extendModule( "DynamicApplicationModule", AcrossModuleDefaultThymeleafErrorViewResolver.class );
+		contextConfig.extendModule( "DynamicApplicationModule", AcrossModuleDefaultErrorViewResolver.class );
 
 		contextConfig.getModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE )
 		             .expose( Validator.class, UriComponentsContributor.class );

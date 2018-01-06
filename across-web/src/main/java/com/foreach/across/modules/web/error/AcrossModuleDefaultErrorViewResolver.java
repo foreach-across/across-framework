@@ -40,7 +40,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @ConditionalOnBean(SpringTemplateEngine.class)
-public class AcrossModuleDefaultThymeleafErrorViewResolver implements ErrorViewResolver, Ordered
+public class AcrossModuleDefaultErrorViewResolver implements ErrorViewResolver, Ordered
 {
 	private static final Map<HttpStatus.Series, String> SERIES_VIEWS;
 
@@ -56,7 +56,7 @@ public class AcrossModuleDefaultThymeleafErrorViewResolver implements ErrorViewR
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
-	private AcrossModuleDefaultThymeleafErrorViewResolver( AcrossModuleInfo moduleInfo, ResourceLoader resourceLoader ) {
+	private AcrossModuleDefaultErrorViewResolver( AcrossModuleInfo moduleInfo, ResourceLoader resourceLoader ) {
 		this.moduleInfo = moduleInfo;
 		this.resourceLoader = resourceLoader;
 	}
