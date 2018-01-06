@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.web;
+package com.foreach.across.test.web.thymeleaf;
 
 import com.foreach.across.test.AcrossWebAppConfiguration;
+import com.foreach.across.test.web.TestDefaultTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,35 +30,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * @author Arne Vandamme
- * @since 2.0.0
+ * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration(classes = TestDefaultTemplate.Config.class)
-@TestPropertySource(properties = "acrossWebModule.registerGlobalBuilderContext=true")
-public class TestViewElementBuilderContextWebArgument
+public class TestDefaultThymeleafDialects
 {
 	@Autowired
 	private MockMvc mvc;
 
 	@Test
-	public void modelAttributesShouldBeVisibleInTheBuilderContext() throws Exception {
-		mvc.perform( get( "/viewElementBuilderContext" ) )
+	public void temporalsAttributeShouldBeAvailable() throws Exception {
+		mvc.perform( get( "/thymeleafDialects" ) )
 		   .andExpect( status().isOk() )
-		   .andExpect( content().string( containsString( "[model:modelA,modelB,modelC]" ) ) );
-	}
-
-	@Test
-	public void customAttributesShouldOnlyBeVisibleInTheBuilderContext() throws Exception {
-		mvc.perform( get( "/viewElementBuilderContext" ) )
-		   .andExpect( status().isOk() )
-		   .andExpect( content().string(
-				   containsString(
-						   "[builderContext:builderContextA,builderContextB," +
-								   "com.foreach.across.modules.web.context.WebAppLinkBuilder," +
-								   "com.foreach.across.modules.web.resource.WebResourceRegistry," +
-								   "com.foreach.across.modules.web.support.LocalizedTextResolver," +
-								   "org.springframework.context.MessageSource]"
-				   )
-		   ) );
+		   .andExpect( content().string( containsString( "java8time:21-Nov-2017" ) ) );
 	}
 }
+

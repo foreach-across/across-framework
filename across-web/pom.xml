@@ -41,6 +41,10 @@
 			<artifactId>thymeleaf-spring4</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-java8time</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.foreach.across</groupId>
 			<artifactId>across-core</artifactId>
 			<version>3.0.0-SNAPSHOT</version>
