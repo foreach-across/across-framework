@@ -20,14 +20,18 @@ import com.foreach.across.boot.postprocessor.config.SamplePostProcessorModule;
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.validation.SmartValidator;
+import org.springframework.validation.Validator;
 
 import static org.junit.Assert.*;
 
@@ -38,10 +42,16 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @ContextConfiguration
 @TestPropertySource(properties = "across.displayName=My Application")
-public class TestDefaultDynamicModules
+public class TestAcrossApplicationBootstrap
 {
 	@Autowired
+	private ApplicationContext applicationContext;
+
+	@Autowired
 	private AcrossContextInfo contextInfo;
+
+	@Autowired
+	private AcrossContextBeanRegistry contextBeanRegistry;
 
 	@Test
 	public void displayNameShouldBeSetFromProperties() {
@@ -75,6 +85,17 @@ public class TestDefaultDynamicModules
 		                                                      .getResourcesKey() );
 		assertTrue( contextInfo.getModuleInfo( "SamplePostProcessorModule" )
 		                       .getModule() instanceof SamplePostProcessorModule );
+	}
+
+	@Test
+	public void singleValidatorShouldBeRegisteredAndInTheRootApplicationContext() {
+		Validator validator = applicationContext.getBean( Validator.class );
+		assertNotNull( validator );
+
+		assertEquals( 1, contextBeanRegistry.getBeansOfType( Validator.class, true ).size() );
+		assertSame( validator, contextBeanRegistry.getBeanOfType( Validator.class ) );
+
+		assertTrue( validator instanceof SmartValidator );
 	}
 
 	@AcrossApplication

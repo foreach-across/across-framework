@@ -93,6 +93,9 @@ public class TestAcrossWebModuleBootstrap extends AbstractWebIntegrationTest
 	public void validatorShouldBeInitialized() {
 		Validator validator = applicationContext.getBean( Validator.class );
 		assertTrue( validator instanceof SmartValidator );
+
+		Validator mvcValidator = applicationContext.getBean( "mvcValidator", Validator.class );
+		assertSame( validator, mvcValidator );
 	}
 
 	@Test

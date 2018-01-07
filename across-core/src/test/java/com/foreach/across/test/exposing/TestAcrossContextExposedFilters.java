@@ -24,7 +24,6 @@ import com.foreach.across.test.modules.exposing.ExposingModule;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -90,15 +89,12 @@ public class TestAcrossContextExposedFilters
 
 	@Test
 	public void disableExposing() {
-		int initialBeanCount = BeanFactoryUtils.countBeansIncludingAncestors( parent );
-
 		context.setExposeTransformer( ExposedBeanDefinitionTransformer.REMOVE_ALL );
 		context.bootstrap();
 
 		assertFalse( parent.containsBean( "cacheManager" ) );
 		assertFalse( parent.containsBean( "conversionService" ) );
 		assertTrue( parent.containsBean( "autoConfigurationReport" ) );
-		assertEquals( initialBeanCount + 1, BeanFactoryUtils.countBeansIncludingAncestors( parent ) );
 
 		ApplicationContext across = AcrossContextUtils.getApplicationContext( context );
 		assertTrue( across.containsBean( "cacheManager" ) );
