@@ -135,6 +135,7 @@ public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModu
 		DynamicAcrossModule module = createWithOrder();
 		module.setName( getModuleName() );
 		module.setResourcesKey( getResourcesKey() );
+		module.setBasePackage( basePackage );
 
 		module.addApplicationContextConfigurer( buildComponentScanConfigurer() );
 		module.addInstallerContextConfigurer( new ComponentScanConfigurer( basePackage + ".installers.config" ) );

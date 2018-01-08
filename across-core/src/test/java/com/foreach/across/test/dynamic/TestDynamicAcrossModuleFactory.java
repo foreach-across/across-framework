@@ -108,6 +108,7 @@ public class TestDynamicAcrossModuleFactory
 		assertEquals( "SomeModule", module.getName() );
 		assertEquals( "myResources", module.getResourcesKey() );
 		assertEquals( 123, module.getOrder() );
+		assertEquals( PkgMember.class.getPackage().getName(), module.getBasePackage() );
 
 		assertPackages( module );
 	}
@@ -121,6 +122,7 @@ public class TestDynamicAcrossModuleFactory
 		assertNotNull( module );
 		assertEquals( "PkgModule", module.getName() );
 		assertEquals( "pkg", module.getResourcesKey() );
+		assertEquals( PkgMember.class.getPackage().getName(), module.getBasePackage() );
 
 		assertPackages( module );
 	}
