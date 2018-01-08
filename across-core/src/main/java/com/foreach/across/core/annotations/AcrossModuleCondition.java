@@ -18,12 +18,12 @@ package com.foreach.across.core.annotations;
 
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
-import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 import java.util.Map;
@@ -32,19 +32,31 @@ import java.util.Map;
  * Condition that checks that a given module is present in the AcrossContext.
  * To be used on @Configuration and @Bean instances to load components only if other modules
  * are being loaded.
+ * <p/>
+ * For compatibility purposes also still added to {@link AcrossDepends}.
  *
  * @see com.foreach.across.core.annotations.ConditionalOnAcrossModule
  */
+@Slf4j
 class AcrossModuleCondition extends SpringBootCondition
 {
-
 	@Override
-	public ConditionOutcome getMatchOutcome( ConditionContext context,
-	                                         AnnotatedTypeMetadata metadata ) {
-		Map<String, Object> attributes = metadata.getAnnotationAttributes( ConditionalOnAcrossModule.class.getName() );
-		String[] allOf = (String[]) attributes.get( "allOf" );
-		String[] anyOf = (String[]) attributes.get( "anyOf" );
-		String[] noneOf = (String[]) attributes.get( "noneOf" );
+	public ConditionOutcome getMatchOutcome( ConditionContext context, AnnotatedTypeMetadata metadata ) {
+		String[] allOf, anyOf, noneOf;
+
+		if ( metadata.isAnnotated( AcrossDepends.class.getName() ) ) {
+			LOG.warn( "Use of @AcrossDepends for conditional component creation - this has been deprecated, please use @ConditionalOnAcrossModule instead" );
+			Map<String, Object> attributes = metadata.getAnnotationAttributes( AcrossDepends.class.getName() );
+			allOf = (String[]) attributes.get( "required" );
+			anyOf = (String[]) attributes.get( "optional" );
+			noneOf = new String[0];
+		}
+		else {
+			Map<String, Object> attributes = metadata.getAnnotationAttributes( ConditionalOnAcrossModule.class.getName() );
+			allOf = (String[]) attributes.get( "allOf" );
+			anyOf = (String[]) attributes.get( "anyOf" );
+			noneOf = (String[]) attributes.get( "noneOf" );
+		}
 
 		try {
 			AcrossContextInfo acrossContext = context.getBeanFactory().getBean( AcrossContextInfo.class );
@@ -52,26 +64,8 @@ class AcrossModuleCondition extends SpringBootCondition
 			return applies( acrossContext.getBootstrapConfiguration(), allOf, anyOf, noneOf );
 		}
 		catch ( NoSuchBeanDefinitionException ignore ) {
-			return ConditionOutcome.match( "user of ConditionalOnAcrossModule outside of an AcrossContext always matches" );
+			return ConditionOutcome.match( "use of ConditionalOnAcrossModule outside of an AcrossContext always matches" );
 		}
-	}
-
-	/**
-	 * Checks if the class has an ConditionalOnAcrossModule annotation, and if so if the dependencies are met.
-	 *
-	 * @param config       Bootstrap configuration to check against.
-	 * @param classToCheck Class to check for AcrossDepends annotation.
-	 * @return True if dependencies are met or no annotation was found.
-	 * @see com.foreach.across.core.annotations.ConditionalOnAcrossModule
-	 */
-	public static ConditionOutcome applies( AcrossBootstrapConfig config, Class<?> classToCheck ) {
-		ConditionalOnAcrossModule conditionalOnModuleAnnotation = AnnotatedElementUtils.findMergedAnnotation( classToCheck, ConditionalOnAcrossModule.class );
-
-		if ( conditionalOnModuleAnnotation == null ) {
-			return ConditionOutcome.match( "no @ConditionalOnAcrossModule arguments for AcrossModuleCondition present" );
-		}
-
-		return applies( config, conditionalOnModuleAnnotation.allOf(), conditionalOnModuleAnnotation.anyOf(), conditionalOnModuleAnnotation.noneOf() );
 	}
 
 	/**
@@ -84,7 +78,7 @@ class AcrossModuleCondition extends SpringBootCondition
 	 * @return True if all required modules are present and at least one of the optionals (if any defined).
 	 * @see com.foreach.across.core.annotations.ConditionalOnAcrossModule
 	 */
-	public static ConditionOutcome applies( AcrossBootstrapConfig config, String[] allOf, String[] anyOf, String[] noneOf ) {
+	private ConditionOutcome applies( AcrossBootstrapConfig config, String[] allOf, String[] anyOf, String[] noneOf ) {
 		if ( allOf.length > 0 || anyOf.length > 0 || noneOf.length > 0 ) {
 			for ( String requiredModuleId : allOf ) {
 				if ( !config.hasModule( requiredModuleId ) ) {

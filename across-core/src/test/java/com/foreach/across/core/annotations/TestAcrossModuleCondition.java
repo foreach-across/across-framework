@@ -17,11 +17,18 @@
 package com.foreach.across.core.annotations;
 
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.core.type.StandardAnnotationMetadata;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class TestAcrossModuleCondition
@@ -111,19 +118,14 @@ public class TestAcrossModuleCondition
 	}
 
 	@Test
-	public void classWithoutConditionAlwaysApplies() {
-		assertTrue( AcrossModuleCondition.applies( contextConfig, ClassWithoutCondition.class ).isMatch() );
-	}
-
-	@Test
 	public void classWithEmptyConditionAlwaysApplies() {
-		assertTrue( AcrossModuleCondition.applies( contextConfig, ClassWithEmptyCondition.class ).isMatch() );
+		assertConditionOutcome( ClassWithEmptyCondition.class, true );
 	}
 
 	@Test
 	public void classWithConditionDoesNotApplyIfNotMet() {
 		modules( "moduleOne", "moduleThree", "moduleFour" );
-		assertFalse( AcrossModuleCondition.applies( contextConfig, ClassWithCondition.class ).isMatch() );
+		assertConditionOutcome( ClassWithCondition.class, false );
 
 		// Check only the required have been checked (after that the condition failed)
 		verify( contextConfig ).hasModule( "moduleOne" );
@@ -132,13 +134,13 @@ public class TestAcrossModuleCondition
 		verify( contextConfig, never() ).hasModule( "moduleFour" );
 
 		modules( "moduleOne", "moduleTwo" );
-		assertFalse( AcrossModuleCondition.applies( contextConfig, ClassWithCondition.class ).isMatch() );
+		assertConditionOutcome( ClassWithCondition.class, false );
 	}
 
 	@Test
 	public void classWithConditionAppliesIfMet() {
 		modules( "moduleOne", "moduleTwo", "moduleThree", "moduleFour" );
-		assertTrue( AcrossModuleCondition.applies( contextConfig, ClassWithCondition.class ).isMatch() );
+		assertConditionOutcome( ClassWithCondition.class, true );
 
 		// Check both required and the first optional has been checked (after that the condition applied)
 		verify( contextConfig ).hasModule( "moduleOne" );
@@ -150,7 +152,7 @@ public class TestAcrossModuleCondition
 	@Test
 	public void classWithConditionalOnAcrossModuleConditionDoesNotApplyIfNotMet() {
 		modules( "moduleOne", "moduleTwo", "moduleThree", "moduleFour", "moduleFive" );
-		assertFalse( AcrossModuleCondition.applies( contextConfig, ClassWithConditonalOnAcrossModuleCondition.class ).isMatch() );
+		assertConditionOutcome( ClassWithConditonalOnAcrossModuleCondition.class, false );
 
 		// Check the required and forbidden have been checked (after that the condition failed)
 		verify( contextConfig ).hasModule( "moduleOne" );
@@ -163,7 +165,7 @@ public class TestAcrossModuleCondition
 	@Test
 	public void classWithConditionalOnAcrossModuleConditionAppliesIfMet() {
 		modules( "moduleOne", "moduleTwo", "moduleThree", "moduleFour" );
-		assertTrue( AcrossModuleCondition.applies( contextConfig, ClassWithConditonalOnAcrossModuleCondition.class ).isMatch() );
+		assertConditionOutcome( ClassWithConditonalOnAcrossModuleCondition.class, true );
 
 		// Check required, forbidden and the first optional has been checked (after that the condition applied)
 		verify( contextConfig ).hasModule( "moduleOne" );
@@ -178,7 +180,7 @@ public class TestAcrossModuleCondition
 	}
 
 	private void assertConditionsMet( String[] allOf, String[] anyOf, String[] noneOf ) {
-		assertTrue( AcrossModuleCondition.applies( contextConfig, allOf, anyOf, noneOf ).isMatch() );
+		assertConditionOutcome( buildAnnotatedTypeMetadata( allOf, anyOf, noneOf ), true );
 	}
 
 	private void assertConditionsNotMet( String[] required, String[] optional ) {
@@ -186,7 +188,34 @@ public class TestAcrossModuleCondition
 	}
 
 	private void assertConditionsNotMet( String[] allOf, String[] anyOf, String[] noneOf ) {
-		assertFalse( AcrossModuleCondition.applies( contextConfig, allOf, anyOf, noneOf ).isMatch() );
+		assertConditionOutcome( buildAnnotatedTypeMetadata( allOf, anyOf, noneOf ), false );
+	}
+
+	private AnnotatedTypeMetadata buildAnnotatedTypeMetadata( String[] allOf, String[] anyOf, String[] noneOf ) {
+		AnnotatedTypeMetadata metadata = mock( AnnotatedTypeMetadata.class );
+		Map<String, Object> attributes = new HashMap<>();
+		attributes.put( "allOf", allOf );
+		attributes.put( "anyOf", anyOf );
+		attributes.put( "noneOf", noneOf );
+		when( metadata.getAnnotationAttributes( ConditionalOnAcrossModule.class.getName() ) ).thenReturn( attributes );
+		return metadata;
+	}
+
+	private void assertConditionOutcome( Class<?> clazz, boolean match ) {
+		assertConditionOutcome( new StandardAnnotationMetadata( clazz ), match );
+	}
+
+	private void assertConditionOutcome( AnnotatedTypeMetadata metadata, boolean match ) {
+		AcrossModuleCondition condition = new AcrossModuleCondition();
+		ConditionContext context = mock( ConditionContext.class );
+		ConfigurableListableBeanFactory beanFactory = mock( ConfigurableListableBeanFactory.class );
+		when( context.getBeanFactory() ).thenReturn( beanFactory );
+
+		AcrossContextInfo contextInfo = mock( AcrossContextInfo.class );
+		when( contextInfo.getBootstrapConfiguration() ).thenReturn( contextConfig );
+		when( beanFactory.getBean( AcrossContextInfo.class ) ).thenReturn( contextInfo );
+
+		assertEquals( match, condition.getMatchOutcome( context, metadata ).isMatch() );
 	}
 
 	// Alias method to improve test readability
@@ -228,10 +257,4 @@ public class TestAcrossModuleCondition
 	{
 
 	}
-
-	static class ClassWithoutCondition
-	{
-
-	}
-
 }

@@ -16,7 +16,7 @@
 
 package com.foreach.across.core.annotations;
 
-import org.springframework.core.annotation.AliasFor;
+import org.springframework.context.annotation.Conditional;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,10 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>Conditional annotation that can be put on a module, @Configuration class, @Bean method or any component.
- * The actual behaviour depends on the owning element.  Using this conditional it is possible to define
- * Across module requirements.</p>
- * <p>When putting @AcrossDepends on an AcrossModule instance:
+ * Conditional annotation that can be put on an Across module descriptor to define the other Across modules it depends on.
  * <ul>
  * <li>the dependencies specified will determine the bootstrap order of the module (after its dependencies)</li>
  * <li>optional dependencies are only used to optimize the bootstrap order, ensuring that any optional
@@ -35,40 +32,26 @@ import java.lang.annotation.Target;
  * <li>if any of the required dependencies are missing the AcrossContext will not be able to boot</li>
  * </ul>
  * In this case, using required and optional together is important for the best bootstrap order of the AcrossContext.
- * </p>
- * <p>When putting @AcrossDepends on a component, @Bean or @Configuration class:
- * <ul>
- * <li>if any of the <u>required</u> dependencies is <u>missing</u> the component or @Configuration will not be created</li>
- * <li>if any of the <u>optional</u> dependencies is <u>present</u> the component or @Configuration will be loaded</li>
- * </ul>
- * The latter is the implementation of the standard Spring @Conditional behavior.
- * </p>
- * <p>When putting @AcrossDepends on an installer class:
- * <ul>
- * <li>if any of the <u>required</u> dependencies is <u>missing</u> the installer will not run</li>
- * <li>if any of the <u>optional</u> dependencies is <u>present</u> the installer will execute</li>
- * </ul>
- * </p>
- * <p>
+ * <p/>
  * A module is always specified either by the name it exposes (eg. AcrossWebModule).
- * </p>
+ * <p/>
+ * NOTE: Before Across 3.0.0 the same annotation was to be used as a conditional for components.
+ * As of 3.0.0 this use has been deprecated, a specialized {@link ConditionalOnAcrossModule} has been added instead.
  *
- * @see org.springframework.context.annotation.Conditional
+ * @see ConditionalOnAcrossModule
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@ConditionalOnAcrossModule
+@Conditional(AcrossModuleCondition.class)
 public @interface AcrossDepends
 {
 	/**
 	 * Set of module identifiers that are required.
 	 */
-	@AliasFor(annotation = ConditionalOnAcrossModule.class, attribute = "allOf")
 	String[] required() default {};
 
 	/**
 	 * Set of module identifiers that are optional.
 	 */
-	@AliasFor(annotation = ConditionalOnAcrossModule.class, attribute = "anyOf")
 	String[] optional() default {};
 }
