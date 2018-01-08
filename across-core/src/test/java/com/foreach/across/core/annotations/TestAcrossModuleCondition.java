@@ -213,7 +213,8 @@ public class TestAcrossModuleCondition
 
 		AcrossContextInfo contextInfo = mock( AcrossContextInfo.class );
 		when( contextInfo.getBootstrapConfiguration() ).thenReturn( contextConfig );
-		when( beanFactory.getBean( AcrossContextInfo.class ) ).thenReturn( contextInfo );
+		when( beanFactory.containsLocalBean( AcrossContextInfo.BEAN ) ).thenReturn( true );
+		when( beanFactory.getBean( AcrossContextInfo.BEAN, AcrossContextInfo.class ) ).thenReturn( contextInfo );
 
 		assertEquals( match, condition.getMatchOutcome( context, metadata ).isMatch() );
 	}

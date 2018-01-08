@@ -94,7 +94,7 @@ public class TestAcrossInstallerRegistry
 		AcrossContextInfo contextInfo = mock( AcrossContextInfo.class );
 		when( contextInfo.getBootstrapConfiguration() ).thenReturn( contextConfig );
 
-		applicationContext.getBeanFactory().registerSingleton( "acrossContextInfo", contextInfo );
+		applicationContext.getBeanFactory().registerSingleton( AcrossContextInfo.BEAN, contextInfo );
 
 		moduleConfig = mock( ModuleBootstrapConfig.class );
 		when( moduleConfig.getModule() ).thenReturn( module );

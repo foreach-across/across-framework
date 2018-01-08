@@ -20,7 +20,9 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
@@ -59,13 +61,25 @@ class AcrossModuleCondition extends SpringBootCondition
 		}
 
 		try {
-			AcrossContextInfo acrossContext = context.getBeanFactory().getBean( AcrossContextInfo.class );
+			AcrossContextInfo acrossContext = findAcrossContextInfo( context.getBeanFactory() );
 
-			return applies( acrossContext.getBootstrapConfiguration(), allOf, anyOf, noneOf );
+			if ( acrossContext != null ) {
+				return applies( acrossContext.getBootstrapConfiguration(), allOf, anyOf, noneOf );
+			}
 		}
 		catch ( NoSuchBeanDefinitionException ignore ) {
-			return ConditionOutcome.match( "use of ConditionalOnAcrossModule outside of an AcrossContext always matches" );
 		}
+
+		return ConditionOutcome.match( "use of ConditionalOnAcrossModule outside of an AcrossContext always matches" );
+	}
+
+	private AcrossContextInfo findAcrossContextInfo( ConfigurableListableBeanFactory beanFactory ) {
+		if ( beanFactory.containsLocalBean( AcrossContextInfo.BEAN ) ) {
+			return beanFactory.getBean( AcrossContextInfo.BEAN, AcrossContextInfo.class );
+		}
+
+		BeanFactory parentFactory = beanFactory.getParentBeanFactory();
+		return parentFactory instanceof ConfigurableListableBeanFactory ? findAcrossContextInfo( (ConfigurableListableBeanFactory) parentFactory ) : null;
 	}
 
 	/**
