@@ -56,6 +56,7 @@
 		<thymeleaf-extras.springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras.springsecurity4.version>
 		<thymeleaf-extras.java8time.version>3.0.1.RELEASE</thymeleaf-extras.java8time.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
+		<maven.javadoc.skip>false</maven.javadoc.skip>
 	</properties>
 
 	<repositories>
@@ -152,6 +153,7 @@
 				<inherited>false</inherited>
 				<configuration>
 					<finalName>${project.artifactId}</finalName>
+					<skipAssembly>${maven.javadoc.skip}</skipAssembly>
 					<descriptors>
 						<descriptor>assembly.xml</descriptor>
 					</descriptors>

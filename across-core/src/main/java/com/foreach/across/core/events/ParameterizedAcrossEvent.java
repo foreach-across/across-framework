@@ -22,6 +22,9 @@ public interface ParameterizedAcrossEvent extends AcrossEvent, ResolvableTypePro
 
 	@Override
 	default ResolvableType getResolvableType() {
-		return ResolvableType.forClassWithGenerics( getClass(), getEventGenericTypes() );
+		ResolvableType classResolvableType = ResolvableType.forClass( getClass() );
+		return classResolvableType.hasGenerics()
+				? ResolvableType.forClassWithGenerics( getClass(), getEventGenericTypes() )
+				: classResolvableType;
 	}
 }

@@ -38,7 +38,7 @@ public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent, Resolva
 {
 	private final T menu;
 	private final PathBasedMenuBuilder menuBuilder;
-	private final ResolvableType[] genericTypes;
+	private final ResolvableType menuResolvableType;
 
 	private MenuSelector selector;
 
@@ -51,15 +51,17 @@ public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent, Resolva
 	}
 
 	public BuildMenuEvent( @NonNull T menu, PathBasedMenuBuilder menuBuilder, ResolvableType menuResolvableType ) {
-		genericTypes = new ResolvableType[] { menuResolvableType };
-
 		this.menu = menu;
 		this.menuBuilder = menuBuilder;
+		this.menuResolvableType = menuResolvableType;
 	}
 
 	@Override
 	public ResolvableType getResolvableType() {
-		return ResolvableType.forClassWithGenerics( getClass(), genericTypes );
+		ResolvableType classResolvableType = ResolvableType.forClass( getClass() );
+		return classResolvableType.hasGenerics()
+				? ResolvableType.forClassWithGenerics( getClass(), menuResolvableType )
+				: classResolvableType;
 	}
 
 	public PathBasedMenuBuilder builder() {
