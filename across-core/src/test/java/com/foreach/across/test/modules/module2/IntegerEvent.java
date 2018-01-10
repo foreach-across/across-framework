@@ -15,27 +15,13 @@
  */
 package com.foreach.across.test.modules.module2;
 
-import com.foreach.across.core.events.AcrossEvent;
-import org.springframework.core.ResolvableType;
-import org.springframework.core.ResolvableTypeProvider;
-
 /**
- * @author arne
- * @since 2.0.0
+ * @author Arne Vandamme
+ * @since 3.0.0
  */
-public class SingleGenericEvent<T> implements AcrossEvent, ResolvableTypeProvider
+public class IntegerEvent extends SingleGenericEvent<Integer>
 {
-	private final Class<T> type;
-
-	public SingleGenericEvent( Class<T> type ) {
-		this.type = type;
-	}
-
-	@Override
-	public ResolvableType getResolvableType() {
-		ResolvableType classResolvableType = ResolvableType.forClass( getClass() );
-		return classResolvableType.hasGenerics()
-				? ResolvableType.forClassWithGenerics( getClass(), type )
-				: classResolvableType;
+	public IntegerEvent() {
+		super( Integer.class );
 	}
 }

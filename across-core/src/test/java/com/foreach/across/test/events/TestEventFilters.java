@@ -135,6 +135,7 @@ public class TestEventFilters
 		assertTrue( eventHandlers.getReceivedSingleInteger().contains( integer ) );
 		assertFalse( eventHandlers.getReceivedSingleDecimal().contains( integer ) );
 		assertTrue( eventHandlers.getReceivedSingleNumber().contains( integer ) );
+		assertFalse( eventHandlers.getReceivedStrongTypedGenericEvent().contains( integer ) );
 
 		SingleGenericEvent<String> string = new SingleGenericEvent<>( String.class );
 		context.publishEvent( string );
@@ -153,6 +154,16 @@ public class TestEventFilters
 		assertFalse( eventHandlers.getReceivedSingleInteger().contains( longNumber ) );
 		assertFalse( eventHandlers.getReceivedSingleDecimal().contains( longNumber ) );
 		assertTrue( eventHandlers.getReceivedSingleNumber().contains( longNumber ) );
+	}
+
+	@Test
+	public void strongTypedEventThasAlsoMatchesGeneric() {
+		IntegerEvent integer = new IntegerEvent();
+		context.publishEvent( integer );
+		assertTrue( eventHandlers.getReceivedSingleInteger().contains( integer ) );
+		assertFalse( eventHandlers.getReceivedSingleDecimal().contains( integer ) );
+		assertTrue( eventHandlers.getReceivedSingleNumber().contains( integer ) );
+		assertTrue( eventHandlers.getReceivedStrongTypedGenericEvent().contains( integer ) );
 	}
 
 	@SuppressWarnings("unchecked")

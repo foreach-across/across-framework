@@ -39,6 +39,9 @@ public class CustomEventHandlers
 	private Set<SingleGenericEvent> receivedSingleDecimal = new HashSet<>();
 
 	@Getter
+	private Set<Object> receivedStrongTypedGenericEvent = new HashSet<>();
+
+	@Getter
 	private int genericsReceivedCounter;
 
 	public Set<SimpleEvent> getReceivedAll() {
@@ -115,6 +118,11 @@ public class CustomEventHandlers
 	@EventListener
 	public void singleInteger( SingleGenericEvent<Integer> number ) {
 		receivedSingleInteger.add( number );
+	}
+
+	@EventListener
+	public void anotherInteger( IntegerEvent number ) {
+		receivedStrongTypedGenericEvent.add( number );
 	}
 
 	@EventListener
