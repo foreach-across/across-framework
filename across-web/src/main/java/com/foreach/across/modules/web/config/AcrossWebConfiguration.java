@@ -114,6 +114,7 @@ class AcrossWebConfiguration extends WebMvcConfigurerAdapter
 	}
 
 	@Bean
+	@Exposed
 	public WebResourceTranslator viewsWebResourceTranslator() {
 		if ( resourceConfigurationProperties.getPath() != null ) {
 			return new WebResourceTranslator()
