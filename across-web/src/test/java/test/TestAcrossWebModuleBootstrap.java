@@ -21,6 +21,7 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
+import com.foreach.across.modules.web.resource.WebResourceTranslator;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -101,6 +102,7 @@ public class TestAcrossWebModuleBootstrap extends AbstractWebIntegrationTest
 	@Test
 	public void exposedDomainBeans() {
 		assertExposed( ViewElementAttributeConverter.class );
+		assertNotNull( beanRegistry.getBean( "viewsWebResourceTranslator", WebResourceTranslator.class ) );
 	}
 
 	@Test
