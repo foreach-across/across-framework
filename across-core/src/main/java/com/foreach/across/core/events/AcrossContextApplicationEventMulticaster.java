@@ -144,7 +144,7 @@ public final class AcrossContextApplicationEventMulticaster extends SimpleApplic
 
 					EventName eventNames = (EventName) annotation;
 					String namesCondition = "(" + Stream.of( eventNames.value() )
-					                                    .map( n -> "#event.eventName == '" + n + "'" )
+					                                    .map( n -> "#p0.eventName == '" + n + "'" )
 					                                    .collect( Collectors.joining( " or " ) ) + ")";
 					condition = condition.isEmpty() ? namesCondition : "(" + condition + ") and " + namesCondition;
 					ReflectionUtils.setField( CONDITION_FIELD, listenerMethodAdapter, condition );

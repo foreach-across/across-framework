@@ -83,8 +83,8 @@ public class CustomEventHandlers
 	}
 
 	@Event
-	public void namedOne( @EventName({ "one", "three" }) NamedEvent event ) {
-		receivedOne.add( event );
+	public void namedOne( @EventName({ "one", "three" }) NamedEvent myNamedEvent ) {
+		receivedOne.add( myNamedEvent );
 	}
 
 	@EventListener(condition = "#event.eventName == 'two' or #event.eventName == 'three'")
