@@ -19,6 +19,7 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -64,14 +67,25 @@ public class TestMethodValidation
 		assertTrue( myService.validateArguments( 56, "my value" ) );
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test
 	public void methodFailsIfNumberNotInRange() {
-		myService.validateArguments( 1, "my value" );
+		assertThatExceptionOfType( ConstraintViolationException.class )
+				.isThrownBy( () -> myService.validateArguments( 1, "my value" ) )
+				.satisfies( exception -> hasConstraintMessage( exception, "must be greater than or equal to 10" ) );
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test
 	public void methodFailsIfValueNull() {
-		myService.validateArguments( 56, null );
+		assertThatExceptionOfType( ConstraintViolationException.class )
+				.isThrownBy( () -> myService.validateArguments( 56, null ) )
+				.satisfies( exception -> hasConstraintMessage( exception, "may not be null" ) );
+	}
+
+	private void hasConstraintMessage( ConstraintViolationException exception, String message ) {
+		val violations = exception.getConstraintViolations();
+		assertEquals( 1, violations.size() );
+		ConstraintViolation violation = violations.iterator().next();
+		assertEquals( message, violation.getMessage() );
 	}
 
 	@Configuration
