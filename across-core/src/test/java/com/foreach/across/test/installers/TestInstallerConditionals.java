@@ -190,13 +190,13 @@ public class TestInstallerConditionals
 	{
 	}
 
-	@ConditionalOnAcrossModule(allOf = "ModuleNotPresent")
+	@ConditionalOnAcrossModule("ModuleNotPresent")
 	@Installer(description = "Should not be registered as module is not configured.")
 	static class ModuleMissingInstaller extends BaseInstaller
 	{
 	}
 
-	@ConditionalOnAcrossModule(allOf = "DummyModule")
+	@ConditionalOnAcrossModule("DummyModule")
 	@Installer(description = "Should be registered as module is configured.")
 	static class ModulePresentInstaller extends BaseInstaller
 	{

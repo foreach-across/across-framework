@@ -195,6 +195,7 @@ public class TestAcrossModuleCondition
 		AnnotatedTypeMetadata metadata = mock( AnnotatedTypeMetadata.class );
 		Map<String, Object> attributes = new HashMap<>();
 		attributes.put( "allOf", allOf );
+		attributes.put( "value", new String[0] );
 		attributes.put( "anyOf", anyOf );
 		attributes.put( "noneOf", noneOf );
 		when( metadata.getAnnotationAttributes( ConditionalOnAcrossModule.class.getName() ) ).thenReturn( attributes );

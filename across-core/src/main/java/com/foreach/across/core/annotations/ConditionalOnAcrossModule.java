@@ -16,6 +16,7 @@
 package com.foreach.across.core.annotations;
 
 import org.springframework.context.annotation.Conditional;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -54,7 +55,15 @@ public @interface ConditionalOnAcrossModule
 {
 	/**
 	 * Set of module identifiers that should be present.
+	 * Alias for {@link #allOf()}.
 	 */
+	@AliasFor("allOf")
+	String[] value() default {};
+
+	/**
+	 * Set of module identifiers that should be present.
+	 */
+	@AliasFor("value")
 	String[] allOf() default {};
 
 	/**

@@ -56,6 +56,9 @@ class AcrossModuleCondition extends SpringBootCondition
 		else {
 			Map<String, Object> attributes = metadata.getAnnotationAttributes( ConditionalOnAcrossModule.class.getName() );
 			allOf = (String[]) attributes.get( "allOf" );
+			if ( allOf == null || allOf.length == 0 ) {
+				allOf = (String[]) attributes.get( "value" );
+			}
 			anyOf = (String[]) attributes.get( "anyOf" );
 			noneOf = (String[]) attributes.get( "noneOf" );
 		}

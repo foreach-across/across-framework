@@ -206,7 +206,7 @@ public class TestAcrossCondition
 	}
 
 	@Configuration
-	@ConditionalOnAcrossModule(allOf = "moduleFour")
+	@ConditionalOnAcrossModule("moduleFour")
 	@AcrossCondition("#{currentModule.name == 'moduleOne'}")
 	static class ConditionAndDependsConfig
 	{
