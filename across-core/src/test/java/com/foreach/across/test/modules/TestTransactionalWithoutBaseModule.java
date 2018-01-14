@@ -17,8 +17,8 @@
 package com.foreach.across.test.modules;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
-import com.foreach.across.core.context.configurer.TransactionManagementConfigurer;
 import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.foreach.across.test.modules.hibernate1.Hibernate1Module;
 import com.foreach.across.test.modules.hibernate1.Product;
@@ -45,6 +45,7 @@ import org.springframework.orm.hibernate5.SessionHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
@@ -189,7 +190,7 @@ public class TestTransactionalWithoutBaseModule
 			acrossContext.setDataSource( dataSource() );
 			acrossContext.addModule( hibernate1Module() );
 			acrossContext.addModule( hibernate2Module() );
-			acrossContext.addApplicationContextConfigurer( new TransactionManagementConfigurer(),
+			acrossContext.addApplicationContextConfigurer( new AnnotatedClassConfigurer( EnableTransactionManagementConfiguration.class ),
 			                                               ConfigurerScope.CONTEXT_AND_MODULES );
 
 			acrossContext.bootstrap();
@@ -206,6 +207,11 @@ public class TestTransactionalWithoutBaseModule
 		public Hibernate2Module hibernate2Module() {
 			return new Hibernate2Module();
 		}
+	}
+
+	@EnableTransactionManagement
+	static class EnableTransactionManagementConfiguration
+	{
 	}
 }
 
