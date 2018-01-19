@@ -170,7 +170,7 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 
 	@Override
 	public String getMessage( String code, String defaultMessage ) {
-		return getMessage( code, code, LocaleContextHolder.getLocale() );
+		return getMessage( code, defaultMessage, LocaleContextHolder.getLocale() );
 	}
 
 	@Override
