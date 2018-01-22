@@ -204,6 +204,30 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
+	public void disablingItemAfterMoveShouldWork() {
+		builder.item( "/list/servers", "Servers" ).and()
+		       .item( "/list/laptops", "Laptops" );
+
+		Menu menu = builder.build();
+		assertEquals( 2, menu.size() );
+
+		verify( menu.getItems().get( 0 ), "/list/laptops", "Laptops", "/list/laptops" );
+		verify( menu.getItems().get( 1 ), "/list/servers", "Servers", "/list/servers" );
+
+		builder.group( "/myinfra", "Infra" ).and()
+		       .move( "/list/laptops", "/myinfra/laptops" ).item( "/myinfra/laptops" ).disable().and()
+		       .move( "/list/servers", "/myinfra/servers" ).item( "/myinfra/servers" ).disable();
+
+		menu = builder.build();
+		assertEquals( 1, menu.size() );
+
+		verify( menu.getItems().get( 0 ).getItems().get( 0 ), "/myinfra/laptops", "Laptops", "/list/laptops" );
+		verify( menu.getItems().get( 0 ).getItems().get( 1 ), "/myinfra/servers", "Servers", "/list/servers" );
+		assertTrue( menu.getItems().get( 0 ).getItems().get( 0 ).isDisabled() );
+		assertTrue( menu.getItems().get( 0 ).getItems().get( 1 ).isDisabled() );
+	}
+
+	@Test
 	public void movingOnlyMovesNestedPath() {
 		builder.item( "/list/business", "Business" ).and()
 		       .item( "/list/business/details", "Details" ).and()
