@@ -43,6 +43,7 @@ import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.format.support.DefaultFormattingConversionService;
 
 import javax.sql.DataSource;
@@ -112,14 +113,14 @@ public class AcrossConfig
 		          ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
 
 		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-		conversionService.addConverter( defaultDateConverter() );
+		conversionService.addConverter( defaultDateConverter( conversionService ) );
 
 		return conversionService;
 	}
 
 	@Bean
-	public StringToDateConverter defaultDateConverter() {
-		return new StringToDateConverter();
+	public StringToDateConverter defaultDateConverter( ConversionService conversionService ) {
+		return new StringToDateConverter( conversionService );
 	}
 
 	@Bean
