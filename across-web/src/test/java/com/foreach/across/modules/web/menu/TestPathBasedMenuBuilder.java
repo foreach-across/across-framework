@@ -16,11 +16,13 @@
 
 package com.foreach.across.modules.web.menu;
 
+import com.foreach.across.core.AcrossException;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.*;
 
 public class TestPathBasedMenuBuilder
@@ -204,27 +206,71 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void disablingItemAfterMoveShouldWork() {
+	public void moveToOfUnknownItemThrowsException() {
+		assertThatThrownBy( () -> {
+			builder.item( "/list/servers", "Servers" ).and().moveTo( "/badurl", "/newurl" );
+		} ).isInstanceOf( AcrossException.class )
+		   .hasMessageContaining( "Could not find menu item with path: /badurl" );
+	}
+
+	@Test
+	public void moveToAndChangingPropertiesShouldReplaceExistingProperties() {
 		builder.item( "/list/servers", "Servers" ).and()
-		       .item( "/list/laptops", "Laptops" );
+		       .item( "/list/laptops", "Laptops", "/custom/url" );
 
 		Menu menu = builder.build();
 		assertEquals( 2, menu.size() );
 
-		verify( menu.getItems().get( 0 ), "/list/laptops", "Laptops", "/list/laptops" );
+		verify( menu.getItems().get( 0 ), "/list/laptops", "Laptops", "/custom/url" );
 		verify( menu.getItems().get( 1 ), "/list/servers", "Servers", "/list/servers" );
 
 		builder.group( "/myinfra", "Infra" ).and()
-		       .move( "/list/laptops", "/myinfra/laptops" ).item( "/myinfra/laptops" ).disable().and()
-		       .move( "/list/servers", "/myinfra/servers" ).item( "/myinfra/servers" ).disable();
+		       .moveTo( "/list/laptops", "/myinfra/laptops" ).disable().and()
+		       .moveTo( "/list/servers", "/myinfra/servers" ).disable().title( "Servers 2.0" );
 
 		menu = builder.build();
 		assertEquals( 1, menu.size() );
 
-		verify( menu.getItems().get( 0 ).getItems().get( 0 ), "/myinfra/laptops", "Laptops", "/list/laptops" );
-		verify( menu.getItems().get( 0 ).getItems().get( 1 ), "/myinfra/servers", "Servers", "/list/servers" );
+		verify( menu.getItems().get( 0 ), "/myinfra", "Infra", "/myinfra" );
+		verify( menu.getItems().get( 0 ).getItems().get( 0 ), "/myinfra/laptops", "Laptops", "/custom/url" );
+		verify( menu.getItems().get( 0 ).getItems().get( 1 ), "/myinfra/servers", "Servers 2.0", "/myinfra/servers" );
 		assertTrue( menu.getItems().get( 0 ).getItems().get( 0 ).isDisabled() );
 		assertTrue( menu.getItems().get( 0 ).getItems().get( 1 ).isDisabled() );
+	}
+
+	@Test
+	public void moveToWithItemToOriginalPlaceRetainsProperties() {
+		builder.item( "/item/a" ).title( "Item A" ).disable().order( 33 );
+
+		builder.group( "/item" ).and().moveTo( "/item/a", "/item/b" ).and().moveTo( "/item/b", "/item/a" );
+		Menu menu = builder.build();
+
+		verify( menu.getItems().get( 0 ), "/item", null, "/item" );
+		verify( menu.getItems().get( 0 ).getItems().get( 0 ), "/item/a", "Item A", "/item/a" );
+		assertEquals( 33, menu.getItems().get( 0 ).getItems().get( 0 ).getOrder() );
+	}
+
+	@Test
+	public void moveToForSubtreeMovesChildItems() {
+		builder.item( "/list/servers", "Servers" ).and()
+		       .item( "/list/laptops", "Laptops" ).and()
+		       .item( "/list/screens", "Screens" ).and()
+		       .item( "/listSomethingElse", "List of something else" );
+
+		Menu menu = builder.build();
+		assertEquals( 4, menu.size() );
+
+		builder.group( "/allstuff", "All Stuff" ).and().moveTo( "/list", "/allstuff" );
+
+		menu = builder.build();
+		assertEquals( 2, menu.size() );
+
+		verify( menu.getItems().get( 0 ), "/allstuff", "All Stuff", "/allstuff" );
+		verify( menu.getItems().get( 1 ), "/listSomethingElse", "List of something else", "/listSomethingElse" );
+
+		verify( menu.getItems().get( 0 ).getItems().get( 0 ), "/allstuff/laptops", "Laptops", "/allstuff/laptops" );
+		verify( menu.getItems().get( 0 ).getItems().get( 1 ), "/allstuff/screens", "Screens", "/allstuff/screens" );
+		verify( menu.getItems().get( 0 ).getItems().get( 2 ), "/allstuff/servers", "Servers", "/allstuff/servers" );
 	}
 
 	@Test

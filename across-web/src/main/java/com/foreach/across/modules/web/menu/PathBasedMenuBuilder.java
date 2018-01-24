@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web.menu;
 
+import com.foreach.across.core.AcrossException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -23,6 +24,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A PathBasedMenuBuilder can be used to define menu items in a non-hierarchical way.
@@ -35,6 +38,7 @@ public class PathBasedMenuBuilder
 
 	private final PathBasedMenuItemBuilder rootBuilder;
 	private final Map<String, PathBasedMenuItemBuilder> itemBuilders;
+	@Deprecated
 	private final Map<String, String> moves;
 	private final MenuItemBuilderProcessor itemProcessor;
 
@@ -58,7 +62,7 @@ public class PathBasedMenuBuilder
 		}
 		else {
 			rootBuilder = new PathBasedMenuItemBuilder( null, this );
-			itemBuilders = new TreeMap<>();
+			itemBuilders = new ConcurrentSkipListMap<>();
 			moves = new TreeMap<>();
 		}
 	}
@@ -205,6 +209,7 @@ public class PathBasedMenuBuilder
 		menu.merge( newMenu, ignoreRoot );
 	}
 
+	@Deprecated
 	private String determineActualPath( String path ) {
 		String prefix = path;
 		String destination = path;
@@ -229,6 +234,56 @@ public class PathBasedMenuBuilder
 		return path;
 	}
 
+	/**
+	 * Move an item or a subtree of items from path to a destination path
+	 *
+	 * @param path            the source path of the item or the path of a subtree
+	 * @param destinationPath the destination path
+	 * @return The item that was moved or the group it was moved to
+	 * @since 3.0.0
+	 */
+	public PathBasedMenuItemBuilder moveTo( String path, String destinationPath ) {
+		AtomicReference<PathBasedMenuItemBuilder> menuItem = new AtomicReference<>();
+
+		itemBuilders.forEach( ( key, menuItemBuilder ) -> {
+			if ( StringUtils.startsWith( key, path ) ) {
+				String newPath = StringUtils.replaceOnce( menuItemBuilder.getPath(), path, destinationPath );
+				if ( StringUtils.equals( menuItemBuilder.getPath(), path ) ) {
+					menuItem.set( menuItemBuilder );
+					updateItemBuilder( key, menuItemBuilder, newPath );
+				}
+				else {
+					String pathPrefix = StringUtils.removeEnd( path, "/" ) + "/";
+
+					if ( StringUtils.startsWith( menuItemBuilder.getPath(), pathPrefix ) ) {
+						updateItemBuilder( key, menuItemBuilder, newPath );
+					}
+				}
+			}
+			else if ( StringUtils.equals( key, destinationPath ) && menuItem.get() == null && menuItemBuilder.isGroup() ) {
+				menuItem.set( menuItemBuilder );
+			}
+		} );
+
+		if ( menuItem.get() != null ) {
+			return menuItem.get();
+		}
+
+		throw new AcrossException( "Could not find menu item with path: " + path );
+	}
+
+	private void updateItemBuilder( String existingKey,
+	                                PathBasedMenuItemBuilder menuItemBuilder, String newPath ) {
+		itemBuilders.remove( existingKey );
+		itemBuilders.put( newPath, menuItemBuilder.path( newPath ) );
+	}
+
+	/***
+	 * The existing implementation of this method is quite dubious and unpredictable
+	 * so it will be removed in a future release
+	 * Consider using {@link #moveTo(String, String)} instead
+	 */
+	@Deprecated
 	public PathBasedMenuBuilder move( String path, String destinationPath ) {
 		Assert.notNull( path, "A valid path must be specified." );
 		Assert.notNull( destinationPath, "Can't move to null destination path" );
@@ -236,6 +291,10 @@ public class PathBasedMenuBuilder
 		return this;
 	}
 
+	/***
+	 * Support for this method will be dropped in a future release due to deprecation of {@link #move(String, String)}
+	 */
+	@Deprecated
 	public PathBasedMenuBuilder undoMove( String path ) {
 		moves.remove( path );
 		return this;
@@ -259,6 +318,11 @@ public class PathBasedMenuBuilder
 
 		public String getPath() {
 			return path;
+		}
+
+		private PathBasedMenuItemBuilder path( String path ) {
+			this.path = path;
+			return this;
 		}
 
 		public String getTitle() {
