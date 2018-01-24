@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -58,6 +59,21 @@ public class TestDefaultViewElementBuilderContext
 
 		ctx.removeAttribute( "test" );
 		assertFalse( ctx.hasAttribute( "test" ) );
+	}
+
+	@Test
+	public void withoutRequestDefaultsAreReturned() {
+		DefaultViewElementBuilderContext ctx = new DefaultViewElementBuilderContext();
+
+		assertThat( ctx.getLocalizedTextResolver() ).isNotNull();
+		assertThat( ctx.resolveText( "test" ) ).isEqualTo( "test" );
+		assertThat( ctx.resolveText( "#{test}" ) ).isEqualTo( "test" );
+		assertThat( ctx.resolveText( "#{test=My test}" ) ).isEqualTo( "My test" );
+
+		assertThat( ctx.getWebAppLinkBuilder() ).isNotNull();
+		assertThat( ctx.buildLink( "my link" ) ).isEqualTo( "my link" );
+		assertThat( ctx.getMessageSource() ).isNotNull();
+		assertThat( ctx.getMessage( "message code" ) ).isEqualTo( "message code" );
 	}
 
 	@Test

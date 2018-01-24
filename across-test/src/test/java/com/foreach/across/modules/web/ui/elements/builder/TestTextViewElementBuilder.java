@@ -48,6 +48,14 @@ public class TestTextViewElementBuilder extends AbstractViewElementBuilderTest<T
 	}
 
 	@Test
+	public void textResolving() {
+		builder.text( "#{my.text=Hello}" );
+
+		build();
+		assertEquals( "Hello", element.getText() );
+	}
+
+	@Test
 	public void html() {
 		builder.escapeXml( true ).html( "some text" );
 
