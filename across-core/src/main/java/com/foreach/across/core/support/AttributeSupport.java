@@ -71,8 +71,8 @@ public abstract class AttributeSupport implements WritableAttributes
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <Y> Y getAttribute( String attributeName, Class<Y> attributeType ) {
-		return (Y) getAttribute( attributeName );
+	public <Y, V extends Y> V getAttribute( String attributeName, Class<Y> attributeType ) {
+		return (V) getAttribute( attributeName );
 	}
 
 	@Override

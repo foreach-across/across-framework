@@ -52,7 +52,7 @@ public interface ReadableAttributes
 	 * @param attributeName the unique attribute key
 	 * @return the current value of the attribute, if any
 	 */
-	<Y> Y getAttribute( String attributeName, Class<Y> attributeType );
+	<Y, V extends Y> V getAttribute( String attributeName, Class<Y> attributeType );
 
 	/**
 	 * Return {@code true} if the attribute identified by {@code attributeType} exists.
