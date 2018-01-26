@@ -126,6 +126,9 @@ public class MenuFactory
 		menu.sort();
 		menu.select( buildMenuEvent.getMenuSelector() );
 
+		buildMenuEvent.getMenuPostProcessors()
+		              .forEach( pp -> pp.accept( menu ) );
+
 		return menu;
 	}
 
@@ -145,8 +148,7 @@ public class MenuFactory
 		return defaultMenuStore;
 	}
 
-	private <T extends Menu, E extends BuildMenuEvent<T>, B extends MenuBuilder<T, E>> T build( String name,
-	                                                                                            Class<T> menuType ) {
+	private <T extends Menu, E extends BuildMenuEvent<T>, B extends MenuBuilder<T, E>> T build( String name, Class<T> menuType ) {
 		B builder = (B) getMenuBuilder( menuType );
 
 		T menu = builder.build();

@@ -35,7 +35,7 @@ public class TestPathBasedMenuBuilder
 
 	@Before
 	public void createBuilder() {
-		builder = new PathBasedMenuBuilder();
+		builder = Menu.builder();
 	}
 
 	@Test

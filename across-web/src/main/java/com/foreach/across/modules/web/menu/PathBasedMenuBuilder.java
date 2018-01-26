@@ -539,17 +539,10 @@ public class PathBasedMenuBuilder
 		private boolean disabled;
 		private Comparator<Menu> comparator;
 		private boolean inheritableComparator;
+		private Integer order;
 
 		@Setter(AccessLevel.PRIVATE)
 		private String path;
-
-		/**
-		 * -- SETTER --
-		 * Set the order of this menu item.
-		 * Setting a {@code null} value (default) will ensure default ordering is applied.
-		 */
-		@Setter
-		private Integer order;
 
 		/**
 		 * -- SETTER --
@@ -592,6 +585,16 @@ public class PathBasedMenuBuilder
 		public PathBasedMenuItemBuilder comparator( Comparator<Menu> comparator, boolean inheritable ) {
 			this.comparator = comparator;
 			this.inheritableComparator = inheritable;
+			return this;
+		}
+
+		/**
+		 * Set the order of this menu item.
+		 *
+		 * @return current item builder
+		 */
+		public PathBasedMenuItemBuilder order( int order ) {
+			this.order = order;
 			return this;
 		}
 

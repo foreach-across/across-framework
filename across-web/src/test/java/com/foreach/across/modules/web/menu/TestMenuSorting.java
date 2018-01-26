@@ -246,8 +246,8 @@ public class TestMenuSorting
 		menu.sort();
 
 		assertMenu( menu, "ccc", "bbb", "aaa" );
-		assertMenu( menu.getItem( Menu.byPath( "/aaa" ) ), "333", "222", "111" );
-		assertMenu( menu.getItem( Menu.byPath( "/aaa" ) ).getItem( Menu.byPath( "333" ) ), "111", "222", "333" );
+		assertMenu( menu.getItem( MenuSelector.byPath( "/aaa" ) ), "333", "222", "111" );
+		assertMenu( menu.getItem( MenuSelector.byPath( "/aaa" ) ).getItem( MenuSelector.byPath( "333" ) ), "111", "222", "333" );
 	}
 
 	@Test
@@ -277,8 +277,8 @@ public class TestMenuSorting
 		menu.sort();
 
 		assertMenu( menu, "bbb", "ccc", "aaa" );
-		assertMenu( menu.getItem( Menu.byPath( "/aaa" ) ), "333", "222", "111" );
-		assertMenu( menu.getItem( Menu.byPath( "/ccc" ) ), "ddd", "eee", "fff" );
+		assertMenu( menu.getItem( MenuSelector.byPath( "/aaa" ) ), "333", "222", "111" );
+		assertMenu( menu.getItem( MenuSelector.byPath( "/ccc" ) ), "ddd", "eee", "fff" );
 	}
 
 	public void assertMenu( Menu menu, String... expected ) {
