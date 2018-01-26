@@ -16,30 +16,108 @@
 
 package com.foreach.across.modules.web.menu;
 
-import com.foreach.across.core.AcrossException;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 /**
  * A PathBasedMenuBuilder can be used to define menu items in a non-hierarchical way.
- * When building the actual Menu, the path will be used to determine parent and sub-menus.
- * Any new prefix will be used as root of a sub menu.
+ * Items are registered using a unique path. Every item with a path that is also the prefix
+ * of another item's path, will become the parent item of those other items, and the path
+ * of those items will be stripped of the prefix in the final menu.
+ * <p/>
+ * Every item with a path that is also the prefix of other items, will result in a sub-tree being created.
+ * The <strong>/</strong> (forward slash) is the path separator for prefix candidates.
+ * <h4>Example</h4>
+ * <p>
+ * Suppose you register the following menu items using {@link #item(String)}:
+ * <ol>
+ * <li>/my-group/item-1</li>
+ * <li>/my-group</li>
+ * <li>/my-item</li>
+ * <li>/my-group/item-2</li>
+ * <li>/my-other-group/single-item</li>
+ * </ol>
+ * or in code:
+ * <pre>{@code
+ * builder.item( "/my-group/item-1" ).and()
+ *        .item( "/my-group" ).and()
+ *        .item( "/my-item" ).and()
+ *        .item( "/my-group/item-2" ).and()
+ *        .item( "/my-other-group/single-item" ).and()
+ *        .item( "/my-group:item-3" ).and()
+ *        .build()
+ * }</pre>
+ * When building the {@link Menu} this will result in the following hierarchy:
+ * <pre>{@code
+ * <ROOT>
+ *   + /my-group
+ *   |   + /my-group/item-1
+ *   |   + /my-group/item-2
+ *   + /my-group:item-3
+ *   + /my-item
+ *   + /my-other-group/single-item
+ * }</pre>
+ * </p>
+ * Note that a parent item does not automatically get created based on path separator (the example of {@code /my-other-group/single-item}.
+ * Only if there is another item with an exact path of that before a separator will an item be created. This is also why {@code /my-group:item-3}
+ * is still a separate item as <strong>:</strong> (colon) does not count as a path separator.
+ * <p/>
+ * By default the top-most item of the menu has no specific path. Setting a path on the root item
+ * can be done using {@link #root(String)}, but this will have no impact on the hierarchy being created.
+ * The root path of a {@code Menu} is only relevant in specialized cases where you want to merge the result of a
+ * builder into an already existing {@code Menu}.
+ * <h4>Order and sorting</h4>
+ * <p>A {@code Menu} item can have an order specified which can be used to sort the {@code Menu}. Sorting a menu is usually done externally,
+ * the {@link PathBasedMenuBuilder} creates a {@code Menu} with the items ordered according to their path value. You can see this in the above example.</p>
+ * <h4>Group items</h4>
+ * <p>
+ * A single item can also be flagged as a group (this sets the value of {@link Menu#isGroup()}. This property however has nothing to do with
+ * the actual hierarchy being created. It is not because an item is flagged as a group that it will be turned into a parent for other items.
+ * It will automatically serve as a parent if the other items have a path that uses the current item as prefix. The group property is an indication
+ * for how the item should behave in the generated {@link Menu}. The value of {@link Menu#isGroup()} is never set automatically, not even when
+ * an item becomes the parent of others. You should create groups using {@link #group(String)}.
+ * </p>
+ * <h4>From item path to Menu hierarchy</h4>
+ * <p>The {@code PathBaseMenuBuilder} has itself no concept of a hierarchy of menu items. It purely works on a map of items identified by their path.
+ * It is only when the actual {@link Menu} is being built that this flat list of items gets turned into a {@link Menu} hierarchy, based on the
+ * presence of path separators (<strong>/</strong> - forward slash) and items matching sub-segments of others.
+ *
+ * @author Arne Vandamme, Marc Vanbrabant
+ * @see MenuFactory
+ * @see Menu
+ * @see MenuSelector
+ * @see RequestMenuSelector
+ * @see RequestMenuBuilder
+ * @since 1.0.0
  */
 public class PathBasedMenuBuilder
 {
+	@Getter(AccessLevel.PROTECTED)
 	private final PathBasedMenuBuilder parent;
 
 	private final PathBasedMenuItemBuilder rootBuilder;
 	private final Map<String, PathBasedMenuItemBuilder> itemBuilders;
+
+	/**
+	 * List of consumers that will be executes the first time {@link #build()} is being called.
+	 * These allow modifying the actual builder itself, but after initial modifications have been done.
+	 * <p/>
+	 * Mainly useful if you want to perform moves of groups and you want to make sure that all items have been added.
+	 */
+	private final Deque<Consumer<PathBasedMenuBuilder>> beforeBuildConsumers;
+
 	@Deprecated
 	private final Map<String, String> moves;
+
 	private final MenuItemBuilderProcessor itemProcessor;
 
 	public PathBasedMenuBuilder() {
@@ -50,8 +128,7 @@ public class PathBasedMenuBuilder
 		this( null, itemProcessor );
 	}
 
-	public PathBasedMenuBuilder( PathBasedMenuBuilder parent,
-	                             MenuItemBuilderProcessor itemProcessor ) {
+	protected PathBasedMenuBuilder( PathBasedMenuBuilder parent, MenuItemBuilderProcessor itemProcessor ) {
 		this.parent = parent;
 		this.itemProcessor = itemProcessor;
 
@@ -59,68 +136,267 @@ public class PathBasedMenuBuilder
 			rootBuilder = parent.rootBuilder;
 			itemBuilders = parent.itemBuilders;
 			moves = parent.moves;
+			beforeBuildConsumers = parent.beforeBuildConsumers;
 		}
 		else {
-			rootBuilder = new PathBasedMenuItemBuilder( null, this );
+			rootBuilder = new PathBasedMenuItemBuilder( null, this, false );
 			itemBuilders = new ConcurrentSkipListMap<>();
 			moves = new TreeMap<>();
+			beforeBuildConsumers = new ArrayDeque<>();
 		}
 	}
 
 	/**
-	 * @return A new builder with the specified processor.
+	 * Perform a set of actions with a different item processor.
+	 * This creates a new builder based on this one but having a different processor applied after menu item building.
+	 * The new builder will have the same configuration, and any item builders modified will immediately apply
+	 * to both the original and the new builder. Only when building will a different processor for these items be used.
+	 * <p/>
+	 * Use this method if you want to apply custom processing to a subset of menu items in this menu.
+	 * This does not change the current builder, only creates a new one that is passed to the consumer.
+	 * <p/>
+	 * If you want to effectively remove an already attached processor, you can use this method
+	 * with the {@link MenuItemBuilderProcessor#NoOpProcessor} as parameter.
+	 *
+	 * @param processor that should be applied to the scoped version
+	 * @param consumer  for performing actions on the scoped builder
+	 * @return original menu builder
+	 * @see MenuItemBuilderProcessor#NoOpProcessor
 	 */
-	public PathBasedMenuBuilder builder( MenuItemBuilderProcessor processor ) {
-		Assert.notNull( processor, "A processor must be specified - try using NoOpProcessor if you want to clear it." );
-		return new PathBasedMenuBuilder( this, processor );
+	public PathBasedMenuBuilder withProcessor( @NonNull MenuItemBuilderProcessor processor, @NonNull Consumer<PathBasedMenuBuilder> consumer ) {
+		consumer.accept( new PathBasedMenuBuilder( this, processor ) );
+		return this;
 	}
 
 	/**
-	 * @return The parent PathBasedMenuBuilder or the current one if there is no parent.
+	 * Get the root item builder. By default the root item of the menu has no path,
+	 * this method also configures a path on the root item.
+	 *
+	 * @param rootPath path of the top most menu
+	 * @return root item builder
 	 */
-	public PathBasedMenuBuilder and() {
-		return parent != null ? parent : this;
-	}
-
-	public PathBasedMenuItemBuilder root( String rootPath ) {
-		Assert.notNull( rootPath, "Root path must not be null." );
+	public PathBasedMenuItemBuilder root( @NonNull String rootPath ) {
 		rootBuilder.path = rootPath;
 		return rootBuilder;
 	}
 
-	public PathBasedMenuItemBuilder item( String path ) {
-		Assert.notNull( path, "A Menu item must have a valid path." );
-
+	/**
+	 * Retrieve the item builder for a specific path. If there is none yet, one will be created.
+	 *
+	 * @param path identifying the item
+	 * @return item builder
+	 */
+	public PathBasedMenuItemBuilder item( @NonNull String path ) {
 		PathBasedMenuItemBuilder itemBuilder = itemBuilders.get( path );
 
 		if ( itemBuilder == null ) {
-			itemBuilder = new PathBasedMenuItemBuilder( path, this );
-			itemBuilders.put( itemBuilder.getPath(), itemBuilder );
+			itemBuilder = new PathBasedMenuItemBuilder( path, this, false );
+			itemBuilders.put( itemBuilder.path, itemBuilder );
 		}
 
 		return itemBuilder;
 	}
 
-	public PathBasedMenuItemBuilder group( String path ) {
-		return item( path ).group( true );
+	/**
+	 * Return an item builder for updating an item if it exists. This will always return a valid
+	 * item builder, but nothing will happen if that item did not exist before.
+	 *
+	 * @param path identifying the item
+	 * @return item builder
+	 */
+	public PathBasedMenuItemBuilder optionalItem( @NonNull String path ) {
+		PathBasedMenuItemBuilder itemBuilder = itemBuilders.get( path );
+
+		if ( itemBuilder == null ) {
+			return new PathBasedMenuItemBuilder( path, this, true );
+		}
+
+		return itemBuilder;
 	}
 
-	public PathBasedMenuItemBuilder group( String path, String title ) {
-		return item( path, title ).group( true );
-	}
-
+	/**
+	 * Retrieve the item builder for a specific path. If there is none yet, one will be created.
+	 * <p/>
+	 * This method is a shorter version for {@code item(path).title(title)}.
+	 *
+	 * @param path  identifying the item
+	 * @param title that should be set on the item
+	 * @return item builder
+	 */
 	public PathBasedMenuItemBuilder item( String path, String title ) {
 		return item( path ).title( title );
 	}
 
+	/**
+	 * Retrieve the item builder for a specific path. If there is none yet, one will be created.
+	 * <p/>
+	 * This method is a shorter version for {@code item(path).title(title).url(url)}.
+	 *
+	 * @param path  identifying the item
+	 * @param title that should be set on the item
+	 * @param url   that should be set on the item
+	 * @return item builder
+	 */
 	public PathBasedMenuItemBuilder item( String path, String title, String url ) {
 		return item( path ).title( title ).url( url );
+	}
+
+	/**
+	 * Retrieve the item builder for a specific path, where the item should represent a group of items.
+	 * If there is no item builder yet, one will be created. If the item builder exists, but is not yet flagged as
+	 * a group, it will be turned into a group.
+	 * <p/>
+	 * Note that flagging an item as a group simply sets the appropriate property. It has no effect on the actual
+	 * {@link Menu} hierarchy being built and the fact that this item might serve as a parent for others.
+	 * The latter is purely determined by the path splitting when building the menu.
+	 * <p/>
+	 * This method is a shorter version for {@code item(path).group(true)}.
+	 *
+	 * @param path identifying the item
+	 * @return item builder
+	 */
+	public PathBasedMenuItemBuilder group( String path ) {
+		return item( path ).group( true );
+	}
+
+	/**
+	 * Retrieve the item builder for a specific path, where the item should represent a group of items.
+	 * If there is no item builder yet, one will be created. If the item builder exists, but is not yet flagged as
+	 * a group, it will be turned into a group.
+	 * <p/>
+	 * Note that flagging an item as a group simply sets the appropriate property. It has no effect on the actual
+	 * {@link Menu} hierarchy being built and the fact that this item might serve as a parent for others.
+	 * The latter is purely determined by the path splitting when building the menu.
+	 * <p/>
+	 * This method is a shorter version for {@code item(path, title).group(true)}.
+	 *
+	 * @param path  identifying the item
+	 * @param title that should be set on the item
+	 * @return item builder
+	 */
+	public PathBasedMenuItemBuilder group( String path, String title ) {
+		return item( path, title ).group( true );
+	}
+
+	/**
+	 * Add an additional {@link Consumer} for this {@link PathBasedMenuBuilder} that should be applied right before
+	 * the actual {@link Menu} is being built.
+	 * <p/>
+	 * Use this method sparingly, only when you want to customize the menu builder and wish to be sure that initial
+	 * configuration has been applied. For example you want to move a group of items but you are not sure up front how
+	 * many child items it will have as modules could register them at a later stage.
+	 * Shifting the path changing calls to the separate {@code andThen(Consumer)} consumer can help you in said case.
+	 * <p/>
+	 * Note that once the consumer has been applied, it will not be re-applied on subsequent builds.
+	 * It is possible to register additional consumers from within a consumer, but simplicity's sake you probably want to avoid this.
+	 *
+	 * @param consumer to add
+	 * @return current builder
+	 */
+	public PathBasedMenuBuilder andThen( @NonNull Consumer<PathBasedMenuBuilder> consumer ) {
+		beforeBuildConsumers.addLast( consumer );
+		return this;
+	}
+
+	/***
+	 * The existing implementation of this method is quite dubious and unpredictable
+	 * so it will be removed in a future release
+	 * Consider using {@link #changeItemPath(String, String)} instead
+	 */
+	@Deprecated
+	public PathBasedMenuBuilder move( String path, String destinationPath ) {
+		Assert.notNull( path, "A valid path must be specified." );
+		Assert.notNull( destinationPath, "Can't move to null destination path" );
+		moves.put( path, destinationPath );
+		return this;
+	}
+
+	/***
+	 * Support for this method will be dropped in a future release due to deprecation of {@link #move(String, String)}
+	 */
+	@Deprecated
+	public PathBasedMenuBuilder undoMove( String path ) {
+		moves.remove( path );
+		return this;
+	}
+
+	/**
+	 * Remove the item with the specified path from this menu builder. Optionally also removes all other items
+	 * having the specified path as prefix.
+	 *
+	 * @param path                           to remove
+	 * @param removeAllItemsWithPathAsPrefix true if other items with that path as prefix should be removed as well
+	 * @return current builder
+	 */
+	public PathBasedMenuBuilder removeItems( @NonNull String path, boolean removeAllItemsWithPathAsPrefix ) {
+		updateOrRemoveItems( path, null, removeAllItemsWithPathAsPrefix );
+		return this;
+	}
+
+	/**
+	 * Update the path of all items starting with (or equal to) the given path prefix.
+	 * The prefix of the current path will be updated to the new path prefix.
+	 * If you only want to change the single item with exactly that path,
+	 * use {@code changeItemPath("currentPrefix", "newPrefix", false)}.
+	 * <p/>
+	 * Note that, unlike {@code item("my item").changePathTo(X)}, this method will not create
+	 * any items if they do not exist.
+	 *
+	 * @param currentPathPrefix prefix item paths should be starting with
+	 * @param newPathPrefix     new prefix to use
+	 * @return current menu builder
+	 * @see #changeItemPath(String, String, boolean)
+	 * @since 3.0.0
+	 */
+	public PathBasedMenuBuilder changeItemPath( @NonNull String currentPathPrefix, @NonNull String newPathPrefix ) {
+		return changeItemPath( currentPathPrefix, newPathPrefix, true );
+	}
+
+	/**
+	 * Update the path of all items starting with (or equal to) the given path prefix.
+	 * The prefix of the current path will be updated to the new path prefix.
+	 * If you only want to change the single item starting with exactly that path,
+	 * use {@code changeItemPaths("currentPrefix", "newPrefix", false)}.
+	 * <p/>
+	 * Note that, unlike {@code item("my item").changePathTo(X)}, this method will not create
+	 * any items if they do not exist.
+	 *
+	 * @param currentPathPrefix         prefix item paths should be starting with
+	 * @param newPathPrefix             new prefix to use
+	 * @param replaceAllItemsWithPrefix true if all items starting with the currentPathPrefix should be updated, false if only an exact match should update
+	 * @return current menu builder
+	 * @since 3.0.0
+	 */
+	public PathBasedMenuBuilder changeItemPath( @NonNull String currentPathPrefix, @NonNull String newPathPrefix, boolean replaceAllItemsWithPrefix ) {
+		updateOrRemoveItems( currentPathPrefix, newPathPrefix, replaceAllItemsWithPrefix );
+		return this;
+	}
+
+	private void updateOrRemoveItems( String currentPathPrefix, String newPathPrefix, boolean replaceAllItemsWithPrefix ) {
+		Collection<String> keys = new ArrayList<>( itemBuilders.keySet() );
+		keys.forEach( key -> {
+			PathBasedMenuItemBuilder menuItemBuilder = itemBuilders.get( key );
+			String suffixedPath = suffixPath( currentPathPrefix );
+			if ( StringUtils.equals( key, currentPathPrefix ) || ( replaceAllItemsWithPrefix && StringUtils.startsWith( key, suffixedPath ) ) ) {
+				String updatePath = newPathPrefix != null ? StringUtils.replaceOnce( menuItemBuilder.path, currentPathPrefix, newPathPrefix ) : null;
+				updateItemBuilder( key, menuItemBuilder, updatePath );
+			}
+		} );
+	}
+
+	private void updateItemBuilder( String existingKey, PathBasedMenuItemBuilder menuItemBuilder, String newPath ) {
+		itemBuilders.remove( existingKey );
+		if ( newPath != null ) {
+			itemBuilders.put( newPath, menuItemBuilder.path( newPath ) );
+		}
 	}
 
 	/**
 	 * @return A newly constructed Menu instance.
 	 */
 	public Menu build() {
+		applyBeforeBuildConsumers();
+
 		Menu root = rootBuilder.build();
 		Menu current = root;
 
@@ -130,7 +406,7 @@ public class PathBasedMenuBuilder
 			builderMap = new TreeMap<>();
 
 			for ( PathBasedMenuItemBuilder itemBuilder : itemBuilders.values() ) {
-				String newPath = determineActualPath( itemBuilder.getPath() );
+				String newPath = determineActualPath( itemBuilder.path );
 
 				builderMap.put( newPath, itemBuilder );
 			}
@@ -154,6 +430,12 @@ public class PathBasedMenuBuilder
 		}
 
 		return root;
+	}
+
+	private void applyBeforeBuildConsumers() {
+		while ( !beforeBuildConsumers.isEmpty() ) {
+			beforeBuildConsumers.removeFirst().accept( this );
+		}
 	}
 
 	private String suffixPath( String path ) {
@@ -235,166 +517,117 @@ public class PathBasedMenuBuilder
 	}
 
 	/**
-	 * Move an item or a subtree of items from path to a destination path
-	 *
-	 * @param path            the source path of the item or the path of a subtree
-	 * @param destinationPath the destination path
-	 * @return The item that was moved or the group it was moved to
-	 * @since 3.0.0
+	 * Represents a single item builder attached to a parent {@link PathBasedMenuBuilder}.
 	 */
-	public PathBasedMenuItemBuilder moveTo( String path, String destinationPath ) {
-		AtomicReference<PathBasedMenuItemBuilder> menuItem = new AtomicReference<>();
-
-		itemBuilders.forEach( ( key, menuItemBuilder ) -> {
-			if ( StringUtils.startsWith( key, path ) ) {
-				String newPath = StringUtils.replaceOnce( menuItemBuilder.getPath(), path, destinationPath );
-				if ( StringUtils.equals( menuItemBuilder.getPath(), path ) ) {
-					menuItem.set( menuItemBuilder );
-					updateItemBuilder( key, menuItemBuilder, newPath );
-				}
-				else {
-					String pathPrefix = StringUtils.removeEnd( path, "/" ) + "/";
-
-					if ( StringUtils.startsWith( menuItemBuilder.getPath(), pathPrefix ) ) {
-						updateItemBuilder( key, menuItemBuilder, newPath );
-					}
-				}
-			}
-			else if ( StringUtils.equals( key, destinationPath ) && menuItem.get() == null && menuItemBuilder.isGroup() ) {
-				menuItem.set( menuItemBuilder );
-			}
-		} );
-
-		if ( menuItem.get() != null ) {
-			return menuItem.get();
-		}
-
-		throw new AcrossException( "Could not find menu item with path: " + path );
-	}
-
-	private void updateItemBuilder( String existingKey,
-	                                PathBasedMenuItemBuilder menuItemBuilder, String newPath ) {
-		itemBuilders.remove( existingKey );
-		itemBuilders.put( newPath, menuItemBuilder.path( newPath ) );
-	}
-
-	/***
-	 * The existing implementation of this method is quite dubious and unpredictable
-	 * so it will be removed in a future release
-	 * Consider using {@link #moveTo(String, String)} instead
-	 */
-	@Deprecated
-	public PathBasedMenuBuilder move( String path, String destinationPath ) {
-		Assert.notNull( path, "A valid path must be specified." );
-		Assert.notNull( destinationPath, "Can't move to null destination path" );
-		moves.put( path, destinationPath );
-		return this;
-	}
-
-	/***
-	 * Support for this method will be dropped in a future release due to deprecation of {@link #move(String, String)}
-	 */
-	@Deprecated
-	public PathBasedMenuBuilder undoMove( String path ) {
-		moves.remove( path );
-		return this;
-	}
-
-	public static class PathBasedMenuItemBuilder implements Comparable<PathBasedMenuItemBuilder>
+	@Accessors(fluent = true)
+	public final static class PathBasedMenuItemBuilder implements Comparable<PathBasedMenuItemBuilder>
 	{
 		private final PathBasedMenuBuilder menuBuilder;
+		private final Map<String, Object> attributes = new HashMap<>();
+		private final boolean optional;
+
+		private boolean disabled;
+
+		@Setter(AccessLevel.PRIVATE)
 		private String path;
 
+		/**
+		 * -- SETTER --
+		 * Set the order of this menu item.
+		 * Setting a {@code null} value (default) will ensure default ordering is applied.
+		 */
+		@Setter
 		private Integer order;
-		private boolean group, disabled;
-		private String title, url;
 
-		private Map<String, Object> attributes = new HashMap<>();
+		/**
+		 * -- SETTER --
+		 * Set the 'group' flag on the menu item.
+		 */
+		@Setter
+		private boolean group;
 
-		PathBasedMenuItemBuilder( String path, PathBasedMenuBuilder menuBuilder ) {
+		/**
+		 * -- SETTER --
+		 * Set the title for this menu item.
+		 */
+		@Setter
+		private String title;
+
+		/**
+		 * -- SETTER --
+		 * Set the url for this menu item.
+		 */
+		@Setter
+		private String url;
+
+		private PathBasedMenuItemBuilder( String path, PathBasedMenuBuilder menuBuilder, boolean optional ) {
 			this.path = path;
 			this.menuBuilder = menuBuilder;
+			this.optional = optional;
 		}
 
-		public String getPath() {
-			return path;
-		}
-
-		private PathBasedMenuItemBuilder path( String path ) {
-			this.path = path;
-			return this;
-		}
-
-		public String getTitle() {
-			return title;
-		}
-
-		public Integer getOrder() {
-			return order;
-		}
-
-		public boolean isGroup() {
-			return group;
-		}
-
-		public boolean isDisabled() {
-			return disabled;
-		}
-
-		public PathBasedMenuItemBuilder title( String title ) {
-			this.title = title;
-			return this;
-		}
-
-		public String getUrl() {
-			return url;
-		}
-
-		public PathBasedMenuItemBuilder url( String url ) {
-			this.url = url;
-			return this;
-		}
-
-		public PathBasedMenuItemBuilder group( boolean isGroup ) {
-			this.group = isGroup;
-			return this;
-		}
-
-		public PathBasedMenuItemBuilder order( int order ) {
-			this.order = order;
-			return this;
-		}
-
-		public PathBasedMenuItemBuilder clearOrder() {
-			this.order = null;
-			return this;
-		}
-
+		/**
+		 * Flag this menu item as disabled.
+		 *
+		 * @return current item builder
+		 */
 		public PathBasedMenuItemBuilder disable() {
 			this.disabled = true;
 			return this;
 		}
 
+		/**
+		 * Flag this menu item as enabled.
+		 *
+		 * @return current item builder
+		 */
 		public PathBasedMenuItemBuilder enable() {
 			this.disabled = false;
 			return this;
 		}
 
+		/**
+		 * Flag this menu item as disabled or enabled.
+		 *
+		 * @param status disabled or not
+		 * @return current item builder
+		 */
 		public PathBasedMenuItemBuilder disable( boolean status ) {
 			this.disabled = status;
 			return this;
 		}
 
+		/**
+		 * Flag this menu item as disabled or enabled.
+		 *
+		 * @param status enabled or not
+		 * @return current item builder
+		 */
 		public PathBasedMenuItemBuilder enable( boolean status ) {
 			this.disabled = !status;
 			return this;
 		}
 
+		/**
+		 * Add a single attribute to this menu item.
+		 *
+		 * @param key   attribute key
+		 * @param value attribute value
+		 * @return current item builder
+		 */
 		public PathBasedMenuItemBuilder attribute( String key, Object value ) {
 			attributes.put( key, value );
 			return this;
 		}
 
+		/**
+		 * Add one or more option attributes to this menu item.
+		 * An option attribute is an attribute where the key is identical to the value.
+		 * For every argument X, an attribute with key X and value X will be added.
+		 *
+		 * @param options to add
+		 * @return current item builder
+		 */
 		public PathBasedMenuItemBuilder options( String... options ) {
 			for ( String option : options ) {
 				attributes.put( option, option );
@@ -402,6 +635,12 @@ public class PathBasedMenuBuilder
 			return this;
 		}
 
+		/**
+		 * Remove the attributes with the given keys.
+		 *
+		 * @param keys of the attributes to remove
+		 * @return current item builder
+		 */
 		public PathBasedMenuItemBuilder removeAttributes( String... keys ) {
 			for ( String key : keys ) {
 				attributes.remove( key );
@@ -410,23 +649,75 @@ public class PathBasedMenuBuilder
 		}
 
 		/**
-		 * Add prefix strings on which this menu item will match in case a RequestMenuSelector
-		 * is being used.  If the request starts with any of these prefixes, this menu item will be selected.
+		 * Add prefix strings on which this menu item will match in case a {@link RequestMenuSelector} is being used.
+		 * If the request starts with any of these prefixes, this menu item will be selected.
 		 * <p>
-		 * These values only apply if the selector supports it, and currently only RequestMenuSelector does so.</p>
+		 * These values only apply if the selector supports it. This is usually the case for menus being built
+		 * through the {@link MenuFactory} using a {@link RequestMenuBuilder} behind the scened.</p>
 		 *
-		 * @param matchers One or more prefix strings.
+		 * @param matchers one or more prefix strings
 		 * @see com.foreach.across.modules.web.menu.RequestMenuSelector
 		 */
-		public void matchRequests( String... matchers ) {
+		public PathBasedMenuItemBuilder matchRequests( String... matchers ) {
 			attributes.put( RequestMenuSelector.ATTRIBUTE_MATCHERS, Arrays.asList( matchers ) );
+			return this;
 		}
 
+		/**
+		 * Remove this item. Optionally removing all other items with this path as prefix.
+		 * This method returns the menu builder that this item belonged to, destroying the item builder.
+		 *
+		 * @param removeAllItemsWithPrefix true if all other items having this prefix should also be removed
+		 * @return menu builder
+		 */
+		public PathBasedMenuBuilder remove( boolean removeAllItemsWithPrefix ) {
+			if ( !optional ) {
+				menuBuilder.updateOrRemoveItems( path, null, removeAllItemsWithPrefix );
+			}
+			return and();
+		}
+
+		/**
+		 * Change the path of this menu item, as well as all other items that have the current path as a prefix.
+		 * This path change will happen immediately and after this call a new item can be created on the previous path.
+		 * <p/>
+		 * If you only want to change the path of the current item but not all other items starting with this path,
+		 * use {@code changePathTo("new path", false)}.
+		 *
+		 * @param newPath new path that should be used
+		 * @return current item builder
+		 * @see #changePathTo(String, boolean)
+		 */
+		public PathBasedMenuItemBuilder changePathTo( @NonNull String newPath ) {
+			return changePathTo( newPath, true );
+		}
+
+		/**
+		 * Change the path of this menu item, optionally changing other items that have the current path as a prefix.
+		 * This path change will happen immediately and after this call a new item can be created on the previous path.
+		 *
+		 * @param newPath                   new path that should be used
+		 * @param replaceAllItemsWithPrefix false if only the current item should have its path changed
+		 * @return current item builder
+		 * @see #changePathTo(String, boolean)
+		 */
+		public PathBasedMenuItemBuilder changePathTo( @NonNull String newPath, boolean replaceAllItemsWithPrefix ) {
+			if ( !optional ) {
+				menuBuilder.updateOrRemoveItems( path, newPath, replaceAllItemsWithPrefix );
+			}
+			return this;
+		}
+
+		/**
+		 * Go up a level, switch from the item builder back to the menu builder.
+		 *
+		 * @return menu builder this item belongs to
+		 */
 		public PathBasedMenuBuilder and() {
 			return menuBuilder;
 		}
 
-		protected Menu build() {
+		private Menu build() {
 			Menu menu = new Menu( path == null ? "" : path, title );
 			menu.setUrl( url );
 
@@ -451,12 +742,7 @@ public class PathBasedMenuBuilder
 			}
 
 			PathBasedMenuItemBuilder that = (PathBasedMenuItemBuilder) o;
-
-			if ( path != null ? !path.equals( that.path ) : that.path != null ) {
-				return false;
-			}
-
-			return true;
+			return path != null ? path.equals( that.path ) : that.path == null;
 		}
 
 		@Override
@@ -466,7 +752,7 @@ public class PathBasedMenuBuilder
 
 		@Override
 		public int compareTo( PathBasedMenuItemBuilder o ) {
-			return getPath().compareTo( o.getPath() );
+			return path.compareTo( o.path );
 		}
 
 		@Override
