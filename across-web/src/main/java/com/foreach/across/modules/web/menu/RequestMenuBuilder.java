@@ -48,7 +48,7 @@ public class RequestMenuBuilder<T extends Menu, E extends BuildMenuEvent<T>> imp
 
 	public E buildEvent( T menu ) {
 		E e = createEvent( menu );
-		e.setSelector( new RequestMenuSelector( request ) );
+		e.setMenuSelector( new RequestMenuSelector( request ) );
 		return e;
 	}
 

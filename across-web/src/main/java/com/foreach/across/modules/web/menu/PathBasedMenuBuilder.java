@@ -46,6 +46,8 @@ import java.util.function.Consumer;
  * <li>/my-group/item-2</li>
  * <li>/my-other-group/single-item</li>
  * </ol>
+ * </p>
+ * <p>
  * or in code:
  * <pre>{@code
  * builder.item( "/my-group/item-1" ).and()
@@ -58,7 +60,7 @@ import java.util.function.Consumer;
  * }</pre>
  * When building the {@link Menu} this will result in the following hierarchy:
  * <pre>{@code
- * <ROOT>
+ * ROOT
  *   + /my-group
  *   |   + /my-group/item-1
  *   |   + /my-group/item-2
@@ -78,6 +80,13 @@ import java.util.function.Consumer;
  * <h4>Order and sorting</h4>
  * <p>A {@code Menu} item can have an order specified which can be used to sort the {@code Menu}. Sorting a menu is usually done externally,
  * the {@link PathBasedMenuBuilder} creates a {@code Menu} with the items ordered according to their path value. You can see this in the above example.</p>
+ * <p>You can manually set a {@code Comparator} that should be used for sorting a menu. You can so do per item, in which case the comparator
+ * will be used only for the children of that particular item. Depending on how you register it, it will apply for all sub-trees of a menu item.</p>
+ * <p>If you want to use a different {@code Comparator} for the entire menu, you must register it on the root item:
+ * <pre>{@code
+ * builder.root( "/root" ).comparator( myComparator, true );
+ * }</pre>
+ * </p>
  * <h4>Group items</h4>
  * <p>
  * A single item can also be flagged as a group (this sets the value of {@link Menu#isGroup()}. This property however has nothing to do with
@@ -488,6 +497,7 @@ public class PathBasedMenuBuilder
 	 */
 	public void merge( Menu menu, boolean ignoreRoot ) {
 		Menu newMenu = build();
+		newMenu.setName( menu.getName() );
 		menu.merge( newMenu, ignoreRoot );
 	}
 
@@ -527,6 +537,8 @@ public class PathBasedMenuBuilder
 		private final boolean optional;
 
 		private boolean disabled;
+		private Comparator<Menu> comparator;
+		private boolean inheritableComparator;
 
 		@Setter(AccessLevel.PRIVATE)
 		private String path;
@@ -564,6 +576,23 @@ public class PathBasedMenuBuilder
 			this.path = path;
 			this.menuBuilder = menuBuilder;
 			this.optional = optional;
+		}
+
+		/**
+		 * Set the comparator to be used when sorting the children of this menu item.
+		 * If the comparator is inheritable, it will also be used for the sub-menus in the resulting tree,
+		 * unless they have another comparator set explicitly.
+		 * <p/>
+		 * Note that depending on the custom comparator you set, the value of {@link #order(Integer)} might be ignored.
+		 *
+		 * @param comparator  to use
+		 * @param inheritable should the comparator also apply to any resulting sub-menus of this item
+		 * @return current builder
+		 */
+		public PathBasedMenuItemBuilder comparator( Comparator<Menu> comparator, boolean inheritable ) {
+			this.comparator = comparator;
+			this.inheritableComparator = inheritable;
+			return this;
 		}
 
 		/**
@@ -723,6 +752,10 @@ public class PathBasedMenuBuilder
 
 			if ( order != null ) {
 				menu.setOrder( order );
+			}
+
+			if ( comparator != null ) {
+				menu.setComparator( comparator, inheritableComparator );
 			}
 
 			menu.setGroup( group );

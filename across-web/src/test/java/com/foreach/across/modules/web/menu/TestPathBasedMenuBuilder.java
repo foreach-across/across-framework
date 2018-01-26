@@ -22,6 +22,7 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +64,6 @@ public class TestPathBasedMenuBuilder
 	@Test
 	public void itemBuilder() {
 		builder.item( "child", "Child", "url" );
-
 		Menu menu = builder.build();
 
 		assertEquals( 1, menu.size() );
@@ -72,6 +72,40 @@ public class TestPathBasedMenuBuilder
 		menu = builder.item( "child" ).title( "test" ).and().build();
 		assertEquals( 1, menu.size() );
 		verify( menu.getFirstItem(), "child", "test", "url" );
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void comparatorOnItems() {
+		Comparator<Menu> comparator = mock( Comparator.class );
+		Comparator<Menu> otherComparator = mock( Comparator.class );
+
+		Menu menu = builder.item( "no-comp" ).and()
+		                   .item( "comp" ).comparator( comparator, true ).and()
+		                   .item( "comp/sub" ).and()
+		                   .item( "comp/sub2" ).comparator( otherComparator, false ).and()
+		                   .build();
+
+		assertThat( menu.getItemWithPath( "no-comp" ) )
+				.satisfies( item -> {
+					assertThat( item.getComparator() ).isNull();
+					assertThat( item.isComparatorInheritable() ).isFalse();
+				} );
+		assertThat( menu.getItemWithPath( "comp" ) )
+				.satisfies( item -> {
+					assertThat( item.getComparator() ).isSameAs( comparator );
+					assertThat( item.isComparatorInheritable() ).isTrue();
+				} );
+		assertThat( menu.getItemWithPath( "comp/sub" ) )
+				.satisfies( item -> {
+					assertThat( item.getComparator() ).isNull();
+					assertThat( item.isComparatorInheritable() ).isFalse();
+				} );
+		assertThat( menu.getItemWithPath( "comp/sub2" ) )
+				.satisfies( item -> {
+					assertThat( item.getComparator() ).isSameAs( otherComparator );
+					assertThat( item.isComparatorInheritable() ).isFalse();
+				} );
 	}
 
 	@Test
@@ -595,7 +629,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void mergeIntoExisting() {
+	public void mergeIntoExistingWithoutRoot() {
 		Menu existing = new Menu( "one" );
 		existing.addItem( "two" ).addItem( "three" );
 
@@ -605,6 +639,23 @@ public class TestPathBasedMenuBuilder
 		assertEquals( "two", existing.getFirstItem().getPath() );
 		assertEquals( "three", existing.getFirstItem().getFirstItem().getPath() );
 		assertEquals( "four", existing.getFirstItem().getItems().get( 1 ).getPath() );
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void mergeIntoExistingWithRoot() {
+		Menu existing = new Menu( "one" );
+		assertThat( existing.getName() ).isEqualTo( "one" );
+		assertThat( existing.getPath() ).isEqualTo( "one" );
+
+		Comparator<Menu> comparator = mock( Comparator.class );
+		builder.root( "/my-root" ).title( "My title" ).comparator( comparator, true ).and().merge( existing );
+
+		assertThat( existing.getName() ).isEqualTo( "one" );
+		assertThat( existing.getTitle() ).isEqualTo( "My title" );
+		assertThat( existing.getPath() ).isEqualTo( "/my-root" );
+		assertThat( existing.getComparator() ).isSameAs( comparator );
+		assertThat( existing.isComparatorInheritable() ).isTrue();
 	}
 
 	private Menu verify( Menu item, String path, String title, String url ) {
