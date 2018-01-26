@@ -69,7 +69,7 @@ public class ConversionServiceConfiguration
 				AcrossWebModule.CONVERSION_SERVICE_BEAN );
 
 		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-		conversionService.addConverter( new StringToDateConverter() );
+		conversionService.addConverter( new StringToDateConverter( conversionService ) );
 
 		return conversionService;
 	}

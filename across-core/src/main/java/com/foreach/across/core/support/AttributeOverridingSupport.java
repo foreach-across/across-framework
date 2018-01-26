@@ -77,7 +77,7 @@ public class AttributeOverridingSupport extends AttributeSupport
 	}
 
 	@Override
-	public <Y> Y getAttribute( String attributeName, Class<Y> attributeType ) {
+	public <Y, V extends Y> V getAttribute( String attributeName, Class<Y> attributeType ) {
 		if ( parent != null ) {
 			if ( super.hasAttribute( attributeName ) ) {
 				return super.getAttribute( attributeName, attributeType );

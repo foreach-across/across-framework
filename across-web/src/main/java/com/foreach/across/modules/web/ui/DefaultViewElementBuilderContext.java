@@ -45,12 +45,20 @@ import java.util.stream.Stream;
  * see {@link #registerMissingDefaultAttributes(ViewElementBuilderContext)}</p>.  See also
  * {@link #DefaultViewElementBuilderContext(boolean)} for sub class implementations that do not want the default
  * attributes set.
+ * <p/>
+ * When there is no web context, this implementation will use default fallback implementations for the public signature
+ * methods of {@link ViewElementBuilderContext}. Ensuring that the calls themselves will not result in NPEs being thrown.
  *
  * @author Arne Vandamme
  * @see IteratorViewElementBuilderContext
  */
+@SuppressWarnings("WeakerAccess")
 public class DefaultViewElementBuilderContext extends AttributeOverridingSupport implements ViewElementBuilderContext
 {
+	public static final LocalizedTextResolver FALLBACK_TEXT_RESOLVER = new MessageCodeSupportingLocalizedTextResolver( null );
+	public static final WebAppLinkBuilder FALLBACK_LINK_BUILDER = new FallbackWebAppLinkBuilder();
+	public static final MessageSource FALLBACK_MESSAGE_SOURCE = new FallbackMessageSource();
+
 	public DefaultViewElementBuilderContext() {
 		this( true );
 	}
@@ -103,7 +111,8 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 	}
 
 	public WebAppLinkBuilder getWebAppLinkBuilder() {
-		return getAttribute( WebAppLinkBuilder.class );
+		WebAppLinkBuilder linkBuilder = getAttribute( WebAppLinkBuilder.class );
+		return linkBuilder != null ? linkBuilder : FALLBACK_LINK_BUILDER;
 	}
 
 	/**
@@ -116,7 +125,8 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 	}
 
 	public MessageSource getMessageSource() {
-		return getAttribute( MessageSource.class );
+		MessageSource messageSource = getAttribute( MessageSource.class );
+		return messageSource != null ? messageSource : FALLBACK_MESSAGE_SOURCE;
 	}
 
 	/**
@@ -129,7 +139,8 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 	}
 
 	public LocalizedTextResolver getLocalizedTextResolver() {
-		return getAttribute( LocalizedTextResolver.class );
+		LocalizedTextResolver textResolver = getAttribute( LocalizedTextResolver.class );
+		return textResolver != null ? textResolver : FALLBACK_TEXT_RESOLVER;
 	}
 
 	@Override
@@ -215,11 +226,12 @@ public class DefaultViewElementBuilderContext extends AttributeOverridingSupport
 	 * <li>{@link WebResourceRegistry}</li>
 	 * <li>{@link WebAppLinkBuilder}</li>
 	 * <li>{@link MessageSource}</li>
-	 * <li>{@link LocalizedTextResolver}: always created if none found, either using the {@link MessageSource}, either</li>
+	 * <li>{@link LocalizedTextResolver}: always created if none found, either using the {@link MessageSource} or as as default</li>
 	 * </ul>
 	 *
 	 * @param builderContext to add the attributes to
 	 */
+	@SuppressWarnings({ "unchecked", "RedundantCast" })
 	public static void registerMissingDefaultAttributes( ViewElementBuilderContext builderContext ) {
 		ViewElementBuilderContext
 				.retrieveGlobalBuilderContext()
