@@ -17,7 +17,6 @@
 package com.foreach.across.modules.web.menu;
 
 import com.foreach.across.modules.web.events.BuildMenuEvent;
-import com.foreach.across.modules.web.events.BuildMenuFinishedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +124,10 @@ public class MenuFactory
 		buildMenuEvent.builder().merge( menu );
 
 		menu.sort();
-		menu.select( buildMenuEvent.getSelector() );
+		menu.select( buildMenuEvent.getMenuSelector() );
+
+		buildMenuEvent.getMenuPostProcessors()
+		              .forEach( pp -> pp.accept( menu ) );
 
 		return menu;
 	}
@@ -146,8 +148,7 @@ public class MenuFactory
 		return defaultMenuStore;
 	}
 
-	private <T extends Menu, E extends BuildMenuEvent<T>, B extends MenuBuilder<T, E>> T build( String name,
-	                                                                                            Class<T> menuType ) {
+	private <T extends Menu, E extends BuildMenuEvent<T>, B extends MenuBuilder<T, E>> T build( String name, Class<T> menuType ) {
 		B builder = (B) getMenuBuilder( menuType );
 
 		T menu = builder.build();
@@ -161,9 +162,10 @@ public class MenuFactory
 
 		// Always sort a menu after the initial build
 		menu.sort();
-		menu.select( buildMenuEvent.getSelector() );
+		menu.select( buildMenuEvent.getMenuSelector() );
 
-		publisher.publishEvent( new BuildMenuFinishedEvent( menu, buildMenuEvent.getSelector() ) );
+		buildMenuEvent.getMenuPostProcessors()
+		              .forEach( pp -> pp.accept( menu ) );
 
 		return menu;
 	}
