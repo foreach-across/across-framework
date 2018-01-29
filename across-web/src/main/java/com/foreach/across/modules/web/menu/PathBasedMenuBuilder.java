@@ -31,14 +31,13 @@ import java.util.function.Consumer;
 /**
  * A PathBasedMenuBuilder can be used to define menu items in a non-hierarchical way.
  * Items are registered using a unique path. Every item with a path that is also the prefix
- * of another item's path, will become the parent item of those other items, and the path
- * of those items will be stripped of the prefix in the final menu.
+ * of another item's path, will become the parent item of those other items.
  * <p/>
- * Every item with a path that is also the prefix of other items, will result in a sub-tree being created.
+ * This will result in a sub-tree being created.
  * The <strong>/</strong> (forward slash) is the path separator for prefix candidates.
  * <h4>Example</h4>
  * <p>
- * Suppose you register the following menu items using {@link #item(String)}:
+ * Suppose you register the following menu items in order:
  * <ol>
  * <li>/my-group/item-1</li>
  * <li>/my-group</li>

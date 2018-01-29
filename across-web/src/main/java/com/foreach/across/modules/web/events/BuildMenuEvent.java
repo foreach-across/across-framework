@@ -200,7 +200,14 @@ public class BuildMenuEvent<T extends Menu> implements NamedAcrossEvent, Resolva
 		menuPostProcessors.add( postProcessor );
 	}
 
-	protected T getMenu() {
+	/**
+	 * The menu item that is being built. Usually you do not want to make direct changes to this menu
+	 * but use the {@link #builder()} instead. If you want to make modifications after the builder
+	 * has been applied, register a custom post-processor using {@link #addMenuPostProcessor(Consumer)}.
+	 *
+	 * @return menu being built - never {@code null}
+	 */
+	public T getMenu() {
 		return menu;
 	}
 }
