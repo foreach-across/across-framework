@@ -20,6 +20,7 @@ package com.foreach.across.modules.web.ui;
  *
  * @author Arne Vandamme
  */
+@FunctionalInterface
 public interface ViewElementPostProcessor<T extends ViewElement>
 {
 	void postProcess( ViewElementBuilderContext builderContext, T element );

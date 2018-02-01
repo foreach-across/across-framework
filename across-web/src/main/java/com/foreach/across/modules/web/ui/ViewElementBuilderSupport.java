@@ -21,6 +21,7 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Base class for a {@link ViewElementBuilder} of a {@link MutableViewElement}.  Provides defaults functionality
@@ -44,6 +45,20 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 	@SuppressWarnings("unchecked")
 	public SELF customTemplate( String template ) {
 		this.customTemplate = template;
+		return (SELF) this;
+	}
+
+	/**
+	 * Execute a consumer that applies some configuration to this builder.
+	 * Useful if you do not want to break a fluent api style of coding.
+	 * <p/>
+	 * The consumer is called immediately if it is not {@code null}.
+	 */
+	@SuppressWarnings("unchecked")
+	public SELF configure( Consumer<SELF> consumer ) {
+		if ( consumer != null ) {
+			consumer.accept( (SELF) this );
+		}
 		return (SELF) this;
 	}
 
@@ -135,9 +150,11 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 		public static Collection<ElementOrBuilder> wrap( Iterable<?> viewElements ) {
 			List<ElementOrBuilder> wrapped = new ArrayList<>();
 			for ( Object viewElement : viewElements ) {
-				Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder,
-				               "viewElement should be an instance of ViewElement of ViewElementBuilder" );
-				wrapped.add( new ElementOrBuilder( viewElement ) );
+				if ( viewElement != null ) {
+					Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder,
+					               "viewElement should be an instance of ViewElement of ViewElementBuilder" );
+					wrapped.add( new ElementOrBuilder( viewElement ) );
+				}
 			}
 
 			return wrapped;
@@ -146,7 +163,9 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 		public static Collection<ElementOrBuilder> wrap( ViewElementBuilder... viewElementBuilders ) {
 			List<ElementOrBuilder> wrapped = new ArrayList<>( viewElementBuilders.length );
 			for ( ViewElementBuilder builder : viewElementBuilders ) {
-				wrapped.add( new ElementOrBuilder( builder ) );
+				if ( builder != null ) {
+					wrapped.add( new ElementOrBuilder( builder ) );
+				}
 			}
 
 			return wrapped;

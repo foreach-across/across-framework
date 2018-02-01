@@ -15,11 +15,15 @@
  */
 package com.foreach.across.modules.web.ui.elements.builder;
 
+import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderFactory;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.test.support.AbstractViewElementBuilderTest;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -35,6 +39,36 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 		build();
 
 		assertFalse( element.hasChildren() );
+	}
+
+	@Test
+	public void nullElementsAreSimplyIgnored() {
+		builder.add( (ViewElement) null )
+		       .add( (ViewElementBuilder) null )
+		       .add( null, (ViewElement) null )
+		       .addAll( Arrays.asList( null, null ) )
+		       .addFirst( (ViewElement) null )
+		       .addFirst( (ViewElementBuilder) null )
+		       .configure( null )
+		       .configure( container -> container.add( (ViewElement) null ) );
+
+		build();
+
+		assertFalse( element.hasChildren() );
+	}
+
+	@Test
+	public void configure() {
+		TextViewElement textOne = new TextViewElement( "textOne", "text 1" );
+		TextViewElement textTwo = new TextViewElement( "textTwo", "text 2" );
+
+		builder.configure( node -> node.tagName( "b" ).add( textTwo ) ).add( textOne );
+		build();
+
+		assertEquals( 2, element.getChildren().size() );
+		assertSame( textTwo, element.getChildren().get( 0 ) );
+		assertSame( textOne, element.getChildren().get( 1 ) );
+		assertEquals( "b", element.getTagName() );
 	}
 
 	@Test

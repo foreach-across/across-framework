@@ -21,6 +21,17 @@ import org.junit.Test;
 public class TestTextViewElement extends AbstractViewElementTemplateTest
 {
 	@Test
+	public void emptyText() {
+		ContainerViewElement container = new ContainerViewElement();
+		container.addChild( TextViewElement.text( "start" ) );
+		container.addChild( TextViewElement.text( null ) );
+		container.addChild( TextViewElement.html( null ) );
+		container.addChild( TextViewElement.text( "stop" ) );
+
+		renderAndExpect( container, "startstop" );
+	}
+
+	@Test
 	public void nonHtmlText() {
 		renderAndExpect(
 				new TextViewElement( "<strong>simple</strong> text" ),

@@ -24,6 +24,7 @@ import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUt
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupport<ContainerViewElement, ContainerViewElementBuilder>
@@ -33,13 +34,13 @@ public class ContainerViewElementBuilder extends ContainerViewElementBuilderSupp
 
 	@Override
 	public ContainerViewElementBuilder addFirst( ViewElement... viewElements ) {
-		Stream.of( viewElements ).forEach( e -> children.add( 0, ElementOrBuilder.wrap( e ) ) );
+		Stream.of( viewElements ).filter( Objects::nonNull ).forEach( e -> children.add( 0, ElementOrBuilder.wrap( e ) ) );
 		return this;
 	}
 
 	@Override
 	public ContainerViewElementBuilder addFirst( ViewElementBuilder... viewElements ) {
-		Stream.of( viewElements ).forEach( e -> children.add( 0, ElementOrBuilder.wrap( e ) ) );
+		Stream.of( viewElements ).filter( Objects::nonNull ).forEach( e -> children.add( 0, ElementOrBuilder.wrap( e ) ) );
 		return this;
 	}
 

@@ -19,6 +19,7 @@ import com.foreach.across.modules.web.ui.*;
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * @author Arne Vandamme
@@ -72,6 +73,11 @@ public class ViewElementGeneratorBuilder<ITEM, VIEW_ELEMENT extends ViewElement>
 	@Override
 	public ViewElementGeneratorBuilder<ITEM, VIEW_ELEMENT> customTemplate( String template ) {
 		return super.customTemplate( template );
+	}
+
+	@Override
+	public ViewElementGeneratorBuilder<ITEM, VIEW_ELEMENT> configure( Consumer<ViewElementGeneratorBuilder<ITEM, VIEW_ELEMENT>> consumer ) {
+		return super.configure( consumer );
 	}
 
 	@Override
