@@ -121,7 +121,6 @@ public class TestThymeleafModelBuilder
 		when( modelFactory.createOpenElementTag( "div", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false ) )
 				.thenReturn( openElementTag );
 		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
-		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
 
 		modelBuilder.addOpenElement( "div" );
 		verify( modelFactory, never() ).createOpenElementTag( anyString() );

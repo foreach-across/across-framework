@@ -82,7 +82,6 @@ public class TestPrefixingSupportingWebAppLinkBuilder
 	@Test
 	public void relativePathWithoutEncode() {
 		when( pathResolver.path( "/test-link" ) ).thenReturn( "/prefixed" );
-		when( response.encodeURL( "/ctx/prefixed" ) ).thenReturn( "encoded" );
 
 		assertEquals( "/ctx/prefixed", linkBuilder.buildLink( "/test-link", false ) );
 	}
