@@ -31,13 +31,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * TODO: original bootProperties have been changed to boot.properties for Spring Boot 2 support - check behaviour
+ *
  * @author Arne Vandamme
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @SpringBootTest(classes = TestSpringBootProperties.Config.class, properties = {
-		"bootProperties.directValue=parent",
-		"bootProperties.yaml.two=parentTwo"
+		"boot.properties.directValue=parent",
+		"boot.properties.yaml.two=parentTwo"
 })
 @ActiveProfiles("props")
 public class TestSpringBootProperties
@@ -59,7 +61,7 @@ public class TestSpringBootProperties
 		@Bean
 		public SpringBootPropertiesModule springBootPropertiesModule() {
 			SpringBootPropertiesModule springBootPropertiesModule = new SpringBootPropertiesModule();
-			springBootPropertiesModule.setProperty( "bootProperties.directValue", "code" );
+			springBootPropertiesModule.setProperty( "boot.properties.directValue", "code" );
 			return springBootPropertiesModule;
 		}
 	}

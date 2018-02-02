@@ -78,7 +78,7 @@ public class TestMethodValidation
 	public void methodFailsIfValueNull() {
 		assertThatExceptionOfType( ConstraintViolationException.class )
 				.isThrownBy( () -> myService.validateArguments( 56, null ) )
-				.satisfies( exception -> hasConstraintMessage( exception, "may not be null" ) );
+				.satisfies( exception -> hasConstraintMessage( exception, "must not be null" ) );
 	}
 
 	private void hasConstraintMessage( ConstraintViolationException exception, String message ) {

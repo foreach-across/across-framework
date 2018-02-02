@@ -29,6 +29,7 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
 import org.junit.Test;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -115,7 +116,7 @@ public class TestAcrossContextShutdown
 		try {
 			return context.getBean( moduleName + "ExposedBean" ).toString();
 		}
-		catch ( IllegalStateException ise ) {
+		catch ( BeanCreationException | IllegalStateException ise ) {
 			return null;
 		}
 	}
@@ -124,7 +125,7 @@ public class TestAcrossContextShutdown
 		try {
 			return registry.getBean( moduleName + "ExposedBean" ).toString();
 		}
-		catch ( IllegalStateException ise ) {
+		catch ( BeanCreationException | IllegalStateException ise ) {
 			return null;
 		}
 	}

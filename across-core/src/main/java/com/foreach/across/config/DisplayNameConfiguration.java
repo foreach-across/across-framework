@@ -55,7 +55,7 @@ class DisplayNameConfiguration implements AcrossContextConfigurer, ImportAware, 
 		                                            .getOrDefault( "displayName", "" );
 
 		if ( StringUtils.isEmpty( displayName ) ) {
-			displayName = environment.getProperty( "across.display-name" );
+			displayName = environment.getProperty( "across.displayName" );
 		}
 
 		if ( StringUtils.isEmpty( displayName ) ) {
