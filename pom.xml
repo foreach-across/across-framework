@@ -235,6 +235,11 @@
 				<artifactId>javax.servlet.jsp-api</artifactId>
 				<version>${jsp-api.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>xmlunit</groupId>
+				<artifactId>xmlunit</artifactId>
+				<version>1.6</version>
+			</dependency>
 
 			<!-- Specific versions overriding platform-->
 			<dependency>
