@@ -16,14 +16,12 @@
 package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
+import org.springframework.boot.web.server.WebServerFactory;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -39,12 +37,11 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
  */
 @ConditionalOnWebApplication
 @Configuration
-@AutoConfigureAfter(EmbeddedServletContainerAutoConfiguration.class)
-@Import({ DispatcherServletAutoConfiguration.class, EmbeddedServletContainerAutoConfiguration.class, ServerPropertiesAutoConfiguration.class })
+@Import({ DispatcherServletAutoConfiguration.class, ServletWebServerFactoryAutoConfiguration.class })
 public class AcrossWebApplicationAutoConfiguration
 {
 	@Bean
-	@ConditionalOnBean({ EmbeddedServletContainerFactory.class, SpringBootServletInitializer.class })
+	@ConditionalOnBean({ WebServerFactory.class, SpringBootServletInitializer.class })
 	public static AcrossServletContextInitializer embeddedAcrossServletContextInitializer( ConfigurableWebApplicationContext webApplicationContext ) {
 		return new AcrossServletContextInitializer( webApplicationContext );
 	}

@@ -19,10 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.web.servlet.ErrorPage;
-import org.springframework.boot.web.servlet.ErrorPageRegistrar;
-import org.springframework.boot.web.servlet.ErrorPageRegistry;
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.server.ErrorPageRegistrar;
+import org.springframework.boot.web.server.ErrorPageRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -51,7 +50,7 @@ public class AcrossWebModuleAutoConfiguration
 	}
 
 	/**
-	 * {@link EmbeddedServletContainerCustomizer} that configures the container's error
+	 * {@link org.springframework.boot.web.server.WebServerFactoryCustomizer} that configures the container's error
 	 * pages.
 	 */
 	private static class ErrorPageCustomizer implements ErrorPageRegistrar, Ordered
@@ -64,7 +63,7 @@ public class AcrossWebModuleAutoConfiguration
 
 		@Override
 		public void registerErrorPages( ErrorPageRegistry errorPageRegistry ) {
-			ErrorPage errorPage = new ErrorPage( this.properties.getServletPrefix() + this.properties.getError().getPath() );
+			ErrorPage errorPage = new ErrorPage( this.properties.getServlet().getServletPrefix() + this.properties.getError().getPath() );
 			errorPageRegistry.addErrorPages( errorPage );
 		}
 

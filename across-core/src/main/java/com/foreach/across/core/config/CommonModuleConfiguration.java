@@ -16,7 +16,6 @@
 package com.foreach.across.core.config;
 
 import org.springframework.boot.autoconfigure.condition.*;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,10 +65,8 @@ public class CommonModuleConfiguration
 		}
 
 		private static boolean determineProxyTargetClass( Environment environment ) {
-			RelaxedPropertyResolver resolver = new RelaxedPropertyResolver( environment,
-			                                                                "spring.aop." );
-			Boolean value = resolver.getProperty( "proxyTargetClass", Boolean.class );
-			return ( value != null ? value : true );
+			Boolean value = environment.getProperty( "spring.aop.proxy-target-class", Boolean.class );
+			return Boolean.TRUE.equals( value );
 		}
 	}
 }

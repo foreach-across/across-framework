@@ -95,11 +95,6 @@ public abstract class AcrossModuleSettings implements EnvironmentAware, Property
 	}
 
 	@Override
-	public <T> Class<T> getPropertyAsClass( String key, Class<T> targetType ) {
-		return environment.getPropertyAsClass( key, targetType );
-	}
-
-	@Override
 	public String getRequiredProperty( String key ) throws IllegalStateException {
 		return environment.getRequiredProperty( key );
 	}

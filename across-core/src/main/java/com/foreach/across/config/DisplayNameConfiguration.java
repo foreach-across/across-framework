@@ -17,7 +17,6 @@ package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
@@ -56,8 +55,7 @@ class DisplayNameConfiguration implements AcrossContextConfigurer, ImportAware, 
 		                                            .getOrDefault( "displayName", "" );
 
 		if ( StringUtils.isEmpty( displayName ) ) {
-			RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver( environment, "across." );
-			displayName = propertyResolver.getProperty( "displayName" );
+			displayName = environment.getProperty( "across.display-name" );
 		}
 
 		if ( StringUtils.isEmpty( displayName ) ) {

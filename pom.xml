@@ -50,12 +50,13 @@
 	<properties>
 		<across.version>3.0.0-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>Brussels-SR6</spring.platform.version>
+		<spring.platform.version>2.0.0.RC1</spring.platform.version>
 		<foreach.common.version>1.1</foreach.common.version>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
 		<thymeleaf-extras.springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras.springsecurity4.version>
 		<thymeleaf-extras.java8time.version>3.0.1.RELEASE</thymeleaf-extras.java8time.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
+		<jsp-api.version>2.3.1</jsp-api.version>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
 	</properties>
 
@@ -221,11 +222,18 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>io.spring.platform</groupId>
-				<artifactId>platform-bom</artifactId>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
 				<version>${spring.platform.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+
+			<!-- Not present in spring-boot-dependencies -->
+			<dependency>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>javax.servlet.jsp-api</artifactId>
+				<version>${jsp-api.version}</version>
 			</dependency>
 
 			<!-- Specific versions overriding platform-->

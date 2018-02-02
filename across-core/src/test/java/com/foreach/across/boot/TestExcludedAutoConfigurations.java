@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfiguration;
+import org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -50,11 +50,11 @@ public class TestExcludedAutoConfigurations
 	public void specifiedAutoConfigurationsAreDisallowed() {
 		AcrossApplicationAutoConfiguration autoConfiguration = AcrossApplicationAutoConfiguration.retrieve( beanFactory, applicationContext.getClassLoader() );
 		assertFalse( autoConfiguration.notExcluded( AopAutoConfiguration.class.getName() ) );
-		assertFalse( autoConfiguration.notExcluded( WebSocketAutoConfiguration.class.getName() ) );
+		assertFalse( autoConfiguration.notExcluded( WebSocketServletAutoConfiguration.class.getName() ) );
 		assertFalse( autoConfiguration.notExcluded( RabbitAutoConfiguration.class.getName() ) );
 	}
 
-	@AcrossApplication(excludeAutoConfigurations = { AopAutoConfiguration.class, WebSocketAutoConfiguration.class, RabbitAutoConfiguration.class })
+	@AcrossApplication(excludeAutoConfigurations = { AopAutoConfiguration.class, WebSocketServletAutoConfiguration.class, RabbitAutoConfiguration.class })
 	@Configuration
 	protected static class SampleApplication
 	{

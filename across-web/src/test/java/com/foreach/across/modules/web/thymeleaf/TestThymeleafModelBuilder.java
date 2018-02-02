@@ -65,7 +65,7 @@ public class TestThymeleafModelBuilder
 	public void before() {
 		when( context.getModelFactory() ).thenReturn( modelFactory );
 		when( modelFactory.createModel() ).thenReturn( model );
-		doAnswer( invocation -> invocation.getArgumentAt( 0, String.class ) )
+		doAnswer( invocation -> invocation.getArgument( 0 ) )
 				.when( attributeConverter ).apply( anyObject() );
 
 		modelBuilder = new ThymeleafModelBuilder( context, registry, htmlIdStore, attributeConverter, new AttributeNameGenerator(), false );
@@ -537,7 +537,7 @@ public class TestThymeleafModelBuilder
 
 		modelBuilder.addOpenElement( "div" );
 		doAnswer( invocation -> {
-			          ThymeleafModelBuilder childBuilder = invocation.getArgumentAt( 1, ThymeleafModelBuilder.class );
+			          ThymeleafModelBuilder childBuilder = invocation.getArgument( 1 );
 			          assertNotSame( modelBuilder, childBuilder );
 			          assertSame( context, childBuilder.getTemplateContext() );
 			          assertSame( childModel, childBuilder.retrieveModel() );

@@ -19,8 +19,8 @@ import com.foreach.across.config.AcrossWebApplicationAutoConfiguration;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
@@ -43,14 +43,14 @@ import java.io.IOException;
 public abstract class AbstractWebIntegrationTest
 {
 	@Autowired
-	protected EmbeddedWebApplicationContext server;
+	protected ServletWebServerApplicationContext server;
 
 	protected RestTemplate template = new RestTemplate();
 	protected String host;
 
 	@Before
 	public void determineHost() {
-		host = "http://localhost:" + server.getEmbeddedServletContainer().getPort();
+		host = "http://localhost:" + server.getWebServer().getPort();
 	}
 
 	protected String url( String relativePath ) {

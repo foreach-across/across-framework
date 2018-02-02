@@ -27,7 +27,7 @@ import com.foreach.across.modules.web.config.AcrossWebModuleDevSettings;
 import com.foreach.across.modules.web.error.AcrossModuleDefaultErrorViewResolver;
 import com.foreach.across.modules.web.menu.Menu;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.validation.Validator;

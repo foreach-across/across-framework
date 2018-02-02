@@ -22,7 +22,7 @@ import com.foreach.across.modules.web.config.CharacterEncodingConfiguration;
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
 import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
 import org.junit.Test;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -45,10 +45,9 @@ public class TestServletContextInitializersWithAbstractAcrossServletInitializer
 {
 	@Test
 	public void allServletContextInitializersShouldBeRegistered() {
-		TomcatEmbeddedServletContainerFactory embeddedServletContainerFactory =
-				new TomcatEmbeddedServletContainerFactory();
+		TomcatServletWebServerFactory embeddedServletContainerFactory = new TomcatServletWebServerFactory();
 		embeddedServletContainerFactory.setPort( 0 );
-		embeddedServletContainerFactory.getEmbeddedServletContainer( new ServletContextInitializer()
+		embeddedServletContainerFactory.getWebServer( new ServletContextInitializer()
 		{
 			@Override
 			public void onStartup( ServletContext servletContext ) throws ServletException {

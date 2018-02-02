@@ -17,7 +17,7 @@ package com.foreach.across.modules.web.config;
 
 import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +34,7 @@ import java.util.Collections;
  * filter in the chain.  It is vital that this filter comes first so the encoding is applied as early as possible.
  * <p>
  * This configuration reuses {@link HttpEncodingAutoConfiguration} and corresponding
- * {@link org.springframework.boot.autoconfigure.web.HttpEncodingProperties}.
+ * {@link org.springframework.boot.autoconfigure.http.HttpEncodingProperties}.
  *
  * @author Arne Vandamme
  * @see HttpEncodingAutoConfiguration
