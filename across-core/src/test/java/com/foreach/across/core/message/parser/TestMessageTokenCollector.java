@@ -36,13 +36,13 @@ public class TestMessageTokenCollector
 	@Test
 	public void singleSimpleIndexedArgument() {
 		assertThat( parse( "{0}" ) )
-				.containsExactly( new IndexedArgument( 0 ) );
+				.containsExactly( new IndexedArgument( 0, null, null ) );
 	}
 
 	@Test
 	public void singleSimpleNamedArgument() {
 		assertThat( parse( "{title}" ) )
-				.containsExactly( new NamedArgument( "title" ) );
+				.containsExactly( new NamedArgument( "title", null, null ) );
 	}
 
 	@Test
@@ -69,8 +69,8 @@ public class TestMessageTokenCollector
 		assertThat( parse( "\\{title}" ) ).containsExactly( new Literal( "{title}" ) );
 		assertThat( parse( "#\\{title}" ) ).containsExactly( new Literal( "#{title}" ) );
 		assertThat( parse( "$\\{title}" ) ).containsExactly( new Literal( "${title}" ) );
-		assertThat( parse( "\\#{title}" ) ).containsExactly( new Literal( "#" ), new NamedArgument( "title" ) );
-		assertThat( parse( "\\${title}" ) ).containsExactly( new Literal( "$" ), new NamedArgument( "title" ) );
+		assertThat( parse( "\\#{title}" ) ).containsExactly( new Literal( "#" ), new NamedArgument( "title", null, null ) );
+		assertThat( parse( "\\${title}" ) ).containsExactly( new Literal( "$" ), new NamedArgument( "title", null, null ) );
 	}
 
 	@Test
@@ -78,9 +78,9 @@ public class TestMessageTokenCollector
 		assertThat( parse( "my message {0} \\${title} \\##{superTitle} \\{ ${expression}" ) )
 				.containsExactly(
 						new Literal( "my message " ),
-						new IndexedArgument( 0 ),
+						new IndexedArgument( 0, null, null ),
 						new Literal( " $" ),
-						new NamedArgument( "title" ),
+						new NamedArgument( "title", null, null ),
 						new Literal( " #" ),
 						new MessageLookup( new String[] { "superTitle" } ),
 						new Literal( " { " ),
@@ -97,7 +97,21 @@ public class TestMessageTokenCollector
 
 	}
 
-	// parse choice format
+	@Test
+	public void argumentParsing() {
+		assertThat( parse( "{0,number}" ) ).containsExactly( new IndexedArgument( 0, "number", null ) );
+		assertThat( parse( "{1, date, dd MMM yyyy}" ) ).containsExactly( new IndexedArgument( 1, "date", "dd MMM yyyy" ) );
+		assertThat( parse( "{0,choice,0#no comments|1#one comment|1<{0} comments}" ) ).containsExactly(
+				new IndexedArgument( 0, "choice", "0#no comments|1#one comment|1<{0} comments" )
+		);
+		assertThat( parse( "{my-number,number}" ) ).containsExactly( new NamedArgument( "my-number", "number", null ) );
+		assertThat( parse( "{user.date, date, dd MMM yyyy}" ) ).containsExactly( new NamedArgument( "user.date", "date", "dd MMM yyyy" ) );
+		assertThat( parse( "{applicationName,choice,0#no comments|1#one comment|1<{0} comments}" ) ).containsExactly(
+				new NamedArgument( "applicationName", "choice", "0#no comments|1#one comment|1<{0} comments" )
+		);
+	}
+
+	// parse expressions inside arguments
 	// parse expression
 	// parse message lookup
 

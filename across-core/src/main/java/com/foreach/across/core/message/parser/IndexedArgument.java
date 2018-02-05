@@ -25,4 +25,6 @@ import lombok.Data;
 class IndexedArgument implements MessageToken
 {
 	private final int index;
+	private final String formatType;
+	private final String formatStyle;
 }

@@ -25,7 +25,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author Arne Vandamme
@@ -39,6 +38,7 @@ public class MessageTokenCollector
 	public static final char START_MESSAGE_LOOKUP = '#';
 	public static final char START_EXPRESSION = '$';
 	public static final char ESCAPE_CHARACTER = '\\';
+	public static final char SEPARATOR = ',';
 
 	@Getter
 	private final List<MessageToken> tokens = new ArrayList<>();
@@ -113,10 +113,9 @@ public class MessageTokenCollector
 	}
 
 	@RequiredArgsConstructor
-	private class ParserContext
+	private abstract class ParserContext
 	{
-		protected final StringBuilder tokenData = new StringBuilder();
-		protected final Function<ParserContext, ? extends MessageToken> tokenFactory;
+		final StringBuilder tokenData = new StringBuilder();
 
 		boolean isEmpty() {
 			return tokenData.length() == 0;
@@ -125,9 +124,11 @@ public class MessageTokenCollector
 		void addToken() {
 			flushPrevious();
 			if ( !isEmpty() ) {
-				tokens.add( tokenFactory.apply( this ) );
+				tokens.add( createToken() );
 			}
 		}
+
+		abstract MessageToken createToken();
 
 		void append( char ch ) {
 			tokenData.append( ch );
@@ -142,7 +143,7 @@ public class MessageTokenCollector
 			return true;
 		}
 
-		protected void flushPrevious() {
+		void flushPrevious() {
 			if ( previous != 0 ) {
 				tokenData.append( previous );
 				previous = 0;
@@ -152,8 +153,9 @@ public class MessageTokenCollector
 
 	private class LiteralParserContext extends ParserContext
 	{
-		LiteralParserContext() {
-			super( context -> new Literal( context.tokenData.toString() ) );
+		@Override
+		MessageToken createToken() {
+			return new Literal( tokenData.toString() );
 		}
 
 		@Override
@@ -193,22 +195,43 @@ public class MessageTokenCollector
 
 	private class ArgumentParserContext extends ParserContext
 	{
-		ArgumentParserContext() {
-			super( context -> {
-				String arg = context.tokenData.toString();
-				if ( StringUtils.isNumeric( arg ) ) {
-					return new IndexedArgument( Integer.parseInt( arg ) );
-				}
-				return new NamedArgument( arg );
-			} );
+		private int group = 0;
+		private String[] parts = new String[3];
+
+		private int nestedTerm = 0;
+
+		@Override
+		MessageToken createToken() {
+			parts[group] = tokenData.toString().trim();
+			if ( StringUtils.isNumeric( parts[0] ) ) {
+				return new IndexedArgument( Integer.parseInt( parts[0] ), parts[1], parts[2] );
+			}
+			return new NamedArgument( parts[0], parts[1], parts[2] );
 		}
 
 		@Override
 		void handle( char ch ) {
 			switch ( ch ) {
+				case BEGIN_TERM:
+					if ( group == 2 ) {
+						nestedTerm++;
+						super.append( ch );
+						break;
+					}
+				case SEPARATOR:
+					parts[group] = tokenData.toString().trim();
+					tokenData.setLength( 0 );
+					group++;
+					break;
 				case END_TERM:
-					addToken();
-					currentContext = new LiteralParserContext();
+					if ( nestedTerm > 0 ) {
+						nestedTerm--;
+						super.append( ch );
+					}
+					else {
+						addToken();
+						currentContext = new LiteralParserContext();
+					}
 					break;
 				default:
 					flushPrevious();
@@ -219,8 +242,9 @@ public class MessageTokenCollector
 
 	private class MessageLookupParserContext extends ParserContext
 	{
-		MessageLookupParserContext() {
-			super( context -> new MessageLookup( StringUtils.split( context.tokenData.toString(), "," ) ) );
+		@Override
+		MessageToken createToken() {
+			return new MessageLookup( StringUtils.split( tokenData.toString(), "," ) );
 		}
 
 		@Override
@@ -239,8 +263,9 @@ public class MessageTokenCollector
 
 	private class ExpressionParserContext extends ParserContext
 	{
-		ExpressionParserContext() {
-			super( context -> new Expression( context.tokenData.toString() ) );
+		@Override
+		MessageToken createToken() {
+			return new Expression( tokenData.toString() );
 		}
 
 		@Override

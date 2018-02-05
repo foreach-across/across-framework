@@ -25,4 +25,6 @@ import lombok.Data;
 class NamedArgument implements MessageToken
 {
 	private final String name;
+	private final String formatType;
+	private final String formatStyle;
 }
