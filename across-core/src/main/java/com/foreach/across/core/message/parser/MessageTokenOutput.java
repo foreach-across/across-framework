@@ -15,16 +15,17 @@
  */
 package com.foreach.across.core.message.parser;
 
-import lombok.Data;
+import com.foreach.across.core.message.ResolvableMessageFormatContext;
 
 /**
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@Data
-class IndexedArgument implements MessageToken
+public interface MessageTokenOutput
 {
-	private final int index;
-	private final String formatType;
-	private final String formatStyle;
+	boolean isLocalized();
+
+	boolean requiresSynchronization();
+
+	void write( StringBuilder output, ResolvableMessageFormatContext context );
 }

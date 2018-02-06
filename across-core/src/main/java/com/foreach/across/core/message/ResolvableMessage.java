@@ -15,38 +15,37 @@
  */
 package com.foreach.across.core.message;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@RequiredArgsConstructor()
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class ResolvableMessage
 {
-	@Getter
 	private final String[] codes;
+	private final List<Object> parameters = new ArrayList<>( 5 );
+	private final List<String> parameterNames = new ArrayList<>( 5 );
+
 	private String defaultValue;
-	@Getter
-	private Map<String, Object> parameters;// = new LinkedHashMap<>();
 
 	public ResolvableMessage withDefaultValue( String defaultValue ) {
-		ResolvableMessage clone = new ResolvableMessage( this.codes );
-		clone.parameters = this.parameters != null ? new LinkedHashMap<>( this.parameters ) : null;
-		clone.defaultValue = defaultValue;
-		return clone;
+		this.defaultValue = defaultValue;
+		return this;
 	}
 
 	public ResolvableMessage withParameter( String name, Object value ) {
-		ResolvableMessage clone = new ResolvableMessage( this.codes );
-		clone.defaultValue = this.defaultValue;
-		clone.parameters = this.parameters != null ? new LinkedHashMap<>( this.parameters ) : new LinkedHashMap<>();
-		clone.parameters.put( name, value );
-		return clone;
+		parameters.add( value );
+		parameterNames.add( name );
+		return this;
 	}
 
 	public static ResolvableMessage messageCode( String... codes ) {

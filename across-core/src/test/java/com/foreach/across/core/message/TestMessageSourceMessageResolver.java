@@ -64,6 +64,17 @@ public class TestMessageSourceMessageResolver
 	}
 
 	@Test
+	public void messageSourceDefaultValueFormatting() {
+		Date date = Date.from( LocalDate.of( 2018, 2, 17 ).atStartOfDay( ZoneId.systemDefault() ).toInstant() );
+		MessageSourceResolvable resolvable = new DefaultMessageSourceResolvable( new String[] { "invalid-code" }, new Object[] { date },
+		                                                                         "{0,date,dd MMM yyyy}" );
+		assertThat( messageSource.getMessage( resolvable, Locale.UK ) ).isEqualTo( "17 Feb 2018" );
+
+		assertThat( messageResolver.resolveMessage( messageCode( "invalid-code" ).withParameter( "date", date ).withDefaultValue( "{0,date,dd MMM yyyy}" ) ) )
+				.isEqualTo( "17 Feb 2018" );
+	}
+
+	@Test
 	public void noParameters() {
 		assertThat( messageResolver.resolveMessage( messageCode( "parameters.none" ) ) ).isEqualTo( "message without parameters" );
 	}
@@ -87,7 +98,7 @@ public class TestMessageSourceMessageResolver
 	@Test
 	public void dateFormat() {
 		Date date = Date.from( LocalDate.of( 2018, 2, 17 ).atStartOfDay( ZoneId.systemDefault() ).toInstant() );
-		assertThat( messageSource.getMessage( "parameters.formatted.simpledate", new Object[] { date }, Locale.UK ) ).isEqualToIgnoringCase( "17 Feb 2018" );
+		assertThat( messageSource.getMessage( "parameters.formatted.simpledate", new Object[] { date }, Locale.UK ) ).isEqualTo( "17 Feb 2018" );
 
 		assertThat( messageResolver.resolveMessage( messageCode( "parameters.formatted.simpledate" ).withParameter( "date", date ) ) )
 				.isEqualTo( "17 Feb 2018" );
@@ -95,9 +106,21 @@ public class TestMessageSourceMessageResolver
 				.isEqualTo( "17 Feb 2018 2018 Feb 17" );
 	}
 
+	@Test
+	public void nestedMessage() {
+		assertThat( messageResolver.resolveMessage( messageCode( "parameters.nested" ) ) ).isEqualTo( "nested message without parameters" );
+	}
+
+	@Test
+	public void nestedMessageWithSameParameters() {
+		assertThat( messageResolver.resolveMessage( messageCode( "parameters.nestedWithSameParameters" )
+				                                            .withParameter( "otherValue", "my other value" )
+				                                            .withParameter( "value", "my value" ) ) )
+				.isEqualTo( "nested my other value and my value, my value and my other value" );
+	}
+
 	// use converter by default if no type specified
 	// use date format for java.time objects
 	// use message format for the default types
-
 
 }

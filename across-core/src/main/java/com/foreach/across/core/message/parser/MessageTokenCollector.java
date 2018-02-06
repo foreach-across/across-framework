@@ -204,9 +204,9 @@ public class MessageTokenCollector
 		MessageToken createToken() {
 			parts[group] = tokenData.toString().trim();
 			if ( StringUtils.isNumeric( parts[0] ) ) {
-				return new IndexedArgument( Integer.parseInt( parts[0] ), parts[1], parts[2] );
+				return new FormattedArgument( ValueResolver.forIndexedArgument( Integer.parseInt( parts[0] ) ), parts[1], parts[2] );
 			}
-			return new NamedArgument( parts[0], parts[1], parts[2] );
+			return new FormattedArgument( ValueResolver.forNamedArgument( parts[0] ), parts[1], parts[2] );
 		}
 
 		@Override

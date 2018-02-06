@@ -15,6 +15,7 @@
  */
 package com.foreach.across.core.message;
 
+import java.util.Locale;
 import java.util.function.Consumer;
 
 /**
@@ -25,5 +26,7 @@ public interface MessageResolver
 {
 	String resolveMessage( ResolvableMessage resolvable );
 
-	String resolveMessage( ResolvableMessage resolvableMessage, Consumer<String> consumer );
+	String resolveMessage( ResolvableMessage resolvable, Locale locale );
+
+	String resolveMessage( ResolvableMessage resolvableMessage, Locale locale, Consumer<String> consumer );
 }

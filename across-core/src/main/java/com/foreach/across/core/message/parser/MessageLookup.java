@@ -15,14 +15,40 @@
  */
 package com.foreach.across.core.message.parser;
 
+import com.foreach.across.core.message.ResolvableMessage;
+import com.foreach.across.core.message.ResolvableMessageFormatContext;
 import lombok.Data;
 
 /**
+ * Token that represents another message that should be looked up.
+ * Can in turn contain expressions or arguments that represent the message codes,
+ * or message arguments.
+ *
  * @author Arne Vandamme
  * @since 3.0.0
  */
 @Data
-class MessageLookup implements MessageToken
+class MessageLookup implements MessageToken, MessageTokenOutput
 {
 	private final String[] messageCodes;
+
+	@Override
+	public MessageTokenOutput createFormat( ResolvableMessageFormatContext context ) {
+		return this;
+	}
+
+	@Override
+	public boolean isLocalized() {
+		return false;
+	}
+
+	@Override
+	public boolean requiresSynchronization() {
+		return false;
+	}
+
+	@Override
+	public void write( StringBuilder output, ResolvableMessageFormatContext context ) {
+		output.append( context.resolveMessage( ResolvableMessage.messageCode( messageCodes ), true ) );
+	}
 }

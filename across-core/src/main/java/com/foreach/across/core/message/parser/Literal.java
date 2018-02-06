@@ -15,6 +15,7 @@
  */
 package com.foreach.across.core.message.parser;
 
+import com.foreach.across.core.message.ResolvableMessageFormatContext;
 import lombok.Data;
 
 /**
@@ -22,7 +23,27 @@ import lombok.Data;
  * @since 3.0.0
  */
 @Data
-class Literal implements MessageToken
+class Literal implements MessageToken, MessageTokenOutput
 {
 	private final String value;
+
+	@Override
+	public boolean isLocalized() {
+		return false;
+	}
+
+	@Override
+	public boolean requiresSynchronization() {
+		return false;
+	}
+
+	@Override
+	public MessageTokenOutput createFormat( ResolvableMessageFormatContext context ) {
+		return this;
+	}
+
+	@Override
+	public void write( StringBuilder output, ResolvableMessageFormatContext context ) {
+		output.append( value );
+	}
 }

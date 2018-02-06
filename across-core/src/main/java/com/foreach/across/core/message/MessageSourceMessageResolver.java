@@ -15,14 +15,14 @@
  */
 package com.foreach.across.core.message;
 
+import com.foreach.across.core.message.parser.MessageTokenCollector;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 
-import java.text.MessageFormat;
-import java.util.Map;
+import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 /**
@@ -32,6 +32,8 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public class MessageSourceMessageResolver implements MessageResolver
 {
+	private final static String INVALID = Character.toString( (char) 0 );
+
 	@NonNull
 	private final MessageSource messageSource;
 
@@ -39,24 +41,32 @@ public class MessageSourceMessageResolver implements MessageResolver
 		return resolveMessage( resolvable, null );
 	}
 
-	public String resolveMessage( ResolvableMessage resolvableMessage, Consumer<String> consumer ) {
+	@Override
+	public String resolveMessage( ResolvableMessage resolvable, Locale locale ) {
+		return resolveMessage( resolvable, locale, null );
+	}
 
-		// build message source resolvable
-		String message = messageSource.getMessage( new DefaultMessageSourceResolvable( resolvableMessage.getCodes() ), null );
+	public String resolveMessage( ResolvableMessage resolvableMessage, Locale locale, Consumer<String> consumer ) {
+		String message = messageSource.getMessage( new DefaultMessageSourceResolvable( resolvableMessage.getCodes(), INVALID ), locale );
 
-		Map<String, Object> parameters = resolvableMessage.getParameters();
-
-		if ( parameters != null ) {
-			int index = 0;
-			for ( val paramName : parameters.keySet() ) {
-				message = message.replaceAll( "\\{" + paramName, "\\{" + index );
-				index++;
-			}
-
-			MessageFormat messageFormat = new MessageFormat( message );
-
-			return messageFormat.format( parameters.values().toArray() );
+		if ( INVALID.equals( message ) ) {
+			message = resolvableMessage.getDefaultValue();
 		}
-		return message;
+
+		if ( message != null ) {
+			ResolvableMessageFormat formatter = new ResolvableMessageFormat( new MessageTokenCollector( message ).getTokens() );
+			List<String> parameterNames = resolvableMessage.getParameterNames();
+			ResolvableMessageFormatContext context = ResolvableMessageFormatContext
+					.builder()
+					.locale( Locale.getDefault() )
+					.messageResolver( this )
+					.arguments( resolvableMessage.getParameters().toArray() )
+					.argumentNames( parameterNames.toArray( new String[parameterNames.size()] ) )
+					.build();
+
+			return formatter.format( context );
+		}
+
+		return null;
 	}
 }

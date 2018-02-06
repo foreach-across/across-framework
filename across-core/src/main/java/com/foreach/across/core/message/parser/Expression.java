@@ -15,6 +15,7 @@
  */
 package com.foreach.across.core.message.parser;
 
+import com.foreach.across.core.message.ResolvableMessageFormatContext;
 import lombok.Data;
 
 /**
@@ -25,4 +26,9 @@ import lombok.Data;
 class Expression implements MessageToken
 {
 	private final String expression;
+
+	@Override
+	public MessageTokenOutput createFormat( ResolvableMessageFormatContext context ) {
+		return null;
+	}
 }

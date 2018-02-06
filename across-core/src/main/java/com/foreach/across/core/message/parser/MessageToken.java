@@ -15,6 +15,8 @@
  */
 package com.foreach.across.core.message.parser;
 
+import com.foreach.across.core.message.ResolvableMessageFormatContext;
+
 /**
  * Single token from a message.
  *
@@ -23,4 +25,11 @@ package com.foreach.across.core.message.parser;
  */
 public interface MessageToken
 {
+	/**
+	 * Create a localized output formatter, specifically for the given context.
+	 *
+	 * @param context to create an output format for
+	 * @return token output
+	 */
+	MessageTokenOutput createFormat( ResolvableMessageFormatContext context );
 }
