@@ -118,6 +118,7 @@ public final class AcrossApplicationAutoConfiguration
 
 	public Map<String, List<String>> getModuleExtensions() {
 		return requested.stream()
+		                .filter( this::notExcluded )
 		                .filter( extendModules::containsKey )
 		                .collect( Collectors.groupingBy( extendModules::get ) );
 	}

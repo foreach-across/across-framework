@@ -62,6 +62,13 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 
 	@Override
 	protected Set<String> getExclusions( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
+		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
+
+		attributes.put( "exclude", new String[0] );
+		attributes.put( "excludeName", new String[0] );
+		super.getExclusions( metadata, attributes )
+		     .forEach( registry::addExcludedAutoConfigurations );
+
 		retrieveAutoConfigurationRegistry().printAutoConfigurationReport();
 		return Collections.emptySet();
 	}

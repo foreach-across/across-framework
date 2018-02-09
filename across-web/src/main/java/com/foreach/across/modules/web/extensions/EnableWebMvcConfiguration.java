@@ -55,7 +55,7 @@ import java.util.List;
  * @since 3.0.0
  */
 @ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
-@Import({ WebMvcAutoConfiguration.class, ErrorMvcAutoConfiguration.class })
+@Import(WebMvcAutoConfiguration.class)
 @RequiredArgsConstructor
 public class EnableWebMvcConfiguration extends WebMvcRegistrationsAdapter
 {
@@ -127,7 +127,9 @@ public class EnableWebMvcConfiguration extends WebMvcRegistrationsAdapter
 		{
 			@Override
 			public void postProcessBeanDefinitionRegistry( BeanDefinitionRegistry registry ) throws BeansException {
-				registry.removeBeanDefinition( "errorPageCustomizer" );
+				if ( registry.containsBeanDefinition( "errorPageCustomer" ) ) {
+					registry.removeBeanDefinition( "errorPageCustomizer" );
+				}
 			}
 
 			@Override
