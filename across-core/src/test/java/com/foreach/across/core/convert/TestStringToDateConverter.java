@@ -284,24 +284,15 @@ public class TestStringToDateConverter
 
 	@Test
 	public void convertsZonedDateTime() {
-		ZonedDateTime date = ZonedDateTime.of( LocalDateTime.parse( "2017-08-21 12:01", DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm" ) ),
-		                                       ZoneId.of( "Europe/Paris" ) ).withFixedOffsetZone();
-		assertThat( convert( "2017-08-21 12:01:00 CET", ZONEDDATETIME_DESCRIPTOR ) ).isEqualTo( date );
-		assertThat( convert( "2017-08-21 12:01:00 Asia/Macao", ZONEDDATETIME_DESCRIPTOR ) )
-				.isEqualTo( date.plusHours( 6 ).withZoneSameLocal( ZoneId.of( "Asia/Macao" ) ).withFixedOffsetZone() );
+		ZoneId zoneId = ( (ZonedDateTime) convert( "2017-08-21 12:01:00 Europe/Paris", ZONEDDATETIME_DESCRIPTOR ) ).getZone();
+		ZonedDateTime date = ZonedDateTime.of( LocalDateTime.parse( "2017-08-21T12:01" ), ZoneId.of( "Europe/Paris" ) );
+		assertThat( convert( "2017-08-21 12:01:00 Europe/Paris", ZONEDDATETIME_DESCRIPTOR ) ).isEqualTo( date );
 
-		date = ZonedDateTime.of( LocalDateTime.parse( "2017-01-07 12:01", DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm" ) ),
-		                         ZoneId.of( "Europe/Paris" ) ).withFixedOffsetZone();
-		assertThat( convert( "07 Jan 2017 12:01:00 CET", ZONEDDATETIME_DESCRIPTOR ) ).isEqualTo( date );
-		assertThat( convert( "07 Jan 2017 12:01:00 Asia/Macao", ZONEDDATETIME_DESCRIPTOR ) )
-				.isEqualTo( date.plusHours( 7 ).withZoneSameLocal( ZoneId.of( "Asia/Macao" ) ).withFixedOffsetZone() );
+		date = ZonedDateTime.of( LocalDateTime.parse( "2017-01-07T12:01" ), ZoneId.of( "Europe/Paris" ) );
+		assertThat( convert( "07 Jan 2017 12:01:00 Europe/Paris", ZONEDDATETIME_DESCRIPTOR ) ).isEqualTo( date );
 
-		date = ZonedDateTime.of( LocalDateTime.parse( "2017-03-31 12:01", DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm" ) ),
-		                         ZoneId.of( "Europe/Paris" ) ).withFixedOffsetZone();
-		assertThat( convert( "2017-03-31 12:01:00 +0200", ZONEDDATETIME_DESCRIPTOR ) ).isEqualTo( date );
-		assertThat( convert( "2017-03-31T12:01:00.000+0300", ZONEDDATETIME_DESCRIPTOR ) )
-				.isEqualTo( date.plusHours( 1 ).withZoneSameLocal( ZoneId.of( "+0300" ) ) );
-
+		date = ZonedDateTime.of( LocalDateTime.parse( "2017-01-07T12:01" ), ZoneId.of( "Asia/Macao" ) );
+		assertThat( convert( "07 Jan 2017 12:01:00 Asia/Macao", ZONEDDATETIME_DESCRIPTOR ) ).isEqualTo( date );
 	}
 
 	@Test

@@ -16,6 +16,7 @@
 package com.foreach.across.core.convert;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.core.convert.ConversionService;
@@ -173,7 +174,7 @@ public class StringToDateConverter implements GenericConverter, ConditionalGener
 			}
 		}
 		else if ( TemporalAccessor.class.isAssignableFrom( type ) ) {
-			convertedValue = dateTimeFormatter.parse( source, new TemporalAccessorQuery() );
+			convertedValue = dateTimeFormatter.parse( source, new TemporalAccessorQuery( type ) );
 		}
 		if ( !type.isInstance( convertedValue ) ) {
 			convertedValue = conversionService.convert( convertedValue, type );
@@ -221,11 +222,18 @@ public class StringToDateConverter implements GenericConverter, ConditionalGener
 	 *
 	 * @see java.time.temporal.TemporalQueries
 	 */
-	class TemporalAccessorQuery implements TemporalQuery<OffsetDateTime>
+	@RequiredArgsConstructor
+	class TemporalAccessorQuery implements TemporalQuery<TemporalAccessor>
 	{
+		private final Class requestedType;
+
 		@Override
-		public OffsetDateTime queryFrom( TemporalAccessor temporal ) {
-			return OffsetDateTime.ofInstant( getZonedDateTime( temporal ).toInstant(), getZoneOffset( temporal ) );
+		public TemporalAccessor queryFrom( TemporalAccessor temporal ) {
+			ZoneId zone = getZoneId( temporal );
+			if ( ZonedDateTime.class.equals( requestedType ) ) {
+				return getLocalDateTime( temporal ).atZone( zone );
+			}
+			return OffsetDateTime.ofInstant( getZonedDateTime( temporal ).toInstant(), getZoneId( temporal ) );
 		}
 
 		/**
@@ -236,7 +244,7 @@ public class StringToDateConverter implements GenericConverter, ConditionalGener
 		 * @param temporal to retrieve the ZoneId of
 		 * @return the ZoneId.
 		 */
-		private ZoneId getZoneOffset( TemporalAccessor temporal ) {
+		private ZoneId getZoneId( TemporalAccessor temporal ) {
 			if ( temporal.isSupported( OFFSET_SECONDS ) ) {
 				return ZoneOffset.ofTotalSeconds( Math.toIntExact( temporal.getLong( OFFSET_SECONDS ) ) );
 			}
@@ -251,7 +259,11 @@ public class StringToDateConverter implements GenericConverter, ConditionalGener
 		 * @return the date-time as a {@link ZonedDateTime}
 		 */
 		private ZonedDateTime getZonedDateTime( TemporalAccessor temporal ) {
-			return LocalDateTime.of( getLocalDate( temporal ), getLocalTime( temporal ) ).atZone( zoneId );
+			return getLocalDateTime( temporal ).atZone( zoneId );
+		}
+
+		private LocalDateTime getLocalDateTime( TemporalAccessor temporal ) {
+			return LocalDateTime.of( getLocalDate( temporal ), getLocalTime( temporal ) );
 		}
 
 		private LocalDate getLocalDate( TemporalAccessor temporal ) {
