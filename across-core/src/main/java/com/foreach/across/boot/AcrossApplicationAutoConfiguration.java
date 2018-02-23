@@ -19,6 +19,7 @@ import com.foreach.across.config.AcrossConfigurationLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.core.Ordered;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,12 +53,13 @@ public final class AcrossApplicationAutoConfiguration
 	public static final String ENABLED_AUTO_CONFIGURATION = "com.foreach.across.AutoConfigurationEnabled";
 	public static final String DISABLED_AUTO_CONFIGURATION = "com.foreach.across.AutoConfigurationDisabled";
 
-	private final Set<String> excluded = new HashSet<>();
+	private final Set<String> excluded = new LinkedHashSet<>();
 
-	private final Map<String, String> allowed = new HashMap<>();
+	private final Map<String, String> allowed = new LinkedHashMap<>();
 
-	private final Map<String, String> extendModules = new HashMap<>();
-	private final Set<String> requested = new HashSet<>();
+	private final Map<String, String> extendModules = new LinkedHashMap<>();
+	private final Set<String> requested = new LinkedHashSet<>();
+	private final Map<String, Integer> autoConfigurationOrder = new HashMap<>();
 	private final Set<String> unknownSupport = new LinkedHashSet<>();
 
 	public AcrossApplicationAutoConfiguration( ClassLoader classLoader ) {
@@ -86,7 +88,9 @@ public final class AcrossApplicationAutoConfiguration
 	}
 
 	public String requestAutoConfiguration( String autoConfigurationClass ) {
-		requested.add( autoConfigurationClass );
+		if ( requested.add( autoConfigurationClass ) ) {
+			autoConfigurationOrder.put( autoConfigurationClass, requested.size() );
+		}
 
 		String actualClass = allowed.get( autoConfigurationClass );
 		String extendModule = extendModules.get( autoConfigurationClass );
@@ -121,6 +125,10 @@ public final class AcrossApplicationAutoConfiguration
 		                .filter( this::notExcluded )
 		                .filter( extendModules::containsKey )
 		                .collect( Collectors.groupingBy( extendModules::get ) );
+	}
+
+	public Integer getAutoConfigurationOrder( String className ) {
+		return autoConfigurationOrder.getOrDefault( className, Ordered.LOWEST_PRECEDENCE );
 	}
 
 	void printAutoConfigurationReport() {
