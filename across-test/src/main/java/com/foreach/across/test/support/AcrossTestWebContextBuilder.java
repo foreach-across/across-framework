@@ -101,6 +101,11 @@ public class AcrossTestWebContextBuilder extends AcrossTestContextBuilder
 	}
 
 	@Override
+	public AcrossTestWebContextBuilder expose( Class<?>... classesToExpose ) {
+		return (AcrossTestWebContextBuilder) super.expose( classesToExpose );
+	}
+
+	@Override
 	public AcrossTestWebContextBuilder register( Class<?>... annotatedClasses ) {
 		return (AcrossTestWebContextBuilder) super.register( annotatedClasses );
 	}

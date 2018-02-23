@@ -16,6 +16,7 @@
 package com.foreach.across.test.support;
 
 import com.foreach.across.config.AcrossContextConfigurer;
+import com.foreach.across.config.ExposedBeansBootstrapConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
@@ -55,6 +56,7 @@ public class AcrossTestContextBuilder
 	private final Properties properties = new Properties();
 	private final List<PropertySource<?>> propertySources = new ArrayList<>();
 	private final Set<Class<?>> annotatedClasses = new LinkedHashSet<>();
+	private final Set<Class<?>> exposeClasses = new LinkedHashSet<>();
 	private final AcrossContextBuilder contextBuilder = new AcrossContextBuilder();
 
 	public AcrossTestContextBuilder() {
@@ -114,6 +116,17 @@ public class AcrossTestContextBuilder
 	 */
 	public AcrossTestContextBuilder register( Class<?>... annotatedClasses ) {
 		Collections.addAll( this.annotatedClasses, annotatedClasses );
+		return this;
+	}
+
+	/**
+	 * Add one or more types (classes, interfaces, annotations) that should be exposed in this test context.
+	 *
+	 * @param classesToExpose list
+	 * @return self
+	 */
+	public AcrossTestContextBuilder expose( Class<?>... classesToExpose ) {
+		Collections.addAll( this.exposeClasses, classesToExpose );
 		return this;
 	}
 
@@ -321,6 +334,10 @@ public class AcrossTestContextBuilder
 
 		ProvidedBeansMap beans = new ProvidedBeansMap();
 		beans.put( "contextBuilder", contextBuilder.applicationContext( applicationContext ) );
+
+		if ( !exposeClasses.isEmpty() ) {
+			beans.put( "exposedTestClassesConfiguration", new ExposedBeansBootstrapConfigurer( exposeClasses ) );
+		}
 
 		applicationContext.provide( beans );
 

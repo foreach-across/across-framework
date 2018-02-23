@@ -16,8 +16,10 @@
 package com.foreach.across.test.support;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.test.AcrossTestContext;
 import org.junit.Test;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
@@ -127,6 +129,34 @@ public class TestAcrossTestContextBuilder
 			assertTestQueryOk( ds );
 			assertTestQueryOk( installerDs );
 		}
+	}
+
+	@Test
+	public void manualExposingOfItems() {
+		try (
+				AcrossTestContext ctx = contextBuilder()
+						.modules( new EmptyAcrossModule( "testModule", ModuleConfig.class ) )
+						.useTestDataSource( false )
+						.build()
+		) {
+			assertFalse( ctx.containsBean( "testModuleConfig" ) );
+		}
+
+		try (
+				AcrossTestContext ctx = contextBuilder()
+						.expose( Configuration.class )
+						.modules( new EmptyAcrossModule( "testModule", ModuleConfig.class ) )
+						.useTestDataSource( false )
+						.build()
+		) {
+			assertTrue( ctx.containsBean( "testModuleConfig" ) );
+		}
+	}
+
+	@Configuration("testModuleConfig")
+	static class ModuleConfig
+	{
+
 	}
 
 	protected AcrossTestContextBuilder contextBuilder() {

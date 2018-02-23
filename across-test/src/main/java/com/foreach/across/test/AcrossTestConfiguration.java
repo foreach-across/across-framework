@@ -53,7 +53,7 @@ import java.lang.annotation.*;
 @Documented
 @Configuration
 @EnableAcrossContext
-@Import({ TestDataSourceConfigurer.class, ResetDatabaseConfigurer.class, MockMvcConfiguration.class })
+@Import({ TestDataSourceConfigurer.class, ResetDatabaseConfigurer.class, MockMvcConfiguration.class, AcrossTestConfigurationConfigurer.class })
 public @interface AcrossTestConfiguration
 {
 	/**
@@ -119,4 +119,11 @@ public @interface AcrossTestConfiguration
 	 * that serves no purpose other than being referenced by this attribute.</p>
 	 */
 	Class<?>[] moduleConfigurationPackageClasses() default {};
+
+	/**
+	 * Specify a collection of types, interfaces or annotations that should be exposed by all modules.
+	 * Useful if you want to exposed components only for integration test purposes, especially for
+	 * dynamic application modules which might not have anything exposed otherwise.
+	 */
+	Class<?>[] expose() default {};
 }
