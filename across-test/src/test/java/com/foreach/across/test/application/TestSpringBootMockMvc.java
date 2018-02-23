@@ -18,7 +18,9 @@ package com.foreach.across.test.application;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossWebAppConfiguration;
+import com.foreach.across.test.ExposeForTest;
 import com.foreach.across.test.application.app.DummyApplication;
+import com.foreach.across.test.application.app.application.controllers.NonExposedComponent;
 import com.foreach.across.test.support.config.MockMvcConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest(classes = { DummyApplication.class, MockMvcConfiguration.class })
 @AcrossWebAppConfiguration
+@ExposeForTest(NonExposedComponent.class)
 public class TestSpringBootMockMvc
 {
 	@Autowired
@@ -55,6 +57,9 @@ public class TestSpringBootMockMvc
 
 	@Autowired
 	private AcrossContextInfo contextInfo;
+
+	@Autowired(required = false)
+	private NonExposedComponent nonExposedComponent;
 
 	@Test
 	public void modulesShouldBeRegistered() {
@@ -75,6 +80,11 @@ public class TestSpringBootMockMvc
 	@Test
 	public void versionedResourceShouldBeReturned() throws Exception {
 		assertContent( "hùllµ€", get( "/res/static/boot-1.0/testResources/test.txt" ) );
+	}
+
+	@Test
+	public void manuallyExposedComponent() {
+		assertNotNull( nonExposedComponent );
 	}
 
 	private void assertContent( String expected, RequestBuilder requestBuilder ) throws Exception {

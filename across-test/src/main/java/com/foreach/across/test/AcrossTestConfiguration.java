@@ -27,6 +27,7 @@ import com.foreach.across.test.support.config.TestDataSourceConfigurer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
 
@@ -53,7 +54,8 @@ import java.lang.annotation.*;
 @Documented
 @Configuration
 @EnableAcrossContext
-@Import({ TestDataSourceConfigurer.class, ResetDatabaseConfigurer.class, MockMvcConfiguration.class, AcrossTestConfigurationConfigurer.class })
+@ExposeForTest
+@Import({ TestDataSourceConfigurer.class, ResetDatabaseConfigurer.class, MockMvcConfiguration.class })
 public @interface AcrossTestConfiguration
 {
 	/**
@@ -125,5 +127,6 @@ public @interface AcrossTestConfiguration
 	 * Useful if you want to exposed components only for integration test purposes, especially for
 	 * dynamic application modules which might not have anything exposed otherwise.
 	 */
+	@AliasFor(annotation = ExposeForTest.class, attribute = "value")
 	Class<?>[] expose() default {};
 }

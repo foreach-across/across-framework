@@ -30,14 +30,14 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Configuration
-class AcrossTestConfigurationConfigurer implements ImportAware, AcrossBootstrapConfigurer
+class ExposeForTestConfiguration implements ImportAware, AcrossBootstrapConfigurer
 {
 	private Class<?>[] types = new Class[0];
 
 	@Override
 	public void setImportMetadata( AnnotationMetadata importMetadata ) {
-		Map<String, Object> configuration = importMetadata.getAnnotationAttributes( AcrossTestConfiguration.class.getName() );
-		types = (Class<?>[]) configuration.get( "expose" );
+		Map<String, Object> configuration = importMetadata.getAnnotationAttributes( ExposeForTest.class.getName() );
+		types = (Class<?>[]) configuration.get( "value" );
 	}
 
 	@Override
