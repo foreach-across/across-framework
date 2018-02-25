@@ -122,8 +122,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	}
 
 	/**
-	 * An exposed bean definition does not really get created but gets fetched
-	 * from the external context.
+	 * An exposed bean definition does not really get created but gets fetched from the external context.
 	 */
 	@Override
 	protected Object doCreateBean( String beanName, RootBeanDefinition mbd, Object[] args ) {
