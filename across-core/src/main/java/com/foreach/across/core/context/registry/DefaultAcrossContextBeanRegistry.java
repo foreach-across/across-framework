@@ -21,6 +21,7 @@ import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -34,6 +35,7 @@ import java.util.*;
 
 public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegistry
 {
+	@Getter
 	private ConfigurableAcrossContextInfo contextInfo;
 
 	public DefaultAcrossContextBeanRegistry( ConfigurableAcrossContextInfo contextInfo ) {

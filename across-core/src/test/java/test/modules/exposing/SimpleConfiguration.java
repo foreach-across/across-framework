@@ -17,10 +17,10 @@
 package test.modules.exposing;
 
 import com.foreach.across.core.annotations.Exposed;
-import test.modules.module1.SomeInterface;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import test.modules.module1.SomeInterface;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -67,6 +67,12 @@ public class SimpleConfiguration
 
 	@Bean
 	@Exposed
+	public SomeOtherInterfaceFactory someOtherInterfaceBean() {
+		return new SomeOtherInterfaceFactory();
+	}
+
+	@Bean
+	@Exposed
 	public AtomicReference<Integer> integerAtomicReference() {
 		return new AtomicReference<>( 1 );
 	}
@@ -75,5 +81,42 @@ public class SimpleConfiguration
 	@Exposed
 	public AtomicReference<String> stringAtomicReference() {
 		return new AtomicReference<>( "value" );
+	}
+
+	/**
+	 * Interface implemented by the factory itself.
+	 */
+	public interface SomeFactoryInterface extends FactoryBean<SomeOtherInterface>
+	{
+
+	}
+
+	/**
+	 * Interface implemented by the target type of SomeFactoryInterface
+	 */
+	public interface SomeOtherInterface
+	{
+	}
+
+	public static class SomeOtherInterfaceFactory implements SomeFactoryInterface
+	{
+		private SomeOtherInterface otherInterface = new SomeOtherInterface()
+		{
+		};
+
+		@Override
+		public SomeOtherInterface getObject() throws Exception {
+			return otherInterface;
+		}
+
+		@Override
+		public Class<?> getObjectType() {
+			return SomeOtherInterface.class;
+		}
+
+		@Override
+		public boolean isSingleton() {
+			return true;
+		}
 	}
 }

@@ -17,6 +17,7 @@
 package com.foreach.across.core.context.registry;
 
 import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import org.springframework.core.ResolvableType;
 
 import java.util.List;
@@ -34,6 +35,11 @@ public interface AcrossContextBeanRegistry
 	 * @return The unique id of the AcrossContext this registry represents.
 	 */
 	String getContextId();
+
+	/**
+	 * @return the entire context info
+	 */
+	AcrossContextInfo getContextInfo();
 
 	/**
 	 * The factory name is the unique bean name under which the registry can be found.

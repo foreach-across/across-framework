@@ -18,16 +18,14 @@ package test.exposing;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.filters.AnnotationBeanFilter;
+import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.ClassBeanFilter;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.database.support.HikariDataSourceHelper;
-import test.modules.exposing.*;
-import test.modules.module1.SomeInterface;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,11 +36,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import test.modules.exposing.*;
+import test.modules.module1.SomeInterface;
 
 import javax.sql.DataSource;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestCustomExposeFilter.Config.class)
@@ -88,8 +89,7 @@ public class TestCustomExposeFilter
 	@Test
 	public void controllerIsFromControllerModule() {
 		assertNotNull( myController );
-		assertSame( myController, AcrossContextUtils.getApplicationContext( controllerModule ).getBean(
-				MyController.class ) );
+		assertSame( myController, AcrossContextUtils.getApplicationContext( controllerModule ).getBean( MyController.class ) );
 	}
 
 	@Test
@@ -100,8 +100,8 @@ public class TestCustomExposeFilter
 
 	@Test
 	public void beansAreFromMyBeansModule() {
-		Map<String, MyBean> exposedBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors( applicationContext,
-		                                                                                   MyBean.class );
+		Map<String, MyBean> exposedBeans = beansOfTypeIncludingAncestors( applicationContext,
+		                                                                  MyBean.class );
 		Map<String, MyBean> moduleBeans =
 				AcrossContextUtils.getApplicationContext( mybeanModule ).getBeansOfType( MyBean.class );
 
@@ -113,6 +113,20 @@ public class TestCustomExposeFilter
 	@Test
 	public void interfaceFromFactoryBeanIsAvailable() {
 		assertNotNull( someInterface );
+	}
+
+	@Test
+	@SuppressWarnings("all")
+	public void factoryExposingExposesAllTargetsAsWell() {
+		val moduleContext = AcrossContextUtils.getApplicationContext( mybeanModule );
+		assertNotNull( moduleContext.getBean( SimpleConfiguration.SomeOtherInterface.class ) );
+		assertNotNull( moduleContext.getBean( SimpleConfiguration.SomeFactoryInterface.class ) );
+		assertArrayEquals( new String[] { "someOtherInterfaceBean" }, moduleContext.getBeanNamesForType( SimpleConfiguration.SomeOtherInterface.class ) );
+		assertArrayEquals( new String[] { "&someOtherInterfaceBean" }, moduleContext.getBeanNamesForType( SimpleConfiguration.SomeFactoryInterface.class ) );
+
+		assertNotNull( applicationContext.getBean( SimpleConfiguration.SomeFactoryInterface.class ) );
+		assertEquals( 1, beansOfTypeIncludingAncestors( applicationContext, SimpleConfiguration.SomeOtherInterface.class ).size() );
+		assertEquals( 1, beansOfTypeIncludingAncestors( applicationContext, SimpleConfiguration.SomeFactoryInterface.class ).size() );
 	}
 
 	@Test
@@ -147,7 +161,7 @@ public class TestCustomExposeFilter
 		@Bean
 		public ExposingModule serviceModule() {
 			ExposingModule module = new ExposingModule( "service" );
-			module.setExposeFilter( new AnnotationBeanFilter( Service.class ) );
+			module.setExposeFilter( BeanFilter.annotations( Service.class ) );
 
 			return module;
 		}
@@ -165,7 +179,7 @@ public class TestCustomExposeFilter
 		public ExposingModule mybeanModule() {
 			ExposingModule module = new ExposingModule( "mybean" );
 			module.setExposeFilter( new ClassBeanFilter( MyBean.class ) );
-			module.expose( SomeInterface.class );
+			module.expose( SomeInterface.class, SimpleConfiguration.SomeFactoryInterface.class );
 
 			return module;
 		}
