@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
@@ -117,7 +116,6 @@ public class TestAcrossApplicationBootstrap
 	}
 
 	@AcrossApplication
-	@Configuration
 	@Import(VerifyNoAutoConfigurationPackages.class)
 	protected static class SampleApplication
 	{

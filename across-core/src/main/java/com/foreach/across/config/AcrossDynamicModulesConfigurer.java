@@ -22,9 +22,8 @@ import com.foreach.across.core.DynamicAcrossModuleFactory;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ClassPathScanningChildPackageProvider;
 import com.foreach.across.core.context.ModuleDependencyResolver;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -50,10 +49,9 @@ import java.util.Optional;
  * @see AcrossDynamicModulesConfiguration
  * @since 1.1.2
  */
+@Slf4j
 public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossDynamicModulesConfiguration.class );
-
 	private boolean metadataReaderFactoryConfigured = false;
 	private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 	private MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory( resourcePatternResolver );
@@ -104,6 +102,10 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 	public void setApplicationClass( Class<?> clazz ) {
 		basePackage = packageName( clazz );
 		baseModuleName = baseModuleName( clazz );
+	}
+
+	protected String getBasePackage() {
+		return basePackage;
 	}
 
 	/**

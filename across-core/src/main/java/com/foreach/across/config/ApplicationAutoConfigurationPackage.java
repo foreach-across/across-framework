@@ -60,6 +60,8 @@ final class ApplicationAutoConfigurationPackage implements ImportBeanDefinitionR
 			applicationModulePackage = existing[0] + ".application";
 			LOG.info( "Disabling @AutoConfigurationPackage on the root package - Across applications support only the application module" );
 			constructorArguments.addIndexedArgumentValue( 0, new String[0] );
+
+			AcrossDynamicModulesConfiguration.verifyNoConflictingComponentScans( importingClassMetadata, existing[0] );
 		}
 
 		if ( registry instanceof BeanFactory ) {
@@ -68,6 +70,8 @@ final class ApplicationAutoConfigurationPackage implements ImportBeanDefinitionR
 		}
 
 		SingletonBeanRegistry singletonBeanRegistry = (SingletonBeanRegistry) registry;
-		singletonBeanRegistry.registerSingleton( ApplicationAutoConfigurationPackage.class.getName(), this );
+		if ( !singletonBeanRegistry.containsSingleton( ApplicationAutoConfigurationPackage.class.getName() ) ) {
+			singletonBeanRegistry.registerSingleton( ApplicationAutoConfigurationPackage.class.getName(), this );
+		}
 	}
 }
