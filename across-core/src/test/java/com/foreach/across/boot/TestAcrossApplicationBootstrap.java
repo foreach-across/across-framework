@@ -23,9 +23,16 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -98,9 +105,31 @@ public class TestAcrossApplicationBootstrap
 		assertTrue( validator instanceof SmartValidator );
 	}
 
+	@Test
+	public void autoConfigurationPackageShouldNotBeRegisteredInNonModuleContext() {
+		HierarchicalBeanFactory ctx = (HierarchicalBeanFactory) contextInfo.getApplicationContext().getAutowireCapableBeanFactory();
+
+		do {
+			assertFalse( AutoConfigurationPackages.has( ctx ) );
+			ctx = (HierarchicalBeanFactory) ctx.getParentBeanFactory();
+		}
+		while ( ctx != null );
+	}
+
 	@AcrossApplication
 	@Configuration
+	@Import(VerifyNoAutoConfigurationPackages.class)
 	protected static class SampleApplication
 	{
+	}
+
+	static class VerifyNoAutoConfigurationPackages implements ImportBeanDefinitionRegistrar
+	{
+		@Override
+		public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {
+			assertFalse( "AutoConfigurationPackages on application itself should always be empty",
+			             AutoConfigurationPackages.has( (BeanFactory) registry ) );
+		}
+
 	}
 }

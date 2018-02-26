@@ -15,20 +15,20 @@
  */
 package com.foreach.across.config;
 
-import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.type.AnnotationMetadata;
 
 /**
  * Disables the auto-configuration package of the main application class,
@@ -39,7 +39,7 @@ import org.springframework.core.annotation.Order;
  */
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
-final class ApplicationAutoConfigurationPackage implements BeanDefinitionRegistryPostProcessor, AcrossBootstrapConfigurer
+final class ApplicationAutoConfigurationPackage implements ImportBeanDefinitionRegistrar, AcrossBootstrapConfigurer
 {
 	private static final String BEAN = AutoConfigurationPackages.class.getName();
 
@@ -47,7 +47,11 @@ final class ApplicationAutoConfigurationPackage implements BeanDefinitionRegistr
 	private String applicationModulePackage = "application";
 
 	@Override
-	public void postProcessBeanDefinitionRegistry( BeanDefinitionRegistry registry ) throws BeansException {
+	public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {
+		if ( !registry.containsBeanDefinition( BEAN ) ) {
+			AutoConfigurationPackages.register( registry );
+		}
+
 		BeanDefinition beanDefinition = registry.getBeanDefinition( BEAN );
 		ConstructorArgumentValues constructorArguments = beanDefinition.getConstructorArgumentValues();
 		String[] existing = (String[]) constructorArguments.getIndexedArgumentValue( 0, String[].class ).getValue();
@@ -57,14 +61,13 @@ final class ApplicationAutoConfigurationPackage implements BeanDefinitionRegistr
 			LOG.info( "Disabling @AutoConfigurationPackage on the root package - Across applications support only the application module" );
 			constructorArguments.addIndexedArgumentValue( 0, new String[0] );
 		}
-	}
 
-	@Override
-	public void configureContext( AcrossBootstrapConfig contextConfiguration ) {
-		contextConfiguration.extendModule( "DynamicApplicationModule", ApplicationModuleAutoConfigurationPackageRegistrar.class );
-	}
+		if ( registry instanceof BeanFactory ) {
+			LOG.trace( "Eager instantiation of AutoConfigurationPackages singleton" );
+			AutoConfigurationPackages.get( (BeanFactory) registry );
+		}
 
-	@Override
-	public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) throws BeansException {
+		SingletonBeanRegistry singletonBeanRegistry = (SingletonBeanRegistry) registry;
+		singletonBeanRegistry.registerSingleton( ApplicationAutoConfigurationPackage.class.getName(), this );
 	}
 }
