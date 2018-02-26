@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.ui;
 
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
@@ -33,7 +34,7 @@ class FallbackMessageSource implements MessageSource
 {
 	@Override
 	public String getMessage( String code, Object[] args, String defaultMessage, Locale locale ) {
-		return code;
+		return StringUtils.defaultString( defaultMessage, code );
 	}
 
 	@Override
