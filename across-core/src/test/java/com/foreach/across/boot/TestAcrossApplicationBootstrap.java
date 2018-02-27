@@ -128,6 +128,5 @@ public class TestAcrossApplicationBootstrap
 			assertFalse( "AutoConfigurationPackages on application itself should always be empty",
 			             AutoConfigurationPackages.has( (BeanFactory) registry ) );
 		}
-
 	}
 }

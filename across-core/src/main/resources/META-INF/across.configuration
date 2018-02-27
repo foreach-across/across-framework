@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#
-# Default classes, interfaces and annotations that should result in component being exposed.
-#
 com.foreach.across.Exposed=\
   org.springframework.stereotype.Service,\
   com.foreach.across.core.annotations.Exposed,\
@@ -39,7 +36,8 @@ com.foreach.across.Exposed=\
 #
 com.foreach.across.AutoConfigurationDisabled=\
   org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration,\
-  org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
+  org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration,\
+  org.springframework.boot.autoconfigure.transaction.jta.JtaAutoConfiguration
 #
 #
 # List of AutoConfiguration classes that are supported on the application level, these will be allowed unless disabled.
@@ -67,4 +65,5 @@ com.foreach.across.AutoConfigurationEnabled=\
   org.springframework.boot.autoconfigure.jdbc.JndiDataSourceAutoConfiguration,\
   org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration,\
   org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration,\
-  org.springframework.boot.autoconfigure.aop.AopAutoConfiguration->DynamicApplicationModule
+  org.springframework.boot.autoconfigure.aop.AopAutoConfiguration->DynamicApplicationModule,\
+  org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration->DynamicApplicationModule

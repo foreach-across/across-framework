@@ -159,11 +159,6 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	}
 
 	@Override
-	public String[] getBeanNamesForType( Class<?> type, boolean includeNonSingletons, boolean allowEagerInit ) {
-		return super.getBeanNamesForType( type, includeNonSingletons, allowEagerInit );
-	}
-
-	@Override
 	public Object doResolveDependency( DependencyDescriptor descriptor,
 	                                   String beanName,
 	                                   Set<String> autowiredBeanNames,
