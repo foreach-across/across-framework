@@ -18,7 +18,6 @@ package com.foreach.across.core.context.registry;
 
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
-import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
 import lombok.Getter;
@@ -173,7 +172,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory, resolvableType.getRawClass() ).keySet() ) {
 			if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
 				boolean isExposedNonSingleton = !beanFactory.isSingleton( beanName )
-						&& beanFactory.getBeanDefinition( beanName ) instanceof ExposedBeanDefinition;
+						&& beanFactory.isExposedBean( beanName );
 
 				// only include exposed non-singletons if we don't include module internals, else we will end up
 				// with double entries
@@ -195,14 +194,12 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 					resolver.setBeanFactory( beanFactory );
 
 					for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
-						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
-							if ( !( beanFactory.getBeanDefinition( beanName ) instanceof ExposedBeanDefinition ) ) {
-								Object bean = beanFactory.getBean( beanName );
-								comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
+						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) && !beanFactory.isExposedBean( beanName ) ) {
+							Object bean = beanFactory.getBean( beanName );
+							comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-								beans.add( (T) bean );
-								beanNames.put( (T) bean, module.getName() + ":" + beanName );
-							}
+							beans.add( (T) bean );
+							beanNames.put( (T) bean, module.getName() + ":" + beanName );
 						}
 					}
 				}
