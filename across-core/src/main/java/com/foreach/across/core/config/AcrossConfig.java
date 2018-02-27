@@ -23,6 +23,7 @@ import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.convert.StringToDateConverter;
+import com.foreach.across.core.convert.StringToDateTimeConverter;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.events.AcrossContextApplicationEventMulticaster;
 import com.foreach.across.core.events.AcrossEventPublisher;
@@ -113,14 +114,19 @@ public class AcrossConfig
 		          ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
 
 		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-		conversionService.addConverter( defaultDateConverter( conversionService ) );
+		conversionService.addConverter( defaultDateTimeConverter( conversionService ) );
 
 		return conversionService;
 	}
 
 	@Bean
-	public StringToDateConverter defaultDateConverter( ConversionService conversionService ) {
-		return new StringToDateConverter( conversionService );
+	public StringToDateConverter defaultDateConverter() {
+		return new StringToDateConverter();
+	}
+
+	@Bean
+	public StringToDateTimeConverter defaultDateTimeConverter( ConversionService conversionService ) {
+		return new StringToDateTimeConverter( conversionService );
 	}
 
 	@Bean

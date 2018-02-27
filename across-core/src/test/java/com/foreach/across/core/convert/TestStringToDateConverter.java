@@ -44,7 +44,7 @@ public class TestStringToDateConverter
 	private GenericApplicationContext parent;
 	private AcrossContext context;
 	private ConversionService conversionService = null;
-	private StringToDateConverter converter = null;
+	private StringToDateTimeConverter converter = null;
 
 	private final TypeDescriptor STRING_DESCRIPTOR = TypeDescriptor.valueOf( String.class );
 	private final TypeDescriptor DATE_DESCRIPTOR = TypeDescriptor.valueOf( Date.class );
@@ -66,7 +66,7 @@ public class TestStringToDateConverter
 		assertThat( context.isBootstrapped() ).isTrue();
 		conversionService = parent.getBean( ConversionService.class );
 		assertThat( conversionService ).isNotNull();
-		converter = new StringToDateConverter( conversionService );
+		converter = new StringToDateTimeConverter( conversionService );
 	}
 
 	@After

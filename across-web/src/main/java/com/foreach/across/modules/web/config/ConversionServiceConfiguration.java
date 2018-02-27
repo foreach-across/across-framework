@@ -18,7 +18,7 @@ package com.foreach.across.modules.web.config;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.core.convert.StringToDateConverter;
+import com.foreach.across.core.convert.StringToDateTimeConverter;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
@@ -69,7 +69,7 @@ public class ConversionServiceConfiguration
 				AcrossWebModule.CONVERSION_SERVICE_BEAN );
 
 		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-		conversionService.addConverter( new StringToDateConverter( conversionService ) );
+		conversionService.addConverter( new StringToDateTimeConverter( conversionService ) );
 
 		return conversionService;
 	}
