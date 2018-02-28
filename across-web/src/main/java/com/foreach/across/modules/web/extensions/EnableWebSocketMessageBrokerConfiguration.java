@@ -17,6 +17,7 @@ package com.foreach.across.modules.web.extensions;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -33,6 +34,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
 @Configuration
 @ConditionalOnClass({ WebSocketMessageBrokerConfigurer.class, AbstractMessageBrokerConfiguration.class })
+@ConditionalOnBean({ WebSocketMessageBrokerConfigurer.class })
 @Import(DelegatingWebSocketMessageBrokerConfiguration.class)
 public class EnableWebSocketMessageBrokerConfiguration
 {
