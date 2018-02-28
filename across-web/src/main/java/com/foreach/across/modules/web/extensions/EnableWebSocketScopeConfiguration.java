@@ -19,7 +19,6 @@ import com.foreach.across.core.annotations.ModuleConfiguration;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.SimpSessionScope;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
@@ -28,7 +27,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
  * @since 3.0.0
  */
 @ModuleConfiguration
-@Configuration
 @ConditionalOnClass(WebSocketMessageBrokerConfigurer.class)
 public class EnableWebSocketScopeConfiguration
 {

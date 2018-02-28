@@ -15,26 +15,22 @@
  */
 package com.foreach.across.modules.web.extensions;
 
-import com.foreach.across.core.annotations.ModuleConfiguration;
-import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.socket.config.annotation.DelegatingWebSocketConfiguration;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.messaging.simp.config.AbstractMessageBrokerConfiguration;
+import org.springframework.web.socket.config.annotation.DelegatingWebSocketMessageBrokerConfiguration;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
- * Ensures that the {@link DelegatingWebSocketConfiguration} is created at the latest possible moment,
- * when all {@link WebSocketConfigurer}s are created.
- * <p>
- * Exposes all {@link WebSocketConfigurer}s from the bootstrapped modules
- * so they can be picked up by the {@link DelegatingWebSocketConfiguration}.
- *
  * @author Steven Gentens
  * @since 3.0.0
  */
-@ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
-@ConditionalOnClass(WebSocketConfigurer.class)
-@Import(DelegatingWebSocketConfiguration.class)
-public class EnableWebSocketConfiguration
+@Configuration
+@ConditionalOnClass({ WebSocketMessageBrokerConfigurer.class, AbstractMessageBrokerConfiguration.class })
+@ConditionalOnBean({ WebSocketMessageBrokerConfigurer.class })
+@Import(DelegatingWebSocketMessageBrokerConfiguration.class)
+public class EnableDelegatingWebSocketMessageBrokerConfiguration
 {
 }
