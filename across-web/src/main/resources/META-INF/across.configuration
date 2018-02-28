@@ -17,7 +17,11 @@
 com.foreach.across.Exposed=\
   org.springframework.boot.autoconfigure.web.ErrorViewResolver,\
   org.springframework.boot.autoconfigure.web.ErrorController,\
-  org.springframework.boot.autoconfigure.web.ErrorAttributes
+  org.springframework.boot.autoconfigure.web.ErrorAttributes,\
+  org.springframework.messaging.simp.SimpMessagingTemplate,\
+  org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer,\
+  org.springframework.web.socket.config.annotation.WebSocketConfigurer
+
 #
 com.foreach.across.AutoConfigurationEnabled=\
   com.foreach.across.autoconfigure.AcrossWebModuleAutoConfiguration,\
