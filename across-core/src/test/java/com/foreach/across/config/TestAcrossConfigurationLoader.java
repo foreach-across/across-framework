@@ -19,9 +19,7 @@ import org.junit.Test;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -38,11 +36,5 @@ public class TestAcrossConfigurationLoader
 		assertTrue( values.contains( DataSourceAutoConfiguration.class.getName() ) );
 		assertTrue( values.contains( "dummyClass" ) );
 		assertTrue( values.contains( "anotherDummyClass:enablerClass" ) );
-
-		Map<String, String> valueMap = AcrossConfigurationLoader.loadMapValues( "com.foreach.across.AutoConfigurationEnabled",
-		                                                                        Thread.currentThread().getContextClassLoader() );
-		assertEquals( DataSourceAutoConfiguration.class.getName(), valueMap.get( DataSourceAutoConfiguration.class.getName() ) );
-		assertEquals( "dummyClass", valueMap.get( "dummyClass" ) );
-		assertEquals( "enablerClass", valueMap.get( "anotherDummyClass" ) );
 	}
 }

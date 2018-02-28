@@ -33,4 +33,13 @@ com.foreach.across.AutoConfigurationDisabled=\
   org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration,\
   org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration,\
   org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration
+#
+com.foreach.across.IllegalConfiguration=\
+  org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport->!AcrossContextPostProcessorModule:webmvc,
+
+#
+# Illegal configuration descriptions.
+#
+com.foreach.across.IllegalConfiguration[webmvc].description=This is usually due to the use of @EnableWebMvc on the application configuration, which is not compatible with Across applications.
+com.foreach.across.IllegalConfiguration[webmvc].action=Remove the use of @EnableWebMvc or WebMvcConfigurationSupport from the application configuration or custom module. Use AcrossWebModule instead and only provide WebMvcConfigurer classes for additional configuration.
 
