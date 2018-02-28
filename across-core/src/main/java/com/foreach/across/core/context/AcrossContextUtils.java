@@ -17,7 +17,6 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
@@ -31,6 +30,7 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.filters.AnnotatedMethodFilter;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -351,43 +351,39 @@ public final class AcrossContextUtils
 	 * @param instance Bean that can be proxied or not.
 	 * @return Bean itself or final target of a set of proxies.
 	 */
+	@SneakyThrows
 	public static Object getProxyTarget( Object instance ) {
-		try {
-			if ( AopUtils.isJdkDynamicProxy( instance ) ) {
-				TargetSource targetSource = ( (Advised) instance ).getTargetSource();
+		if ( AopUtils.isJdkDynamicProxy( instance ) ) {
+			TargetSource targetSource = ( (Advised) instance ).getTargetSource();
 
-				if ( targetSource instanceof AbstractLazyCreationTargetSource ) {
-					AbstractLazyCreationTargetSource lazyCreationTargetSource
-							= (AbstractLazyCreationTargetSource) targetSource;
+			if ( targetSource instanceof AbstractLazyCreationTargetSource ) {
+				AbstractLazyCreationTargetSource lazyCreationTargetSource
+						= (AbstractLazyCreationTargetSource) targetSource;
 
-					if ( lazyCreationTargetSource.isInitialized() ) {
-						return getProxyTarget( lazyCreationTargetSource.getTarget() );
-					}
-
-					LOG.trace( "Attempt to retrieve uninitialized proxy target: {}",
-					           lazyCreationTargetSource.getTargetClass() );
-					return null;
-				}
-				else if ( targetSource instanceof LazyInitTargetSource ) {
-					LOG.trace( "Skipping LazyInitTargetSource - unable to access proxy target without possible throwing exception" );
-					return null;
-				}
-				else if ( targetSource instanceof SimpleBeanTargetSource ) {
-					SimpleBeanTargetSource beanTargetSource = (SimpleBeanTargetSource) targetSource;
-					String targetBeanName = beanTargetSource.getTargetBeanName();
-
-					if ( StringUtils.isEmpty( targetBeanName )
-							|| StringUtils.startsWith( targetBeanName, "scopedTarget." ) ) {
-						LOG.trace( "Refusing proxy target for a scoped target bean, might not be initialized." );
-						return null;
-					}
+				if ( lazyCreationTargetSource.isInitialized() ) {
+					return getProxyTarget( lazyCreationTargetSource.getTarget() );
 				}
 
-				return getProxyTarget( targetSource.getTarget() );
+				LOG.trace( "Attempt to retrieve uninitialized proxy target: {}",
+				           lazyCreationTargetSource.getTargetClass() );
+				return null;
 			}
-		}
-		catch ( Exception e ) {
-			throw new AcrossException( e );
+			else if ( targetSource instanceof LazyInitTargetSource ) {
+				LOG.trace( "Skipping LazyInitTargetSource - unable to access proxy target without possible throwing exception" );
+				return null;
+			}
+			else if ( targetSource instanceof SimpleBeanTargetSource ) {
+				SimpleBeanTargetSource beanTargetSource = (SimpleBeanTargetSource) targetSource;
+				String targetBeanName = beanTargetSource.getTargetBeanName();
+
+				if ( StringUtils.isEmpty( targetBeanName )
+						|| StringUtils.startsWith( targetBeanName, "scopedTarget." ) ) {
+					LOG.trace( "Refusing proxy target for a scoped target bean, might not be initialized." );
+					return null;
+				}
+			}
+
+			return getProxyTarget( targetSource.getTarget() );
 		}
 
 		return instance;

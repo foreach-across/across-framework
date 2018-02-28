@@ -13,37 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.foreach.across.core;
 
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Generic base class for exceptions thrown by Across processing.
+ * Specialization of {@link AcrossException} used to indicate a configuration error.
+ * Might be thrown before (or during) bootstrap of the Across context, when validating configuration.
  *
- * @see com.foreach.across.core.diagnostics.AcrossExceptionFailureAnalyzer
+ * @author Arne Vandamme
+ * @see com.foreach.across.core.diagnostics.AcrossConfigurationExceptionFailureAnalyzer
+ * @since 3.0.0
  */
-public class AcrossException extends RuntimeException
+public class AcrossConfigurationException extends AcrossException
 {
-	/**
-	 * Name of the module that was being processed. Depending on the exception type
-	 * this might mean the module was being bootstrapped or something happened during
-	 * configuration of this particular module.
-	 */
 	@Getter
 	@Setter
-	private String moduleBeingProcessed;
+	private String actionToTake;
 
-	public AcrossException( String message ) {
+	public AcrossConfigurationException( String message ) {
 		super( message );
 	}
 
-	public AcrossException( String message, Throwable cause ) {
-		super( message, cause );
+	public AcrossConfigurationException( String message, String actionToTake ) {
+		this( message );
+		this.actionToTake = actionToTake;
 	}
 
-	protected AcrossException( Throwable cause ) {
-		super( cause );
+	public AcrossConfigurationException( String message, Throwable cause ) {
+		super( message, cause );
 	}
 }

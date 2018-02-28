@@ -65,5 +65,6 @@ com.foreach.across.AutoConfigurationEnabled=\
   org.springframework.boot.autoconfigure.jdbc.JndiDataSourceAutoConfiguration,\
   org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration,\
   org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration,\
-  org.springframework.boot.autoconfigure.aop.AopAutoConfiguration->DynamicApplicationModule,\
-  org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration->DynamicApplicationModule
+  org.springframework.boot.autoconfigure.aop.AopAutoConfiguration->DynamicApplicationModule
+  #,\
+  #org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration->DynamicApplicationModule
