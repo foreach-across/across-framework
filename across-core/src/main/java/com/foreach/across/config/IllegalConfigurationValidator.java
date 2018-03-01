@@ -81,7 +81,7 @@ import static com.foreach.across.config.AcrossConfigurationLoader.loadSingleValu
  * @since 3.0.0
  */
 @ConditionalOnProperty(value = "across.configuration.validate", havingValue = "true", matchIfMissing = true)
-@Configuration
+@Configuration("across.illegalConfigurationValidator")
 @Import(IllegalConfigurationValidator.IllegalConfigurationDetector.class)
 public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer, BeanClassLoaderAware
 {
@@ -232,7 +232,8 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 
 		@Override
 		public void postProcessBeanDefinitionRegistry( BeanDefinitionRegistry registry ) throws BeansException {
-			IllegalConfigurationValidator illegalConfigurationValidator = ( (BeanFactory) registry ).getBean( IllegalConfigurationValidator.class );
+			IllegalConfigurationValidator illegalConfigurationValidator
+					= ( (BeanFactory) registry ).getBean( "across.illegalConfigurationValidator", IllegalConfigurationValidator.class );
 			AcrossModuleInfo moduleInfo = retrieveModuleInfo( registry );
 
 			Stream.of( registry.getBeanDefinitionNames() )
@@ -264,7 +265,7 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 
 		private AcrossModuleInfo retrieveModuleInfo( BeanDefinitionRegistry registry ) {
 			try {
-				AcrossContextInfo contextInfo = ( (BeanFactory) registry ).getBean( AcrossContextInfo.class );
+				AcrossContextInfo contextInfo = ( (BeanFactory) registry ).getBean( AcrossContextInfo.BEAN, AcrossContextInfo.class );
 				return contextInfo.getModuleBeingBootstrapped();
 			}
 			catch ( Exception e ) {
