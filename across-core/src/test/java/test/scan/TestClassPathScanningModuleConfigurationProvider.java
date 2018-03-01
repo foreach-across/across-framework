@@ -17,16 +17,10 @@ package test.scan;
 
 import com.foreach.across.core.context.ClassPathScanningModuleConfigurationProvider;
 import com.foreach.across.core.context.ModuleConfigurationSet;
-import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
-import test.scan.moduleExtendingValidModule.config.BeanOneConfiguration;
-import test.scan.moduleExtendingValidModule.extensions.BeanTwoConfiguration;
-import test.scan.moduleExtendingValidModule.extensions.SameBeanConfiguration;
-import test.scan.packageOne.ValidModule;
-import test.scan.packageTwo.OtherValidModule;
 import org.junit.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
-import test.scan.moduleExtendingValidModule.config.BeanOneConfiguration;
+import test.scan.moduleExtendingValidModule.extensions.BeanOneConfiguration;
 import test.scan.moduleExtendingValidModule.extensions.BeanTwoConfiguration;
 import test.scan.moduleExtendingValidModule.extensions.SameBeanConfiguration;
 import test.scan.packageOne.ValidModule;

@@ -18,7 +18,7 @@ package com.foreach.across.core.annotations;
 import java.lang.annotation.*;
 
 /**
- * Alternative for {@link org.springframework.context.annotation.Configuration} to declare annotated classes
+ * Extension of {@link org.springframework.context.annotation.Configuration} to declare configurations
  * that should not be added to the current {@link org.springframework.beans.factory.support.BeanDefinitionRegistry},
  * but rather be added to the registry of the modules specified in the {@link #value()} attribute.
  *

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package test.scan.moduleExtendingValidModule.config;
+package test.scan.moduleExtendingValidModule.extensions;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
-import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
 import org.springframework.context.annotation.Bean;
+import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
 
 /**
  * @author Arne Vandamme
