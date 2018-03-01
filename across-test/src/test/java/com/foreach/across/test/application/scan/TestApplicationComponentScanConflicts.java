@@ -16,7 +16,7 @@
 package com.foreach.across.test.application.scan;
 
 import com.foreach.across.config.AcrossApplication;
-import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import org.junit.Test;
 import org.springframework.context.annotation.ComponentScan;
@@ -40,19 +40,19 @@ public class TestApplicationComponentScanConflicts
 
 	@Test
 	public void exceptionWithDefaultComponentScan() {
-		assertThatExceptionOfType( AcrossException.class )
+		assertThatExceptionOfType( AcrossConfigurationException.class )
 				.isThrownBy( () -> bootstrap( DefaultComponentScan.class ) );
 	}
 
 	@Test
 	public void overlapWithNested() {
-		assertThatExceptionOfType( AcrossException.class )
+		assertThatExceptionOfType( AcrossConfigurationException.class )
 				.isThrownBy( () -> bootstrap( NestedComponentScan.class ) );
 	}
 
 	@Test
 	public void metaComponentScan() {
-		assertThatExceptionOfType( AcrossException.class )
+		assertThatExceptionOfType( AcrossConfigurationException.class )
 				.isThrownBy( () -> bootstrap( MetaComponentScan.class ) );
 	}
 

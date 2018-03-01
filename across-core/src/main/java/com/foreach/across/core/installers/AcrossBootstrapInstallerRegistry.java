@@ -214,7 +214,13 @@ public class AcrossBootstrapInstallerRegistry
 							installed = true;
 						}
 						catch ( Exception e ) {
-							throw new AcrossException( e );
+							throw new AcrossInstallerException(
+									module.getName(),
+									installerMetaData,
+									target,
+									method,
+									e
+							);
 						}
 					}
 

@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.resource;
 
-import com.foreach.across.core.AcrossException;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -222,7 +221,7 @@ public class WebResourceRegistry
 				WebResourcePackage webResourcePackage = packageManager.getPackage( packageName );
 
 				if ( webResourcePackage == null ) {
-					throw new AcrossException( "No WebResourcePackage found with name " + packageName );
+					throw new IllegalArgumentException( "No WebResourcePackage found with name " + packageName );
 				}
 
 				installedPackages.add( packageName );

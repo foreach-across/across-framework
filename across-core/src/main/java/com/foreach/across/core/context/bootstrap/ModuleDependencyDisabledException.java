@@ -16,18 +16,20 @@
 
 package com.foreach.across.core.context.bootstrap;
 
-import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.AcrossConfigurationException;
 
-public class ModuleDependencyDisabledException extends AcrossException
+public class ModuleDependencyDisabledException extends AcrossConfigurationException
 {
 	private final String moduleName, dependencyName;
 
 	public ModuleDependencyDisabledException( String moduleName, String dependencyName ) {
 		super( "Unable to bootstrap AcrossContext as module " + moduleName + " requires module " + dependencyName
-				       + ".  Module " + dependencyName + " is present but is not enabled." );
+				       + ". Module " + dependencyName + " is present but is not enabled." );
 
 		this.moduleName = moduleName;
 		this.dependencyName = dependencyName;
+
+		setModuleBeingProcessed( moduleName );
 	}
 
 	public String getModuleName() {

@@ -16,18 +16,20 @@
 
 package com.foreach.across.core.context.bootstrap;
 
-import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.AcrossConfigurationException;
 
-public class ModuleDependencyMissingException extends AcrossException
+public class ModuleDependencyMissingException extends AcrossConfigurationException
 {
 	private final String moduleName, dependencyName;
 
 	public ModuleDependencyMissingException( String moduleName, String dependencyName ) {
 		super( "Unable to bootstrap AcrossContext as module " + moduleName + " requires module " + dependencyName
-				       + ".  Module " + dependencyName + " is not present in the context." );
+				       + ". Module " + dependencyName + " is not present in the context." );
 
 		this.moduleName = moduleName;
 		this.dependencyName = dependencyName;
+
+		setModuleBeingProcessed( moduleName );
 	}
 
 	public String getModuleName() {

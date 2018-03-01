@@ -15,7 +15,7 @@
  */
 package com.foreach.across.config;
 
-import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.context.SharedMetadataReaderFactory;
 import com.foreach.across.core.util.ClassLoadingUtils;
 import lombok.SneakyThrows;
@@ -66,7 +66,7 @@ public class AcrossDynamicModulesConfiguration extends AcrossDynamicModulesConfi
 			verifyNoConflictingComponentScans( importMetadata, getBasePackage() );
 		}
 		catch ( ClassNotFoundException cnfe ) {
-			throw new AcrossException( "Unable to configure dynamic application modules", cnfe );
+			throw new AcrossConfigurationException( "Unable to configure dynamic application modules", cnfe );
 		}
 	}
 
@@ -98,11 +98,15 @@ public class AcrossDynamicModulesConfiguration extends AcrossDynamicModulesConfi
 	private static void verifyNoScanConflict( Set<String> scanPackages, String basePackage ) {
 		for ( String scanPackage : scanPackages ) {
 			if ( scanPackage.startsWith( basePackage ) || basePackage.startsWith( scanPackage ) ) {
-				throw new AcrossException(
+				AcrossConfigurationException configurationException = new AcrossConfigurationException(
 						"Detected a @ComponentScan conflict between '" + scanPackage + "' and '" + basePackage + "'. " +
-								"The latter is a dynamic module package and components should only be scanned within that module. " +
-								"Please review your configuration and optionally re-organize your package layout."
+								"The latter is a dynamic module package and components should only be scanned within that module. "
 				);
+				configurationException.setActionToTake(
+						"Remove the use of @ComponentScan on your @AcrossApplication or @EnableAcrossContext class. " +
+								"Review your configuration and package layout, and ensure you do not scan any beans that are part of an Across module package. "
+				);
+				throw configurationException;
 			}
 		}
 	}

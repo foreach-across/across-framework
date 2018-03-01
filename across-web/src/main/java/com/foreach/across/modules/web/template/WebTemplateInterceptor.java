@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.template;
 
-import com.foreach.across.core.AcrossException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpEntity;
@@ -94,7 +93,7 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 					processor.prepareForTemplate( request, response, handler );
 				}
 				else {
-					throw new AcrossException( "No WebTemplateProcessor registered with name: " + templateName );
+					throw new IllegalArgumentException( "No WebTemplateProcessor registered with name: " + templateName );
 				}
 			}
 			else {

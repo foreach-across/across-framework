@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.menu;
 
-import com.foreach.across.core.AcrossException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 
@@ -454,7 +453,7 @@ public class Menu implements Ordered
 
 	public Menu addItem( Menu item ) {
 		if ( item.hasParent() ) {
-			throw new AcrossException( "A Menu can only belong to a single parent menu." );
+			throw new IllegalStateException( "A Menu can only belong to a single parent menu." );
 		}
 
 		items.add( item );

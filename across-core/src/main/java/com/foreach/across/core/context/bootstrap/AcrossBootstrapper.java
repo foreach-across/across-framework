@@ -100,6 +100,8 @@ public class AcrossBootstrapper
 	 * Bootstraps all modules in the context.
 	 */
 	public void bootstrap() {
+		String moduleBeingProcessed = null;
+
 		try {
 			checkBootstrapIsPossible();
 
@@ -156,6 +158,8 @@ public class AcrossBootstrapper
 				List<ConfigurableAcrossModuleInfo> bootstrappedModules = new ArrayList<>();
 
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
+					moduleBeingProcessed = moduleInfo.getName();
+
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
 					ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
 					bootstrappedModules.forEach( previous -> config.addPreviouslyExposedBeans( previous.getExposedBeanRegistry() ) );
@@ -226,6 +230,8 @@ public class AcrossBootstrapper
 					LOG.info( "" );
 				}
 
+				moduleBeingProcessed = null;
+
 				LOG.info( "--- Module bootstrap finished: {} modules started", contextInfo.getModules().size() );
 				LOG.info( "" );
 
@@ -261,7 +267,13 @@ public class AcrossBootstrapper
 
 			destroyAllCreatedApplicationContexts();
 
-			throw new AcrossException( "Across bootstrap failed", e );
+			AcrossException ae = e instanceof AcrossException ? (AcrossException) e : new AcrossBootstrapException( e );
+
+			if ( ae.getModuleBeingProcessed() == null ) {
+				ae.setModuleBeingProcessed( moduleBeingProcessed );
+			}
+
+			throw ae;
 		}
 	}
 
@@ -684,7 +696,7 @@ public class AcrossBootstrapper
 
 		for ( AcrossModule module : modules ) {
 			if ( moduleNames.contains( module.getName() ) ) {
-				throw new AcrossException(
+				throw new AcrossConfigurationException(
 						"Each module must have a unique name, duplicate found for " + module.getName() );
 			}
 

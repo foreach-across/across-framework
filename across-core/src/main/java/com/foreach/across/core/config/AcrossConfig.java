@@ -16,8 +16,8 @@
 
 package com.foreach.across.core.config;
 
+import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
@@ -153,8 +153,9 @@ public class AcrossConfig
 	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
 	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( DataSource acrossDataSource ) {
 		if ( acrossDataSource == null ) {
-			throw new AcrossException(
-					"Unable to create the DistributedLockRepository because there is no DataSource configured."
+			throw new AcrossConfigurationException(
+					"Unable to create the DistributedLockRepository because there is no DataSource configured.",
+					"Define a datasource for Across. If you have multiple datasources mark one as @Primary or name the bean 'acrossDataSource'."
 			);
 		}
 

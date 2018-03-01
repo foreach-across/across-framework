@@ -44,7 +44,7 @@ import java.lang.annotation.*;
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @Import({ ApplicationModuleImportSelector.class, AcrossAutoConfigurationImportSelector.class, ExtendModuleAutoConfiguration.class,
-          ApplicationAutoConfigurationPackage.class, ApplicationModuleAutoConfigurationPackage.class })
+          ApplicationAutoConfigurationPackage.class, ApplicationModuleAutoConfigurationPackage.class, IllegalConfigurationValidator.class })
 public @interface AcrossApplication
 {
 	/**
