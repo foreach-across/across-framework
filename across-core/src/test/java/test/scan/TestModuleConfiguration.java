@@ -19,11 +19,6 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import test.scan.extensions.BeanFourAndFiveConfiguration;
-import test.scan.extensions.SomeBeanInterface;
-import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
-import test.scan.packageOne.ValidModule;
-import test.scan.packageTwo.OtherValidModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +49,9 @@ public class TestModuleConfiguration
 
 	@Test
 	public void moduleExtendingValidModuleShouldOnlyHaveBeanFourAndFive() {
-		assertFalse( beanRegistry.moduleContainsLocalBean( ModuleExtendingValidModule.NAME, "beanOne" ) );
+		// bean one is also present because it is defined in the config package, which is scanned for regular
+		// configurations as well - @ModuleConfiguration is also a regular configuration
+		assertTrue( beanRegistry.moduleContainsLocalBean( ModuleExtendingValidModule.NAME, "beanOne" ) );
 		assertFalse( beanRegistry.moduleContainsLocalBean( ModuleExtendingValidModule.NAME, "beanTwo" ) );
 		assertFalse( beanRegistry.moduleContainsLocalBean( ModuleExtendingValidModule.NAME, "beanThree" ) );
 		assertTrue( beanRegistry.moduleContainsLocalBean( ModuleExtendingValidModule.NAME, "beanFour" ) );

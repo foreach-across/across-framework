@@ -17,6 +17,7 @@ package com.foreach.across.modules.web.extensions;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.socket.config.annotation.DelegatingWebSocketConfiguration;
@@ -34,7 +35,8 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
  */
 @ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
 @ConditionalOnClass(WebSocketConfigurer.class)
+@ConditionalOnBean(WebSocketConfigurer.class)
 @Import(DelegatingWebSocketConfiguration.class)
-public class EnableWebSocketConfiguration
+class EnableWebSocketConfiguration
 {
 }

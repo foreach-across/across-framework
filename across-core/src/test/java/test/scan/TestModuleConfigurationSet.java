@@ -36,16 +36,16 @@ public class TestModuleConfigurationSet
 
 	@Test
 	public void nothingRegistered() {
-		assertEquals( 0, set.getAnnotatedClasses( "moduleOne" ).length );
-		assertEquals( 0, set.getAnnotatedClasses( "moduleTwo" ).length );
+		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
+		assertEquals( 0, set.getConfigurations( "moduleTwo" ).length );
 	}
 
 	@Test
 	public void registerToAll() {
 		set.register( One.class );
 
-		assertArrayEquals( new Class[] { One.class }, set.getAnnotatedClasses( "moduleOne" ) );
-		assertArrayEquals( new Class[] { One.class }, set.getAnnotatedClasses( "moduleTwo" ) );
+		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleOne" ) );
+		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
 	}
 
 	@Test
@@ -53,16 +53,16 @@ public class TestModuleConfigurationSet
 		set.register( One.class );
 		set.register( One.class, "moduleTwo" );
 
-		assertArrayEquals( new Class[] { One.class }, set.getAnnotatedClasses( "moduleOne" ) );
-		assertArrayEquals( new Class[] { One.class }, set.getAnnotatedClasses( "moduleTwo" ) );
+		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleOne" ) );
+		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
 	}
 
 	@Test
 	public void specificIncludes() {
 		set.register( One.class, "moduleTwo" );
 
-		assertEquals( 0, set.getAnnotatedClasses( "moduleOne" ).length );
-		assertArrayEquals( new Class[] { One.class }, set.getAnnotatedClasses( "moduleTwo" ) );
+		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
+		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
 	}
 
 	@Test
@@ -72,9 +72,9 @@ public class TestModuleConfigurationSet
 		set.register( Three.class, "aliasOne" );
 		set.register( Two.class, "aliasTwo" );
 
-		Class<?>[] annotatedClasses = set.getAnnotatedClasses( "moduleOne", "aliasOne", "aliasTwo" );
+		String[] annotatedClasses = set.getConfigurations( "moduleOne", "aliasOne", "aliasTwo" );
 		assertEquals( 3, annotatedClasses.length );
-		assertArrayEquals( new Class[] { One.class, Three.class, Two.class }, annotatedClasses );
+		assertArrayEquals( new String[] { One.class.getName(), Three.class.getName(), Two.class.getName() }, annotatedClasses );
 	}
 
 	@Test
@@ -82,10 +82,10 @@ public class TestModuleConfigurationSet
 		set.register( One.class );
 		set.exclude( One.class, "moduleOne" );
 
-		assertEquals( 0, set.getAnnotatedClasses( "moduleOne" ).length );
-		assertArrayEquals( new Class[] { One.class }, set.getAnnotatedClasses( "moduleTwo" ) );
-		assertArrayEquals( new Class[] { One.class }, set.getExcludedAnnotatedClasses( "moduleOne" ) );
-		assertEquals( 0, set.getExcludedAnnotatedClasses( "moduleTwo" ).length );
+		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
+		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
+		assertArrayEquals( new String[] { One.class.getName() }, set.getExcludedConfigurations( "moduleOne" ) );
+		assertEquals( 0, set.getExcludedConfigurations( "moduleTwo" ).length );
 	}
 
 	@Test
@@ -93,8 +93,8 @@ public class TestModuleConfigurationSet
 		set.register( One.class, "moduleOne", "moduleTwo" );
 		set.exclude( One.class, "moduleOne" );
 
-		assertEquals( 0, set.getAnnotatedClasses( "moduleOne" ).length );
-		assertArrayEquals( new Class[] { One.class }, set.getAnnotatedClasses( "moduleTwo" ) );
+		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
+		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
 	}
 
 	@Test
@@ -103,10 +103,10 @@ public class TestModuleConfigurationSet
 		set.exclude( One.class, "moduleTwo" );
 		set.remove( One.class );
 
-		assertEquals( 0, set.getAnnotatedClasses( "moduleOne" ).length );
-		assertEquals( 0, set.getAnnotatedClasses( "moduleTwo" ).length );
-		assertEquals( 0, set.getExcludedAnnotatedClasses( "moduleOne" ).length );
-		assertEquals( 0, set.getExcludedAnnotatedClasses( "moduleTwo" ).length );
+		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
+		assertEquals( 0, set.getConfigurations( "moduleTwo" ).length );
+		assertEquals( 0, set.getExcludedConfigurations( "moduleOne" ).length );
+		assertEquals( 0, set.getExcludedConfigurations( "moduleTwo" ).length );
 	}
 
 	@Test
@@ -116,8 +116,8 @@ public class TestModuleConfigurationSet
 		set.register( Three.class, "moduleOne", "moduleTwo" );
 		set.register( One.class, "moduleOne" );
 
-		assertArrayEquals( new Class[] { One.class, Three.class }, set.getAnnotatedClasses( "moduleOne" ) );
-		assertArrayEquals( new Class[] { One.class, Two.class, Three.class }, set.getAnnotatedClasses( "moduleTwo" ) );
+		assertArrayEquals( new String[] { One.class.getName(), Three.class.getName() }, set.getConfigurations( "moduleOne" ) );
+		assertArrayEquals( new String[] { One.class.getName(), Two.class.getName(), Three.class.getName() }, set.getConfigurations( "moduleTwo" ) );
 	}
 
 	static class One

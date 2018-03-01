@@ -44,6 +44,12 @@ public class TestModuleBootstrapConfig
 	}
 
 	@Test
+	public void configNonEmptyIfClassesToImport() {
+		config.addConfigurationsToImport( "my.config" );
+		assertFalse( config.isEmpty() );
+	}
+
+	@Test
 	public void configStaysEmptyIfOptionalAdded() {
 		config.addApplicationContextConfigurer( true, TestModuleBootstrapConfig.class );
 		assertTrue( config.isEmpty() );

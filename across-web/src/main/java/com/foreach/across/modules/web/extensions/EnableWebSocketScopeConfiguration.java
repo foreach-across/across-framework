@@ -27,8 +27,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
  * @since 3.0.0
  */
 @ModuleConfiguration
-@ConditionalOnClass(WebSocketMessageBrokerConfigurer.class)
-public class EnableWebSocketScopeConfiguration
+@ConditionalOnClass({ WebSocketMessageBrokerConfigurer.class, SimpSessionScope.class })
+class EnableWebSocketScopeConfiguration
 {
 	@Bean
 	public static CustomScopeConfigurer webSocketScopeConfigurer() {
