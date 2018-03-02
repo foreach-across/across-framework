@@ -45,6 +45,13 @@ public class TestDefaultViewElementBuilderContext
 	}
 
 	@Test
+	public void defaultMessages() {
+		DefaultViewElementBuilderContext ctx = new DefaultViewElementBuilderContext(  );
+		assertEquals( "my.code", ctx.getMessage( "my.code" ) );
+		assertEquals( "default message", ctx.getMessage( "my.code", "default message" ) );
+	}
+
+	@Test
 	public void withoutParent() {
 		DefaultViewElementBuilderContext ctx = new DefaultViewElementBuilderContext( false );
 		assertFalse( ctx.hasAttribute( "test" ) );
@@ -154,3 +161,4 @@ public class TestDefaultViewElementBuilderContext
 		assertSame( other, builderContext.getAttribute( WebResourceRegistry.class ) );
 	}
 }
+

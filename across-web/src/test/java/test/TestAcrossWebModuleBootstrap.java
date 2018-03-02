@@ -16,7 +16,7 @@
 package test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.foreach.across.config.EnableAcrossContext;
+import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
@@ -28,6 +28,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.*;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -133,7 +135,8 @@ public class TestAcrossWebModuleBootstrap extends AbstractWebIntegrationTest
 		assertNotNull( applicationContext.getBean( type ) );
 	}
 
-	@EnableAcrossContext(modules = AcrossWebModule.NAME)
+	@AcrossApplication(modules = AcrossWebModule.NAME, autoConfiguration = false)
+	@ImportAutoConfiguration(ErrorMvcAutoConfiguration.class)
 	@Configuration
 	static class Config
 	{

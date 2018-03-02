@@ -62,9 +62,10 @@ public class ExtendModuleAutoConfiguration implements AcrossBootstrapConfigurer,
 	@Override
 	public void configureModule( ModuleBootstrapConfig moduleConfiguration ) {
 		String moduleName = moduleConfiguration.getModuleName();
-		Map<String, List<String>> moduleExtensions = AcrossApplicationAutoConfiguration.retrieve( beanFactory, beanClassLoader ).getModuleExtensions();
+		AcrossApplicationAutoConfiguration applicationAutoConfiguration = AcrossApplicationAutoConfiguration.retrieve( beanFactory, beanClassLoader );
+		Map<String, List<String>> moduleExtensions = applicationAutoConfiguration.getModuleExtensions();
 
-		Set<String> classNames = new LinkedHashSet<>();
+		Set<String> classNames = new TreeSet<>( Comparator.comparingInt( applicationAutoConfiguration::getAutoConfigurationOrder ) );
 		Stream.of( moduleConfiguration.getAllModuleNames() )
 		      .forEach( name -> classNames.addAll( moduleExtensions.getOrDefault( name, Collections.emptyList() ) ) );
 

@@ -28,6 +28,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
+ * Registers the application module package. Separate configuration class so it would not be scanned in a parent class.
+ *
  * @author Arne Vandamme
  * @see ApplicationAutoConfigurationPackage
  * @since 3.0.0

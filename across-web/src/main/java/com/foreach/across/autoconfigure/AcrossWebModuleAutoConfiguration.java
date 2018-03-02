@@ -15,9 +15,11 @@
  */
 package com.foreach.across.autoconfigure;
 
+import com.foreach.across.boot.ConditionalOnAutoConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;
@@ -37,6 +39,7 @@ import org.springframework.core.Ordered;
 @RequiredArgsConstructor
 @ConditionalOnWebApplication
 @ConditionalOnBean(ErrorPageRegistry.class)
+@ConditionalOnAutoConfiguration(ErrorMvcAutoConfiguration.class)
 public class AcrossWebModuleAutoConfiguration
 {
 	private final ServerProperties serverProperties;

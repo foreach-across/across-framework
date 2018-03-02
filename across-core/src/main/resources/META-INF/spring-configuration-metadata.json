@@ -16,6 +16,12 @@
       "type": "java.lang.String",
       "description": "The location of the development mode properties resource.",
       "defaultValue": "file:${user.home}/dev-configs/across-devel.properties"
+    },
+    {
+      "name": "across.configuration.validate",
+      "type": "java.lang.Boolean",
+      "description": "Should Across application and module configuration be validated.",
+      "defaultValue": true
     }
   ]
 }

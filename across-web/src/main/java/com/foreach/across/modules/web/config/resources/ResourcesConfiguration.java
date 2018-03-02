@@ -51,7 +51,7 @@ import java.util.Map;
  * <p>
  * Customizing the default resource configuration can be done by overriding
  * {@link DefaultResourceRegistrationConfigurer}
- * and injecting it back into the module context under the same bean name (<strong>defaultResourceRegistrationConfigurer</strong>.
+ * and injecting it back into the module context under the same bean name (<strong>defaultResourceRegistrationConfigurer</strong>).
  *
  * @author Arne Vandamme
  */

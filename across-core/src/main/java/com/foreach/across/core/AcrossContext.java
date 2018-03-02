@@ -189,11 +189,11 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		Assert.notNull( module.getName(), "An AcrossModule must have a valid unique name." );
 
 		if ( module.getContext() != null ) {
-			throw new AcrossException( "Module is already attached to another AcrossContext: " + module );
+			throw new AcrossConfigurationException( "Module is already attached to another AcrossContext: " + module );
 		}
 
 		if ( isBootstrapped ) {
-			throw new AcrossException(
+			throw new AcrossConfigurationException(
 					"Adding a module to an already bootstrapped AcrossContext is currently not supported." );
 		}
 

@@ -135,6 +135,7 @@ public final class ThymeleafModelBuilder
 
 			if ( partialName != null && partialName.equals( viewElement.getName() ) ) {
 				partialRenderingEnabled = true;
+				writePendingTag();
 				model.add( modelFactory.createProcessingInstruction( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "start" ) );
 			}
 
@@ -162,6 +163,7 @@ public final class ThymeleafModelBuilder
 			}
 
 			if ( partialRenderingEnabled ) {
+				writePendingTag();
 				model.add( modelFactory.createProcessingInstruction( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "end" ) );
 			}
 		}

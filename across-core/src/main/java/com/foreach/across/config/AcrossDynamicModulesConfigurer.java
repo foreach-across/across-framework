@@ -15,16 +15,12 @@
  */
 package com.foreach.across.config;
 
-import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossException;
-import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.DynamicAcrossModuleFactory;
+import com.foreach.across.core.*;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ClassPathScanningChildPackageProvider;
 import com.foreach.across.core.context.ModuleDependencyResolver;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -50,10 +46,9 @@ import java.util.Optional;
  * @see AcrossDynamicModulesConfiguration
  * @since 1.1.2
  */
+@Slf4j
 public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossDynamicModulesConfiguration.class );
-
 	private boolean metadataReaderFactoryConfigured = false;
 	private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 	private MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory( resourcePatternResolver );
@@ -106,6 +101,10 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 		baseModuleName = baseModuleName( clazz );
 	}
 
+	protected String getBasePackage() {
+		return basePackage;
+	}
+
 	/**
 	 * Set the {@link ResourcePatternResolver} that should be used for classpath scanning.
 	 * Defaults to a {@link PathMatchingResourcePatternResolver}.
@@ -130,7 +129,7 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 	@Override
 	public synchronized void configure( AcrossContext context ) {
 		if ( basePackage == null || baseModuleName == null ) {
-			throw new AcrossException(
+			throw new AcrossConfigurationException(
 					"Unable to add dynamic modules as no basePackage and no baseModuleName have been configured" );
 		}
 
@@ -236,7 +235,9 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 			return factory.getObject();
 		}
 		catch ( Exception e ) {
-			throw new AcrossException( "Unable to create package based module", e );
+			AcrossConfigurationException configurationException = new AcrossConfigurationException( "Unable to create package based module", e );
+			configurationException.setModuleBeingProcessed( moduleName );
+			throw configurationException;
 		}
 	}
 

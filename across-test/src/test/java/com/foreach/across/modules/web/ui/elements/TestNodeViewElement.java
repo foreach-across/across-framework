@@ -58,6 +58,21 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 	}
 
 	@Test
+	public void partialRenderingOfNodeHierarchy() {
+		NodeViewElement row = new NodeViewElement( "div" );
+		NodeViewElement leftColumn = new NodeViewElement( "leftColumn", "div" );
+		leftColumn.setHtmlId( "left-column" );
+		NodeViewElement rightColumn = new NodeViewElement( "rightColumn", "div" );
+		rightColumn.setHtmlId( "right-column" );
+
+		row.addChild( leftColumn );
+		row.addChild( rightColumn );
+
+		renderAndExpect( row, model -> model.addAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "rightColumn" ), "<div id='right-column' />" );
+		renderAndExpect( row, model -> model.addAttribute( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "leftColumn" ), "<div id='left-column' />" );
+	}
+
+	@Test
 	public void nodeWithAttributes() {
 		NodeViewElement node = new NodeViewElement( "div" );
 		node.setAttribute( "class", "test-class test" );

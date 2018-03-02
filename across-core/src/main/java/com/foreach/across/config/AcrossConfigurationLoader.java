@@ -30,9 +30,6 @@ import java.util.stream.Collectors;
  * strings using {@link #loadValues(String, ClassLoader)}.
  * <p/>
  * All files on the classpath matching the resource will be read.
- * <p/>
- * If the values itself are a key/value pair, they can be separated with a colon (:) and
- * retrieved as a {@link Map} using {@link #loadMapValues(String, ClassLoader)}.
  *
  * @author Arne Vandamme
  * @see org.springframework.core.io.support.SpringFactoriesLoader
@@ -46,19 +43,31 @@ public abstract class AcrossConfigurationLoader
 	public static final String CONFIGURATION_RESOURCE_LOCATION = "META-INF/across.configuration";
 
 	/**
-	 * In addition to {@link #loadValues(String, ClassLoader)}, this method assumes a single value is in itself
-	 * a key:value pair (separated by a colon).  If no value is specified, the value will be the same as the key.
+	 * Retrieve a single value from the across.configuration.
 	 *
-	 * @param key         property for which to read the values
-	 * @param classLoader to fetch the resources
-	 * @return map of values
+	 * @param key         key for the value
+	 * @param classLoader to fetch the sources
+	 * @return single value or null if none available
 	 */
-	@Deprecated
-	public static Map<String, String> loadMapValues( String key, ClassLoader classLoader ) {
-		return loadValues( key, classLoader )
-				.stream()
-				.map( s -> s.split( ":" ) )
-				.collect( Collectors.toMap( s -> s[0], s -> s.length == 2 ? s[1] : s[0] ) );
+	public static String loadSingleValue( String key, ClassLoader classLoader ) {
+		String value = null;
+
+		try {
+			Enumeration<URL> urls = ( classLoader != null ? classLoader.getResources( CONFIGURATION_RESOURCE_LOCATION ) :
+					ClassLoader.getSystemResources( CONFIGURATION_RESOURCE_LOCATION ) );
+			while ( urls.hasMoreElements() ) {
+				URL url = urls.nextElement();
+				Properties properties = PropertiesLoaderUtils.loadProperties( new UrlResource( url ) );
+				if ( properties.containsKey( key ) ) {
+					value = properties.getProperty( key );
+				}
+			}
+
+			return value;
+		}
+		catch ( IOException ex ) {
+			throw new IllegalArgumentException( "Unable to load [" + key + "] from location [" + CONFIGURATION_RESOURCE_LOCATION + "]", ex );
+		}
 	}
 
 	/**

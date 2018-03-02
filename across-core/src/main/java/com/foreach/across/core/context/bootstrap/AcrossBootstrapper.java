@@ -19,6 +19,7 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.config.AcrossConfigurationLoader;
 import com.foreach.across.core.*;
 import com.foreach.across.core.annotations.Module;
+import com.foreach.across.core.config.ModuleConfigurationImportSelector;
 import com.foreach.across.core.context.*;
 import com.foreach.across.core.context.beans.PrimarySingletonBean;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
@@ -66,6 +67,7 @@ import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Takes care of bootstrapping an entire across context.
@@ -100,6 +102,8 @@ public class AcrossBootstrapper
 	 * Bootstraps all modules in the context.
 	 */
 	public void bootstrap() {
+		String moduleBeingProcessed = null;
+
 		try {
 			checkBootstrapIsPossible();
 
@@ -156,12 +160,14 @@ public class AcrossBootstrapper
 				List<ConfigurableAcrossModuleInfo> bootstrappedModules = new ArrayList<>();
 
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
+					moduleBeingProcessed = moduleInfo.getName();
+
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
 					ModuleBootstrapConfig config = moduleInfo.getBootstrapConfiguration();
 					bootstrappedModules.forEach( previous -> config.addPreviouslyExposedBeans( previous.getExposedBeanRegistry() ) );
 
 					// Add scanned (or edited) module configurations - first registered on the context, then on module itself
-					config.addApplicationContextConfigurer( moduleConfigurationSet.getAnnotatedClasses( moduleInfo.getName(), moduleInfo.getAliases() ) );
+					config.addConfigurationsToImport( moduleConfigurationSet.getConfigurations( moduleInfo.getName(), moduleInfo.getAliases() ) );
 					bootstrapConfigurers.forEach( configurer -> configurer.configureModule( config ) );
 
 					LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
@@ -181,17 +187,13 @@ public class AcrossBootstrapper
 					filterApplicationContextConfigurers( moduleInfo, config, moduleConfigurationSet );
 
 					// Run installers before bootstrapping this particular module
-					installerRegistry.runInstallersForModule( moduleInfo.getName(),
-					                                          InstallerPhase.BeforeModuleBootstrap );
+					installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.BeforeModuleBootstrap );
 
 					// Create the module context
-					AcrossConfigurableApplicationContext child =
-							applicationContextFactory.createApplicationContext( context, config, root );
+					AcrossConfigurableApplicationContext child = applicationContextFactory.createApplicationContext( context, config, root );
 
-					AcrossApplicationContextHolder moduleApplicationContext = new AcrossApplicationContextHolder( child,
-					                                                                                              root );
-					AcrossContextUtils.setAcrossApplicationContextHolder( config.getModule(),
-					                                                      moduleApplicationContext );
+					AcrossApplicationContextHolder moduleApplicationContext = new AcrossApplicationContextHolder( child, root );
+					AcrossContextUtils.setAcrossApplicationContextHolder( config.getModule(), moduleApplicationContext );
 
 					applicationContextFactory.loadApplicationContext( context, config, moduleApplicationContext );
 
@@ -204,8 +206,7 @@ public class AcrossBootstrapper
 					rootContext.publishEvent( new AcrossModuleBootstrappedEvent( moduleInfo ) );
 
 					// Run installers after module itself has bootstrapped
-					installerRegistry.runInstallersForModule( moduleInfo.getName(),
-					                                          InstallerPhase.AfterModuleBootstrap );
+					installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.AfterModuleBootstrap );
 
 					// Copy the beans to the parent context
 					exposeBeans( configurableAcrossModuleInfo, config.getExposeFilter(), config.getExposeTransformer(),
@@ -225,6 +226,8 @@ public class AcrossBootstrapper
 
 					LOG.info( "" );
 				}
+
+				moduleBeingProcessed = null;
 
 				LOG.info( "--- Module bootstrap finished: {} modules started", contextInfo.getModules().size() );
 				LOG.info( "" );
@@ -261,7 +264,13 @@ public class AcrossBootstrapper
 
 			destroyAllCreatedApplicationContexts();
 
-			throw new AcrossException( "Across bootstrap failed", e );
+			AcrossException ae = e instanceof AcrossException ? (AcrossException) e : new AcrossBootstrapException( e );
+
+			if ( ae.getModuleBeingProcessed() == null ) {
+				ae.setModuleBeingProcessed( moduleBeingProcessed );
+			}
+
+			throw ae;
 		}
 	}
 
@@ -272,8 +281,8 @@ public class AcrossBootstrapper
 	private void filterApplicationContextConfigurers( AcrossModuleInfo moduleInfo,
 	                                                  ModuleBootstrapConfig config,
 	                                                  ModuleConfigurationSet moduleConfigurationSet ) {
-		Set<Class<?>> notAllowedAnnotatedClasses = new LinkedHashSet<>(
-				Arrays.asList( moduleConfigurationSet.getExcludedAnnotatedClasses( moduleInfo.getName(), moduleInfo.getAliases() ) )
+		Set<String> notAllowedAnnotatedClasses = new LinkedHashSet<>(
+				Arrays.asList( moduleConfigurationSet.getExcludedConfigurations( moduleInfo.getName(), moduleInfo.getAliases() ) )
 		);
 		notAllowedAnnotatedClasses.addAll( config.getExcludedAnnotatedClasses() );
 
@@ -285,8 +294,10 @@ public class AcrossBootstrapper
 				      filtered.add( configurer );
 			      }
 			      else {
-				      List<Class> filteredClasses = new ArrayList<>( Arrays.asList( configurer.annotatedClasses() ) );
-				      filteredClasses.removeAll( notAllowedAnnotatedClasses );
+				      List<Class> filteredClasses = new ArrayList<>();
+				      Stream.of( configurer.annotatedClasses() )
+				            .filter( c -> !notAllowedAnnotatedClasses.contains( c.getName() ) )
+				            .forEach( filteredClasses::add );
 
 				      filtered.add(
 						      new ApplicationContextConfigurerAdapter()
@@ -324,6 +335,11 @@ public class AcrossBootstrapper
 				      );
 			      }
 		      } );
+
+		// filter classes to import
+		Set<String> configurationsToImport = new LinkedHashSet<>( config.getConfigurationsToImport() );
+		configurationsToImport.removeAll( notAllowedAnnotatedClasses );
+		config.setConfigurationsToImport( configurationsToImport );
 
 		config.setApplicationContextConfigurers( filtered );
 	}
@@ -549,6 +565,8 @@ public class AcrossBootstrapper
 			config.addInstallerContextConfigurers( contextInfo.getContext().getInstallerContextConfigurers() );
 			config.addInstallerContextConfigurers( AcrossContextUtils.getInstallerContextConfigurers( module ) );
 
+			// add the module configuration importer
+			config.addApplicationContextConfigurer( true, ModuleConfigurationImportSelector.class );
 			configs.add( config );
 
 			( (ConfigurableAcrossModuleInfo) moduleInfo ).setBootstrapConfiguration( config );
@@ -684,7 +702,7 @@ public class AcrossBootstrapper
 
 		for ( AcrossModule module : modules ) {
 			if ( moduleNames.contains( module.getName() ) ) {
-				throw new AcrossException(
+				throw new AcrossConfigurationException(
 						"Each module must have a unique name, duplicate found for " + module.getName() );
 			}
 

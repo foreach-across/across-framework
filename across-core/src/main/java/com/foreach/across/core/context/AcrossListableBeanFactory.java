@@ -17,6 +17,7 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import com.foreach.across.core.context.support.AcrossOrderUtils;
@@ -27,6 +28,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
@@ -47,6 +49,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.springframework.beans.factory.BeanFactoryUtils.isFactoryDereference;
+
 /**
  * Extends a {@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
  * with support for Exposed beans.  This implementation also allows the parent bean factory to be updated.
@@ -56,7 +60,7 @@ import java.util.stream.Collectors;
  */
 public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 {
-	private Set<String> exposedBeanNames = new HashSet<>();
+	private final Set<String> exposedBeanNames = new HashSet<>();
 
 	private BeanFactory parentBeanFactory;
 	private Integer moduleIndex;
@@ -122,8 +126,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	}
 
 	/**
-	 * An exposed bean definition does not really get created but gets fetched
-	 * from the external context.
+	 * An exposed bean definition does not really get created but gets fetched from the external context.
 	 */
 	@Override
 	protected Object doCreateBean( String beanName, RootBeanDefinition mbd, Object[] args ) {
@@ -201,6 +204,24 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		}
 
 		return super.doResolveDependency( descriptor, beanName, autowiredBeanNames, typeConverter );
+	}
+
+	@Override
+	protected <T> T doGetBean( String name, Class<T> requiredType, Object[] args, boolean typeCheckOnly ) throws BeansException {
+		String beanName = BeanFactoryUtils.transformedBeanName( name );
+		if ( isExposedBean( beanName ) ) {
+			ExposedBeanDefinition mbd = (ExposedBeanDefinition) getBeanDefinition( beanName );
+			AcrossContextInfo contextInfo = ( (AcrossContextBeanRegistry) getBean( mbd.getFactoryBeanName() ) ).getContextInfo();
+			AcrossListableBeanFactory moduleBeanFactory =
+					(AcrossListableBeanFactory) ( mbd.getModuleName() != null
+							? contextInfo.getModuleInfo( mbd.getModuleName() ).getApplicationContext().getAutowireCapableBeanFactory()
+							: contextInfo.getApplicationContext().getAutowireCapableBeanFactory() );
+
+			String originalBeanName = isFactoryDereference( name ) ? FACTORY_BEAN_PREFIX + mbd.getOriginalBeanName() : mbd.getOriginalBeanName();
+			return moduleBeanFactory.doGetBean( originalBeanName, requiredType, args, typeCheckOnly );
+		}
+
+		return super.doGetBean( name, requiredType, args, typeCheckOnly );
 	}
 
 	private Map<String, Object> findRefreshableCollectionAttributes( DependencyDescriptor dependencyDescriptor ) {
@@ -337,6 +358,60 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	 */
 	public boolean isExposedBean( String beanName ) {
 		return containsBeanDefinition( beanName ) && getBeanDefinition( beanName ) instanceof ExposedBeanDefinition;
+	}
+
+	@Override
+	protected boolean isFactoryBean( String beanName, RootBeanDefinition mbd ) {
+		BeanDefinition bd = mbd;
+
+		if ( isFactoryDereference( beanName ) ) {
+			String originalBeanName = BeanFactoryUtils.transformedBeanName( beanName );
+			if ( isExposedBean( originalBeanName ) ) {
+				bd = getBeanDefinition( originalBeanName );
+			}
+		}
+
+		if ( bd instanceof ExposedBeanDefinition ) {
+			ExposedBeanDefinition ebd = (ExposedBeanDefinition) bd;
+			AcrossContextInfo contextInfo = ( (AcrossContextBeanRegistry) getBean( ebd.getFactoryBeanName() ) ).getContextInfo();
+			try {
+				AcrossListableBeanFactory moduleBeanFactory =
+						(AcrossListableBeanFactory) ( ebd.getModuleName() != null
+								? contextInfo.getModuleInfo( ebd.getModuleName() ).getApplicationContext().getAutowireCapableBeanFactory()
+								: contextInfo.getApplicationContext().getAutowireCapableBeanFactory() );
+
+				return moduleBeanFactory.isFactoryBean( isFactoryDereference( beanName )
+						                                        ? BeanFactory.FACTORY_BEAN_PREFIX + ebd.getOriginalBeanName()
+						                                        : ebd.getOriginalBeanName() );
+			}
+			catch ( IllegalStateException ise ) {
+				// Most likely already shutdown - exposed beans are no longer correctly available
+				return false;
+			}
+		}
+
+		return super.isFactoryBean( beanName, mbd );
+	}
+
+	@Override
+	public boolean isTypeMatch( String name, ResolvableType typeToMatch ) throws NoSuchBeanDefinitionException {
+		if ( isFactoryDereference( name ) ) {
+			String beanName = BeanFactoryUtils.transformedBeanName( name );
+			if ( isExposedBean( beanName ) ) {
+				ExposedBeanDefinition mbd = (ExposedBeanDefinition) getBeanDefinition( beanName );
+				AcrossContextInfo contextInfo = ( (AcrossContextBeanRegistry) getBean( mbd.getFactoryBeanName() ) ).getContextInfo();
+				AcrossListableBeanFactory moduleBeanFactory =
+						(AcrossListableBeanFactory) ( mbd.getModuleName() != null
+								? contextInfo.getModuleInfo( mbd.getModuleName() ).getApplicationContext().getAutowireCapableBeanFactory()
+								: contextInfo.getApplicationContext().getAutowireCapableBeanFactory() );
+				RootBeanDefinition originalBd = moduleBeanFactory.getMergedLocalBeanDefinition( mbd.getOriginalBeanName() );
+
+				return moduleBeanFactory.isFactoryBean( mbd.getOriginalBeanName(), originalBd )
+						&& moduleBeanFactory.isTypeMatch( FACTORY_BEAN_PREFIX + mbd.getOriginalBeanName(), typeToMatch );
+			}
+		}
+
+		return super.isTypeMatch( name, typeToMatch );
 	}
 
 	/**

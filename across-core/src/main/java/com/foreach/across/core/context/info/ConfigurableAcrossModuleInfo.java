@@ -24,6 +24,9 @@ import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import lombok.NonNull;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
@@ -85,6 +88,11 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	@Override
 	public String[] getAliases() {
 		return aliases;
+	}
+
+	@Override
+	public boolean matchesModuleName( @NonNull String moduleName ) {
+		return StringUtils.equals( this.moduleName, moduleName ) || ArrayUtils.contains( getAliases(), moduleName );
 	}
 
 	@Override

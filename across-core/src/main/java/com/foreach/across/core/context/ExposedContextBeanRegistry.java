@@ -53,8 +53,7 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 		}
 
 		Map<String, Object> beans = ApplicationContextScanner.findSingletonsMatching( beanFactory, EXPOSED_FILTER );
-		Map<String, BeanDefinition> definitions =
-				ApplicationContextScanner.findBeanDefinitionsMatching( beanFactory, EXPOSED_FILTER );
+		Map<String, BeanDefinition> definitions = ApplicationContextScanner.findBeanDefinitionsMatching( beanFactory, EXPOSED_FILTER );
 
 		addBeans( definitions, beans );
 	}

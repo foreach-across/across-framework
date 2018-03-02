@@ -16,10 +16,24 @@
 
 package com.foreach.across.core;
 
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Generic base class for exceptions thrown by Across processing.
+ *
+ * @see com.foreach.across.core.diagnostics.AcrossExceptionFailureAnalyzer
+ */
 public class AcrossException extends RuntimeException
 {
-	public AcrossException() {
-	}
+	/**
+	 * Name of the module that was being processed. Depending on the exception type
+	 * this might mean the module was being bootstrapped or something happened during
+	 * configuration of this particular module.
+	 */
+	@Getter
+	@Setter
+	private String moduleBeingProcessed;
 
 	public AcrossException( String message ) {
 		super( message );
@@ -29,11 +43,7 @@ public class AcrossException extends RuntimeException
 		super( message, cause );
 	}
 
-	public AcrossException( Throwable cause ) {
+	protected AcrossException( Throwable cause ) {
 		super( cause );
-	}
-
-	public AcrossException( String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace ) {
-		super( message, cause, enableSuppression, writableStackTrace );
 	}
 }

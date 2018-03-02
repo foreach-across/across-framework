@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.foreach.across.modules.web.template.WebTemplateInterceptor.PROCESSOR_ATTRIBUTE;
+
 /**
  * Default error view resolver that will detect the presence of Thymeleaf templates
  * in a module location: eg: *MODULE_RESOURCES/error/5xx.html*.
@@ -64,6 +66,9 @@ public class AcrossModuleDefaultErrorViewResolver implements ErrorViewResolver, 
 	@Override
 	public ModelAndView resolveErrorView( HttpServletRequest request, HttpStatus status,
 	                                      Map<String, Object> model ) {
+		// Remove the already applied template
+		request.removeAttribute( PROCESSOR_ATTRIBUTE );
+
 		ModelAndView modelAndView = resolve( String.valueOf( status ), model );
 		if ( modelAndView == null && SERIES_VIEWS.containsKey( status.series() ) ) {
 			modelAndView = resolve( SERIES_VIEWS.get( status.series() ), model );

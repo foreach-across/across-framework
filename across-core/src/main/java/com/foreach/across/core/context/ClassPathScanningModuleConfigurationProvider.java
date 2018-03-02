@@ -16,7 +16,6 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
-import com.foreach.across.core.util.ClassLoadingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -69,38 +68,30 @@ public class ClassPathScanningModuleConfigurationProvider extends AbstractClassP
 						ClassMetadata classMetadata = metadataReader.getClassMetadata();
 
 						if ( classMetadata.isConcrete() ) {
-							try {
-								Class annotatedClass = ClassLoadingUtils.loadClass( classMetadata.getClassName() );
+							Map<String, Object> attributes = annotationMetadata.getAnnotationAttributes( ANNOTATION_NAME );
+							String[] moduleNames = (String[]) attributes.get( "value" );
 
-								Map<String, Object> attributes = annotationMetadata.getAnnotationAttributes(
-										ANNOTATION_NAME );
-								String[] moduleNames = (String[]) attributes.get( "value" );
-
-								if ( moduleNames == null || moduleNames.length == 0 ) {
-									moduleConfigurationSet.register( annotatedClass );
-								}
-								else {
-									moduleConfigurationSet.register( annotatedClass, moduleNames );
-								}
-
-								String[] excludedModuleNames = (String[]) attributes.get( "exclude" );
-
-								if ( excludedModuleNames != null && excludedModuleNames.length > 0 ) {
-									moduleConfigurationSet.exclude( annotatedClass, excludedModuleNames );
-								}
+							if ( moduleNames == null || moduleNames.length == 0 ) {
+								moduleConfigurationSet.register( classMetadata.getClassName() );
 							}
-							catch ( ClassNotFoundException | IllegalStateException e ) {
-								LOG.trace( "Unable to load @ModuleConfiguration class {}", classMetadata.getClassName(),
-								           e );
+							else {
+								moduleConfigurationSet.register( classMetadata.getClassName(), moduleNames );
+							}
+
+							String[] excludedModuleNames = (String[]) attributes.get( "exclude" );
+
+							if ( excludedModuleNames != null && excludedModuleNames.length > 0 ) {
+								moduleConfigurationSet.exclude( classMetadata.getClassName(), excludedModuleNames );
 							}
 						}
 					}
 				}
 			}
 			catch ( IOException ioe ) {
-				LOG.warn( "Unable to scan for @ModuleConfiguration classes", ioe );
+				LOG.error( "Unable to scan for @ModuleConfiguration classes - trying to continue", ioe );
 			}
 		}
+
 		return moduleConfigurationSet;
 	}
 }

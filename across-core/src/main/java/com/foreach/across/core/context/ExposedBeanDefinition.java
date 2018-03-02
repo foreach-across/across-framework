@@ -85,7 +85,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		setFactoryBeanName( contextBeanRegistry.getFactoryName() );
 		setFactoryMethodName( "getBeanFromModule" );
 
-		setScope( "prototype" );
+		setScope( SCOPE_SINGLETON );
 
 		if ( beanClass != null ) {
 			setBeanClassName( beanClass.getName() );
@@ -127,6 +127,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		setPrimary( original.isPrimary() );
 		setDescription( original.getDescription() );
 		setRole( original.getRole() );
+		setScope( original.getScope() );
 
 		setAutowireCandidate( original.isAutowireCandidate() );
 

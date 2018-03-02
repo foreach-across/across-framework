@@ -16,13 +16,14 @@
 
 package com.foreach.across.core.config;
 
+import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.convert.StringToDateConverter;
+import com.foreach.across.core.convert.StringToDateTimeConverter;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.events.AcrossContextApplicationEventMulticaster;
 import com.foreach.across.core.events.AcrossEventPublisher;
@@ -35,6 +36,7 @@ import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockMa
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -49,6 +51,7 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import javax.sql.DataSource;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -56,7 +59,7 @@ import java.util.UUID;
  */
 @Slf4j
 @Configuration
-@Import(ValidationAutoConfiguration.class)
+@Import({ ValidationAutoConfiguration.class, AcrossDataSourceRegistrar.class })
 public class AcrossConfig
 {
 	/**
@@ -113,14 +116,20 @@ public class AcrossConfig
 		          ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
 
 		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-		conversionService.addConverter( defaultDateConverter( conversionService ) );
+		conversionService.addConverter( defaultDateTimeConverter( conversionService ) );
 
 		return conversionService;
 	}
 
 	@Bean
-	public StringToDateConverter defaultDateConverter( ConversionService conversionService ) {
-		return new StringToDateConverter( conversionService );
+	@Lazy
+	public StringToDateConverter defaultDateConverter() {
+		return new StringToDateConverter();
+	}
+
+	@Bean
+	public StringToDateTimeConverter defaultDateTimeConverter( ConversionService conversionService ) {
+		return new StringToDateTimeConverter( conversionService );
 	}
 
 	@Bean
@@ -144,24 +153,25 @@ public class AcrossConfig
 
 	@Bean(destroyMethod = "close")
 	@Lazy
-	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
-	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( DataSource acrossDataSource ) {
-		if ( acrossDataSource == null ) {
-			throw new AcrossException(
-					"Unable to create the DistributedLockRepository because there is no DataSource configured."
+	@DependsOn("acrossCoreSchemaInstaller")
+	@SuppressWarnings("all")
+	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource ) {
+		if ( !acrossDataSource.isPresent() ) {
+			throw new AcrossConfigurationException(
+					"Unable to create the DistributedLockRepository because there is no DataSource configured.",
+					"Define a datasource for Across. If you have multiple datasources mark one as @Primary or name the bean 'acrossDataSource'."
 			);
 		}
 
 		return new SqlBasedDistributedLockManager(
-				acrossDataSource,
+				acrossDataSource.get(),
 				sqlBasedDistributedLockConfiguration( schemaConfigurationHolder() )
 		);
 	}
 
 	@Bean
 	@Lazy
-	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration(
-			CoreSchemaConfigurationHolder schemaConfigurationHolder ) {
+	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration( CoreSchemaConfigurationHolder schemaConfigurationHolder ) {
 		String tablePrefix = "";
 		String defaultSchema = schemaConfigurationHolder.getDefaultSchema();
 		if ( !StringUtils.isBlank( defaultSchema ) ) {

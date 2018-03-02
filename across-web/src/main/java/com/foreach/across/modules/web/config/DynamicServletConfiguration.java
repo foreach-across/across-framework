@@ -16,10 +16,10 @@
 package com.foreach.across.modules.web.config;
 
 import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
-import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -30,7 +30,6 @@ import org.springframework.context.event.EventListener;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import java.util.Collection;
 
 /**
@@ -52,22 +51,19 @@ public class DynamicServletConfiguration
 	private final ServletContext servletContext;
 
 	@EventListener
+	@SneakyThrows
 	public void registerServletsAndFilters( AcrossContextBootstrappedEvent bootstrappedEvent ) {
 		Collection<ServletContextInitializer> initializers = retrieveInitializersCreatedInAcrossContextOrAnyChildModule( bootstrappedEvent.getContext() );
 
-		try {
-			if ( !initializers.isEmpty() ) {
-				LOG.info( "Found {} ServletContextInitializer beans found in the Across context", initializers.size() );
+		if ( !initializers.isEmpty() ) {
+			LOG.info( "Found {} ServletContextInitializer beans found in the Across context", initializers.size() );
 
-				for ( ServletContextInitializer i : initializers ) {
-					LOG.debug( "Registering ServletContextInitializer - {}", i );
-					i.onStartup( servletContext );
-				}
+			for ( ServletContextInitializer i : initializers ) {
+				LOG.debug( "Registering ServletContextInitializer - {}", i );
+				i.onStartup( servletContext );
 			}
 		}
-		catch ( ServletException se ) {
-			throw new AcrossException( se );
-		}
+
 	}
 
 	private Collection<ServletContextInitializer> retrieveInitializersCreatedInAcrossContextOrAnyChildModule( AcrossContextInfo contextInfo ) {

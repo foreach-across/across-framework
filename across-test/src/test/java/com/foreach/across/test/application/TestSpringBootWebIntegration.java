@@ -17,7 +17,9 @@ package com.foreach.across.test.application;
 
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.test.ExposeForTest;
 import com.foreach.across.test.application.app.DummyApplication;
+import com.foreach.across.test.application.app.application.controllers.NonExposedComponent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -50,6 +52,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DummyApplication.class)
+@ExposeForTest(NonExposedComponent.class)
 public class TestSpringBootWebIntegration
 {
 	private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -62,6 +65,9 @@ public class TestSpringBootWebIntegration
 
 	@Autowired
 	private ListableBeanFactory beanFactory;
+
+	@Autowired(required = false)
+	private NonExposedComponent nonExposedComponent;
 
 	@Test
 	public void modulesShouldBeRegistered() {
@@ -128,6 +134,11 @@ public class TestSpringBootWebIntegration
 	public void dummyAutoConfigurationShouldHaveBeenAddedToApplicationModule() {
 		assertFalse( contextInfo.getApplicationContext().containsBean( "dummyDecimal" ) );
 		assertTrue( contextInfo.getModuleInfo( "DummyApplicationModule" ).getApplicationContext().containsBean( "dummyDecimal" ) );
+	}
+
+	@Test
+	public void manuallyExposedComponent() {
+		assertNotNull( nonExposedComponent );
 	}
 
 	private String get( String relativePath ) {

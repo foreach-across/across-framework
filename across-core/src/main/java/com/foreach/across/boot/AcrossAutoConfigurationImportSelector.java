@@ -20,11 +20,9 @@ import org.springframework.boot.autoconfigure.AutoConfigurationImportSelector;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Defers the actual import selection to Across.
@@ -40,30 +38,42 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 	}
 
 	@Override
-	protected List<String> getCandidateConfigurations( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
-		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
+	public String[] selectImports( AnnotationMetadata annotationMetadata ) {
+		String[] sortedOriginalImports = super.selectImports( annotationMetadata );
 
+		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
+		AnnotationAttributes attributes = getAttributes( annotationMetadata );
 		String[] excludedAutoConfigurations = attributes.getStringArray( "excludeAutoConfigurations" );
 		registry.addExcludedAutoConfigurations( excludedAutoConfigurations );
 
-		boolean autoConfiguration = (boolean) attributes.get( "autoConfiguration" );
+		String[] actualImports = Stream.of( sortedOriginalImports )
+		                               .map( registry::requestAutoConfiguration )
+		                               .filter( Objects::nonNull )
+		                               .filter( registry::notExcluded )
+		                               .toArray( String[]::new );
 
-		if ( !autoConfiguration ) {
-			return Collections.emptyList();
-		}
+		registry.printAutoConfigurationReport();
 
-		return super.getCandidateConfigurations( metadata, attributes )
-		            .stream()
-		            .map( registry::requestAutoConfiguration )
-		            .filter( Objects::nonNull )
-		            .filter( registry::notExcluded )
-		            .collect( Collectors.toList() );
+		return actualImports;
+	}
+
+	@Override
+	protected boolean isEnabled( AnnotationMetadata metadata ) {
+		AnnotationAttributes attributes = getAttributes( metadata );
+		return attributes.getBoolean( "autoConfiguration" );
 	}
 
 	@Override
 	protected Set<String> getExclusions( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
-		retrieveAutoConfigurationRegistry().printAutoConfigurationReport();
-		return Collections.emptySet();
+		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
+
+		attributes.put( "exclude", new String[0] );
+		attributes.put( "excludeName", new String[0] );
+
+		Set<String> exclusions = super.getExclusions( metadata, attributes );
+		exclusions.forEach( registry::addExcludedAutoConfigurations );
+
+		return exclusions;
 	}
 
 	private AcrossApplicationAutoConfiguration retrieveAutoConfigurationRegistry() {

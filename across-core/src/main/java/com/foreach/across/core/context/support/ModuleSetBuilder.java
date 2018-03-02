@@ -15,7 +15,7 @@
  */
 package com.foreach.across.core.context.support;
 
-import com.foreach.across.core.AcrossException;
+import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
@@ -54,11 +54,17 @@ public class ModuleSetBuilder
 	public void addModule( String moduleName ) {
 		moduleSuppliers.add( () -> {
 			if ( dependencyResolver == null ) {
-				throw new AcrossException( "Unable to resolve modules by name as no dependencyResolver is configured" );
+				throw new AcrossConfigurationException(
+						"Unable to resolve modules by name as no dependencyResolver is configured.",
+						"Add all modules directly to the Across context or configure module scanning on your @EnableAcrossContext or @AcrossApplication."
+				);
 			}
 			Optional<AcrossModule> module = dependencyResolver.resolveModule( moduleName, true );
 			if ( !module.isPresent() ) {
-				throw new AcrossException( "Unable to resolve module " + moduleName );
+				throw new AcrossConfigurationException(
+						"Unable to resolve module " + moduleName + ".",
+						"Either declare the module as a @Bean in the parent context or configure module scanning and check your module has a 'public static final String NAME' constant."
+				);
 			}
 			return module.get();
 		} );
