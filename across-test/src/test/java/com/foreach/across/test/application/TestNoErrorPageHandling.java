@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DummyApplication.class)
-@TestPropertySource(properties = { "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration",
+@TestPropertySource(properties = { "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration",
                                    "server.error.includeStacktrace=ALWAYS" })
 public class TestNoErrorPageHandling
 {

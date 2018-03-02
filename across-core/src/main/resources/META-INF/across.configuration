@@ -27,7 +27,7 @@ com.foreach.across.Exposed=\
   org.springframework.web.servlet.View,\
   org.springframework.web.servlet.ViewResolver,\
   org.springframework.web.servlet.config.annotation.WebMvcConfigurer,\
-  org.springframework.boot.autoconfigure.web.WebMvcRegistrations,\
+  org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations,\
   javax.servlet.MultipartConfigElement,\
   org.springframework.web.multipart.MultipartResolver
 #
@@ -49,17 +49,16 @@ com.foreach.across.AutoConfigurationEnabled=\
   org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration,\
   org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration,\
   org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration,\
-  org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration,\
+  org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration,\
   org.springframework.boot.devtools.autoconfigure.DevToolsDataSourceAutoConfiguration,\
   org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration,\
   org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration,\
   org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration,\
+  org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration,\
   org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration,\
   org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration,\
   org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration,\

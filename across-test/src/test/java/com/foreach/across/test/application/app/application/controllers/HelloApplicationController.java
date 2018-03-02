@@ -44,7 +44,7 @@ public class HelloApplicationController
 
 	@RequestMapping("/stringToDateConverterWithAnnotationPattern")
 	@ResponseBody
-	public String dateConversionWithPattern( @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ") Date time ) {
+	public String dateConversionWithPattern( @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy'T'HH:mm:ss") Date time ) {
 		return time.toString();
 	}
 }

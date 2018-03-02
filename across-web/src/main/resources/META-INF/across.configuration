@@ -15,9 +15,9 @@
 #
 # Types that should always be exposed
 com.foreach.across.Exposed=\
-  org.springframework.boot.autoconfigure.web.ErrorViewResolver,\
-  org.springframework.boot.autoconfigure.web.ErrorController,\
-  org.springframework.boot.autoconfigure.web.ErrorAttributes,\
+  org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver,\
+  org.springframework.boot.autoconfigure.web.servlet.error.ErrorController,\
+  org.springframework.boot.autoconfigure.web.servlet.error.ErrorAttributes,\
   org.springframework.messaging.simp.SimpMessagingTemplate,\
   org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer,\
   org.springframework.web.socket.config.annotation.WebSocketConfigurer
@@ -25,20 +25,19 @@ com.foreach.across.Exposed=\
 # Enabled auto-configuration classes
 com.foreach.across.AutoConfigurationEnabled=\
   com.foreach.across.autoconfigure.AcrossWebModuleAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration->AcrossContextPostProcessorModule
+  org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration->AcrossContextPostProcessorModule
 
 # Disabled auto-configuration classes - usually because AcrossWebModule adds them manually
 com.foreach.across.AutoConfigurationDisabled=\
-  org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration,\
+  org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration,\
   org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration,\
   org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration,\
   org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration,\
-  org.springframework.boot.autoconfigure.websocket.WebSocketMessagingAutoConfiguration,\
-  org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
+  org.springframework.boot.autoconfigure.websocket.servlet.WebSocketMessagingAutoConfiguration
 
 # List illegal configuration entries
 com.foreach.across.IllegalConfiguration=\
