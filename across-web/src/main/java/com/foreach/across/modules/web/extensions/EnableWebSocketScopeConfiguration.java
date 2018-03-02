@@ -23,6 +23,8 @@ import org.springframework.messaging.simp.SimpSessionScope;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
+ * Activates web socket scope in every module.
+ *
  * @author Steven Gentens
  * @since 3.0.0
  */

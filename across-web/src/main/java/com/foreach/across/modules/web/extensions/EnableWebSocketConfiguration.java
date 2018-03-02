@@ -36,7 +36,7 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 @ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
 @ConditionalOnClass(WebSocketConfigurer.class)
 @ConditionalOnBean(WebSocketConfigurer.class)
-@Import(DelegatingWebSocketConfiguration.class)
+@Import({ DelegatingWebSocketConfiguration.class })
 class EnableWebSocketConfiguration
 {
 }
