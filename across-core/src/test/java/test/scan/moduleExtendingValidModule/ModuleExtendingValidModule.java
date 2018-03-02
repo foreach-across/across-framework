@@ -33,4 +33,9 @@ public class ModuleExtendingValidModule extends AcrossModule
 	public String getDescription() {
 		return null;
 	}
+
+	@Override
+	public String[] getModuleConfigurationScanPackages() {
+		return new String[] { getClass().getPackage().getName() + ".config", getClass().getPackage().getName() + ".extensions" };
+	}
 }

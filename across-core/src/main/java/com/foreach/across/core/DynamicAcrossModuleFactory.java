@@ -141,7 +141,7 @@ public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModu
 		module.addInstallerContextConfigurer( new ComponentScanConfigurer( basePackage + ".installers.config" ) );
 
 		module.setInstallerScanPackages( basePackage + ".installers" );
-		module.setModuleConfigurationScanPackages( basePackage + ".config", basePackage + ".extensions" );
+		module.setModuleConfigurationScanPackages( basePackage + ".extensions" );
 		return module;
 	}
 

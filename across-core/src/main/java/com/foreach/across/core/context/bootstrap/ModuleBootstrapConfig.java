@@ -25,6 +25,9 @@ import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import com.foreach.across.core.util.ClassLoadingUtils;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
@@ -43,7 +46,13 @@ public class ModuleBootstrapConfig
 	private ExposedBeanDefinitionTransformer exposeTransformer;
 	private Set<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
 	private Set<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
-	private Set<Class<?>> excludedAnnotatedClasses = new LinkedHashSet<>();
+	private Set<String> excludedAnnotatedClasses = new LinkedHashSet<>();
+
+	@Getter
+	@Setter
+	@NonNull
+	private Set<String> configurationsToImport = new LinkedHashSet<>();
+
 	private Collection<Object> installers = new LinkedList<>();
 	private InstallerSettings installerSettings;
 	private Collection<ExposedModuleBeanRegistry> previouslyExposedBeans = new ArrayList<>();
@@ -187,6 +196,15 @@ public class ModuleBootstrapConfig
 		}
 	}
 
+	/**
+	 * Add a number of configurations that should be imported when bootstrapping this module.
+	 *
+	 * @param configurationClasses to import
+	 */
+	public void addConfigurationsToImport( String... configurationClasses ) {
+		configurationsToImport.addAll( Arrays.asList( configurationClasses ) );
+	}
+
 	public Set<ApplicationContextConfigurer> getInstallerContextConfigurers() {
 		return installerContextConfigurers;
 	}
@@ -224,7 +242,7 @@ public class ModuleBootstrapConfig
 	}
 
 	public boolean isEmpty() {
-		return installers.isEmpty() && !hasComponents;
+		return installers.isEmpty() && !hasComponents && configurationsToImport.isEmpty();
 	}
 
 	public Collection<ExposedModuleBeanRegistry> getPreviouslyExposedBeans() {
@@ -239,7 +257,7 @@ public class ModuleBootstrapConfig
 		this.previouslyExposedBeans.add( moduleBeanRegistry );
 	}
 
-	public Set<Class<?>> getExcludedAnnotatedClasses() {
+	public Set<String> getExcludedAnnotatedClasses() {
 		return excludedAnnotatedClasses;
 	}
 
@@ -251,12 +269,7 @@ public class ModuleBootstrapConfig
 	 * @param classNames to exclude
 	 */
 	public void exclude( String... classNames ) {
-		exclude(
-				(Class[]) Stream.of( classNames )
-				                .map( ClassLoadingUtils::resolveClass )
-				                .filter( Objects::nonNull )
-				                .toArray( Class[]::new )
-		);
+		excludedAnnotatedClasses.addAll( Arrays.asList( classNames ) );
 	}
 
 	/**
@@ -267,6 +280,8 @@ public class ModuleBootstrapConfig
 	 * @param annotatedClasses to exclude
 	 */
 	public void exclude( Class<?>... annotatedClasses ) {
-		excludedAnnotatedClasses.addAll( Arrays.asList( annotatedClasses ) );
+		Stream.of( annotatedClasses )
+		      .map( Class::getName )
+		      .forEach( excludedAnnotatedClasses::add );
 	}
 }

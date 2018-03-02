@@ -23,11 +23,6 @@ import com.foreach.across.core.DynamicAcrossModule.DynamicPostProcessorModule;
 import com.foreach.across.core.DynamicAcrossModuleFactory;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
-import test.dynamic.pkg.PkgMember;
-import test.dynamic.pkg.config.PkgConfig;
-import test.dynamic.pkg.extensions.PkgExtensionConfig;
-import test.dynamic.pkg.installers.PkgInstaller;
-import test.dynamic.pkg.installers.config.PkgInstallerConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.Ordered;
@@ -170,8 +165,7 @@ public class TestDynamicAcrossModuleFactory
 		);
 
 		assertArrayEquals(
-				new String[] { PkgConfig.class.getPackage().getName(),
-				               PkgExtensionConfig.class.getPackage().getName() },
+				new String[] { PkgExtensionConfig.class.getPackage().getName() },
 				module.getModuleConfigurationScanPackages()
 		);
 	}

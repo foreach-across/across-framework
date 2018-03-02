@@ -17,12 +17,6 @@ package test.scan;
 
 import com.foreach.across.core.context.ClassPathScanningModuleConfigurationProvider;
 import com.foreach.across.core.context.ModuleConfigurationSet;
-import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
-import test.scan.moduleExtendingValidModule.config.BeanOneConfiguration;
-import test.scan.moduleExtendingValidModule.extensions.BeanTwoConfiguration;
-import test.scan.moduleExtendingValidModule.extensions.SameBeanConfiguration;
-import test.scan.packageOne.ValidModule;
-import test.scan.packageTwo.OtherValidModule;
 import org.junit.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
@@ -47,9 +41,9 @@ public class TestClassPathScanningModuleConfigurationProvider
 		ModuleConfigurationSet configurationSet = provider.scan( "illegal" );
 
 		assertNotNull( configurationSet );
-		assertEquals( 0, configurationSet.getAnnotatedClasses( ValidModule.NAME ).length );
-		assertEquals( 0, configurationSet.getAnnotatedClasses( OtherValidModule.NAME ).length );
-		assertEquals( 0, configurationSet.getAnnotatedClasses( "badModule" ).length );
+		assertEquals( 0, configurationSet.getConfigurations( ValidModule.NAME ).length );
+		assertEquals( 0, configurationSet.getConfigurations( OtherValidModule.NAME ).length );
+		assertEquals( 0, configurationSet.getConfigurations( "badModule" ).length );
 	}
 
 	@Test
@@ -60,18 +54,18 @@ public class TestClassPathScanningModuleConfigurationProvider
 
 		assertNotNull( configurationSet );
 		assertArrayEquals(
-				new Class[] { BeanOneConfiguration.class }, configurationSet.getAnnotatedClasses( ValidModule.NAME )
+				new String[] { BeanOneConfiguration.class.getName() }, configurationSet.getConfigurations( ValidModule.NAME )
 		);
 		assertArrayEquals(
-				new Class[] { BeanOneConfiguration.class },
-				configurationSet.getAnnotatedClasses( OtherValidModule.NAME )
+				new String[] { BeanOneConfiguration.class.getName() },
+				configurationSet.getConfigurations( OtherValidModule.NAME )
 		);
 		assertArrayEquals(
-				new Class[] { BeanOneConfiguration.class }, configurationSet.getAnnotatedClasses( "badModule" )
+				new String[] { BeanOneConfiguration.class.getName() }, configurationSet.getConfigurations( "badModule" )
 		);
 
 		// excluded
-		assertEquals( 0, configurationSet.getAnnotatedClasses( ModuleExtendingValidModule.NAME ).length );
+		assertEquals( 0, configurationSet.getConfigurations( ModuleExtendingValidModule.NAME ).length );
 	}
 
 	@Test
@@ -83,16 +77,16 @@ public class TestClassPathScanningModuleConfigurationProvider
 
 		assertNotNull( configurationSet );
 		assertArrayEquals(
-				new Class[] { BeanOneConfiguration.class, BeanTwoConfiguration.class, SameBeanConfiguration.class },
-				configurationSet.getAnnotatedClasses( ValidModule.NAME )
+				new String[] { BeanOneConfiguration.class.getName(), BeanTwoConfiguration.class.getName(), SameBeanConfiguration.class.getName() },
+				configurationSet.getConfigurations( ValidModule.NAME )
 		);
 		assertArrayEquals(
-				new Class[] { BeanOneConfiguration.class },
-				configurationSet.getAnnotatedClasses( OtherValidModule.NAME )
+				new String[] { BeanOneConfiguration.class.getName() },
+				configurationSet.getConfigurations( OtherValidModule.NAME )
 		);
 		assertArrayEquals(
-				new Class[] { BeanOneConfiguration.class }, configurationSet.getAnnotatedClasses( "badModule" )
+				new String[] { BeanOneConfiguration.class.getName() }, configurationSet.getConfigurations( "badModule" )
 		);
-		assertEquals( 0, configurationSet.getAnnotatedClasses( ModuleExtendingValidModule.NAME ).length );
+		assertEquals( 0, configurationSet.getConfigurations( ModuleExtendingValidModule.NAME ).length );
 	}
 }

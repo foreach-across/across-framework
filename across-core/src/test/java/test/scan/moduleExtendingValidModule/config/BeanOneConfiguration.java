@@ -16,8 +16,8 @@
 package test.scan.moduleExtendingValidModule.config;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
-import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
 import org.springframework.context.annotation.Bean;
+import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
 
 /**
  * @author Arne Vandamme

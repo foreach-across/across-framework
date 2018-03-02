@@ -51,6 +51,7 @@ com.foreach.across.AutoConfigurationEnabled=\
   org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,\
   org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration,\
   org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration,\
+  org.springframework.boot.autoconfigure.websocket.WebSocketAutoConfiguration,\
   org.springframework.boot.devtools.autoconfigure.DevToolsDataSourceAutoConfiguration,\
   org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration,\
   org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration,\

@@ -333,10 +333,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	 * @return Array of package names.
 	 */
 	public String[] getModuleConfigurationScanPackages() {
-		return new String[] {
-				getClass().getPackage().getName() + ".config",
-				getClass().getPackage().getName() + ".extensions"
-		};
+		return new String[] { getClass().getPackage().getName() + ".extensions" };
 	}
 
 	/**
