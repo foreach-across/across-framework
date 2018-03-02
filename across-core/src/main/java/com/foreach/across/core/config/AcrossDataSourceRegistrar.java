@@ -58,8 +58,16 @@ class AcrossDataSourceRegistrar implements BeanDefinitionRegistryPostProcessor
 			registerPrimaryDataSource( acrossContext.getDataSource(), beanFactory, hasInstallerDataSource );
 		}
 
-		if ( hasInstallerDataSource && !beanFactory.containsBeanDefinition( INSTALLER_DATASOURCE ) ) {
-			registerInstallerDataSource( acrossContext.getInstallerDataSource(), beanFactory );
+		if ( !beanFactory.containsBeanDefinition( INSTALLER_DATASOURCE ) ) {
+			if ( hasInstallerDataSource ) {
+				registerInstallerDataSource( acrossContext.getInstallerDataSource(), beanFactory );
+			}
+			else {
+				BeanDefinitionRegistry primaryRegistry = getRegistryWithLocalBeanDefinition( beanFactory, DATASOURCE );
+				if ( primaryRegistry != null ) {
+					primaryRegistry.registerAlias( DATASOURCE, INSTALLER_DATASOURCE );
+				}
+			}
 		}
 	}
 
@@ -71,15 +79,12 @@ class AcrossDataSourceRegistrar implements BeanDefinitionRegistryPostProcessor
 			boolean multipleDataSources = hasMultipleDataSources( beanFactory ) || hasInstallerDataSource;
 
 			if ( multipleDataSources && !beanDefinition.isPrimary() ) {
-				registerPrimaryDataSourceBeanDefinition( beanFactory, expected, hasInstallerDataSource );
-			}
-			else if ( !multipleDataSources ) {
-				registry.registerAlias( DATASOURCE, INSTALLER_DATASOURCE );
+				registerPrimaryDataSourceBeanDefinition( beanFactory, expected );
 			}
 		}
 
 		else if ( expected != null ) {
-			registerPrimaryDataSourceBeanDefinition( beanFactory, expected, hasInstallerDataSource );
+			registerPrimaryDataSourceBeanDefinition( beanFactory, expected );
 		}
 	}
 
@@ -95,16 +100,11 @@ class AcrossDataSourceRegistrar implements BeanDefinitionRegistryPostProcessor
 		}
 	}
 
-	private void registerPrimaryDataSourceBeanDefinition( AcrossListableBeanFactory beanFactory, DataSource dataSource, boolean hasInstallerDataSource ) {
+	private void registerPrimaryDataSourceBeanDefinition( AcrossListableBeanFactory beanFactory, DataSource dataSource ) {
 		GenericBeanDefinition definition = new GenericBeanDefinition();
 		definition.setPrimary( true );
 		definition.setBeanClass( DataSource.class );
 		beanFactory.registerBeanDefinition( DATASOURCE, definition );
-
-		if ( !hasInstallerDataSource ) {
-			beanFactory.registerAlias( DATASOURCE, INSTALLER_DATASOURCE );
-		}
-
 		beanFactory.registerSingleton( DATASOURCE, dataSource );
 	}
 

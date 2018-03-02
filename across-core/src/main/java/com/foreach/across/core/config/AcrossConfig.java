@@ -36,6 +36,7 @@ import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockMa
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -50,6 +51,7 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import javax.sql.DataSource;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -151,9 +153,10 @@ public class AcrossConfig
 
 	@Bean(destroyMethod = "close")
 	@Lazy
-	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
-	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( DataSource acrossDataSource ) {
-		if ( acrossDataSource == null ) {
+	@DependsOn("acrossCoreSchemaInstaller")
+	@SuppressWarnings("all")
+	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource ) {
+		if ( !acrossDataSource.isPresent() ) {
 			throw new AcrossConfigurationException(
 					"Unable to create the DistributedLockRepository because there is no DataSource configured.",
 					"Define a datasource for Across. If you have multiple datasources mark one as @Primary or name the bean 'acrossDataSource'."
@@ -161,15 +164,14 @@ public class AcrossConfig
 		}
 
 		return new SqlBasedDistributedLockManager(
-				acrossDataSource,
+				acrossDataSource.get(),
 				sqlBasedDistributedLockConfiguration( schemaConfigurationHolder() )
 		);
 	}
 
 	@Bean
 	@Lazy
-	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration(
-			CoreSchemaConfigurationHolder schemaConfigurationHolder ) {
+	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration( CoreSchemaConfigurationHolder schemaConfigurationHolder ) {
 		String tablePrefix = "";
 		String defaultSchema = schemaConfigurationHolder.getDefaultSchema();
 		if ( !StringUtils.isBlank( defaultSchema ) ) {

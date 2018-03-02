@@ -71,7 +71,6 @@ public class AcrossInstallerConfig
 
 	@Bean
 	@Lazy
-	@DependsOn(AcrossContext.INSTALLER_DATASOURCE)
 	@SuppressWarnings("all")
 	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller( @Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource,
 	                                                            CoreSchemaConfigurationHolder schemaHolder,
