@@ -17,11 +17,6 @@ package test.installers;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
-import test.installers.examples.InstallerThree;
-import test.installers.scan.InstallerScanModule;
-import test.installers.scan.installers.InstallerOne;
-import test.installers.scan.installers.InstallerTwo;
-import test.modules.installer.installers.TestInstaller;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -30,6 +25,7 @@ import test.installers.examples.InstallerThree;
 import test.installers.scan.InstallerScanModule;
 import test.installers.scan.installers.InstallerOne;
 import test.installers.scan.installers.InstallerTwo;
+import test.modules.installer.installers.TestInstaller;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -70,7 +66,7 @@ public class TestModuleInstallers
 
 	private void execute( InstallerScanModule module ) {
 		AcrossContext ctx = new AcrossContext();
-		ctx.setDataSource( new EmbeddedDatabaseBuilder().setType( EmbeddedDatabaseType.HSQL ).build() );
+		ctx.setDataSource( new EmbeddedDatabaseBuilder().generateUniqueName( true ).setType( EmbeddedDatabaseType.HSQL ).build() );
 		ctx.setInstallerAction( InstallerAction.EXECUTE );
 		ctx.addModule( module );
 		ctx.bootstrap();

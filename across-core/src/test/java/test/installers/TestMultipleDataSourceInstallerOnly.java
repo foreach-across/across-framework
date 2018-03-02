@@ -69,7 +69,7 @@ public class TestMultipleDataSourceInstallerOnly extends AbstractInstallerDataSo
 		public void configure( AcrossContext context ) {
 			context.getModule( "InstallerModule" )
 			       .addInstallerContextConfigurer(
-					       new SingletonBeanConfigurer( AcrossContext.INSTALLER_DATASOURCE, dataDataSource() )
+					       new SingletonBeanConfigurer( AcrossContext.INSTALLER_DATASOURCE, dataDataSource(), true )
 			       );
 		}
 	}

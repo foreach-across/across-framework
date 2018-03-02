@@ -18,33 +18,31 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossException;
-import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.installers.AcrossCoreSchemaInstaller;
 import com.foreach.across.core.installers.AcrossInstallerRepository;
 import com.foreach.across.core.installers.AcrossInstallerRepositoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 
 import javax.sql.DataSource;
+import java.util.Optional;
+
+import static com.foreach.across.core.context.AcrossContextUtils.getApplicationContext;
 
 /**
  * Provides the installer configuration for an AcrossContext.
  * Will also make sure that the core schema is present before bootstrap.
  */
 @Configuration
+@Slf4j
+@RequiredArgsConstructor
 public class AcrossInstallerConfig
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossInstallerConfig.class );
-
-	@Autowired
-	private AcrossContext acrossContext;
-
-	@Autowired
-	private CoreSchemaConfigurationHolder schemaHolder;
-
 	/**
 	 * Requesting the AcrossInstallerRepository will result in the core schema to be installed.
 	 * This bean is lazy because if no installers are required to run, there is no need for a DataSource
@@ -55,10 +53,9 @@ public class AcrossInstallerConfig
 	@Bean
 	@Lazy
 	@DependsOn("acrossCoreSchemaInstaller")
-	public AcrossInstallerRepository installerRepository() {
-		DataSource installerDataSource = acrossDataSource();
-
-		if ( installerDataSource == null ) {
+	public AcrossInstallerRepository installerRepository( @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource,
+	                                                      CoreSchemaConfigurationHolder schemaHolder ) {
+		if ( !acrossDataSource.isPresent() ) {
 			throw new AcrossConfigurationException(
 					"Unable to create the AcrossInstallerRepository because there is no DataSource configured. " +
 							"A DataSource is required if there is at least one non-disabled installer.",
@@ -66,7 +63,7 @@ public class AcrossInstallerConfig
 			);
 		}
 
-		AcrossInstallerRepositoryImpl repository = new AcrossInstallerRepositoryImpl( installerDataSource );
+		AcrossInstallerRepositoryImpl repository = new AcrossInstallerRepositoryImpl( acrossDataSource.get() );
 		repository.setSchema( schemaHolder.getDefaultSchema() );
 
 		return repository;
@@ -75,10 +72,11 @@ public class AcrossInstallerConfig
 	@Bean
 	@Lazy
 	@DependsOn(AcrossContext.INSTALLER_DATASOURCE)
-	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller() {
-		DataSource installerDataSource = acrossInstallerDataSource();
-
-		if ( installerDataSource == null ) {
+	@SuppressWarnings("all")
+	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller( @Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource,
+	                                                            CoreSchemaConfigurationHolder schemaHolder,
+	                                                            AcrossContext acrossContext ) {
+		if ( !installerDataSource.isPresent() ) {
 			throw new AcrossConfigurationException(
 					"Unable to create the AcrossCoreSchemaInstaller because there is no DataSource configured. " +
 							"A DataSource is required if there is at least one non-disabled installer.",
@@ -86,33 +84,9 @@ public class AcrossInstallerConfig
 			);
 		}
 
-		AcrossCoreSchemaInstaller installer = new AcrossCoreSchemaInstaller(
-				installerDataSource, AcrossContextUtils.getApplicationContext( acrossContext )
-		);
+		AcrossCoreSchemaInstaller installer = new AcrossCoreSchemaInstaller( installerDataSource.get(), getApplicationContext( acrossContext ) );
 		installer.setDefaultSchema( schemaHolder.getDefaultSchema() );
 
 		return installer;
-	}
-
-	@Bean(name = AcrossContext.INSTALLER_DATASOURCE)
-	@DependsOn(AcrossContext.DATASOURCE)
-	public DataSource acrossInstallerDataSource() {
-		DataSource installerDataSource = acrossContext.getInstallerDataSource();
-
-		if ( installerDataSource == null ) {
-			installerDataSource = acrossDataSource();
-		}
-
-		if ( installerDataSource == null ) {
-			LOG.warn( "No Across installer data source specified - it will be impossible to run any installers." );
-		}
-
-		return installerDataSource;
-	}
-
-	@Primary
-	@Bean(name = AcrossContext.DATASOURCE)
-	public DataSource acrossDataSource() {
-		return acrossContext.getDataSource();
 	}
 }

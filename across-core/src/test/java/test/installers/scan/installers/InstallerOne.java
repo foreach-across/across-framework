@@ -16,8 +16,8 @@
 package test.installers.scan.installers;
 
 import com.foreach.across.core.annotations.Installer;
-import test.modules.installer.installers.TestInstaller;
 import org.springframework.core.annotation.Order;
+import test.modules.installer.installers.TestInstaller;
 
 /**
  * @author Arne Vandamme

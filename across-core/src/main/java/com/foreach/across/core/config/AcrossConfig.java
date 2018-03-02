@@ -57,7 +57,7 @@ import java.util.UUID;
  */
 @Slf4j
 @Configuration
-@Import(ValidationAutoConfiguration.class)
+@Import({ ValidationAutoConfiguration.class, AcrossDataSourceRegistrar.class })
 public class AcrossConfig
 {
 	/**
@@ -120,6 +120,7 @@ public class AcrossConfig
 	}
 
 	@Bean
+	@Lazy
 	public StringToDateConverter defaultDateConverter() {
 		return new StringToDateConverter();
 	}

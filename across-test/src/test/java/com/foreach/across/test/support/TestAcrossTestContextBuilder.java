@@ -19,6 +19,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.test.AcrossTestContext;
 import org.junit.Test;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -26,6 +27,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import javax.sql.DataSource;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
@@ -82,11 +84,10 @@ public class TestAcrossTestContextBuilder
 	@Test
 	public void noDefaultDataSources() {
 		try (AcrossTestContext context = contextBuilder().useTestDataSource( false ).build()) {
-			DataSource dataSource = context.getBean( AcrossContext.DATASOURCE, DataSource.class );
-			DataSource installerDataSource = context.getBean( AcrossContext.INSTALLER_DATASOURCE, DataSource.class );
-
-			assertNull( dataSource );
-			assertNull( installerDataSource );
+			assertThatExceptionOfType( NoSuchBeanDefinitionException.class )
+					.isThrownBy( () -> context.getBean( AcrossContext.DATASOURCE, DataSource.class ) );
+			assertThatExceptionOfType( NoSuchBeanDefinitionException.class )
+					.isThrownBy( () -> context.getBean( AcrossContext.INSTALLER_DATASOURCE, DataSource.class ) );
 		}
 	}
 
