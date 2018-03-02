@@ -16,12 +16,9 @@
 package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
-import org.springframework.boot.web.server.WebServerFactory;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -35,13 +32,12 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
  * @see AcrossApplication
  * @since 1.1.2
  */
-@ConditionalOnWebApplication
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @Configuration
 @Import({ DispatcherServletAutoConfiguration.class, ServletWebServerFactoryAutoConfiguration.class })
 public class AcrossWebApplicationAutoConfiguration
 {
 	@Bean
-	@ConditionalOnBean({ WebServerFactory.class, SpringBootServletInitializer.class })
 	public static AcrossServletContextInitializer embeddedAcrossServletContextInitializer( ConfigurableWebApplicationContext webApplicationContext ) {
 		return new AcrossServletContextInitializer( webApplicationContext );
 	}
