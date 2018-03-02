@@ -32,7 +32,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrationsAdapter;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -57,7 +57,7 @@ import java.util.List;
 @ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
 @Import(WebMvcAutoConfiguration.class)
 @RequiredArgsConstructor
-public class EnableWebMvcConfiguration extends WebMvcRegistrationsAdapter
+public class EnableWebMvcConfiguration implements WebMvcRegistrations
 {
 	private final AcrossContextBeanRegistry beanRegistry;
 

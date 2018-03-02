@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Exposed
-@ConfigurationProperties(prefix = "acrossWebModule.development")
+@ConfigurationProperties(prefix = "across.web.development")
 public class AcrossWebModuleDevSettings
 {
 	private final AcrossDevelopmentMode developmentMode;

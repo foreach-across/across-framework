@@ -58,7 +58,7 @@ import java.util.stream.Stream;
  * Registers Thymeleaf support for all files with .html or .thtml extension.
  */
 @Configuration
-@ConditionalOnProperty(value = "acrossWebModule.views.thymeleaf.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "across.web.views.thymeleaf.enabled", matchIfMissing = true)
 public class ThymeleafViewSupportConfiguration
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfiguration.class );

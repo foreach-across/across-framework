@@ -37,7 +37,8 @@ com.foreach.across.AutoConfigurationDisabled=\
   org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration,\
   org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration,\
   org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration,\
-  org.springframework.boot.autoconfigure.websocket.WebSocketMessagingAutoConfiguration
+  org.springframework.boot.autoconfigure.websocket.WebSocketMessagingAutoConfiguration,\
+  org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 # List illegal configuration entries
 com.foreach.across.IllegalConfiguration=\

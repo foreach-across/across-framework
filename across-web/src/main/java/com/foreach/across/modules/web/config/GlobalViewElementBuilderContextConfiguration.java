@@ -29,7 +29,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@ConditionalOnProperty(value = "acrossWebModule.registerGlobalBuilderContext")
+@ConditionalOnProperty(value = "across.web.registerGlobalBuilderContext")
 @OrderInModule(3)
 @Configuration
 public class GlobalViewElementBuilderContextConfiguration extends WebMvcConfigurerAdapter

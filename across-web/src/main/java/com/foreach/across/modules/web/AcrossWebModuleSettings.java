@@ -22,15 +22,15 @@ import java.util.Collections;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@ConfigurationProperties(prefix = "acrossWebModule")
+@ConfigurationProperties(prefix = "across.web")
 public class AcrossWebModuleSettings
 {
-	public static final String TEMPLATES_ENABLED = "acrossWebModule.templates.enabled";
-	public static final String TEMPLATES_AUTO_REGISTER = "acrossWebModule.templates.auto-register";
+	public static final String TEMPLATES_ENABLED = "across.web.templates.enabled";
+	public static final String TEMPLATES_AUTO_REGISTER = "across.web.templates.auto-register";
 
-	public static final String DEVELOPMENT_VIEWS = "acrossWebModule.developmentViews";
+	public static final String DEVELOPMENT_VIEWS = "across.web.developmentViews";
 
-	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.resources.path";
+	public static final String VIEWS_RESOURCES_PATH = "across.web.resources.path";
 
 	/**
 	 * Templates configuration.

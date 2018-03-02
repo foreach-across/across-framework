@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration(classes = TestDefaultTemplate.Config.class)
-@TestPropertySource(properties = "acrossWebModule.registerGlobalBuilderContext=true")
+@TestPropertySource(properties = "across.web.registerGlobalBuilderContext=true")
 public class TestViewElementBuilderContextWebArgument
 {
 	@Autowired

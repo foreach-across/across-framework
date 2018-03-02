@@ -130,7 +130,7 @@ public class DefaultResourceRegistrationConfigurer
 	}
 
 	@Bean
-	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)
 	@ConditionalOnMissingBean(value = VersionResourceResolver.class, search = SearchStrategy.CURRENT)
 	public VersionResourceResolver versionResourceResolver() {
 		return new VersionResourceResolver()
@@ -138,7 +138,7 @@ public class DefaultResourceRegistrationConfigurer
 	}
 
 	@Bean
-	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)
 	@ConditionalOnMissingBean(value = AppCacheManifestTransformer.class, search = SearchStrategy.CURRENT)
 	public AppCacheManifestTransformer appCacheManifestTransformer() {
 		return new AppCacheManifestTransformer();

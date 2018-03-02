@@ -130,7 +130,7 @@ public class TestAcrossWebModuleBootstrap
 				AcrossTestWebContext ctx = web()
 						.property( "spring.http.multipart.enabled", "false" )
 						.property( "spring.http.encoding.enabled", "false" )
-						.property( "acrossWebModule.resources.versioning.enabled", "false" )
+						.property( "across.web.resources.versioning.enabled", "false" )
 						.modules( AcrossWebModule.NAME )
 						.build()
 		) {

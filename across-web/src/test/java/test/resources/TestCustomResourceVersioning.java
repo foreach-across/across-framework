@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = TestCustomResourceVersioning.Config.class)
-@TestPropertySource(properties = { "build.number=95247852", "acrossWebModule.resources.versioning.enabled=true" })
+@TestPropertySource(properties = { "build.number=95247852", "across.web.resources.versioning.enabled=true" })
 public class TestCustomResourceVersioning extends AbstractWebIntegrationTest
 {
 	@Test

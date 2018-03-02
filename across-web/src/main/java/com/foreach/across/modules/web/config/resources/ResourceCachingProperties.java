@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * @author Arne Vandamme
  */
 @Component
-@ConfigurationProperties(prefix = "acrossWebModule.resources.caching")
+@ConfigurationProperties(prefix = "across.web.resources.caching")
 public class ResourceCachingProperties
 {
 	/**

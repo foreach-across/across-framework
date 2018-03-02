@@ -57,7 +57,7 @@ public class ITGlobalViewElementBuilderContext
 	public void globalBuilderContextIsRegistered() throws Exception {
 		try (AcrossTestWebContext ctx = web().register( TestController.class )
 		                                     .modules( AcrossWebModule.NAME )
-		                                     .property( "acrossWebModule.registerGlobalBuilderContext", "true" )
+		                                     .property( "across.web.registerGlobalBuilderContext", "true" )
 		                                     .build()) {
 			ctx.getBeansOfTypeAsMap( WebMvcConfigurer.class );
 			assertTrue(

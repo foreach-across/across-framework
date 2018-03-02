@@ -34,8 +34,8 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = TestCustomConfiguration.Config.class)
-@TestPropertySource(properties = { "acrossWebModule.resources.path=/static",
-                                   "acrossWebModule.views.thymeleaf.enabled=false" })
+@TestPropertySource(properties = { "across.web.resources.path=/static",
+                                   "across.web.views.thymeleaf.enabled=false" })
 public class TestCustomConfiguration extends AbstractWebIntegrationTest
 {
 	@Autowired

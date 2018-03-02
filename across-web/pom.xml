@@ -41,10 +41,12 @@
 			<artifactId>jstl</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf-spring4</artifactId>

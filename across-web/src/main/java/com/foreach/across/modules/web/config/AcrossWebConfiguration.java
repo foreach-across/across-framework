@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -58,7 +58,7 @@ import java.util.List;
  */
 @Configuration
 @OrderInModule(1)
-@Import({ HttpMessageConvertersAutoConfiguration.class, JacksonAutoConfiguration.class, GsonAutoConfiguration.class, WebClientAutoConfiguration.class })
+@Import({ HttpMessageConvertersAutoConfiguration.class, JacksonAutoConfiguration.class, GsonAutoConfiguration.class, RestTemplateAutoConfiguration.class })
 class AcrossWebConfiguration extends WebMvcConfigurerAdapter
 {
 	@Autowired

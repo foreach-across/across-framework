@@ -144,7 +144,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	}
 
 	@Bean
-	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)
 	@ConditionalOnConfigurableServletContext
 	public FilterRegistrationBean resourceUrlEncodingFilterRegistration() {
 		FilterRegistrationBean registration = new FilterRegistrationBean();
@@ -164,7 +164,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	 * Ensures the interceptor is registered so all controllers have access to it.
 	 */
 	@Configuration("resourceUrlProviderExposingInterceptorConfiguration")
-	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)
 	public static class ResourceUrlProviderExposingInterceptorConfiguration extends PrefixingHandlerMappingConfigurerAdapter
 	{
 		@Override

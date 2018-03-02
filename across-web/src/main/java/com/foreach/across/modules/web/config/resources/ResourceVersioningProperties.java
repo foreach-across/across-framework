@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  * @author Arne Vandamme
  */
 @Component
-@ConfigurationProperties(prefix = "acrossWebModule.resources.versioning")
+@ConfigurationProperties(prefix = "across.web.resources.versioning")
 public class ResourceVersioningProperties
 {
 	@Autowired

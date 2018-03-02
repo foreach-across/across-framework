@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * Contains the different settings for the default resource configuration (path, folders, versioning and caching).
  */
 @Component
-@ConfigurationProperties(prefix = "acrossWebModule.resources")
+@ConfigurationProperties(prefix = "across.web.resources")
 public class ResourceConfigurationProperties
 {
 	/**

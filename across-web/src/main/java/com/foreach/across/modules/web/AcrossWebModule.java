@@ -75,9 +75,9 @@ public class AcrossWebModule extends AcrossModule
 	 */
 	@Deprecated
 	public void setSupportViews( AcrossWebViewSupport... viewSupport ) {
-		setProperty( "acrossWebModule.views.thymeleaf.enabled",
+		setProperty( "across.web.views.thymeleaf.enabled",
 		             ArrayUtils.contains( viewSupport, AcrossWebViewSupport.THYMELEAF ) );
-		setProperty( "acrossWebModule.views.jsp.enabled",
+		setProperty( "across.web.views.jsp.enabled",
 		             ArrayUtils.contains( viewSupport, AcrossWebViewSupport.JSP ) );
 	}
 

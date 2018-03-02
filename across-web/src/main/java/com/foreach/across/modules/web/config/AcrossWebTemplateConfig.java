@@ -39,7 +39,7 @@ import java.util.Collection;
  * Configures web template support with automatic registration of named web templates.
  */
 @Configuration
-@ConditionalOnProperty(value = "acrossWebModule.templates.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "across.web.templates.enabled", matchIfMissing = true)
 @OrderInModule(2)
 public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 {
