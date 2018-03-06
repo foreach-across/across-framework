@@ -102,8 +102,7 @@ public class TestSpringApplicationContextLifecycle
 
 		across.bootstrap();
 
-		AcrossConfigurableApplicationContext acrossApplicationContext = AcrossContextUtils.getApplicationContext(
-				across );
+		AcrossConfigurableApplicationContext acrossApplicationContext = AcrossContextUtils.getApplicationContext( across );
 		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.getBeanFactory( across );
 		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.getBeanFactory( moduleOne );
 		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.getBeanFactory( moduleTwo );
@@ -211,7 +210,9 @@ public class TestSpringApplicationContextLifecycle
 	public static class Config
 	{
 		@Bean
+		@SuppressWarnings( "all" )
 		public Object myBean() {
+			// create an actual separate instance (different reference)
 			return new String( "bean" );
 		}
 	}

@@ -414,6 +414,11 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		return super.isTypeMatch( name, typeToMatch );
 	}
 
+	@Override
+	protected void resetBeanDefinition( String beanName ) {
+		super.resetBeanDefinition( beanName );
+	}
+
 	/**
 	 * Custom {@link OrderComparator} in order to replace the default ordering logic with AcrossSpecifier based.
 	 * Uses reflection to retrieve private values from the source provider as otherwise custom implementation

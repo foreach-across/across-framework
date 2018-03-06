@@ -22,6 +22,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
@@ -29,16 +30,17 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
 import org.junit.Test;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -109,6 +111,25 @@ public class TestAcrossContextShutdown
 
 		assertNull( fetch( parent, "two" ) );
 		assertNull( fetch( parent, "one" ) );
+	}
+
+	@Test
+	public void acrossRegistersParentBeanFactoryThatGetsRemovedWhenAcrossContextDestroyed() {
+		GenericApplicationContext parent = new GenericApplicationContext();
+		parent.refresh();
+		parent.start();
+
+		AcrossContext acrossContext = new AcrossContext( parent );
+		acrossContext.bootstrap();
+
+		assertTrue( parent.getParent() instanceof AcrossApplicationContext );
+		BeanFactory beanFactory = parent.getBeanFactory().getParentBeanFactory();
+		assertNotNull( beanFactory );
+		assertTrue( beanFactory instanceof AcrossListableBeanFactory );
+
+		acrossContext.shutdown();
+		assertNull( parent.getParent() );
+		assertNull( parent.getBeanFactory().getParentBeanFactory() );
 	}
 
 	private String fetch( ApplicationContext context, String moduleName ) {
