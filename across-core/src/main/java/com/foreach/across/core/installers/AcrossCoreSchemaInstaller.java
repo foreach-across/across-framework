@@ -21,6 +21,7 @@ import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -31,7 +32,7 @@ import java.util.Date;
 /**
  * Special bean that takes care of installing the very minimum schema for module installation versioning.
  */
-public class AcrossCoreSchemaInstaller
+public class AcrossCoreSchemaInstaller implements InitializingBean
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossCoreSchemaInstaller.class );
 
@@ -53,6 +54,11 @@ public class AcrossCoreSchemaInstaller
 
 	public void setDefaultSchema( String defaultSchema ) {
 		this.defaultSchema = defaultSchema;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		installCoreSchema();
 	}
 
 	@PostConstruct

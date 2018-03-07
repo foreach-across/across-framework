@@ -63,7 +63,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	private final Set<String> exposedBeanNames = new HashSet<>();
 
 	private BeanFactory parentBeanFactory;
-	private Integer moduleIndex;
+	private Integer moduleIndex = -1;
 
 	private final AcrossOrderComparator acrossOrderComparator = new AcrossOrderComparator();
 

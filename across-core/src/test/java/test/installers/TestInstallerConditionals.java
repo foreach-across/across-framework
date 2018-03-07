@@ -15,6 +15,7 @@
  */
 package test.installers;
 
+import com.foreach.across.AcrossContextLoader;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
@@ -55,7 +56,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestInstallerConditionals.Config.class)
+@ContextConfiguration(classes = TestInstallerConditionals.Config.class, loader = AcrossContextLoader.class)
 @ActiveProfiles("dev")
 @TestPropertySource(properties = "active.value=true")
 public class TestInstallerConditionals

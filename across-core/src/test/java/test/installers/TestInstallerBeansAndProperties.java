@@ -15,6 +15,7 @@
  */
 package test.installers;
 
+import com.foreach.across.AcrossContextLoader;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Installer;
@@ -50,7 +51,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestInstallerBeansAndProperties.Config.class)
+@ContextConfiguration(classes = TestInstallerBeansAndProperties.Config.class, loader = AcrossContextLoader.class)
 @TestPropertySource(properties = { "parent.value=parent", "module.value=parent" })
 public class TestInstallerBeansAndProperties
 {

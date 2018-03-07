@@ -17,17 +17,17 @@ package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.config.AcrossCoreConfiguration;
 import com.foreach.across.core.context.ClassPathScanningCandidateModuleProvider;
 import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
 import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.context.SharedMetadataReaderFactory;
 import com.foreach.across.core.support.AcrossContextBuilder;
 import com.foreach.across.core.util.ClassLoadingUtils;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanClassLoaderAware;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory;
@@ -49,7 +49,7 @@ import java.util.*;
  * <p>A single {@link DataSource} bean or one named <b>acrossDataSource</b> is required for installers to work.</p>
  */
 @Configuration
-@Import(AcrossContextWebConfiguration.class)
+@Import({ AcrossContextWebConfiguration.class, AcrossCoreConfiguration.class})
 public class AcrossContextConfiguration implements ImportAware, EnvironmentAware, BeanFactoryAware, BeanClassLoaderAware
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextConfiguration.class );
@@ -70,12 +70,9 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	@Autowired(required = false)
 	private Collection<AcrossContextConfigurer> configurers = Collections.emptyList();
 
-	@Autowired(required = false)
-	private Collection<AcrossModule> moduleBeans = Collections.emptyList();
-
 	private AnnotationMetadata importMetadata;
 	private Environment environment;
-	private BeanFactory beanFactory;
+	private ListableBeanFactory beanFactory;
 	private ClassLoader beanClassLoader;
 
 	@Override
@@ -90,7 +87,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 
 	@Override
 	public void setBeanFactory( BeanFactory beanFactory ) {
-		this.beanFactory = beanFactory;
+		this.beanFactory = (ListableBeanFactory) beanFactory;
 	}
 
 	@Override
@@ -113,7 +110,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		autoConfigureContextBuilder( contextBuilder, importMetadata.getAnnotationAttributes( ANNOTATION_TYPE ) );
 
 		AcrossContext context = contextBuilder.build();
-		context.bootstrap();
+		//context.bootstrap();
 
 		return context;
 	}
@@ -144,6 +141,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	                                          Map<String, Object> configuration ) {
 		if ( configuration != null ) {
 			if ( Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
+				val moduleBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory, AcrossModule.class, false, false ).values();
 				contextBuilder.moduleDependencyResolver( beanFactory.getBean( ModuleDependencyResolver.class ) )
 				              .modules( namedModulesToConfigure( configuration ) )
 				              .modules( moduleBeans.toArray( new AcrossModule[moduleBeans.size()] ) );

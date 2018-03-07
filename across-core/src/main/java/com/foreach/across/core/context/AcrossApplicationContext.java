@@ -18,6 +18,7 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.context.annotation.ModuleConfigurationBeanNameGenerator;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import com.foreach.across.core.context.bootstrap.AcrossConfigurationClassPostProcessor;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.events.AcrossContextApplicationEventMulticaster;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -54,6 +55,7 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 	protected AcrossApplicationContext( AcrossListableBeanFactory beanFactory ) {
 		super( beanFactory );
 		setBeanNameGenerator( new ModuleConfigurationBeanNameGenerator() );
+		addBeanFactoryPostProcessor( new AcrossConfigurationClassPostProcessor.Registrar() );
 	}
 
 	@Override

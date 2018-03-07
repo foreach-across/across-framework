@@ -17,11 +17,8 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
-import com.foreach.across.core.context.AbstractAcrossEntity;
-import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.context.ModuleDependencyResolver;
-import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
-import com.foreach.across.core.context.bootstrap.AcrossLifecycleShutdownHandler;
+import com.foreach.across.core.config.AcrossCoreConfiguration;
+import com.foreach.across.core.context.*;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
@@ -34,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 import org.springframework.util.Assert;
@@ -385,24 +383,56 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 		AcrossContextUtils.getApplicationContext( this ).publishEvent( event );
 	}
 
-	public void bootstrap() {
+	/**
+	 * Create a new application context with this Across context configuration.
+	 *
+	 * @return application context that has been created
+	 */
+	public ConfigurableApplicationContext bootstrap() {
 		if ( !isBootstrapped ) {
 			isBootstrapped = true;
 
 			try {
-				new AcrossBootstrapper( this ).bootstrap();
+				AcrossApplicationContext applicationContext = new AcrossApplicationContext();
+				if ( parentApplicationContext != null ) {
+					applicationContext.setParent( parentApplicationContext );
+				}
+				applicationContext.register( AcrossCoreConfiguration.class );
+				applicationContext.registerBean( AcrossContext.BEAN, AcrossContext.class, () -> this );
+
+				if ( dataSource != null ) {
+					applicationContext.registerBean( AcrossContext.DATASOURCE, DataSource.class, () -> dataSource );
+				}
+				if ( installerDataSource != null ) {
+					applicationContext.registerBean( AcrossContext.INSTALLER_DATASOURCE, DataSource.class, () -> installerDataSource );
+				}
+				else if ( dataSource != null ) {
+					applicationContext.registerAlias( AcrossContext.DATASOURCE, AcrossContext.INSTALLER_DATASOURCE );
+				}
+
+				applicationContext.refresh();
+				applicationContext.start();
+
+				AcrossContextUtils.setAcrossApplicationContextHolder( this, new AcrossApplicationContextHolder( applicationContext ) );
+
+				return applicationContext;
 			}
 			catch ( Exception ignore ) {
 				isBootstrapped = false;
 				throw ignore;
 			}
 		}
+
+		return AcrossContextUtils.getApplicationContext( this );
 	}
 
 	public void shutdown() {
 		if ( isBootstrapped ) {
 			LOG.info( "Shutdown signal received - destroying ApplicationContext instances" );
-			new AcrossLifecycleShutdownHandler( this ).shutdown();
+			AcrossContextUtils.getApplicationContext( this ).stop();
+			AcrossContextUtils.setAcrossApplicationContextHolder( this, null );
+
+			//new AcrossLifecycleShutdownHandler( this ).shutdown();
 			isBootstrapped = false;
 		}
 	}

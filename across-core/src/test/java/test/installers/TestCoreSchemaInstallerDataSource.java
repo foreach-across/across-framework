@@ -15,6 +15,7 @@
  */
 package test.installers;
 
+import com.foreach.across.AcrossContextLoader;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
@@ -43,7 +44,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestCoreSchemaInstallerDataSource.Config.class)
+@ContextConfiguration(classes = TestCoreSchemaInstallerDataSource.Config.class,loader = AcrossContextLoader.class)
 public class TestCoreSchemaInstallerDataSource
 {
 	@Autowired

@@ -16,7 +16,6 @@
 
 package com.foreach.across.core.installers;
 
-import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
@@ -365,8 +364,8 @@ public class AcrossBootstrapInstallerRegistry
 	private AcrossInstallerRepository getInstallerRepository() {
 		if ( installerRepository == null ) {
 			installerRepository = AcrossContextUtils
-					.getBeanRegistry( contextConfig.getContext() )
-					.getBeanOfType( AcrossInstallerRepository.class );
+					.getApplicationContext( contextConfig.getContext() )
+					.getBean( AcrossInstallerRepository.class );
 		}
 
 		return installerRepository;
