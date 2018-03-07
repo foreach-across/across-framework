@@ -115,6 +115,8 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		return super.getMergedBeanDefinition( beanName, bd, containingBd );
 	}
 
+
+
 	/**
 	 * Overridden to make public.
 	 */
@@ -338,6 +340,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	                                    BeanDefinition beanDefinition ) throws BeanDefinitionStoreException {
 		destroySingleton( beanName );
 		super.registerBeanDefinition( beanName, beanDefinition );
+		beanDefinition.setAttribute( "moduleIndex", getModuleIndex() );
 	}
 
 	@Override
