@@ -37,6 +37,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.SmartValidator;
@@ -48,6 +49,7 @@ import org.springframework.web.servlet.view.BeanNameViewResolver;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -80,6 +82,22 @@ public class TestAcrossWebModuleBootstrap extends AbstractWebIntegrationTest
 
 		// Exposed from the post-processor
 		assertExposed( UriComponentsContributor.class );
+	}
+
+	@Test
+	public void jacksonMessageConverterUsingTheObjectMapperShouldBeRegistered() {
+		HttpMessageConverters converters = beanRegistry.getBeanOfTypeFromModule( AcrossWebModule.NAME, HttpMessageConverters.class );
+		ObjectMapper objectMapper = beanRegistry.getBeanOfTypeFromModule( AcrossWebModule.NAME, ObjectMapper.class );
+
+		Optional<MappingJackson2HttpMessageConverter> found = converters
+				.getConverters()
+				.stream()
+				.filter( MappingJackson2HttpMessageConverter.class::isInstance )
+				.map( MappingJackson2HttpMessageConverter.class::cast )
+				.filter( c -> c.getObjectMapper() == objectMapper )
+				.findFirst();
+
+		assertTrue( found.isPresent() );
 	}
 
 	@Test

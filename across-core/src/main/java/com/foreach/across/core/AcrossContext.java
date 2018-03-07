@@ -18,14 +18,13 @@ package com.foreach.across.core;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
 import com.foreach.across.core.context.AbstractAcrossEntity;
-import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapper;
+import com.foreach.across.core.context.bootstrap.AcrossLifecycleShutdownHandler;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
-import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
@@ -403,32 +402,7 @@ public class AcrossContext extends AbstractAcrossEntity implements DisposableBea
 	public void shutdown() {
 		if ( isBootstrapped ) {
 			LOG.info( "Shutdown signal received - destroying ApplicationContext instances" );
-
-			// Shutdown all modules in reverse order - note that it is quite possible that beans might have been destroyed
-			// already by Spring in the meantime
-			List<AcrossModuleInfo> reverseList = new ArrayList<>( AcrossContextUtils.getContextInfo( this ).getModules() );
-			Collections.reverse( reverseList );
-
-			for ( AcrossModuleInfo moduleInfo : reverseList ) {
-				if ( moduleInfo.isBootstrapped() ) {
-					AcrossModule module = moduleInfo.getModule();
-					AcrossConfigurableApplicationContext applicationContext
-							= AcrossContextUtils.getApplicationContext( module );
-
-					if ( applicationContext != null ) {
-						LOG.debug( "Destroying ApplicationContext for module {}", module.getName() );
-
-						module.shutdown();
-						applicationContext.destroy();
-					}
-				}
-			}
-
-			// Destroy the root ApplicationContext
-			AcrossContextUtils.getApplicationContext( this ).destroy();
-
-			LOG.debug( "Destroyed root ApplicationContext: {}", getId() );
-
+			new AcrossLifecycleShutdownHandler( this ).shutdown();
 			isBootstrapped = false;
 		}
 	}

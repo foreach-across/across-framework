@@ -74,6 +74,8 @@ import java.util.stream.Stream;
  */
 public class AcrossBootstrapper
 {
+	static final String EXPOSE_SUPPORTING_APPLICATION_CONTEXT = "ax:expose-parent";
+
 	private static final String AUTO_CONFIGURATION_REPORT_BEAN_NAME = "autoConfigurationReport";
 
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossBootstrapper.class );
@@ -359,8 +361,7 @@ public class AcrossBootstrapper
 	private boolean shouldPushExposedBeansToParent( AcrossContextInfo contextInfo ) {
 		ApplicationContext applicationContext = contextInfo.getApplicationContext();
 
-		if ( applicationContext.getParent() != null && !( applicationContext
-				.getParent() instanceof ConfigurableApplicationContext ) ) {
+		if ( applicationContext.getParent() != null && !( applicationContext.getParent() instanceof ConfigurableApplicationContext ) ) {
 			LOG.warn(
 					"Unable to push the exposed beans to the parent ApplicationContext - requires a ConfigurableApplicationContext" );
 		}
@@ -368,8 +369,7 @@ public class AcrossBootstrapper
 		return applicationContext.getParent() != null;
 	}
 
-	private void pushExposedBeansToParent( ExposedContextBeanRegistry exposedContextBeanRegistry,
-	                                       ApplicationContext rootContext ) {
+	private void pushExposedBeansToParent( ExposedContextBeanRegistry exposedContextBeanRegistry, ApplicationContext rootContext ) {
 		if ( !exposedContextBeanRegistry.isEmpty() ) {
 			ApplicationContext parentContext = rootContext.getParent();
 			ConfigurableApplicationContext currentApplicationContext = (ConfigurableApplicationContext) parentContext;
@@ -379,8 +379,7 @@ public class AcrossBootstrapper
 
 			// If the direct parent does not handle exposed beans, check if another context already introduced
 			// a supporting context higher up
-			if ( !( beanFactory instanceof AcrossListableBeanFactory ) && currentApplicationContext
-					.getParent() != null ) {
+			if ( !( beanFactory instanceof AcrossListableBeanFactory ) && currentApplicationContext.getParent() != null ) {
 				ApplicationContext parent = currentApplicationContext.getParent();
 
 				if ( parent instanceof ConfigurableApplicationContext ) {
@@ -390,8 +389,9 @@ public class AcrossBootstrapper
 
 			// Make sure the parent can handle exposed beans - if not, introduce a supporting BeanFactory in the hierarchy
 			if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
-				AcrossConfigurableApplicationContext parentApplicationContext =
-						applicationContextFactory.createApplicationContext();
+				AcrossConfigurableApplicationContext parentApplicationContext = applicationContextFactory.createApplicationContext();
+				parentApplicationContext.setId( EXPOSE_SUPPORTING_APPLICATION_CONTEXT );
+
 				ProvidedBeansMap providedBeansMap = new ProvidedBeansMap();
 				providedBeansMap.put(
 						SharedMetadataReaderFactory.BEAN_NAME,
