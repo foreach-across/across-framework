@@ -58,7 +58,7 @@ import java.util.List;
  */
 @Configuration
 @OrderInModule(1)
-@Import({ HttpMessageConvertersAutoConfiguration.class, JacksonAutoConfiguration.class, GsonAutoConfiguration.class, WebClientAutoConfiguration.class })
+@Import({ JacksonAutoConfiguration.class, GsonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, WebClientAutoConfiguration.class})
 class AcrossWebConfiguration extends WebMvcConfigurerAdapter
 {
 	@Autowired
