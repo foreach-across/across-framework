@@ -42,6 +42,7 @@ public class AcrossInstallerException extends AcrossException
 	public AcrossInstallerException( String moduleName, InstallerMetaData installerMetaData, Object installer, Method method, Throwable cause ) {
 		super( "Exception executing installer for module " + moduleName, cause );
 
+		setModuleBeingProcessed( moduleName );
 		this.installerMetaData = installerMetaData;
 		this.installerClass = ClassUtils.getUserClass( installer );
 		this.installerMethod = method;
