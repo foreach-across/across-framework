@@ -15,15 +15,25 @@
  */
 package test.exposing;
 
+import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import test.modules.exposing.MyPrototypeBean;
+import com.foreach.across.core.installers.InstallerAction;
+import com.foreach.across.database.support.HikariDataSourceHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import test.modules.exposing.EqualBean;
+import test.modules.exposing.ExposingModule;
+import test.modules.exposing.MyPrototypeBean;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -34,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
  * @since 1.1.3
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestDefaultExposeFilter.Config.class)
+@ContextConfiguration(classes = { TestAcrossContextBeanRegistry.Config.class })
 @DirtiesContext
 public class TestAcrossContextBeanRegistry
 {
@@ -42,16 +52,47 @@ public class TestAcrossContextBeanRegistry
 	private AcrossContextBeanRegistry beanRegistry;
 
 	@Test
-	public void exposedPrototypeBeanShouldBeFoundOnceInRoot() {
+	public void exposedPrototypeBeanShouldBeFoundInRoot() {
 		List<MyPrototypeBean> beans = beanRegistry.getBeansOfType( MyPrototypeBean.class );
-		assertEquals( 1, beans.size() );
+		assertEquals( 2, beans.size() );
 		assertNotNull( beans.get( 0 ) );
 	}
 
 	@Test
-	public void exposedPrototypeBeanShouldBeFoundOnceWithInternalModulesLookup() {
+	public void exposedPrototypeBeanShouldBeFoundWithInternalModulesLookup() {
 		List<MyPrototypeBean> beans = beanRegistry.getBeansOfType( MyPrototypeBean.class, true );
-		assertEquals( 1, beans.size() );
+		assertEquals( 2, beans.size() );
 		assertNotNull( beans.get( 0 ) );
+		assertNotNull( beans.get( 1 ) );
+	}
+
+	@Test
+	public void beansOfTypeShouldReturnAllBeansEvenWhenEqual() {
+		assertEquals( 2, beanRegistry.getBeansOfType( EqualBean.class ).size() );
+		assertEquals( 2, beanRegistry.getBeansOfType( EqualBean.class, true ).size() );
+	}
+
+	@Configuration
+	public static class Config
+	{
+		@Bean
+		public DataSource acrossDataSource() throws Exception {
+			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
+			                                      StringUtils.EMPTY );
+		}
+
+		@Bean
+		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+			AcrossContext context = new AcrossContext( applicationContext );
+			context.setDataSource( acrossDataSource() );
+			context.setInstallerAction( InstallerAction.DISABLED );
+
+			context.addModule( new ExposingModule( "default" ) );
+			context.addModule( new ExposingModule( "extra" ) );
+
+			context.bootstrap();
+
+			return context;
+		}
 	}
 }

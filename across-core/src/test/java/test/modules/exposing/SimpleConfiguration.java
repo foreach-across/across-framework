@@ -44,13 +44,7 @@ public class SimpleConfiguration
 		{
 			@Override
 			public SomeInterface getObject() throws Exception {
-				return new SomeInterface()
-				{
-					@Override
-					public int getOrder() {
-						return 0;
-					}
-				};
+				return () -> 0;
 			}
 
 			@Override

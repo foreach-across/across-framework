@@ -158,10 +158,10 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> Map<String, T> getBeansOfTypeAsMap( ResolvableType resolvableType, boolean includeModuleInternals ) {
-		Set<T> beans = new LinkedHashSet<>();
+		List<T> beans = new ArrayList<>();
 		AcrossOrderSpecifierComparator comparator = new AcrossOrderSpecifierComparator();
 
-		Map<T, String> beanNames = new HashMap<>();
+		Map<T, String> beanNames = new IdentityHashMap<>();
 
 		DependencyDescriptor dd = new ResolvableTypeDescriptor( resolvableType );
 		ResolvableTypeAutowireCandidateResolver resolver = new ResolvableTypeAutowireCandidateResolver();
@@ -180,8 +180,10 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 					Object bean = beanFactory.getBean( beanName );
 					comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-					beans.add( (T) bean );
-					beanNames.put( (T) bean, beanName );
+					if ( !beanNames.containsKey( bean ) ) {
+						beans.add( (T) bean );
+						beanNames.put( (T) bean, beanName );
+					}
 				}
 			}
 		}
@@ -206,11 +208,10 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 			}
 		}
 
-		List<T> beanList = new ArrayList<>( beans );
-		comparator.sort( beanList );
+		comparator.sort( beans );
 
 		LinkedHashMap<String, T> beansMap = new LinkedHashMap<>();
-		for ( T bean : beanList ) {
+		for ( T bean : beans ) {
 			beansMap.put( beanNames.get( bean ), bean );
 		}
 
