@@ -32,8 +32,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ import static com.foreach.across.config.AcrossConfigurationLoader.loadSingleValu
  * @since 3.0.0
  */
 @ConditionalOnProperty(value = "across.configuration.validate", havingValue = "true", matchIfMissing = true)
-@Configuration("across.illegalConfigurationValidator")
+@Component("across.illegalConfigurationValidator")
 @Import(IllegalConfigurationValidator.IllegalConfigurationDetector.class)
 public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer, BeanClassLoaderAware
 {

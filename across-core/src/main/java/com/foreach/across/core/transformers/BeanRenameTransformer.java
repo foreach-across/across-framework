@@ -31,6 +31,8 @@ public class BeanRenameTransformer extends AbstractBeanRenameTransformer
 	private final boolean removeUndefined;
 
 	public BeanRenameTransformer( @NonNull Map<String, String> renameMap, boolean removeUndefined ) {
+		super( true );
+
 		this.renameMap = renameMap;
 		this.removeUndefined = removeUndefined;
 	}
