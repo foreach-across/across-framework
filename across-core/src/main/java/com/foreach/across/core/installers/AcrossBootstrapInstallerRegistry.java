@@ -213,11 +213,9 @@ public class AcrossBootstrapInstallerRegistry
 							method.invoke( target, arguments );
 							installed = true;
 						}
-						catch ( InvocationTargetException ite ) {
-							throw new AcrossInstallerException( module.getName(), installerMetaData, target, method, ite.getCause() );
-						}
 						catch ( Exception e ) {
-							throw new AcrossInstallerException( module.getName(), installerMetaData, target, method, e );
+							Throwable cause = e instanceof InvocationTargetException ? e.getCause() : e;
+							throw new AcrossInstallerException( module.getName(), installerMetaData, target, method, cause );
 						}
 					}
 
