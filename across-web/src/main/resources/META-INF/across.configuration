@@ -13,14 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Types that should always be exposed
 com.foreach.across.Exposed=\
   org.springframework.boot.autoconfigure.web.ErrorViewResolver,\
   org.springframework.boot.autoconfigure.web.ErrorController,\
   org.springframework.boot.autoconfigure.web.ErrorAttributes,\
   org.springframework.messaging.simp.SimpMessagingTemplate,\
   org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer,\
-  org.springframework.web.socket.config.annotation.WebSocketConfigurer
+  org.springframework.web.socket.config.annotation.WebSocketConfigurer,\
+  org.springframework.web.servlet.handler.HandlerMappingIntrospector
 
 # Enabled auto-configuration classes
 com.foreach.across.AutoConfigurationEnabled=\
