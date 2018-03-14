@@ -37,12 +37,11 @@ import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
 
@@ -58,7 +57,7 @@ import java.util.List;
  */
 @Configuration
 @OrderInModule(1)
-@Import({ JacksonAutoConfiguration.class, GsonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, WebClientAutoConfiguration.class})
+@Import({ JacksonAutoConfiguration.class, GsonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, WebClientAutoConfiguration.class })
 class AcrossWebConfiguration extends WebMvcConfigurerAdapter
 {
 	@Autowired
@@ -76,6 +75,17 @@ class AcrossWebConfiguration extends WebMvcConfigurerAdapter
 	@Override
 	public void addArgumentResolvers( List<HandlerMethodArgumentResolver> argumentResolvers ) {
 		argumentResolvers.add( acrossWebArgumentResolver() );
+	}
+
+	/**
+	 * Manually create and expose the handler mapping introspector early, so (f.i.) security modules can use it.
+	 */
+	@Bean
+	@Lazy
+	@Exposed
+	@Primary
+	public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+		return new HandlerMappingIntrospector();
 	}
 
 	@Bean

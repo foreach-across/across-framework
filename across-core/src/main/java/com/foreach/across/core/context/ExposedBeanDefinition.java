@@ -123,6 +123,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 	                              String[] aliases ) {
 		this( contextBeanRegistry, moduleName, moduleIndex, originalBeanName, beanClass, aliases );
 
+		setLazyInit( original.isLazyInit() );
 		setOriginatingBeanDefinition( original );
 		setPrimary( original.isPrimary() );
 		setDescription( original.getDescription() );
