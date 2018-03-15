@@ -49,6 +49,6 @@ com.foreach.across.IllegalConfiguration=\
 #
 com.foreach.across.IllegalConfiguration[webmvc].description=This is usually due to the use of @EnableWebMvc on the application configuration, which is not compatible with Across applications.
 com.foreach.across.IllegalConfiguration[webmvc].action=Remove the use of @EnableWebMvc or WebMvcConfigurationSupport from the application configuration or custom module. Use AcrossWebModule instead and only provide WebMvcConfigurer classes for additional configuration.
-com.foreach.across.IllegalConfiguration[webmvc].description=This is usually due to the use of @EnableWebSocket or @EnableWebSocketMessageBroker on the application configuration, which is not compatible with Across applications.
-com.foreach.across.IllegalConfiguration[webmvc].action=Remove the use of @EnableWebSocket or @EnableWebSocketMessageBroker. Web socket support is activated automatically by AcrossWebModule if the right dependencies are on the classpath and configurer beans are present.
+com.foreach.across.IllegalConfiguration[websocket].description=This is usually due to the use of @EnableWebSocket or @EnableWebSocketMessageBroker on the application configuration, which is not compatible with Across applications.
+com.foreach.across.IllegalConfiguration[websocket].action=Remove the use of @EnableWebSocket or @EnableWebSocketMessageBroker. Web socket support is activated automatically by AcrossWebModule if the right dependencies are on the classpath and configurer beans are present.
 

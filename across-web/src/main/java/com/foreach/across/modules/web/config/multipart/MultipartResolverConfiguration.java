@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,6 +37,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.PathResource;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.MultipartFilter;
@@ -73,7 +75,10 @@ public class MultipartResolverConfiguration
 
 	@Bean
 	@ConditionalOnMissingBean
-	public MultipartConfigElement multipartConfigElement() {
+	public MultipartConfigElement multipartConfigElement( @Value("${java.io.tmpdir}") String tempDirectory ) {
+		if ( !StringUtils.hasText( multipartProperties.getLocation() ) && StringUtils.hasText( tempDirectory ) ) {
+			multipartProperties.setLocation( tempDirectory );
+		}
 		return this.multipartProperties.createMultipartConfig();
 	}
 
