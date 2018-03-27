@@ -20,13 +20,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>across-web</artifactId>
-	<version>2.1.1.RELEASE</version>
+	<version>3.0.0.RELEASE</version>
 	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>across-base</artifactId>
-		<version>2.1.1.RELEASE</version>
+		<version>3.0.0.RELEASE</version>
 	</parent>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -41,9 +41,13 @@
 			<artifactId>thymeleaf-spring4</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-java8time</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.foreach.across</groupId>
 			<artifactId>across-core</artifactId>
-			<version>2.1.1.RELEASE</version>
+			<version>3.0.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -68,6 +72,10 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<scope>test</scope>
@@ -76,6 +84,16 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-messaging</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -93,6 +111,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

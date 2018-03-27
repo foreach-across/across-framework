@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.context;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -44,9 +45,9 @@ public class PrefixingSupportingWebAppLinkBuilder implements WebAppLinkBuilder
 
 	@PostConstruct
 	public void validateProperties() {
-		Assert.notNull( pathResolver );
-		Assert.notNull( request );
-		Assert.notNull( response );
+		Assert.notNull( pathResolver, "pathResolver must not be null" );
+		Assert.notNull( request, "request must not be null" );
+		Assert.notNull( response, "response must not be null" );
 	}
 
 	@Override
@@ -121,8 +122,7 @@ public class PrefixingSupportingWebAppLinkBuilder implements WebAppLinkBuilder
 	}
 
 	@Autowired
-	public void setRequest( HttpServletRequest request ) {
-		Assert.notNull( request );
+	public void setRequest( @NonNull HttpServletRequest request ) {
 		this.request = request;
 
 		contextPath = StringUtils.defaultString( request.getContextPath() );

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,10 +63,13 @@ public class ViewElementBuilderContextController
 		List<String> modelAttributeNames = new ArrayList<>( model.asMap().keySet() );
 		Collections.sort( modelAttributeNames );
 
+		List<String> builderContextAttributeNames = Arrays.asList( builderContext.attributeNames() );
+		Collections.sort( builderContextAttributeNames );
+
 		return "[model:" +
 				StringUtils.join( modelAttributeNames, ',' ) +
 				"][builderContext:" +
-				StringUtils.join( builderContext.attributeNames(), ',' ) +
+				StringUtils.join( builderContextAttributeNames, ',' ) +
 				"]";
 	}
 }

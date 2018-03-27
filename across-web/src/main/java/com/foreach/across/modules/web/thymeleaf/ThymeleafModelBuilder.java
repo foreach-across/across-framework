@@ -20,8 +20,8 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 import org.thymeleaf.context.IEngineContext;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.model.AttributeValueQuotes;
@@ -62,18 +62,12 @@ public final class ThymeleafModelBuilder
 	private String pendingTag;
 	private String viewElementName;
 
-	public ThymeleafModelBuilder( ITemplateContext templateContext,
-	                              ViewElementModelWriterRegistry nodeBuilderRegistry,
-	                              HtmlIdStore htmlIdStore,
-	                              ViewElementAttributeConverter attributeConverter,
-	                              AttributeNameGenerator attributeNameGenerator,
+	public ThymeleafModelBuilder( @NonNull ITemplateContext templateContext,
+	                              @NonNull ViewElementModelWriterRegistry nodeBuilderRegistry,
+	                              @NonNull HtmlIdStore htmlIdStore,
+	                              @NonNull ViewElementAttributeConverter attributeConverter,
+	                              @NonNull AttributeNameGenerator attributeNameGenerator,
 	                              boolean developmentMode ) {
-		Assert.notNull( templateContext );
-		Assert.notNull( nodeBuilderRegistry );
-		Assert.notNull( htmlIdStore );
-		Assert.notNull( attributeConverter );
-		Assert.notNull( attributeNameGenerator );
-
 		this.templateContext = templateContext;
 		this.nodeBuilderRegistry = nodeBuilderRegistry;
 		this.htmlIdStore = htmlIdStore;
@@ -141,6 +135,7 @@ public final class ThymeleafModelBuilder
 
 			if ( partialName != null && partialName.equals( viewElement.getName() ) ) {
 				partialRenderingEnabled = true;
+				writePendingTag();
 				model.add( modelFactory.createProcessingInstruction( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "start" ) );
 			}
 
@@ -168,6 +163,7 @@ public final class ThymeleafModelBuilder
 			}
 
 			if ( partialRenderingEnabled ) {
+				writePendingTag();
 				model.add( modelFactory.createProcessingInstruction( WebTemplateInterceptor.RENDER_VIEW_ELEMENT, "end" ) );
 			}
 		}

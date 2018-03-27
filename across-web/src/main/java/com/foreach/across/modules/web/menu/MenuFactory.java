@@ -16,12 +16,11 @@
 
 package com.foreach.across.modules.web.menu;
 
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.web.events.BuildMenuEvent;
-import com.foreach.across.modules.web.events.BuildMenuFinishedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +32,7 @@ public class MenuFactory
 	private static final Logger LOG = LoggerFactory.getLogger( MenuFactory.class );
 
 	@Autowired
-	private AcrossEventPublisher publisher;
+	private ApplicationEventPublisher publisher;
 
 	private Map<Class, MenuStore> menuStoreMap = new HashMap<Class, MenuStore>();
 	private Map<Class, MenuBuilder> menuBuilderMap = new HashMap<Class, MenuBuilder>();
@@ -119,13 +118,16 @@ public class MenuFactory
 		B builder = (B) getMenuBuilder( menu.getClass() );
 
 		E buildMenuEvent = builder.buildEvent( menu );
-		publisher.publish( buildMenuEvent );
+		publisher.publishEvent( buildMenuEvent );
 
 		// Merge the menu from the builder in the current
 		buildMenuEvent.builder().merge( menu );
 
 		menu.sort();
-		menu.select( buildMenuEvent.getSelector() );
+		menu.select( buildMenuEvent.getMenuSelector() );
+
+		buildMenuEvent.getMenuPostProcessors()
+		              .forEach( pp -> pp.accept( menu ) );
 
 		return menu;
 	}
@@ -146,24 +148,24 @@ public class MenuFactory
 		return defaultMenuStore;
 	}
 
-	private <T extends Menu, E extends BuildMenuEvent<T>, B extends MenuBuilder<T, E>> T build( String name,
-	                                                                                            Class<T> menuType ) {
+	private <T extends Menu, E extends BuildMenuEvent<T>, B extends MenuBuilder<T, E>> T build( String name, Class<T> menuType ) {
 		B builder = (B) getMenuBuilder( menuType );
 
 		T menu = builder.build();
 		menu.setName( name );
 
 		E buildMenuEvent = builder.buildEvent( menu );
-		publisher.publish( buildMenuEvent );
+		publisher.publishEvent( buildMenuEvent );
 
 		// Merge the menu from the builder in the current
 		buildMenuEvent.builder().merge( menu );
 
 		// Always sort a menu after the initial build
 		menu.sort();
-		menu.select( buildMenuEvent.getSelector() );
+		menu.select( buildMenuEvent.getMenuSelector() );
 
-		publisher.publish( new BuildMenuFinishedEvent( menu, buildMenuEvent.getSelector() ) );
+		buildMenuEvent.getMenuPostProcessors()
+		              .forEach( pp -> pp.accept( menu ) );
 
 		return menu;
 	}

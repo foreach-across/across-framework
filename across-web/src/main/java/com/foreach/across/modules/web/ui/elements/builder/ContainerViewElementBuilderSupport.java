@@ -24,8 +24,8 @@ import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUt
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public abstract class ContainerViewElementBuilderSupport<T extends ContainerViewElement, SELF extends ContainerViewElementBuilderSupport<T, SELF>>
@@ -36,33 +36,36 @@ public abstract class ContainerViewElementBuilderSupport<T extends ContainerView
 
 	@SuppressWarnings("unchecked")
 	public SELF addFirst( ViewElement... viewElements ) {
-		Stream.of( viewElements ).forEach( e -> children.add( 0, e ) );
+		Stream.of( viewElements ).filter( Objects::nonNull ).forEach( e -> children.add( 0, e ) );
 		return (SELF) this;
 	}
 
 	@SuppressWarnings("unchecked")
 	public SELF addFirst( ViewElementBuilder... viewElements ) {
-		Stream.of( viewElements ).forEach( e -> children.add( 0, e ) );
+		Stream.of( viewElements ).filter( Objects::nonNull ).forEach( e -> children.add( 0, e ) );
 		return (SELF) this;
 	}
 
 	@SuppressWarnings("unchecked")
 	public SELF add( ViewElement... viewElements ) {
-		Collections.addAll( children, viewElements );
+		Stream.of( viewElements ).filter( Objects::nonNull ).forEach( children::add );
 		return (SELF) this;
 	}
 
 	@SuppressWarnings("unchecked")
 	public SELF add( ViewElementBuilder... viewElements ) {
-		Collections.addAll( children, viewElements );
+		Stream.of( viewElements ).filter( Objects::nonNull ).forEach( children::add );
 		return (SELF) this;
 	}
 
 	@SuppressWarnings("unchecked")
 	public SELF addAll( Iterable<?> viewElements ) {
 		for ( Object viewElement : viewElements ) {
-			Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder );
-			children.add( viewElement );
+			if ( viewElement != null ) {
+				Assert.isTrue( viewElement instanceof ViewElement || viewElement instanceof ViewElementBuilder,
+				               "viewElement should be an instance of ViewElement of ViewElementBuilder" );
+				children.add( viewElement );
+			}
 		}
 		return (SELF) this;
 	}

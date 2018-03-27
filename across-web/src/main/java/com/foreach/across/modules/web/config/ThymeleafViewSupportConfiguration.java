@@ -43,6 +43,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
@@ -60,7 +61,7 @@ import java.util.stream.Stream;
 @ConditionalOnProperty(value = "acrossWebModule.views.thymeleaf.enabled", matchIfMissing = true)
 public class ThymeleafViewSupportConfiguration
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfig.class );
+	private static final Logger LOG = LoggerFactory.getLogger( AcrossWebConfiguration.class );
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -77,6 +78,7 @@ public class ThymeleafViewSupportConfiguration
 	public SpringTemplateEngine springTemplateEngine( PrefixingPathRegistry prefixingPathRegistry ) {
 		SpringTemplateEngine engine = new SpringTemplateEngine();
 		engine.addDialect( new AcrossWebDialect() );
+		engine.addDialect( new Java8TimeDialect() );
 		engine.addTemplateResolver( templateResolver() );
 		engine.addTemplateResolver( thtmlTemplateResolver() );
 		engine.setLinkBuilder( new PrefixingSupportingLinkBuilder( prefixingPathRegistry ) );
@@ -109,14 +111,8 @@ public class ThymeleafViewSupportConfiguration
 
 	@Bean
 	@Exposed
-	public ViewElementAttributeConverter viewElementAttributeConverter() {
-		return new DefaultViewElementAttributeConverter( viewElementAttributeObjectMapper() );
-	}
-
-	@Bean(ViewElementAttributeConverter.OBJECT_MAPPER_BEAN)
-	@Exposed
-	public ObjectMapper viewElementAttributeObjectMapper() {
-		return new ObjectMapper();
+	public ViewElementAttributeConverter viewElementAttributeConverter( ObjectMapper objectMapper ) {
+		return new DefaultViewElementAttributeConverter( objectMapper );
 	}
 
 	@Bean

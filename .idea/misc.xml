@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <entry_points version="2.0" />
-    <list size="2">
+    <list size="4">
       <item index="0" class="java.lang.String" itemvalue="com.foreach.across.core.annotations.Event" />
       <item index="1" class="java.lang.String" itemvalue="com.foreach.across.core.annotations.RefreshableCollection" />
+      <item index="2" class="java.lang.String" itemvalue="org.springframework.context.annotation.Configuration" />
+      <item index="3" class="java.lang.String" itemvalue="org.springframework.stereotype.Component" />
     </list>
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
@@ -50,7 +51,7 @@
   <component name="ProjectResources">
     <resource url="http://www.thymeleaf.org" location="$MAVEN_REPOSITORY$/org/thymeleaf/thymeleaf/2.1.2.RELEASE/thymeleaf-2.1.2.RELEASE.jar!/org/thymeleaf/dtd/standard/xhtml5-legacy-wildcard.dtd" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/target" />
   </component>
 </project>

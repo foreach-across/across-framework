@@ -1,6 +1,8 @@
+.DS_Store
 target
-**/target
 .idea/workspace.xml
 .idea/excludeFromValidation
 .idea/libraries
+.idea/template/template_variable_settings.xml
 *.iml
+pom.xml.versionsBackup

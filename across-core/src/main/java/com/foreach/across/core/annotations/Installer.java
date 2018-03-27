@@ -18,15 +18,22 @@ package com.foreach.across.core.annotations;
 
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.installers.InstallerRunCondition;
+import org.springframework.context.annotation.Lazy;
 
 import java.lang.annotation.*;
 
 /**
- * Used to indicate installer metadata..
+ * Used to indicate installer metadata.
+ * <p/>
+ * An installer is a component that should be manually registered into an {@link com.foreach.across.core.context.AcrossApplicationContext}
+ * with {@link com.foreach.across.core.context.AcrossApplicationContext#setInstallerMode(boolean)} enabled.
+ * <p/>
+ * Installer components are always lazy, they will only be instantiated if they need execution.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Lazy
 public @interface Installer
 {
 	/**

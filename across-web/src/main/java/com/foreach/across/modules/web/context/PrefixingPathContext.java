@@ -16,8 +16,8 @@
 
 package com.foreach.across.modules.web.context;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.Map;
@@ -52,9 +52,7 @@ public class PrefixingPathContext implements WebAppPathResolver
 
 	private Map<String, PrefixingPathContext> namedPrefixers = Collections.emptyMap();
 
-	public PrefixingPathContext( String prefix ) {
-		Assert.notNull( prefix );
-
+	public PrefixingPathContext( @NonNull String prefix ) {
 		if ( prefix.length() > 0 ) {
 			if ( prefix.endsWith( "/" ) ) {
 				this.prefix = prefix.substring( 0, prefix.length() - 1 );
@@ -74,8 +72,7 @@ public class PrefixingPathContext implements WebAppPathResolver
 	 *
 	 * @param namedPrefixers Map of namedPrefixers, should not be null.
 	 */
-	public void setNamedPrefixMap( Map<String, PrefixingPathContext> namedPrefixers ) {
-		Assert.notNull( namedPrefixers );
+	public void setNamedPrefixMap( @NonNull Map<String, PrefixingPathContext> namedPrefixers ) {
 		this.namedPrefixers = namedPrefixers;
 	}
 

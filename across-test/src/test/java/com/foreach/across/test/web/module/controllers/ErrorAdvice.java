@@ -15,7 +15,6 @@
  */
 package com.foreach.across.test.web.module.controllers;
 
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.template.Template;
 import com.foreach.across.test.web.module.ui.ErrorTemplate;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Arne Vandamme
  * @since 1.1.3
  */
-@Exposed
 @ControllerAdvice(assignableTypes = PrefixedController.class)
 public class ErrorAdvice
 {

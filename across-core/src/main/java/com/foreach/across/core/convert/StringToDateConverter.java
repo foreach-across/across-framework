@@ -15,10 +15,13 @@
  */
 package com.foreach.across.core.convert;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.core.convert.converter.ConditionalConverter;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.util.Assert;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -32,8 +35,10 @@ import java.util.Locale;
  * A blank string is considered to be a null date but will not result in a conversion exception.
  *
  * @author Arne Vandamme
+ * @see Deprecated since 3.0.0, use {@link StringToDateTimeConverter} instead.
  */
-public class StringToDateConverter implements Converter<String, Date>
+@Deprecated
+public class StringToDateConverter implements Converter<String, Date>, ConditionalConverter
 {
 	static final String[] DEFAULT_PATTERNS = {
 			"yyyy-MM-dd",
@@ -93,8 +98,7 @@ public class StringToDateConverter implements Converter<String, Date>
 		this.locale = locale;
 	}
 
-	public void setPatterns( String[] patterns ) {
-		Assert.notNull( patterns );
+	public void setPatterns( @NonNull String[] patterns ) {
 		this.patterns = patterns.clone();
 	}
 
@@ -117,5 +121,11 @@ public class StringToDateConverter implements Converter<String, Date>
 	 */
 	public static String[] defaultPatterns() {
 		return DEFAULT_PATTERNS.clone();
+	}
+
+	@Override
+	public boolean matches( TypeDescriptor sourceType, TypeDescriptor targetType ) {
+		// AX-176 Don't match @RequestParam when @DateTimeFormat is specified
+		return targetType.getAnnotation( DateTimeFormat.class ) == null;
 	}
 }

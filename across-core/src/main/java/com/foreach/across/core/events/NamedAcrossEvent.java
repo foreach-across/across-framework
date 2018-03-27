@@ -16,10 +16,17 @@
 
 package com.foreach.across.core.events;
 
+import org.springframework.context.event.EventListener;
+
 /**
  * Event with a specific name that can be used for name based filtering of events.
- *
- * @see com.foreach.across.core.events.EventNameFilter
+ * Can be used with {@link EventListener#condition()}:.
+ * <pre>
+ * {@code
+ *     @EventListener(condition="#event.eventName == 'my name'")
+ *     public void handleEvent( NamedAcrossEvent e ) {}
+ * }
+ * </pre>
  */
 public interface NamedAcrossEvent extends AcrossEvent
 {

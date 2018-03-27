@@ -21,25 +21,18 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import com.foreach.across.test.MockAcrossServletContext;
 import com.foreach.across.test.support.config.MockMvcConfiguration;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import java.util.EnumSet;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -59,10 +52,9 @@ public class ITFilterRegistrationOrder
 	@Test
 	public void additionalCustomFilter() {
 		String[] filterNames = servletContext.getFilterRegistrations().keySet().toArray( new String[0] );
-		System.out.println( ArrayUtils.toString( filterNames ) );
 		assertArrayEquals(
-				new String[] { "characterEncodingFilter", "multipartFilter", "corsFilter",
-				               "resourceUrlEncodingFilter" },
+				new String[] { "characterEncodingFilter", "multipartFilter", "hiddenHttpMethodFilter", "httpPutFormContentFilter", "requestContextFilter",
+				               "resourceUrlEncodingFilter", "corsFilter" },
 				filterNames
 		);
 	}
@@ -77,17 +69,11 @@ public class ITFilterRegistrationOrder
 		}
 	}
 
-	public static class UnorderedCustomCorsFilter extends AcrossWebDynamicServletConfigurer
+	public static class UnorderedCustomCorsFilter
 	{
-		@Override
-		protected void dynamicConfigurationAllowed( ServletContext servletContext ) throws ServletException {
-			FilterRegistration.Dynamic filter = servletContext.addFilter( "corsFilter", new CorsFilter(
-					new UrlBasedCorsConfigurationSource() ) );
-			filter.addMappingForUrlPatterns( EnumSet.allOf( DispatcherType.class ), false, "/*" );
-		}
-
-		@Override
-		protected void dynamicConfigurationDenied( ServletContext servletContext ) throws ServletException {
+		@Bean
+		public CorsFilter corsFilter() {
+			return new CorsFilter( new UrlBasedCorsConfigurationSource() );
 		}
 	}
 }

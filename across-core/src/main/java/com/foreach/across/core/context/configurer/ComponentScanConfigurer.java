@@ -16,24 +16,41 @@
 
 package com.foreach.across.core.context.configurer;
 
+import org.springframework.core.type.filter.RegexPatternTypeFilter;
+import org.springframework.core.type.filter.TypeFilter;
+
+import java.util.regex.Pattern;
+
 /**
  * Simple implementation for specifying packages an ApplicationContext should scan.
  * Packages can be specified as {@code String} or by providing a {@code Class} in that package.
  */
 public class ComponentScanConfigurer extends ApplicationContextConfigurerAdapter
 {
-	private String[] packages;
+	private final String[] packages;
+	private final TypeFilter[] excludedTypeFilters;
 
 	public ComponentScanConfigurer( String... packages ) {
-		this.packages = packages;
+		this( packages, new TypeFilter[0] );
 	}
 
 	public ComponentScanConfigurer( Class<?>... packageClasses ) {
+		this( packageClasses, new TypeFilter[0] );
+	}
+
+	public ComponentScanConfigurer( String[] packages, TypeFilter[] excludedTypeFilters ) {
+		this.packages = packages;
+		this.excludedTypeFilters = excludedTypeFilters;
+	}
+
+	public ComponentScanConfigurer( Class<?>[] packageClasses, TypeFilter[] excludedTypeFilters ) {
 		this.packages = new String[packageClasses.length];
 
 		for ( int i = 0; i < packageClasses.length; i++ ) {
 			packages[i] = packageClasses[i].getPackage().getName();
 		}
+
+		this.excludedTypeFilters = excludedTypeFilters;
 	}
 
 	/**
@@ -44,5 +61,37 @@ public class ComponentScanConfigurer extends ApplicationContextConfigurerAdapter
 	@Override
 	public String[] componentScanPackages() {
 		return packages.clone();
+	}
+
+	@Override
+	public TypeFilter[] excludedTypeFilters() {
+		return excludedTypeFilters;
+	}
+
+	/**
+	 * Create a component scan configurer for an AcrossModule.
+	 * The entire package the module belongs to will be included, with the exception
+	 * of the *extensions* or *installers* package.
+	 *
+	 * @param moduleClass representing the module descriptor
+	 * @return configurer
+	 */
+	public static ComponentScanConfigurer forAcrossModule( Class<?> moduleClass ) {
+		return forAcrossModulePackage( moduleClass.getPackage().getName() );
+	}
+
+	/**
+	 * Create a component scan configurer for an AcrossModule.
+	 * The entire package the module belongs to will be included, with the exception
+	 * of the *extensions* or *installers* package.
+	 *
+	 * @param packageName representing the module descriptor
+	 * @return configurer
+	 */
+	public static ComponentScanConfigurer forAcrossModulePackage( String packageName ) {
+		return new ComponentScanConfigurer( new String[] { packageName },
+		                                    new TypeFilter[] {
+				                                    new RegexPatternTypeFilter( Pattern.compile( packageName + ".(extensions|installers).+" ) )
+		                                    } );
 	}
 }

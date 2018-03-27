@@ -34,9 +34,17 @@ public final class EmptyAcrossModule extends AcrossModule
 	private final String name;
 
 	public EmptyAcrossModule( String name, Class<?>... annotatedClasses ) {
+		this( name, false, annotatedClasses );
+	}
+
+	protected EmptyAcrossModule( String name, boolean optional, Class<?>[] annotatedClasses ) {
 		this.name = name;
+
 		if ( annotatedClasses.length > 0 ) {
 			addApplicationContextConfigurer( annotatedClasses );
+		}
+		else if ( !optional ) {
+			addApplicationContextConfigurer( Object.class );
 		}
 	}
 
@@ -69,5 +77,15 @@ public final class EmptyAcrossModule extends AcrossModule
 	@Override
 	public String[] getInstallerScanPackages() {
 		return new String[0];
+	}
+
+	/**
+	 * Creates an empty module that will not be bootstrapped unless any actual configuration with components is added.
+	 *
+	 * @param moduleName name of the module
+	 * @return module
+	 */
+	public static EmptyAcrossModule optional( String moduleName ) {
+		return new EmptyAcrossModule( moduleName, true, new Class[0] );
 	}
 }

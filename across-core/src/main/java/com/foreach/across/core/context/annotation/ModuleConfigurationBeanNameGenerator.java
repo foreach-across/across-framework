@@ -18,33 +18,32 @@ package com.foreach.across.core.context.annotation;
 import com.foreach.across.core.annotations.ModuleConfiguration;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.context.annotation.AnnotationBeanNameGenerator;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.AnnotationMetadata;
-
-import java.beans.Introspector;
-import java.util.Set;
+import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 
 /**
- * Extends the default {@link AnnotationBeanNameGenerator} with support for
- * {@link com.foreach.across.core.annotations.ModuleConfiguration} classes.
- * For the latter the full qualified class name will be used for default bean name,
- * instead of the simple name.
+ * Extends the default {@link AnnotationBeanNameGenerator} to always use a fully qualified class name
+ * as bean name in case of a {@link Configuration} or {@link ModuleConfiguration} class, as well
+ * as for any class not annotated with {@link Component} (which is in fact the case for {@link ModuleConfiguration}).
  *
  * @author Arne Vandamme
  * @since 1.1.2
  */
 public class ModuleConfigurationBeanNameGenerator extends AnnotationBeanNameGenerator
 {
+	private static final String COMPONENT_ANNOTATION = Component.class.getName();
+	private static final String CONFIGURATION_ANNOTATION = Configuration.class.getName();
+
 	@Override
 	protected String determineBeanNameFromAnnotation( AnnotatedBeanDefinition annotatedDef ) {
 		String name = super.determineBeanNameFromAnnotation( annotatedDef );
 
 		if ( name == null ) {
-			AnnotationMetadata amd = annotatedDef.getMetadata();
-			Set<String> types = amd.getAnnotationTypes();
-
-			if ( types.contains( ModuleConfiguration.class.getName() ) ) {
-				// use fully qualified class name as default bean name
-				return Introspector.decapitalize( annotatedDef.getBeanClassName() );
+			AnnotationMetadata metadata = annotatedDef.getMetadata();
+			if ( !metadata.isAnnotated( COMPONENT_ANNOTATION ) || metadata.isAnnotated( CONFIGURATION_ANNOTATION ) ) {
+				return ClassUtils.getPackageName( annotatedDef.getBeanClassName() ) + "." + ClassUtils.getShortName( annotatedDef.getBeanClassName() );
 			}
 		}
 

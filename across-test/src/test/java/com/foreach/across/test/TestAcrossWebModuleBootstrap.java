@@ -16,19 +16,22 @@
 package com.foreach.across.test;
 
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.config.CharacterEncodingConfiguration;
 import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
 import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.servlet.AcrossMultipartFilter;
 import org.junit.Test;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.HandlerAdapter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 import javax.servlet.DispatcherType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Map;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.Assert.*;
@@ -39,6 +42,15 @@ import static org.junit.Assert.*;
  */
 public class TestAcrossWebModuleBootstrap
 {
+	@Test
+	public void acrossWebModuleDefaultExposed() {
+		try (AcrossTestWebContext ctx = web().modules( AcrossWebModule.NAME ).build()) {
+			assertFalse( ctx.getBeansOfType( HandlerMapping.class ).isEmpty() );
+			assertFalse( ctx.getBeansOfType( HandlerAdapter.class ).isEmpty() );
+			assertFalse( ctx.getBeansOfType( HandlerExceptionResolver.class ).isEmpty() );
+		}
+	}
+
 	@Test
 	public void acrossWebModuleDefaultFilters() {
 		try (AcrossTestWebContext ctx = web().modules( AcrossWebModule.NAME ).build()) {
@@ -56,9 +68,10 @@ public class TestAcrossWebModuleBootstrap
 			);
 
 			// Resource url encoding must be last
+			Map<String, MockFilterRegistration> filterRegistrations = servletContext.getFilterRegistrations();
 			assertEquals(
 					ResourcesConfiguration.RESOURCE_URL_ENCODING_FILTER,
-					new ArrayList<>( servletContext.getFilterRegistrations().keySet() ).get( 2 )
+					new ArrayList<>( filterRegistrations.keySet() ).get( filterRegistrations.size() - 1 )
 			);
 		}
 	}
@@ -115,7 +128,7 @@ public class TestAcrossWebModuleBootstrap
 	public void dynamicConfigurationButDisabledThroughProperties() {
 		try (
 				AcrossTestWebContext ctx = web()
-						.property( AcrossWebModuleSettings.MULTIPART_AUTO_CONFIGURE, "false" )
+						.property( "spring.http.multipart.enabled", "false" )
 						.property( "spring.http.encoding.enabled", "false" )
 						.property( "acrossWebModule.resources.versioning.enabled", "false" )
 						.modules( AcrossWebModule.NAME )

@@ -20,7 +20,6 @@ import com.foreach.across.test.web.TestDefaultTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,9 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@DirtiesContext
 @AcrossWebAppConfiguration(classes = TestDefaultTemplate.Config.class)
-@TestPropertySource(properties="build.number=fixed")
+@TestPropertySource(properties = "build.number=fixed")
 public class TestStaticAttribute
 {
 	@Autowired

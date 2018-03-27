@@ -19,6 +19,7 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
+import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import org.springframework.context.ApplicationContext;
 
@@ -90,9 +91,11 @@ public interface BootstrapApplicationContextFactory
 	/**
 	 * Loads a set of configurers into an {@link ApplicationContext}.
 	 *
-	 * @param context     Configurable application context
-	 * @param configurers Configurers to apply
+	 * @param context               Configurable application context
+	 * @param configurers           Configurers to apply
+	 * @param exposedBeanRegistries
 	 */
 	void loadApplicationContext( AcrossConfigurableApplicationContext context,
-	                             Collection<ApplicationContextConfigurer> configurers );
+	                             Collection<ApplicationContextConfigurer> configurers,
+	                             Collection<ExposedModuleBeanRegistry> exposedBeanRegistries );
 }

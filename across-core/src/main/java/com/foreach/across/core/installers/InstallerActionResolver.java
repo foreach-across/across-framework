@@ -20,7 +20,7 @@ import java.util.Optional;
 
 /**
  * Implement to have a callback for resolving installer actions upon bootstrap.
- *
+ * <p>
  * When an {@link com.foreach.across.core.annotations.Installer} annotated class implements this interface,
  * the {@link #resolve(String, InstallerMetaData)} method will be called if the pre-determined action is
  * {@link InstallerAction#EXECUTE}.

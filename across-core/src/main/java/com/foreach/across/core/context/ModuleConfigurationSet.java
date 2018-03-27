@@ -15,86 +15,165 @@
  */
 package com.foreach.across.core.context;
 
+import lombok.NonNull;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.context.annotation.Configuration;
+
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
- * Represents a collection of classes annotated with {@link @ModuleConfiguration},
- * mapped on the module names they apply for.
+ * Represents a collection of - usually {@link @ModuleConfiguration} - classes, mapped on the module names they apply for.
+ * These classes will be registered in the module using an {@link org.springframework.context.annotation.ImportSelector}
+ * in order to ensure correct conditional validation without premature class-loading. As such, only {@link Configuration}
+ * annotated classes are correctly handled.
  *
  * @author Arne Vandamme
+ * @see ClassPathScanningModuleConfigurationProvider
  */
 public class ModuleConfigurationSet
 {
-	private final Map<Class<?>, ModuleConfigurationScope> scopedAnnotatedClasses = new LinkedHashMap<>();
+	private final Map<String, ModuleConfigurationScope> scopedAnnotatedClasses = new LinkedHashMap<>();
 
-	public Class<?>[] getAnnotatedClasses( String moduleName ) {
-		List<Class<?>> annotatedClasses = new ArrayList<>();
+	/**
+	 * Get the configuration classes that should be added to the module specified by the name.
+	 * Optionally a number of module name aliases can be specified - usually used by dynamic modules.
+	 *
+	 * @param moduleName of the module
+	 * @param aliases    additional module names
+	 * @return configurations
+	 */
+	public String[] getConfigurations( String moduleName, String... aliases ) {
+		String[] moduleNames = ArrayUtils.addAll( aliases, moduleName );
+		List<String> configurations = new ArrayList<>();
 		scopedAnnotatedClasses.forEach( ( annotatedClass, modules ) -> {
-			if ( !modules.excludedModules.contains( moduleName )
-					&& ( modules.addToAll || modules.includedModules.contains( moduleName ) ) ) {
-				annotatedClasses.add( annotatedClass );
+			if ( !containsAny( modules.excludedModules, moduleNames )
+					&& ( modules.addToAll || containsAny( modules.includedModules, moduleNames ) ) ) {
+				configurations.add( annotatedClass );
 			}
 		} );
 
-		return annotatedClasses.toArray( new Class[annotatedClasses.size()] );
+		return configurations.toArray( new String[configurations.size()] );
 	}
 
 	/**
-	 * Register an annotated class to be added to all modules.
+	 * Get the explicitly excluded configuration classes registered to the module with that name
+	 * Optionally a number of module name aliases can be specified - usually used by dynamic modules.
+	 *
+	 * @param moduleName of the module
+	 * @param aliases    additional module names
+	 * @return configurations
+	 */
+	public String[] getExcludedConfigurations( String moduleName, String... aliases ) {
+		String[] moduleNames = ArrayUtils.addAll( aliases, moduleName );
+		List<String> configurations = new ArrayList<>();
+		scopedAnnotatedClasses.forEach( ( annotatedClass, modules ) -> {
+			if ( containsAny( modules.excludedModules, moduleNames ) ) {
+				configurations.add( annotatedClass );
+			}
+		} );
+
+		return configurations.toArray( new String[configurations.size()] );
+	}
+
+	private boolean containsAny( Set<String> moduleNameSet, String... moduleName ) {
+		return Stream.of( moduleName ).anyMatch( moduleNameSet::contains );
+	}
+
+	/**
+	 * Register a configuration class to be added to all modules.
 	 * Any additional {@link #register(Class, String...)} calls will have no effect as this module will be added
 	 * for all anyway.
 	 *
-	 * @param annotatedClass configuration
+	 * @param configurationClass configuration
 	 */
-	public void register( Class<?> annotatedClass ) {
-		ModuleConfigurationScope scope
-				= scopedAnnotatedClasses.getOrDefault( annotatedClass, new ModuleConfigurationScope() );
+	public void register( @NonNull Class<?> configurationClass ) {
+		register( configurationClass.getName() );
+	}
+
+	/**
+	 * Register a configuration class to be added to all modules.
+	 * Any additional {@link #register(Class, String...)} calls will have no effect as this module will be added
+	 * for all anyway.
+	 *
+	 * @param configurationClass configuration
+	 */
+	public void register( @NonNull String configurationClass ) {
+		ModuleConfigurationScope scope = scopedAnnotatedClasses.getOrDefault( configurationClass, new ModuleConfigurationScope() );
 		scope.addToAll = true;
 
-		scopedAnnotatedClasses.put( annotatedClass, scope );
+		scopedAnnotatedClasses.put( configurationClass, scope );
 	}
 
 	/**
-	 * Register an annotated class to be added to a specific set of modules.
+	 * Register a configuration class to be added to a specific set of modules.
 	 *
-	 * @param annotatedClass configuration
-	 * @param moduleNames    names of the modules to which this configuration should be added
+	 * @param configurationClass configuration
+	 * @param moduleNames        names of the modules to which this configuration should be added
 	 */
-	public void register( Class<?> annotatedClass, String... moduleNames ) {
-		ModuleConfigurationScope scope
-				= scopedAnnotatedClasses.getOrDefault( annotatedClass, new ModuleConfigurationScope() );
+	public void register( @NonNull Class<?> configurationClass, String... moduleNames ) {
+		register( configurationClass.getName(), moduleNames );
+	}
+
+	/**
+	 * Register a configuration class to be added to a specific set of modules.
+	 *
+	 * @param configurationClass configuration
+	 * @param moduleNames        names of the modules to which this configuration should be added
+	 */
+	public void register( @NonNull String configurationClass, String... moduleNames ) {
+		ModuleConfigurationScope scope = scopedAnnotatedClasses.getOrDefault( configurationClass, new ModuleConfigurationScope() );
 		Collections.addAll( scope.includedModules, moduleNames );
 
-		scopedAnnotatedClasses.put( annotatedClass, scope );
+		scopedAnnotatedClasses.put( configurationClass, scope );
 	}
 
 	/**
-	 * Register an annotated class to be excluded specifically for a number of modules.
+	 * Register a configuration class to be excluded specifically for a number of modules.
 	 *
-	 * @param annotatedClass configuration to be excluded
-	 * @param moduleNames    names of the modules to which this configuration should <strong>never</strong> be added
+	 * @param configurationClass configuration to be excluded
+	 * @param moduleNames        names of the modules to which this configuration should <strong>never</strong> be added
 	 */
-	public void exclude( Class<?> annotatedClass, String... moduleNames ) {
+	public void exclude( @NonNull Class<?> configurationClass, String... moduleNames ) {
+		exclude( configurationClass.getName(), moduleNames );
+	}
+
+	/**
+	 * Register a configuration class to be excluded specifically for a number of modules.
+	 *
+	 * @param configurationClass configuration to be excluded
+	 * @param moduleNames        names of the modules to which this configuration should <strong>never</strong> be added
+	 */
+	public void exclude( @NonNull String configurationClass, String... moduleNames ) {
 		ModuleConfigurationScope scope
-				= scopedAnnotatedClasses.getOrDefault( annotatedClass, new ModuleConfigurationScope() );
+				= scopedAnnotatedClasses.getOrDefault( configurationClass, new ModuleConfigurationScope() );
 		Collections.addAll( scope.excludedModules, moduleNames );
 
-		scopedAnnotatedClasses.put( annotatedClass, scope );
+		scopedAnnotatedClasses.put( configurationClass, scope );
 	}
 
 	/**
-	 * Remove an annotated class from the set altogether.
+	 * Remove a configuration class from the set altogether.
 	 *
-	 * @param annotatedClass configuration
+	 * @param configurationClass configuration
 	 */
-	public void remove( Class<?> annotatedClass ) {
-		scopedAnnotatedClasses.remove( annotatedClass );
+	public void remove( Class<?> configurationClass ) {
+		remove( configurationClass.getName() );
+	}
+
+	/**
+	 * Remove a configuration class from the set altogether.
+	 *
+	 * @param configurationClass configuration
+	 */
+	public void remove( String configurationClass ) {
+		scopedAnnotatedClasses.remove( configurationClass );
 	}
 
 	private static class ModuleConfigurationScope
 	{
-		public boolean addToAll = false;
-		public final Set<String> includedModules = new HashSet<>();
-		public final Set<String> excludedModules = new HashSet<>();
+		boolean addToAll = false;
+		final Set<String> includedModules = new HashSet<>();
+		final Set<String> excludedModules = new HashSet<>();
 	}
 }

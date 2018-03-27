@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/across.iml" filepath="$PROJECT_DIR$/across.iml" />
       <module fileurl="file://$PROJECT_DIR$/across-base.iml" filepath="$PROJECT_DIR$/across-base.iml" />
       <module fileurl="file://$PROJECT_DIR$/across-core/across-core.iml" filepath="$PROJECT_DIR$/across-core/across-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/across-test/across-test.iml" filepath="$PROJECT_DIR$/across-test/across-test.iml" />

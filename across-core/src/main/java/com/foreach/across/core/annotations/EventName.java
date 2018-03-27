@@ -16,12 +16,18 @@
 
 package com.foreach.across.core.annotations;
 
+import org.springframework.context.event.EventListener;
+
 import java.lang.annotation.*;
 
+/**
+ * @deprecated use {@link EventListener#condition()} instead
+ */
 @Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
+@Deprecated
 public @interface EventName
 {
 	String[] value();

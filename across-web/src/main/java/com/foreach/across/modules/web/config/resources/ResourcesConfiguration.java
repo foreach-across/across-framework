@@ -51,7 +51,7 @@ import java.util.Map;
  * <p>
  * Customizing the default resource configuration can be done by overriding
  * {@link DefaultResourceRegistrationConfigurer}
- * and injecting it back into the module context under the same bean name (<strong>defaultResourceRegistrationConfigurer</strong>.
+ * and injecting it back into the module context under the same bean name (<strong>defaultResourceRegistrationConfigurer</strong>).
  *
  * @author Arne Vandamme
  */
@@ -115,6 +115,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	 * @param resourceHandlerRegistry containing the registered resources
 	 * @param applicationContext      triggering the reload
 	 */
+	// todo: fix resources! @PostRefresh
 	public void reload( com.foreach.across.modules.web.mvc.ResourceHandlerRegistry resourceHandlerRegistry,
 	                    ApplicationContext applicationContext,
 	                    Map<String, CorsConfiguration> corsConfigurations ) {

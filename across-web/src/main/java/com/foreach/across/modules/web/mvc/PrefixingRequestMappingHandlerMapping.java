@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.mvc;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.mvc.condition.CompositeCustomRequestCondition;
@@ -27,6 +26,7 @@ import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ClassUtils;
@@ -64,6 +64,18 @@ import java.util.stream.Stream;
  */
 public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandlerMapping
 {
+	/**
+	 * Bean name prefix for target beans behind scoped proxies. Used to exclude those
+	 * targets from handler method detection, in favor of the corresponding proxies.
+	 * <p>We're not checking the autowire-candidate status here, which is how the
+	 * proxy target filtering problem is being handled at the autowiring level,
+	 * since autowire-candidate may have been turned to {@code false} for other
+	 * reasons, while still expecting the bean to be eligible for handler methods.
+	 * <p>Originally defined in {@link org.springframework.aop.scope.ScopedProxyUtils}
+	 * but duplicated here to avoid a hard dependency on the spring-aop module.
+	 */
+	private static final String SCOPED_TARGET_NAME_PREFIX = "scopedTarget.";
+
 	private final String prefixPath;
 	private final ClassFilter handlerMatcher;
 
@@ -98,7 +110,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 		setInterceptors( interceptor );
 	}
 
-	@Event
+	@EventListener
 	protected void rescan( AcrossContextBootstrappedEvent event ) {
 		for ( AcrossModuleInfo moduleInfo : event.getModules() ) {
 			scan( moduleInfo.getApplicationContext(), false );
@@ -143,9 +155,21 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 				: context.getBeanNamesForType( Object.class );
 
 		for ( String beanName : beanNames ) {
-			if ( isHandler( context.getType( beanName ) ) && !scannedHandlers.contains( beanName ) ) {
-				scannedHandlers.add( beanName );
-				detectHandlerMethods( context, beanName );
+			if ( !beanName.startsWith( SCOPED_TARGET_NAME_PREFIX ) && !scannedHandlers.contains( beanName ) ) {
+				Class<?> beanType = null;
+				try {
+					beanType = context.getType( beanName );
+				}
+				catch ( Throwable ex ) {
+					// An unresolvable bean type, probably from a lazy bean - let's ignore it.
+					if ( logger.isTraceEnabled() ) {
+						logger.trace( "Could not resolve target class for bean with name '" + beanName + "'", ex );
+					}
+				}
+				if ( beanType != null && isHandler( beanType ) ) {
+					scannedHandlers.add( beanName );
+					detectHandlerMethods( context, beanName );
+				}
 			}
 		}
 

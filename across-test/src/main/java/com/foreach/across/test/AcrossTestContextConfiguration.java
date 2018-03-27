@@ -39,10 +39,10 @@ import java.util.UUID;
  * Deprecated configuration for creating an {@link AcrossContext} with the default test datasource that will also
  * reset the database before bootstrapping.
  *
- * @deprecated favour the use of an {@link com.foreach.across.test.support.AcrossTestContextBuilder} instead
  * @see com.foreach.across.test.support.AcrossTestContextBuilder
  * @see com.foreach.across.test.support.config.ResetDatabaseConfigurer
  * @see com.foreach.across.test.support.config.TestDataSourceConfigurer
+ * @deprecated favour the use of an {@link com.foreach.across.test.support.AcrossTestContextBuilder} instead
  */
 @Deprecated
 @Configuration
@@ -69,14 +69,15 @@ public class AcrossTestContextConfiguration implements EnvironmentAware
 		System.out.println( "Creating Across test datasource with profile: " + dsName );
 
 		if ( StringUtils.equals( "auto", dsName ) ) {
-			dataSource = HikariDataSourceHelper.create(  "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:/hsql-mem/ax-" + UUID.randomUUID().toString(), "sa", StringUtils.EMPTY );
+			dataSource = HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:/hsql-mem/ax-" + UUID.randomUUID().toString(), "sa",
+			                                            StringUtils.EMPTY );
 		}
 		else {
 			dataSource = HikariDataSourceHelper.create( environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".driver" ),
 			                                            environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".url" ),
 			                                            environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".username" ),
 			                                            environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".password" ) );
-			if( dataSource.getJdbcUrl().startsWith( "jdbc:jtds:" ) ) {
+			if ( dataSource.getJdbcUrl().startsWith( "jdbc:jtds:" ) ) {
 				// jtds is not JDBC 4.0 compliant
 				dataSource.setConnectionTestQuery( "select 1" );
 			}

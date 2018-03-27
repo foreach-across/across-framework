@@ -25,19 +25,14 @@ import com.foreach.across.core.support.AcrossContextBuilder;
 import com.foreach.across.core.util.ClassLoadingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanClassLoaderAware;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportAware;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
@@ -52,14 +47,12 @@ import java.util.*;
  * <p>A single {@link DataSource} bean or one named <b>acrossDataSource</b> is required for installers to work.</p>
  */
 @Configuration
+@Import(AcrossContextWebConfiguration.class)
 public class AcrossContextConfiguration implements ImportAware, EnvironmentAware, BeanFactoryAware, BeanClassLoaderAware
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextConfiguration.class );
 
 	static final String ANNOTATION_TYPE = EnableAcrossContext.class.getName();
-
-	@Autowired(required = false)
-	private List<DataSource> dataSources = Collections.emptyList();
 
 	@Autowired(required = false)
 	@Qualifier(AcrossContext.DATASOURCE)
@@ -125,10 +118,12 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			return acrossDataSource;
 		}
 
+		Collection<DataSource> dataSources = BeanFactoryUtils.beansOfTypeIncludingAncestors( (ListableBeanFactory) beanFactory, DataSource.class, false, false )
+		                                                     .values();
 		if ( !dataSources.isEmpty() ) {
 			if ( dataSources.size() == 1 ) {
 				LOG.info( "Single datasource bean found - registering it as the AcrossContext datasource." );
-				return dataSources.get( 0 );
+				return dataSources.iterator().next();
 			}
 			else {
 				LOG.warn(
@@ -251,7 +246,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			modulePackageSet.add( modulePackageClass.getPackage().getName() );
 		}
 
-		if ( modulePackageSet.isEmpty() ) {
+		if ( !modulePackageSet.contains( "." ) ) {
 			modulePackageSet.add( AcrossContextBuilder.STANDARD_MODULES_PACKAGE );
 
 			try {
@@ -267,6 +262,10 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			}
 			catch ( ClassNotFoundException ignore ) {
 			}
+		}
+		else {
+			LOG.info( "Not registering default packages for Across module scanning" );
+			modulePackageSet.remove( "." );
 		}
 
 		return modulePackageSet.toArray( new String[modulePackageSet.size()] );

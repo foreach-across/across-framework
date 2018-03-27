@@ -19,7 +19,8 @@ package com.foreach.across.core.annotations;
 import java.lang.annotation.*;
 
 /**
- * Used to specify the parameter-less method in an @Installer annotated class.
+ * Used to specify a method to executed in an @Installer annotated class.
+ * Autowires the method's parameters if they are present.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -27,4 +28,10 @@ import java.lang.annotation.*;
 @Inherited
 public @interface InstallerMethod
 {
+	/**
+	 * Declares whether the method arguments are required.
+	 * If they are not required, parameters will not be autowired if not found.
+	 * <p>Defaults to {@code true}.
+	 */
+	boolean required() default true;
 }

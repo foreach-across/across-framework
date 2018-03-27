@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web.resource;
 
+import lombok.NonNull;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;
@@ -41,9 +42,8 @@ public class SimpleWebResourcePackage implements WebResourcePackage
 		setWebResources( Arrays.asList( webResources ) );
 	}
 
-	protected void setWebResources( Collection<WebResource> webResources ) {
-		Assert.notNull( webResources );
-		Assert.notEmpty( webResources );
+	protected void setWebResources( @NonNull Collection<WebResource> webResources ) {
+		Assert.notEmpty( webResources, "webResources must not be empty" );
 		this.webResources = webResources;
 	}
 

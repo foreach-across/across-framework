@@ -15,14 +15,20 @@
  */
 package com.foreach.across.core.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.SearchStrategy;
+import org.springframework.boot.autoconfigure.condition.*;
+import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
+
+import javax.validation.Validator;
+import javax.validation.executable.ExecutableValidator;
 
 /**
  * Base configuration for a module {@link org.springframework.context.ApplicationContext}.
@@ -38,5 +44,32 @@ public class CommonModuleConfiguration
 	@ConditionalOnMissingBean(search = SearchStrategy.CURRENT)
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
+	}
+
+	/**
+	 * Activate method validation in every module.
+	 */
+	@Configuration
+	@ConditionalOnClass(ExecutableValidator.class)
+	@ConditionalOnBean(Validator.class)
+	@ConditionalOnResource(resources = "classpath:META-INF/services/javax.validation.spi.ValidationProvider")
+	static class MethodValidationConfiguration
+	{
+		@Bean
+		@ConditionalOnMissingBean(search = SearchStrategy.CURRENT)
+		public static MethodValidationPostProcessor methodValidationPostProcessor(
+				Environment environment, @Lazy Validator validator ) {
+			MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
+			processor.setProxyTargetClass( determineProxyTargetClass( environment ) );
+			processor.setValidator( validator );
+			return processor;
+		}
+
+		private static boolean determineProxyTargetClass( Environment environment ) {
+			RelaxedPropertyResolver resolver = new RelaxedPropertyResolver( environment,
+			                                                                "spring.aop." );
+			Boolean value = resolver.getProperty( "proxyTargetClass", Boolean.class );
+			return ( value != null ? value : true );
+		}
 	}
 }

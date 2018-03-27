@@ -17,8 +17,8 @@ package com.foreach.across.modules.web.ui.elements.support;
 
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.function.Function;
@@ -177,9 +177,7 @@ public final class ContainerViewElementUtils
 	 * @param predicate additional predicate the elements should match
 	 * @return stream of matching elements
 	 */
-	public static Stream<ViewElement> findAll( ContainerViewElement container, Predicate<ViewElement> predicate ) {
-		Assert.notNull( container );
-		Assert.notNull( predicate );
+	public static Stream<ViewElement> findAll( @NonNull ContainerViewElement container, @NonNull Predicate<ViewElement> predicate ) {
 		Stream.Builder<ViewElement> stream = Stream.builder();
 		appendElementsToStream( container, predicate, stream );
 		return stream.build();

@@ -1,9 +1,0 @@
-= Appendices
-
-include::appendix-troubleshooting.adoc[]
-
-include::appendix-core-events.adoc[]
-
-include::appendix-across-default-beans.adoc[]
-
-include::appendix-test-configurations.adoc[]

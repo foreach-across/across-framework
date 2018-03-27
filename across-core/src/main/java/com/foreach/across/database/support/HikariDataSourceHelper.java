@@ -30,56 +30,59 @@ import java.util.Properties;
 
 public final class HikariDataSourceHelper
 {
-    private static final String DATASOURCES_PREFIX = "datasources.";
-    private HikariDataSourceHelper() {
-    }
+	private static final String DATASOURCES_PREFIX = "datasources.";
 
-    public static HikariConfig create( String datasourcePrefix, ConfigurableEnvironment propertyResolver ) {
-        Properties applicationProperties = getProperties(propertyResolver);
-        Properties datasourcesProperties = new Properties();
-        datasourcePrefix += ".";
-        for( Map.Entry<Object, Object> props : applicationProperties.entrySet() ) {
-            Object key = props.getKey();
-            String cleanedKey =  DATASOURCES_PREFIX + datasourcePrefix;
-            if( key.toString().startsWith(DATASOURCES_PREFIX) && key.toString().startsWith( cleanedKey) ) {
-                datasourcesProperties.put( key.toString().substring( cleanedKey.length() ), props.getValue() );
-            }
-        }
+	private HikariDataSourceHelper() {
+	}
 
-        String jndiProperty = applicationProperties.getProperty(DATASOURCES_PREFIX + datasourcePrefix + "jndi");
-        if (StringUtils.isNotEmpty(jndiProperty)) {
-            final JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
-            dataSourceLookup.setResourceRef(true);
-            DataSource dataSourceTemp;
-            try {
-                dataSourceTemp = dataSourceLookup.getDataSource(jndiProperty);
-            } catch (DataSourceLookupFailureException e) {
-                throw new IllegalArgumentException("Datasource " + jndiProperty + " not found", e);
-            }
+	public static HikariConfig create( String datasourcePrefix, ConfigurableEnvironment propertyResolver ) {
+		Properties applicationProperties = getProperties( propertyResolver );
+		Properties datasourcesProperties = new Properties();
+		datasourcePrefix += ".";
+		for ( Map.Entry<Object, Object> props : applicationProperties.entrySet() ) {
+			Object key = props.getKey();
+			String cleanedKey = DATASOURCES_PREFIX + datasourcePrefix;
+			if ( key.toString().startsWith( DATASOURCES_PREFIX ) && key.toString().startsWith( cleanedKey ) ) {
+				datasourcesProperties.put( key.toString().substring( cleanedKey.length() ), props.getValue() );
+			}
+		}
 
-            datasourcesProperties.remove("jndi");
-            HikariConfig config = new HikariConfig(datasourcesProperties);
-            config.setDataSource( dataSourceTemp );
-            return config;
-        } else {
-            return new HikariConfig(datasourcesProperties);
-        }
-    }
+		String jndiProperty = applicationProperties.getProperty( DATASOURCES_PREFIX + datasourcePrefix + "jndi" );
+		if ( StringUtils.isNotEmpty( jndiProperty ) ) {
+			final JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
+			dataSourceLookup.setResourceRef( true );
+			DataSource dataSourceTemp;
+			try {
+				dataSourceTemp = dataSourceLookup.getDataSource( jndiProperty );
+			}
+			catch ( DataSourceLookupFailureException e ) {
+				throw new IllegalArgumentException( "Datasource " + jndiProperty + " not found", e );
+			}
 
-    private static Properties getProperties( ConfigurableEnvironment propertyResolver ) {
-        MutablePropertySources propertySources = propertyResolver.getPropertySources();
-        Properties properties = new Properties();
-        for (org.springframework.core.env.PropertySource<?> source : propertySources) {
-            if( source instanceof EnumerablePropertySource) {
-                EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) source;
-                String[] props = enumerablePropertySource.getPropertyNames();
-                for( String prop : props ) {
-                    properties.put( prop, enumerablePropertySource.getProperty(prop) );
-                }
-            }
-        }
-        return properties;
-    }
+			datasourcesProperties.remove( "jndi" );
+			HikariConfig config = new HikariConfig( datasourcesProperties );
+			config.setDataSource( dataSourceTemp );
+			return config;
+		}
+		else {
+			return new HikariConfig( datasourcesProperties );
+		}
+	}
+
+	private static Properties getProperties( ConfigurableEnvironment propertyResolver ) {
+		MutablePropertySources propertySources = propertyResolver.getPropertySources();
+		Properties properties = new Properties();
+		for ( org.springframework.core.env.PropertySource<?> source : propertySources ) {
+			if ( source instanceof EnumerablePropertySource ) {
+				EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) source;
+				String[] props = enumerablePropertySource.getPropertyNames();
+				for ( String prop : props ) {
+					properties.put( prop, enumerablePropertySource.getProperty( prop ) );
+				}
+			}
+		}
+		return properties;
+	}
 
 	public static HikariDataSource create( String driverClassName, String jdbcUrl, String username, String password ) {
 		HikariDataSource dataSource = new HikariDataSource();

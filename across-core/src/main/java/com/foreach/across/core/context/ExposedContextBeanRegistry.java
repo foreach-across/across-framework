@@ -41,7 +41,7 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 	public ExposedContextBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry,
 	                                   ConfigurableListableBeanFactory beanFactory,
 	                                   ExposedBeanDefinitionTransformer transformer ) {
-		super( contextBeanRegistry, null, transformer );
+		super( contextBeanRegistry, null, 0, transformer );
 
 		this.beanFactory = beanFactory;
 
@@ -53,8 +53,7 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 		}
 
 		Map<String, Object> beans = ApplicationContextScanner.findSingletonsMatching( beanFactory, EXPOSED_FILTER );
-		Map<String, BeanDefinition> definitions =
-				ApplicationContextScanner.findBeanDefinitionsMatching( beanFactory, EXPOSED_FILTER );
+		Map<String, BeanDefinition> definitions = ApplicationContextScanner.findBeanDefinitionsMatching( beanFactory, EXPOSED_FILTER );
 
 		addBeans( definitions, beans );
 	}
@@ -97,13 +96,13 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 
 	@Override
 	protected void copyBeanDefinitions( ConfigurableListableBeanFactory beanFactory,
-	                                    BeanDefinitionRegistry beanDefinitionRegistry ) {
+	                                    BeanDefinitionRegistry beanDefinitionRegistry, boolean ignoreExistingBeanName ) {
 		if ( !exposedDefinitions.isEmpty() ) {
 			// Make sure the registry is present in the parent context
 			beanFactory.registerSingleton( contextBeanRegistry.getFactoryName(), contextBeanRegistry );
 		}
 
-		super.copyBeanDefinitions( beanFactory, beanDefinitionRegistry );
+		super.copyBeanDefinitions( beanFactory, beanDefinitionRegistry, ignoreExistingBeanName );
 	}
 
 	@Override

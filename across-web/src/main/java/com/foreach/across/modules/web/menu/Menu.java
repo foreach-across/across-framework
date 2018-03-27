@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.menu;
 
-import com.foreach.across.core.AcrossException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 
@@ -400,7 +399,7 @@ public class Menu implements Ordered
 	 * @return Menu instance or null if not found.
 	 */
 	public Menu getItemWithPath( String path ) {
-		return getItem( Menu.byPath( path ) );
+		return getItem( MenuSelector.byPath( path ) );
 	}
 
 	/**
@@ -410,7 +409,7 @@ public class Menu implements Ordered
 	 * @return Menu instance or null if not found.
 	 */
 	public Menu getItemWithName( String name ) {
-		return getItem( Menu.byName( name ) );
+		return getItem( MenuSelector.byName( name ) );
 	}
 
 	public List<Menu> getItems() {
@@ -454,7 +453,7 @@ public class Menu implements Ordered
 
 	public Menu addItem( Menu item ) {
 		if ( item.hasParent() ) {
-			throw new AcrossException( "A Menu can only belong to a single parent menu." );
+			throw new IllegalStateException( "A Menu can only belong to a single parent menu." );
 		}
 
 		items.add( item );
@@ -617,66 +616,11 @@ public class Menu implements Ordered
 	}
 
 	/**
-	 * Creates a MenuSelector that will look for the MenuItem with the given path.
+	 * Create a {@link PathBasedMenuBuilder} for a new {@code Menu}.
 	 *
-	 * @param path Path to look for.
-	 * @return MenuSelector instance.
+	 * @return builder for a menu
 	 */
-	public static MenuSelector byPath( final String path ) {
-		return new TraversingMenuSelector( false )
-		{
-			@Override
-			protected boolean matches( Menu item ) {
-				return StringUtils.equals( path, item.getPath() );
-			}
-		};
-	}
-
-	/**
-	 * Creates a MenuSelector that will look for the MenuItem with the given url.
-	 *
-	 * @param url URL to look for.
-	 * @return MenuSelector instance.
-	 */
-	public static MenuSelector byUrl( final String url ) {
-		return new TraversingMenuSelector( false )
-		{
-			@Override
-			protected boolean matches( Menu item ) {
-				return StringUtils.equals( url, item.getUrl() );
-			}
-		};
-	}
-
-	/**
-	 * Creates a MenuSelector that will look for the MenuItem with the given name.
-	 *
-	 * @param name Name to look for.
-	 * @return MenuSelector instance.
-	 */
-	public static MenuSelector byName( final String name ) {
-		return new TraversingMenuSelector( false )
-		{
-			@Override
-			protected boolean matches( Menu item ) {
-				return StringUtils.equals( name, item.getName() );
-			}
-		};
-	}
-
-	/**
-	 * Creates a MenuSelector that will look for the MenuItem with the given title.
-	 *
-	 * @param title Title to look for.
-	 * @return MenuSelector instance.
-	 */
-	public static MenuSelector byTitle( final String title ) {
-		return new TraversingMenuSelector( false )
-		{
-			@Override
-			protected boolean matches( Menu item ) {
-				return StringUtils.equals( title, item.getTitle() );
-			}
-		};
+	public static PathBasedMenuBuilder builder() {
+		return new PathBasedMenuBuilder();
 	}
 }

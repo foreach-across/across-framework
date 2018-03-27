@@ -16,8 +16,8 @@
 
 package com.foreach.across.modules.web.menu;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.regex.Pattern;
 
@@ -30,9 +30,7 @@ public final class MenuMatchers
 	{
 		private String path;
 
-		public PathEqualityMenuMatcher( String path ) {
-			Assert.notNull( path );
-
+		public PathEqualityMenuMatcher( @NonNull String path ) {
 			this.path = path;
 		}
 

@@ -16,12 +16,14 @@
 package com.foreach.across.modules.web.ui.elements.builder;
 
 import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderFactory;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.test.support.AbstractViewElementBuilderTest;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -43,22 +45,39 @@ public class TestContainerViewElementBuilder extends AbstractViewElementBuilderT
 	}
 
 	@Test
+	public void nullElementsAreSimplyIgnored() {
+		builder.add( (ViewElement) null )
+		       .add( (ViewElementBuilder) null )
+		       .add( null, (ViewElement) null )
+		       .addAll( Arrays.asList( null, null ) )
+		       .addFirst( (ViewElement) null )
+		       .addFirst( (ViewElementBuilder) null )
+		       .configure( null )
+		       .configure( container -> container.add( (ViewElement) null ) );
+
+		build();
+
+		assertFalse( element.hasChildren() );
+	}
+
+	@Test
 	public void addElements() {
 		TextViewElement textOne = new TextViewElement( "textOne", "text 1" );
 		TextViewElement textTwo = new TextViewElement( "textTwo", "text 2" );
 
-		builder.add( textOne ).add( textTwo );
+		builder.add( textOne ).add( textTwo ).configure( container -> container.add( new TextViewElement( "textThree", "test 3" ) ) );
 
 		build();
-		assertEquals( 2, element.getChildren().size() );
+		assertEquals( 3, element.getChildren().size() );
 		assertEquals( Optional.of( textOne ), find( element, "textOne" ) );
 		assertEquals( Optional.of( textTwo ), find( element, "textTwo" ) );
+		assertEquals( "test 3", find( element, "textThree", TextViewElement.class ).map( TextViewElement::getText ).orElse( null ) );
 		assertSame( textOne, element.getChildren().get( 0 ) );
 
 		builder.sort( "textTwo", "textOne" );
 
 		build();
-		assertEquals( 2, element.getChildren().size() );
+		assertEquals( 3, element.getChildren().size() );
 		assertEquals( Optional.of( textOne ), find( element, "textOne" ) );
 		assertEquals( Optional.of( textTwo ), find( element, "textTwo" ) );
 		assertSame( textTwo, element.getChildren().get( 0 ) );

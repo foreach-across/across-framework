@@ -19,7 +19,7 @@ import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
-import org.springframework.util.Assert;
+import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,8 +119,7 @@ public class ContainerViewElement implements MutableViewElement
 	 *
 	 * @param element to add
 	 */
-	public void addChild( ViewElement element ) {
-		Assert.notNull( element );
+	public void addChild( @NonNull ViewElement element ) {
 		children.add( element );
 	}
 
@@ -129,8 +128,7 @@ public class ContainerViewElement implements MutableViewElement
 	 *
 	 * @param elements to add
 	 */
-	public void addChildren( Collection<ViewElement> elements ) {
-		Assert.notNull( elements );
+	public void addChildren( @NonNull Collection<ViewElement> elements ) {
 		children.addAll( elements );
 	}
 
@@ -139,8 +137,7 @@ public class ContainerViewElement implements MutableViewElement
 	 *
 	 * @param element to add
 	 */
-	public void addFirstChild( ViewElement element ) {
-		Assert.notNull( element );
+	public void addFirstChild( @NonNull ViewElement element ) {
 		children.add( 0, element );
 	}
 

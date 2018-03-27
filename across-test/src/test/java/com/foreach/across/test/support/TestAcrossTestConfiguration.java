@@ -18,6 +18,7 @@ package com.foreach.across.test.support;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestConfiguration;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -50,6 +52,9 @@ public class TestAcrossTestConfiguration
 	@Autowired
 	private AcrossContextInfo contextInfo;
 
+	@Autowired(required = false)
+	private MyManuallyExposedComponent manuallyExposedComponent;
+
 	@Test
 	public void dataSourceForTestShouldBeCreated() {
 		AcrossContext ctx = contextInfo.getContext();
@@ -65,9 +70,15 @@ public class TestAcrossTestConfiguration
 
 	@Test
 	public void modulesShouldBePresent() {
-		assertEquals( 2, contextInfo.getModules().size() );
+		assertEquals( 3, contextInfo.getModules().size() );
 		assertTrue( contextInfo.hasModule( AcrossWebModule.NAME ) );
 		assertTrue( contextInfo.hasModule( "named" ) );
+		assertTrue( contextInfo.hasModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ) );
+	}
+
+	@Test
+	public void manuallyExposedComponentShouldActuallyBeExposed() {
+		assertNotNull( manuallyExposedComponent );
 	}
 
 	private void assertTestQueryFails( DataSource dataSource ) {
@@ -80,7 +91,7 @@ public class TestAcrossTestConfiguration
 		fail( "Query executed but should not have" );
 	}
 
-	@AcrossTestConfiguration(modules = { AcrossWebModule.NAME })
+	@AcrossTestConfiguration(modules = { AcrossWebModule.NAME }, expose = MyManuallyExposedComponent.class)
 	protected static class Config
 	{
 		@Bean
@@ -95,7 +106,7 @@ public class TestAcrossTestConfiguration
 
 		@Bean
 		public AcrossModule namedModule() {
-			return new EmptyAcrossModule( "named" );
+			return new EmptyAcrossModule( "named", MyManuallyExposedComponent.class );
 		}
 
 		private void assertTestQueryOk( DataSource dataSource ) {
@@ -106,5 +117,10 @@ public class TestAcrossTestConfiguration
 				fail( "Query did not execute ok" );
 			}
 		}
+	}
+
+	@Component
+	static class MyManuallyExposedComponent
+	{
 	}
 }

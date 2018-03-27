@@ -16,11 +16,91 @@
 
 package com.foreach.across.modules.web.menu;
 
+import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * A MenuSelector is a strategy interface that searches a Menu tree and returns at most one Menu item that matches it.
  */
 public interface MenuSelector
 {
+	/**
+	 * Create a {@code MenuSelector} that will look for the item best matching the {@link HttpServletRequest}.
+	 *
+	 * @param request to match with
+	 * @return selector
+	 * @see RequestMenuSelector
+	 */
+	static MenuSelector byHttpServletRequest( @NonNull HttpServletRequest request ) {
+		return new RequestMenuSelector( request );
+	}
+
+	/**
+	 * Creates a MenuSelector that will look for the MenuItem with the given path.
+	 *
+	 * @param path Path to look for.
+	 * @return MenuSelector instance.
+	 */
+	static MenuSelector byPath( final String path ) {
+		return new TraversingMenuSelector( false )
+		{
+			@Override
+			protected boolean matches( Menu item ) {
+				return StringUtils.equals( path, item.getPath() );
+			}
+		};
+	}
+
+	/**
+	 * Creates a MenuSelector that will look for the MenuItem with the given url.
+	 *
+	 * @param url URL to look for.
+	 * @return MenuSelector instance.
+	 */
+	static MenuSelector byUrl( final String url ) {
+		return new TraversingMenuSelector( false )
+		{
+			@Override
+			protected boolean matches( Menu item ) {
+				return StringUtils.equals( url, item.getUrl() );
+			}
+		};
+	}
+
+	/**
+	 * Creates a MenuSelector that will look for the MenuItem with the given name.
+	 *
+	 * @param name Name to look for.
+	 * @return MenuSelector instance.
+	 */
+	static MenuSelector byName( final String name ) {
+		return new TraversingMenuSelector( false )
+		{
+			@Override
+			protected boolean matches( Menu item ) {
+				return StringUtils.equals( name, item.getName() );
+			}
+		};
+	}
+
+	/**
+	 * Creates a MenuSelector that will look for the MenuItem with the given title.
+	 *
+	 * @param title Title to look for.
+	 * @return MenuSelector instance.
+	 */
+	static MenuSelector byTitle( final String title ) {
+		return new TraversingMenuSelector( false )
+		{
+			@Override
+			protected boolean matches( Menu item ) {
+				return StringUtils.equals( title, item.getTitle() );
+			}
+		};
+	}
+
 	/**
 	 * Search the given Menu for an item that matches the current selector.
 	 *

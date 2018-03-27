@@ -135,7 +135,7 @@ public final class CompositeCustomRequestCondition extends AbstractRequestCondit
 				return result;
 			}
 
-			Set<String> classNames = new HashSet<>( conditionMap.keySet() );
+			Set<String> classNames = new TreeSet<>( conditionMap.keySet() );
 			classNames.addAll( other.conditionMap.keySet() );
 
 			for ( String className : classNames ) {

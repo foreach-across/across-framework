@@ -77,8 +77,10 @@ public @interface EnableAcrossContext
 	boolean scanForOptionalModules() default false;
 
 	/**
-	 * Set of packages that should be scanned for modules.  If empty the standard modules packages as well as the
-	 * package of the importing class will be used.
+	 * Set of packages that should be scanned for modules. The standard modules packages as well as the
+	 * package of the importing class will be used as well. If you do not want this, you should add
+	 * <strong>.</strong> (dot) as a package name. In that case only explicitly defined module packages
+	 * will be used.
 	 */
 	String[] modulePackages() default {};
 
@@ -87,6 +89,8 @@ public @interface EnableAcrossContext
 	 * The package of each class specified will be scanned.
 	 * <p>Consider creating a special no-op marker class or interface in each package
 	 * that serves no purpose other than being referenced by this attribute.</p>
+	 * <p>The default packages will always apply as well, if you do not want this you should define
+	 * <strong>.</strong> (dot) in {@link #modulePackages()}</p>.
 	 */
 	Class<?>[] modulePackageClasses() default {};
 

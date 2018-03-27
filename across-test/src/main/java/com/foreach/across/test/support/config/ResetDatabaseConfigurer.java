@@ -18,11 +18,14 @@ package com.foreach.across.test.support.config;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import liquibase.integration.spring.SpringLiquibase;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
@@ -36,9 +39,16 @@ import javax.sql.DataSource;
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
 @Configuration
-public class ResetDatabaseConfigurer implements AcrossContextConfigurer
+public class ResetDatabaseConfigurer implements AcrossContextConfigurer, BeanFactoryAware
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ResetDatabaseConfigurer.class );
+
+	private BeanFactory beanFactory;
+
+	@Override
+	public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
+		this.beanFactory = beanFactory;
+	}
 
 	@Override
 	public void configure( AcrossContext context ) {
@@ -56,14 +66,15 @@ public class ResetDatabaseConfigurer implements AcrossContextConfigurer
 		}
 	}
 
-	@Bean
-	@Scope("prototype")
-	protected SpringLiquibase dropDataSource( DataSource ds ) {
+	@SneakyThrows
+	private void dropDataSource( DataSource ds ) {
 		SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource( ds );
 		springLiquibase.setChangeLog( "classpath:com/foreach/across/test/resetDatabase.xml" );
 		springLiquibase.setDropFirst( true );
 
-		return springLiquibase;
+		AutowireCapableBeanFactory bf = (AutowireCapableBeanFactory) beanFactory;
+		bf.autowireBean( springLiquibase );
+		bf.initializeBean( springLiquibase, "dropDataSource" );
 	}
 }

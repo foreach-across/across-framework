@@ -17,16 +17,21 @@
 package com.foreach.across.core.transformers;
 
 import com.foreach.across.core.context.ExposedBeanDefinition;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractBeanRenameTransformer implements ExposedBeanDefinitionTransformer
 {
 	@SuppressWarnings("all")
 	private final Logger LOG = LoggerFactory.getLogger( getClass() );
+
+	private final boolean renameAliases;
 
 	/**
 	 * Modify the collection of ExposedBeanDefinitions.
@@ -47,18 +52,19 @@ public abstract class AbstractBeanRenameTransformer implements ExposedBeanDefini
 			else {
 				exposed.setPreferredBeanName( name );
 
-				Set<String> aliases = new HashSet<>( exposed.getAliases() );
+				if ( renameAliases ) {
+					Set<String> aliases = new HashSet<>( exposed.getAliases() );
 
-				for ( String alias : aliases ) {
-					String newAlias = rename( alias, exposed );
-					if ( !StringUtils.equals( alias, newAlias ) ) {
-						exposed.removeAlias( alias );
-						if ( newAlias != null ) {
-							exposed.addAlias( newAlias );
-						}
-						else {
-							LOG.debug( "Removing exposed bean alias {} because new alias was null",
-							           definition.getKey() );
+					for ( String alias : aliases ) {
+						String newAlias = rename( alias, exposed );
+						if ( !StringUtils.equals( alias, newAlias ) ) {
+							exposed.removeAlias( alias );
+							if ( newAlias != null ) {
+								exposed.addAlias( newAlias );
+							}
+							else {
+								LOG.debug( "Removing exposed bean alias {} because new alias was null", definition.getKey() );
+							}
 						}
 					}
 				}

@@ -16,7 +16,6 @@
 
 package com.foreach.across.core;
 
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.AbstractAcrossEntity;
 import com.foreach.across.core.context.AcrossModuleEntity;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
@@ -25,16 +24,15 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
-import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.filters.BeanFilter;
-import com.foreach.across.core.filters.BeanFilterComposite;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import com.foreach.across.core.util.ClassLoadingUtils;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public abstract class AcrossModule extends AbstractAcrossEntity implements AcrossModuleEntity
 {
@@ -44,7 +42,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	private final Set<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
 	private final Set<String> runtimeDependencies = new HashSet<>();
 	private AcrossContext context;
-	private BeanFilter exposeFilter = defaultExposeFilter();
+	private BeanFilter exposeFilter = BeanFilter.empty();
 	private ExposedBeanDefinitionTransformer exposeTransformer = null;
 	private boolean enabled = true;
 
@@ -56,13 +54,16 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	}
 
 	/**
-	 * By default all @Service and @Controller beans are exposed, along with any other beans
-	 * annotated explicitly with @Exposed or created through an @Exposed BeanFactory.
+	 * This method is now deprecated as default expose rules are configured in across.configuration instead,
+	 * and the defaults can only be overruled by the module implementing {@link #prepareForBootstrap(ModuleBootstrapConfig, AcrossBootstrapConfig)}.
+	 * The module specific {@link #getExposeFilter()} should only specify additional beans that should be exposed.
+	 *
+	 * @deprecated since 3.0.0 - replaced by across.configuration settings
 	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public static BeanFilter defaultExposeFilter() {
-		return new BeanFilterComposite( new AnnotationBeanFilter( Service.class ),
-		                                new AnnotationBeanFilter( true, true, Exposed.class ) );
+		return BeanFilter.empty();
 	}
 
 	public AcrossContext getContext() {
@@ -116,11 +117,28 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	 * @param classOrAnnotations to match
 	 */
 	public void expose( Class<?>... classOrAnnotations ) {
-		setExposeFilter( BeanFilter.composite(
-				getExposeFilter(),
-				BeanFilter.instances( classOrAnnotations ),
-				BeanFilter.annotations( classOrAnnotations )
-		) );
+		if ( classOrAnnotations.length > 0 ) {
+			setExposeFilter( BeanFilter.composite(
+					getExposeFilter(),
+					BeanFilter.instances( classOrAnnotations ),
+					BeanFilter.annotations( classOrAnnotations )
+			) );
+		}
+	}
+
+	/**
+	 * Expose beans matching any of the classes or annotations.
+	 * If the class specified is not present on the classpath, it will be ignored.
+	 *
+	 * @param classNames to add
+	 */
+	public void exposeClass( String... classNames ) {
+		expose(
+				(Class[]) Stream.of( classNames )
+				                .map( ClassLoadingUtils::resolveClass )
+				                .filter( Objects::nonNull )
+				                .toArray( Class[]::new )
+		);
 	}
 
 	/**
@@ -315,10 +333,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	 * @return Array of package names.
 	 */
 	public String[] getModuleConfigurationScanPackages() {
-		return new String[] {
-				getClass().getPackage().getName() + ".config",
-				getClass().getPackage().getName() + ".extensions"
-		};
+		return new String[] { getClass().getPackage().getName() + ".extensions" };
 	}
 
 	/**

@@ -18,7 +18,7 @@ package com.foreach.across.modules.web.ui.elements;
 import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.ViewElementSupport;
 import com.foreach.across.modules.web.ui.elements.support.CssClassAttributeUtils;
-import org.springframework.util.Assert;
+import lombok.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,8 +45,7 @@ public abstract class AbstractVoidNodeViewElement extends ViewElementSupport imp
 		return tagName;
 	}
 
-	protected void setTagName( String tagName ) {
-		Assert.notNull( tagName );
+	protected void setTagName( @NonNull String tagName ) {
 		this.tagName = tagName;
 	}
 
@@ -76,8 +75,7 @@ public abstract class AbstractVoidNodeViewElement extends ViewElementSupport imp
 		return attributes;
 	}
 
-	public void setAttributes( Map<String, Object> attributes ) {
-		Assert.notNull( attributes );
+	public void setAttributes( @NonNull Map<String, Object> attributes ) {
 		this.attributes = attributes;
 	}
 

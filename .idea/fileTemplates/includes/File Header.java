@@ -1,4 +1,4 @@
 /**
- * @author ${USER}
- * @since 2.0.0
+ * @author Arne Vandamme
+ * @since 3.0.0
  */

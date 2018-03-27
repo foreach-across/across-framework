@@ -16,12 +16,10 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.context.AcrossModuleRole;
-import com.foreach.across.core.context.ClassPathScanningChildPackageProvider;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
 /**
@@ -35,23 +33,11 @@ import org.springframework.util.Assert;
  */
 public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModule>
 {
-	private ClassPathScanningChildPackageProvider packageProvider;
 	private AcrossModuleRole moduleRole = AcrossModuleRole.APPLICATION;
 	private String moduleName, resourcesKey;
 	private String basePackage, shortPackageName;
 	private Integer order;
 	private boolean fullComponentScan = true;
-
-	/**
-	 * Set the package provider that should be used.
-	 *
-	 * @param packageProvider instance
-	 * @return self
-	 */
-	public DynamicAcrossModuleFactory setPackageProvider( ClassPathScanningChildPackageProvider packageProvider ) {
-		this.packageProvider = packageProvider;
-		return this;
-	}
 
 	/**
 	 * Set the module role that the generated module should have, defaults to {@link AcrossModuleRole#APPLICATION}.
@@ -149,31 +135,27 @@ public class DynamicAcrossModuleFactory implements FactoryBean<DynamicAcrossModu
 		DynamicAcrossModule module = createWithOrder();
 		module.setName( getModuleName() );
 		module.setResourcesKey( getResourcesKey() );
+		module.setBasePackage( basePackage );
 
-		module.addApplicationContextConfigurer( new ComponentScanConfigurer( buildComponentScanPackages() ) );
+		module.addApplicationContextConfigurer( buildComponentScanConfigurer() );
 		module.addInstallerContextConfigurer( new ComponentScanConfigurer( basePackage + ".installers.config" ) );
 
 		module.setInstallerScanPackages( basePackage + ".installers" );
-		module.setModuleConfigurationScanPackages( basePackage + ".config", basePackage + ".extensions" );
+		module.setModuleConfigurationScanPackages( basePackage + ".extensions" );
 		return module;
 	}
 
-	private String[] buildComponentScanPackages() {
-		if ( packageProvider == null ) {
-			packageProvider = new ClassPathScanningChildPackageProvider( new PathMatchingResourcePatternResolver() );
-		}
-
+	private ComponentScanConfigurer buildComponentScanConfigurer() {
 		if ( basePackage != null ) {
 			if ( fullComponentScan ) {
-				packageProvider.setExcludedChildPackages( "installers", "extensions" );
-				return packageProvider.findChildren( basePackage );
+				return ComponentScanConfigurer.forAcrossModulePackage( basePackage );
 			}
 			else {
-				return new String[] { basePackage + ".config" };
+				return new ComponentScanConfigurer( basePackage + ".config" );
 			}
 		}
 
-		return new String[0];
+		return new ComponentScanConfigurer( new String[0] );
 	}
 
 	private DynamicAcrossModule createWithOrder() {

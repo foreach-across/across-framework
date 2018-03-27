@@ -17,7 +17,7 @@ package com.foreach.across.modules.web.ui.elements.builder;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
-import org.springframework.util.Assert;
+import lombok.NonNull;
 
 public class NodeViewElementBuilder extends AbstractNodeViewElementBuilder<NodeViewElement, NodeViewElementBuilder>
 {
@@ -27,8 +27,7 @@ public class NodeViewElementBuilder extends AbstractNodeViewElementBuilder<NodeV
 		tagName( tagName );
 	}
 
-	public NodeViewElementBuilder tagName( String tagName ) {
-		Assert.notNull( tagName );
+	public NodeViewElementBuilder tagName( @NonNull String tagName ) {
 		this.tagName = tagName;
 		return this;
 	}

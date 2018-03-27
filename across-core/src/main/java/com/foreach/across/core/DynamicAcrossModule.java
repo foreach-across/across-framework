@@ -34,6 +34,7 @@ public abstract class DynamicAcrossModule extends AcrossModule implements Ordere
 	private String name;
 	private String resourcesKey;
 
+	private String basePackage;
 	private String[] installerScanPackages = new String[0];
 	private String[] moduleConfigurationScanPackages = new String[0];
 
@@ -101,6 +102,17 @@ public abstract class DynamicAcrossModule extends AcrossModule implements Ordere
 
 	void setModuleConfigurationScanPackages( String... moduleConfigurationScanPackages ) {
 		this.moduleConfigurationScanPackages = moduleConfigurationScanPackages;
+	}
+
+	/**
+	 * @return the base package where this dynamic module was created from
+	 */
+	public String getBasePackage() {
+		return basePackage;
+	}
+
+	void setBasePackage( String basePackage ) {
+		this.basePackage = basePackage;
 	}
 
 	@Override

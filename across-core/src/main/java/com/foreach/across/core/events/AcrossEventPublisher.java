@@ -16,35 +16,20 @@
 
 package com.foreach.across.core.events;
 
-import net.engio.mbassy.bus.error.IPublicationErrorHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * <p>EventBus implementation for the AcrossContext.  Allows for publishing AcrossEvent
- * instances to all registered listeners.  Also provides the necessary functionality
- * to register and unregister listeners.</p>
+ * Event publisher interface for sending {@link AcrossEvent} implementations.
+ * As of 3.0.0 using the custom Across event publisher is no longer required and discouraged,
+ * use the {@link org.springframework.context.ApplicationEventPublisher} from Spring instead.
+ * <p/>
+ * Any event sent from within an Across this will be routed through the Across event pipeline
+ * and sent to the listeners registered by all modules according to their module order.
+ *
+ * @see org.springframework.context.ApplicationEventPublisher
+ * @deprecated use the Spring {@link org.springframework.context.ApplicationEventPublisher} instead
  */
+@Deprecated
 public interface AcrossEventPublisher
 {
-	Logger LOG = LoggerFactory.getLogger( AcrossEventPublisher.class );
-
-	/**
-	 * Remove a listener instance.  Safe to call even if the instance was never registered as a listener.
-	 *
-	 * @param listener instance to remove
-	 * @return true if the listener was registered
-	 */
-	boolean unsubscribe( Object listener );
-
-	/**
-	 * Add an object as an event listener, scans it for {@link com.foreach.across.core.annotations.Event}
-	 * annotated methods. Safe to call even if the instance has no such methods.
-	 *
-	 * @param listener instance
-	 */
-	void subscribe( Object listener );
-
 	/**
 	 * Publish an event.
 	 *
@@ -56,14 +41,8 @@ public interface AcrossEventPublisher
 	 * Publish an event asynchronously.
 	 *
 	 * @param event to publish
+	 * @deprecated users should provide their own async calling methods
 	 */
+	@Deprecated
 	void publishAsync( AcrossEvent event );
-
-	/**
-	 * Add an error handler that will be called whenever an event handler has thrown an error while
-	 * handling an event.  Note that if this happens, all other event handlers will still be called.
-	 *
-	 * @param errorHandler instance
-	 */
-	void addErrorHandler( IPublicationErrorHandler errorHandler );
 }

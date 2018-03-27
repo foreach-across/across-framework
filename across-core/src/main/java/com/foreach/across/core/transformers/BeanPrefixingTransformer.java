@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * <p>Will add a prefix to all bean names, and will camelCase if required (default).</p>
  * <p><strong>Eg.</strong> with prefix test: sessionFactory would become testSessionFactory</p>
+ * <p>By default only prefixes the primary bean name, if you want to include alias renames as well,
+ * you should use {@link #BeanPrefixingTransformer(String, boolean, boolean)}.</p>
  */
 public class BeanPrefixingTransformer extends AbstractBeanRenameTransformer
 {
@@ -29,10 +31,12 @@ public class BeanPrefixingTransformer extends AbstractBeanRenameTransformer
 	private final boolean camelCase;
 
 	public BeanPrefixingTransformer( String prefix ) {
-		this( prefix, true );
+		this( prefix, true, true );
 	}
 
-	public BeanPrefixingTransformer( String prefix, boolean camelCase ) {
+	public BeanPrefixingTransformer( String prefix, boolean camelCase, boolean includeAliases ) {
+		super( includeAliases );
+
 		this.prefix = prefix;
 		this.camelCase = camelCase;
 	}

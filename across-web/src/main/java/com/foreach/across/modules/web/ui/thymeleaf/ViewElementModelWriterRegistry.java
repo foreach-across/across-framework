@@ -16,8 +16,8 @@
 package com.foreach.across.modules.web.ui.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,8 +43,7 @@ public class ViewElementModelWriterRegistry
 	 * @param viewElement instance for which to find a builder
 	 * @return builder instance or null if none found
 	 */
-	public ViewElementModelWriter<ViewElement> getModelWriter( ViewElement viewElement ) {
-		Assert.notNull( viewElement );
+	public ViewElementModelWriter<ViewElement> getModelWriter( @NonNull ViewElement viewElement ) {
 		ViewElementModelWriter builder = modelWriters.get( viewElement.getClass() );
 
 		return builder != null ? builder : modelWriters.get( viewElement.getElementType() );

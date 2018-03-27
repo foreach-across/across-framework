@@ -16,7 +16,7 @@
 package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
-import org.springframework.util.Assert;
+import lombok.NonNull;
 
 /**
  * Wrapping {@link ViewElementBuilderContext} that is used by a {@link ViewElementGenerator} and provides
@@ -33,9 +33,8 @@ public class IteratorViewElementBuilderContext<ITEM> extends DefaultViewElementB
 {
 	private IteratorItemStats<ITEM> itemStats;
 
-	public IteratorViewElementBuilderContext( IteratorItemStats<ITEM> itemStats ) {
+	public IteratorViewElementBuilderContext( @NonNull IteratorItemStats<ITEM> itemStats ) {
 		super( false );
-		Assert.notNull( itemStats );
 		this.itemStats = itemStats;
 	}
 

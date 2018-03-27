@@ -16,14 +16,10 @@
 
 package com.foreach.across.core.registry;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.Refreshable;
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.ResolvableType;
-
-import javax.annotation.PostConstruct;
 
 /**
  * <p>Extends the {@link com.foreach.across.core.registry.RefreshableRegistry} by scanning for members
@@ -34,9 +30,6 @@ import javax.annotation.PostConstruct;
 @Refreshable
 public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 {
-	@Autowired
-	private AcrossEventPublisher eventBus;
-
 	public IncrementalRefreshableRegistry( Class<T> memberType ) {
 		super( memberType );
 	}
@@ -49,12 +42,7 @@ public class IncrementalRefreshableRegistry<T> extends RefreshableRegistry<T>
 		super( resolvableType, includeModuleInternals );
 	}
 
-	@PostConstruct
-	void hookupEventHandler() {
-		eventBus.subscribe( this );
-	}
-
-	@Event
+	@EventListener
 	void moduleBootstrapped( AcrossModuleBootstrappedEvent moduleBootstrapped ) {
 		refresh();
 	}

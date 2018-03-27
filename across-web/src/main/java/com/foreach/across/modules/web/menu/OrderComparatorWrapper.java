@@ -16,8 +16,8 @@
 
 package com.foreach.across.modules.web.menu;
 
+import lombok.NonNull;
 import org.springframework.core.OrderComparator;
-import org.springframework.util.Assert;
 
 import java.util.Comparator;
 
@@ -29,8 +29,7 @@ public class OrderComparatorWrapper implements Comparator<Menu>
 {
 	private final Comparator<Menu> comparator;
 
-	public OrderComparatorWrapper( Comparator<Menu> comparator ) {
-		Assert.notNull( comparator );
+	public OrderComparatorWrapper( @NonNull Comparator<Menu> comparator ) {
 		this.comparator = comparator;
 	}
 

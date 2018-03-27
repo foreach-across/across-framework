@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>2.1.1.RELEASE</version>
+	<version>3.0.0.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -30,7 +30,7 @@
 		configuration files. Every module defines its own Spring application context and can share one or more beans
 		with other modules.
 	</description>
-	<url>https://foreach.atlassian.net/wiki/display/AX</url>
+	<url>https://across.foreach.be</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
@@ -48,13 +48,15 @@
 	</developers>
 
 	<properties>
-		<across.version>2.1.1.RELEASE</across.version>
+		<across.version>3.0.0.RELEASE</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>Athens-SR6</spring.platform.version>
+		<spring.platform.version>Brussels-SR7</spring.platform.version>
 		<foreach.common.version>1.1</foreach.common.version>
-		<thymeleaf.version>3.0.7.RELEASE</thymeleaf.version>
+		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
 		<thymeleaf-extras.springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras.springsecurity4.version>
+		<thymeleaf-extras.java8time.version>3.0.1.RELEASE</thymeleaf-extras.java8time.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
+		<maven.javadoc.skip>false</maven.javadoc.skip>
 	</properties>
 
 	<repositories>
@@ -131,35 +133,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.asciidoctor</groupId>
-				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.5</version>
-				<inherited>false</inherited>
-				<configuration>
-					<sourceDirectory>docs</sourceDirectory>
-					<!--
-					<sourceDocumentName>index.adoc</sourceDocumentName>
-					--><!--
-					<doctype>book</doctype>-->
-					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
-					<backend>html</backend>
-					<sourceHighlighter>coderay</sourceHighlighter>
-					<preserveDirectories>true</preserveDirectories>
-					<attributes>
-						<stylesheet>across.css</stylesheet>
-					</attributes>
-				</configuration>
-				<executions>
-					<execution>
-						<id>output-html</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>process-asciidoc</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.6</version>
@@ -180,8 +153,9 @@
 				<inherited>false</inherited>
 				<configuration>
 					<finalName>${project.artifactId}</finalName>
+					<skipAssembly>${maven.javadoc.skip}</skipAssembly>
 					<descriptors>
-						<descriptor>docs/assembly.xml</descriptor>
+						<descriptor>assembly.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>
@@ -270,7 +244,22 @@
 				<artifactId>thymeleaf-extras-springsecurity4</artifactId>
 				<version>${thymeleaf-extras.springsecurity4.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.thymeleaf.extras</groupId>
+				<artifactId>thymeleaf-extras-java8time</artifactId>
+				<version>${thymeleaf-extras.java8time.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>3.9.0</version>
+			</dependency>
+			<!-- Workaround for https://issues.apache.org/jira/browse/LANG-1285 -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.7</version>
+			</dependency>
 
 			<!-- Non-spring managed -->
 			<dependency>
@@ -288,6 +277,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<!-- Mbassador kept for version compatibility for now -->
 			<dependency>
 				<groupId>net.engio</groupId>
 				<artifactId>mbassador</artifactId>
@@ -329,6 +319,17 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.18</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

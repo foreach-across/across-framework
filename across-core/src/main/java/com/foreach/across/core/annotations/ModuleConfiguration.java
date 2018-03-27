@@ -15,10 +15,13 @@
  */
 package com.foreach.across.core.annotations;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 /**
- * Alternative for {@link org.springframework.context.annotation.Configuration} to declare annotated classes
+ * Extension of {@link org.springframework.context.annotation.Configuration} to declare configurations
  * that should not be added to the current {@link org.springframework.beans.factory.support.BeanDefinitionRegistry},
  * but rather be added to the registry of the modules specified in the {@link #value()} attribute.
  *
@@ -27,6 +30,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Configuration
 public @interface ModuleConfiguration
 {
 	/**
@@ -37,8 +41,19 @@ public @interface ModuleConfiguration
 
 	/**
 	 * List of module names where this configuration should not be imported.
-	 * Takes precedence over {@link #value()} and is mainly useful is {@link #value()} empty which
+	 * Takes precedence over {@link #value()} and is mainly useful if {@link #value()} is empty which
 	 * would imply the configuration would be added to all modules (including the module providing the configuration).
 	 */
 	String[] exclude() default {};
+
+	/**
+	 * Explicitly specify the name of the Spring bean definition associated
+	 * with this Configuration class. If left unspecified (the common case),
+	 * a bean name will be automatically generated.
+	 *
+	 * @return the suggested component name, if any (or empty String otherwise)
+	 * @see org.springframework.beans.factory.support.DefaultBeanNameGenerator
+	 */
+	@AliasFor(annotation = Configuration.class, attribute = "value")
+	String beanName() default "";
 }

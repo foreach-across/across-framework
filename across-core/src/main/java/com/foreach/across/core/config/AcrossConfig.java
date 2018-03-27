@@ -16,59 +16,65 @@
 
 package com.foreach.across.core.config;
 
+import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.convert.StringToDateConverter;
+import com.foreach.across.core.convert.StringToDateTimeConverter;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
+import com.foreach.across.core.events.AcrossContextApplicationEventMulticaster;
 import com.foreach.across.core.events.AcrossEventPublisher;
-import com.foreach.across.core.events.EventHandlerBeanPostProcessor;
-import com.foreach.across.core.events.MBassadorEventPublisher;
+import com.foreach.across.core.events.DefaultAcrossEventPublisher;
 import com.foreach.across.core.events.SpringContextRefreshedEventListener;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepositoryImpl;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockConfiguration;
 import com.foreach.common.concurrent.locks.distributed.SqlBasedDistributedLockManager;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.format.support.DefaultFormattingConversionService;
 
 import javax.sql.DataSource;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Installs the common beans that are always available.
+ * Installs the common Across Context beans that are always available.
  */
+@Slf4j
 @Configuration
+@Import({ ValidationAutoConfiguration.class, AcrossDataSourceRegistrar.class })
 public class AcrossConfig
 {
-	private static final Logger LOG = LoggerFactory.getLogger( AcrossConfig.class );
-
-	@Bean
-	public AcrossEventPublisher eventPublisher( ApplicationContext applicationContext ) {
-		return new MBassadorEventPublisher();
+	/**
+	 * @return central Across event publisher
+	 */
+	@Primary
+	@Bean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
+	public AcrossContextApplicationEventMulticaster acrossEventMulticaster( BeanFactory beanFactory ) {
+		return new AcrossContextApplicationEventMulticaster( beanFactory );
 	}
 
 	@Bean
-	@Order(Ordered.HIGHEST_PRECEDENCE)
-	public EventHandlerBeanPostProcessor eventHandlerBeanPostProcessor( ConfigurableListableBeanFactory beanFactory ) {
-		return new EventHandlerBeanPostProcessor( beanFactory );
+	@Exposed
+	public AcrossEventPublisher acrossEventPublisher( ApplicationContext applicationContext ) {
+		return new DefaultAcrossEventPublisher( applicationContext );
 	}
 
 	@Bean
@@ -110,14 +116,20 @@ public class AcrossConfig
 		          ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
 
 		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-		conversionService.addConverter( defaultDateConverter() );
+		conversionService.addConverter( defaultDateTimeConverter( conversionService ) );
 
 		return conversionService;
 	}
 
 	@Bean
+	@Lazy
 	public StringToDateConverter defaultDateConverter() {
 		return new StringToDateConverter();
+	}
+
+	@Bean
+	public StringToDateTimeConverter defaultDateTimeConverter( ConversionService conversionService ) {
+		return new StringToDateTimeConverter( conversionService );
 	}
 
 	@Bean
@@ -141,24 +153,25 @@ public class AcrossConfig
 
 	@Bean(destroyMethod = "close")
 	@Lazy
-	@DependsOn({ "acrossCoreSchemaInstaller", AcrossContext.DATASOURCE })
-	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( DataSource acrossDataSource ) {
-		if ( acrossDataSource == null ) {
-			throw new AcrossException(
-					"Unable to create the DistributedLockRepository because there is no DataSource configured."
+	@DependsOn("acrossCoreSchemaInstaller")
+	@SuppressWarnings("all")
+	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource ) {
+		if ( !acrossDataSource.isPresent() ) {
+			throw new AcrossConfigurationException(
+					"Unable to create the DistributedLockRepository because there is no DataSource configured.",
+					"Define a datasource for Across. If you have multiple datasources mark one as @Primary or name the bean 'acrossDataSource'."
 			);
 		}
 
 		return new SqlBasedDistributedLockManager(
-				acrossDataSource,
+				acrossDataSource.get(),
 				sqlBasedDistributedLockConfiguration( schemaConfigurationHolder() )
 		);
 	}
 
 	@Bean
 	@Lazy
-	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration(
-			CoreSchemaConfigurationHolder schemaConfigurationHolder ) {
+	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration( CoreSchemaConfigurationHolder schemaConfigurationHolder ) {
 		String tablePrefix = "";
 		String defaultSchema = schemaConfigurationHolder.getDefaultSchema();
 		if ( !StringUtils.isBlank( defaultSchema ) ) {

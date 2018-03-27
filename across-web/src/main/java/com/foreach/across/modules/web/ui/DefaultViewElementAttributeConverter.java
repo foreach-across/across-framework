@@ -18,8 +18,6 @@ package com.foreach.across.modules.web.ui;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
@@ -43,8 +41,7 @@ public class DefaultViewElementAttributeConverter implements ViewElementAttribut
 
 	private final ObjectMapper objectMapper;
 
-	@Autowired
-	public DefaultViewElementAttributeConverter( @Qualifier(OBJECT_MAPPER_BEAN) ObjectMapper objectMapper ) {
+	public DefaultViewElementAttributeConverter( ObjectMapper objectMapper ) {
 		this.objectMapper = objectMapper;
 	}
 

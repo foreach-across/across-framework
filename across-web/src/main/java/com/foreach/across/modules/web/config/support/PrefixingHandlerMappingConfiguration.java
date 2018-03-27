@@ -16,18 +16,16 @@
 package com.foreach.across.modules.web.config.support;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 
 /**
@@ -44,20 +42,18 @@ import java.util.Collection;
  */
 public abstract class PrefixingHandlerMappingConfiguration
 {
+	/**
+	 * Default order of the fallback handler mapping is 0.  Prefixing mappings should come before that,
+	 * preferably in module order.  The offset is the number that is subtracted from the module index.
+	 */
+	public static final int DEFAULT_ORDER_OFFSET = 100;
+
 	@Autowired
 	@Module(AcrossModule.CURRENT_MODULE)
 	private AcrossModuleInfo currentModule;
 
 	@RefreshableCollection(includeModuleInternals = true)
 	private Collection<PrefixingHandlerMappingConfigurer> configurers;
-
-	@Autowired
-	private AcrossEventPublisher eventPublisher;
-
-	@PostConstruct
-	public void registerEventHandler() {
-		eventPublisher.subscribe( this );
-	}
 
 	/**
 	 * Override and annotate this method to create and expose the handler mapping correctly as a bean.
@@ -83,10 +79,10 @@ public abstract class PrefixingHandlerMappingConfiguration
 	protected abstract ClassFilter getHandlerMatcher();
 
 	/**
-	 * @return order for the handler mapping - defaults to module bootstrap incdex
+	 * @return order for the handler mapping - defaults to module bootstrap index
 	 */
 	protected int getHandlerMappingOrder() {
-		return currentModule.getIndex();
+		return currentModule.getIndex() - DEFAULT_ORDER_OFFSET;
 	}
 
 	/**
@@ -98,7 +94,7 @@ public abstract class PrefixingHandlerMappingConfiguration
 		return currentModule.getName();
 	}
 
-	@Event
+	@EventListener
 	protected final void configureHandlerMapping( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
 		PrefixingRequestMappingHandlerMapping mapping = controllerHandlerMapping();

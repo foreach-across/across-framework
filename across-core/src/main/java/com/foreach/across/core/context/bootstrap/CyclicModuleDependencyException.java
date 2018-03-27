@@ -16,12 +16,14 @@
 
 package com.foreach.across.core.context.bootstrap;
 
-public class CyclicModuleDependencyException extends RuntimeException
+import com.foreach.across.core.AcrossConfigurationException;
+
+public class CyclicModuleDependencyException extends AcrossConfigurationException
 {
 	private final String module;
 
 	public CyclicModuleDependencyException( String module ) {
-		super( "Unable to determine legal module bootstrap order, possible cyclic dependency on module " + module );
+		super( "Unable to determine legal module bootstrap order, possible cyclic dependency on module " + module + "." );
 		this.module = module;
 	}
 

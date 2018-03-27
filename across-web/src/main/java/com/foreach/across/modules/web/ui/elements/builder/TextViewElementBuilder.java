@@ -54,7 +54,7 @@ public class TextViewElementBuilder extends ViewElementBuilderSupport<TextViewEl
 	protected TextViewElement createElement( ViewElementBuilderContext builderContext ) {
 		TextViewElement text = new TextViewElement();
 		if ( content != null ) {
-			text.setText( content );
+			text.setText( builderContext.resolveText( content ) );
 		}
 		if ( escapeXml != null ) {
 			text.setEscapeXml( escapeXml );

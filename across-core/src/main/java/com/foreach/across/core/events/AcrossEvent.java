@@ -17,8 +17,10 @@
 package com.foreach.across.core.events;
 
 /**
- * Marker interface used for all events to be published through the AcrossContext.
- * Use of this marker interface is to easily find all event implementations.
+ * Marker interface used for events published by Across core.
+ * <p/>
+ * This interface is no longer required since Across 3.0.0 as regular Spring event handling integrates with the Across context.
+ * It is still used internally to allow general interception of common Across core events.
  */
 public interface AcrossEvent
 {

@@ -18,6 +18,7 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
@@ -45,6 +46,8 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 	private final String fullyQualifiedBeanName;
 	private final String originalBeanName;
+	@Getter
+	private final Integer moduleIndex;
 	private String preferredBeanName;
 
 	private Set<String> aliases = new HashSet<>();
@@ -61,23 +64,28 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		originalBeanName = original.originalBeanName;
 		fullyQualifiedBeanName = original.fullyQualifiedBeanName;
 		preferredBeanName = original.preferredBeanName;
+		moduleIndex = original.moduleIndex;
 		aliases.addAll( original.aliases );
+
+		setOriginatingBeanDefinition( original.getOriginatingBeanDefinition() );
 	}
 
 	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
 	                              String moduleName,
+	                              Integer moduleIndex,
 	                              String originalBeanName,
 	                              Class beanClass,
 	                              String[] aliases ) {
 		this.contextId = contextBeanRegistry.getContextId();
 		this.moduleName = moduleName;
+		this.moduleIndex = moduleIndex;
 
 		setSynthetic( true );
 
 		setFactoryBeanName( contextBeanRegistry.getFactoryName() );
 		setFactoryMethodName( "getBeanFromModule" );
 
-		setScope( "prototype" );
+		setScope( SCOPE_SINGLETON );
 
 		if ( beanClass != null ) {
 			setBeanClassName( beanClass.getName() );
@@ -108,15 +116,19 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
 	                              String moduleName,
+	                              Integer moduleIndex,
 	                              String originalBeanName,
 	                              BeanDefinition original,
 	                              Class<?> beanClass,
 	                              String[] aliases ) {
-		this( contextBeanRegistry, moduleName, originalBeanName, beanClass, aliases );
+		this( contextBeanRegistry, moduleName, moduleIndex, originalBeanName, beanClass, aliases );
 
+		setLazyInit( original.isLazyInit() );
+		setOriginatingBeanDefinition( original );
 		setPrimary( original.isPrimary() );
 		setDescription( original.getDescription() );
 		setRole( original.getRole() );
+		setScope( original.getScope() );
 
 		setAutowireCandidate( original.isAutowireCandidate() );
 

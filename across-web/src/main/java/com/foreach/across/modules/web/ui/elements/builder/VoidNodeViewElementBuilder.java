@@ -17,7 +17,7 @@ package com.foreach.across.modules.web.ui.elements.builder;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.VoidNodeViewElement;
-import org.springframework.util.Assert;
+import lombok.NonNull;
 
 public class VoidNodeViewElementBuilder extends AbstractVoidNodeViewElementBuilder<VoidNodeViewElement, VoidNodeViewElementBuilder>
 {
@@ -27,8 +27,7 @@ public class VoidNodeViewElementBuilder extends AbstractVoidNodeViewElementBuild
 		tagName( tagName );
 	}
 
-	public VoidNodeViewElementBuilder tagName( String tagName ) {
-		Assert.notNull( tagName );
+	public VoidNodeViewElementBuilder tagName( @NonNull String tagName ) {
 		this.tagName = tagName;
 		return this;
 	}

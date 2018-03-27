@@ -17,16 +17,16 @@
 package com.foreach.across.core.context.registry;
 
 import com.foreach.across.core.context.AcrossListableBeanFactory;
-import com.foreach.across.core.context.ExposedBeanDefinition;
-import com.foreach.across.core.context.ModuleBeanOrderComparator;
+import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.Field;
@@ -34,6 +34,7 @@ import java.util.*;
 
 public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegistry
 {
+	@Getter
 	private ConfigurableAcrossContextInfo contextInfo;
 
 	public DefaultAcrossContextBeanRegistry( ConfigurableAcrossContextInfo contextInfo ) {
@@ -117,6 +118,16 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	}
 
 	@Override
+	public <T> Optional<T> findBeanOfTypeFromModule( String moduleName, Class<T> requiredType ) {
+		try {
+			return Optional.ofNullable( getBeanOfTypeFromModule( moduleName, requiredType ) );
+		}
+		catch ( BeansException be ) {
+			return Optional.empty();
+		}
+	}
+
+	@Override
 	public <T> List<T> getBeansOfType( Class<T> beanClass ) {
 		return getBeansOfType( beanClass, false );
 	}
@@ -147,32 +158,32 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> Map<String, T> getBeansOfTypeAsMap( ResolvableType resolvableType, boolean includeModuleInternals ) {
-		Set<T> beans = new LinkedHashSet<>();
-		ModuleBeanOrderComparator comparator = new ModuleBeanOrderComparator();
+		List<T> beans = new ArrayList<>();
+		AcrossOrderSpecifierComparator comparator = new AcrossOrderSpecifierComparator();
 
-		Map<T, String> beanNames = new HashMap<>();
+		Map<T, String> beanNames = new IdentityHashMap<>();
 
 		DependencyDescriptor dd = new ResolvableTypeDescriptor( resolvableType );
 		ResolvableTypeAutowireCandidateResolver resolver = new ResolvableTypeAutowireCandidateResolver();
 		AcrossListableBeanFactory beanFactory = beanFactory( contextInfo.getApplicationContext() );
 
 		resolver.setBeanFactory( beanFactory );
-		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory,
-		                                                                        resolvableType.getRawClass() )
-		                                        .keySet() ) {
 
+		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory, resolvableType.getRawClass() ).keySet() ) {
 			if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
 				boolean isExposedNonSingleton = !beanFactory.isSingleton( beanName )
-						&& beanFactory.getBeanDefinition( beanName ) instanceof ExposedBeanDefinition;
+						&& beanFactory.isExposedBean( beanName );
 
 				// only include exposed non-singletons if we don't include module internals, else we will end up
 				// with double entries
 				if ( !includeModuleInternals || !isExposedNonSingleton ) {
 					Object bean = beanFactory.getBean( beanName );
-					comparator.register( bean, Ordered.HIGHEST_PRECEDENCE );
+					comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-					beans.add( (T) bean );
-					beanNames.put( (T) bean, beanName );
+					if ( !beanNames.containsKey( bean ) ) {
+						beans.add( (T) bean );
+						beanNames.put( (T) bean, beanName );
+					}
 				}
 			}
 		}
@@ -185,9 +196,9 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 					resolver.setBeanFactory( beanFactory );
 
 					for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
-						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
+						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) && !beanFactory.isExposedBean( beanName ) ) {
 							Object bean = beanFactory.getBean( beanName );
-							comparator.register( bean, module.getIndex() );
+							comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
 							beans.add( (T) bean );
 							beanNames.put( (T) bean, module.getName() + ":" + beanName );
@@ -197,11 +208,10 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 			}
 		}
 
-		List<T> beanList = new ArrayList<>( beans );
-		comparator.sort( beanList );
+		comparator.sort( beans );
 
 		LinkedHashMap<String, T> beansMap = new LinkedHashMap<>();
-		for ( T bean : beanList ) {
+		for ( T bean : beans ) {
 			beansMap.put( beanNames.get( bean ), bean );
 		}
 
@@ -252,7 +262,6 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		public boolean equals( Object other ) {
 			return super.equals( other );
 		}
-
 
 	}
 }

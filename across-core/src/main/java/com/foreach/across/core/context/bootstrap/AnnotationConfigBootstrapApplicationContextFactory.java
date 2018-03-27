@@ -18,21 +18,25 @@ package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.config.CommonModuleConfiguration;
-import com.foreach.across.core.context.AcrossApplicationContext;
-import com.foreach.across.core.context.AcrossApplicationContextHolder;
-import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
-import com.foreach.across.core.context.AcrossContextUtils;
+import com.foreach.across.core.context.*;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConfigurer;
+import com.foreach.across.core.context.support.ApplicationContextIdNameGenerator;
+import com.foreach.across.core.events.NonExposedEventListenerMethodProcessor;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class AnnotationConfigBootstrapApplicationContextFactory implements BootstrapApplicationContextFactory
 {
@@ -64,6 +68,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	                                                                      ApplicationContext parentApplicationContext ) {
 		AcrossConfigurableApplicationContext applicationContext = createApplicationContext();
 		applicationContext.setDisplayName( "[" + across.getId() + "]" );
+		applicationContext.setId( ApplicationContextIdNameGenerator.forContext( applicationContext ) );
 
 		if ( parentApplicationContext != null ) {
 			applicationContext.setParent( parentApplicationContext );
@@ -86,6 +91,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	                                                                      AcrossApplicationContextHolder parentContext ) {
 		AcrossConfigurableApplicationContext child = createApplicationContext();
 		child.setDisplayName( moduleBootstrapConfig.getModuleName() );
+		child.setId( ApplicationContextIdNameGenerator.forModule( moduleBootstrapConfig ) );
 		child.setParent( parentContext.getApplicationContext() );
 
 		return child;
@@ -100,10 +106,9 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	@Override
 	public void loadApplicationContext( AcrossContext across, AcrossApplicationContextHolder context ) {
 		AcrossConfigurableApplicationContext root = context.getApplicationContext();
-		Collection<ApplicationContextConfigurer> configurers
-				= AcrossContextUtils.getApplicationContextConfigurers( across );
+		Collection<ApplicationContextConfigurer> configurers = AcrossContextUtils.getApplicationContextConfigurers( across );
 
-		loadApplicationContext( root, configurers );
+		loadApplicationContext( root, configurers, Collections.emptyList() );
 	}
 
 	/**
@@ -117,18 +122,20 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 	public void loadApplicationContext( AcrossContext across,
 	                                    ModuleBootstrapConfig moduleBootstrapConfig,
 	                                    AcrossApplicationContextHolder context ) {
-		AcrossConfigurableApplicationContext child =
-				(AcrossConfigurableApplicationContext) context.getApplicationContext();
+		AcrossConfigurableApplicationContext child = context.getApplicationContext();
+		child.setModuleIndex( moduleBootstrapConfig.getBootstrapIndex() );
 
-		loadApplicationContext( child, moduleBootstrapConfig.getApplicationContextConfigurers() );
+		loadApplicationContext( child, moduleBootstrapConfig.getApplicationContextConfigurers(), moduleBootstrapConfig.getPreviouslyExposedBeans() );
 	}
 
 	@Override
 	public void loadApplicationContext( AcrossConfigurableApplicationContext context,
-	                                    Collection<ApplicationContextConfigurer> configurers ) {
+	                                    Collection<ApplicationContextConfigurer> configurers,
+	                                    Collection<ExposedModuleBeanRegistry> exposedBeanRegistries ) {
 		ConfigurableEnvironment environment = context.getEnvironment();
 
 		context.register( CommonModuleConfiguration.class );
+		context.addBeanFactoryPostProcessor( new NonExposedEventListenerMethodProcessor.Registrar() );
 
 		for ( ApplicationContextConfigurer configurer : configurers ) {
 			// First register property sources
@@ -154,7 +161,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 			}
 
 			if ( !ArrayUtils.isEmpty( configurer.componentScanPackages() ) ) {
-				context.scan( configurer.componentScanPackages() );
+				context.scan( configurer.componentScanPackages(), configurer.excludedTypeFilters() );
 			}
 
 			if ( !ArrayUtils.isEmpty( configurer.annotatedClasses() ) ) {
@@ -162,7 +169,24 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 			}
 		}
 
+		context.provide( new ProvidedBeansMap( Collections.singletonMap( "exposedBeansPostProcessor", pp( exposedBeanRegistries ) ) ) );
+
 		context.refresh();
 		context.start();
+	}
+
+	private BeanDefinitionRegistryPostProcessor pp( Collection<ExposedModuleBeanRegistry> exposedBeanRegistries ) {
+		return new BeanDefinitionRegistryPostProcessor()
+		{
+			@Override
+			public void postProcessBeanDefinitionRegistry( BeanDefinitionRegistry registry ) throws BeansException {
+
+			}
+
+			@Override
+			public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) throws BeansException {
+				exposedBeanRegistries.forEach( r -> r.copyTo( beanFactory, false ) );
+			}
+		};
 	}
 }

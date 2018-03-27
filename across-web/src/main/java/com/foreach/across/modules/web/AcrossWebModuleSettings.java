@@ -18,7 +18,6 @@ package com.foreach.across.modules.web;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import javax.servlet.MultipartConfigElement;
 import java.util.Collections;
 import java.util.Map;
 
@@ -29,17 +28,9 @@ public class AcrossWebModuleSettings
 	public static final String TEMPLATES_ENABLED = "acrossWebModule.templates.enabled";
 	public static final String TEMPLATES_AUTO_REGISTER = "acrossWebModule.templates.auto-register";
 
-	public static final String MULTIPART_AUTO_CONFIGURE = "acrossWebModule.multipart.auto-configure";
-	public static final String MULTIPART_SETTINGS = "acrossWebModule.multipart.settings";
-
 	public static final String DEVELOPMENT_VIEWS = "acrossWebModule.developmentViews";
 
 	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.resources.path";
-
-	/**
-	 * Multipart support configuration settings.
-	 */
-	private final Multipart multipart = new Multipart();
 
 	/**
 	 * Templates configuration.
@@ -51,10 +42,6 @@ public class AcrossWebModuleSettings
 	 */
 	private Map<String, String> developmentViews = Collections.emptyMap();
 
-	public Multipart getMultipart() {
-		return multipart;
-	}
-
 	public Templates getTemplates() {
 		return templates;
 	}
@@ -65,35 +52,6 @@ public class AcrossWebModuleSettings
 
 	public void setDevelopmentViews( Map<String, String> developmentViews ) {
 		this.developmentViews = developmentViews;
-	}
-
-	public static class Multipart
-	{
-		/**
-		 * Auto configure a multipart resolver.
-		 */
-		private boolean autoConfigure = true;
-
-		/**
-		 * MultipartConfigElement holding the multipart upload settings.
-		 */
-		private MultipartConfigElement settings;
-
-		public boolean isAutoConfigure() {
-			return autoConfigure;
-		}
-
-		public void setAutoConfigure( boolean autoConfigure ) {
-			this.autoConfigure = autoConfigure;
-		}
-
-		public MultipartConfigElement getSettings() {
-			return settings;
-		}
-
-		public void setSettings( MultipartConfigElement settings ) {
-			this.settings = settings;
-		}
 	}
 
 	public static class Templates

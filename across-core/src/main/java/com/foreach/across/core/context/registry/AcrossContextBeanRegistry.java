@@ -16,10 +16,13 @@
 
 package com.foreach.across.core.context.registry;
 
+import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import org.springframework.core.ResolvableType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Provides access to all BeanFactories present in an AcrossContext.
@@ -32,6 +35,11 @@ public interface AcrossContextBeanRegistry
 	 * @return The unique id of the AcrossContext this registry represents.
 	 */
 	String getContextId();
+
+	/**
+	 * @return the entire context info
+	 */
+	AcrossContextInfo getContextInfo();
 
 	/**
 	 * The factory name is the unique bean name under which the registry can be found.
@@ -120,6 +128,17 @@ public interface AcrossContextBeanRegistry
 	<T> T getBeanOfTypeFromModule( String moduleName, Class<T> requiredType );
 
 	/**
+	 * Searches the ApplicationContext of the specific module for a bean of the given type.
+	 * Returns an empty optional if no unique bean could be found.
+	 *
+	 * @param moduleName   Unique name of the module.
+	 * @param requiredType Type the bean should match.
+	 * @param <T>          Type of the matching bean.
+	 * @return optional containing the bean found
+	 */
+	<T> Optional<T> findBeanOfTypeFromModule( String moduleName, Class<T> requiredType );
+
+	/**
 	 * <p>Collect all beans of a given type that are visible inside this bean registry.
 	 * This includes beans from ancestors, but does not include module internal beans.</p>
 	 * <p>All beans will be sorted according to the Order, module index and OrderInModule values.</p>
@@ -127,7 +146,7 @@ public interface AcrossContextBeanRegistry
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
 	 * @return List of bean instances.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -142,7 +161,7 @@ public interface AcrossContextBeanRegistry
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
 	 * @return Map of bean instances with their bean name and/or module information.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -156,7 +175,7 @@ public interface AcrossContextBeanRegistry
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
 	 * @return List of bean instances.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -175,7 +194,7 @@ public interface AcrossContextBeanRegistry
 	 * @param beanClass Type of bean to look for.
 	 * @param <T>       Specific bean type.
 	 * @return Map of bean instances with their bean name and/or module information.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -190,7 +209,7 @@ public interface AcrossContextBeanRegistry
 	 * @param resolvableType Type of bean to look for.
 	 * @param <T>            Specific bean type.
 	 * @return List of bean instances.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */
@@ -210,7 +229,7 @@ public interface AcrossContextBeanRegistry
 	 * @param resolvableType Type of bean to look for.
 	 * @param <T>            Specific bean type.
 	 * @return Map of bean instances with their bean name and/or module information.
-	 * @see com.foreach.across.core.context.ModuleBeanOrderComparator
+	 * @see AcrossOrderSpecifierComparator
 	 * @see com.foreach.across.core.OrderedInModule
 	 * @see org.springframework.core.Ordered
 	 */

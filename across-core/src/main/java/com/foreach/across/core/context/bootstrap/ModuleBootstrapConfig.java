@@ -17,13 +17,21 @@
 package com.foreach.across.core.context.bootstrap;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import com.foreach.across.core.util.ClassLoadingUtils;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Represents the actual bootstrap configuration of an AcrossModule.
@@ -32,27 +40,42 @@ import java.util.*;
  */
 public class ModuleBootstrapConfig
 {
-	private final int bootstrapIndex;
-	private final AcrossModule module;
+	private final AcrossModuleInfo moduleInfo;
 
 	private BeanFilter exposeFilter;
 	private ExposedBeanDefinitionTransformer exposeTransformer;
 	private Set<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
 	private Set<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
+	private Set<String> excludedAnnotatedClasses = new LinkedHashSet<>();
+
+	@Getter
+	@Setter
+	@NonNull
+	private Set<String> configurationsToImport = new LinkedHashSet<>();
+
 	private Collection<Object> installers = new LinkedList<>();
 	private InstallerSettings installerSettings;
+	private Collection<ExposedModuleBeanRegistry> previouslyExposedBeans = new ArrayList<>();
 
-	public ModuleBootstrapConfig( AcrossModule module, int bootstrapIndex ) {
-		this.module = module;
-		this.bootstrapIndex = bootstrapIndex;
+	private boolean hasComponents = false;
+
+	public ModuleBootstrapConfig( AcrossModuleInfo moduleInfo ) {
+		this.moduleInfo = moduleInfo;
 	}
 
 	public AcrossModule getModule() {
-		return module;
+		return moduleInfo.getModule();
 	}
 
 	public String getModuleName() {
-		return module.getName();
+		return moduleInfo.getName();
+	}
+
+	/**
+	 * @return module name as well as possible aliases
+	 */
+	public String[] getAllModuleNames() {
+		return ArrayUtils.addAll( new String[] { getModuleName() }, moduleInfo.getAliases() );
 	}
 
 	public BeanFilter getExposeFilter() {
@@ -64,7 +87,7 @@ public class ModuleBootstrapConfig
 	}
 
 	public int getBootstrapIndex() {
-		return bootstrapIndex;
+		return moduleInfo.getIndex();
 	}
 
 	/**
@@ -84,6 +107,21 @@ public class ModuleBootstrapConfig
 		}
 
 		setExposeFilter( BeanFilter.composite( members ) );
+	}
+
+	/**
+	 * Expose beans matching any of the classes or annotations.
+	 * If the class specified is not present on the classpath, it will be ignored.
+	 *
+	 * @param classNames to add
+	 */
+	public void exposeClass( String... classNames ) {
+		expose(
+				(Class<?>[]) Stream.of( classNames )
+				                   .map( ClassLoadingUtils::resolveClass )
+				                   .filter( Objects::nonNull )
+				                   .toArray( Class[]::new )
+		);
 	}
 
 	/**
@@ -121,23 +159,50 @@ public class ModuleBootstrapConfig
 	}
 
 	public Set<ApplicationContextConfigurer> getApplicationContextConfigurers() {
-		return applicationContextConfigurers;
+		return Collections.unmodifiableSet( applicationContextConfigurers );
 	}
 
 	public void setApplicationContextConfigurers( Set<ApplicationContextConfigurer> applicationContextConfigurers ) {
-		this.applicationContextConfigurers = applicationContextConfigurers;
+		this.applicationContextConfigurers.clear();
+		this.hasComponents = false;
+		addApplicationContextConfigurers( applicationContextConfigurers );
 	}
 
 	public void addApplicationContextConfigurer( Class<?>... annotatedClasses ) {
 		addApplicationContextConfigurer( new AnnotatedClassConfigurer( annotatedClasses ) );
 	}
 
+	public void addApplicationContextConfigurer( boolean optional, Class<?>... annotatedClasses ) {
+		addApplicationContextConfigurer( optional, new AnnotatedClassConfigurer( annotatedClasses ) );
+	}
+
 	public void addApplicationContextConfigurer( ApplicationContextConfigurer... configurers ) {
 		addApplicationContextConfigurers( Arrays.asList( configurers ) );
 	}
 
+	public void addApplicationContextConfigurer( boolean optional, ApplicationContextConfigurer... configurers ) {
+		addApplicationContextConfigurers( optional, Arrays.asList( configurers ) );
+	}
+
 	public void addApplicationContextConfigurers( Collection<ApplicationContextConfigurer> configurers ) {
+		addApplicationContextConfigurers( false, configurers );
+	}
+
+	public void addApplicationContextConfigurers( boolean optional, Collection<ApplicationContextConfigurer> configurers ) {
 		applicationContextConfigurers.addAll( configurers );
+
+		if ( !optional && configurers.stream().anyMatch( ApplicationContextConfigurer::hasComponents ) ) {
+			hasComponents = true;
+		}
+	}
+
+	/**
+	 * Add a number of configurations that should be imported when bootstrapping this module.
+	 *
+	 * @param configurationClasses to import
+	 */
+	public void addConfigurationsToImport( String... configurationClasses ) {
+		configurationsToImport.addAll( Arrays.asList( configurationClasses ) );
 	}
 
 	public Set<ApplicationContextConfigurer> getInstallerContextConfigurers() {
@@ -174,5 +239,49 @@ public class ModuleBootstrapConfig
 
 	public void setInstallers( Collection<Object> installers ) {
 		this.installers = installers;
+	}
+
+	public boolean isEmpty() {
+		return installers.isEmpty() && !hasComponents && configurationsToImport.isEmpty();
+	}
+
+	public Collection<ExposedModuleBeanRegistry> getPreviouslyExposedBeans() {
+		return previouslyExposedBeans;
+	}
+
+	public void setPreviouslyExposedBeans( Collection<ExposedModuleBeanRegistry> previouslyExposedBeans ) {
+		this.previouslyExposedBeans = previouslyExposedBeans;
+	}
+
+	public void addPreviouslyExposedBeans( ExposedModuleBeanRegistry moduleBeanRegistry ) {
+		this.previouslyExposedBeans.add( moduleBeanRegistry );
+	}
+
+	public Set<String> getExcludedAnnotatedClasses() {
+		return excludedAnnotatedClasses;
+	}
+
+	/**
+	 * Explicitly exclude an annotated class from being added. If it has been configured previously, it will still be ignored.
+	 * <p>
+	 * <p>NOTE: this only applies to the application context, not the installer context.</p>
+	 *
+	 * @param classNames to exclude
+	 */
+	public void exclude( String... classNames ) {
+		excludedAnnotatedClasses.addAll( Arrays.asList( classNames ) );
+	}
+
+	/**
+	 * Explicitly exclude an annotated class from being added. If it has been configured previously, it will still be ignored.
+	 * <p>
+	 * <p>NOTE: this only applies to the application context, not the installer context.</p>
+	 *
+	 * @param annotatedClasses to exclude
+	 */
+	public void exclude( Class<?>... annotatedClasses ) {
+		Stream.of( annotatedClasses )
+		      .map( Class::getName )
+		      .forEach( excludedAnnotatedClasses::add );
 	}
 }

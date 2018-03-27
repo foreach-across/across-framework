@@ -17,16 +17,28 @@ package com.foreach.across.test.application;
 
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.test.ExposeForTest;
 import com.foreach.across.test.application.app.DummyApplication;
+import com.foreach.across.test.application.app.application.controllers.NonExposedComponent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
+import org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -40,6 +52,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DummyApplication.class)
+@ExposeForTest(NonExposedComponent.class)
 public class TestSpringBootWebIntegration
 {
 	private final TestRestTemplate restTemplate = new TestRestTemplate();
@@ -49,6 +62,12 @@ public class TestSpringBootWebIntegration
 
 	@Autowired
 	private AcrossContextInfo contextInfo;
+
+	@Autowired
+	private ListableBeanFactory beanFactory;
+
+	@Autowired(required = false)
+	private NonExposedComponent nonExposedComponent;
 
 	@Test
 	public void modulesShouldBeRegistered() {
@@ -67,12 +86,71 @@ public class TestSpringBootWebIntegration
 	}
 
 	@Test
+	public void requestMappingsWithDateTimeFormatPattnerWorkCorrectly() {
+		assertEquals( "Wed Nov 29 00:00:00 CET 2017", get( "/stringToDateConverterWithoutAnnotationPattern?time=2017-11-29" ) );
+		assertEquals( "Fri Dec 29 17:59:00 CET 2017", get( "/stringToDateConverterWithAnnotationPattern?time=2017-12-29T16:59:00+0000" ) );
+	}
+
+	@Test
 	public void versionedResourceShouldBeReturned() {
 		assertEquals( "hùllµ€", get( "/res/static/boot-1.0/testResources/test.txt" ) );
 	}
 
+	@Test
+	public void customErrorViewForRuntimeExceptions() {
+		assertTrue( getAsHtml( "/exception" ).contains( "something broke" ) );
+	}
+
+	@Test
+	public void detectedErrorTemplateForUnauthorized() {
+		assertTrue( getAsHtml( "/unauthorized" ).contains( "you are not authorized" ) );
+	}
+
+	@Test
+	public void pageNotFound() {
+		assertTrue( getAsHtml( "/page-does-not-exist" ).contains( "no explicit mapping" ) );
+	}
+
+	@Test
+	public void configurationPropertiesBeanShouldNotExist() {
+		assertNotNull( BeanFactoryUtils.beanOfType( beanFactory, ConfigurationPropertiesAutoConfiguration.class ) );
+	}
+
+	@Test
+	public void defaultAutoConfigurationPackageShouldNotBeRegisteredInMainContext() {
+		assertEquals( Collections.emptyList(), AutoConfigurationPackages.get( beanFactory ) );
+	}
+
+	@Test
+	public void autoConfigurationPackageShouldBeApplicationModule() {
+		String applicationModulePackage = DummyApplication.class.getPackage().getName() + ".application";
+		assertEquals(
+				Collections.singletonList( applicationModulePackage ),
+				AutoConfigurationPackages.get( contextInfo.getModuleInfo( "DummyApplicationModule" ).getApplicationContext() )
+		);
+	}
+
+	@Test
+	public void dummyAutoConfigurationShouldHaveBeenAddedToApplicationModule() {
+		assertFalse( contextInfo.getApplicationContext().containsBean( "dummyDecimal" ) );
+		assertTrue( contextInfo.getModuleInfo( "DummyApplicationModule" ).getApplicationContext().containsBean( "dummyDecimal" ) );
+	}
+
+	@Test
+	public void manuallyExposedComponent() {
+		assertNotNull( nonExposedComponent );
+	}
+
 	private String get( String relativePath ) {
 		return restTemplate.getForEntity( url( relativePath ), String.class ).getBody();
+	}
+
+	private String getAsHtml( String relativePath ) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept( Collections.singletonList( MediaType.TEXT_HTML ) );
+		HttpEntity<?> entity = new HttpEntity<>( headers );
+
+		return restTemplate.exchange( url( relativePath ), HttpMethod.GET, entity, String.class ).getBody();
 	}
 
 	private String url( String relativePath ) {
