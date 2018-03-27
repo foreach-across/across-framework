@@ -312,13 +312,16 @@ public class TestStringToDateConverter
 	@Test
 	public void convertsOffsetTime() {
 		LocalTime localTime = LocalTime.parse( "10:32", DateTimeFormatter.ofPattern( "HH:mm" ) );
-		OffsetTime time = OffsetTime.of( localTime, ZoneOffset.ofHours( 1 ) );
+		ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset( LocalDateTime.now() );
+		OffsetTime time = OffsetTime.of( localTime, ZoneId.systemDefault().getRules().getOffset( LocalDateTime.now() ) );
 		assertThat( convert( "10:32", OFFSETTIME_DESCRIPTOR ) ).isEqualTo( time );
 		assertThat( convert( "10:32:00", OFFSETTIME_DESCRIPTOR ) ).isEqualTo( time );
+		int differenceInOffsetSeconds = ZoneOffset.ofHours( 2 ).getTotalSeconds() - offset.getTotalSeconds();
 		assertThat( convert( "10:32:00 +0200", OFFSETTIME_DESCRIPTOR ) )
-				.isEqualTo( time.plusHours( 1 ).withOffsetSameLocal( ZoneOffset.ofHours( 2 ) ) );
+				.isEqualTo( time.plusHours( differenceInOffsetSeconds != 0 ? 1 : 0 )
+				                .withOffsetSameLocal( ZoneOffset.ofHours( 2 ) ) );
 		assertThat( convert( "10:32:00.000+03:00", OFFSETTIME_DESCRIPTOR ) )
-				.isEqualTo( time.plusHours( 2 ).withOffsetSameLocal( ZoneOffset.ofHours( 3 ) ) );
+				.isEqualTo( time.plusHours( differenceInOffsetSeconds != 0 ? 2 : 1 ).withOffsetSameLocal( ZoneOffset.ofHours( 3 ) ) );
 	}
 
 	@Test
