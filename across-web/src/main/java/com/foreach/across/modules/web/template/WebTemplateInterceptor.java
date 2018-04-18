@@ -16,7 +16,9 @@
 
 package com.foreach.across.modules.web.template;
 
+import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -64,9 +66,15 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	public static final String RENDER_VIEW_ELEMENT = "_partial.viewElement";
 
 	private final WebTemplateRegistry webTemplateRegistry;
+	private PrefixingPathRegistry prefixingPathRegistry;
 
 	public WebTemplateInterceptor( WebTemplateRegistry webTemplateRegistry ) {
 		this.webTemplateRegistry = webTemplateRegistry;
+	}
+
+	@Autowired
+	public void setPrefixingPathRegistry( PrefixingPathRegistry prefixingPathRegistry ) {
+		this.prefixingPathRegistry = prefixingPathRegistry;
 	}
 
 	@Override
@@ -136,6 +144,8 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	                        ModelAndView modelAndView ) {
 		WebTemplateProcessor processor = (WebTemplateProcessor) request.getAttribute( PROCESSOR_ATTRIBUTE );
 
+		boolean isRedirectOrForward = resolveRedirectViews( modelAndView );
+
 		if ( processor != null ) {
 			processor.applyTemplate( request, response, handler, modelAndView );
 		}
@@ -144,17 +154,21 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 			        .ifPresent( fragment -> {
 				        String viewName = modelAndView.getViewName();
 
-				        if (
-					        // Redirect views should not be modified
-						        !StringUtils.startsWithAny( viewName, UrlBasedViewResolver.REDIRECT_URL_PREFIX,
-						                                    UrlBasedViewResolver.FORWARD_URL_PREFIX )
-								        // Nor should views that already contain a fragment
-								        && !viewName.contains( "::" )
-						        ) {
+				        if ( !isRedirectOrForward && !viewName.contains( "::" ) ) {
 					        modelAndView.setViewName( viewName + "::" + fragment );
 				        }
 			        } );
 		}
+	}
+
+	private boolean resolveRedirectViews( ModelAndView mav ) {
+		if ( mav != null && mav.hasView() && mav.isReference() ) {
+			if ( StringUtils.startsWithAny( mav.getViewName(), UrlBasedViewResolver.REDIRECT_URL_PREFIX, UrlBasedViewResolver.FORWARD_URL_PREFIX ) ) {
+				mav.setViewName( prefixingPathRegistry.path( mav.getViewName() ) );
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private String determineTemplateName( Object handler ) {
