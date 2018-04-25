@@ -178,6 +178,21 @@ public class ContainerViewElement implements MutableViewElement
 	}
 
 	/**
+	 * Apply a consumer to this container. Useful for providing extensions that wish
+	 * to provide actions on the container itself.
+	 * <p/>
+	 * This method allows you to pass any {@link Consumer} for a generic {@link ViewElement}.
+	 * Note that if you pass a consumer for a type that is not compatible with
+	 * {@link ContainerViewElement}, you will receive class cast exceptions at runtime, hence the <em>unsafe</em>.
+	 *
+	 * @param consumer to execute
+	 */
+	@SuppressWarnings("unchecked")
+	public <U extends ViewElement> void applyUnsafe( @NonNull Consumer<U> consumer ) {
+		consumer.accept( (U) this );
+	}
+
+	/**
 	 * Find the first child element with the given name in the container.  Will recursive through all children
 	 * that are also {@link ContainerViewElement} implementations.  Search will be top-down and the first
 	 * matching element will be returned.
