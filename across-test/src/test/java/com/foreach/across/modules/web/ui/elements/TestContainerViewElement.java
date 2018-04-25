@@ -217,4 +217,14 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 
 		renderAndExpect( container, CUSTOM_TEMPLATE_OUTPUT );
 	}
+
+	@Test
+	public void apply() {
+		TextViewElement member = TextViewElement.text( "hello" );
+
+		ContainerViewElement container = new ContainerViewElement();
+		container.apply( c -> c.addChild( member ) );
+
+		assertSame( member, container.getChildren().get( 0 ) );
+	}
 }
