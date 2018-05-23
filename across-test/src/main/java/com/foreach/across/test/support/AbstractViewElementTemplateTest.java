@@ -72,6 +72,7 @@ public abstract class AbstractViewElementTemplateTest
 
 	private MockMvc mockMvc;
 	private RenderViewElementController.Callback callback;
+	private String template;
 
 	@Before
 	public void initMvc() {
@@ -90,6 +91,15 @@ public abstract class AbstractViewElementTemplateTest
 	 */
 	protected void setCallback( RenderViewElementController.Callback callback ) {
 		this.callback = callback;
+	}
+
+	/**
+	 * Set a custom Thymeleaf template that should be used for rendering.
+	 *
+	 * @param template to use
+	 */
+	protected void setTemplate( String template ) {
+		this.template = template;
 	}
 
 	/**
@@ -114,6 +124,7 @@ public abstract class AbstractViewElementTemplateTest
 	public void renderAndExpect( ViewElement viewElement,
 	                             RenderViewElementController.Callback callback,
 	                             final String expectedContent ) {
+		renderController.setTemplate( template );
 		renderController.setElement( viewElement );
 		renderController.setCallback( callback );
 
@@ -156,6 +167,7 @@ public abstract class AbstractViewElementTemplateTest
 	public String render( ViewElement viewElement, RenderViewElementController.Callback callback ) {
 		renderController.setElement( viewElement );
 		renderController.setCallback( callback );
+		renderController.setTemplate( template );
 
 		final String doctype = generateDocType();
 

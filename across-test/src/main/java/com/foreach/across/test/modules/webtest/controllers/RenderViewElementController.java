@@ -18,6 +18,7 @@ package com.foreach.across.test.modules.webtest.controllers;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.template.ClearTemplate;
 import com.foreach.across.modules.web.ui.ViewElement;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ public class RenderViewElementController
 
 	private Callback callback;
 	private ViewElement element;
+	private String template;
 
 	public void setElement( ViewElement element ) {
 		this.element = element;
@@ -41,6 +43,10 @@ public class RenderViewElementController
 
 	public void setCallback( Callback callback ) {
 		this.callback = callback;
+	}
+
+	public void setTemplate( String template ) {
+		this.template = template;
 	}
 
 	@RequestMapping(PATH)
@@ -54,7 +60,7 @@ public class RenderViewElementController
 		model.put( "controllerAttributes", controllerAttributes );
 		model.put( "element", element );
 
-		return "th/WebTestModule/renderViewElement";
+		return StringUtils.isNotEmpty( template ) ? template : "th/WebTestModule/renderViewElement";
 	}
 
 	public interface Callback
