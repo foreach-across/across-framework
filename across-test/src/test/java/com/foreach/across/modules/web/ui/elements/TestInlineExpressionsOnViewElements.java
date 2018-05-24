@@ -27,6 +27,14 @@ import org.junit.Test;
 public class TestInlineExpressionsOnViewElements extends AbstractViewElementTemplateTest
 {
 	@Test
+	public void inlineExpressionInCustomViewElementShouldBeEvaluated() {
+		TextViewElement text = new TextViewElement( "hello" );
+		text.setCustomTemplate( "th/test/elements/text :: manualText" );
+
+		renderAndExpect( text, "<p>hello</p>" );
+	}
+
+	@Test
 	public void inlineExpressionsShouldNotBeEvaluatedInsideViewElements() {
 		ContainerViewElement container = new ContainerViewElement();
 		container.addChild( TextViewElement.text( "[[1/0]]" ) );

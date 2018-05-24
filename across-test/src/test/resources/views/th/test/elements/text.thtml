@@ -41,6 +41,10 @@
 <div th:fragment="nestedTemplate(component)" th:inline="text" th:remove="tag">
     [[${component.text}]]: <across:view element="${otherElement}" />
 </div>
+
+<div th:fragment="manualText(component)" th:remove="tag">
+    <p>[[${component.text}]]</p>
+</div>
 </body>
 </html>
 
