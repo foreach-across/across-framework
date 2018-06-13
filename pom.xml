@@ -50,7 +50,7 @@
 	<properties>
 		<across.version>3.1.0-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>Brussels-SR7</spring.platform.version>
+		<spring.platform.version>Brussels-SR10</spring.platform.version>
 		<foreach.common.version>1.1</foreach.common.version>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
 		<thymeleaf-extras.springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras.springsecurity4.version>

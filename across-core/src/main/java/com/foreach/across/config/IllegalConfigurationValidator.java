@@ -126,8 +126,8 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 		private final Set<String> illegalModules = new HashSet<>();
 
 		ModuleMatcher( String moduleSpecifier ) {
-			boolean illegalOnApplication = true;
-			boolean illegalOnModule = true;
+			Boolean illegalOnApplication = null;
+			Boolean illegalOnModule = null;
 
 			if ( moduleSpecifier != null ) {
 				for ( String moduleName : moduleSpecifier.split( "\\|" ) ) {
@@ -149,11 +149,19 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 				}
 			}
 			else {
-				illegalOnModule = false;
+				illegalOnApplication = true;
 			}
 
-			this.illegalOnApplication = illegalOnApplication;
-			this.illegalOnModule = illegalOnModule;
+			if ( illegalOnModule == null ) {
+				illegalOnModule = ( illegalOnApplication == null || !illegalOnApplication ) && illegalModules.isEmpty();
+			}
+
+			if ( illegalOnApplication == null ) {
+				illegalOnApplication = true;
+			}
+
+			this.illegalOnApplication = Boolean.TRUE.equals( illegalOnApplication );
+			this.illegalOnModule = Boolean.TRUE.equals( illegalOnModule );
 		}
 
 		@Override
