@@ -16,6 +16,7 @@
 package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossConfigurationException;
+import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
@@ -26,7 +27,6 @@ import lombok.val;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -247,14 +247,14 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 			Stream.of( registry.getBeanDefinitionNames() )
 			      .forEach( beanName -> {
 				      BeanDefinition beanDefinition = registry.getBeanDefinition( beanName );
-				      if ( beanDefinition instanceof AnnotatedBeanDefinition ) {
 
+				      if ( !( beanDefinition instanceof ExposedBeanDefinition ) ) {
 					      Class<?> beanType = resolveBeanType( beanDefinition );
 					      if ( beanType != null ) {
 						      IllegalConfigurationEntry illegal = illegalConfigurationValidator.isIllegalUse( beanType, moduleInfo );
 						      if ( illegal != null ) {
 							      String description = String.format(
-									      "A configuration class of type '%s' was detected.%n - Bean name: '%s'%n - Bean type: '%s'",
+									      "A bean definition of type '%s' was detected.%n - Bean name: '%s'%n - Bean type: '%s'",
 									      illegal.illegalType.getName(), beanName, beanType.getName()
 							      );
 
