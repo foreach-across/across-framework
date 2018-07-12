@@ -54,7 +54,7 @@ public class TestBeanPrefixingTransformer
 	}
 
 	@Test
-	public void camelCasing() {
+	public void defaultIsCamelCasingWithAliasPrefixing() {
 		ExposedBeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "test" );
 		transformer.transformBeanDefinitions( definitions );
 
@@ -68,8 +68,22 @@ public class TestBeanPrefixingTransformer
 	}
 
 	@Test
+	public void camelCasingWithoutAliasPrefixing() {
+		ExposedBeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "test", true, false );
+		transformer.transformBeanDefinitions( definitions );
+
+		assertEquals( 2, definitions.size() );
+		assertEquals( "testSessionFactory", definitions.get( "sessionFactory" ).getPreferredBeanName() );
+		assertEquals( "testTransactionManager", definitions.get( "transactionManager" ).getPreferredBeanName() );
+		assertEquals(
+				Collections.singleton( "myTransactionManager" ),
+				definitions.get( "transactionManager" ).getAliases()
+		);
+	}
+
+	@Test
 	public void noCamelCasing() {
-		ExposedBeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "some.", false );
+		ExposedBeanDefinitionTransformer transformer = new BeanPrefixingTransformer( "some.", false, true );
 		transformer.transformBeanDefinitions( definitions );
 
 		assertEquals( 2, definitions.size() );

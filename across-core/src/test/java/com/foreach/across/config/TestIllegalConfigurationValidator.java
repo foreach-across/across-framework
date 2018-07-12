@@ -40,6 +40,10 @@ public class TestIllegalConfigurationValidator
 		ModuleMatcher moduleMatcher = new ModuleMatcher( null );
 		assertThat( moduleMatcher.test( null ) ).isTrue();
 		assertThat( moduleMatcher.test( moduleInfo ) ).isFalse();
+
+		moduleMatcher = new ModuleMatcher( "AcrossContext" );
+		assertThat( moduleMatcher.test( null ) ).isTrue();
+		assertThat( moduleMatcher.test( moduleInfo ) ).isFalse();
 	}
 
 	@Test

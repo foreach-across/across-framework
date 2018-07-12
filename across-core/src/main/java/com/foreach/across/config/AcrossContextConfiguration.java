@@ -25,9 +25,7 @@ import com.foreach.across.core.support.AcrossContextBuilder;
 import com.foreach.across.core.util.ClassLoadingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanClassLoaderAware;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory;
@@ -55,9 +53,6 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossContextConfiguration.class );
 
 	static final String ANNOTATION_TYPE = EnableAcrossContext.class.getName();
-
-	@Autowired(required = false)
-	private List<DataSource> dataSources = Collections.emptyList();
 
 	@Autowired(required = false)
 	@Qualifier(AcrossContext.DATASOURCE)
@@ -123,10 +118,12 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			return acrossDataSource;
 		}
 
+		Collection<DataSource> dataSources = BeanFactoryUtils.beansOfTypeIncludingAncestors( (ListableBeanFactory) beanFactory, DataSource.class, false, false )
+		                                                     .values();
 		if ( !dataSources.isEmpty() ) {
 			if ( dataSources.size() == 1 ) {
 				LOG.info( "Single datasource bean found - registering it as the AcrossContext datasource." );
-				return dataSources.get( 0 );
+				return dataSources.iterator().next();
 			}
 			else {
 				LOG.warn(

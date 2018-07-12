@@ -44,6 +44,7 @@ import org.springframework.validation.SmartValidator;
 import org.springframework.validation.Validator;
 import org.springframework.web.method.support.UriComponentsContributor;
 import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 
@@ -82,6 +83,8 @@ public class TestAcrossWebModuleBootstrap extends AbstractWebIntegrationTest
 
 		// Exposed from the post-processor
 		assertExposed( UriComponentsContributor.class );
+
+		assertExposed( HandlerMappingIntrospector.class );
 	}
 
 	@Test

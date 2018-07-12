@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.template;
 
+import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +39,9 @@ public class TestWebTemplateInterceptor
 	@Mock
 	private WebTemplateRegistry templateRegistry;
 
+	@Mock
+	private PrefixingPathRegistry prefixingPathRegistry;
+
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
 
@@ -49,6 +53,7 @@ public class TestWebTemplateInterceptor
 		response = new MockHttpServletResponse();
 
 		interceptor = new WebTemplateInterceptor( templateRegistry );
+		interceptor.setPrefixingPathRegistry( prefixingPathRegistry );
 	}
 
 	@Test
@@ -110,7 +115,6 @@ public class TestWebTemplateInterceptor
 		interceptor.postHandle( request, response, handler, mav );
 
 		verify( template ).applyTemplate( request, response, handler, mav );
-		verifyNoMoreInteractions( mav );
 	}
 
 	@Test
@@ -134,23 +138,27 @@ public class TestWebTemplateInterceptor
 	}
 
 	@Test
-	public void postHandleShouldNotAppendPartialFragmentToRedirect() {
+	public void postHandleShouldNotAppendPartialFragmentToForward() {
 		request.setAttribute( WebTemplateInterceptor.RENDER_FRAGMENT, "myfragment" );
+
+		when( prefixingPathRegistry.path( "forward:/bar" ) ).thenReturn( "forward:/prefixed/bar" );
 
 		ModelAndView mav = new ModelAndView( "forward:/bar" );
 		interceptor.postHandle( request, response, null, mav );
 
-		assertEquals( "forward:/bar", mav.getViewName() );
+		assertEquals( "forward:/prefixed/bar", mav.getViewName() );
 	}
 
 	@Test
-	public void postHandleShouldNotAppendPartialFragmentToForward() {
+	public void postHandleShouldNotAppendPartialFragmentToRedirect() {
 		request.setAttribute( WebTemplateInterceptor.RENDER_FRAGMENT, "myfragment" );
+
+		when( prefixingPathRegistry.path( "redirect:/foo" ) ).thenReturn( "redirect:/prefixed/foo" );
 
 		ModelAndView mav = new ModelAndView( "redirect:/foo" );
 		interceptor.postHandle( request, response, null, mav );
 
-		assertEquals( "redirect:/foo", mav.getViewName() );
+		assertEquals( "redirect:/prefixed/foo", mav.getViewName() );
 	}
 
 	// AX-120 - NPE on partial view rendering

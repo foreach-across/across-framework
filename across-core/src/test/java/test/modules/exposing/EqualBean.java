@@ -13,27 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package test.modules.simple;
+package test.modules.exposing;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import com.foreach.across.core.annotations.Exposed;
+import org.springframework.stereotype.Component;
 
 /**
+ * Bean with a custom hashCode() and equals() implementation that will
+ * always return the same value for every instance of this class.
+ *
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@Controller
-public class SimpleController
+@Component
+@Exposed
+public final class EqualBean
 {
-	@GetMapping("/hello")
-	@ResponseBody
-	public String hello() {
-		return "hello";
+	@Override
+	public int hashCode() {
+		return EqualBean.class.hashCode();
 	}
 
-	@GetMapping("/prefix-redirect")
-	public String redirect() {
-		return "redirect:@acrossWeb:/hello";
+	@Override
+	public boolean equals( Object obj ) {
+		if ( obj == null ) {
+			return false;
+		}
+		return EqualBean.class.equals( obj.getClass() );
 	}
 }

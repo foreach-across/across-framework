@@ -15,12 +15,15 @@
  */
 package com.foreach.across.modules.web.context;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,7 +53,14 @@ public class TestPrefixingSupportingWebAppLinkBuilder
 
 	@Before
 	public void setUp() throws Exception {
+		ServletRequestAttributes ra = new ServletRequestAttributes( request, response );
+		RequestContextHolder.setRequestAttributes( ra );
 		contextPath( "/ctx" );
+	}
+
+	@After
+	public void destroy() {
+		RequestContextHolder.resetRequestAttributes();
 	}
 
 	@Test
@@ -121,6 +131,5 @@ public class TestPrefixingSupportingWebAppLinkBuilder
 
 	private void contextPath( String path ) {
 		when( request.getContextPath() ).thenReturn( path );
-		linkBuilder.setRequest( request );
 	}
 }

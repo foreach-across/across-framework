@@ -16,6 +16,7 @@
 package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossConfigurationException;
+import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
@@ -26,14 +27,13 @@ import lombok.val;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ import static com.foreach.across.config.AcrossConfigurationLoader.loadSingleValu
  * @since 3.0.0
  */
 @ConditionalOnProperty(value = "across.configuration.validate", havingValue = "true", matchIfMissing = true)
-@Configuration("across.illegalConfigurationValidator")
+@Component("across.illegalConfigurationValidator")
 @Import(IllegalConfigurationValidator.IllegalConfigurationDetector.class)
 public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer, BeanClassLoaderAware
 {
@@ -126,8 +126,8 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 		private final Set<String> illegalModules = new HashSet<>();
 
 		ModuleMatcher( String moduleSpecifier ) {
-			boolean illegalOnApplication = true;
-			boolean illegalOnModule = true;
+			Boolean illegalOnApplication = null;
+			Boolean illegalOnModule = null;
 
 			if ( moduleSpecifier != null ) {
 				for ( String moduleName : moduleSpecifier.split( "\\|" ) ) {
@@ -149,11 +149,19 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 				}
 			}
 			else {
-				illegalOnModule = false;
+				illegalOnApplication = true;
 			}
 
-			this.illegalOnApplication = illegalOnApplication;
-			this.illegalOnModule = illegalOnModule;
+			if ( illegalOnModule == null ) {
+				illegalOnModule = ( illegalOnApplication == null || !illegalOnApplication ) && illegalModules.isEmpty();
+			}
+
+			if ( illegalOnApplication == null ) {
+				illegalOnApplication = true;
+			}
+
+			this.illegalOnApplication = Boolean.TRUE.equals( illegalOnApplication );
+			this.illegalOnModule = Boolean.TRUE.equals( illegalOnModule );
 		}
 
 		@Override
@@ -239,14 +247,14 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 			Stream.of( registry.getBeanDefinitionNames() )
 			      .forEach( beanName -> {
 				      BeanDefinition beanDefinition = registry.getBeanDefinition( beanName );
-				      if ( beanDefinition instanceof AnnotatedBeanDefinition ) {
 
+				      if ( !( beanDefinition instanceof ExposedBeanDefinition ) ) {
 					      Class<?> beanType = resolveBeanType( beanDefinition );
 					      if ( beanType != null ) {
 						      IllegalConfigurationEntry illegal = illegalConfigurationValidator.isIllegalUse( beanType, moduleInfo );
 						      if ( illegal != null ) {
 							      String description = String.format(
-									      "A configuration class of type '%s' was detected.%n - Bean name: '%s'%n - Bean type: '%s'",
+									      "A bean definition of type '%s' was detected.%n - Bean name: '%s'%n - Bean type: '%s'",
 									      illegal.illegalType.getName(), beanName, beanType.getName()
 							      );
 

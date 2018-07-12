@@ -201,8 +201,12 @@ public final class ThymeleafModelBuilder
 					appendFragmentIfRequired( viewElement.getCustomTemplate() ), "${component", "${" + attributeName
 			);
 
-			model.add( modelFactory.createOpenElementTag( "div", "th:replace", templateWithFragment, false ) );
-			model.add( modelFactory.createCloseElementTag( "div" ) );
+			Map<String, String> attributes = new HashMap<>( 2 );
+			attributes.put( "th:insert", templateWithFragment );
+			attributes.put( "th:inline", context.getTemplateMode().name() );
+
+			model.add( modelFactory.createOpenElementTag( "th:block", attributes, AttributeValueQuotes.DOUBLE, false ) );
+			model.add( modelFactory.createCloseElementTag( "th:block" ) );
 		}
 		else {
 			throw new IllegalStateException(

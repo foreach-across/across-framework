@@ -37,7 +37,7 @@ class AcrossInstallerExceptionFailureAnalyzer extends AbstractAcrossFailureAnaly
 
 	private String buildDescription( AcrossInstallerException cause ) {
 		StringBuilder description = new StringBuilder();
-		description.append( String.format( "A error occurred when executing an installer for module MyModule:%n" ) );
+		description.append( String.format( "A error occurred when executing an installer for module %s:%n", cause.getModuleBeingProcessed() ) );
 		InstallerMetaData installerMetaData = cause.getInstallerMetaData();
 		description.append( String.format( " - Installer name: %s%n", installerMetaData.getName() ) );
 		description.append( String.format( " - Description: %s%n", installerMetaData.getDescription() ) );

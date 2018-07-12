@@ -15,12 +15,13 @@
  */
 package com.foreach.across.modules.web.context;
 
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,20 +36,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author Arne Vandamme
  * @since 2.0.0
  */
+@RequiredArgsConstructor
 public class PrefixingSupportingWebAppLinkBuilder implements WebAppLinkBuilder
 {
-	private WebAppPathResolver pathResolver;
-	private HttpServletRequest request;
-	private HttpServletResponse response;
-
-	private String contextPath;
-
-	@PostConstruct
-	public void validateProperties() {
-		Assert.notNull( pathResolver, "pathResolver must not be null" );
-		Assert.notNull( request, "request must not be null" );
-		Assert.notNull( response, "response must not be null" );
-	}
+	private final WebAppPathResolver pathResolver;
+	private final ServletContext servletContext;
 
 	@Override
 	public String buildLink( String baseLink ) {
@@ -65,7 +57,7 @@ public class PrefixingSupportingWebAppLinkBuilder implements WebAppLinkBuilder
 				link.delete( 0, 1 );
 			}
 			else if ( isContextRelative( link ) ) {
-				link.insert( 0, contextPath );
+				link.insert( 0, getContextPath() );
 			}
 		}
 
@@ -113,26 +105,25 @@ public class PrefixingSupportingWebAppLinkBuilder implements WebAppLinkBuilder
 	}
 
 	private String encodeUrl( CharSequence link ) {
-		return response.encodeURL( link.toString() );
+		val response = getResponse();
+		return response != null ? response.encodeURL( link.toString() ) : link.toString();
 	}
 
-	@Autowired
-	public void setPathResolver( WebAppPathResolver pathResolver ) {
-		this.pathResolver = pathResolver;
-	}
-
-	@Autowired
-	public void setRequest( @NonNull HttpServletRequest request ) {
-		this.request = request;
-
-		contextPath = StringUtils.defaultString( request.getContextPath() );
+	private String getContextPath() {
+		val ra = RequestContextHolder.getRequestAttributes();
+		String contextPath = ra != null && ra instanceof ServletRequestAttributes
+				? ( (ServletRequestAttributes) ra ).getRequest().getContextPath()
+				: servletContext.getContextPath();
+		contextPath = StringUtils.defaultString( contextPath );
 		if ( "/".equals( contextPath ) ) {
 			contextPath = "";
 		}
+
+		return contextPath;
 	}
 
-	@Autowired
-	public void setResponse( HttpServletResponse response ) {
-		this.response = response;
+	private HttpServletResponse getResponse() {
+		val ra = RequestContextHolder.getRequestAttributes();
+		return ra != null && ra instanceof ServletRequestAttributes ? ( (ServletRequestAttributes) ra ).getResponse() : null;
 	}
 }

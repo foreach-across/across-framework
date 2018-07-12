@@ -38,6 +38,11 @@ public class TestSimpleControllers extends AbstractWebIntegrationTest
 		assertEquals( "hello", get( "/hello" ) );
 	}
 
+	@Test
+	public void prefixesAreSupportedInRedirects() {
+		assertEquals( "hello", get( "/prefix-redirect" ) );
+	}
+
 	@EnableAcrossContext(modules = SimpleWebModule.NAME)
 	@Configuration
 	static class Config

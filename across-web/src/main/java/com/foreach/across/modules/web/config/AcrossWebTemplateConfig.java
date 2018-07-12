@@ -37,6 +37,7 @@ import java.util.Collection;
 
 /**
  * Configures web template support with automatic registration of named web templates.
+ * This also activates support for prefixing paths in redirect or forward view names.
  */
 @Configuration
 @ConditionalOnProperty(value = "across.web.templates.enabled", matchIfMissing = true)
@@ -72,9 +73,7 @@ public class AcrossWebTemplateConfig extends WebMvcConfigurerAdapter
 		if ( settings.getTemplates().isAutoRegister() ) {
 			LOG.info( "Scanning modules for NamedWebTemplateProcessor instances" );
 
-			Collection<NamedWebTemplateProcessor> namedProcessors = beanRegistry.getBeansOfType(
-					NamedWebTemplateProcessor.class,
-					true );
+			Collection<NamedWebTemplateProcessor> namedProcessors = beanRegistry.getBeansOfType( NamedWebTemplateProcessor.class, true );
 			WebTemplateRegistry registry = webTemplateRegistry();
 
 			for ( NamedWebTemplateProcessor webTemplateProcessor : namedProcessors ) {

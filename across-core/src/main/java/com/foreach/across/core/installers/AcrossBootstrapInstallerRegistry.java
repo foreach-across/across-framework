@@ -16,7 +16,6 @@
 
 package com.foreach.across.core.installers;
 
-import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.AcrossApplicationContextHolder;
@@ -42,6 +41,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -214,13 +214,8 @@ public class AcrossBootstrapInstallerRegistry
 							installed = true;
 						}
 						catch ( Exception e ) {
-							throw new AcrossInstallerException(
-									module.getName(),
-									installerMetaData,
-									target,
-									method,
-									e
-							);
+							Throwable cause = e instanceof InvocationTargetException ? e.getCause() : e;
+							throw new AcrossInstallerException( module.getName(), installerMetaData, target, method, cause );
 						}
 					}
 
