@@ -64,6 +64,8 @@ import org.springframework.core.env.PropertySources;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -391,6 +393,11 @@ public class AcrossBootstrapper
 			if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
 				AcrossConfigurableApplicationContext parentApplicationContext = applicationContextFactory.createApplicationContext();
 				parentApplicationContext.setId( EXPOSE_SUPPORTING_APPLICATION_CONTEXT );
+
+				if ( parentApplicationContext instanceof WebApplicationContext && rootContext instanceof WebApplicationContext ) {
+					( (ConfigurableWebApplicationContext) parentApplicationContext )
+							.setServletContext( ( (WebApplicationContext) rootContext ).getServletContext() );
+				}
 
 				ProvidedBeansMap providedBeansMap = new ProvidedBeansMap();
 				providedBeansMap.put(
