@@ -55,7 +55,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DummyApplication.class)
-@TestPropertySource(properties = "server.context-path=/custom/servlet")
+@TestPropertySource(properties = { "server.servlet.context-path=/custom/servlet" })
 @ExposeForTest(NonExposedComponent.class)
 public class TestSpringBootWebIntegration
 {

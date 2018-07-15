@@ -24,6 +24,7 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactory;
@@ -42,8 +43,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import static com.foreach.across.config.AcrossConfigurationLoader.loadSingleValue;
 
 /**
  * Validation class that checks wrong use of @Configuration classes, either in a module
@@ -78,6 +77,7 @@ import static com.foreach.across.config.AcrossConfigurationLoader.loadSingleValu
  *
  * @author Arne Vandamme
  * @see com.foreach.across.core.diagnostics.AcrossConfigurationExceptionFailureAnalyzer
+ * @see AcrossConfiguration
  * @since 3.0.0
  */
 @ConditionalOnProperty(value = "across.configuration.validate", havingValue = "true", matchIfMissing = true)
@@ -87,29 +87,21 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 {
 	private final List<IllegalConfigurationEntry> illegalEntries = new ArrayList<>();
 
-	private ClassLoader classLoader;
-
 	@Override
 	public void setBeanClassLoader( ClassLoader classLoader ) {
-		this.classLoader = classLoader;
+		val entries = AcrossConfiguration.get( classLoader ).getIllegalConfigurations();
 
-		val entries = AcrossConfigurationLoader.loadValues( "com.foreach.across.IllegalConfiguration", classLoader );
+		entries.forEach( configuration -> {
+			configuration.getConfigurations()
+			             .forEach( classEntry -> {
+				             Class<?> clazz = resolveClass( classEntry.getClassName(), classLoader );
 
-		entries.stream()
-		       .map( String::trim )
-		       .forEach( e -> {
-			       String[] definitionAndMessageKey = e.split( ":" );
-			       String[] classNameAndMatcher = definitionAndMessageKey[0].split( "->" );
-
-			       Class<?> clazz = resolveClass( classNameAndMatcher[0], classLoader );
-			       if ( clazz != null ) {
-				       String moduleNames = classNameAndMatcher.length > 1 ? classNameAndMatcher[1] : null;
-				       Predicate<AcrossModuleInfo> matcher = new ModuleMatcher( moduleNames );
-
-				       String messageKey = definitionAndMessageKey.length > 1 ? definitionAndMessageKey[1] : null;
-				       illegalEntries.add( new IllegalConfigurationEntry( clazz, matcher, messageKey ) );
-			       }
-		       } );
+				             if ( clazz != null ) {
+					             Predicate<AcrossModuleInfo> matcher = new ModuleMatcher( classEntry.getAllowed(), classEntry.getIllegal() );
+					             illegalEntries.add( new IllegalConfigurationEntry( clazz, matcher, configuration ) );
+				             }
+			             } );
+		} );
 	}
 
 	@Override
@@ -125,39 +117,56 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 		private final Set<String> allowedModules = new HashSet<>();
 		private final Set<String> illegalModules = new HashSet<>();
 
-		ModuleMatcher( String moduleSpecifier ) {
+		ModuleMatcher( String allowed, String illegal ) {
 			Boolean illegalOnApplication = null;
 			Boolean illegalOnModule = null;
 
-			if ( moduleSpecifier != null ) {
-				for ( String moduleName : moduleSpecifier.split( "\\|" ) ) {
-					boolean negative = moduleName.startsWith( "!" );
-					String transformedName = negative ? moduleName.substring( 1 ) : moduleName;
+			String a = StringUtils.defaultString( allowed, "" );
+			String i = StringUtils.defaultString( illegal, "" );
 
-					if ( "AcrossModule".equals( transformedName ) ) {
-						illegalOnModule = !negative;
-					}
-					else if ( "AcrossContext".equals( transformedName ) ) {
-						illegalOnApplication = !negative;
-					}
-					else if ( negative ) {
-						allowedModules.add( transformedName );
-					}
-					else {
-						illegalModules.add( transformedName );
-					}
+			if ( i.isEmpty() && a.isEmpty() ) {
+				illegalOnApplication = true;
+				illegalOnModule = false;
+			}
+			else if ( i.isEmpty() ) {
+				illegalOnApplication = true;
+				illegalOnModule = true;
+			}
+			else if ( a.isEmpty() ) {
+				illegalOnApplication = false;
+				illegalOnModule = false;
+			}
+
+			for ( String allowedModule : a.split( "," ) ) {
+				if ( "*".equals( allowedModule ) ) {
+					illegalOnApplication = false;
+					illegalOnModule = false;
+				}
+				else if ( "AcrossContext".equals( allowedModule ) ) {
+					illegalOnApplication = false;
+				}
+				else if ( "AcrossModule".equals( allowedModule ) ) {
+					illegalOnModule = false;
+				}
+				else {
+					allowedModules.add( allowedModule );
 				}
 			}
-			else {
-				illegalOnApplication = true;
-			}
 
-			if ( illegalOnModule == null ) {
-				illegalOnModule = ( illegalOnApplication == null || !illegalOnApplication ) && illegalModules.isEmpty();
-			}
-
-			if ( illegalOnApplication == null ) {
-				illegalOnApplication = true;
+			for ( String illegalModule : i.split( "," ) ) {
+				if ( "*".equals( illegalModule ) ) {
+					illegalOnApplication = true;
+					illegalOnModule = true;
+				}
+				else if ( "AcrossContext".equals( illegalModule ) ) {
+					illegalOnApplication = true;
+				}
+				else if ( "AcrossModule".equals( illegalModule ) ) {
+					illegalOnModule = true;
+				}
+				else {
+					illegalModules.add( illegalModule );
+				}
 			}
 
 			this.illegalOnApplication = Boolean.TRUE.equals( illegalOnApplication );
@@ -194,17 +203,6 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 		return null;
 	}
 
-	private IllegalConfigurationMessage getMessage( IllegalConfigurationEntry entry ) {
-		if ( entry.messageKey != null ) {
-			return new IllegalConfigurationMessage(
-					loadSingleValue( "com.foreach.across.IllegalConfiguration[" + entry.messageKey + "].description", classLoader ),
-					loadSingleValue( "com.foreach.across.IllegalConfiguration[" + entry.messageKey + "].action", classLoader )
-			);
-		}
-
-		return new IllegalConfigurationMessage( null, null );
-	}
-
 	@SneakyThrows
 	private static Class<?> resolveClass( String className, ClassLoader classLoader ) {
 		if ( ClassUtils.isPresent( className, classLoader ) ) {
@@ -215,18 +213,11 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 	}
 
 	@RequiredArgsConstructor
-	private static class IllegalConfigurationMessage
-	{
-		private final String description;
-		private final String action;
-	}
-
-	@RequiredArgsConstructor
 	private static class IllegalConfigurationEntry
 	{
 		private final Class<?> illegalType;
 		private final Predicate<AcrossModuleInfo> moduleMatcher;
-		private final String messageKey;
+		private final AcrossConfiguration.IllegalConfiguration context;
 	}
 
 	static class IllegalConfigurationDetector implements BeanDefinitionRegistryPostProcessor, BeanClassLoaderAware
@@ -258,13 +249,13 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 									      illegal.illegalType.getName(), beanName, beanType.getName()
 							      );
 
-							      IllegalConfigurationMessage message = illegalConfigurationValidator.getMessage( illegal );
+							      String contextDescription = illegal.context.getDescription();
 
-							      if ( message.description != null ) {
-								      description = String.format( "%s%n%n%s", description, message.description );
+							      if ( contextDescription != null ) {
+								      description = String.format( "%s%n%n%s", description, contextDescription );
 							      }
 
-							      throw new AcrossConfigurationException( description, message.action );
+							      throw new AcrossConfigurationException( description, illegal.context.getAction() );
 						      }
 					      }
 				      }

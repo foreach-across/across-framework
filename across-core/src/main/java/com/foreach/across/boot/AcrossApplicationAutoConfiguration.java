@@ -15,7 +15,9 @@
  */
 package com.foreach.across.boot;
 
-import com.foreach.across.config.AcrossConfigurationLoader;
+import com.foreach.across.config.AcrossConfiguration;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -23,6 +25,9 @@ import org.springframework.core.Ordered;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Tracks requested auto-configuration classes and determines which action should be taken:
@@ -50,37 +55,35 @@ public final class AcrossApplicationAutoConfiguration
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossApplicationAutoConfiguration.class );
 
-	public static final String ENABLED_AUTO_CONFIGURATION = "com.foreach.across.AutoConfigurationEnabled";
-	public static final String DISABLED_AUTO_CONFIGURATION = "com.foreach.across.AutoConfigurationDisabled";
-
 	private final Set<String> excluded = new LinkedHashSet<>();
 
 	private final Map<String, String> allowed = new LinkedHashMap<>();
 
-	private final Map<String, String> extendModules = new LinkedHashMap<>();
+	private final Map<String, ModuleExtension> extendModules = new LinkedHashMap<>();
 	private final Set<String> requested = new LinkedHashSet<>();
 	private final Map<String, Integer> autoConfigurationOrder = new HashMap<>();
 	private final Set<String> unknownSupport = new LinkedHashSet<>();
 
 	public AcrossApplicationAutoConfiguration( ClassLoader classLoader ) {
-		AcrossConfigurationLoader
-				.loadValues( ENABLED_AUTO_CONFIGURATION, classLoader )
-				.forEach( this::registerEnabledAutoConfiguration );
-		excluded.addAll( AcrossConfigurationLoader.loadValues( DISABLED_AUTO_CONFIGURATION, classLoader ) );
-	}
-
-	private void registerEnabledAutoConfiguration( String classTransform ) {
-		if ( classTransform.contains( ":" ) ) {
-			String[] parts = classTransform.split( ":" );
-			allowed.put( parts[0], parts[1] );
-		}
-		else if ( classTransform.contains( "->" ) ) {
-			String[] parts = classTransform.split( "->" );
-			extendModules.put( parts[0], parts[1] );
-		}
-		else {
-			allowed.put( classTransform, classTransform );
-		}
+		AcrossConfiguration
+				.get( classLoader )
+				.getAutoConfigurationClasses()
+				.forEach( autoConfigurationClass -> {
+					if ( autoConfigurationClass.isDisabled() ) {
+						excluded.add( autoConfigurationClass.getClassName() );
+					}
+					else {
+						if ( autoConfigurationClass.hasDestinationModule() ) {
+							extendModules.put(
+									autoConfigurationClass.getClassName(),
+									new ModuleExtension( autoConfigurationClass.getDestinationModule(), autoConfigurationClass.getConfigurationClassName() )
+							);
+						}
+						else {
+							allowed.put( autoConfigurationClass.getClassName(), autoConfigurationClass.getConfigurationClassName() );
+						}
+					}
+				} );
 	}
 
 	public void addExcludedAutoConfigurations( String... excludedConfigurationClasses ) {
@@ -93,10 +96,10 @@ public final class AcrossApplicationAutoConfiguration
 		}
 
 		String actualClass = allowed.get( autoConfigurationClass );
-		String extendModule = extendModules.get( autoConfigurationClass );
+		ModuleExtension moduleExtension = extendModules.get( autoConfigurationClass );
 		boolean disabled = excluded.contains( autoConfigurationClass );
 
-		if ( actualClass == null && !disabled && extendModule == null ) {
+		if ( actualClass == null && !disabled && moduleExtension == null ) {
 			unknownSupport.add( autoConfigurationClass );
 		}
 
@@ -108,8 +111,9 @@ public final class AcrossApplicationAutoConfiguration
 			LOG.trace( "Disallowed AutoConfiguration class {}", autoConfigurationClass );
 		}
 
-		if ( extendModule != null ) {
-			LOG.trace( "Resolved AutoConfiguration class {} to extend module {}", autoConfigurationClass, extendModule );
+		if ( moduleExtension != null ) {
+			LOG.trace( "Resolved AutoConfiguration class {} to extend module {} with {}", autoConfigurationClass, moduleExtension.moduleName,
+			           moduleExtension.className );
 			return null;
 		}
 
@@ -123,8 +127,9 @@ public final class AcrossApplicationAutoConfiguration
 	public Map<String, List<String>> getModuleExtensions() {
 		return requested.stream()
 		                .filter( this::notExcluded )
-		                .filter( extendModules::containsKey )
-		                .collect( Collectors.groupingBy( extendModules::get ) );
+		                .map( extendModules::get )
+		                .filter( Objects::nonNull )
+		                .collect( Collectors.groupingBy( ModuleExtension::getModuleName, mapping( ModuleExtension::getClassName, toList() ) ) );
 	}
 
 	public Integer getAutoConfigurationOrder( String className ) {
@@ -141,6 +146,14 @@ public final class AcrossApplicationAutoConfiguration
 			LOG.warn( "--- End Across AutoConfiguration Report ---" );
 			LOG.warn( "" );
 		}
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	private static class ModuleExtension
+	{
+		private final String moduleName;
+		private final String className;
 	}
 
 	/**

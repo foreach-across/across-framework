@@ -16,13 +16,19 @@
 package com.foreach.across.boot;
 
 import com.foreach.across.config.AcrossApplication;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.boot.autoconfigure.AutoConfigurationImportSelector;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.lang.Nullable;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Defers the actual import selection to Across.
@@ -37,9 +43,51 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 		return AcrossApplication.class;
 	}
 
+	private static class Nested extends AutoConfigurationImportSelector
+	{
+		@Override
+		protected Class<?> getAnnotationClass() {
+			return AcrossApplication.class;
+		}
+
+		@Override
+		protected boolean isEnabled( AnnotationMetadata metadata ) {
+			AnnotationAttributes attributes = getAttributes( metadata );
+			return attributes.getBoolean( "autoConfiguration" );
+		}
+
+		@Override
+		protected Set<String> getExclusions( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
+			AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
+
+			attributes.put( "exclude", new String[0] );
+			attributes.put( "excludeName", new String[0] );
+
+			Set<String> exclusions = super.getExclusions( metadata, attributes );
+			exclusions.forEach( registry::addExcludedAutoConfigurations );
+
+			return exclusions;
+		}
+
+		private AcrossApplicationAutoConfiguration retrieveAutoConfigurationRegistry() {
+			return AcrossApplicationAutoConfiguration.retrieve( getBeanFactory(), getBeanClassLoader() );
+		}
+	}
+
 	@Override
 	public String[] selectImports( AnnotationMetadata annotationMetadata ) {
-		String[] sortedOriginalImports = super.selectImports( annotationMetadata );
+		AutoConfigurationImportSelector baseSelector = new Nested();
+		baseSelector.setBeanClassLoader( getBeanClassLoader() );
+		baseSelector.setBeanFactory( getBeanFactory() );
+		baseSelector.setEnvironment( getEnvironment() );
+		baseSelector.setResourceLoader( getResourceLoader() );
+		baseSelector.selectImports( annotationMetadata );
+
+		Group group = createGroup( getImportGroup() );
+		group.process( annotationMetadata, baseSelector );
+		String[] sortedOriginalImports = StreamSupport.stream( group.selectImports().spliterator(), false )
+		                                              .map( Group.Entry::getImportClassName )
+		                                              .toArray( String[]::new );
 
 		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
 		AnnotationAttributes attributes = getAttributes( annotationMetadata );
@@ -57,23 +105,26 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 		return actualImports;
 	}
 
+	private Group createGroup( @Nullable Class<? extends Group> type ) {
+		Group group = BeanUtils.instantiateClass( type );
+
+		if ( group instanceof ResourceLoaderAware ) {
+			( (ResourceLoaderAware) group ).setResourceLoader( getResourceLoader() );
+		}
+		if ( group instanceof BeanClassLoaderAware ) {
+			( (BeanClassLoaderAware) group ).setBeanClassLoader( getBeanClassLoader() );
+		}
+		if ( group instanceof BeanFactoryAware ) {
+			( (BeanFactoryAware) group ).setBeanFactory( getBeanFactory() );
+		}
+
+		return group;
+	}
+
 	@Override
 	protected boolean isEnabled( AnnotationMetadata metadata ) {
 		AnnotationAttributes attributes = getAttributes( metadata );
 		return attributes.getBoolean( "autoConfiguration" );
-	}
-
-	@Override
-	protected Set<String> getExclusions( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
-		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
-
-		attributes.put( "exclude", new String[0] );
-		attributes.put( "excludeName", new String[0] );
-
-		Set<String> exclusions = super.getExclusions( metadata, attributes );
-		exclusions.forEach( registry::addExcludedAutoConfigurations );
-
-		return exclusions;
 	}
 
 	private AcrossApplicationAutoConfiguration retrieveAutoConfigurationRegistry() {

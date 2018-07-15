@@ -1,0 +1,59 @@
+#
+# Name of this configuration group.
+#
+across.core:
+  #
+  # Core has a low priority, allowing other configurations to override.
+  #
+  priority: 0
+  #
+  # List of interfaces, classes, annotations that should always be exposed.
+  #
+  exposed:
+    - com.foreach.across.core.annotations.Exposed
+    - javax.servlet.Servlet
+    - javax.servlet.Filter
+    - javax.servlet.MultipartConfigElement
+    - org.springframework.stereotype.Service
+    - org.springframework.stereotype.Controller
+    - org.springframework.web.servlet.HandlerMapping
+    - org.springframework.web.servlet.HandlerAdapter
+    - org.springframework.web.servlet.HandlerExceptionResolver
+    - org.springframework.web.bind.annotation.ControllerAdvice
+    - org.springframework.web.servlet.View
+    - org.springframework.web.servlet.ViewResolver
+    - org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+    - org.springframework.web.multipart.MultipartResolver
+    - org.springframework.boot.web.servlet.ServletContextInitializer
+    - org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations
+  #
+  # Auto-configuration class rules.
+  #
+  auto-configuration:
+    com.foreach.across.config.AcrossWebApplicationAutoConfiguration: true
+    org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration: true
+    org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration: true
+    org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: true
+    org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration: true
+    org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration: true
+    org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration: true
+    org.springframework.boot.devtools.autoconfigure.DevToolsDataSourceAutoConfiguration: true
+    org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration: true
+    org.springframework.boot.devtools.autoconfigure.RemoteDevToolsAutoConfiguration: true
+    org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration: true
+    org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration: true
+    org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration: true
+    org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration: true
+    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration: true
+    org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration: true
+    org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration: true
+    org.springframework.boot.autoconfigure.jdbc.JndiDataSourceAutoConfiguration: true
+    org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration: true
+    org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration: true
+    org.springframework.boot.autoconfigure.aop.AopAutoConfiguration:
+      destination: DynamicApplicationModule
+    org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration:
+      destination: DynamicApplicationModule
+    org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration: false
+    org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration: false
+    org.springframework.boot.autoconfigure.transaction.jta.JtaAutoConfiguration: false

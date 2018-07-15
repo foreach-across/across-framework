@@ -37,32 +37,32 @@ public class TestIllegalConfigurationValidator
 
 	@Test
 	public void illegalOnApplicationButNotOnModule() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( null );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( null, null );
 		assertThat( moduleMatcher.test( null ) ).isTrue();
 		assertThat( moduleMatcher.test( moduleInfo ) ).isFalse();
 
-		moduleMatcher = new ModuleMatcher( "AcrossContext" );
+		moduleMatcher = new ModuleMatcher( null, "AcrossContext" );
 		assertThat( moduleMatcher.test( null ) ).isTrue();
 		assertThat( moduleMatcher.test( moduleInfo ) ).isFalse();
 	}
 
 	@Test
 	public void allowedOnApplicationButNotModule() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( "!AcrossContext" );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( "AcrossContext", null );
 		assertThat( moduleMatcher.test( null ) ).isFalse();
 		assertThat( moduleMatcher.test( moduleInfo ) ).isTrue();
 	}
 
 	@Test
 	public void illegalAnywhere() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( "AcrossContext|AcrossModule" );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( null, "AcrossContext,AcrossModule" );
 		assertThat( moduleMatcher.test( null ) ).isTrue();
 		assertThat( moduleMatcher.test( moduleInfo ) ).isTrue();
 	}
 
 	@Test
 	public void illegalInSpecificModuleOnly() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( "!AcrossContext|!AcrossModule|MyModule|OtherModule" );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( null, "MyModule,OtherModule" );
 		assertThat( moduleMatcher.test( null ) ).isFalse();
 
 		when( moduleInfo.matchesModuleName( "MyModule" ) ).thenReturn( false );
@@ -80,7 +80,7 @@ public class TestIllegalConfigurationValidator
 
 	@Test
 	public void allowedInSpecificModulesOnly() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( "!MyModule|!OtherModule" );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( "MyModule,OtherModule", null );
 		assertThat( moduleMatcher.test( null ) ).isTrue();
 
 		when( moduleInfo.matchesModuleName( "MyModule" ) ).thenReturn( false );

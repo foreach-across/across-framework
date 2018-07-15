@@ -16,7 +16,7 @@
 
 package com.foreach.across.core.context.bootstrap;
 
-import com.foreach.across.config.AcrossConfigurationLoader;
+import com.foreach.across.config.AcrossConfiguration;
 import com.foreach.across.core.*;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.config.ModuleConfigurationImportSelector;
@@ -602,8 +602,7 @@ public class AcrossBootstrapper
 	}
 
 	private BeanFilter buildDefaultExposeFilter( ClassLoader classLoader ) {
-		final List<String> exposedItems = AcrossConfigurationLoader
-				.loadValues( "com.foreach.across.Exposed", classLoader );
+		final Collection<String> exposedItems = AcrossConfiguration.get( classLoader ).getExposeRules();
 
 		Class<?>[] classesOrAnnotations = exposedItems
 				.stream()
