@@ -23,6 +23,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.context.WebEngineContext;
+import org.thymeleaf.inline.NoOpInliner;
 import org.thymeleaf.model.IProcessableElementTag;
 import org.thymeleaf.processor.element.AbstractElementTagProcessor;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
@@ -55,6 +56,8 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 	protected void doProcess( ITemplateContext context,
 	                          IProcessableElementTag tag,
 	                          IElementTagStructureHandler structureHandler ) {
+		structureHandler.setInliner( NoOpInliner.INSTANCE );
+
 		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
 		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext(
 				( (WebEngineContext) context ).getRequest() );

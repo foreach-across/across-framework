@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -164,6 +165,31 @@ public class ContainerViewElement implements MutableViewElement
 	 */
 	public void clearChildren() {
 		children.clear();
+	}
+
+	/**
+	 * Apply a consumer to this container. Useful for providing extensions that wish
+	 * to provide actions on the container itself.
+	 *
+	 * @param consumer to execute
+	 */
+	public void apply( @NonNull Consumer<ContainerViewElement> consumer ) {
+		consumer.accept( this );
+	}
+
+	/**
+	 * Apply a consumer to this container. Useful for providing extensions that wish
+	 * to provide actions on the container itself.
+	 * <p/>
+	 * This method allows you to pass any {@link Consumer} for a generic {@link ViewElement}.
+	 * Note that if you pass a consumer for a type that is not compatible with
+	 * {@link ContainerViewElement}, you will receive class cast exceptions at runtime, hence the <em>unsafe</em>.
+	 *
+	 * @param consumer to execute
+	 */
+	@SuppressWarnings("unchecked")
+	public <U extends ViewElement> void applyUnsafe( @NonNull Consumer<U> consumer ) {
+		consumer.accept( (U) this );
 	}
 
 	/**

@@ -31,4 +31,9 @@ public class SimpleController
 	public String hello() {
 		return "hello";
 	}
+
+	@GetMapping("/prefix-redirect")
+	public String redirect() {
+		return "redirect:@acrossWeb:/hello";
+	}
 }

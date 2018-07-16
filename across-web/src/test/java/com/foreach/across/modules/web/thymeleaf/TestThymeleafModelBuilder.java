@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.thymeleaf.context.IEngineContext;
 import org.thymeleaf.model.*;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -67,6 +68,8 @@ public class TestThymeleafModelBuilder
 		when( modelFactory.createModel() ).thenReturn( model );
 		doAnswer( invocation -> invocation.getArgumentAt( 0, String.class ) )
 				.when( attributeConverter ).apply( anyObject() );
+
+		when( context.getTemplateMode() ).thenReturn( TemplateMode.HTML );
 
 		modelBuilder = new ThymeleafModelBuilder( context, registry, htmlIdStore, attributeConverter, new AttributeNameGenerator(), false );
 	}
@@ -426,11 +429,15 @@ public class TestThymeleafModelBuilder
 		ViewElement ve = mock( ViewElement.class );
 		when( ve.getCustomTemplate() ).thenReturn( "myTemplate" );
 
+		Map<String, String> attributes = new HashMap<>( 2 );
+		attributes.put( "th:insert", "myTemplate :: render(component=${_generatedAttribute0})" );
+		attributes.put( "th:inline", TemplateMode.HTML.name());
+
 		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
-		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: render(component=${_generatedAttribute0})", false ) )
+		when( modelFactory.createOpenElementTag( "th:block", attributes, AttributeValueQuotes.DOUBLE,false ) )
 				.thenReturn( openElementTag );
 		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
-		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
+		when( modelFactory.createCloseElementTag( "th:block" ) ).thenReturn( closeElementTag );
 
 		modelBuilder.addViewElement( ve );
 
@@ -447,11 +454,15 @@ public class TestThymeleafModelBuilder
 		ViewElement ve = mock( ViewElement.class );
 		when( ve.getCustomTemplate() ).thenReturn( "myTemplate :: customFragment" );
 
+		Map<String, String> attributes = new HashMap<>( 2 );
+		attributes.put( "th:insert", "myTemplate :: customFragment(component=${_generatedAttribute0})" );
+		attributes.put( "th:inline", TemplateMode.HTML.name());
+
 		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
-		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: customFragment(component=${_generatedAttribute0})", false ) )
+		when( modelFactory.createOpenElementTag( "th:block", attributes, AttributeValueQuotes.DOUBLE,false ) )
 				.thenReturn( openElementTag );
 		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
-		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
+		when( modelFactory.createCloseElementTag( "th:block" ) ).thenReturn( closeElementTag );
 
 		modelBuilder.addViewElement( ve );
 
@@ -471,11 +482,16 @@ public class TestThymeleafModelBuilder
 		IOpenElementTag openHeader = mock( IOpenElementTag.class );
 		when( modelFactory.createOpenElementTag( "h1", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false ) )
 				.thenReturn( openHeader );
+
+		Map<String, String> attributes = new HashMap<>( 2 );
+		attributes.put( "th:insert", "myTemplate :: customFragment(component=${_generatedAttribute0})" );
+		attributes.put( "th:inline", TemplateMode.HTML.name());
+
 		IOpenElementTag openElementTag = mock( IOpenElementTag.class );
-		when( modelFactory.createOpenElementTag( "div", "th:replace", "myTemplate :: customFragment(component=${_generatedAttribute0})", false ) )
+		when( modelFactory.createOpenElementTag( "th:block", attributes, AttributeValueQuotes.DOUBLE,false ) )
 				.thenReturn( openElementTag );
 		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
-		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
+		when( modelFactory.createCloseElementTag( "th:block" ) ).thenReturn( closeElementTag );
 
 		modelBuilder.addOpenElement( "h1" );
 		modelBuilder.addViewElement( ve );

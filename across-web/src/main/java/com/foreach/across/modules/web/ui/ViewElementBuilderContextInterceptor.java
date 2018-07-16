@@ -45,6 +45,7 @@ public class ViewElementBuilderContextInterceptor extends HandlerInterceptorAdap
 	                                HttpServletResponse response,
 	                                Object handler ) throws Exception {
 		WebResourceUtils.storeMessageSource( messageSource, request );
+		WebResourceUtils.storeLinkBuilder( webAppLinkBuilder, request );
 
 		ViewElementBuilderContext builderContext = createDefaultViewElementBuilderContext( request );
 		WebResourceUtils.storeViewElementBuilderContext( builderContext, request );

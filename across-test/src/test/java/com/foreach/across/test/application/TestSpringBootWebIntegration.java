@@ -17,6 +17,8 @@ package com.foreach.across.test.application;
 
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.context.WebAppLinkBuilder;
+import com.foreach.across.modules.web.context.WebAppPathResolver;
 import com.foreach.across.test.ExposeForTest;
 import com.foreach.across.test.application.app.DummyApplication;
 import com.foreach.across.test.application.app.application.controllers.NonExposedComponent;
@@ -36,6 +38,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collections;
@@ -52,6 +55,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DummyApplication.class)
+@TestPropertySource(properties = "server.context-path=/custom/servlet")
 @ExposeForTest(NonExposedComponent.class)
 public class TestSpringBootWebIntegration
 {
@@ -141,6 +145,12 @@ public class TestSpringBootWebIntegration
 		assertNotNull( nonExposedComponent );
 	}
 
+	@Test
+	public void webappLinks() {
+		assertEquals( "/res/static/", beanFactory.getBean( WebAppPathResolver.class ).path( "@static:/" ) );
+		assertEquals( "/custom/servlet/res/static/", beanFactory.getBean( WebAppLinkBuilder.class ).buildLink( "@static:/", false ) );
+	}
+
 	private String get( String relativePath ) {
 		return restTemplate.getForEntity( url( relativePath ), String.class ).getBody();
 	}
@@ -154,6 +164,6 @@ public class TestSpringBootWebIntegration
 	}
 
 	private String url( String relativePath ) {
-		return "http://localhost:" + port + relativePath;
+		return "http://localhost:" + port + "/custom/servlet" + relativePath;
 	}
 }

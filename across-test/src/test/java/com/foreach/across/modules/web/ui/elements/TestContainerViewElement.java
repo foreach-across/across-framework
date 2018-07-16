@@ -16,11 +16,13 @@
 package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
+import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -216,5 +218,25 @@ public class TestContainerViewElement extends AbstractViewElementTemplateTest
 		container.addChild( new TemplateViewElement( CUSTOM_TEMPLATE ) );
 
 		renderAndExpect( container, CUSTOM_TEMPLATE_OUTPUT );
+	}
+
+	@Test
+	public void apply() {
+		TextViewElement member = TextViewElement.text( "hello" );
+
+		ContainerViewElement container = new ContainerViewElement();
+		container.apply( c -> c.addChild( member ) );
+
+		assertSame( member, container.getChildren().get( 0 ) );
+	}
+
+	@Test
+	public void applyUnsafe() {
+		Consumer<MutableViewElement> consumer = e -> e.setName( "containerName" );
+
+		ContainerViewElement container = new ContainerViewElement();
+		container.applyUnsafe( consumer );
+
+		assertEquals( "containerName", container.getName() );
 	}
 }
