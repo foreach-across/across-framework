@@ -24,6 +24,7 @@ import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver
 import com.foreach.across.test.support.config.MockMvcConfiguration;
 import com.foreach.across.test.support.config.ResetDatabaseConfigurer;
 import com.foreach.across.test.support.config.TestDataSourceConfigurer;
+import com.foreach.across.test.support.config.TestDataSourcePostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -55,7 +56,7 @@ import java.lang.annotation.*;
 @Configuration
 @EnableAcrossContext
 @ExposeForTest
-@Import({ TestDataSourceConfigurer.class, ResetDatabaseConfigurer.class, MockMvcConfiguration.class })
+@Import({ TestDataSourceConfigurer.class, TestDataSourcePostProcessor.class, ResetDatabaseConfigurer.class, MockMvcConfiguration.class })
 public @interface AcrossTestConfiguration
 {
 	/**

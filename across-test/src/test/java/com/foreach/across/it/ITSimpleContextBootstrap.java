@@ -26,16 +26,21 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestWebConfiguration;
+import net.ttddyy.dsproxy.asserts.ProxyTestDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import javax.sql.DataSource;
 import java.util.Set;
 
+import static net.ttddyy.dsproxy.asserts.assertj.DataSourceAssertAssertions.assertThat;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -45,6 +50,7 @@ import static org.junit.Assert.assertTrue;
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration
+@TestPropertySource(properties = { "acrossTest.dbUtil.active=true" })
 public class ITSimpleContextBootstrap
 {
 	@Autowired
@@ -54,6 +60,18 @@ public class ITSimpleContextBootstrap
 	public void webModuleShouldHaveBeenBootstrapped() {
 		assertTrue( SimpleInstaller.installed );
 		assertTrue( contextInfo.getModuleInfo( AcrossWebModule.NAME ).isBootstrapped() );
+	}
+
+	@Test
+	public void getDataSource() {
+		AcrossContext context = contextInfo.getContext();
+		DataSource dataSource = context.getDataSource();
+		assertTrue( dataSource instanceof ProxyTestDataSource );
+		ProxyTestDataSource proxyDataSource = (ProxyTestDataSource) dataSource;
+		assertNotEquals( dataSource, context.getParentApplicationContext().getBean( "acrossDataSource" ) );
+		assertThat( proxyDataSource ).hasInsertCount( 4 );
+		proxyDataSource.reset();
+		assertThat( proxyDataSource ).hasInsertCount( 0 );
 	}
 
 	@AcrossTestWebConfiguration
