@@ -16,6 +16,9 @@ across.web:
     - org.springframework.messaging.simp.SimpMessagingTemplate
     - org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
     - org.springframework.web.socket.config.annotation.WebSocketConfigurer
+    - org.thymeleaf.dialect.IDialect
+    - org.thymeleaf.templateresolver.ITemplateResolver
+
   #
   # Auto-configuration class rules.
   #

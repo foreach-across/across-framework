@@ -15,7 +15,14 @@
  */
 package com.foreach.across.boot.application;
 
+import lombok.Getter;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Component in the root of the package.
@@ -26,4 +33,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class RootComponent
 {
+	public static final AtomicInteger EVENT_COUNTER = new AtomicInteger( 0 );
+
+	@Getter
+	private Map<String, Integer> eventsReceived = new LinkedHashMap<>();
+
+	@EventListener
+	public void handle( ApplicationReadyEvent applicationReadyEvent ) {
+		eventsReceived.put( applicationReadyEvent.getClass().getName(), EVENT_COUNTER.getAndIncrement() );
+	}
 }

@@ -21,6 +21,8 @@ import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import lombok.Getter;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactory;
@@ -28,16 +30,21 @@ import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.SmartValidator;
 import org.springframework.validation.Validator;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -46,8 +53,8 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration
 @TestPropertySource(properties = "across.displayName=My Application")
+@SpringBootTest(classes = { TestAcrossApplicationBootstrap.SampleApplication.class })
 public class TestAcrossApplicationBootstrap
 {
 	@Autowired
@@ -115,10 +122,34 @@ public class TestAcrossApplicationBootstrap
 		while ( ctx != null );
 	}
 
+	@Test
+	public void springApplicationEventShouldBeReceivedInsideModulesAndParent() {
+		RootComponent applicationComponent = contextInfo.getModuleInfo( "SampleApplicationModule" ).getApplicationContext().getBean( RootComponent.class );
+		SampleApplication application = applicationContext.getBean( SampleApplication.class );
+
+		Assertions.assertThat( application.getEventsReceived() )
+		          .hasSize( 1 )
+		          .containsKey( ApplicationReadyEvent.class.getName() );
+
+		Assertions.assertThat( applicationComponent.getEventsReceived() )
+		          .hasSize( 1 )
+		          .containsKey( ApplicationReadyEvent.class.getName() );
+
+		Assertions.assertThat( application.getEventsReceived().get( ApplicationReadyEvent.class.getName() ) )
+		          .isGreaterThan( applicationComponent.getEventsReceived().get( ApplicationReadyEvent.class.getName() ) );
+	}
+
 	@AcrossApplication
 	@Import(VerifyNoAutoConfigurationPackages.class)
 	protected static class SampleApplication
 	{
+		@Getter
+		private Map<String, Integer> eventsReceived = new LinkedHashMap<>();
+
+		@EventListener
+		public void handle( ApplicationReadyEvent applicationReadyEvent ) {
+			eventsReceived.put( applicationReadyEvent.getClass().getName(), RootComponent.EVENT_COUNTER.getAndIncrement() );
+		}
 	}
 
 	static class VerifyNoAutoConfigurationPackages implements ImportBeanDefinitionRegistrar
