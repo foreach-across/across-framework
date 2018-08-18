@@ -29,6 +29,7 @@ import com.foreach.across.test.AcrossTestContext;
 import com.foreach.across.test.support.config.AcrossContextBuilderConfigurerRegistrar;
 import com.foreach.across.test.support.config.ResetDatabaseConfigurer;
 import com.foreach.across.test.support.config.TestDataSourceConfigurer;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -367,6 +368,7 @@ public class AcrossTestContextBuilder
 
 		ConfigurableEnvironment environment = applicationContext.getEnvironment();
 		propertySources.forEach( environment.getPropertySources()::addLast );
+		ConfigurationPropertySources.attach( environment );
 	}
 
 	protected Class<?>[] annotatedClasses() {
