@@ -22,8 +22,6 @@ import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConf
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
-import test.properties.settings.PropertiesModule;
-import test.properties.settings.SetPropertyConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +35,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import test.properties.settings.PropertiesModule;
+import test.properties.settings.SetPropertyConfig;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -111,13 +111,13 @@ public class TestPropertyPlaceholders
 
 		MutablePropertySources sources = env.getPropertySources();
 		assertNotNull( sources );
-		assertEquals( 8, sources.size() );
+		assertEquals( 9, sources.size() );
 
-		assertEquals( 4, sources.precedenceOf( sources.get(
-				StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME ) ) );
 		assertEquals( 5, sources.precedenceOf( sources.get(
+				StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME ) ) );
+		assertEquals( 6, sources.precedenceOf( sources.get(
 				StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME ) ) );
-		assertEquals( 7, sources.precedenceOf( sources.get( "PropertiesModuleSettings: default values" ) ) );
+		assertEquals( 8, sources.precedenceOf( sources.get( "PropertiesModuleSettings: default values" ) ) );
 	}
 
 	@Configuration

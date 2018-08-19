@@ -30,6 +30,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySource;
@@ -148,6 +149,8 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 				}
 			}
 		}
+
+		ConfigurationPropertySources.attach( environment );
 
 		for ( ApplicationContextConfigurer configurer : configurers ) {
 			ProvidedBeansMap providedBeans = configurer.providedBeans();

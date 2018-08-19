@@ -50,7 +50,7 @@
 	<properties>
 		<across.version>4.0.0-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>Cairo-SR2</spring.platform.version>
+		<spring.platform.version>Cairo-SR3</spring.platform.version>
 		<foreach.common.version>1.1</foreach.common.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
