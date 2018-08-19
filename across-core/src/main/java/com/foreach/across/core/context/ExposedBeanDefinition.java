@@ -68,6 +68,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		aliases.addAll( original.aliases );
 
 		setOriginatingBeanDefinition( original.getOriginatingBeanDefinition() );
+		setRole( 10 );
 	}
 
 	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
@@ -112,6 +113,8 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		setPreferredBeanName( originalBeanName );
 
 		Collections.addAll( this.aliases, aliases );
+
+		setRole( 10 );
 	}
 
 	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
@@ -151,6 +154,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 			}
 		}
 
+		setRole( 10 );
 	}
 
 	public String getOriginalBeanName() {

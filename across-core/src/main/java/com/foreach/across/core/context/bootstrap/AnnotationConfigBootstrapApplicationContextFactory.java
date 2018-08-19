@@ -25,11 +25,7 @@ import com.foreach.across.core.context.configurer.PropertyPlaceholderSupportConf
 import com.foreach.across.core.context.support.ApplicationContextIdNameGenerator;
 import com.foreach.across.core.events.NonExposedEventListenerMethodProcessor;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -172,24 +168,7 @@ public class AnnotationConfigBootstrapApplicationContextFactory implements Boots
 			}
 		}
 
-		context.provide( new ProvidedBeansMap( Collections.singletonMap( "exposedBeansPostProcessor", pp( exposedBeanRegistries ) ) ) );
-
 		context.refresh();
 		context.start();
-	}
-
-	private BeanDefinitionRegistryPostProcessor pp( Collection<ExposedModuleBeanRegistry> exposedBeanRegistries ) {
-		return new BeanDefinitionRegistryPostProcessor()
-		{
-			@Override
-			public void postProcessBeanDefinitionRegistry( BeanDefinitionRegistry registry ) throws BeansException {
-
-			}
-
-			@Override
-			public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) throws BeansException {
-				exposedBeanRegistries.forEach( r -> r.copyTo( beanFactory, false ) );
-			}
-		};
 	}
 }

@@ -15,15 +15,18 @@
  */
 package com.foreach.across.core.config;
 
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 import javax.validation.Validator;
@@ -37,6 +40,7 @@ import javax.validation.executable.ExecutableValidator;
 @EnableConfigurationProperties
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Import(CommonModuleConfiguration.ExposedBeanDefinitionImporter.class)
 public class CommonModuleConfiguration
 {
 	@Bean
@@ -67,6 +71,29 @@ public class CommonModuleConfiguration
 		private static boolean determineProxyTargetClass( Environment environment ) {
 			Boolean value = environment.getProperty( "spring.aop.proxy-target-class", Boolean.class );
 			return Boolean.TRUE.equals( value );
+		}
+	}
+
+	/**
+	 * Register previously exposed bean definitions directly inside the module being bootstrapped.
+	 */
+	static class ExposedBeanDefinitionImporter implements ImportBeanDefinitionRegistrar
+	{
+		@Override
+		public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {
+			ConfigurableListableBeanFactory beanFactory = (ConfigurableListableBeanFactory) registry;
+
+			if ( beanFactory.containsBean( AcrossContextInfo.BEAN ) ) {
+				AcrossContextInfo contextInfo = beanFactory.getBean( AcrossContextInfo.BEAN, AcrossContextInfo.class );
+
+				AcrossModuleInfo currentModule = contextInfo.getModuleBeingBootstrapped();
+
+				if ( currentModule != null ) {
+					currentModule.getBootstrapConfiguration()
+					             .getPreviouslyExposedBeans()
+					             .forEach( r -> r.copyTo( beanFactory, false ) );
+				}
+			}
 		}
 	}
 }
