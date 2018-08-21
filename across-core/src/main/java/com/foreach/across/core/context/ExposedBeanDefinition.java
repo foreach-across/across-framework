@@ -41,6 +41,8 @@ import java.util.Set;
  */
 public class ExposedBeanDefinition extends RootBeanDefinition
 {
+	public static final int ROLE_EXPOSED = 10;
+
 	private final String contextId;
 	private final String moduleName;
 
@@ -68,7 +70,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		aliases.addAll( original.aliases );
 
 		setOriginatingBeanDefinition( original.getOriginatingBeanDefinition() );
-		setRole( 10 );
+		setRole( ROLE_EXPOSED );
 	}
 
 	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
@@ -114,7 +116,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		Collections.addAll( this.aliases, aliases );
 
-		setRole( 10 );
+		setRole( ROLE_EXPOSED );
 	}
 
 	public ExposedBeanDefinition( AcrossContextBeanRegistry contextBeanRegistry,
@@ -154,7 +156,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 			}
 		}
 
-		setRole( 10 );
+		setRole( ROLE_EXPOSED );
 	}
 
 	public String getOriginalBeanName() {
