@@ -16,6 +16,7 @@
 package com.foreach.across.test;
 
 import com.foreach.across.test.support.config.MockAcrossServletContextInitializer;
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextLoader;
 import org.springframework.test.context.SmartContextLoader;
@@ -51,6 +52,18 @@ import java.lang.annotation.*;
 @ContextConfiguration(initializers = MockAcrossServletContextInitializer.class)
 public @interface AcrossWebAppConfiguration
 {
+	/**
+	 * The resource path to the root directory of the web application.
+	 * <p>A path that does not include a Spring resource prefix (e.g., {@code classpath:},
+	 * {@code file:}, etc.) will be interpreted as a file system resource, and a
+	 * path should not end with a slash.
+	 * <p>Defaults to {@code "classpath:"}, note that the standard directory
+	 * for the root of a web application in in a Maven WAR layout usually
+	 * {@code "src/main/webapp"} is.
+	 */
+	@AliasFor(annotation = WebAppConfiguration.class, value = "value")
+	String resourcePath() default "classpath:";
+
 	/**
 	 * The <em>annotated classes</em> to use for loading an
 	 * {@link org.springframework.context.ApplicationContext ApplicationContext}.

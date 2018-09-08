@@ -53,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@WebAppConfiguration
+@WebAppConfiguration(value = "classpath:")
 @ContextConfiguration(classes = AbstractViewElementTemplateTest.Config.class)
 public abstract class AbstractViewElementTemplateTest
 {
