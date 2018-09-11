@@ -58,8 +58,8 @@ public @interface AcrossWebAppConfiguration
 	 * {@code file:}, etc.) will be interpreted as a file system resource, and a
 	 * path should not end with a slash.
 	 * <p>Defaults to {@code "classpath:"}, note that the standard directory
-	 * for the root of a web application in in a Maven WAR layout usually
-	 * {@code "src/main/webapp"} is.
+	 * for the root of a web application in a Maven WAR layout usually
+	 * is {@code "src/main/webapp"}.
 	 */
 	@AliasFor(annotation = WebAppConfiguration.class, value = "value")
 	String resourcePath() default "classpath:";
