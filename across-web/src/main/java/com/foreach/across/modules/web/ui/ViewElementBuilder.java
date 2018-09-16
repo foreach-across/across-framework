@@ -17,11 +17,44 @@ package com.foreach.across.modules.web.ui;
 
 /**
  * Base interface to create a single {@link ViewElement} instance.
+ * Usually used to build an entire hierarchy of elements by calling {@link #build(ViewElementBuilderContext)} on the
+ * top-most element. Building a {@link ViewElement} requires a {@link ViewElementBuilderContext} and often a
+ * single builder context is used to build many elements.
+ * <p/>
+ * If you call {@link #build()} without manually specifying a builder context, a global context will be retrieved
+ * using {@link ViewElementBuilderContext#retrieveGlobalBuilderContext()} and if none is available, a new
+ * {@link DefaultViewElementBuilderContext} will be used instead.
+ * <p/>
+ * For performance it is often best to manage the lifecycle of a {@link ViewElementBuilderContext} yourself,
+ * so you don't have unnecessary creation and can optimize contextual data sharing.
  *
  * @author Arne Vandamme
  */
+@FunctionalInterface
 public interface ViewElementBuilder<T extends ViewElement>
 {
+	/**
+	 * Build the {@link ViewElement} using the globally available {@link ViewElementBuilderContext},
+	 * this will use {@link ViewElementBuilderContext#retrieveGlobalBuilderContext()} to get the global context.
+	 * <p/>
+	 * If none is returned, a new {@link DefaultViewElementBuilderContext} will be used instead.
+	 * <p/>
+	 * Use this method sparingly, usually only for the single top-level build of a {@link ViewElement}.
+	 * The creation of a {@link ViewElementBuilderContext} can be relatively costly, performance-wise it is usually
+	 * better if you call {@link #build(ViewElementBuilderContext)} with a predefined or {@link ViewElementBuilderContext},
+	 * or at least ensure you have a global context available.
+	 *
+	 * @return view element
+	 * @see ViewElementBuilderContext#retrieveGlobalBuilderContext()
+	 */
+	default T build() {
+		ViewElementBuilderContext globalBuilderContext = ViewElementBuilderContext
+				.retrieveGlobalBuilderContext()
+				.orElseGet( DefaultViewElementBuilderContext::new );
+
+		return build( globalBuilderContext );
+	}
+
 	/**
 	 * Builds the actual element.
 	 *
@@ -29,4 +62,26 @@ public interface ViewElementBuilder<T extends ViewElement>
 	 * @return instance to render the element.
 	 */
 	T build( ViewElementBuilderContext builderContext );
+
+	/**
+	 * Chain a {@link ViewElementPostProcessor} to the result of this builder.
+	 * This will return a new builder instance that applies the post processor to the element generated.
+	 * <p>
+	 * Explicitly supports {@code null} argument values, which mean <em>do nothing</em> and will actually
+	 * return the same builder.
+	 *
+	 * @param postProcessor to apply on the builder result
+	 * @return new builder with the post processor chained to it
+	 */
+	default ViewElementBuilder<T> andThen( ViewElementPostProcessor<T> postProcessor ) {
+		if ( postProcessor != null ) {
+			ViewElementBuilder<T> self = this;
+			return builderContext -> {
+				T element = self.build( builderContext );
+				postProcessor.postProcess( builderContext, element );
+				return element;
+			};
+		}
+		return this;
+	}
 }

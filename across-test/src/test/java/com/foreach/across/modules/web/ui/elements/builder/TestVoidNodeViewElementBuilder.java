@@ -31,12 +31,13 @@ public class TestVoidNodeViewElementBuilder extends AbstractViewElementBuilderTe
 
 	@Test
 	public void setAttributes() {
-		builder.tagName( "a" ).attribute( "href", "somelink" ).removeAttribute( "class" );
+		builder.tagName( "a" ).attribute( "href", "somelink" ).removeAttribute( "class" ).data( "role", "link" );
 
 		build();
 
 		assertEquals( "a", element.getTagName() );
 		assertEquals( "somelink", element.getAttribute( "href" ) );
+		assertEquals( "link", element.getAttribute( "data-role" ) );
 		assertNull( element.getAttribute( "class" ) );
 		assertTrue( element.hasAttribute( "class" ) );
 	}

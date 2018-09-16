@@ -134,6 +134,7 @@ public interface ViewElementBuilderContext extends WritableAttributes, Localized
 	 * {@link ViewElementBuilderContextHolder} or - lacking that - to the request attributes.
 	 *
 	 * @return optional buildercontext
+	 * @see ViewElementBuilderContextHolder
 	 */
 	static Optional<ViewElementBuilderContext> retrieveGlobalBuilderContext() {
 		return Optional.ofNullable(

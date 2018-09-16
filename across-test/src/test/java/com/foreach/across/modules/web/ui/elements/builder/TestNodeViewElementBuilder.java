@@ -76,7 +76,11 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 		TextViewElement textOne = new TextViewElement( "textOne", "text 1" );
 		TextViewElement textTwo = new TextViewElement( "textTwo", "text 2" );
 
-		builder.tagName( "a" ).attribute( "href", "somelink" ).removeAttribute( "class" ).add( textOne )
+		builder.tagName( "a" )
+		       .attribute( "href", "somelink" )
+		       .data( "role", "link" )
+		       .removeAttribute( "class" )
+		       .add( textOne )
 		       .addFirst( textTwo );
 
 		build();
@@ -87,6 +91,7 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 
 		assertEquals( "a", element.getTagName() );
 		assertEquals( "somelink", element.getAttribute( "href" ) );
+		assertEquals( "link", element.getAttribute( "data-role" ) );
 		assertNull( element.getAttribute( "class" ) );
 		assertTrue( element.hasAttribute( "class" ) );
 	}
