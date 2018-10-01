@@ -16,7 +16,11 @@
 package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.resource.WebResourceUtils;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
+import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
+import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -122,5 +126,24 @@ public class TestViewElementBuilder
 		NodeViewElement node = composed.build( new DefaultViewElementBuilderContext() );
 		assertThat( node.getTagName() ).isEqualTo( "div" );
 		assertThat( node.getAttribute( "test" ) ).isEqualTo( "hello" );
+	}
+
+	@Test
+	public void mapReturnsNewBuilderOfNewType() {
+		NodeViewElementBuilder node = new NodeViewElementBuilder( "mytag" );
+
+		ViewElementBuilder<TextViewElement> tagName = node.map( ( builderContext, n ) -> TextViewElement.text( n.getTagName() ) );
+		assertThat( tagName ).isNotNull();
+		assertThat( tagName.build().getText() ).isEqualTo( "mytag" );
+
+		ViewElementBuilder<ContainerViewElement> container = tagName
+				.map( ( builderContext, textViewElement ) -> new ContainerViewElementBuilder().add( textViewElement ).build( builderContext ) )
+				.andThen( ( builderContext, transformed ) -> transformed.addChild( TextViewElement.text( "second" ) ) );
+
+		ContainerViewElement built = container.build();
+		assertThat( built ).isNotNull();
+		assertThat( built.getChildren() ).hasSize( 2 );
+		assertThat( ( (TextViewElement) built.getChildren().get( 0 ) ).getText() ).isEqualTo( "mytag" );
+		assertThat( ( (TextViewElement) built.getChildren().get( 1 ) ).getText() ).isEqualTo( "second" );
 	}
 }
