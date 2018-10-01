@@ -132,7 +132,7 @@ public class TestViewElementBuilder
 	public void mapReturnsNewBuilderOfNewType() {
 		NodeViewElementBuilder node = new NodeViewElementBuilder( "mytag" );
 
-		ViewElementBuilder<TextViewElement> tagName = node.map( ( builderContext, n ) -> TextViewElement.text( n.getTagName() ) );
+		ViewElementBuilder<TextViewElement> tagName = node.map( n -> TextViewElement.text( n.getTagName() ) );
 		assertThat( tagName ).isNotNull();
 		assertThat( tagName.build().getText() ).isEqualTo( "mytag" );
 

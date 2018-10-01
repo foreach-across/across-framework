@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.ui;
 import lombok.NonNull;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Base interface to create a single {@link ViewElement} instance.
@@ -92,10 +93,29 @@ public interface ViewElementBuilder<T extends ViewElement>
 	/**
 	 * Map the {@link ViewElement} that this builder returns to another type.
 	 * Creates a new builder returning the resulting element.
+	 * <p/>
+	 * If you need access to the {@link ViewElementBuilderContext} use {@link #map(BiFunction)} instead.
 	 *
 	 * @param mappingFunction to apply to the generated element
 	 * @param <U>             type of the new element returned
 	 * @return new builder instance
+	 * @see #map(BiFunction)
+	 */
+	default <U extends ViewElement> ViewElementBuilder<U> map( @NonNull Function<T, U> mappingFunction ) {
+		return builderContext -> {
+			T element = this.build( builderContext );
+			return mappingFunction.apply( element );
+		};
+	}
+
+	/**
+	 * Map the {@link ViewElement} that this builder returns to another type.
+	 * Creates a new builder returning the resulting element.
+	 *
+	 * @param mappingFunction to apply to the generated element
+	 * @param <U>             type of the new element returned
+	 * @return new builder instance
+	 * @see #map(Function)
 	 */
 	default <U extends ViewElement> ViewElementBuilder<U> map( @NonNull BiFunction<ViewElementBuilderContext, T, U> mappingFunction ) {
 		return builderContext -> {
