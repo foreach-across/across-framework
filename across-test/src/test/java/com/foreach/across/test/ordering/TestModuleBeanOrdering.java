@@ -179,7 +179,7 @@ public class TestModuleBeanOrdering
 
 	private void assertBeans( Map<String, MyComponent> beans, String... expected ) {
 		assertEquals( expected.length, beans.size() );
-		String[] beanNames = beans.keySet().toArray( new String[beans.size()] );
+		String[] beanNames = beans.keySet().toArray( new String[0] );
 		assertArrayEquals( "Bean names: " + Arrays.toString( beanNames ), expected, beanNames );
 	}
 }

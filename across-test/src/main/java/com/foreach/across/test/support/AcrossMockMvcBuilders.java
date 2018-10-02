@@ -84,7 +84,7 @@ public class AcrossMockMvcBuilders extends MockMvcBuilders
 				  Collection<String> urlPatternMappings = r.getUrlPatternMappings();
 				  mockMvcBuilder.addFilter(
 						  r.getFilter(),
-						  urlPatternMappings.toArray( new String[urlPatternMappings.size()] )
+						  urlPatternMappings.toArray( new String[0] )
 				  );
 			  } );
 		}

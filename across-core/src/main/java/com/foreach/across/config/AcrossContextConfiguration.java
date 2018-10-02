@@ -103,7 +103,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 				.installerDataSource( installerDataSource )
 				.developmentMode( isDevelopmentMode() )
 				.moduleConfigurationPackages( determineModuleConfigurationPackages( configuration ) )
-				.configurer( configurers.toArray( new AcrossContextConfigurer[configurers.size()] ) );
+				.configurer( configurers.toArray( new AcrossContextConfigurer[0] ) );
 
 		autoConfigureContextBuilder( contextBuilder, importMetadata.getAnnotationAttributes( ANNOTATION_TYPE ) );
 
@@ -143,7 +143,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			if ( Boolean.TRUE.equals( configuration.get( "autoConfigure" ) ) ) {
 				contextBuilder.moduleDependencyResolver( beanFactory.getBean( ModuleDependencyResolver.class ) )
 				              .modules( namedModulesToConfigure( configuration ) )
-				              .modules( moduleBeans.toArray( new AcrossModule[moduleBeans.size()] ) );
+				              .modules( moduleBeans.toArray( new AcrossModule[0] ) );
 			}
 		}
 	}
@@ -167,7 +167,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		modules.addAll( Arrays.asList( valueModuleNames ) );
 		modules.addAll( Arrays.asList( moduleNames ) );
 
-		return modules.toArray( new String[modules.size()] );
+		return modules.toArray( new String[0] );
 	}
 
 	@Bean(SharedMetadataReaderFactory.BEAN_NAME)
@@ -231,7 +231,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			}
 		}
 
-		return configurationPackageSet.toArray( new String[configurationPackageSet.size()] );
+		return configurationPackageSet.toArray( new String[0] );
 	}
 
 	private String[] determineModulePackages( Map<String, Object> configuration ) {
@@ -268,6 +268,6 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			modulePackageSet.remove( "." );
 		}
 
-		return modulePackageSet.toArray( new String[modulePackageSet.size()] );
+		return modulePackageSet.toArray( new String[0] );
 	}
 }

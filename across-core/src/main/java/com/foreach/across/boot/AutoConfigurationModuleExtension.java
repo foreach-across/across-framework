@@ -42,7 +42,7 @@ class AutoConfigurationModuleExtension
 	private final String[] classNames;
 
 	AutoConfigurationModuleExtension( Collection<String> classNames ) {
-		this.classNames = classNames.toArray( new String[classNames.size()] );
+		this.classNames = classNames.toArray( new String[0] );
 	}
 
 	@Import(Importer.class)

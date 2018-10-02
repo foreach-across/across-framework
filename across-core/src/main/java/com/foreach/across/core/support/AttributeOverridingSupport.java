@@ -116,7 +116,7 @@ public class AttributeOverridingSupport extends AttributeSupport
 	@Override
 	public String[] attributeNames() {
 		Map<String, Object> map = attributeMap();
-		String[] names = map.keySet().toArray( new String[map.size()] );
+		String[] names = map.keySet().toArray( new String[0] );
 		Arrays.sort( names );
 
 		return names;

@@ -106,7 +106,7 @@ public abstract class AttributeSupport implements WritableAttributes
 
 	@Override
 	public String[] attributeNames() {
-		String[] names = this.attributes.keySet().toArray( new String[this.attributes.size()] );
+		String[] names = this.attributes.keySet().toArray( new String[0] );
 		Arrays.sort( names );
 
 		return names;

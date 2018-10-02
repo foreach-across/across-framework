@@ -53,7 +53,7 @@ public class ModuleConfigurationSet
 			}
 		} );
 
-		return configurations.toArray( new String[configurations.size()] );
+		return configurations.toArray( new String[0] );
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class ModuleConfigurationSet
 			}
 		} );
 
-		return configurations.toArray( new String[configurations.size()] );
+		return configurations.toArray( new String[0] );
 	}
 
 	private boolean containsAny( Set<String> moduleNameSet, String... moduleName ) {

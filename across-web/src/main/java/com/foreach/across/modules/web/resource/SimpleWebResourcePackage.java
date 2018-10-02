@@ -48,7 +48,7 @@ public class SimpleWebResourcePackage implements WebResourcePackage
 	}
 
 	protected void setDependencies( Collection<String> packageNames ) {
-		setDependencies( packageNames.toArray( new String[packageNames.size()] ) );
+		setDependencies( packageNames.toArray( new String[0] ) );
 	}
 
 	protected void setDependencies( String... packageNames ) {

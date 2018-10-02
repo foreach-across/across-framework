@@ -98,7 +98,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	 * @return The array of all forcibly exposed beans.
 	 */
 	public String[] getExposedBeanNames() {
-		return exposedBeanNames.toArray( new String[exposedBeanNames.size()] );
+		return exposedBeanNames.toArray( new String[0] );
 	}
 
 	/**

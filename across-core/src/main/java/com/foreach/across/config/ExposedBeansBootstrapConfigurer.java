@@ -34,7 +34,7 @@ public final class ExposedBeansBootstrapConfigurer implements AcrossBootstrapCon
 	private final Class<?>[] types;
 
 	public ExposedBeansBootstrapConfigurer( @NonNull Collection<Class<?>> types ) {
-		this.types = types.toArray( new Class<?>[types.size()] );
+		this.types = types.toArray( new Class<?>[0] );
 	}
 
 	@Override

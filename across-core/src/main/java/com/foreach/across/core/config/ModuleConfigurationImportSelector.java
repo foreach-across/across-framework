@@ -54,7 +54,7 @@ public class ModuleConfigurationImportSelector
 		@Override
 		public String[] selectImports( AnnotationMetadata importingClassMetadata ) {
 			val configurationsToImport = moduleInfo.getBootstrapConfiguration().getConfigurationsToImport();
-			return configurationsToImport.isEmpty() ? new String[0] : configurationsToImport.toArray( new String[configurationsToImport.size()] );
+			return configurationsToImport.isEmpty() ? new String[0] : configurationsToImport.toArray( new String[0] );
 		}
 	}
 }
