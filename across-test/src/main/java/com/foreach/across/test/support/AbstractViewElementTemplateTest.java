@@ -128,8 +128,7 @@ public abstract class AbstractViewElementTemplateTest
 		renderController.setElement( viewElement );
 		renderController.setCallback( callback );
 
-		final String doctype = generateDocType();
-		final String pattern = "<?xml version=\"1.0\"?>" + doctype + "<root xmlns:across='http://across.foreach.be'>%s</root>";
+		final String pattern = "<?xml version=\"1.0\"?>" + generateDocType() + "<root xmlns:across='http://across.foreach.be'>%s</root>";
 
 		try {
 			mockMvc.perform( get( RenderViewElementController.PATH ) )
