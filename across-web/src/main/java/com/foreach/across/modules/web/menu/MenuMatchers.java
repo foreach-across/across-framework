@@ -88,7 +88,7 @@ public final class MenuMatchers
 
 			PathPatternMenuMatcher that = (PathPatternMenuMatcher) o;
 
-			if ( pattern != null ? !pattern.equals( that.pattern ) : that.pattern != null ) {
+			if ( pattern != null ? !pattern.pattern().equals( that.pattern.pattern() ) : that.pattern != null ) {
 				return false;
 			}
 
@@ -97,7 +97,7 @@ public final class MenuMatchers
 
 		@Override
 		public int hashCode() {
-			return pattern != null ? pattern.hashCode() : 0;
+			return pattern != null ? pattern.pattern().hashCode() : 0;
 		}
 	}
 
