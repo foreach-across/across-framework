@@ -168,8 +168,6 @@ public abstract class AbstractViewElementTemplateTest
 		renderController.setCallback( callback );
 		renderController.setTemplate( template );
 
-		final String doctype = generateDocType();
-
 		try {
 			return mockMvc.perform( get( RenderViewElementController.PATH ) )
 			              .andExpect( status().isOk() )
