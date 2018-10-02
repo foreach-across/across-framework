@@ -65,7 +65,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	private BeanFactory parentBeanFactory;
 	private Integer moduleIndex;
 
-	private final AcrossOrderComparator acrossOrderComparator = new AcrossOrderComparator();
+	private transient final AcrossOrderComparator acrossOrderComparator = new AcrossOrderComparator();
 
 	public AcrossListableBeanFactory() {
 	}
