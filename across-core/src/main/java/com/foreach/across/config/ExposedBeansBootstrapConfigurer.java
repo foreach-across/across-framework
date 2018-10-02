@@ -18,7 +18,6 @@ package com.foreach.across.config;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 
@@ -28,10 +27,13 @@ import java.util.Collection;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@RequiredArgsConstructor
 public final class ExposedBeansBootstrapConfigurer implements AcrossBootstrapConfigurer
 {
 	private final Class<?>[] types;
+
+	public ExposedBeansBootstrapConfigurer( Class<?>[] types ) {
+		this.types = types.clone();
+	}
 
 	public ExposedBeansBootstrapConfigurer( @NonNull Collection<Class<?>> types ) {
 		this.types = types.toArray( new Class<?>[0] );
