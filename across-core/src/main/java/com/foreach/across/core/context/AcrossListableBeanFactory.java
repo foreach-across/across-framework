@@ -58,6 +58,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.isFactoryDerefe
  * Exposed beans are fetched from the module context but are not managed by the bean factory.
  * </p>
  */
+@SuppressWarnings("serial")
 public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 {
 	private final Set<String> exposedBeanNames = new HashSet<>();
