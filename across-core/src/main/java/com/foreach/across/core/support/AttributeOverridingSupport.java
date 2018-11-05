@@ -15,10 +15,7 @@
  */
 package com.foreach.across.core.support;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>Extension to {@link AttributeSupport} that optionally takes a parent {@link ReadableAttributes} instance.
@@ -120,5 +117,34 @@ public class AttributeOverridingSupport extends AttributeSupport
 		Arrays.sort( names );
 
 		return names;
+	}
+
+	public InheritedAttributeValue<Object> findAttribute( String attributeName ) {
+		return findAttribute( attributeName, Object.class );
+	}
+
+	public <U> InheritedAttributeValue<U> findAttribute( Class<U> attributeType ) {
+		return findAttribute( attributeType.getName(), attributeType );
+	}
+
+	public <U> InheritedAttributeValue<U> findAttribute( String attributeName, Class<U> attributeType ) {
+		return findAttribute( attributeName, attributeType, 0 );
+	}
+
+	private <U> InheritedAttributeValue<U> findAttribute( String attributeName, Class<U> attributeType, int ancestorLevel ) {
+		if ( super.hasAttribute( attributeName ) ) {
+			return new InheritedAttributeValue<>( Optional.ofNullable( super.getAttribute( attributeName, attributeType ) ), attributeName, ancestorLevel );
+		}
+		else if ( parent != null ) {
+			if ( parent instanceof AttributeOverridingSupport ) {
+				return ( (AttributeOverridingSupport) parent ).findAttribute( attributeName, attributeType, ancestorLevel + 1 );
+			}
+			else if ( parent.hasAttribute( attributeName ) ) {
+				return new InheritedAttributeValue<>( Optional.ofNullable( parent.getAttribute( attributeName, attributeType ) ), attributeName,
+				                                      ancestorLevel + 1 );
+			}
+		}
+
+		return new InheritedAttributeValue<>( Optional.empty(), attributeName, -1 );
 	}
 }

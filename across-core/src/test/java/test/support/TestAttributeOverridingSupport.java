@@ -17,6 +17,7 @@ package test.support;
 
 import com.foreach.across.core.support.AttributeOverridingSupport;
 import com.foreach.across.core.support.AttributeSupport;
+import com.foreach.across.core.support.InheritedAttributeValue;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -76,6 +77,10 @@ public class TestAttributeOverridingSupport
 		// Previous map should not get modified
 		assertEquals( 3, map.size() );
 		assertEquals( 4, attributes.attributeMap().size() );
+
+		assertAttributeValue( attributes.findAttribute( "nonExisting" ), "nonExisting", null, -1 );
+		assertAttributeValue( attributes.findAttribute( "test2", Integer.class ), "test2", 999, 0 );
+		assertAttributeValue( attributes.findAttribute( Long.class ), "java.lang.Long", 500L, 0 );
 	}
 
 	@Test
@@ -126,6 +131,12 @@ public class TestAttributeOverridingSupport
 		// Previous map should not get modified
 		assertEquals( 3, map.size() );
 		assertEquals( 4, attributes.attributeMap().size() );
+
+		assertAttributeValue( attributes.findAttribute( "nonExisting" ), "nonExisting", null, -1 );
+		assertAttributeValue( attributes.findAttribute( "test" ), "test", "boe", 1 );
+		assertAttributeValue( attributes.findAttribute( "test2", Integer.class ), "test2", 999, 1 );
+		assertAttributeValue( attributes.findAttribute( Long.class ), "java.lang.Long", 500L, 1 );
+		assertAttributeValue( attributes.findAttribute( String.class ), "java.lang.String", "hello", 1 );
 	}
 
 	@Test
@@ -187,6 +198,19 @@ public class TestAttributeOverridingSupport
 		// Previous map should not get modified
 		assertEquals( 3, parent.attributeMap().size() );
 		assertEquals( 4, attributes.attributeMap().size() );
+
+		assertAttributeValue( attributes.findAttribute( "nonExisting" ), "nonExisting", null, -1 );
+		assertAttributeValue( attributes.findAttribute( "test" ), "test", "boe", 1 );
+		assertAttributeValue( attributes.findAttribute( "test2", Integer.class ), "test2", 999, 0 );
+		assertAttributeValue( attributes.findAttribute( Long.class ), "java.lang.Long", null, 0 );
+		assertAttributeValue( attributes.findAttribute( String.class ), "java.lang.String", "hello", 0 );
+	}
+
+	private <U> void assertAttributeValue( InheritedAttributeValue<U> value, String name, U actualValue, int ancestorLevel ) {
+		assertNotNull( value );
+		assertEquals( name, value.getAttributeName() );
+		assertEquals( ancestorLevel, value.getAncestorLevel() );
+		assertEquals( actualValue, value.getValue() );
 	}
 
 	static class Attributes extends AttributeOverridingSupport

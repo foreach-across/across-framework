@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.ui;
 
+import com.foreach.across.core.support.InheritedAttributeValue;
 import com.foreach.across.core.support.WritableAttributes;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
 import com.foreach.across.modules.web.support.LocalizedTextResolver;
@@ -128,6 +129,67 @@ public interface ViewElementBuilderContext extends WritableAttributes, Localized
 	 * @return processed link
 	 */
 	String buildLink( String baseLink );
+
+	/**
+	 * Find an attribute value in this builder context or any of its parents, in case of a hierarchy.
+	 *
+	 * @param attributeName name of the attribute
+	 * @return attribute value information - never {@code null}
+	 */
+	InheritedAttributeValue<Object> findAttribute( String attributeName );
+
+	/**
+	 * Find an attribute value in this builder context or any of its parents, in case of a hierarchy.
+	 *
+	 * @param attributeType type of the attribute
+	 * @return attribute value information - never {@code null}
+	 */
+	<U> InheritedAttributeValue<U> findAttribute( Class<U> attributeType );
+
+	/**
+	 * Find an attribute value in this builder context or any of its parents, in case of a hierarchy.
+	 *
+	 * @param attributeName name of the attribute
+	 * @param attributeType expected type of the attribute
+	 * @return attribute value information - never {@code null}
+	 */
+	<U> InheritedAttributeValue<U> findAttribute( String attributeName, Class<U> attributeType );
+
+	/**
+	 * Create a temporary {@link java.io.Closeable} scope for the current {@link ViewElementBuilderContext} in which
+	 * the given attribute value is overridden with the specified value. Setting {@code null} as attribute value
+	 * will "remove" the attribute.
+	 * <p/>
+	 * Once {@link ScopedAttributesViewElementBuilderContext#close()} is called, the original attribute values will be reset.
+	 * <p/>
+	 * <strong>WARNING:</strong> this does not create a new separate builder context, it effectively modified the current
+	 * builder context as long as {@link ScopedAttributesViewElementBuilderContext#close()} is not called.
+	 *
+	 * @param attributeName name of the attribute to override
+	 * @param attributeValue value to override the attribute with
+	 * @return builder context scope
+	 */
+	default ScopedAttributesViewElementBuilderContext withAttributeOverride( String attributeName, Object attributeValue ) {
+		return new ScopedAttributesViewElementBuilderContext( this ).withAttributeOverride( attributeName, attributeValue );
+	}
+
+	/**
+	 * Create a temporary {@link java.io.Closeable} scope for the current {@link ViewElementBuilderContext} in which
+	 * the given attribute value is overridden with the specified value. Setting {@code null} as attribute value
+	 * will "remove" the attribute.
+	 * <p/>
+	 * Once {@link ScopedAttributesViewElementBuilderContext#close()} is called, the original attribute values will be reset.
+	 * <p/>
+	 * <strong>WARNING:</strong> this does not create a new separate builder context, it effectively modified the current
+	 * builder context as long as {@link ScopedAttributesViewElementBuilderContext#close()} is not called.
+	 *
+	 * @param attributeType type of the attribute to override
+	 * @param attributeValue value to override the attribute with
+	 * @return builder context scope
+	 */
+	default <Y> ScopedAttributesViewElementBuilderContext withAttributeOverride( Class<Y> attributeType, Y attributeValue ) {
+		return new ScopedAttributesViewElementBuilderContext( this ).withAttributeOverride( attributeType, attributeValue );
+	}
 
 	/**
 	 * Fetches the global {@link ViewElementBuilderContext}.  Can be bound to the local thread using
