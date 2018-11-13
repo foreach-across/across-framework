@@ -25,7 +25,10 @@ import com.foreach.across.test.support.config.MockMvcConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -61,6 +64,10 @@ public class TestSpringBootMockMvc
 	@Autowired(required = false)
 	private NonExposedComponent nonExposedComponent;
 
+	@Autowired(required = false)
+	@Qualifier(DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME)
+	private ServletRegistrationBean dispatcherServletRegistration;
+
 	@Test
 	public void modulesShouldBeRegistered() {
 		assertTrue( contextInfo.hasModule( "emptyModule" ) );
@@ -85,6 +92,12 @@ public class TestSpringBootMockMvc
 	@Test
 	public void manuallyExposedComponent() {
 		assertNotNull( nonExposedComponent );
+	}
+
+	@Test
+	public void multipartConfigurationShouldBeRegistered() {
+		assertNotNull( dispatcherServletRegistration );
+		assertNotNull( dispatcherServletRegistration.getMultipartConfig() );
 	}
 
 	private void assertContent( String expected, RequestBuilder requestBuilder ) throws Exception {

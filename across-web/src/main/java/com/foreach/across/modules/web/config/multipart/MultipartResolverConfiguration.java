@@ -22,15 +22,21 @@ import com.foreach.across.modules.web.servlet.AcrossMultipartFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.MultipartProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -92,6 +98,22 @@ public class MultipartResolverConfiguration
 		}
 		else {
 			return createStandardServletMultipartResolver();
+		}
+	}
+
+	@Autowired
+	public void registerMultipartConfig( ListableBeanFactory beanFactory ) {
+		try {
+			MultipartConfigElement multipartConfigElement = BeanFactoryUtils.beanOfType( beanFactory, MultipartConfigElement.class );
+			ServletRegistrationBean registrationBean = beanFactory.getBean(
+					DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME,
+					ServletRegistrationBean.class
+			);
+
+			registrationBean.setMultipartConfig( multipartConfigElement );
+		}
+		catch ( BeansException be ) {
+			LOG.debug( "Unable to register MultipartConfigElement on the default dispatcher servlet" );
 		}
 	}
 

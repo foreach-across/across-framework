@@ -21,9 +21,11 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderFactory;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.test.support.AbstractViewElementBuilderTest;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -39,6 +41,33 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 		build();
 
 		assertFalse( element.hasChildren() );
+	}
+
+	@Test
+	public void builderMethodsAreCorrect() {
+		String htmlId = RandomStringUtils.random( 200 );
+		builder.htmlId( htmlId ).tagName( "tagName" ).css( "one", "two", "three" ).removeCss( "three" )
+		       .data( "number", 53 )
+		       .data( "index", 44 )
+		       .attribute( "foo", "bar" )
+		       .attributes( Collections.singletonMap( "wonderful", "world" ) )
+		       .removeData( "index" );
+		build();
+		assertEquals( htmlId, element.getHtmlId() );
+		assertEquals( "tagName", element.getTagName() );
+		assertEquals( "one two", element.getAttributes().get( "class" ) );
+		assertEquals( 53, element.getAttributes().get( "data-number" ) );
+		assertNull( element.getAttributes().get( "data-index" ) );
+		assertEquals( "bar", element.getAttributes().get( "foo" ) );
+		assertEquals( "world", element.getAttributes().get( "wonderful" ) );
+	}
+
+	@Test
+	public void builderMethodClears() {
+		builder.attribute( "one", 1 ).attribute( "two", 2 );
+		builder.clearAttributes();
+		build();
+		assertEquals( 0, element.getAttributes().size() );
 	}
 
 	@Test
@@ -76,7 +105,11 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 		TextViewElement textOne = new TextViewElement( "textOne", "text 1" );
 		TextViewElement textTwo = new TextViewElement( "textTwo", "text 2" );
 
-		builder.tagName( "a" ).attribute( "href", "somelink" ).removeAttribute( "class" ).add( textOne )
+		builder.tagName( "a" )
+		       .attribute( "href", "somelink" )
+		       .data( "role", "link" )
+		       .removeAttribute( "class" )
+		       .add( textOne )
 		       .addFirst( textTwo );
 
 		build();
@@ -87,6 +120,7 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 
 		assertEquals( "a", element.getTagName() );
 		assertEquals( "somelink", element.getAttribute( "href" ) );
+		assertEquals( "link", element.getAttribute( "data-role" ) );
 		assertNull( element.getAttribute( "class" ) );
 		assertTrue( element.hasAttribute( "class" ) );
 	}

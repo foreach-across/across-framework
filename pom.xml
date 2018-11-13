@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>3.1.0.RELEASE</version>
+	<version>3.1.1.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -47,14 +47,14 @@
 	</developers>
 
 	<properties>
-		<across.version>3.1.0.RELEASE</across.version>
+		<across.version>3.1.1.RELEASE</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>Brussels-SR11</spring.platform.version>
+		<spring.platform.version>Brussels-SR14</spring.platform.version>
 		<foreach.common.version>1.1</foreach.common.version>
-		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-		<thymeleaf-extras.springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras.springsecurity4.version>
+		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
+		<thymeleaf-extras.springsecurity4.version>3.0.4.RELEASE</thymeleaf-extras.springsecurity4.version>
 		<thymeleaf-extras.java8time.version>3.0.1.RELEASE</thymeleaf-extras.java8time.version>
-		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
+		<assertj.version>3.11.1</assertj.version>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
 	</properties>
 
@@ -192,16 +192,6 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco-maven-plugin.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>sonar-maven-plugin</artifactId>
-				<version>2.6</version>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -251,7 +241,7 @@
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
-				<version>3.9.0</version>
+				<version>${assertj.version}</version>
 			</dependency>
 			<!-- Workaround for https://issues.apache.org/jira/browse/LANG-1285 -->
 			<dependency>
@@ -327,7 +317,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.18</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

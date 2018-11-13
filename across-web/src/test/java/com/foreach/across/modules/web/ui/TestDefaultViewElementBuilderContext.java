@@ -46,7 +46,7 @@ public class TestDefaultViewElementBuilderContext
 
 	@Test
 	public void defaultMessages() {
-		DefaultViewElementBuilderContext ctx = new DefaultViewElementBuilderContext(  );
+		DefaultViewElementBuilderContext ctx = new DefaultViewElementBuilderContext();
 		assertEquals( "my.code", ctx.getMessage( "my.code" ) );
 		assertEquals( "default message", ctx.getMessage( "my.code", "default message" ) );
 	}
@@ -159,6 +159,30 @@ public class TestDefaultViewElementBuilderContext
 		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext( parent );
 		assertNotSame( registry, other );
 		assertSame( other, builderContext.getAttribute( WebResourceRegistry.class ) );
+	}
+
+	@Test
+	public void scopedOverride() {
+		ViewElementBuilderContext context = new DefaultViewElementBuilderContext();
+		context.setAttribute( "one", 1 );
+		context.setAttribute( Long.class, 123L );
+		context.setAttribute( Integer.class, 456 );
+		context.setAttribute( "two", "2" );
+
+		try (ScopedAttributesViewElementBuilderContext ignore = context.withAttributeOverride( "one", 3 )
+		                                                               .removeAttribute( Integer.class )
+		                                                               .withAttributeOverride( "two", "22" )
+		                                                               .withAttributeOverride( "two", "33" )) {
+			assertEquals( 3, context.getAttribute( "one" ) );
+			assertEquals( "33", context.getAttribute( "two" ) );
+			assertEquals( 123L, context.getAttribute( Long.class ).longValue() );
+			assertNull( context.getAttribute( Integer.class ) );
+		}
+
+		assertEquals( 1, context.getAttribute( "one" ) );
+		assertEquals( "2", context.getAttribute( "two" ) );
+		assertEquals( 123L, context.getAttribute( Long.class ).longValue() );
+		assertEquals( 456, context.getAttribute( Integer.class ).intValue() );
 	}
 }
 

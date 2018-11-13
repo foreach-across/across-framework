@@ -53,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@WebAppConfiguration
+@WebAppConfiguration(value = "classpath:")
 @ContextConfiguration(classes = AbstractViewElementTemplateTest.Config.class)
 public abstract class AbstractViewElementTemplateTest
 {
@@ -128,8 +128,7 @@ public abstract class AbstractViewElementTemplateTest
 		renderController.setElement( viewElement );
 		renderController.setCallback( callback );
 
-		final String doctype = generateDocType();
-		final String pattern = "<?xml version=\"1.0\"?>" + doctype + "<root xmlns:across='http://across.foreach.be'>%s</root>";
+		final String pattern = "<?xml version=\"1.0\"?>" + generateDocType() + "<root xmlns:across='http://across.foreach.be'>%s</root>";
 
 		try {
 			mockMvc.perform( get( RenderViewElementController.PATH ) )
@@ -168,8 +167,6 @@ public abstract class AbstractViewElementTemplateTest
 		renderController.setElement( viewElement );
 		renderController.setCallback( callback );
 		renderController.setTemplate( template );
-
-		final String doctype = generateDocType();
 
 		try {
 			return mockMvc.perform( get( RenderViewElementController.PATH ) )

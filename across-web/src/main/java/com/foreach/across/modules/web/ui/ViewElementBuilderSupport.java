@@ -30,8 +30,7 @@ import java.util.function.Consumer;
  * @param <T>    resulting {@link ViewElement}
  * @param <SELF> return type for builder methods
  */
-public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SELF extends ViewElementBuilder<T>>
-		extends GlobalContextSupportingViewElementBuilder<T>
+public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SELF extends ViewElementBuilder<T>> implements ViewElementBuilder<T>
 {
 	protected String name, customTemplate;
 	private Collection<ViewElementPostProcessor<T>> postProcessors = new ArrayList<>();

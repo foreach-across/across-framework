@@ -119,7 +119,7 @@ public class InstallerMetaData
 
 		AnnotationAwareOrderComparator.sort( methods );
 
-		return methods.toArray( new Method[methods.size()] );
+		return methods.toArray( new Method[0] );
 	}
 
 	@Override

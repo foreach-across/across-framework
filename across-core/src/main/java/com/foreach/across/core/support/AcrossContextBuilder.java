@@ -243,7 +243,7 @@ public class AcrossContextBuilder
 		configureModules( context, dependencyResolver );
 
 		context.setModuleConfigurationScanPackages(
-				moduleConfigurationScanPackages.toArray( new String[moduleConfigurationScanPackages.size()] )
+				moduleConfigurationScanPackages.toArray( new String[0] )
 		);
 
 		executeConfigurers( context );
@@ -258,7 +258,7 @@ public class AcrossContextBuilder
 							applicationContext != null ? applicationContext : new PathMatchingResourcePatternResolver()
 					)
 			);
-			dependencyResolver.setBasePackages( moduleScanPackages.toArray( new String[moduleScanPackages.size()] ) );
+			dependencyResolver.setBasePackages( moduleScanPackages.toArray( new String[0] ) );
 
 			return dependencyResolver;
 		}

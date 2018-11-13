@@ -15,11 +15,6 @@
  */
 package com.foreach.across.modules.web.ui;
 
-/**
- * @author Arne Vandamme
- * @since 2.0.0
- */
-
 import org.springframework.core.NamedInheritableThreadLocal;
 
 import java.util.Optional;
@@ -34,6 +29,7 @@ import java.util.Optional;
  * The attached context is not inherited by child threads.
  *
  * @author Arne Vandamme
+ * @see com.foreach.across.modules.web.config.GlobalViewElementBuilderContextConfiguration
  * @since 2.0.0
  */
 public abstract class ViewElementBuilderContextHolder

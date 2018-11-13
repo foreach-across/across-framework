@@ -15,7 +15,10 @@
  */
 package com.foreach.across.config;
 
-import com.foreach.across.core.*;
+import com.foreach.across.core.AcrossConfigurationException;
+import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.DynamicAcrossModuleFactory;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ClassPathScanningChildPackageProvider;
 import com.foreach.across.core.context.ModuleDependencyResolver;
@@ -127,7 +130,7 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 	}
 
 	@Override
-	public synchronized void configure( AcrossContext context ) {
+	public void configure( AcrossContext context ) {
 		if ( basePackage == null || baseModuleName == null ) {
 			throw new AcrossConfigurationException(
 					"Unable to add dynamic modules as no basePackage and no baseModuleName have been configured" );

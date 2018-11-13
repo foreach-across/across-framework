@@ -98,6 +98,6 @@ public class ClassPathScanningChildPackageProvider extends AbstractClassPathScan
 			LOG.warn( "Unable to scan for child packages", ioe );
 		}
 
-		return packageNames.toArray( new String[packageNames.size()] );
+		return packageNames.toArray( new String[0] );
 	}
 }
