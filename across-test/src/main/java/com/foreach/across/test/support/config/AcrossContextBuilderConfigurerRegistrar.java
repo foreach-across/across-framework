@@ -39,6 +39,6 @@ public class AcrossContextBuilderConfigurerRegistrar
 
 	@Autowired
 	public void registerConfigurers( AcrossContextBuilder contextBuilder ) {
-		contextBuilder.configurer( configurers.toArray( new AcrossContextConfigurer[configurers.size()] ) );
+		contextBuilder.configurer( configurers.toArray( new AcrossContextConfigurer[0] ) );
 	}
 }

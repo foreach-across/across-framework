@@ -136,7 +136,7 @@ public class AcrossModuleMessageSource extends ReloadableResourceBundleMessageSo
 			);
 		}
 
-		setBasenames( baseNames.toArray( new String[baseNames.size()] ) );
+		setBasenames( baseNames.toArray( new String[0] ) );
 	}
 
 	@Override

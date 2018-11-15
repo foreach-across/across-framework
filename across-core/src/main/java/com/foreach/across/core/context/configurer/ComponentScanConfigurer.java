@@ -39,8 +39,8 @@ public class ComponentScanConfigurer extends ApplicationContextConfigurerAdapter
 	}
 
 	public ComponentScanConfigurer( String[] packages, TypeFilter[] excludedTypeFilters ) {
-		this.packages = packages;
-		this.excludedTypeFilters = excludedTypeFilters;
+		this.packages = packages.clone();
+		this.excludedTypeFilters = excludedTypeFilters.clone();
 	}
 
 	public ComponentScanConfigurer( Class<?>[] packageClasses, TypeFilter[] excludedTypeFilters ) {
@@ -50,7 +50,7 @@ public class ComponentScanConfigurer extends ApplicationContextConfigurerAdapter
 			packages[i] = packageClasses[i].getPackage().getName();
 		}
 
-		this.excludedTypeFilters = excludedTypeFilters;
+		this.excludedTypeFilters = excludedTypeFilters.clone();
 	}
 
 	/**

@@ -27,12 +27,7 @@ import static org.junit.Assert.*;
 
 public class TestMenuSorting
 {
-	private static final Comparator<Menu> REVERSE_SORT = new Comparator<Menu>()
-	{
-		public int compare( Menu o1, Menu o2 ) {
-			return o2.getTitle().compareTo( o1.getTitle() );
-		}
-	};
+	private static final Comparator<Menu> REVERSE_SORT = ( o1, o2 ) -> o2.getTitle().compareTo( o1.getTitle() );
 
 	@Test
 	public void singleLevelSorting() {
@@ -251,6 +246,23 @@ public class TestMenuSorting
 	}
 
 	@Test
+	public void equalsShouldBeCorrect() {
+		MenuMatcher matcher1 = MenuMatchers.pathEquals( "/bbb" );
+		MenuMatcher matcher2 = MenuMatchers.pathEquals( "/bbb" );
+		assertNotSame( matcher1, matcher2 );
+		assertNotEquals( MenuMatchers.pathEquals( "/not" ), MenuMatchers.pathEquals( "/same" ) );
+		assertEquals( matcher1, matcher2 );
+		assertEquals( matcher2, matcher1 );
+
+		MenuMatcher matcher3 = MenuMatchers.pathMatches( "^/c" );
+		MenuMatcher matcher4 = MenuMatchers.pathMatches( "^/c" );
+		assertNotSame( matcher3, matcher4 );
+		assertEquals( matcher3, matcher4 );
+		assertNotEquals( MenuMatchers.pathMatches( "some" ), MenuMatchers.pathMatches( "pattern" ) );
+		assertEquals( matcher4, matcher3 );
+	}
+
+	@Test
 	public void fixedOrderComparator() {
 		Menu menu = new Menu( "any" );
 		Menu subMenu = new Menu( "/aaa", "aaa" );
@@ -281,7 +293,7 @@ public class TestMenuSorting
 		assertMenu( menu.getItem( MenuSelector.byPath( "/ccc" ) ), "ddd", "eee", "fff" );
 	}
 
-	public void assertMenu( Menu menu, String... expected ) {
+	private void assertMenu( Menu menu, String... expected ) {
 		List<Menu> items = menu.getItems();
 		assertEquals( expected.length, items.size() );
 		for ( int i = 0; i < items.size(); i++ ) {

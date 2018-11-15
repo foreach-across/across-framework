@@ -40,7 +40,7 @@ public abstract class TestInstaller
 	}
 
 	public static Class[] executed() {
-		return EXECUTED.toArray( new Class[EXECUTED.size()] );
+		return EXECUTED.toArray( new Class[0] );
 	}
 
 	public static void reset() {

@@ -372,7 +372,7 @@ public class AcrossTestContextBuilder
 	}
 
 	protected Class<?>[] annotatedClasses() {
-		return annotatedClasses.toArray( new Class<?>[annotatedClasses.size()] );
+		return annotatedClasses.toArray( new Class<?>[0] );
 	}
 
 	private static class RunningAcrossContext extends AcrossTestContext

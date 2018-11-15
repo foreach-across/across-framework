@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.ui.elements.builder;
 
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
+import lombok.NonNull;
 
 import java.util.Map;
 
@@ -29,6 +30,28 @@ public interface HtmlViewElementBuilder<T extends HtmlViewElement, SELF extends 
 	SELF css( String... cssClasses );
 
 	SELF removeCss( String... cssClasses );
+
+	/**
+	 * Short-hand for adding a {@code data-} HTML attribute, but without having
+	 * to specify the {@code data-} prefix yourself.
+	 *
+	 * @param name  attribute name (will be prefixed with {@code data-}
+	 * @param value attribute value
+	 * @return current builder
+	 */
+	default SELF data( @NonNull String name, Object value ) {
+		return attribute( "data-" + name, value );
+	}
+
+	/**
+	 * Short-hand for removing a {@code data-} HTML attribute.
+	 *
+	 * @param name attribute name (will be prefixed with {@code data-}
+	 * @return current builder
+	 */
+	default SELF removeData( @NonNull String name ) {
+		return removeAttribute( "data-" + name );
+	}
 
 	SELF attribute( String name, Object value );
 

@@ -313,7 +313,7 @@ public class AcrossBootstrapper
 
 							      @Override
 							      public Class[] annotatedClasses() {
-								      return filteredClasses.toArray( new Class[filteredClasses.size()] );
+								      return filteredClasses.toArray( new Class[0] );
 							      }
 
 							      @Override
@@ -696,7 +696,7 @@ public class AcrossBootstrapper
 		Collections.addAll( basePackages, contextInfo.getContext().getModuleConfigurationScanPackages() );
 
 		return new ClassPathScanningModuleConfigurationProvider( applicationContext, metadataReaderFactory )
-				.scan( basePackages.toArray( new String[basePackages.size()] ) );
+				.scan( basePackages.toArray( new String[0] ) );
 	}
 
 	private void checkBootstrapIsPossible() {

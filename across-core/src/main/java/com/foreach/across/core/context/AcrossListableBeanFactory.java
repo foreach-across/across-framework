@@ -58,6 +58,7 @@ import static org.springframework.beans.factory.BeanFactoryUtils.isFactoryDerefe
  * Exposed beans are fetched from the module context but are not managed by the bean factory.
  * </p>
  */
+@SuppressWarnings("serial")
 public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 {
 	private final Set<String> exposedBeanNames = new HashSet<>();
@@ -65,7 +66,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	private BeanFactory parentBeanFactory;
 	private Integer moduleIndex;
 
-	private final AcrossOrderComparator acrossOrderComparator = new AcrossOrderComparator();
+	private transient final AcrossOrderComparator acrossOrderComparator = new AcrossOrderComparator();
 
 	public AcrossListableBeanFactory() {
 	}
@@ -98,7 +99,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	 * @return The array of all forcibly exposed beans.
 	 */
 	public String[] getExposedBeanNames() {
-		return exposedBeanNames.toArray( new String[exposedBeanNames.size()] );
+		return exposedBeanNames.toArray( new String[0] );
 	}
 
 	/**
