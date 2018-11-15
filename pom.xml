@@ -50,7 +50,7 @@
 	<properties>
 		<across.version>4.0.0-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>Cairo-SR3</spring.platform.version>
+		<spring.platform.version>Cairo-SR5</spring.platform.version>
 		<foreach.common.version>1.1</foreach.common.version>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
@@ -225,19 +225,6 @@
 				<scope>import</scope>
 			</dependency>
 
-			<!-- Specific versions overriding platform-->
-			<dependency>
-				<groupId>org.assertj</groupId>
-				<artifactId>assertj-core</artifactId>
-				<version>3.9.0</version>
-			</dependency>
-			<!-- Workaround for https://issues.apache.org/jira/browse/LANG-1285 -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>3.7</version>
-			</dependency>
-
 			<!-- Non-spring managed -->
 			<dependency>
 				<groupId>com.mattbertolini</groupId>
@@ -305,7 +292,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.18</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
