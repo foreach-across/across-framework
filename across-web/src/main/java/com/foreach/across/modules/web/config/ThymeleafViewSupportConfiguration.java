@@ -56,10 +56,7 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -106,11 +103,13 @@ public class ThymeleafViewSupportConfiguration
 			                  .filter( d -> !engine.getDialects().contains( d ) )
 			                  .forEach( engine::addDialect );
 
-			applicationContext.getBeansOfType( ITemplateResolver.class )
-			                  .values()
-			                  .stream()
-			                  .filter( r -> !engine.getTemplateResolvers().contains( r ) )
-			                  .forEach( engine::addTemplateResolver );
+			List<ITemplateResolver> resolvers = new ArrayList<>( developmentResolvers() );
+			resolvers.addAll( applicationContext.getBeansOfType( ITemplateResolver.class ).values() );
+
+			resolvers.stream()
+			         .sorted( Comparator.comparingInt( ITemplateResolver::getOrder ) )
+			         .filter( r -> !engine.getTemplateResolvers().contains( r ) )
+			         .forEach( engine::addTemplateResolver );
 		}
 	}
 
