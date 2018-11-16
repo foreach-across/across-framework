@@ -105,6 +105,19 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 		return actualImports;
 	}
 
+	@Override
+	protected Set<String> getExclusions( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
+		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
+
+		attributes.put( "exclude", new String[0] );
+		attributes.put( "excludeName", new String[0] );
+
+		Set<String> exclusions = super.getExclusions( metadata, attributes );
+		exclusions.forEach( registry::addExcludedAutoConfigurations );
+
+		return exclusions;
+	}
+
 	private Group createGroup( @Nullable Class<? extends Group> type ) {
 		Group group = BeanUtils.instantiateClass( type );
 

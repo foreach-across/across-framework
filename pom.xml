@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>4.0.0-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -41,18 +41,18 @@
 	<developers>
 		<developer>
 			<name>Arne Vandamme</name>
-			<email>arne at foreach.be</email>
 			<organization>Foreach</organization>
 			<organizationUrl>http://www.foreach.be</organizationUrl>
 		</developer>
 	</developers>
 
 	<properties>
-		<across.version>4.0.0-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>Cairo-SR5</spring.platform.version>
-		<foreach.common.version>1.1</foreach.common.version>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
+		<across.version>5.0.0-SNAPSHOT</across.version>
+		<spring.boot.dependencies.version>2.1.0.RELEASE</spring.boot.dependencies.version>
+		<foreach.common.version>1.1</foreach.common.version>
+		<jsp-api.version>2.3.3</jsp-api.version>
 	</properties>
 
 	<repositories>
@@ -207,14 +207,19 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>io.spring.platform</groupId>
-				<artifactId>platform-bom</artifactId>
-				<version>${spring.platform.version}</version>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.dependencies.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 
 			<!-- Non-spring managed -->
+			<dependency>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>javax.servlet.jsp-api</artifactId>
+				<version>${jsp-api.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.mattbertolini</groupId>
 				<artifactId>liquibase-slf4j</artifactId>
