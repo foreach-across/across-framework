@@ -25,8 +25,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.Nullable;
 
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -106,6 +105,11 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 	}
 
 	@Override
+	protected List<String> getCandidateConfigurations( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
+		return Arrays.asList( selectImports( metadata ) );
+	}
+
+	@Override
 	protected Set<String> getExclusions( AnnotationMetadata metadata, AnnotationAttributes attributes ) {
 		AcrossApplicationAutoConfiguration registry = retrieveAutoConfigurationRegistry();
 
@@ -114,6 +118,13 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 
 		Set<String> exclusions = super.getExclusions( metadata, attributes );
 		exclusions.forEach( registry::addExcludedAutoConfigurations );
+
+		List<String> allowed = getCandidateConfigurations( metadata, attributes );
+		new ArrayList<>( exclusions ).forEach( e -> {
+			if ( !allowed.contains( e ) ) {
+				exclusions.remove( e );
+			}
+		} );
 
 		return exclusions;
 	}

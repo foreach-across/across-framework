@@ -55,10 +55,13 @@ public class AcrossWebModuleAutoConfiguration
 	{
 		@Override
 		public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {
-			registry.removeBeanDefinition( "errorPageCustomizer" );
+			if ( registry.containsBeanDefinition( "errorPageCustomizer" ) ) {
+				registry.removeBeanDefinition( "errorPageCustomizer" );
+			}
 			registry.registerAlias( "acrossErrorPageCustomizer", "errorPageCustomizer" );
 		}
 	}
+
 	/**
 	 * Configure the error pages.
 	 */

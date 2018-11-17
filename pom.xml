@@ -196,6 +196,7 @@
 		<module>across-core</module>
 		<module>across-web</module>
 		<module>across-test</module>
+		<module>across-experimental</module>
 	</modules>
 
 	<scm>

@@ -34,7 +34,7 @@ import java.util.Collections;
  * filter in the chain.  It is vital that this filter comes first so the encoding is applied as early as possible.
  * <p>
  * This configuration reuses {@link HttpEncodingAutoConfiguration} and corresponding
- * {@link org.springframework.boot.autoconfigure.http.HttpEncodingProperties}.
+ * {@link org.springframework.boot.autoconfigure.http.HttpProperties.Encoding}.
  *
  * @author Arne Vandamme
  * @see HttpEncodingAutoConfiguration
