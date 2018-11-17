@@ -82,7 +82,7 @@ public class AcrossWebModuleAutoConfiguration
 
 		@Override
 		public void registerErrorPages( ErrorPageRegistry errorPageRegistry ) {
-			ErrorPage errorPage = new ErrorPage( this.dispatcherServletPath.getPath() + this.properties.getError().getPath() );
+			ErrorPage errorPage = new ErrorPage( this.dispatcherServletPath.getRelativePath( this.properties.getError().getPath() ) );
 			errorPageRegistry.addErrorPages( errorPage );
 		}
 

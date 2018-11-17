@@ -69,7 +69,7 @@ public class AcrossModuleDefaultErrorViewResolver implements ErrorViewResolver, 
 		// Remove the already applied template
 		request.removeAttribute( PROCESSOR_ATTRIBUTE );
 
-		ModelAndView modelAndView = resolve( String.valueOf( status ), model );
+		ModelAndView modelAndView = resolve( String.valueOf( status.value() ), model );
 		if ( modelAndView == null && SERIES_VIEWS.containsKey( status.series() ) ) {
 			modelAndView = resolve( SERIES_VIEWS.get( status.series() ), model );
 		}
