@@ -48,6 +48,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.springframework.beans.factory.BeanFactoryUtils.isFactoryDereference;
 
@@ -67,6 +68,8 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	private Integer moduleIndex;
 
 	private transient final AcrossOrderComparator acrossOrderComparator = new AcrossOrderComparator();
+
+	private boolean hideExposedBeans = false;
 
 	public AcrossListableBeanFactory() {
 	}
@@ -266,6 +269,29 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		                  .collect( Collectors.toMap( nameForBean::get, Function.identity(), ( v1, v2 ) -> v1, LinkedHashMap::new ) );
 	}
 
+	@Override
+	public String[] getBeanNamesForType( ResolvableType type ) {
+		return filterEposedBeanNames( super.getBeanNamesForType( type ) );
+	}
+
+	@Override
+	public String[] getBeanNamesForType( Class<?> type ) {
+		return filterEposedBeanNames( super.getBeanNamesForType( type ) );
+	}
+
+	@Override
+	public String[] getBeanNamesForType( Class<?> type, boolean includeNonSingletons, boolean allowEagerInit ) {
+		return filterEposedBeanNames( super.getBeanNamesForType( type, includeNonSingletons, allowEagerInit ) );
+	}
+
+	private String[] filterEposedBeanNames( String[] beanNames ) {
+		if ( hideExposedBeans ) {
+			return Stream.of( beanNames ).filter( name -> !isExposedBean( name ) ).toArray( String[]::new );
+		}
+
+		return beanNames;
+	}
+
 	/**
 	 * Retrieve an {@link AcrossOrderSpecifier} for a local bean or singleton.
 	 * If neither is present with that name, {@code null} will be returned.
@@ -418,6 +444,17 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	@Override
 	protected void resetBeanDefinition( String beanName ) {
 		super.resetBeanDefinition( beanName );
+	}
+
+	/**
+	 * Set to {@code true} if you do not want to return exposed bean definitions when retrieving beans of type.
+	 * Mainly added to support processing of internal beans only, for example for {@link com.foreach.across.core.events.NonExposedEventListenerMethodProcessor}.
+	 * Internal framework method.
+	 *
+	 * @param hideExposedBeans true if exposed beans should not be returned
+	 */
+	public void setHideExposedBeans( boolean hideExposedBeans ) {
+		this.hideExposedBeans = hideExposedBeans;
 	}
 
 	/**

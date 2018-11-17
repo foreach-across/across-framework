@@ -15,6 +15,7 @@
  */
 package com.foreach.across.core.events;
 
+import com.foreach.across.core.context.AcrossListableBeanFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -38,10 +39,19 @@ public final class NonExposedEventListenerMethodProcessor extends EventListenerM
 {
 	private ConfigurableApplicationContext applicationContext;
 
+	private AcrossListableBeanFactory beanFactory;
+
 	@Override
 	public void setApplicationContext( ApplicationContext applicationContext ) throws BeansException {
 		super.setApplicationContext( applicationContext );
 		this.applicationContext = (ConfigurableApplicationContext) applicationContext;
+	}
+
+	@Override
+	public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
+		this.beanFactory = (AcrossListableBeanFactory) beanFactory;
+
+		super.postProcessBeanFactory( beanFactory );
 	}
 
 	// todo: fixme 5.1
@@ -51,6 +61,18 @@ public final class NonExposedEventListenerMethodProcessor extends EventListenerM
 			super.processBean( factories, beanName, targetType );
 		}
 	}*/
+
+	@Override
+	public void afterSingletonsInstantiated() {
+		beanFactory.setHideExposedBeans( true );
+
+		try {
+			super.afterSingletonsInstantiated();
+		}
+		finally {
+			beanFactory.setHideExposedBeans( false );
+		}
+	}
 
 	/**
 	 * Registers the Across compatible {@link EventListenerMethodProcessor}, replaces the original one from Spring.
