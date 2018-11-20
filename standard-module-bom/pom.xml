@@ -59,6 +59,7 @@
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<!-- Required for plugins -->
 		<querydsl.version>4.2.1</querydsl.version>
+		<commons-io.version>2.6</commons-io.version>
 	</properties>
 
 	<repositories>
@@ -130,6 +131,13 @@
 						<artifactId>mockito-all</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+
+			<!-- Backwards compatibility with Spring Platform -->
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
