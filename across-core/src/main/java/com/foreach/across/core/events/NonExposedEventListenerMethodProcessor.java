@@ -54,14 +54,6 @@ public final class NonExposedEventListenerMethodProcessor extends EventListenerM
 		super.postProcessBeanFactory( beanFactory );
 	}
 
-	// todo: fixme 5.1
-	/*@Override
-	protected void processBean( List<EventListenerFactory> factories, String beanName, Class<?> targetType ) {
-		if ( !( (AcrossListableBeanFactory) applicationContext.getBeanFactory() ).isExposedBean( beanName ) ) {
-			super.processBean( factories, beanName, targetType );
-		}
-	}*/
-
 	@Override
 	public void afterSingletonsInstantiated() {
 		beanFactory.setHideExposedBeans( true );

@@ -17,8 +17,6 @@
 package com.foreach.across.test;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.AcrossModuleSettings;
-import com.foreach.across.core.util.ClassLoadingUtils;
 import com.foreach.across.modules.web.AcrossWebModule;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -94,46 +92,6 @@ public abstract class AbstractAcrossModuleConventionsTest
 				              constantResourcesKey );
 			}
 		}
-	}
-
-	@Test
-	public void moduleSettings() {
-		String settingsClassName = module.getClass().getName() + "Settings";
-		Class settingsClass = loadClass( settingsClassName );
-
-		if ( hasSettings() ) {
-			assertNotNull( "DevelopmentModeCondition declares module has settings but class was not found: " + settingsClassName,
-			               settingsClass );
-
-			if ( !AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
-				fail( "A settings class must extend AcrossModuleSettings" );
-			}
-		}
-		else if ( settingsClass != null ) {
-			if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
-				assertNull(
-						"DevelopmentModeCondition declares module does not have settings but AcrossModuleSettings implementation was found",
-						settingsClass );
-			}
-		}
-	}
-
-	private Class loadClass( String className ) {
-		try {
-			return ClassLoadingUtils.loadClass( className );
-		}
-		catch ( Exception e ) {
-			return null;
-		}
-	}
-
-	/**
-	 * @return True if settings file should be tested.
-	 * @deprecated use of {@link AcrossModuleSettings} is deprecated in favor of Spring ConfigurationProperties
-	 */
-	@Deprecated
-	protected boolean hasSettings() {
-		return false;
 	}
 
 	protected abstract AcrossModule createModule();

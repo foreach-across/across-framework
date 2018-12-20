@@ -17,7 +17,6 @@
 package com.foreach.across.core.annotations;
 
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.AcrossModuleSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,6 @@ import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.Scope;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.expression.StandardBeanExpressionResolver;
@@ -107,30 +105,6 @@ public class AcrossConditionCondition implements Condition
 			catch ( NoSuchBeanDefinitionException nsbe ) {
 				return null;
 			}
-		}
-
-		@Deprecated
-		public AcrossModuleSettings getSettings() {
-			try {
-				LOG.warn(
-						"The use of @AcrossCondition('settings') is deprecated - functionality will be removed in the future." );
-				BeanDefinitionRegistry registry = (BeanDefinitionRegistry) getBeanFactory();
-
-				ConfigurableListableBeanFactory beanFactory = (ConfigurableListableBeanFactory) getBeanFactory();
-				String[] beanNames = beanFactory.getBeanNamesForType( AcrossModuleSettings.class );
-
-				if ( beanNames.length >= 1 ) {
-					AcrossModuleSettings settings
-							= (AcrossModuleSettings) beanFactory.createBean( beanFactory.getType( beanNames[0] ) );
-					settings.setEnvironment( environment );
-
-					return settings;
-				}
-			}
-			catch ( NoSuchBeanDefinitionException ignore ) {
-			}
-
-			return null;
 		}
 
 		/**

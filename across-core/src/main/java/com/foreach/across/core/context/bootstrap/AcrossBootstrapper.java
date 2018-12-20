@@ -651,19 +651,6 @@ public class AcrossBootstrapper
 
 					beansMap.put( AcrossModule.CURRENT_MODULE + "Settings", beanDefinition );
 				}
-				else if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
-					// If this is an old settings class, register it in the parent context as well,
-					// note that this means the bean will be wired in a different context than in the module
-					GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
-					beanDefinition.setBeanClass( settingsClass );
-					beanDefinition.setPrimary( false );
-					beanDefinition.setLazyInit( true );
-					beanDefinition.addQualifier(
-							new AutowireCandidateQualifier( Module.class.getName(), module.getName() )
-					);
-
-					beansMap.put( settingsClassName, beanDefinition );
-				}
 			}
 		}
 		catch ( ClassNotFoundException ignore ) {
