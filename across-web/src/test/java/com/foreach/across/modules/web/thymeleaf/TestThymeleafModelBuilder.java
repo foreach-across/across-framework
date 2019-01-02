@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.thymeleaf.context.IEngineContext;
 import org.thymeleaf.model.*;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -67,7 +67,7 @@ public class TestThymeleafModelBuilder
 		when( context.getModelFactory() ).thenReturn( modelFactory );
 		when( modelFactory.createModel() ).thenReturn( model );
 		doAnswer( invocation -> invocation.getArgument( 0 ) )
-				.when( attributeConverter ).apply( anyObject() );
+				.when( attributeConverter ).apply( any() );
 
 		when( context.getTemplateMode() ).thenReturn( TemplateMode.HTML );
 
