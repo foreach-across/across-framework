@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package test.modules.module1;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.Refreshable;
-import com.foreach.across.core.events.AcrossEventPublisher;
-import test.modules.EventPubSub;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import test.modules.EventPubSub;
 
 @Exposed
 @Configuration
@@ -51,7 +51,7 @@ public class TestModule1Config
 	}
 
 	@Bean
-	public EventPubSub publisherModuleOne( AcrossEventPublisher eventPublisher ) {
+	public EventPubSub publisherModuleOne( ApplicationEventPublisher eventPublisher ) {
 		return new EventPubSub( "moduleOne", eventPublisher );
 	}
 }

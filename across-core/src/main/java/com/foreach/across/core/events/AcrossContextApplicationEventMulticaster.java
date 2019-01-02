@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package com.foreach.across.core.events;
 
-import com.foreach.across.core.annotations.EventName;
 import com.foreach.across.core.context.support.AcrossOrderSpecifier;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -29,12 +27,9 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.ReflectionUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Custom implementation of {@link ApplicationEventMulticaster} for use in a single {@link com.foreach.across.core.AcrossContext}.
@@ -50,8 +45,6 @@ import java.util.stream.Stream;
  * Any {@link EventListener} method will be adjusted to receive a default Across order.
  * When publishing an event the listeners added directly on the context will be be merged with all listeners registered on the modules,
  * and sorted again. This ensures event listeners will be executed in the expected Across module ordering.
- * <p/>
- * This implementation also supports the old {@link EventName} annotation and converts it a to a condition on {@link EventListener}.
  * <p/>
  * NOTE: the current implementation has reduced performance compared to a single multicaster as there is no overall caching.
  *
@@ -119,8 +112,7 @@ public final class AcrossContextApplicationEventMulticaster extends SimpleApplic
 	}
 
 	/**
-	 * Adjust a method adapter: apply module ordering and convert the old {@link com.foreach.across.core.annotations.EventName} annotations
-	 * into a SpEL condition.
+	 * Adjust a method adapter: apply module ordering.
 	 *
 	 * @param listenerMethodAdapter event listener
 	 * @param moduleIndex           to use
@@ -134,23 +126,6 @@ public final class AcrossContextApplicationEventMulticaster extends SimpleApplic
 		                                .build()
 		                                .toPriority();
 		ReflectionUtils.setField( ORDER_FIELD, listenerMethodAdapter, order );
-
-		// convert the old EventName annotation to a custom condition
-		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-		if ( parameterAnnotations.length > 0 ) {
-			for ( Annotation annotation : parameterAnnotations[0] ) {
-				if ( annotation instanceof EventName ) {
-					String condition = StringUtils.defaultString( (String) ReflectionUtils.getField( CONDITION_FIELD, listenerMethodAdapter ) );
-
-					EventName eventNames = (EventName) annotation;
-					String namesCondition = "(" + Stream.of( eventNames.value() )
-					                                    .map( n -> "#p0.eventName == '" + n + "'" )
-					                                    .collect( Collectors.joining( " or " ) ) + ")";
-					condition = condition.isEmpty() ? namesCondition : "(" + condition + ") and " + namesCondition;
-					ReflectionUtils.setField( CONDITION_FIELD, listenerMethodAdapter, condition );
-				}
-			}
-		}
 	}
 
 	private static class ModuleApplicationEventMulticaster extends SimpleApplicationEventMulticaster
