@@ -34,5 +34,12 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:unchecked" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="across-base" options="" />
+      <module name="across-core" options="" />
+      <module name="across-experimental" options="" />
+      <module name="across-test" options="" />
+      <module name="across-web" options="" />
+    </option>
   </component>
 </project>
