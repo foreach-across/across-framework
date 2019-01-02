@@ -71,7 +71,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	public void preflightIsNotAllowedForOtherOrigin() throws Exception {
 		restTemplate.setErrorHandler( new NoOpResponseErrorHandler() );
 		ResponseEntity<String> response = restTemplate.exchange( url( URL ), HttpMethod.OPTIONS,
-		                                                         new HttpEntity( new HttpHeaders()
+		                                                         new HttpEntity<>( new HttpHeaders()
 		                                                         {
 			                                                         {
 				                                                         set( HttpHeaders.ORIGIN, "http://foo.bar" );
@@ -85,7 +85,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	@Test
 	public void preflightAndCorsRequestShouldWork() throws Exception {
 		ResponseEntity<String> response = restTemplate.exchange( url( URL ), HttpMethod.OPTIONS,
-		                                                         new HttpEntity( new HttpHeaders()
+		                                                         new HttpEntity<>( new HttpHeaders()
 		                                                         {
 			                                                         {
 				                                                         set( HttpHeaders.ORIGIN,
@@ -110,7 +110,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	public void preflightAndCorsRequestShouldWorkForGlobalConfig() throws Exception {
 		Long randomLong = RandomUtils.nextLong( 1, 100 );
 		ResponseEntity<String> response = restTemplate.exchange( url( "/cors/global/" + randomLong ),
-		                                                         HttpMethod.OPTIONS, new HttpEntity( new HttpHeaders()
+		                                                         HttpMethod.OPTIONS, new HttpEntity<>( new HttpHeaders()
 				{
 					{
 						set( HttpHeaders.ORIGIN, "http://thirddomain.com" );
@@ -133,7 +133,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	public void corsWorksForResourceHandlers() throws Exception {
 		ResponseEntity<String> response = restTemplate.exchange(
 				url( "/across/resources/js/testResources/javascript.js" ), HttpMethod.OPTIONS,
-				new HttpEntity( new HttpHeaders()
+				new HttpEntity<>( new HttpHeaders()
 				{
 					{
 						set( HttpHeaders.ORIGIN, "http://staticscrossdomain.com" );

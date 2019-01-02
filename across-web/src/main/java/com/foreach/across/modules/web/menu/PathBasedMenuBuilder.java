@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -123,9 +122,6 @@ public class PathBasedMenuBuilder
 	 */
 	private final Deque<Consumer<PathBasedMenuBuilder>> beforeBuildConsumers;
 
-	@Deprecated
-	private final Map<String, String> moves;
-
 	private final MenuItemBuilderProcessor itemProcessor;
 
 	public PathBasedMenuBuilder() {
@@ -143,13 +139,11 @@ public class PathBasedMenuBuilder
 		if ( parent != null ) {
 			rootBuilder = parent.rootBuilder;
 			itemBuilders = parent.itemBuilders;
-			moves = parent.moves;
 			beforeBuildConsumers = parent.beforeBuildConsumers;
 		}
 		else {
 			rootBuilder = new PathBasedMenuItemBuilder( null, this, false );
 			itemBuilders = new ConcurrentSkipListMap<>();
-			moves = new TreeMap<>();
 			beforeBuildConsumers = new ArrayDeque<>();
 		}
 	}
@@ -306,28 +300,6 @@ public class PathBasedMenuBuilder
 		return this;
 	}
 
-	/***
-	 * The existing implementation of this method is quite dubious and unpredictable
-	 * so it will be removed in a future release
-	 * Consider using {@link #changeItemPath(String, String)} instead
-	 */
-	@Deprecated
-	public PathBasedMenuBuilder move( String path, String destinationPath ) {
-		Assert.notNull( path, "A valid path must be specified." );
-		Assert.notNull( destinationPath, "Can't move to null destination path" );
-		moves.put( path, destinationPath );
-		return this;
-	}
-
-	/***
-	 * Support for this method will be dropped in a future release due to deprecation of {@link #move(String, String)}
-	 */
-	@Deprecated
-	public PathBasedMenuBuilder undoMove( String path ) {
-		moves.remove( path );
-		return this;
-	}
-
 	/**
 	 * Remove the item with the specified path from this menu builder. Optionally also removes all other items
 	 * having the specified path as prefix.
@@ -408,21 +380,9 @@ public class PathBasedMenuBuilder
 		Menu root = rootBuilder.build();
 		Menu current = root;
 
-		Map<String, PathBasedMenuItemBuilder> builderMap = itemBuilders;
-
-		if ( !moves.isEmpty() ) {
-			builderMap = new TreeMap<>();
-
-			for ( PathBasedMenuItemBuilder itemBuilder : itemBuilders.values() ) {
-				String newPath = determineActualPath( itemBuilder.path );
-
-				builderMap.put( newPath, itemBuilder );
-			}
-		}
-
 		Map<Menu, String> pathMap = new HashMap<>();
 
-		for ( Map.Entry<String, PathBasedMenuItemBuilder> builderEntry : builderMap.entrySet() ) {
+		for ( Map.Entry<String, PathBasedMenuItemBuilder> builderEntry : itemBuilders.entrySet() ) {
 			String path = builderEntry.getKey();
 			PathBasedMenuItemBuilder itemBuilder = builderEntry.getValue();
 			Menu item = itemBuilder.build();
@@ -500,31 +460,6 @@ public class PathBasedMenuBuilder
 		menu.merge( newMenu, ignoreRoot );
 	}
 
-	@Deprecated
-	private String determineActualPath( String path ) {
-		String prefix = path;
-		String destination = path;
-
-		for ( Map.Entry<String, String> pathEntry : moves.entrySet() ) {
-			if ( StringUtils.startsWith( path, pathEntry.getKey() ) ) {
-				prefix = pathEntry.getKey();
-				destination = pathEntry.getValue();
-			}
-		}
-
-		if ( StringUtils.equals( path, prefix ) ) {
-			return destination;
-		}
-
-		String pathPrefix = StringUtils.removeEnd( prefix, "/" ) + "/";
-
-		if ( StringUtils.startsWith( path, pathPrefix ) ) {
-			return StringUtils.replaceOnce( path, prefix, destination );
-		}
-
-		return path;
-	}
-
 	/**
 	 * Represents a single item builder attached to a parent {@link PathBasedMenuBuilder}.
 	 */
@@ -575,7 +510,7 @@ public class PathBasedMenuBuilder
 		 * If the comparator is inheritable, it will also be used for the sub-menus in the resulting tree,
 		 * unless they have another comparator set explicitly.
 		 * <p/>
-		 * Note that depending on the custom comparator you set, the value of {@link #order(Integer)} might be ignored.
+		 * Note that depending on the custom comparator you set, the value of {@link #order(int)} might be ignored.
 		 *
 		 * @param comparator  to use
 		 * @param inheritable should the comparator also apply to any resulting sub-menus of this item

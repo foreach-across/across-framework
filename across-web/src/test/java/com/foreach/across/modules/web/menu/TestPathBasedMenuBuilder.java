@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
+@SuppressWarnings( "unchecked" )
 public class TestPathBasedMenuBuilder
 {
 	private PathBasedMenuBuilder builder;
@@ -199,72 +200,6 @@ public class TestPathBasedMenuBuilder
 
 		verify( news.getItems().get( 1 ), "/news/national", "National news", "national" );
 		verify( news.getItems().get( 2 ), "/news/nationalAlmost", "Almost national news", "nationalAlmost" );
-	}
-
-	@Test
-	public void movingGeneratesADifferentMenuButKeepsPathIntact() {
-		builder.group( "/users", "User management" ).and()
-		       .item( "/users/roles", "User roles" ).and()
-		       .item( "/users/users", "Users" ).and()
-		       .item( "/loggers", "Loggers" ).and()
-		       .group( "/administration", "Administration" ).and()
-		       .item( "/administration/system-info", "System info" );
-
-		Menu menu = builder.build();
-		assertEquals( 3, menu.size() );
-
-		Menu administration = menu.getItems().get( 0 );
-		verify( administration, "/administration", "Administration", "/administration" );
-		verify( administration.getFirstItem(), "/administration/system-info", "System info",
-		        "/administration/system-info" );
-
-		verify( menu.getItems().get( 1 ), "/loggers", "Loggers", "/loggers" );
-
-		Menu userManagement = menu.getItems().get( 2 );
-		verify( userManagement, "/users", "User management", "/users" );
-		verify( userManagement.getItems().get( 0 ), "/users/roles", "User roles", "/users/roles" );
-		verify( userManagement.getItems().get( 1 ), "/users/users", "Users", "/users/users" );
-
-		builder.move( "/users", "/administration/users" )
-		       .move( "/loggers", "/administration/loggers" );
-
-		// Items should have been moved, but still the same data
-		menu = builder.build();
-		assertEquals( 1, menu.size() );
-
-		administration = menu.getItems().get( 0 );
-		verify( administration, "/administration", "Administration", "/administration" );
-		assertEquals( 3, administration.size() );
-
-		verify( administration.getItems().get( 0 ), "/loggers", "Loggers", "/loggers" );
-
-		verify( administration.getItems().get( 1 ), "/administration/system-info", "System info",
-		        "/administration/system-info" );
-
-		userManagement = administration.getItems().get( 2 );
-		verify( userManagement, "/users", "User management", "/users" );
-		verify( userManagement.getItems().get( 0 ), "/users/roles", "User roles", "/users/roles" );
-		verify( userManagement.getItems().get( 1 ), "/users/users", "Users", "/users/users" );
-
-		// Moving back should be possible, builder itself should not have been modified by previous build
-		builder.undoMove( "/loggers" );
-
-		menu = builder.build();
-		assertEquals( 2, menu.size() );
-
-		administration = menu.getItems().get( 0 );
-		verify( administration, "/administration", "Administration", "/administration" );
-		assertEquals( 2, administration.size() );
-
-		verify( administration.getItems().get( 0 ), "/administration/system-info", "System info",
-		        "/administration/system-info" );
-
-		userManagement = administration.getItems().get( 1 );
-		verify( userManagement, "/users", "User management", "/users" );
-		verify( userManagement.getItems().get( 0 ), "/users/roles", "User roles", "/users/roles" );
-		verify( userManagement.getItems().get( 1 ), "/users/users", "Users", "/users/users" );
-
-		verify( menu.getItems().get( 1 ), "/loggers", "Loggers", "/loggers" );
 	}
 
 	@Test
@@ -580,15 +515,15 @@ public class TestPathBasedMenuBuilder
 		verify( menu.getItems().get( 1 ), "/list/businessDescription", "Business description", "/list/businessDescription" );
 
 		builder.group( "/mybusiness", "My Business" ).and()
-		       .move( "/list/business", "/mybusiness/business" );
+		       .changeItemPath( "/list/business", "/mybusiness/business" );
 
 		menu = builder.build();
 		assertEquals( 2, menu.size() );
 
 		verify( menu.getItems().get( 0 ), "/list/businessDescription", "Business description", "/list/businessDescription" );
 		verify( menu.getItems().get( 1 ), "/mybusiness", "My Business", "/mybusiness" );
-		verify( menu.getItems().get( 1 ).getItems().get( 0 ), "/list/business", "Business", "/list/business" );
-		verify( menu.getItems().get( 1 ).getItems().get( 0 ).getFirstItem(), "/list/business/details", "Details", "/list/business/details" );
+		verify( menu.getItems().get( 1 ).getItems().get( 0 ), "/mybusiness/business", "Business", "/mybusiness/business" );
+		verify( menu.getItems().get( 1 ).getItems().get( 0 ).getFirstItem(), "/mybusiness/business/details", "Details", "/mybusiness/business/details" );
 	}
 
 	@Test
