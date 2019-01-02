@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,19 +51,6 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	public AcrossModule() {
 		registerDefaultApplicationContextConfigurers( applicationContextConfigurers );
 		registerDefaultInstallerContextConfigurers( installerContextConfigurers );
-	}
-
-	/**
-	 * This method is now deprecated as default expose rules are configured in across.configuration instead,
-	 * and the defaults can only be overruled by the module implementing {@link #prepareForBootstrap(ModuleBootstrapConfig, AcrossBootstrapConfig)}.
-	 * The module specific {@link #getExposeFilter()} should only specify additional beans that should be exposed.
-	 *
-	 * @deprecated since 3.0.0 - replaced by across.configuration settings
-	 */
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public static BeanFilter defaultExposeFilter() {
-		return BeanFilter.empty();
 	}
 
 	public AcrossContext getContext() {

@@ -15,10 +15,7 @@
  */
 package com.foreach.across.test;
 
-import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
-import com.foreach.across.core.context.web.AcrossWebApplicationContext;
 import com.foreach.across.test.support.AcrossMockMvcBuilders;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -44,15 +41,6 @@ public class AcrossTestWebContext extends AcrossTestContext
 	private MockMvc mockMvc;
 
 	protected AcrossTestWebContext() {
-	}
-
-	/**
-	 * @param configurers list of configures
-	 * @deprecated use {@link com.foreach.across.test.support.AcrossTestBuilders} instead
-	 */
-	@Deprecated
-	public AcrossTestWebContext( AcrossContextConfigurer... configurers ) {
-		super( configurers );
 	}
 
 	/**
@@ -86,15 +74,5 @@ public class AcrossTestWebContext extends AcrossTestContext
 	@Override
 	protected void setApplicationContext( ConfigurableApplicationContext applicationContext ) {
 		super.setApplicationContext( applicationContext );
-	}
-
-	@Override
-	protected AcrossConfigurableApplicationContext createApplicationContext() {
-		AcrossWebApplicationContext wac = new AcrossWebApplicationContext();
-
-		servletContext = new MockAcrossServletContext();
-		wac.setServletContext( servletContext );
-
-		return wac;
 	}
 }
