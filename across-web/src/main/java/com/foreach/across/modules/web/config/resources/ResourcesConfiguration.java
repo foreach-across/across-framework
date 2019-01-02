@@ -144,9 +144,8 @@ public class ResourcesConfiguration implements WebMvcConfigurer
 	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)
 	@ConditionalOnConfigurableServletContext
 	public FilterRegistrationBean resourceUrlEncodingFilterRegistration() {
-		FilterRegistrationBean registration = new FilterRegistrationBean();
+		FilterRegistrationBean<ResourceUrlEncodingFilter> registration = new FilterRegistrationBean<>( new ResourceUrlEncodingFilter() );
 		registration.setName( RESOURCE_URL_ENCODING_FILTER );
-		registration.setFilter( new ResourceUrlEncodingFilter() );
 		registration.setAsyncSupported( true );
 		registration.setMatchAfter( true );
 		registration.setUrlPatterns( Collections.singletonList( "/*" ) );

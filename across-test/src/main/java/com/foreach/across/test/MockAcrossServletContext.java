@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.*;
  * <p>
  * This implementation can act as a not-initialized {@link ServletContext} that allows for dynamic registration
  * of filters and servlets.  It can be used in an integration test scenario to have any
- * {@link com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer} bean in the
+ * {@link org.springframework.boot.web.servlet.ServletContextInitializer} bean in the
  * {@link com.foreach.across.core.AcrossContext} to execute its configuration.
  * <p>
  * The latter is also the default behaviour when creating a new {@link MockAcrossServletContext}.  Once the context

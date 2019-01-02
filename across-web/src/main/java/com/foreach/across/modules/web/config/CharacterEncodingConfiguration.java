@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,8 @@ public class CharacterEncodingConfiguration
 	@Bean
 	@ConditionalOnConfigurableServletContext
 	public FilterRegistrationBean characterEncodingFilterRegistration( CharacterEncodingFilter characterEncodingFilter ) {
-		FilterRegistrationBean registration = new FilterRegistrationBean();
+		FilterRegistrationBean<CharacterEncodingFilter> registration = new FilterRegistrationBean<>( characterEncodingFilter );
 		registration.setName( FILTER_NAME );
-		registration.setFilter( characterEncodingFilter );
 		registration.setAsyncSupported( true );
 		registration.setMatchAfter( false );
 		registration.setUrlPatterns( Collections.singletonList( "/*" ) );
