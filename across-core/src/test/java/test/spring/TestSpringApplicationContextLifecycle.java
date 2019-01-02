@@ -45,7 +45,7 @@ public class TestSpringApplicationContextLifecycle
 
 		assertNotNull( beanFactory.getSingleton( "myBean" ) );
 
-		parent.destroy();
+		parent.close();
 		assertNull( beanFactory.getSingleton( "myBean" ) );
 	}
 
@@ -62,7 +62,7 @@ public class TestSpringApplicationContextLifecycle
 		assertNotNull( childFactory.getSingleton( "myBean" ) );
 		assertNotSame( parentFactory.getSingleton( "myBean" ), childFactory.getSingleton( "myBean" ) );
 
-		parent.destroy();
+		parent.close();
 		assertNull( parentFactory.getSingleton( "myBean" ) );
 		assertNotNull( childFactory.getSingleton( "myBean" ) );
 	}
@@ -80,7 +80,7 @@ public class TestSpringApplicationContextLifecycle
 		assertNotNull( childFactory.getSingleton( "myBean" ) );
 		assertNotSame( parentFactory.getSingleton( "myBean" ), childFactory.getSingleton( "myBean" ) );
 
-		child.destroy();
+		child.close();
 		assertNotNull( parentFactory.getSingleton( "myBean" ) );
 		assertNull( childFactory.getSingleton( "myBean" ) );
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 
@@ -175,7 +176,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		if ( environment.containsProperty( "across.development.active" ) ) {
 			return environment.getProperty( "across.development.active", Boolean.class, false );
 		}
-		else if ( environment.acceptsProfiles( "dev" ) ) {
+		else if ( environment.acceptsProfiles( Profiles.of( "dev" ) ) ) {
 			LOG.info( "Activating development mode for Across because of 'dev' Spring profile" );
 			return true;
 		}
