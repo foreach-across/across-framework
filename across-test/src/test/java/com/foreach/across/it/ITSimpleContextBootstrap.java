@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.test.AcrossTestWebConfiguration;
+import com.foreach.across.test.AcrossTestConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class ITSimpleContextBootstrap
 		assertTrue( contextInfo.getModuleInfo( AcrossWebModule.NAME ).isBootstrapped() );
 	}
 
-	@AcrossTestWebConfiguration
+	@AcrossTestConfiguration(modules = AcrossWebModule.NAME)
 	static class Config implements AcrossContextConfigurer
 	{
 		@Override
