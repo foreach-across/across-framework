@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
@@ -68,7 +68,7 @@ public class TestCustomConfiguration extends AbstractWebIntegrationTest
 			modules = TestResourcesModule.NAME,
 			modulePackageClasses = { AcrossPlatform.class, TestModules.class }
 	)
-	public static class Config extends WebMvcConfigurerAdapter
+	public static class Config implements WebMvcConfigurer
 	{
 	}
 }

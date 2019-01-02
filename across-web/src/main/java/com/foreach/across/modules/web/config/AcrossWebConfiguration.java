@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.context.annotation.*;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
@@ -58,7 +58,7 @@ import java.util.List;
 @Configuration
 @OrderInModule(1)
 @Import({ JacksonAutoConfiguration.class, GsonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, RestTemplateAutoConfiguration.class })
-class AcrossWebConfiguration extends WebMvcConfigurerAdapter
+class AcrossWebConfiguration implements WebMvcConfigurer
 {
 	@Autowired
 	private PrefixingPathRegistry prefixingPathRegistry;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.springframework.http.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import sun.net.www.protocol.http.HttpURLConnection;
 import test.modules.cors.CorsModule;
 
@@ -145,7 +145,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 
 	@Configuration
 	@EnableAcrossContext(modules = CorsModule.NAME)
-	protected static class Config extends WebMvcConfigurerAdapter
+	protected static class Config implements WebMvcConfigurer
 	{
 	}
 }

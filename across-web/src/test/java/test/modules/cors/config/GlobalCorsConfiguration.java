@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@ package test.modules.cors.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author Marc Vanbrabant
  */
 @Configuration
-public class GlobalCorsConfiguration extends WebMvcConfigurerAdapter
+public class GlobalCorsConfiguration implements WebMvcConfigurer
 {
 	@Override
 	public void addCorsMappings( CorsRegistry registry ) {

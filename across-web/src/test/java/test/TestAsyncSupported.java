@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.context.request.async.CallableProcessingInterceptor;
 import org.springframework.web.context.request.async.DeferredResultProcessingInterceptor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import test.modules.async.AsyncModule;
 
 import java.util.UUID;
@@ -84,7 +84,7 @@ public class TestAsyncSupported extends AbstractWebIntegrationTest
 
 	@Configuration
 	@EnableAcrossContext(modules = AsyncModule.NAME)
-	protected static class Config extends WebMvcConfigurerAdapter
+	protected static class Config implements WebMvcConfigurer
 	{
 		@Bean
 		public AsyncTaskExecutor spyTaskExecutor() {

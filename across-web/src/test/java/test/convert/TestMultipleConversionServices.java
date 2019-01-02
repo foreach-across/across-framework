@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.text.ParseException;
 import java.util.Locale;
@@ -106,7 +106,7 @@ public class TestMultipleConversionServices
 
 	@EnableAcrossContext
 	@Configuration
-	protected static class Config extends WebMvcConfigurerAdapter implements AcrossContextConfigurer
+	protected static class Config implements WebMvcConfigurer, AcrossContextConfigurer
 	{
 		@Bean
 		public FormattingConversionService otherConversionService() {

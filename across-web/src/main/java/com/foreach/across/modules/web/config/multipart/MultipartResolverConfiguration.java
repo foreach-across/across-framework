@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.PathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartResolver;
@@ -153,7 +153,7 @@ public class MultipartResolverConfiguration
 		multipartResolver.setResolveLazily( multipartProperties.isResolveLazily() );
 
 		try {
-			multipartResolver.setUploadTempDir( new PathResource( multipartConfig.getLocation() ) );
+			multipartResolver.setUploadTempDir( new FileSystemResource( multipartConfig.getLocation() ) );
 		}
 		catch ( IOException ioe ) {
 			throw new ServletException( "Illegal location for multipart uploads: " + multipartConfig.getLocation() );
