@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -122,9 +121,7 @@ public class ResourcesConfiguration implements WebMvcConfigurer
 		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
 
 		if ( resourceUrlProviderExposingInterceptor != null && resourceUrlProvider != null ) {
-			resourceHandlerMapping.setInterceptors(
-					new HandlerInterceptor[] { resourceUrlProviderExposingInterceptor }
-			);
+			resourceHandlerMapping.setInterceptors( resourceUrlProviderExposingInterceptor );
 		}
 		resourceHandlerMapping.setCorsConfigurations( corsConfigurations );
 		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );

@@ -127,9 +127,8 @@ public class MultipartResolverConfiguration
 
 		MultipartFilter multipartFilter = new AcrossMultipartFilter( multipartResolver );
 
-		FilterRegistrationBean registration = new FilterRegistrationBean();
+		FilterRegistrationBean<MultipartFilter> registration = new FilterRegistrationBean<>( multipartFilter );
 		registration.setName( FILTER_NAME );
-		registration.setFilter( multipartFilter );
 		registration.setAsyncSupported( true );
 		registration.setMatchAfter( false );
 		registration.setUrlPatterns( Collections.singletonList( "/*" ) );
