@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package test.installers;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
@@ -202,19 +201,19 @@ public class TestInstallerConditionals
 	{
 	}
 
-	@AcrossCondition("${illegal.value:false}")
+	@ConditionalOnExpression("${illegal.value:false}")
 	@Installer(description = "Should not be registered as condition evaluates to false.")
 	static class InvalidConditionInstaller extends BaseInstaller
 	{
 	}
 
-	@AcrossCondition("${active.value:false}")
+	@ConditionalOnExpression("${active.value:false}")
 	@Installer(description = "Should be registered as condition evaluates to true.")
 	static class ValidConditionInstaller extends BaseInstaller
 	{
 	}
 
-	@AcrossCondition("currentModule.name == 'InstallerConditionsModule'")
+	@ConditionalOnExpression("@'across.currentModule'.name == 'InstallerConditionsModule'")
 	@Installer(description = "Should be registered as condition evaluates to true.")
 	static class OtherValidConditionInstaller extends BaseInstaller
 	{
