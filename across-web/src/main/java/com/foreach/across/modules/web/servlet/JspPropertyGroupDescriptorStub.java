@@ -21,7 +21,7 @@ import java.util.Collections;
 
 /**
  * This is a stub implementation for the {@link javax.servlet.descriptor.JspPropertyGroupDescriptor} from the servlet 3.0 spec.
- * This simplifies configuring your own jsp-property-group in servlet configurationby providing sane defaults.
+ * This simplifies configuring your own jsp-property-group in servlet configuration by providing sane defaults.
  *
  * @author niels
  * @since 23/10/2014
