@@ -38,7 +38,7 @@ import java.lang.reflect.Constructor;
  * @author Arne Vandamme
  * @since 5.0.0
  */
-@SuppressWarnings( "unused" )
+@SuppressWarnings("unused")
 public class AcrossApplicationRunner extends SpringApplication
 {
 	public AcrossApplicationRunner( Class<?>... primarySources ) {
@@ -57,7 +57,8 @@ public class AcrossApplicationRunner extends SpringApplication
 
 		// create a new instance using the custom bean factory instead
 		Constructor<? extends ConfigurableApplicationContext> constructor = actualClass.getConstructor( DefaultListableBeanFactory.class );
-		Assert.notNull( constructor, "no constructor for DefaultListableBeanFactory" );
+		Assert.notNull( constructor,
+		                "no constructor for DefaultListableBeanFactory - unable to use the specified ApplicationContext class with AcrossApplicationRunner" );
 
 		return constructor.newInstance( new AcrossListableBeanFactory() );
 	}
