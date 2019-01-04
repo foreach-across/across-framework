@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,17 @@
  */
 package test;
 
-import com.foreach.across.config.AcrossWebApplicationAutoConfiguration;
+import com.foreach.across.config.AcrossServletContextInitializer;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
@@ -28,6 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import java.io.IOException;
 
@@ -39,7 +45,7 @@ import java.io.IOException;
  * @author Arne Vandamme
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = AcrossWebApplicationAutoConfiguration.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = AbstractWebIntegrationTest.AcrossWebApplicationConfiguration.class)
 public abstract class AbstractWebIntegrationTest
 {
 	@Autowired
@@ -81,6 +87,16 @@ public abstract class AbstractWebIntegrationTest
 		}
 
 		public void handleError( ClientHttpResponse response ) throws IOException {
+		}
+	}
+
+	@Configuration
+	@Import({ DispatcherServletAutoConfiguration.class, ServletWebServerFactoryAutoConfiguration.class })
+	static class AcrossWebApplicationConfiguration
+	{
+		@Bean
+		public static AcrossServletContextInitializer embeddedAcrossServletContextInitializer( ConfigurableWebApplicationContext webApplicationContext ) {
+			return new AcrossServletContextInitializer( webApplicationContext );
 		}
 	}
 }
