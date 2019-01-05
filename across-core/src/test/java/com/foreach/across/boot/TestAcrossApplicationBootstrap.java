@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class TestAcrossApplicationBootstrap
 
 	@Test
 	public void infrastructureModuleShouldBeAdded() {
-		assertEquals( 1, contextInfo.getModuleIndex( "SampleInfrastructureModule" ) );
+		assertEquals( 2, contextInfo.getModuleIndex( "SampleInfrastructureModule" ) );
 		assertEquals( "sampleInfrastructure", contextInfo.getModuleInfo( "SampleInfrastructureModule" )
 		                                                 .getResourcesKey() );
 		assertTrue( contextInfo.getModuleInfo( "SampleInfrastructureModule" )
@@ -82,7 +82,7 @@ public class TestAcrossApplicationBootstrap
 
 	@Test
 	public void applicationModuleShouldBeAdded() {
-		assertEquals( 2, contextInfo.getModuleIndex( "SampleApplicationModule" ) );
+		assertEquals( 3, contextInfo.getModuleIndex( "SampleApplicationModule" ) );
 		assertEquals( "sample", contextInfo.getModuleInfo( "SampleApplicationModule" ).getResourcesKey() );
 		assertTrue( contextInfo.getModuleInfo( "SampleApplicationModule" )
 		                       .getModule() instanceof DynamicAcrossModule );
@@ -93,7 +93,7 @@ public class TestAcrossApplicationBootstrap
 
 	@Test
 	public void postProcessorModuleShouldBeAddedButScanned() {
-		assertEquals( 3, contextInfo.getModuleIndex( "SamplePostProcessorModule" ) );
+		assertEquals( 4, contextInfo.getModuleIndex( "SamplePostProcessorModule" ) );
 		assertEquals( "SamplePostProcessorModule", contextInfo.getModuleInfo( "SamplePostProcessorModule" )
 		                                                      .getResourcesKey() );
 		assertTrue( contextInfo.getModuleInfo( "SamplePostProcessorModule" )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionEvaluationRepor
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
@@ -70,6 +71,9 @@ import org.springframework.web.context.WebApplicationContext;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Stream;
+
+import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE;
+import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE;
 
 /**
  * Takes care of bootstrapping an entire across context.
@@ -467,28 +471,35 @@ public class AcrossBootstrapper
 		Collection<AcrossModuleInfo> configured = new LinkedList<>();
 
 		int row = 1;
+
+		AcrossContextConfigurationModule infrastructureModule = new AcrossContextConfigurationModule( CONTEXT_INFRASTRUCTURE_MODULE );
+		infrastructureModule.setOrder( Ordered.HIGHEST_PRECEDENCE + 1000 );
+		ConfigurableAcrossModuleInfo moduleInfo = new ConfigurableAcrossModuleInfo( contextInfo, infrastructureModule, row++ );
+		moduleInfo.setModuleRole( AcrossModuleRole.INFRASTRUCTURE );
+		moduleInfo.setOrderInModuleRole( infrastructureModule.getOrder() );
+
+		configured.add( moduleInfo );
+
 		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
-			ConfigurableAcrossModuleInfo moduleInfo = new ConfigurableAcrossModuleInfo( contextInfo, module, row++ );
-			configured.add( moduleInfo );
+			configured.add( new ConfigurableAcrossModuleInfo( contextInfo, module, row++ ) );
 		}
 
-		configured.add(
-				new ConfigurableAcrossModuleInfo( contextInfo, new AcrossContextConfigurationModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ),
-				                                  row )
-		);
+		AcrossContextConfigurationModule postProcessorModule = new AcrossContextConfigurationModule( CONTEXT_POSTPROCESSOR_MODULE );
+		postProcessorModule.setOrder( Ordered.LOWEST_PRECEDENCE - 1000 );
+		moduleInfo = new ConfigurableAcrossModuleInfo( contextInfo, postProcessorModule, row );
+		moduleInfo.setModuleRole( AcrossModuleRole.POSTPROCESSOR );
+		moduleInfo.setOrderInModuleRole( postProcessorModule.getOrder() );
+		configured.add( moduleInfo );
 
 		contextInfo.setConfiguredModules( configured );
 
 		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
-			ConfigurableAcrossModuleInfo moduleInfo = contextInfo.getConfigurableModuleInfo( module.getName() );
+			moduleInfo = contextInfo.getConfigurableModuleInfo( module.getName() );
 
-			moduleInfo.setRequiredDependencies(
-					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( module ),
-					                     contextInfo ) );
-			moduleInfo.setOptionalDependencies(
-					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredOptionalDependencies( module ),
-					                     contextInfo ) );
+			moduleInfo.setRequiredDependencies( convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( module ), contextInfo ) );
+			moduleInfo.setOptionalDependencies( convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredOptionalDependencies( module ), contextInfo ) );
 			moduleInfo.setModuleRole( moduleBootstrapOrderBuilder.getModuleRole( module ) );
+			moduleInfo.setOrderInModuleRole( moduleBootstrapOrderBuilder.getOrderInRole( module ) );
 		}
 
 		return contextInfo;

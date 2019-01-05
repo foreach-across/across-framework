@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,10 +70,11 @@ public class TestAcrossTestConfiguration
 
 	@Test
 	public void modulesShouldBePresent() {
-		assertEquals( 3, contextInfo.getModules().size() );
+		assertEquals( 4, contextInfo.getModules().size() );
 		assertTrue( contextInfo.hasModule( AcrossWebModule.NAME ) );
 		assertTrue( contextInfo.hasModule( "named" ) );
 		assertTrue( contextInfo.hasModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ) );
+		assertTrue( contextInfo.hasModule( AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE ) );
 	}
 
 	@Test

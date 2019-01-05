@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,8 @@ public class TestEventHandlersFromParent
 	@Test
 	public void eventsShouldHaveBeenIntercepted() {
 		assertEquals(
-				Arrays.asList( "before:named", "after:named", "before:AcrossContextPostProcessorModule", "bootstrapped" ),
+				Arrays.asList( "before:AcrossContextInfrastructureModule", "before:named", "after:named", "before:AcrossContextPostProcessorModule",
+				               "bootstrapped" ),
 				config.eventsReceived
 		);
 	}

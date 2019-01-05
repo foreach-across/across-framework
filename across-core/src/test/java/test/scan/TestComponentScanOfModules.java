@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package test.scan;
 
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
-import test.scan.packageOne.ValidModule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,7 @@ public class TestComponentScanOfModules
 	@Test
 	public void moduleShouldBeScanned() {
 		assertTrue( contextInfo.isBootstrapped() );
-		assertEquals( 2, contextInfo.getModules().size() );
+		assertEquals( 3, contextInfo.getModules().size() );
 		assertTrue( contextInfo.hasModule( "someName" ) );
 	}
 

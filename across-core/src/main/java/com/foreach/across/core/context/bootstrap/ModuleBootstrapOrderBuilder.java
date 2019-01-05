@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -197,8 +197,7 @@ public class ModuleBootstrapOrderBuilder
 			AcrossModule module = orderedModules.get( i );
 
 			if ( getModuleRole( moduleToMove ) == getModuleRole( module ) ) {
-				if ( getRoleOrder( module ) < getRoleOrder( moduleToMove )
-						|| getOrderInRole( module ) < getOrderInRole( moduleToMove ) ) {
+				if ( getRoleOrder( module ) < getRoleOrder( moduleToMove ) || getOrderInRole( module ) < getOrderInRole( moduleToMove ) ) {
 					index = Math.max( i, index );
 				}
 			}
@@ -403,7 +402,7 @@ public class ModuleBootstrapOrderBuilder
 		}
 	}
 
-	private int getOrderInRole( AcrossModule module ) {
+	public int getOrderInRole( AcrossModule module ) {
 		if ( module instanceof Ordered ) {
 			return ( (Ordered) module ).getOrder();
 		}
