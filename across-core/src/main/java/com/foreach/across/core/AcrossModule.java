@@ -81,6 +81,21 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	}
 
 	/**
+	 * Returns an array of module names for which this module is an extension.
+	 * Any non-empty array will effectively turn this module descriptor into a module extension.
+	 * <p/>
+	 * If more than one module name is specified, the first one present will be extended.
+	 * <p/>
+	 * Specifying extension targets does not impact dependencies, if the target of the extension
+	 * is required, than it should also be specified using {@link com.foreach.across.core.annotations.AcrossDepends}.
+	 *
+	 * @return array of module names
+	 */
+	public String[] getExtensionTargets() {
+		return new String[0];
+	}
+
+	/**
 	 * @return The filter that beans should match to exposed to other modules in the AcrossContext.
 	 */
 	public BeanFilter getExposeFilter() {
@@ -315,7 +330,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 
 	/**
 	 * The collection of packages that should be scanned for module configurations.
-	 * Defaults to the "config" and "extension" packages relative to the package of the implementing class.
+	 * Defaults to the "extensionq" packages relative to the package of the implementing class.
 	 *
 	 * @return Array of package names.
 	 */
@@ -354,14 +369,20 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	/**
 	 * Called after all modules have been installed and - depending on the registration order in the context -
 	 * previous modules have been bootstrapped already.
+	 *
+	 * @deprecated since 5.0.0 - no longer called
 	 */
+	@Deprecated
 	public void bootstrap() {
 	}
 
 	/**
 	 * Called in case of a context shutdown.  Modules registered after this one in the context will have
 	 * been shutdown already.
+	 *
+	 * @deprecated since 5.0.0 - no longer called
 	 */
+	@Deprecated
 	public void shutdown() {
 	}
 
