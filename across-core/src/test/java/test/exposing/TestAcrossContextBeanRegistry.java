@@ -18,11 +18,11 @@ package test.exposing;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
-import com.foreach.across.database.support.HikariDataSourceHelper;
-import org.apache.commons.lang3.StringUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -76,13 +76,13 @@ public class TestAcrossContextBeanRegistry
 	public static class Config
 	{
 		@Bean
-		public DataSource acrossDataSource() throws Exception {
-			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
-			                                      StringUtils.EMPTY );
+		public DataSource acrossDataSource() {
+			return DataSourceBuilder.create().driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).type( HikariDataSource.class )
+			                        .url( "jdbc:hsqldb:mem:acrossTest" ).username( "sa" ).build();
 		}
 
 		@Bean
-		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
 			context.setInstallerAction( InstallerAction.DISABLED );

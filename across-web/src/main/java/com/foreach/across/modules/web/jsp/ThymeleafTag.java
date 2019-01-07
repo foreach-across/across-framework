@@ -143,7 +143,7 @@ public class ThymeleafTag extends BodyTagSupport
 			}
 		}
 
-		viewTemplateEngine.process( templateName, markupSelectors, context, response.getWriter() );
+		viewTemplateEngine.process( templateName, markupSelectors, context, writer );
 	}
 
 	protected WebExpressionContext getWebExpressionContext( HttpServletRequest request,
