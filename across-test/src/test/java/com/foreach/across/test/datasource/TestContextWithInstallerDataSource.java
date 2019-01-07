@@ -23,12 +23,12 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
 import com.foreach.across.core.installers.InstallerRunCondition;
-import com.foreach.across.database.support.HikariDataSourceHelper;
-import org.apache.commons.lang3.StringUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -91,14 +91,14 @@ public class TestContextWithInstallerDataSource
 	{
 		@Bean(name = { "acrossDataSource", "mockDataSource" })
 		public DataSource acrossDataSource() {
-			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
-			                                      StringUtils.EMPTY );
+			return DataSourceBuilder.create().driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).type( HikariDataSource.class )
+			                        .url( "jdbc:hsqldb:mem:acrossTest" ).username( "sa" ).build();
 		}
 
 		@Bean
 		public DataSource acrossInstallerDataSource() {
-			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
-			                                      StringUtils.EMPTY );
+			return DataSourceBuilder.create().driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).type( HikariDataSource.class )
+			                        .url( "jdbc:hsqldb:mem:acrossTest" ).username( "sa" ).build();
 		}
 
 		@Override

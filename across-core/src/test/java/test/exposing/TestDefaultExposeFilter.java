@@ -19,13 +19,12 @@ package test.exposing;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.installers.InstallerAction;
-import com.foreach.across.database.support.HikariDataSourceHelper;
-import test.modules.exposing.*;
-import org.apache.commons.lang3.StringUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import test.modules.exposing.*;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -118,13 +118,13 @@ public class TestDefaultExposeFilter
 	public static class Config
 	{
 		@Bean
-		public DataSource acrossDataSource() throws Exception {
-			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
-			                                      StringUtils.EMPTY );
+		public DataSource acrossDataSource() {
+			return DataSourceBuilder.create().driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).type( HikariDataSource.class )
+			                        .url( "jdbc:hsqldb:mem:acrossTest" ).username( "sa" ).build();
 		}
 
 		@Bean
-		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
 			context.setInstallerAction( InstallerAction.DISABLED );

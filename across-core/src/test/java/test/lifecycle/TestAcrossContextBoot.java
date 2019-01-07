@@ -18,20 +18,14 @@ package test.lifecycle;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
-import com.foreach.across.database.support.HikariDataSourceHelper;
-import test.modules.TestContextEventListener;
-import test.modules.TestEvent;
-import test.modules.module1.*;
-import test.modules.module2.ConstructedBeanModule2;
-import test.modules.module2.ScannedBeanModule2;
-import test.modules.module2.TestModule2;
-import org.apache.commons.lang3.StringUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +33,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import test.modules.TestContextEventListener;
+import test.modules.TestEvent;
+import test.modules.module1.*;
+import test.modules.module2.ConstructedBeanModule2;
+import test.modules.module2.ScannedBeanModule2;
+import test.modules.module2.TestModule2;
 
 import javax.sql.DataSource;
 
@@ -216,14 +216,14 @@ public class TestAcrossContextBoot
 		}
 
 		@Bean
-		public DataSource acrossDataSource() throws Exception {
-			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
-			                                      StringUtils.EMPTY );
+		public DataSource acrossDataSource() {
+			return DataSourceBuilder.create().driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).type( HikariDataSource.class )
+			                        .url( "jdbc:hsqldb:mem:acrossTest" ).username( "sa" ).build();
 		}
 
 		@Bean
 		@Autowired
-		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
 			ScannedBeanModule1.CONSTRUCTION_COUNTER.set( 0 );
 			ScannedBeanModule2.CONSTRUCTION_COUNTER.set( 0 );
 
