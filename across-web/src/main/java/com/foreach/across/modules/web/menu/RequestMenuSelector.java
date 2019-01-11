@@ -23,8 +23,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 
 /**
  * Will search a menu for the item that best matches with the requested url.
@@ -48,9 +50,6 @@ public class RequestMenuSelector implements MenuSelector
 
 	private final LookupPath absoluteLookup;
 	private final LookupPath relativeLookup;
-
-	private int maxScore = 0;
-	private Menu itemFound = null;
 
 	public RequestMenuSelector( HttpServletRequest request ) {
 		UriComponents uriComponents = ServletUriComponentsBuilder.fromRequest( request ).build();
@@ -96,33 +95,30 @@ public class RequestMenuSelector implements MenuSelector
 	}
 
 	public synchronized Menu find( Menu menu ) {
-		maxScore = LookupPath.NO_MATCH;
-		itemFound = null;
+		int maxScore = LookupPath.NO_MATCH;
+		Menu itemFound = null;
+		Deque<Menu> queue = new ArrayDeque<>();
+		queue.add( menu );
 
-		scoreMenu( menu );
+		while ( !queue.isEmpty() ) {
+			Menu item = queue.pop();
+
+			int score = calculateScore( item );
+
+			if ( score == LookupPath.EXACT_MATCH ) {
+				maxScore = score;
+				itemFound = item;
+				queue.clear();
+			}
+			else if ( score >= maxScore ) {
+				maxScore = score;
+				itemFound = item;
+			}
+
+			queue.addAll( item.getItems() );
+		}
 
 		return itemFound;
-	}
-
-	private void scoreMenu( Menu menu ) {
-		if ( maxScore == LookupPath.EXACT_MATCH ) {
-			return;
-		}
-
-		int score = calculateScore( menu );
-
-		if ( score == LookupPath.EXACT_MATCH ) {
-			maxScore = score;
-			itemFound = menu;
-			return;
-		}
-
-		if ( score > maxScore ) {
-			maxScore = score;
-			itemFound = menu;
-		}
-
-		menu.getItems().forEach( this::scoreMenu );
 	}
 
 	private int calculateScore( Menu menu ) {
@@ -202,7 +198,9 @@ public class RequestMenuSelector implements MenuSelector
 					}
 				}
 
-				if ( matchingQueryParams > 0 && matchingQueryParams == queryParameters.length && StringUtils.equals( fragment, other.fragment ) ) {
+				if ( matchingQueryParams == queryParameters.length
+						&& queryParameters.length == other.queryParameters.length
+						&& StringUtils.equals( fragment, other.fragment ) ) {
 					score = EXACT_MATCH;
 				}
 				else {
