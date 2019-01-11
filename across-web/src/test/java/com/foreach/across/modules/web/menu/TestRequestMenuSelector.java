@@ -61,7 +61,8 @@ public class TestRequestMenuSelector
 	@Test
 	public void pathScoring() {
 		assertThat( LookupPath.parse( "/one" ).calculateScore( LookupPath.parse( "/two" ) ) ).isEqualTo( LookupPath.NO_MATCH );
-		assertThat( LookupPath.parse( "/one" ).calculateScore( LookupPath.parse( "/one" ) ) ).isEqualTo( LookupPath.PATH_EQUALS );
+		assertThat( LookupPath.parse( "/one" ).calculateScore( LookupPath.parse( "/one" ) ) ).isEqualTo( LookupPath.EXACT_MATCH );
+		assertThat( LookupPath.parse( "/one" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) ).isEqualTo( LookupPath.PATH_EQUALS );
 		assertThat( LookupPath.parse( "/one?x=y" ).calculateScore( LookupPath.parse( "/one" ) ) ).isEqualTo( LookupPath.PATH_EQUALS );
 		assertThat( LookupPath.parse( "/one?x=y" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) ).isEqualTo( LookupPath.EXACT_MATCH );
 		assertThat( LookupPath.parse( "/one/two" ).calculateScore( LookupPath.parse( "/one" ) ) ).isEqualTo( LookupPath.PATH_STARTS_WITH + 4 );
@@ -144,6 +145,31 @@ public class TestRequestMenuSelector
 
 		Menu selected = selector.find( menu );
 		assertEquals( "/entities/sectorRepresentative", selected.getPath() );
+	}
+
+	@Test
+	public void lowestGetsSelected() {
+		Menu menu = new Menu( "/entities", "Entities" );
+		menu.addItem( "/entities/sector", "Sector" )
+		    .addItem( "/entities/sector/child", "Sector child", "/entities/sector" );
+
+		RequestMenuSelector selector = new RequestMenuSelector(
+				"http://localhost:8103/entities/sector",
+				"/entities/sector",
+				"/entities/sector?from=goback"
+		);
+
+		Menu selected = selector.find( menu );
+		assertEquals( "/entities/sector/child", selected.getPath() );
+
+		selector = new RequestMenuSelector(
+				"http://localhost:8103/entities/sector",
+				"/entities/sector",
+				"/entities/sector"
+		);
+
+		selected = selector.find( menu );
+		assertEquals( "/entities/sector/child", selected.getPath() );
 	}
 
 	@Test
