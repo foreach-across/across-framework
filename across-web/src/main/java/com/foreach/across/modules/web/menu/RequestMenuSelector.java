@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.web.menu;
 
+import lombok.Getter;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
@@ -23,7 +25,6 @@ import org.springframework.web.util.UriComponents;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Will search a menu for the item that best matches with the requested url.
@@ -41,9 +42,13 @@ public class RequestMenuSelector implements MenuSelector
 	 * Value should be a collection of strings.
 	 */
 	public static final String ATTRIBUTE_MATCHERS = RequestMenuSelector.class.getCanonicalName() + ".MATCHERS";
-	private final String fullUrl;
+
 	private final String servletPath;
 	private final String servletPathWithQueryString;
+
+	private final LookupPath absoluteLookup;
+	private final LookupPath relativeLookup;
+
 	private int maxScore = 0;
 	private Menu itemFound = null;
 
@@ -58,8 +63,14 @@ public class RequestMenuSelector implements MenuSelector
 			pathWithQueryString += "?" + qs;
 		}
 
-		fullUrl = url;
+		if ( !StringUtils.isBlank( uriComponents.getFragment() ) ) {
+			pathWithQueryString += "#" + uriComponents.getFragment();
+		}
+
 		servletPathWithQueryString = pathWithQueryString;
+
+		absoluteLookup = LookupPath.parse( url );
+		relativeLookup = LookupPath.parse( servletPathWithQueryString );
 	}
 
 	/**
@@ -68,9 +79,11 @@ public class RequestMenuSelector implements MenuSelector
 	 * @param servletPathWithQueryString Path within the application including the querystring.
 	 */
 	public RequestMenuSelector( String fullUrl, String servletPath, String servletPathWithQueryString ) {
-		this.fullUrl = fullUrl;
 		this.servletPath = servletPath;
 		this.servletPathWithQueryString = servletPathWithQueryString;
+
+		absoluteLookup = LookupPath.parse( fullUrl );
+		relativeLookup = LookupPath.parse( servletPathWithQueryString );
 	}
 
 	private String stripContextPath( HttpServletRequest request, String path ) {
@@ -83,26 +96,36 @@ public class RequestMenuSelector implements MenuSelector
 	}
 
 	public synchronized Menu find( Menu menu ) {
-		maxScore = 0;
+		maxScore = LookupPath.NO_MATCH;
 		itemFound = null;
 
-		scoreItems( menu );
+		scoreMenu( menu );
 
 		return itemFound;
 	}
 
-	private void scoreItems( Menu menu ) {
-		score( menu );
-		for ( Menu item : menu.getItems() ) {
-			scoreItems( item );
+	private void scoreMenu( Menu menu ) {
+		if ( maxScore == LookupPath.EXACT_MATCH ) {
+			return;
 		}
+
+		int score = calculateScore( menu );
+
+		if ( score == LookupPath.EXACT_MATCH ) {
+			maxScore = score;
+			itemFound = menu;
+			return;
+		}
+
+		if ( score > maxScore ) {
+			maxScore = score;
+			itemFound = menu;
+		}
+
+		menu.getItems().forEach( this::scoreMenu );
 	}
 
-	private void score( Menu menu ) {
-		int calculated = 0;
-
-		AtomicInteger score = new AtomicInteger( calculated );
-
+	private int calculateScore( Menu menu ) {
 		Collection<String> stringsToMatch = new ArrayList<>( 3 );
 		if ( menu.hasUrl() ) {
 			stringsToMatch.add( menu.getUrl() );
@@ -113,34 +136,106 @@ public class RequestMenuSelector implements MenuSelector
 
 		Collection<String> additionalStringsToMatch = menu.getAttribute( ATTRIBUTE_MATCHERS );
 
+		int itemScore = LookupPath.NO_MATCH;
+
 		if ( additionalStringsToMatch != null ) {
 			stringsToMatch.addAll( additionalStringsToMatch );
 		}
 
 		for ( String stringToMatch : stringsToMatch ) {
-			match( fullUrl, stringToMatch, 9, 7, score );
-			match( servletPathWithQueryString, stringToMatch, 9, 7, score );
-			match( servletPath, stringToMatch, 8, 6, score );
+			LookupPath path = LookupPath.parse( stringToMatch );
+
+			int absoluteScore = absoluteLookup.calculateScore( path );
+
+			if ( absoluteScore == LookupPath.EXACT_MATCH ) {
+				return absoluteScore;
+			}
+
+			int relativeScore = relativeLookup.calculateScore( path );
+
+			itemScore = Math.max( itemScore, Math.max( absoluteScore, relativeScore ) );
 		}
 
-		calculated = score.intValue();
-
-		if ( calculated > 0 ) {
-			calculated += ( menu.getLevel() + 1000000 ) * 10;
-		}
-
-		if ( calculated > maxScore ) {
-			maxScore = calculated;
-			itemFound = menu;
-		}
+		return itemScore;
 	}
 
-	private void match( String url, String pathToTest, int equalsScore, int startsWithScore, AtomicInteger total ) {
-		if ( StringUtils.equals( url, pathToTest ) && total.intValue() < equalsScore ) {
-			total.set( equalsScore * 1000 );
+	@Getter
+	static class LookupPath
+	{
+		static final int NO_MATCH = 0;
+		static final int EXACT_MATCH = Integer.MAX_VALUE;
+
+		static final int PATH_EQUALS = 20000;
+		static final int PATH_STARTS_WITH = 10000;
+		static final int QUERY_PARAM_MATCH = 10;
+
+		private String path;
+		private String fragment = "";
+		private String[] queryParameters = new String[0];
+
+		/**
+		 * Calculate a score for how much the current matches another path.
+		 * - not matching the 'path' itself gives a score of 0
+		 * - matching the 'path' exactly gives a score of 20000
+		 * - matching the path partially gives a score of 10000
+		 * - every 'query parameter' match adds 10
+		 * - if all query parameters match as well as the fragment, this is an exact match
+		 *
+		 * @param other path to match against
+		 * @return score
+		 */
+		int calculateScore( LookupPath other ) {
+			int score = NO_MATCH;
+
+			if ( StringUtils.equals( path, other.path ) ) {
+				score = PATH_EQUALS;
+			}
+			else if ( StringUtils.startsWith( path, other.path + "/" ) ) {
+				score = PATH_STARTS_WITH + other.path.length();
+			}
+
+			if ( score == PATH_EQUALS ) {
+				int matchingQueryParams = 0;
+				for ( String queryParameter : other.getQueryParameters() ) {
+					if ( ArrayUtils.contains( queryParameters, queryParameter ) ) {
+						matchingQueryParams++;
+					}
+				}
+
+				if ( matchingQueryParams > 0 && matchingQueryParams == queryParameters.length && StringUtils.equals( fragment, other.fragment ) ) {
+					score = EXACT_MATCH;
+				}
+				else {
+					score += matchingQueryParams * QUERY_PARAM_MATCH;
+				}
+			}
+
+			return score;
 		}
-		else if ( StringUtils.startsWith( url, pathToTest ) && total.intValue() < startsWithScore ) {
-			total.set( startsWithScore * 1000 + pathToTest.length() );
+
+		static LookupPath parse( String url ) {
+			LookupPath lookup = new LookupPath();
+
+			String[] urlWithFragment = StringUtils.split( url, "#" );
+
+			if ( urlWithFragment != null && urlWithFragment.length > 0 ) {
+				String[] pathAndQueryString = StringUtils.split( urlWithFragment[0], "?" );
+
+				lookup.path = pathAndQueryString[0];
+
+				if ( pathAndQueryString.length > 1 ) {
+					lookup.queryParameters = StringUtils.split( pathAndQueryString[1], "&" );
+				}
+
+				if ( urlWithFragment.length > 1 ) {
+					lookup.fragment = urlWithFragment[1];
+				}
+			}
+			else {
+				lookup.path = "";
+			}
+
+			return lookup;
 		}
 	}
 }
