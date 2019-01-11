@@ -28,6 +28,10 @@ import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * @deprecated use {@link org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder} or Spring Boot datasource properties
+ */
+@Deprecated
 public final class HikariDataSourceHelper
 {
 	private static final String DATASOURCES_PREFIX = "datasources.";

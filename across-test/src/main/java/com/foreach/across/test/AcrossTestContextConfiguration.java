@@ -20,10 +20,10 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.database.DatabaseInfo;
 import com.foreach.across.core.installers.InstallerAction;
-import com.foreach.across.database.support.HikariDataSourceHelper;
 import com.zaxxer.hikari.HikariDataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -69,14 +69,19 @@ public class AcrossTestContextConfiguration implements EnvironmentAware
 		System.out.println( "Creating Across test datasource with profile: " + dsName );
 
 		if ( StringUtils.equals( "auto", dsName ) ) {
-			dataSource = HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:/hsql-mem/ax-" + UUID.randomUUID().toString(), "sa",
-			                                            StringUtils.EMPTY );
+			dataSource = (HikariDataSource) DataSourceBuilder.create().type( HikariDataSource.class )
+			                                                 .driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).url(
+							"jdbc:hsqldb:mem:/hsql-mem/ax-" + UUID.randomUUID().toString() ).username( "sa" ).build();
 		}
 		else {
-			dataSource = HikariDataSourceHelper.create( environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".driver" ),
-			                                            environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".url" ),
-			                                            environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".username" ),
-			                                            environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".password" ) );
+			dataSource = (HikariDataSource) DataSourceBuilder.create()
+			                                                 .type( HikariDataSource.class )
+			                                                 .driverClassName(
+					                                                 environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".driver" ) )
+			                                                 .url( environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".url" ) )
+			                                                 .username( environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".username" ) )
+			                                                 .password( environment.getRequiredProperty( "acrossTest.datasource." + dsName + ".password" ) )
+			                                                 .build();
 			if ( dataSource.getJdbcUrl().startsWith( "jdbc:jtds:" ) ) {
 				// jtds is not JDBC 4.0 compliant
 				dataSource.setConnectionTestQuery( "select 1" );

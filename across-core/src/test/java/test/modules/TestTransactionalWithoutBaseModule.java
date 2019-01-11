@@ -19,14 +19,7 @@ package test.modules;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
-import com.foreach.across.database.support.HikariDataSourceHelper;
-import test.modules.hibernate1.Hibernate1Module;
-import test.modules.hibernate1.Product;
-import test.modules.hibernate1.ProductRepository;
-import test.modules.hibernate2.Hibernate2Module;
-import test.modules.hibernate2.User;
-import test.modules.hibernate2.UserRepository;
-import org.apache.commons.lang3.StringUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.After;
@@ -34,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -160,13 +154,13 @@ public class TestTransactionalWithoutBaseModule
 	static class Config
 	{
 		@Bean
-		public DataSource dataSource() throws Exception {
-			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrosscore", "sa",
-			                                      StringUtils.EMPTY );
+		public DataSource dataSource() {
+			return DataSourceBuilder.create().driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).type( HikariDataSource.class )
+			                        .url( "jdbc:hsqldb:mem:acrosscore" ).username( "sa" ).build();
 		}
 
 		@Bean
-		public LocalSessionFactoryBean sessionFactory() throws Exception {
+		public LocalSessionFactoryBean sessionFactory() {
 			LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 			sessionFactory.setDataSource( dataSource() );
 			sessionFactory.setPackagesToScan( "test.modules.hibernate1",

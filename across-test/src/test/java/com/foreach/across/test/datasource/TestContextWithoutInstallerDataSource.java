@@ -17,11 +17,11 @@ package com.foreach.across.test.datasource;
 
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.database.support.HikariDataSourceHelper;
-import org.apache.commons.lang3.StringUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -60,8 +60,8 @@ public class TestContextWithoutInstallerDataSource
 	{
 		@Bean
 		public DataSource acrossDataSource() {
-			return HikariDataSourceHelper.create( "org.hsqldb.jdbc.JDBCDriver", "jdbc:hsqldb:mem:acrossTest", "sa",
-			                                      StringUtils.EMPTY );
+			return DataSourceBuilder.create().driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).type( HikariDataSource.class )
+			                        .url( "jdbc:hsqldb:mem:acrossTest" ).username( "sa" ).build();
 		}
 	}
 }

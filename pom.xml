@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>3.1.1.RELEASE</version>
+	<version>3.1.2.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -47,9 +47,9 @@
 	</developers>
 
 	<properties>
-		<across.version>3.1.1.RELEASE</across.version>
+		<across.version>3.1.2.RELEASE</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.platform.version>Brussels-SR14</spring.platform.version>
+		<spring.platform.version>Brussels-SR15</spring.platform.version>
 		<foreach.common.version>1.1</foreach.common.version>
 		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 		<thymeleaf-extras.springsecurity4.version>3.0.4.RELEASE</thymeleaf-extras.springsecurity4.version>
