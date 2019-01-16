@@ -106,7 +106,7 @@ public class AcrossTestContext extends DefaultAcrossContextBeanRegistry implemen
 	public void close() {
 		acrossContext.shutdown();
 		if ( applicationContext != null ) {
-			applicationContext.stop();
+			applicationContext.close();
 		}
 	}
 
