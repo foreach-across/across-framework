@@ -21,17 +21,17 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Sorts a collection of {@link AcrossModuleBootstrapConfiguration} instances, based on module role, order in role and module dependencies.
+ * Sorts a collection of {@link AcrossModuleDescriptor} instances, based on module role, order in role and module dependencies.
  *
  * @author Arne Vandamme
  * @since 5.0.0
  */
 @RequiredArgsConstructor
-class AcrossModuleBootstrapConfigurationSorter
+class AcrossModuleDescriptorSorter
 {
-	private final Collection<AcrossModuleBootstrapConfiguration> configurations;
+	private final Collection<AcrossModuleDescriptor> descriptors;
 
-	Collection<AcrossModuleBootstrapConfiguration> getConfigurationsInOrder() {
+	Collection<AcrossModuleDescriptor> getDescriptorsInOrder() {
 		// split in groups according to module role
 		// ensure that required dependencies are in the same group
 		// sort groups according to order in role

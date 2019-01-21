@@ -36,6 +36,7 @@ import java.util.*;
  * modules have a cyclic dependency and are impossible to bootstrap (very bad - impossible to fix).
  */
 @SuppressWarnings("all")
+@Deprecated
 public class ModuleBootstrapOrderBuilder
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ModuleBootstrapOrderBuilder.class );

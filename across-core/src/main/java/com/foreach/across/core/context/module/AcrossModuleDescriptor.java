@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @Builder(toBuilder = true)
 @EqualsAndHashCode
 @Getter
-public final class AcrossModuleDescriptor
+public class AcrossModuleDescriptor
 {
 	/**
 	 * The (usually unique) name of the module.
@@ -170,6 +170,10 @@ public final class AcrossModuleDescriptor
 	 */
 	public boolean isExtensionModule() {
 		return !extensionTargets.isEmpty();
+	}
+
+	AcrossModuleDependencySorter.DependencySpec asDependencySpec() {
+		return null;
 	}
 
 	/**
