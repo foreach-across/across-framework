@@ -21,9 +21,7 @@
  * @since 5.0.0
  */
 @NonNullApi
-@NonNullFields
 package com.foreach.across.core.context.module;
 
 import org.springframework.lang.NonNullApi;
-import org.springframework.lang.NonNullFields;
 

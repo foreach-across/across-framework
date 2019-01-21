@@ -15,12 +15,14 @@
  */
 package com.foreach.across.core.context.module;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.filters.BeanFilter;
+import com.foreach.across.core.installers.InstallerReference;
+import com.foreach.across.core.installers.InstallerSettings;
+import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * Represents the actual configuration that will be used to bootstrap a module.
@@ -29,15 +31,103 @@ import java.util.Collection;
  * @author Arne Vandamme
  * @since 5.0.0
  */
+@Setter
+@Getter
+@EqualsAndHashCode
 @RequiredArgsConstructor
 public class AcrossModuleBootstrapConfiguration implements MutableAcrossModuleConfiguration
 {
+	/**
+	 * Original {@link AcrossModuleDescriptor} that this configuration was derived from.
+	 */
 	@NonNull
-	@Getter
 	private final AcrossModuleDescriptor moduleDescriptor;
 
+	/**
+	 * Extensions that have been applied.
+	 */
 	@Getter
 	private final Collection<AcrossModuleConfiguration> extensions = new ArrayList<>();
+
+	/**
+	 * Collection of {@link ApplicationContextConfigurer} instances that should be loaded in the
+	 * {@link org.springframework.context.ApplicationContext} of this module.
+	 */
+	private final Collection<ApplicationContextConfigurer> applicationContextConfigurers = new LinkedHashSet<>();
+
+	/**
+	 * Collection of package names that should be scanned
+	 * for {@link com.foreach.across.core.annotations.Installer} annotated classes.
+	 */
+	private final Collection<String> installerScanPackages = new LinkedHashSet<>();
+
+	private InstallerSettings installerSettings;
+
+	/**
+	 * Collection of {@link ApplicationContextConfigurer} that should be loaded in the
+	 * installer {@link org.springframework.context.ApplicationContext} of this module.
+	 */
+	private final Collection<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
+
+	/**
+	 * Collection of package names that should be scanned for {@link com.foreach.across.core.annotations.ModuleConfiguration} annotated classes.
+	 */
+	private final Collection<String> moduleConfigurationScanPackages = new LinkedHashSet<>();
+
+	/**
+	 * Initial properties attached to this module.
+	 */
+	private final Map<String, Object> properties = new LinkedHashMap<>();
+
+	/**
+	 * Names of the modules that are required dependencies and must be present in the context.
+	 */
+	private final Collection<String> requiredModules = new LinkedHashSet<>();
+
+	/**
+	 * Names of the modules that are optional dependencies.
+	 */
+	private final Collection<String> optionalModules = new LinkedHashSet<>();
+
+	/**
+	 * List of installers that should be considered for execution during the bootstrapping of this module.
+	 */
+	private final Collection<InstallerReference> installers = new LinkedHashSet<>();
+
+	private BeanFilter exposeFilter;
+
+	private ExposedBeanDefinitionTransformer exposeTransformer;
+
+	/**
+	 *
+	 */
+	private final Set<String> excludedAnnotatedClasses = new LinkedHashSet<>();
+
+	@Getter
+	@Setter
+	@NonNull
+	private Set<String> configurationsToImport = new LinkedHashSet<>();
+
+	/**
+	 * Installer settings for this module.
+	 */
+	public Optional<InstallerSettings> getInstallerSettings() {
+		return Optional.ofNullable( installerSettings );
+	}
+
+	/**
+	 * Custom filter that should be used to determine which beans should be exposed.
+	 */
+	public Optional<BeanFilter> getExposeFilter() {
+		return Optional.ofNullable( exposeFilter );
+	}
+
+	/**
+	 * Transformer that should be applied to all beans that are exposed.
+	 */
+	public Optional<ExposedBeanDefinitionTransformer> getExposeTransformer() {
+		return Optional.ofNullable( exposeTransformer );
+	}
 
 	@Override
 	public void extendWith( @NonNull AcrossModuleConfiguration configuration ) {
