@@ -24,6 +24,20 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * Implements the sorting logic for Across modules. Sorting is done according to the following rules:
+ * <ol>
+ * <li>module role</li>
+ * <li>order in module role</li>
+ * <li>optional dependencies</li>
+ * <li>required dependencies</li>
+ * </ol>
+ * Sorting is done in stages, to reach the most consistent ordering possible (eg: optional dependencies
+ * are used as much as possible, and module role/order is also kept as much as possible, if required
+ * dependencies do not explicitly impact is.
+ * <p/>
+ * This class is internal to the framework, called via {@link #sort(Collection, Function)}.
+ * The inner class {@link DependencySpec} is used as container for all dependency specifications.
+ *
  * @author Arne Vandamme
  * @since 5.0.0
  */
@@ -36,7 +50,7 @@ class AcrossModuleDependencySorter
 	private Map<String, DependencySpec> specsByName;
 	private LinkedList<DependencySpec> sorted;
 
-	public Collection<DependencySpec> sort() {
+	Collection<DependencySpec> sort() {
 		specsByName = new HashMap<>();
 		dependencySpecs.forEach( spec -> spec.getNames().forEach( n -> specsByName.put( n, spec ) ) );
 
@@ -79,6 +93,14 @@ class AcrossModuleDependencySorter
 				);
 	}
 
+	/**
+	 * Sort a collection of objects according to their Across module dependency specifications.
+	 *
+	 * @param targets objects to sort
+	 * @param dependencySpecResolver resolver to fetch a {@link DependencySpec} for a single object
+	 * @param <U> object type
+	 * @return original targets collection in resulting order
+	 */
 	public static <U> Collection<U> sort( @NonNull Collection<U> targets, @NonNull Function<U, DependencySpec> dependencySpecResolver ) {
 		Map<DependencySpec, U> map = new LinkedHashMap<>();
 		targets.forEach( target -> map.put( dependencySpecResolver.apply( target ), target ) );
@@ -90,6 +112,9 @@ class AcrossModuleDependencySorter
 				.collect( Collectors.toList() );
 	}
 
+	/**
+	 * Represents the different dependency and sorting related parameters.
+	 */
 	@Builder
 	@Getter
 	@EqualsAndHashCode
