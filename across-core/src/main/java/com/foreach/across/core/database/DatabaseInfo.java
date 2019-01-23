@@ -50,6 +50,10 @@ public class DatabaseInfo
 		return StringUtils.containsIgnoreCase( productName, "HSQL" );
 	}
 
+	public boolean isH2() {
+		return StringUtils.containsIgnoreCase( productName, "H2" );
+	}
+
 	public boolean isMySQL() {
 		return StringUtils.containsIgnoreCase( productName, "MySQL" );
 	}
@@ -60,6 +64,10 @@ public class DatabaseInfo
 
 	public boolean isOracle() {
 		return StringUtils.containsIgnoreCase( productName, "Oracle" );
+	}
+
+	public boolean isPostgres() {
+		return StringUtils.containsIgnoreCase( productName, "PostgreSQL" );
 	}
 
 	public static DatabaseInfo retrieve( DataSource dataSource ) {
