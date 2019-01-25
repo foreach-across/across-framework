@@ -178,6 +178,7 @@ public class RequestMenuSelector implements MenuSelector
 		 * - matching the path partially gives a score of 10000
 		 * - every 'query parameter' match adds 10
 		 * - if all query parameters match as well as the fragment, this is an exact match
+		 * - query parameters are only taken into account if the path matches exactly
 		 *
 		 * @param other path to match against
 		 * @return score
