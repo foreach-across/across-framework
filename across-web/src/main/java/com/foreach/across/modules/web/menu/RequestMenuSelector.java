@@ -105,14 +105,16 @@ public class RequestMenuSelector implements MenuSelector
 
 			int score = calculateScore( item );
 
-			if ( score == LookupPath.EXACT_MATCH ) {
-				maxScore = score;
-				itemFound = item;
-				queue.clear();
-			}
-			else if ( score >= maxScore ) {
-				maxScore = score;
-				itemFound = item;
+			if ( score > LookupPath.NO_MATCH ) {
+				if ( score == LookupPath.EXACT_MATCH ) {
+					maxScore = score;
+					itemFound = item;
+					queue.clear();
+				}
+				else if ( score >= maxScore ) {
+					maxScore = score;
+					itemFound = item;
+				}
 			}
 
 			queue.addAll( item.getItems() );
@@ -185,12 +187,7 @@ public class RequestMenuSelector implements MenuSelector
 
 			if ( StringUtils.equals( path, other.path ) ) {
 				score = PATH_EQUALS;
-			}
-			else if ( StringUtils.startsWith( path, other.path + "/" ) ) {
-				score = PATH_STARTS_WITH + other.path.length();
-			}
 
-			if ( score == PATH_EQUALS ) {
 				int matchingQueryParams = 0;
 				for ( String queryParameter : other.getQueryParameters() ) {
 					if ( ArrayUtils.contains( queryParameters, queryParameter ) ) {
@@ -198,14 +195,20 @@ public class RequestMenuSelector implements MenuSelector
 					}
 				}
 
-				if ( matchingQueryParams == queryParameters.length
-						&& queryParameters.length == other.queryParameters.length
-						&& StringUtils.equals( fragment, other.fragment ) ) {
-					score = EXACT_MATCH;
+				if ( other.queryParameters.length > 0 && matchingQueryParams != other.queryParameters.length ) {
+					score = NO_MATCH;
 				}
-				else {
-					score += matchingQueryParams * QUERY_PARAM_MATCH;
+				else if ( matchingQueryParams == other.queryParameters.length ) {
+					if ( queryParameters.length == other.queryParameters.length ) {
+						score = EXACT_MATCH;
+					}
+					else {
+						score += matchingQueryParams * QUERY_PARAM_MATCH;
+					}
 				}
+			}
+			else if ( StringUtils.startsWith( path, other.path + "/" ) && other.queryParameters.length == 0 ) {
+				score = PATH_STARTS_WITH + other.path.length();
 			}
 
 			return score;
