@@ -17,14 +17,15 @@ package com.foreach.across.core.context.module;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * @author Arne Vandamme
  * @since 5.0.0
  */
+@Slf4j
 @Accessors(fluent = true, chain = true)
 public class AcrossModuleBootstrapConfigurationSetBuilder
 {
@@ -39,15 +40,57 @@ public class AcrossModuleBootstrapConfigurationSetBuilder
 	 * This will convert the descriptors to configuration instances, order and merge the extensions together.
 	 * Extensions will also be added in relative order.
 	 * <p/>
-	 * The result is the exact list of module configurations that should be
+	 * The result is the exact list of module configurations that should be bootstrapped.
 	 *
 	 * @return final
 	 */
 	public Collection<AcrossModuleBootstrapConfiguration> getConfigurationsInOrder() {
-		// convert descriptors to configuration
-		// sort the configurations
-		// merge the extensions
-		// sort the remaining configurations again
-		return Collections.emptyList();
+		// do an initial sort on the module descriptors
+		Collection<AcrossModuleDescriptor> descriptors = AcrossModuleDependencySorter.sort( moduleDescriptors, AcrossModuleDescriptor::asDependencySpec );
+
+		// build module configurations, merge in the extensions
+		Collection<AcrossModuleBootstrapConfiguration> configurations = buildMergedConfigurations( descriptors );
+
+		// sort the remaining configurations, modified dependencies have changed
+		return AcrossModuleDependencySorter.sort( configurations, AcrossModuleBootstrapConfiguration::asDependencySpec );
+	}
+
+	private Collection<AcrossModuleBootstrapConfiguration> buildMergedConfigurations( Collection<AcrossModuleDescriptor> descriptors ) {
+		Map<String, AcrossModuleBootstrapConfiguration> configurationsByName = new HashMap<>();
+		Set<AcrossModuleBootstrapConfiguration> configurations = new HashSet<>();
+
+		descriptors.stream()
+		           .map( AcrossModuleBootstrapConfiguration::from )
+		           .forEach( configuration -> {
+			           configurations.add( configuration );
+
+			           AcrossModuleDescriptor moduleDescriptor = configuration.getModuleDescriptor();
+			           configurationsByName.put( moduleDescriptor.getModuleName(), configuration );
+			           moduleDescriptor.getModuleNameAliases().forEach( alias -> configurationsByName.put( alias, configuration ) );
+		           } );
+
+		for ( Iterator<AcrossModuleBootstrapConfiguration> it = configurations.iterator(); it.hasNext(); ) {
+			AcrossModuleBootstrapConfiguration configuration = it.next();
+			AcrossModuleDescriptor moduleDescriptor = configuration.getModuleDescriptor();
+
+			if ( moduleDescriptor.isExtensionModule() ) {
+				it.remove();
+
+				Optional<AcrossModuleBootstrapConfiguration> target = moduleDescriptor.getExtensionTargets()
+				                                                                      .stream()
+				                                                                      .map( configurationsByName::get )
+				                                                                      .filter( Objects::nonNull )
+				                                                                      .findFirst();
+				if ( !target.isPresent() ) {
+					LOG.warn( "Ignoring module {} as none of the target modules were present, expected one of: {}",
+					          moduleDescriptor.getModuleName(), moduleDescriptor.getExtensionTargets() );
+				}
+				else {
+					target.get().extendWith( configuration );
+				}
+			}
+		}
+
+		return configurations;
 	}
 }

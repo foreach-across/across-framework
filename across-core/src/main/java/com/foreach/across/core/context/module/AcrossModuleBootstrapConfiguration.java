@@ -129,8 +129,16 @@ public class AcrossModuleBootstrapConfiguration implements MutableAcrossModuleCo
 		return Optional.ofNullable( exposeTransformer );
 	}
 
+	AcrossModuleDependencySorter.DependencySpec asDependencySpec() {
+		return null;
+	}
+
 	@Override
 	public void extendWith( @NonNull AcrossModuleConfiguration configuration ) {
 		extensions.add( configuration );
+	}
+
+	public static AcrossModuleBootstrapConfiguration from( AcrossModuleDescriptor descriptor ) {
+		return null;
 	}
 }

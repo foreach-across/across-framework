@@ -55,6 +55,14 @@ public class AcrossModuleDescriptor
 	private final String moduleName;
 
 	/**
+	 * An optional list of aliases that this module serves for.
+	 * Can be used to take the identity of multiple other modules.
+	 */
+	@NonNull
+	@Singular
+	private final Collection<String> moduleNameAliases;
+
+	/**
 	 * The resources key for the module.
 	 */
 	@NonNull
@@ -72,7 +80,7 @@ public class AcrossModuleDescriptor
 
 	/**
 	 * Collection of {@link ApplicationContextConfigurer} that should be loaded in the
-	 * {@link org.springframework.context.ApplicationContext} of this module.
+	 * {@code org.springframework.context.ApplicationContext} of this module.
 	 */
 	@Singular
 	private final Collection<ApplicationContextConfigurer> applicationContextConfigurers;
@@ -88,7 +96,7 @@ public class AcrossModuleDescriptor
 
 	/**
 	 * Collection of {@link ApplicationContextConfigurer} that should be loaded in the
-	 * installer {@link org.springframework.context.ApplicationContext} of this module.
+	 * installer {@code org.springframework.context.ApplicationContext} of this module.
 	 */
 	@Singular
 	private final Collection<ApplicationContextConfigurer> installerContextConfigurers;
