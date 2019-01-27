@@ -62,6 +62,9 @@ class TestAcrossModuleDescriptor
 		                                                          .resourcesKey( "defaultModule" )
 		                                                          .build();
 
+		assertThat( descriptor.getModuleName() ).isEqualTo( "defaultModule" );
+		assertThat( descriptor.getResourcesKey() ).isEqualTo( "defaultModule" );
+		assertThat( descriptor.getModuleNameAliases() ).isEmpty();
 		assertThat( descriptor.isExtensionModule() ).isFalse();
 		assertThat( descriptor.getExtensionTargets() ).isEmpty();
 		assertThat( descriptor.getApplicationContextConfigurers() ).isEmpty();
@@ -84,30 +87,72 @@ class TestAcrossModuleDescriptor
 	@Test
 	@DisplayName("using builder")
 	void builder() {
-		assertDescriptorProperties(
-				AcrossModuleDescriptor
-						.builder()
-						.moduleName( "myModule" )
-						.resourcesKey( "myModuleResources" )
-						.applicationContextConfigurer( appConfigurer )
-						.installerContextConfigurer( installerConfigurer )
-						.installerScanPackage( MyModule.class.getPackage().getName() + ".installers" )
-						.moduleConfigurationScanPackage( MyModule.class.getPackage().getName() + ".extensions" )
-						.installerSettings( installerSettings )
-						.requiredModule( "One" )
-						.optionalModule( "Two" )
-						.optionalModule( "Three" )
-						.moduleRole( AcrossModuleRole.INFRASTRUCTURE )
-						.orderInModuleRole( 1000 )
-						.exposeFilter( exposeFilter )
-						.exposeTransformer( exposeTransformer )
-						.versionInfo( versionInfo )
-						.property( "one", 1 )
-						.installer( InstallerReference.from( "SomeClassName" ) )
-						.installer( InstallerReference.from( ExtensionModule.class ) )
-						.installer( InstallerReference.from( 10 ) )
-						.build()
-		);
+		AcrossModuleDescriptor descriptor = AcrossModuleDescriptor
+				.builder()
+				.moduleName( "myModule" )
+				.moduleNameAlias( "aliasOne" )
+				.moduleNameAlias( "aliasTwo" )
+				.resourcesKey( "myModuleResources" )
+				.applicationContextConfigurer( appConfigurer )
+				.installerContextConfigurer( installerConfigurer )
+				.installerScanPackage( MyModule.class.getPackage().getName() + ".installers" )
+				.moduleConfigurationScanPackage( MyModule.class.getPackage().getName() + ".extensions" )
+				.installerSettings( installerSettings )
+				.requiredModule( "One" )
+				.optionalModule( "Two" )
+				.optionalModule( "Three" )
+				.moduleRole( AcrossModuleRole.INFRASTRUCTURE )
+				.orderInModuleRole( 1000 )
+				.exposeFilter( exposeFilter )
+				.exposeTransformer( exposeTransformer )
+				.versionInfo( versionInfo )
+				.property( "one", 1 )
+				.installer( InstallerReference.from( "SomeClassName" ) )
+				.installer( InstallerReference.from( ExtensionModule.class ) )
+				.installer( InstallerReference.from( 10 ) )
+				.build();
+
+		assertDescriptorProperties( descriptor );
+		assertThat( descriptor.getModuleNameAliases() ).containsExactly( "aliasOne", "aliasTwo" );
+	}
+
+	@Test
+	@DisplayName("to dependency spec")
+	void asDependencySpec() {
+		AcrossModuleDependencySorter.DependencySpec dependencySpec = AcrossModuleDescriptor
+				.builder()
+				.moduleName( "myModule" )
+				.resourcesKey( "res" )
+				.build()
+				.toDependencySpec();
+
+		assertThat( dependencySpec ).isNotNull();
+		assertThat( dependencySpec.getNames() ).containsExactly( "myModule" );
+		assertThat( dependencySpec.getRequiredDependencies() ).isEmpty();
+		assertThat( dependencySpec.getOptionalDependencies() ).isEmpty();
+		assertThat( dependencySpec.getOrderInRole() ).isEqualTo( 0 );
+		assertThat( dependencySpec.getRole() ).isEqualTo( AcrossModuleRole.APPLICATION );
+
+		dependencySpec = AcrossModuleDescriptor
+				.builder()
+				.moduleName( "myModule" )
+				.resourcesKey( "res" )
+				.moduleNameAlias( "aliasOne" )
+				.moduleNameAlias( "aliasTwo" )
+				.requiredModule( "One" )
+				.optionalModule( "Two" )
+				.optionalModule( "Three" )
+				.moduleRole( AcrossModuleRole.INFRASTRUCTURE )
+				.orderInModuleRole( 1000 )
+				.build()
+				.toDependencySpec();
+
+		assertThat( dependencySpec ).isNotNull();
+		assertThat( dependencySpec.getNames() ).containsExactly( "myModule", "aliasOne", "aliasTwo" );
+		assertThat( dependencySpec.getRequiredDependencies() ).containsExactly( "One" );
+		assertThat( dependencySpec.getOptionalDependencies() ).containsExactly( "Two", "Three" );
+		assertThat( dependencySpec.getOrderInRole() ).isEqualTo( 1000 );
+		assertThat( dependencySpec.getRole() ).isEqualTo( AcrossModuleRole.INFRASTRUCTURE );
 	}
 
 	@Test

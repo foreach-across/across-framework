@@ -31,5 +31,5 @@ public interface MutableAcrossModuleConfiguration extends AcrossModuleConfigurat
 	 *
 	 * @param configuration to extend the current configuration with
 	 */
-	void extendWith( @NonNull AcrossModuleConfiguration configuration );
+	MutableAcrossModuleConfiguration addExtension( @NonNull AcrossModuleConfiguration configuration );
 }

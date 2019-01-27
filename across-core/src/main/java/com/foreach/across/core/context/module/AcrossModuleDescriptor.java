@@ -21,6 +21,7 @@ import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.module.AcrossModuleDependencySorter.DependencySpec;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerReference;
 import com.foreach.across.core.installers.InstallerSettings;
@@ -180,8 +181,15 @@ public class AcrossModuleDescriptor
 		return !extensionTargets.isEmpty();
 	}
 
-	AcrossModuleDependencySorter.DependencySpec asDependencySpec() {
-		return null;
+	DependencySpec toDependencySpec() {
+		return DependencySpec.builder()
+		                     .name( getModuleName() )
+		                     .names( getModuleNameAliases() )
+		                     .requiredDependencies( getRequiredModules() )
+		                     .optionalDependencies( getOptionalModules() )
+		                     .role( getModuleRole() )
+		                     .orderInRole( getOrderInModuleRole() )
+		                     .build();
 	}
 
 	/**

@@ -221,12 +221,12 @@ class TestAcrossModuleDependencySorter
 	@Test
 	@DisplayName("dependencySpecResolver function")
 	void simpleSort( @Mock AcrossModuleDescriptor moduleOne, @Mock AcrossModuleDescriptor moduleTwo ) {
-		when( moduleOne.asDependencySpec() ).thenReturn( builder().name( "one" ).role( AcrossModuleRole.APPLICATION ).orderInRole( 0 ).build() );
-		when( moduleTwo.asDependencySpec() ).thenReturn( builder().name( "two" ).role( AcrossModuleRole.APPLICATION ).orderInRole( 0 )
+		when( moduleOne.toDependencySpec() ).thenReturn( builder().name( "one" ).role( AcrossModuleRole.APPLICATION ).orderInRole( 0 ).build() );
+		when( moduleTwo.toDependencySpec() ).thenReturn( builder().name( "two" ).role( AcrossModuleRole.APPLICATION ).orderInRole( 0 )
 		                                                          .requiredDependency( "one" ).build() );
 
 		Collection<AcrossModuleDescriptor> descriptors
-				= AcrossModuleDependencySorter.sort( Arrays.asList( moduleTwo, moduleOne ), AcrossModuleDescriptor::asDependencySpec );
+				= AcrossModuleDependencySorter.sort( Arrays.asList( moduleTwo, moduleOne ), AcrossModuleDescriptor::toDependencySpec );
 		assertThat( descriptors ).isEqualTo( Arrays.asList( moduleOne, moduleTwo ) );
 	}
 

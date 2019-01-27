@@ -46,13 +46,13 @@ public class AcrossModuleBootstrapConfigurationSetBuilder
 	 */
 	public Collection<AcrossModuleBootstrapConfiguration> getConfigurationsInOrder() {
 		// do an initial sort on the module descriptors
-		Collection<AcrossModuleDescriptor> descriptors = AcrossModuleDependencySorter.sort( moduleDescriptors, AcrossModuleDescriptor::asDependencySpec );
+		Collection<AcrossModuleDescriptor> descriptors = AcrossModuleDependencySorter.sort( moduleDescriptors, AcrossModuleDescriptor::toDependencySpec );
 
 		// build module configurations, merge in the extensions
 		Collection<AcrossModuleBootstrapConfiguration> configurations = buildMergedConfigurations( descriptors );
 
 		// sort the remaining configurations, modified dependencies have changed
-		return AcrossModuleDependencySorter.sort( configurations, AcrossModuleBootstrapConfiguration::asDependencySpec );
+		return AcrossModuleDependencySorter.sort( configurations, AcrossModuleBootstrapConfiguration::toDependencySpec );
 	}
 
 	private Collection<AcrossModuleBootstrapConfiguration> buildMergedConfigurations( Collection<AcrossModuleDescriptor> descriptors ) {
@@ -86,7 +86,7 @@ public class AcrossModuleBootstrapConfigurationSetBuilder
 					          moduleDescriptor.getModuleName(), moduleDescriptor.getExtensionTargets() );
 				}
 				else {
-					target.get().extendWith( configuration );
+					target.get().addExtension( configuration );
 				}
 			}
 		}
