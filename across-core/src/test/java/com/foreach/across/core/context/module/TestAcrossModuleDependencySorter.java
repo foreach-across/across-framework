@@ -76,10 +76,10 @@ class TestAcrossModuleDependencySorter
 	@DisplayName("initial order is kept if no dependencies")
 	void registrationOrder() {
 		DependencySpec a = spec().name( "a" ).build();
-		DependencySpec b = spec().name( "b" ).optionalDependency( "c" ).build();
-		DependencySpec c = spec().name( "c" ).optionalDependency( "b" ).build();
+		DependencySpec b = spec().name( "b" ).build();
+		DependencySpec c = spec().name( "c" ).build();
 
-		new AcrossModuleDependencySorter( Arrays.asList( a, b, c ) ).verifyNoCyclicDependencies();
+		assertSorted( Arrays.asList( a, b, c ), Arrays.asList( a, b, c ) );
 	}
 
 	@Test
@@ -93,7 +93,11 @@ class TestAcrossModuleDependencySorter
 	@Test
 	@DisplayName("Optional cyclic dependency is ignored")
 	void optionalCyclicDependency() {
+		DependencySpec a = spec().name( "a" ).build();
+		DependencySpec b = spec().name( "b" ).optionalDependency( "c" ).build();
+		DependencySpec c = spec().name( "c" ).optionalDependency( "b" ).build();
 
+		new AcrossModuleDependencySorter( Arrays.asList( a, b, c ) ).verifyNoCyclicDependencies();
 	}
 
 	@Test
