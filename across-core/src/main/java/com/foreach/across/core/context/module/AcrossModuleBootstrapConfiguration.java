@@ -360,7 +360,13 @@ public class AcrossModuleBootstrapConfiguration implements MutableAcrossModuleCo
 		return this;
 	}
 
-	public static AcrossModuleBootstrapConfiguration from( @NonNull AcrossModuleDescriptor descriptor ) {
+	/**
+	 * Convert a module descriptor into an equivalent (modifiable) configuration.
+	 *
+	 * @param descriptor original module descriptor
+	 * @return configuration
+	 */
+	static AcrossModuleBootstrapConfiguration from( @NonNull AcrossModuleDescriptor descriptor ) {
 		return new AcrossModuleBootstrapConfiguration( descriptor )
 				.addApplicationContextConfigurers( descriptor.getApplicationContextConfigurers() )
 				.addInstallerContextConfigurers( descriptor.getInstallerContextConfigurers() )

@@ -37,6 +37,7 @@ import static org.mockito.Mockito.*;
  * @author Arne Vandamme
  * @since 3.0.0
  */
+@DisplayName( "Module descriptor set building" )
 @ExtendWith(MockitoExtension.class)
 class TestAcrossModuleDescriptorSetBuilder
 {

@@ -16,7 +16,9 @@
 package com.foreach.across.core.context.module;
 
 import com.foreach.across.core.context.AcrossModuleRole;
+import com.foreach.across.core.context.bootstrap.CyclicModuleDependencyException;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
@@ -42,20 +44,44 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @NotThreadSafe
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+@Slf4j
 class AcrossModuleDependencySorter
 {
-	private final Collection<DependencySpec> dependencySpecs;
+	private final Map<String, DependencySpec> specsByName = new HashMap<>();
+	private final LinkedList<DependencySpec> sorted;
 
-	private Map<String, DependencySpec> specsByName;
-	private LinkedList<DependencySpec> sorted;
+	AcrossModuleDependencySorter( Collection<DependencySpec> dependencySpecs ) {
+		sorted = new LinkedList<>( dependencySpecs );
+		dependencySpecs.forEach( spec -> spec.getNames().forEach( n -> specsByName.put( n, spec ) ) );
+	}
+
+	AcrossModuleDependencySorter verifyNoCyclicDependencies() {
+		sorted.forEach( spec -> {
+			Set<String> handled = new HashSet<>( spec.getNames() );
+			verifyDependencies( handled, spec );
+		} );
+		return this;
+	}
+
+	private void verifyDependencies( Set<String> modulesHandled, DependencySpec spec ) {
+		spec.getRequiredDependencies()
+		    .stream()
+		    .map( specsByName::get )
+		    .forEach( dep -> {
+			    dep.getRequiredDependencies().forEach( next -> {
+				    if ( modulesHandled.contains( next ) ) {
+					    LOG.error( "Unable to bootstrap, cyclic module dependencies detected: unable for module {} to depend back on {} (dependency name: {})",
+					               spec.getNames(), specsByName.get( next ).getNames(), next );
+					    throw new CyclicModuleDependencyException( next );
+				    }
+			    } );
+
+			    modulesHandled.addAll( dep.getRequiredDependencies() );
+			    verifyDependencies( modulesHandled, dep );
+		    } );
+	}
 
 	Collection<DependencySpec> sort() {
-		specsByName = new HashMap<>();
-		dependencySpecs.forEach( spec -> spec.getNames().forEach( n -> specsByName.put( n, spec ) ) );
-
-		sorted = new LinkedList<>( dependencySpecs );
-
 		// sort according to module role and order in role
 		sorted.sort( Comparator.comparingLong( DependencySpec::getModulePriority ) );
 
@@ -95,10 +121,11 @@ class AcrossModuleDependencySorter
 
 	/**
 	 * Sort a collection of objects according to their Across module dependency specifications.
+	 * This will also verify that there are no cyclic dependencies in the required dependencies collection.
 	 *
-	 * @param targets objects to sort
+	 * @param targets                objects to sort
 	 * @param dependencySpecResolver resolver to fetch a {@link DependencySpec} for a single object
-	 * @param <U> object type
+	 * @param <U>                    object type
 	 * @return original targets collection in resulting order
 	 */
 	public static <U> Collection<U> sort( @NonNull Collection<U> targets, @NonNull Function<U, DependencySpec> dependencySpecResolver ) {
@@ -106,6 +133,7 @@ class AcrossModuleDependencySorter
 		targets.forEach( target -> map.put( dependencySpecResolver.apply( target ), target ) );
 
 		return new AcrossModuleDependencySorter( map.keySet() )
+				.verifyNoCyclicDependencies()
 				.sort()
 				.stream()
 				.map( map::get )
@@ -115,24 +143,30 @@ class AcrossModuleDependencySorter
 	/**
 	 * Represents the different dependency and sorting related parameters.
 	 */
-	@Builder
 	@Getter
 	@EqualsAndHashCode
 	static class DependencySpec
 	{
-		@NonNull
 		private final AcrossModuleRole role;
-
 		private final int orderInRole;
-
-		@Singular
 		private final Set<String> names;
-
-		@Singular
 		private final Set<String> requiredDependencies;
-
-		@Singular
 		private final Set<String> optionalDependencies;
+
+		@Builder
+		public DependencySpec( @NonNull AcrossModuleRole role,
+		                       int orderInRole,
+		                       @NonNull @Singular Set<String> names,
+		                       @NonNull @Singular Set<String> requiredDependencies,
+		                       @NonNull @Singular Set<String> optionalDependencies ) {
+			this.role = role;
+			this.orderInRole = orderInRole;
+			this.names = names;
+			this.requiredDependencies = new LinkedHashSet<>( requiredDependencies );
+			this.requiredDependencies.removeAll( names );
+			this.optionalDependencies = new LinkedHashSet<>( optionalDependencies );
+			this.optionalDependencies.removeAll( names );
+		}
 
 		@Override
 		public String toString() {

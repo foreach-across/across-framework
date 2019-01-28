@@ -16,6 +16,7 @@
 package com.foreach.across.core.context.module;
 
 import com.foreach.across.core.context.AcrossModuleRole;
+import com.foreach.across.core.context.bootstrap.CyclicModuleDependencyException;
 import com.foreach.across.core.context.module.AcrossModuleDependencySorter.DependencySpec;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,26 +27,73 @@ import org.springframework.core.Ordered;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import static com.foreach.across.core.context.module.AcrossModuleDependencySorter.DependencySpec.builder;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
 
 /**
  * @author Arne Vandamme
  * @since 5.0.0
  */
+@DisplayName("Across module dependency sorting")
 @ExtendWith(MockitoExtension.class)
 class TestAcrossModuleDependencySorter
 {
 	@Test
+	void directCyclicDependency() {
+		DependencySpec a = spec().name( "a" ).requiredDependency( "b" ).build();
+		DependencySpec b = spec().name( "b" ).requiredDependency( "a" ).build();
+
+		assertThatExceptionOfType( CyclicModuleDependencyException.class )
+				.isThrownBy( () -> new AcrossModuleDependencySorter( Arrays.asList( a, b ) ).verifyNoCyclicDependencies() )
+				.withMessage( "Unable to determine legal module bootstrap order, possible cyclic dependency on module a." );
+	}
+
+	@Test
+	void transitiveCyclicDependency() {
+		DependencySpec a = spec().name( "a" ).name( "aa" ).requiredDependency( "c" ).build();
+		DependencySpec b = spec().name( "b" ).requiredDependency( "aa" ).build();
+		DependencySpec c = spec().name( "c" ).requiredDependency( "b" ).build();
+
+		assertThatExceptionOfType( CyclicModuleDependencyException.class )
+				.isThrownBy( () -> new AcrossModuleDependencySorter( Arrays.asList( a, b, c ) ).verifyNoCyclicDependencies() )
+				.withMessage( "Unable to determine legal module bootstrap order, possible cyclic dependency on module aa." );
+	}
+
+	@Test
+	void noFailureIfNoCyclicDependencies() {
+		DependencySpec a = spec().name( "a" ).build();
+		DependencySpec b = spec().name( "b" ).requiredDependency( "a" ).build();
+		DependencySpec c = spec().name( "c" ).requiredDependency( "b" ).build();
+
+		new AcrossModuleDependencySorter( Arrays.asList( a, b, c ) ).verifyNoCyclicDependencies();
+	}
+
+	@Test
 	@DisplayName("initial order is kept if no dependencies")
 	void registrationOrder() {
 		DependencySpec a = spec().name( "a" ).build();
-		DependencySpec b = spec().name( "b" ).build();
-		DependencySpec c = spec().name( "c" ).build();
+		DependencySpec b = spec().name( "b" ).optionalDependency( "c" ).build();
+		DependencySpec c = spec().name( "c" ).optionalDependency( "b" ).build();
 
-		assertSorted( Arrays.asList( a, b, c ), Arrays.asList( a, b, c ) );
+		new AcrossModuleDependencySorter( Arrays.asList( a, b, c ) ).verifyNoCyclicDependencies();
+	}
+
+	@Test
+	void selfReferringDependenciesAreRemoved() {
+		DependencySpec a = spec().name( "a" ).name( "aa" ).requiredDependency( "aa" ).build();
+		assertThat( a.getRequiredDependencies() ).isEmpty();
+
+		new AcrossModuleDependencySorter( Collections.singleton( a ) ).verifyNoCyclicDependencies();
+	}
+
+	@Test
+	@DisplayName("Optional cyclic dependency is ignored")
+	void optionalCyclicDependency() {
+
 	}
 
 	@Test
@@ -115,6 +163,14 @@ class TestAcrossModuleDependencySorter
 		assertSorted( Arrays.asList( c, b, a ), Arrays.asList( a, b, c ) );
 		assertSorted( Arrays.asList( d, c, b, a ), Arrays.asList( a, d, b, c ) );
 		assertSorted( Arrays.asList( a, d, b, c ), Arrays.asList( a, d, b, c ) );
+	}
+
+	@Test
+	void selfDependenciesAreIgnored() {
+		DependencySpec a = spec().name( "a" ).requiredDependency( "aa" ).name( "aa" ).build();
+		DependencySpec b = spec().name( "b" ).requiredDependency( "a" ).build();
+
+		assertSorted( Arrays.asList( a, b ), Arrays.asList( a, b ) );
 	}
 
 	@Test
