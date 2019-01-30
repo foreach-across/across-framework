@@ -17,6 +17,7 @@ package com.foreach.across.modules.web.config;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.config.resources.ResourceConfigurationProperties;
+import com.foreach.across.modules.web.config.resources.ResourceWebJarConfigurationProperties;
 import com.foreach.across.modules.web.context.PrefixingPathContext;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
 import com.foreach.across.modules.web.context.PrefixingSupportingWebAppLinkBuilder;
@@ -45,15 +46,19 @@ public class UrlPrefixingConfiguration
 {
 	public static final String RESOURCE = "resource";
 	public static final String STATIC = "static";
+	public static final String WEBJAR = "webjar";
 
 	@Bean
 	@Primary
 	@Exposed
-	public PrefixingPathRegistry prefixingPathRegistry( ResourceConfigurationProperties resourcesConfiguration ) {
+	public PrefixingPathRegistry prefixingPathRegistry( ResourceConfigurationProperties resourcesConfiguration, ResourceWebJarConfigurationProperties resourceWebJarConfigurationProperties ) {
 		PrefixingPathRegistry prefixingPathRegistry = new PrefixingPathRegistry();
 		PrefixingPathContext resourceContext = new PrefixingPathContext( resourcesConfiguration.getPath() );
 		prefixingPathRegistry.add( RESOURCE, resourceContext );
 		prefixingPathRegistry.add( STATIC, new PrefixingPathContext( resourceContext.getPathPrefix() + "/static" ) );
+
+		prefixingPathRegistry.add( WEBJAR, new PrefixingPathContext( resourceWebJarConfigurationProperties.getPath()) );
+
 		return prefixingPathRegistry;
 	}
 

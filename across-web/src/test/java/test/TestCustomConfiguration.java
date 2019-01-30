@@ -35,6 +35,7 @@ import static org.junit.Assert.*;
  */
 @ContextConfiguration(classes = TestCustomConfiguration.Config.class)
 @TestPropertySource(properties = { "acrossWebModule.resources.path=/static",
+                                   "acrossWebModule.webjars.path=/webjars-custom",
                                    "acrossWebModule.views.thymeleaf.enabled=false" })
 public class TestCustomConfiguration extends AbstractWebIntegrationTest
 {
@@ -61,6 +62,7 @@ public class TestCustomConfiguration extends AbstractWebIntegrationTest
 	public void resourcePrefixesShouldBeRegistered() {
 		assertEquals( "/static/pdf/list.pdf", pathResolver.path( "@resource:/pdf/list.pdf" ) );
 		assertEquals( "/static/static/pdf/list.pdf", pathResolver.path( "@static:/pdf/list.pdf" ) );
+		assertEquals( "/webjars-custom/bootstrap/3.1.0/css/bootstrap.min.css", pathResolver.path( "@webjar:/bootstrap/3.1.0/css/bootstrap.min.css" ) );
 	}
 
 	@Configuration
