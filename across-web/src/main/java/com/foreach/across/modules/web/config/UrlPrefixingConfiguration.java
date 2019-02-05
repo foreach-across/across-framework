@@ -46,7 +46,7 @@ public class UrlPrefixingConfiguration
 {
 	public static final String RESOURCE = "resource";
 	public static final String STATIC = "static";
-	public static final String WEBJAR = "webjar";
+	public static final String WEBJAR = "webjars";
 
 	@Bean
 	@Primary
