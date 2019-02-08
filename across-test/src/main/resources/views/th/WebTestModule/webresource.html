@@ -1,0 +1,33 @@
+<body>
+<div id="inline-data-javascript">
+    <!--/* Include the javascript added using the web resource registry */-->
+    <script th:each="javascript :${webResourceRegistry.getResources('javascript')}" type="text/javascript"
+            th:if="${javascript.location == 'data'}" th:inline="javascript">
+        (function ( Across ) {
+            Across['' + [[${javascript.key}]]] = [[${javascript.data}]];
+        })( window.Across = window.Across || {} );
+    </script>
+</div>
+
+<div id="not-inline-and-data-javascript">
+    <script th:each="javascript : ${webResourceRegistry.getResources('javascript')}" th:src="@{${javascript.data}}"
+        th:if="${javascript.location != 'inline' and javascript.location != 'data'}"></script>
+</div>
+
+<div id="javascript-page-end">
+<script th:each="javascript : ${webResourceRegistry.getResources('javascript-page-end')}" th:src="@{${javascript.data}}"
+        th:if="${javascript.location != 'inline'}"></script>
+</div>
+
+<div id="javascript-bottom-scripts">
+<th:block th:fragment="bottom-scripts(scripts)" th:if="${scripts}">
+    <th:block th:insert="${scripts}"/>
+</th:block>
+</div>
+
+
+<h1>Start javascript bottom-scripts page end</h1>
+
+<th:block th:insert="::bottom-scripts(~{${childPage} :: javascript-page-end})"/>
+<h1>End javascript bottom-scripts page end</h1>
+</body>
