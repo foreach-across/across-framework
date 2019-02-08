@@ -32,7 +32,7 @@ public class AcrossWebModuleSettings
 
 	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.resources.path";
 
-	public static final String WEBJARS_RESOURCES_PATH = "acrossWebModule.webjars.path";
+	public static final String WEBJARS_RESOURCES_PATH = "acrossWebModule.resources.webjars";
 
 	/**
 	 * Templates configuration.
