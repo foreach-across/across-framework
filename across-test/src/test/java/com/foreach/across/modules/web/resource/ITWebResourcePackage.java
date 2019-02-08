@@ -22,6 +22,7 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.across.test.modules.webtest.WebTestModule;
 import com.foreach.across.test.modules.webtest.controllers.WebResourceController;
+import com.foreach.across.test.modules.webtest.controllers.WebResourcePackageController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,8 +43,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @WebAppConfiguration(value = "classpath:")
-@ContextConfiguration(classes = ITWebResource.Config.class)
-public class ITWebResource
+@ContextConfiguration(classes = ITWebResourcePackage.Config.class)
+public class ITWebResourcePackage
 {
 	@Autowired
 	private AcrossContextInfo contextInfo;
@@ -57,31 +58,11 @@ public class ITWebResource
 
 	@Test
 	public void testInlineJavascriptRendered() throws Exception {
-		mockMvc.perform( get( WebResourceController.PATH ) )
+		mockMvc.perform( get( WebResourcePackageController.PATH ) )
+		       .andExpect( jsoup().elementById( "not-inline-or-data-css" ).valueIgnoringLineEndings( "<link rel=\"stylesheet\" href=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">" ) )
+		       .andExpect( jsoup().elementById( "javascript-page-end" ).valueIgnoringLineEndings( "<script src=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>" ) )
 		       .andExpect( status().isOk() )
-		       // Assert css
-		       .andExpect( jsoup().elementById( "inline-data-css" ).valueIgnoringLineEndings( "<style>test-css-inline</style><style>test-css-data</style>" ) )
-		       .andExpect( jsoup().elementById( "not-inline-or-data-css" ).valueIgnoringLineEndings(
-				       "<link rel=\"stylesheet\" href=\"test-css-external\"><link rel=\"stylesheet\" href=\"/across/resources/test-css-views\"><link rel=\"stylesheet\" href=\"test-css-relative\">" ) )
-
-		       // Assert head javascript
-		       .andExpect( jsoup().elementById( "inline-javascript" ).valueIgnoringLineEndings( "<script src=\"test-javascript-inline\"></script>" ) )
-		       .andExpect( jsoup().elementById( "not-inline-and-data-javascript" ).valueIgnoringLineEndings(
-				       "<script src=\"test-javascript-external\"></script>\n<script src=\"/across/resources/test-javascript-views\"></script>\n<script src=\"test-javascript-relative\"></script>" ) )
-		       .andExpect( jsoup().elementById( "data-javascript" ).valueIgnoringLineEndings( "<script type=\"text/javascript\">\n" +
-				                                                                                             "        (function ( Across ) {\n" +
-				                                                                                             "            Across['' + \"test-javascript-data\"] = \"test-javascript-data\";\n" +
-				                                                                                             "        })( window.Across = window.Across || {} );\n" +
-				                                                                                             "    </script>" ) )
-
-		       // Assert foot javascript
-		       .andExpect( jsoup().elementById( "javascript-page-end" ).valueIgnoringLineEndings(
-				       "<script src=\"test-javascript-end-external\"></script>\n<script src=\"/across/resources/test-javascript-end-views\"></script>\n<script src=\"test-javascript-end-relative\"></script>" ) )
-		       .andExpect( jsoup().elementById( "javascript-page-end-data" ).valueIgnoringLineEndings(
-				       "<script type=\"text/javascript\">        (function ( Across ) {            Across['' + \"test-javascript-end-data\"] = \"test-javascript-end-data\";        })( window.Across = window.Across || {} );    </script>" ) )
-		       .andExpect(
-				       jsoup().elementById( "javascript-page-end-inline" ).valueIgnoringLineEndings(
-						       "<script src=\"test-javascript-end-inline\"></script>" ) );
+		;
 
 	}
 

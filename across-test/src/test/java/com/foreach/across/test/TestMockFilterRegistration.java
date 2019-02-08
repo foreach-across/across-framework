@@ -91,7 +91,7 @@ public class TestMockFilterRegistration
 		Map<String, String> expected = new LinkedHashMap<>();
 		expected.put( "two", "x" );
 		expected.put( "one", "five" );
-		expected.put( "value", "other" );
+		expected.put( "valueIgnoringLineEndings", "other" );
 
 		assertEquals( Collections.singleton( "one" ), registration.setInitParameters( expected ) );
 
@@ -102,7 +102,7 @@ public class TestMockFilterRegistration
 		Enumeration<String> parameterNames = registration.getInitParameterNames();
 		assertEquals( "one", parameterNames.nextElement() );
 		assertEquals( "two", parameterNames.nextElement() );
-		assertEquals( "value", parameterNames.nextElement() );
+		assertEquals( "valueIgnoringLineEndings", parameterNames.nextElement() );
 	}
 
 	@Test

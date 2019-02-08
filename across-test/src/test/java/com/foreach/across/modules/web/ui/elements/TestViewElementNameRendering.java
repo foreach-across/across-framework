@@ -41,7 +41,7 @@ public class TestViewElementNameRendering extends AbstractViewElementTemplateTes
 
 		NodeViewElement li = new NodeViewElement( "li" );
 		li.setName( "child" );
-		li.setAttribute( "test", "value" );
+		li.setAttribute( "test", "valueIgnoringLineEndings" );
 		node.addChild( li );
 
 		TextViewElement text = new TextViewElement( "child text" );
@@ -51,7 +51,7 @@ public class TestViewElementNameRendering extends AbstractViewElementTemplateTes
 		node.addChild( new NodeViewElement( "li" ) );
 
 		renderAndExpect( node, "<ul data-ax-dev-view-element='parent'>" +
-				"<li test='value' data-ax-dev-view-element='child'></li>" +
+				"<li test='valueIgnoringLineEndings' data-ax-dev-view-element='child'></li>" +
 				"child text" +
 				"<li></li></ul>" );
 	}

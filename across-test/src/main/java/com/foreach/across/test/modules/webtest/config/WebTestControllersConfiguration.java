@@ -17,6 +17,7 @@ package com.foreach.across.test.modules.webtest.config;
 
 import com.foreach.across.test.modules.webtest.controllers.RenderViewElementController;
 import com.foreach.across.test.modules.webtest.controllers.WebResourceController;
+import com.foreach.across.test.modules.webtest.controllers.WebResourcePackageController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,5 +32,15 @@ public class WebTestControllersConfiguration
 	@Bean
 	public WebResourceController webResourceController() {
 		return new WebResourceController();
+	}
+
+	@Bean
+	public WebResourcePackageController webResourcePackageController() {
+		return new WebResourcePackageController();
+	}
+
+	@Bean
+	public WebTestWebResourcePackage webTestWebresourcePackage() {
+		return new WebTestWebResourcePackage();
 	}
 }

@@ -15,7 +15,6 @@
  */
 package com.foreach.across.utils;
 
-import org.hamcrest.Matcher;
 import org.jsoup.Jsoup;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -26,27 +25,35 @@ public class JsoupResultMatcher
 {
 
 	public JsoupElementByIdMatcher elementById( String elementId ) {
-		return new JsoupElementByIdMatcher(elementId);
+		return new JsoupElementByIdMatcher( elementId );
 	}
 
-	public class JsoupElementByIdMatcher{
+	public class JsoupElementByIdMatcher
+	{
 		private final String elementId;
 
 		public JsoupElementByIdMatcher( String elementId ) {
 			this.elementId = elementId;
 		}
 
-		public <T> ResultMatcher value( String expected) {
-			return new ResultMatcher() {
+		public <T> ResultMatcher valueIgnoringLineEndings( String expected ) {
+			return new ResultMatcher()
+			{
 				@Override
-				public void match(MvcResult result) throws Exception {
+				public void match( MvcResult result ) throws Exception {
 					assertEquals(
 							"Response content",
-							expected,
-							Jsoup.parse( result.getResponse().getContentAsString() ).getElementById( elementId).html()
+							removeLineEndings( expected ),
+							removeLineEndings(
+									Jsoup.parse( result.getResponse().getContentAsString() ).getElementById( elementId ).html()
+							)
 					);
 				}
 			};
+		}
+
+		private String removeLineEndings( String text ) {
+			return text.replace( "\n", "" ).replace( "\r", "" );
 		}
 	}
 }
