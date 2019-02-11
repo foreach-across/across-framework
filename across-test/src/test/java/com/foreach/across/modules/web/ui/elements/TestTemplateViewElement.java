@@ -36,7 +36,7 @@ public class TestTemplateViewElement extends AbstractViewElementTemplateTest
 	public void illegalFramentInTemplate() throws Throwable {
 		TemplateViewElement template = new TemplateViewElement( "th/test/elements/text :: illegalFragment" );
 		try {
-			renderAndExpect( template, "Custom attribute valueIgnoringLineEndings: 123" );
+			renderAndExpect( template, "Custom attribute value: 123" );
 		}
 		catch ( RuntimeException rte ) {
 			throw rte.getCause().getCause();
@@ -52,7 +52,7 @@ public class TestTemplateViewElement extends AbstractViewElementTemplateTest
 	@Test
 	public void customModelAttributeSetThroughGlobalCallback() {
 		TemplateViewElement template = new TemplateViewElement( "th/test/elements/text :: customAttribute" );
-		renderAndExpect( template, "Custom attribute valueIgnoringLineEndings: 123" );
+		renderAndExpect( template, "Custom attribute value: 123" );
 	}
 
 	@Test
@@ -63,8 +63,8 @@ public class TestTemplateViewElement extends AbstractViewElementTemplateTest
 		                 model -> RequestContextHolder
 				                 .getRequestAttributes()
 				                 .setAttribute( "customAttribute", "hello!", RequestAttributes.SCOPE_REQUEST ),
-		                 "Custom attribute valueIgnoringLineEndings: hello!" );
-		renderAndExpect( template, "Custom attribute valueIgnoringLineEndings: 123" );
+		                 "Custom attribute value: hello!" );
+		renderAndExpect( template, "Custom attribute value: 123" );
 	}
 
 	@Test
