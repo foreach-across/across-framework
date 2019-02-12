@@ -16,10 +16,14 @@
 
 package com.foreach.across.modules.web.resource;
 
+import com.foreach.across.modules.web.ui.ViewElement;
+import lombok.Getter;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+
+import static com.foreach.across.modules.web.resource.WebResource.*;
 
 /**
  * <p>Registry for a set of web resources.  Usually there is one registry per view.
@@ -35,7 +39,9 @@ public class WebResourceRegistry
 	private String defaultLocation = WebResource.RELATIVE;
 
 	private final WebResourcePackageManager packageManager;
-	private final List<WebResource> resources = new LinkedList<>();
+
+	@Getter
+	private final Map<String, List<WebResourceReference>> webResources = new LinkedHashMap<>();
 
 	private final Set<String> installedPackages = new HashSet<>();
 
@@ -115,7 +121,32 @@ public class WebResourceRegistry
 		WebResource existing = findResource( type, key, data );
 
 		if ( existing == null ) {
-			resources.add( new WebResource( type, key, data, location ) );
+			List<WebResourceReference> rules = webResources.computeIfAbsent( type, k -> new ArrayList<>() );
+			WebResourceRule rule = null;
+			switch ( type ) {
+				case JAVASCRIPT:
+				case JAVASCRIPT_PAGE_END:
+					if ( data instanceof String ) {
+						// INLINE and DATA
+						rule = WebResourceRule.add( WebResource.javascript( (String) data ) ).withKey( key ).toBucket( type );
+					}
+					else {
+						// INLINE and DATA
+						rule = WebResourceRule.add( WebResource.javascript().data( data ) ).withKey( key ).toBucket( type );
+					}
+
+					break;
+				case CSS:
+					rule = WebResourceRule.add( WebResource.javascript( (String) data ) ).withKey( key ).toBucket( type );
+					break;
+				default:
+					rule = WebResourceRule.add( null ).withKey( key ).toBucket( type );
+			}
+
+			WebResource resource = new WebResource( type, key, data, location );
+			AddWebResourceRule addWebResourceRule = (AddWebResourceRule) rule;
+			rules.add( new WebResourceReference( addWebResourceRule.getViewElementBuilder(), rule.getKey(), addWebResourceRule.getBefore(),
+			                                     addWebResourceRule.getAfter(), addWebResourceRule.getOrder(), resource ) );
 		}
 		else {
 			existing.setKey( key );
@@ -127,16 +158,20 @@ public class WebResourceRegistry
 	private WebResource findResource( String type, String key, Object data ) {
 		WebResource matchOnKey = null, matchOnData = null;
 
-		for ( WebResource resource : resources ) {
-			if ( StringUtils.equals( type, resource.getType() ) ) {
-				// We are interested in resources with the same key
-				if ( key != null && StringUtils.equals( key, resource.getKey() ) ) {
-					matchOnKey = resource;
-				}
+		List<WebResourceReference> references = webResources.get( type );
+		if ( references != null ) {
+			for ( WebResourceReference reference : references ) {
+				WebResource resource = reference.getResource();
+				if ( resource != null ) {
+					// We are interested in resources with the same key
+					if ( key != null && StringUtils.equals( key, resource.getKey() ) ) {
+						matchOnKey = resource;
+					}
 
-				// A resource without key but the same data will always match
-				if ( !resource.hasKey() && Objects.equals( data, resource.getData() ) ) {
-					matchOnData = resource;
+					// A resource without key but the same data will always match
+					if ( !resource.hasKey() && Objects.equals( data, resource.getData() ) ) {
+						matchOnData = resource;
+					}
 				}
 			}
 		}
@@ -151,13 +186,8 @@ public class WebResourceRegistry
 	 * @param data Content the resource should have.
 	 */
 	public void removeResource( Object data ) {
-		Iterator<WebResource> iterator = resources.iterator();
-
-		while ( iterator.hasNext() ) {
-			if ( Objects.equals( data, iterator.next().getData() ) ) {
-				iterator.remove();
-			}
-		}
+		throw new RuntimeException( "not supported" );
+		//resources.removeIf( resource -> Objects.equals( data, resource.getData() ) );
 	}
 
 	/**
@@ -166,15 +196,21 @@ public class WebResourceRegistry
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param data Content the resource should have.
 	 */
+	@Deprecated
 	public void removeResource( String type, Object data ) {
-		Iterator<WebResource> iterator = resources.iterator();
-
-		while ( iterator.hasNext() ) {
-			WebResource resource = iterator.next();
-			if ( StringUtils.equals( type, resource.getType() ) && Objects.equals( data, resource.getData() ) ) {
-				iterator.remove();
+		List<WebResourceReference> references = webResources.get( type );
+		if ( references != null ) {
+			// Only for old style references
+			for ( WebResourceReference reference : references ) {
+				WebResource resource = reference.getResource();
+				if ( resource != null ) {
+					if ( Objects.equals( data, resource.getData() ) ) {
+						references.remove( reference );
+					}
+				}
 			}
 		}
+		//resources.removeIf( resource -> StringUtils.equals( type, resource.getType() ) && Objects.equals( data, resource.getData() ) );
 	}
 
 	/**
@@ -183,13 +219,7 @@ public class WebResourceRegistry
 	 * @param key Key the resource is registered under.
 	 */
 	public void removeResourceWithKey( String key ) {
-		Iterator<WebResource> iterator = resources.iterator();
-
-		while ( iterator.hasNext() ) {
-			if ( StringUtils.equals( key, iterator.next().getKey() ) ) {
-				iterator.remove();
-			}
-		}
+		webResources.entrySet().removeIf( resource -> StringUtils.equals( key, resource.getKey() ) );
 	}
 
 	/**
@@ -199,13 +229,9 @@ public class WebResourceRegistry
 	 * @param key  Key the resource is registered under.
 	 */
 	public void removeResourceWithKey( String type, String key ) {
-		Iterator<WebResource> iterator = resources.iterator();
-
-		while ( iterator.hasNext() ) {
-			WebResource resource = iterator.next();
-			if ( StringUtils.equals( type, resource.getType() ) && StringUtils.equals( key, resource.getKey() ) ) {
-				iterator.remove();
-			}
+		List<WebResourceReference> references = webResources.get( type );
+		if ( references != null ) {
+			references.removeIf( resource -> StringUtils.equals( key, resource.getKey() ) );
 		}
 	}
 
@@ -251,7 +277,7 @@ public class WebResourceRegistry
 	 * Clears the entire registry.
 	 */
 	public void clear() {
-		resources.clear();
+		webResources.values().clear();
 	}
 
 	/**
@@ -260,12 +286,9 @@ public class WebResourceRegistry
 	 * @param type Type of the resource.
 	 */
 	public void clear( String type ) {
-		Iterator<WebResource> iterator = resources.iterator();
-
-		while ( iterator.hasNext() ) {
-			if ( StringUtils.equals( type, iterator.next().getType() ) ) {
-				iterator.remove();
-			}
+		List<WebResourceReference> references = webResources.get( type );
+		if ( references != null ) {
+			references.clear();
 		}
 	}
 
@@ -275,12 +298,42 @@ public class WebResourceRegistry
 	 * @param type Type of the resource.
 	 * @return Collection of WebResource instances.
 	 */
+	@Deprecated
 	public Collection<WebResource> getResources( String type ) {
-		List<WebResource> filtered = new LinkedList<WebResource>();
+		List<WebResource> filtered = new LinkedList<>();
 
-		for ( WebResource resource : resources ) {
-			if ( StringUtils.equals( type, resource.getType() ) ) {
-				filtered.add( resource );
+		List<WebResourceReference> resources = webResources.get( type );
+		if ( resources != null ) {
+			for ( WebResourceReference resource : resources ) {
+				WebResource webResource = resource.getResource();
+				if ( webResource != null ) {
+					filtered.add( webResource );
+				}
+			}
+		}
+
+		return filtered;
+	}
+
+	public Collection<ViewElement> getBucketResources() {
+		List<ViewElement> elements = new LinkedList<>();
+
+		for ( Map.Entry<String, List<WebResourceReference>> items : webResources.entrySet() ) {
+			for ( WebResourceReference resource : items.getValue() ) {
+				elements.add( resource.getViewElementBuilder().build() );
+			}
+		}
+
+		return elements;
+	}
+
+	public Collection<ViewElement> getBucketResources( String type ) {
+		List<ViewElement> filtered = new LinkedList<>();
+
+		List<WebResourceReference> resources = webResources.get( type );
+		if ( resources != null ) {
+			for ( WebResourceReference resource : resources ) {
+				filtered.add( resource.getViewElementBuilder().build() );
 			}
 		}
 
@@ -292,8 +345,19 @@ public class WebResourceRegistry
 	 *
 	 * @return Collection of WebResource instances.
 	 */
+	@Deprecated
 	public Collection<WebResource> getResources() {
-		return new ArrayList<WebResource>( resources );
+		List<WebResource> items = new LinkedList<>();
+		for ( Map.Entry<String, List<WebResourceReference>> webResources : webResources.entrySet() ) {
+			if ( webResources.getValue() != null ) {
+				for ( WebResourceReference reference : webResources.getValue() ) {
+					if ( reference.getResource() != null ) {
+						items.add( reference.getResource() );
+					}
+				}
+			}
+		}
+		return items;
 	}
 
 	/**
@@ -302,10 +366,21 @@ public class WebResourceRegistry
 	 * @param registry Registry containing resource to be copied.
 	 */
 	public void merge( WebResourceRegistry registry ) {
+		//TODO: marc
 		if ( registry != null ) {
-			for ( WebResource other : registry.resources ) {
-				addWithKey( other.getType(), other.getKey(), other.getData(), other.getLocation() );
-			}
+			// for ( WebResource other : registry.resources ) {
+			// 	addWithKey( other.getType(), other.getKey(), other.getData(), other.getLocation() );
+			// }
 		}
+	}
+
+	public void apply( WebResourceRule... webResourceRules ) {
+		for ( WebResourceRule webResourceRule : webResourceRules ) {
+			webResourceRule.applyTo( this );
+		}
+	}
+
+	public void add( String bucket, WebResourceReference webResourceReference ) {
+		this.webResources.computeIfAbsent( bucket, w -> new ArrayList<>() ).add( webResourceReference );
 	}
 }

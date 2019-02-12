@@ -59,11 +59,24 @@ public class WebResource
 	private String key, type, location;
 	private Object data;
 
+	@Deprecated
 	public WebResource( String type, String key, Object data, String location ) {
 		this.type = type;
 		this.key = key;
 		this.data = data;
 		this.location = location;
+	}
+
+	public static JavascriptWebResourceBuilder javascript() {
+		return new JavascriptWebResourceBuilder();
+	}
+
+	public static JavascriptWebResourceBuilder javascript( String url ) {
+		return javascript().url( url );
+	}
+
+	public static CssWebResourceBuilder css( String url ) {
+		return new CssWebResourceBuilder().url( url );
 	}
 
 	/**
@@ -104,4 +117,5 @@ public class WebResource
 	public boolean hasKey() {
 		return key != null;
 	}
+
 }
