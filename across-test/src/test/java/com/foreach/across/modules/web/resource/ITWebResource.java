@@ -61,7 +61,7 @@ public class ITWebResource
 	}
 
 	@Test
-	public void testInlineJavascriptRendered() throws Exception {
+	public void inlineJavascriptIsRendered() throws Exception {
 		mockMvc.perform( get( WebResourceController.PATH ) )
 		       .andExpect( status().isOk() )
 		       // Assert css
@@ -87,6 +87,18 @@ public class ITWebResource
 		       .andExpect(
 				       jsoup().elementById( "javascript-page-end-inline" ).valueIgnoringLineEndings(
 						       "<script src=\"test-javascript-end-inline\"></script>" ) );
+
+	}
+
+	@Test
+	public void inlineJavascriptIsRenderedForPackage() throws Exception {
+		mockMvc.perform( get( WebResourcePackageController.PATH ) )
+		       .andExpect( jsoup().elementById( "not-inline-or-data-css" ).valueIgnoringLineEndings(
+				       "<link rel=\"stylesheet\" href=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">" ) )
+		       .andExpect( jsoup().elementById( "javascript-page-end" )
+		                          .valueIgnoringLineEndings( "<script src=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>" ) )
+		       .andExpect( status().isOk() )
+		;
 
 	}
 
