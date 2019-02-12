@@ -19,7 +19,7 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.test.AcrossTestWebConfiguration;
+import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.modules.webtest.WebTestModule;
 import com.foreach.across.test.modules.webtest.controllers.WebResourceController;
 import org.junit.Before;
@@ -86,13 +86,12 @@ public class ITWebResource
 	}
 
 	@Configuration
-	@AcrossTestWebConfiguration
+	@AcrossTestConfiguration(modules = { AcrossWebModule.NAME })
 	protected static class Config implements AcrossContextConfigurer
 	{
 		@Override
 		public void configure( AcrossContext context ) {
 			context.addModule( new WebTestModule() );
-			context.addModule( new AcrossWebModule() );
 		}
 	}
 }

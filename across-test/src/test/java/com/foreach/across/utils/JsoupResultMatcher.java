@@ -16,14 +16,12 @@
 package com.foreach.across.utils;
 
 import org.jsoup.Jsoup;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 public class JsoupResultMatcher
 {
-
 	public JsoupElementByIdMatcher elementById( String elementId ) {
 		return new JsoupElementByIdMatcher( elementId );
 	}
@@ -37,19 +35,13 @@ public class JsoupResultMatcher
 		}
 
 		public <T> ResultMatcher valueIgnoringLineEndings( String expected ) {
-			return new ResultMatcher()
-			{
-				@Override
-				public void match( MvcResult result ) throws Exception {
-					assertEquals(
-							"Response content",
-							removeLineEndings( expected ),
-							removeLineEndings(
-									Jsoup.parse( result.getResponse().getContentAsString() ).getElementById( elementId ).html()
-							)
-					);
-				}
-			};
+			return result -> assertEquals(
+					"Response content",
+					removeLineEndings( expected ),
+					removeLineEndings(
+							Jsoup.parse( result.getResponse().getContentAsString() ).getElementById( elementId ).html()
+					)
+			);
 		}
 
 		private String removeLineEndings( String text ) {
