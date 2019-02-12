@@ -17,15 +17,20 @@ package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestConfiguration;
-import com.foreach.across.test.modules.webtest.WebTestModule;
+import com.foreach.across.test.modules.webtest.config.WebTestWebResourcePackage;
 import com.foreach.across.test.modules.webtest.controllers.WebResourceController;
+import com.foreach.across.test.modules.webtest.controllers.WebResourcePackageController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -91,7 +96,38 @@ public class ITWebResource
 	{
 		@Override
 		public void configure( AcrossContext context ) {
-			context.addModule( new WebTestModule() );
+			context.addModule( new AcrossModule()
+			{
+				@Override
+				public String getName() {
+					return "WebResourceTestModule";
+				}
+
+				@Override
+				public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
+				                                 AcrossBootstrapConfig contextConfig ) {
+					contextConfig.extendModule( "WebResourceTestModule", DummyModuleConfig.class );
+				}
+			} );
+		}
+	}
+
+	@Configuration
+	public static class DummyModuleConfig
+	{
+		@Bean
+		public WebResourceController webResourceController() {
+			return new WebResourceController();
+		}
+
+		@Bean
+		public WebResourcePackageController webResourcePackageController() {
+			return new WebResourcePackageController();
+		}
+
+		@Bean
+		public WebTestWebResourcePackage webTestWebresourcePackage() {
+			return new WebTestWebResourcePackage();
 		}
 	}
 }
