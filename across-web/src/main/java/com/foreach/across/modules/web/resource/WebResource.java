@@ -16,6 +16,9 @@
 
 package com.foreach.across.modules.web.resource;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * <p>Represents a single entry in the WebResourceRegistry.</p>
  * <p>All constants are deliberately Strings so they can easily be used in different view
@@ -56,9 +59,23 @@ public class WebResource
 	 */
 	public static final String VIEWS = "views";
 
+	@Deprecated
+	@Getter
+	@Setter
 	private String key, type, location;
+	@Deprecated
+	@Getter
+	@Setter
 	private Object data;
 
+	@Deprecated
+	public boolean hasKey() {
+		return key != null;
+	}
+
+	/**
+	 * @deprecated since 3.1.3 - replaced by {@link #javascript()} and {@link #css()} methods
+	 */
 	@Deprecated
 	public WebResource( String type, String key, Object data, String location ) {
 		this.type = type;
@@ -67,55 +84,35 @@ public class WebResource
 		this.location = location;
 	}
 
+	/**
+	 * A builder for constructing a {@link com.foreach.across.modules.web.ui.ViewElementBuilder}
+	 * This builder will generate a script tag and can be used for inline or json
+	 */
 	public static JavascriptWebResourceBuilder javascript() {
 		return new JavascriptWebResourceBuilder();
 	}
 
+	/**
+	 * A builder for constructing a {@link com.foreach.across.modules.web.ui.ViewElementBuilder}
+	 * This builder will generate a script tag for external resources
+	 */
 	public static JavascriptWebResourceBuilder javascript( String url ) {
 		return javascript().url( url );
 	}
 
-	public static CssWebResourceBuilder css( String url ) {
-		return new CssWebResourceBuilder().url( url );
+	/**
+	 * A builder for constructing a {@link com.foreach.across.modules.web.ui.ViewElementBuilder}
+	 * This builder will generate a link or style tag, depending if inline or url is used
+	 */
+	public static CssWebResourceBuilder css() {
+		return new CssWebResourceBuilder();
 	}
 
 	/**
-	 * @return Key this resource is registered under.  Can be null or empty.
+	 * A builder for constructing a {@link com.foreach.across.modules.web.ui.ViewElementBuilder}
+	 * This builder will generate a link tag
 	 */
-	public String getKey() {
-		return key;
+	public static CssWebResourceBuilder css( String url ) {
+		return css().url( url );
 	}
-
-	public void setKey( String key ) {
-		this.key = key;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType( String type ) {
-		this.type = type;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation( String location ) {
-		this.location = location;
-	}
-
-	public Object getData() {
-		return data;
-	}
-
-	public void setData( Object data ) {
-		this.data = data;
-	}
-
-	public boolean hasKey() {
-		return key != null;
-	}
-
 }

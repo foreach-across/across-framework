@@ -21,32 +21,14 @@ import lombok.Getter;
 @Getter
 public abstract class WebResourceRule
 {
-	private String bucket;
-	private String key;
-
-	public WebResourceRule withKey( String key ) {
-		this.key = key;
-		return this;
-	}
-
-	public WebResourceRule toBucket( String bucket ) {
-		this.bucket = bucket;
-		return this;
-	}
-
-	public WebResourceRule fromBucket( String bucket ) {
-		this.bucket = bucket;
-		return this;
-	}
-
 	abstract void applyTo( WebResourceRegistry webResourceRegistry );
 
 	public static AddWebResourceRule add( ViewElementBuilder viewElementBuilder ) {
 		return new AddWebResourceRule().of( viewElementBuilder );
 	}
 
-	public static AddPackageResourceRule addPackage( WebResourcePackage webResourcePackage ) {
-		return new AddPackageResourceRule( webResourcePackage );
+	public static AddPackageResourceRule addPackage( String packageName ) {
+		return new AddPackageResourceRule( packageName );
 	}
 
 	public static RemoveWebResourceRule remove() {

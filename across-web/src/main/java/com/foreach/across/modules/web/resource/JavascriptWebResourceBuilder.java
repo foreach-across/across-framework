@@ -15,6 +15,7 @@
  */
 package com.foreach.across.modules.web.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
@@ -22,6 +23,7 @@ import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,28 +35,38 @@ public class JavascriptWebResourceBuilder extends AbstractWebResourceBuilder
 	private boolean async;
 	private boolean defer;
 	private String url;
+	private String inline;
 	private String type;
 	private Object data;
 
 	@Override
+	@SneakyThrows
 	public MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
 		ContainerViewElement container = new ContainerViewElement();
 		NodeViewElement script = new NodeViewElement( "script" );
-		if ( async ) {
-			script.setAttribute( "async", "" );
-		}
-		if ( defer ) {
-			script.setAttribute( "defer", "" );
-		}
+
 		if ( StringUtils.isNotBlank( url ) ) {
 			script.setAttribute( "src", url );
+			if ( async ) {
+				script.setAttribute( "async", "" );
+			}
+			if ( defer ) {
+				script.setAttribute( "defer", "" );
+			}
 		}
 		else {
-			if ( data != null ) {
-				TextViewElement data = new TextViewElement();
-				data.setText( data.toString() );
-				script.addChild( data );
+			if ( StringUtils.isNotBlank( inline ) ) {
+				script.addChild( TextViewElement.html( inline ) );
 			}
+			else {
+				if ( data != null ) {
+					script.addChild( TextViewElement.html( "(function ( Across ) {\n" +
+							                                       "var data=" + new ObjectMapper().writeValueAsString( data ) + ";\n" +
+							                                       "for(var key in data) Across[key] = data[key];\n" +
+							                                       "        })( window.Across = window.Across || {} );\n" ) );
+				}
+			}
+
 		}
 		if ( StringUtils.isNotBlank( type ) ) {
 			script.setAttribute( "type", type );

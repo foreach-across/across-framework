@@ -15,29 +15,7 @@
  */
 package com.foreach.across.modules.web.resource;
 
-public class RemoveWebResourceRule extends WebResourceRule implements WebResourceRuleKey
+public interface WebResourceRuleKey
 {
-	private String key;
-	private String bucket;
-
-	@Override
-	public RemoveWebResourceRule withKey( String key ) {
-		this.key = key;
-		return this;
-	}
-
-	public RemoveWebResourceRule fromBucket( String bucket ) {
-		this.bucket = bucket;
-		return this;
-	}
-
-	@Override
-	void applyTo( WebResourceRegistry webResourceRegistry ) {
-		if ( bucket != null ) {
-			webResourceRegistry.removeResourceWithKey( bucket, key );
-		}
-		else {
-			webResourceRegistry.removeResourceWithKey( key );
-		}
-	}
+	WebResourceRule withKey( String key );
 }

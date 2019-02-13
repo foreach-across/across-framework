@@ -17,14 +17,14 @@ package com.foreach.across.modules.web.resource;
 
 public class AddPackageResourceRule extends WebResourceRule
 {
-	private WebResourcePackage webResourcePackage;
+	private String packageName;
 
-	public AddPackageResourceRule( WebResourcePackage webResourcePackage ) {
-		this.webResourcePackage = webResourcePackage;
+	public AddPackageResourceRule( String packageName ) {
+		this.packageName = packageName;
 	}
 
 	@Override
 	void applyTo( WebResourceRegistry webResourceRegistry ) {
-		webResourcePackage.install( webResourceRegistry );
+		webResourceRegistry.addPackage( packageName );
 	}
 }

@@ -19,6 +19,7 @@ import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -32,17 +33,25 @@ public class CssWebResourceBuilder extends AbstractWebResourceBuilder
 	private String url;
 	private String rel;
 	private String type;
+	private String inline;
 
 	@Override
 	public MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
 		ContainerViewElement container = new ContainerViewElement();
-		NodeViewElement link = new NodeViewElement( "link" );
+		NodeViewElement link;
+
+		if ( StringUtils.isNotBlank( url ) ) {
+			link = new NodeViewElement( "link" );
+			link.setAttribute( "href", url );
+		}
+		else {
+			link = new NodeViewElement( "style" );
+			if ( StringUtils.isNotBlank( inline ) ) {
+				link.addChild( TextViewElement.html( inline ) );
+			}
+		}
 		if ( StringUtils.isNotBlank( rel ) ) {
 			link.setAttribute( "rel", rel );
-		}
-		if ( StringUtils.isNotBlank( url ) ) {
-			// Not for inline
-			link.setAttribute( "href", url );
 		}
 		if ( StringUtils.isNotBlank( type ) ) {
 			link.setAttribute( "type", type );

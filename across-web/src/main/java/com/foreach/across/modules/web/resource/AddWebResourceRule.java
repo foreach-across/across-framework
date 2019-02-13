@@ -19,12 +19,24 @@ import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import lombok.Getter;
 
 @Getter
-public class AddWebResourceRule extends WebResourceRule
+public class AddWebResourceRule extends WebResourceRule implements WebResourceRuleKey
 {
 	private ViewElementBuilder viewElementBuilder;
 	private String after;
 	private String before;
 	private Integer order;
+	private String key;
+	private String bucket;
+
+	public AddWebResourceRule withKey( String key ) {
+		this.key = key;
+		return this;
+	}
+
+	public AddWebResourceRule toBucket( String bucket ) {
+		this.bucket = bucket;
+		return this;
+	}
 
 	public AddWebResourceRule before( String key ) {
 		this.before = key;

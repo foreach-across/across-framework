@@ -19,6 +19,9 @@ import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 
+/**
+ * Abstract builder class which can be used to generate ViewElements for any HTML tag
+ */
 public abstract class AbstractWebResourceBuilder extends ViewElementBuilderSupport
 {
 	protected abstract MutableViewElement createElement( ViewElementBuilderContext builderContext );
