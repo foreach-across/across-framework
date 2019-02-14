@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
- * Utilities for accessing the {@link WebResourceRegistry} and the  {@link WebAppPathResolver} when
+ * Utilities for accessing the {@link WebResourceRegistry} and the {@link WebAppPathResolver} when
  * running in a web context.
  *
  * @author Arne Vandamme

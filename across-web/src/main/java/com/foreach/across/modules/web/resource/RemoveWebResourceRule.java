@@ -15,6 +15,15 @@
  */
 package com.foreach.across.modules.web.resource;
 
+/**
+ * A rule which specifies that a {@link WebResourceReference} with a specific key must be removed from the {@link WebResourceRegistry}
+ * <p>
+ * If a bucket is specified, only remove the item with this key from the specified bucket.
+ * If no bucket is specified, remove the item with this key from all buckets.
+ *
+ * @author Marc Vanbrabant
+ * @since 3.1.3
+ */
 public class RemoveWebResourceRule extends WebResourceRule implements WebResourceRuleKey
 {
 	private String key;

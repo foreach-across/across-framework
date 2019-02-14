@@ -16,18 +16,22 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.ui.MutableViewElement;
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Builder class for creating a {@link ViewElement} of tag <link> or <style>
+ *
+ * @author Marc Vanbrabant
+ * @since 3.1.3
+ */
 @Accessors(fluent = true, chain = true)
 @Setter
-@Getter
 public class CssWebResourceBuilder extends AbstractWebResourceBuilder
 {
 	private String url;
@@ -37,29 +41,32 @@ public class CssWebResourceBuilder extends AbstractWebResourceBuilder
 
 	@Override
 	public MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
-		ContainerViewElement container = new ContainerViewElement();
-		NodeViewElement link;
+		NodeViewElement element;
 
 		if ( StringUtils.isNotBlank( url ) ) {
-			link = new NodeViewElement( "link" );
-			link.setAttribute( "href", url );
-		}
-		else {
-			link = new NodeViewElement( "style" );
-			if ( StringUtils.isNotBlank( inline ) ) {
-				link.addChild( TextViewElement.html( inline ) );
+			element = new NodeViewElement( "link" );
+			element.setAttribute( "href", builderContext.buildLink( url ) );
+
+			if ( StringUtils.isNotBlank( rel ) ) {
+				element.setAttribute( "rel", rel );
+			}
+			else {
+				element.setAttribute( "rel", "stylesheet" );
 			}
 		}
-		if ( StringUtils.isNotBlank( rel ) ) {
-			link.setAttribute( "rel", rel );
+		else {
+			element = new NodeViewElement( "style" );
+			if ( StringUtils.isNotBlank( inline ) ) {
+				element.addChild( TextViewElement.html( inline ) );
+			}
 		}
+
 		if ( StringUtils.isNotBlank( type ) ) {
-			link.setAttribute( "type", type );
+			element.setAttribute( "type", type );
 		}
 		else {
-			link.setAttribute( "type", "text/css" );
+			element.setAttribute( "type", "text/css" );
 		}
-		container.addChild( link );
-		return container;
+		return element;
 	}
 }

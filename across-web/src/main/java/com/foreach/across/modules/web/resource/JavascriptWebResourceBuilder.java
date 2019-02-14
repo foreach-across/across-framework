@@ -17,19 +17,23 @@ package com.foreach.across.modules.web.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.MutableViewElement;
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Builder class for creating a {@link ViewElement} of tag <script>
+ *
+ * @author Marc Vanbrabant
+ * @since 3.1.3
+ */
 @Accessors(fluent = true, chain = true)
 @Setter
-@Getter
 public class JavascriptWebResourceBuilder extends AbstractWebResourceBuilder
 {
 	private boolean async;
@@ -42,40 +46,38 @@ public class JavascriptWebResourceBuilder extends AbstractWebResourceBuilder
 	@Override
 	@SneakyThrows
 	public MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
-		ContainerViewElement container = new ContainerViewElement();
-		NodeViewElement script = new NodeViewElement( "script" );
+		NodeViewElement element = new NodeViewElement( "script" );
 
 		if ( StringUtils.isNotBlank( url ) ) {
-			script.setAttribute( "src", url );
+			element.setAttribute( "src", builderContext.buildLink( url ) );
 			if ( async ) {
-				script.setAttribute( "async", "" );
+				element.setAttribute( "async", "" );
 			}
 			if ( defer ) {
-				script.setAttribute( "defer", "" );
+				element.setAttribute( "defer", "" );
 			}
 		}
 		else {
 			if ( StringUtils.isNotBlank( inline ) ) {
-				script.addChild( TextViewElement.html( inline ) );
+				element.addChild( TextViewElement.html( inline ) );
 			}
 			else {
 				if ( data != null ) {
-					script.addChild( TextViewElement.html( "(function ( Across ) {\n" +
-							                                       "var data=" + new ObjectMapper().writeValueAsString( data ) + ";\n" +
-							                                       "for(var key in data) Across[key] = data[key];\n" +
-							                                       "        })( window.Across = window.Across || {} );\n" ) );
+					element.addChild( TextViewElement.html( "(function ( Across ) {\n" +
+							                                        "var data=" + new ObjectMapper().writeValueAsString( data ) + ";\n" +
+							                                        "for(var key in data) Across[key] = data[key];\n" +
+							                                        "        })( window.Across = window.Across || {} );\n" ) );
 				}
 			}
 
 		}
 		if ( StringUtils.isNotBlank( type ) ) {
-			script.setAttribute( "type", type );
+			element.setAttribute( "type", type );
 		}
 		else {
-			script.setAttribute( "type", "text/javascript" );
+			element.setAttribute( "type", "text/javascript" );
 		}
 
-		container.addChild( script );
-		return container;
+		return element;
 	}
 }

@@ -15,23 +15,48 @@
  */
 package com.foreach.across.modules.web.resource;
 
+import com.foreach.across.modules.web.context.WebAppLinkBuilder;
+import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.MutableViewElement;
-import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.ViewElementBuilderContextHolder;
+import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static com.foreach.across.modules.web.resource.WebResource.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TestWebResourceRule extends AbstractViewElementTemplateTest
 {
+	@Autowired
+	private WebAppLinkBuilder webAppLinkBuilder;
+
+	@Before
+	public void setBuilderContext() {
+		DefaultViewElementBuilderContext defaultViewElementBuilderContext = new DefaultViewElementBuilderContext();
+		defaultViewElementBuilderContext.setWebAppLinkBuilder( webAppLinkBuilder );
+		ViewElementBuilderContextHolder.setViewElementBuilderContext( defaultViewElementBuilderContext );
+	}
+
+	@After
+	public void resetBuilderContext() {
+		ViewElementBuilderContextHolder.clearViewElementBuilderContext();
+	}
+
 	@Test
 	public void addRendersViewElements() {
-		WebResourceRegistry resourceRegistry = new WebResourceRegistry( null );
+		WebResourceRegistry registry = new WebResourceRegistry( null );
 
 		Map<String, String> statics = new HashMap<String, String>()
 		{{
@@ -44,13 +69,16 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 			put( "language", "nl" );
 		}};
 
-		resourceRegistry.apply(
-				WebResourceRule.add( WebResource.css( "/css/bootstrap.min.css" ) ).withKey( "bootstrap-min-css" ).toBucket( CSS ),
+		registry.apply(
+				WebResourceRule.add( WebResource.css( "favicon.ico" ).rel( "icon" ).type( "image/x-icon" ) ).toBucket( "FAVICON" ),
+				WebResourceRule.add( WebResource.css( "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" ).rel( "alternate" ) )
+				               .toBucket( "CSS_CDN" ),
+				WebResourceRule.add( WebResource.css( "@static:/css/bootstrap.min.css" ) ).withKey( "bootstrap-min-css" ).toBucket( CSS ),
 				WebResourceRule.add( WebResource.css().inline( "body {background-color: powderblue;}" ) ).withKey( "inline-body-blue" ).toBucket( CSS ),
 				WebResourceRule.add( WebResource.javascript().inline( "alert('hello world');" ) ).withKey( "alert-page-top" ).toBucket( JAVASCRIPT ),
 				WebResourceRule.add( WebResource.javascript().data( vars ) ).withKey( "alert-page-top" ).toBucket( "javascript_vars" ),
 				WebResourceRule.add( WebResource.javascript( "bootstrap.min.js" ) ).withKey( "bootstrap-min-js" ).toBucket( JAVASCRIPT_PAGE_END ),
-				WebResourceRule.add( WebResource.javascript( "bootstrapui.js" ) ).withKey( "BootstrapUiModule-js" ).toBucket( JAVASCRIPT_PAGE_END ),
+				WebResourceRule.add( WebResource.javascript( "@resource:bootstrapui.js" ) ).withKey( "BootstrapUiModule-js" ).toBucket( JAVASCRIPT_PAGE_END ),
 				WebResourceRule.add( new AbstractWebResourceBuilder()
 				{
 					@Override
@@ -60,31 +88,47 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 						element.setAttribute( "target", "_blank" );
 						return element;
 					}
-				} ).toBucket( "base" )
+				} ).toBucket( "base" ),
+				WebResourceRule.add( new CssWebResourceBuilder()
+				{
+					@Override
+					public MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
+						MutableViewElement element = super.createElement( builderContext );
+						( (AbstractNodeViewElement) element ).setAttribute( "crossorigin", "use-credentials" );
+						return element;
+					}
+				}.type( "application/json" ).rel( "license" ).url( "https://en.wikipedia.org/wiki/BSD_licenses" ) ).toBucket( "custom-element" )
 		);
 
-		assertEquals( 0, resourceRegistry.getBucketResources( UUID.randomUUID().toString() ).size() );
-		assertEquals( 2, resourceRegistry.getBucketResources( CSS ).size() );
-		assertEquals( 1, resourceRegistry.getBucketResources( JAVASCRIPT ).size() );
-		assertEquals( 1, resourceRegistry.getBucketResources( "javascript_vars" ).size() );
-		assertEquals( 2, resourceRegistry.getBucketResources( JAVASCRIPT_PAGE_END ).size() );
-		assertEquals( 1, resourceRegistry.getBucketResources( "base" ).size() );
+		assertEquals( 8, registry.getBuckets().size() );
 
-		Collection<ViewElement> resources = resourceRegistry.getBucketResources();
-		assertEquals( 7, resources.size() );
-		Iterator<ViewElement> it = resources.iterator();
+		renderAndExpect( registry.getBucketResources( "FAVICON" ),
+		                 "<link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\" />" );
 
-		renderAndExpect( it.next(), "<link href=\"/css/bootstrap.min.css\" type=\"text/css\"></link>" );
-		renderAndExpect( it.next(), "<style type=\"text/css\">body {background-color: powderblue;}</style>" );
-		renderAndExpect( it.next(), "<script type=\"text/javascript\">alert('hello world');</script>" );
-		renderAndExpect( it.next(), "<script type=\"text/javascript\">(function ( Across ) {\n" +
-				"var data={\"rootPaths\":{\"static\":\"@static:/\",\"admin\":\"@adminWeb:/\"},\"language\":\"nl\"};\n" +
-				"for(var key in data) Across[key] = data[key];\n" +
-				"        })( window.Across = window.Across || {} );\n" +
-				"</script>" );
-		renderAndExpect( it.next(), "<script src=\"bootstrap.min.js\" type=\"text/javascript\"></script>" );
-		renderAndExpect( it.next(), "<script src=\"bootstrapui.js\" type=\"text/javascript\"></script>" );
-		renderAndExpect( it.next(), "<base href=\"https://www.w3schools.com/images/\" target=\"_blank\"></base>" );
+		renderAndExpect( registry.getBucketResources( "CSS_CDN" ),
+		                 "<link href=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\" rel=\"alternate\" type=\"text/css\"></link>" );
+
+		renderAndExpect( registry.getBucketResources( CSS ),
+		                 "<link href=\"/across/resources/static/css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\"></link><style type=\"text/css\">body {background-color: powderblue;}</style>" );
+
+		renderAndExpect( registry.getBucketResources( JAVASCRIPT ),
+		                 "<script type=\"text/javascript\">alert('hello world');</script>" );
+
+		renderAndExpect( registry.getBucketResources( "javascript_vars" ),
+		                 "<script type=\"text/javascript\">(function ( Across ) {\n" +
+				                 "var data={\"rootPaths\":{\"static\":\"@static:/\",\"admin\":\"@adminWeb:/\"},\"language\":\"nl\"};\n" +
+				                 "for(var key in data) Across[key] = data[key];\n" +
+				                 "        })( window.Across = window.Across || {} );\n" +
+				                 "</script>" );
+
+		renderAndExpect( registry.getBucketResources( JAVASCRIPT_PAGE_END ),
+		                 "<script src=\"/bootstrap.min.js\" type=\"text/javascript\"></script><script src=\"/across/resources/bootstrapui.js\" type=\"text/javascript\"></script>" );
+
+		renderAndExpect( registry.getBucketResources( "base" ),
+		                 "<base href=\"https://www.w3schools.com/images/\" target=\"_blank\"></base>" );
+
+		renderAndExpect( registry.getBucketResources( "custom-element" ),
+		                 "<link crossorigin=\"use-credentials\" rel=\"license\" href=\"https://en.wikipedia.org/wiki/BSD_licenses\" type=\"application/json\"></link>" );
 	}
 
 	@Test
@@ -129,16 +173,23 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				WebResourceRule.add( WebResource.css( "/foo.js" ) ).withKey( "date-pickers" ).toBucket( "date-picker-bucket-js" )
 		);
 
+
 		assertEquals( 1, resourceRegistry.getResources( "custom-package-css" ).size() );
 		resourceRegistry.removePackage( "CUSTOM-PACKAGE" );
-		assertEquals( 0, resourceRegistry.getBucketResources( "custom-package-css" ).size() );
+		assertFalse( resourceRegistry.getBucketResources( "custom-package-css" ).iterator().hasNext() );
 
 		resourceRegistry.apply( WebResourceRule.remove().withKey( "bootstrap-min-css" ).fromBucket( CSS ) );
 		resourceRegistry.apply( WebResourceRule.remove().withKey( "date-pickers" ) );
-		assertEquals( 0, resourceRegistry.getBucketResources( "date-picker-bucket-css" ).size() );
-		assertEquals( 0, resourceRegistry.getBucketResources( "date-picker-bucket-js" ).size() );
-		assertEquals( 1, resourceRegistry.getBucketResources( CSS ).size() );
-		assertEquals( 3, resourceRegistry.getBucketResources( JAVASCRIPT_PAGE_END ).size() );
+
+		assertFalse( resourceRegistry.getBucketResources( "date-picker-bucket-css" ).iterator().hasNext() );
+		assertFalse( resourceRegistry.getBucketResources( "date-picker-bucket-js" ).iterator().hasNext() );
+
+		size( 1, resourceRegistry.getBucketResources( CSS ) );
+
+		Iterator<WebResourceReference> it = resourceRegistry.getBucketResources( JAVASCRIPT_PAGE_END ).iterator();
+		assertEquals( "bootstrap-min-js", it.next().getKey() );
+		assertEquals( "bootstrap-extra-min-js", it.next().getKey() );
+		assertEquals( "bootstrap-custom-min-js", it.next().getKey() );
 	}
 
 	@Test
@@ -156,21 +207,37 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 		);
 
 		original.merge( additional );
-		assertEquals( 2, original.getBucketResources( "bucket-css" ).size() );
-		assertEquals( 1, original.getBucketResources( "bucket-js" ).size() );
-		assertEquals( 3, original.getBucketResources( "bucket-two-js" ).size() );
+		size( 2, original.getBucketResources( "bucket-css" ) );
+		size( 1, original.getBucketResources( "bucket-js" ) );
+		size( 3, original.getBucketResources( "bucket-two-js" ) );
 
 		additional.clear();
-		assertEquals( 6, original.getBucketResources().size() );
-		assertEquals( 0, additional.getBucketResources().size() );
+		size( 2, original.getBucketResources( "bucket-css" ) );
+		size( 1, original.getBucketResources( "bucket-js" ) );
+		size( 3, original.getBucketResources( "bucket-two-js" ) );
+		size( 0, additional.getBucketResources( "bucket-css" ) );
+		size( 0, additional.getBucketResources( "bucket-js" ) );
+		size( 0, additional.getBucketResources( "bucket-two-js" ) );
 
 		original.clear( "bucket-js" );
-		assertEquals( 5, original.getBucketResources().size() );
-		assertEquals( 0, additional.getBucketResources().size() );
+		size( 2, original.getBucketResources( "bucket-css" ) );
+		size( 2, original.getBucketResources( "bucket-css" ) );
+		size( 0, original.getBucketResources( "bucket-js" ) );
+		size( 3, original.getBucketResources( "bucket-two-js" ) );
 
 		original.clear();
-		assertEquals( 0, original.getBucketResources().size() );
-		assertEquals( 0, additional.getBucketResources().size() );
+		size( 0, original.getBucketResources( "bucket-css" ) );
+		size( 0, original.getBucketResources( "bucket-css" ) );
+		size( 0, original.getBucketResources( "bucket-js" ) );
+		size( 0, original.getBucketResources( "bucket-two-js" ) );
+	}
+
+	public void size( int expectedSize, WebResourceReferenceCollection referenceCollection ) {
+		int i = 0;
+		for ( WebResourceReference ignore : referenceCollection ) {
+			i++;
+		}
+		assertEquals( expectedSize, i );
 	}
 
 	public class BootstrapUiFormElementsWebResources extends SimpleWebResourcePackage

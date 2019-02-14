@@ -18,6 +18,15 @@ package com.foreach.across.modules.web.resource;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import lombok.Getter;
 
+/**
+ * A rule which specifies that a {@link ViewElementBuilder} must be added to the {@link WebResourceRegistry}
+ *
+ * @author Marc Vanbrabant
+ * @see WebResourceReference
+ * @see AbstractWebResourceBuilder
+ * @see WebResourceRegistry
+ * @since 3.1.3
+ */
 @Getter
 public class AddWebResourceRule extends WebResourceRule implements WebResourceRuleKey
 {
@@ -60,6 +69,6 @@ public class AddWebResourceRule extends WebResourceRule implements WebResourceRu
 
 	@Override
 	void applyTo( WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.add( getBucket(), new WebResourceReference( viewElementBuilder, getKey(), after, before, order, null ) );
+		webResourceRegistry.add( getBucket(), new WebResourceReference( viewElementBuilder, getKey(), after, before, order ) );
 	}
 }

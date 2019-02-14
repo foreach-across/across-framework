@@ -21,6 +21,14 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 
+/**
+ * A class used to sort WebResourceReferences.
+ * Sorting is done in stages: first by order, then by after.
+ * The <code>before</code> field is logically translated into an <code>after</code> field.
+ *
+ * @author Marc Vanbrabant
+ * @since 3.1.3
+ */
 class WebResourceSorter
 {
 	public static List<WebResourceReference> sort( @NonNull List<WebResourceReference> items ) {

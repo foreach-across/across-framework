@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.resource;
 
-import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -135,7 +134,7 @@ public class WebResourceRegistry
 
 		if ( existing == null ) {
 			List<WebResourceReference> rules = webResources.computeIfAbsent( type, k -> new LinkedList<>() );
-			WebResourceRule rule;
+			AddWebResourceRule rule;
 			switch ( type ) {
 				case JAVASCRIPT:
 				case JAVASCRIPT_PAGE_END:
@@ -157,7 +156,7 @@ public class WebResourceRegistry
 			}
 
 			WebResource resource = new WebResource( type, key, data, location );
-			AddWebResourceRule addWebResourceRule = (AddWebResourceRule) rule;
+			AddWebResourceRule addWebResourceRule = rule;
 			rules.add( new WebResourceReference( addWebResourceRule.getViewElementBuilder(), key, addWebResourceRule.getBefore(),
 			                                     addWebResourceRule.getAfter(), addWebResourceRule.getOrder(), resource ) );
 		}
@@ -368,39 +367,26 @@ public class WebResourceRegistry
 	}
 
 	/**
-	 * Return all {@link ViewElement} resources in this registry.
-	 *
-	 * @return Collection of {@link ViewElement} instances.
+	 * Return all bucket names in this registry.
 	 */
-	public Collection<ViewElement> getBucketResources() {
-		List<ViewElement> elements = new LinkedList<>();
-
-		for ( Map.Entry<String, List<WebResourceReference>> items : webResources.entrySet() ) {
-			for ( WebResourceReference resource : WebResourceSorter.sort( items.getValue() ) ) {
-				elements.add( resource.getViewElementBuilder().build() );
-			}
-		}
-
-		return elements;
+	public Set<String> getBuckets() {
+		return Collections.unmodifiableSet( webResources.keySet() );
 	}
 
 	/**
-	 * Return all {@link ViewElement} resources in this registry for a specific bucket.
+	 * Return a {@link WebResourceReferenceCollection} from all resources in this registry for a specific bucket.
 	 *
-	 * @return Collection of {@link ViewElement} instances.
+	 * @param bucket The bucket name.
 	 */
-	public Collection<ViewElement> getBucketResources( String bucket ) {
-		List<ViewElement> filtered = new LinkedList<>();
+	public WebResourceReferenceCollection getBucketResources( String bucket ) {
+		List<WebResourceReference> filtered = new LinkedList<>();
 
 		List<WebResourceReference> items = webResources.get( bucket );
 		if ( items != null ) {
-			List<WebResourceReference> resources = WebResourceSorter.sort( items );
-			for ( WebResourceReference resource : resources ) {
-				filtered.add( resource.getViewElementBuilder().build() );
-			}
+			filtered.addAll( WebResourceSorter.sort( items ) );
 		}
 
-		return filtered;
+		return new WebResourceReferenceCollection( filtered );
 	}
 
 	/**

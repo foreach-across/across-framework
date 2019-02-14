@@ -15,6 +15,12 @@
  */
 package com.foreach.across.modules.web.resource;
 
+/**
+ * A rule which specifies that a {@link WebResourcePackage} with the <code>packageName</code> must be added to the {@link WebResourceRegistry}
+ *
+ * @author Marc Vanbrabant
+ * @since 3.1.3
+ */
 public class AddPackageResourceRule extends WebResourceRule
 {
 	private String packageName;

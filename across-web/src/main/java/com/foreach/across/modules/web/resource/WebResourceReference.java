@@ -16,19 +16,50 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
 
-@AllArgsConstructor
+/**
+ * <p>Represents a single entry in a bucket in the {@link WebResourceRegistry}.</p>
+ * <p>The key is unique within a bucket and ordering can be applied using the before, after and order fields.</p>
+ * <p>Ordering is handled by {@link WebResourceSorter}.</p>
+ *
+ * @author Marc Vanbrabant
+ * @since 3.1.3
+ */
 @Getter
-class WebResourceReference
+public class WebResourceReference
 {
-	private ViewElementBuilder viewElementBuilder;
-	private String key;
-	private String before;
-	private String after;
-	private Integer order;
+	private final ViewElementBuilder viewElementBuilder;
+	private final String key;
+	private final String before;
+	private final String after;
+	private final Integer order;
+
+	public WebResourceReference( ViewElementBuilder viewElementBuilder,
+	                             String key,
+	                             String before,
+	                             String after,
+	                             Integer order ) {
+		this( viewElementBuilder, key, before, after, order, null );
+	}
 
 	@Deprecated
-	private WebResource resource;
+	WebResourceReference( ViewElementBuilder viewElementBuilder,
+	                      String key,
+	                      String before,
+	                      String after,
+	                      Integer order,
+	                      WebResource resource ) {
+		this.viewElementBuilder = viewElementBuilder;
+		this.key = key;
+		this.before = before;
+		this.after = after;
+		this.order = order;
+		this.resource = resource;
+	}
+
+	@Deprecated
+	@Getter(AccessLevel.PACKAGE)
+	private final WebResource resource;
 }

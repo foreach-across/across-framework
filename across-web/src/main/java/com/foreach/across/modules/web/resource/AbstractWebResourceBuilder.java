@@ -21,6 +21,9 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 
 /**
  * Abstract builder class which can be used to generate ViewElements for any HTML tag
+ *
+ * @author Marc Vanbrabant
+ * @since 3.1.3
  */
 public abstract class AbstractWebResourceBuilder extends ViewElementBuilderSupport
 {

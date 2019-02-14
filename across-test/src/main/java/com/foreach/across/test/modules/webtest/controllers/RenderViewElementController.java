@@ -17,7 +17,6 @@ package com.foreach.across.test.modules.webtest.controllers;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.template.ClearTemplate;
-import com.foreach.across.modules.web.ui.ViewElement;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,10 +33,10 @@ public class RenderViewElementController
 	public static final String PATH = "/renderViewElement";
 
 	private Callback callback;
-	private ViewElement element;
+	private Object element;
 	private String template;
 
-	public void setElement( ViewElement element ) {
+	public void setElement( Object element ) {
 		this.element = element;
 	}
 

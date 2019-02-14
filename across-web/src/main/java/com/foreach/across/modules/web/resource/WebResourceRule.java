@@ -16,9 +16,15 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import lombok.Getter;
 
-@Getter
+/**
+ * <p>An abstract class that can be used to single {@link #add} a {@link CssWebResourceBuilder}, {@link JavascriptWebResourceBuilder}
+ * or {@link AbstractWebResourceBuilder}. </p>
+ * <p>A {@link WebResourcePackage} can be added with {@link #addPackage(String)}</p>
+ *
+ * @author Marc Vanbrabant
+ * @since 3.1.3
+ */
 public abstract class WebResourceRule
 {
 	abstract void applyTo( WebResourceRegistry webResourceRegistry );
