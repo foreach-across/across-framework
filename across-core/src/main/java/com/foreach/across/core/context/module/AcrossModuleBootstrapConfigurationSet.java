@@ -39,7 +39,7 @@ import java.util.*;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class AcrossModuleBootstrapConfigurationSet
+public class AcrossModuleBootstrapConfigurationSet implements Iterable<AcrossModuleBootstrapConfiguration>
 {
 	private final Collection<AcrossModuleBootstrapConfiguration> configurationsInBootstrapOrder;
 	private final Map<String, AcrossModuleBootstrapConfiguration> configurationsByModuleName;
@@ -60,6 +60,18 @@ public class AcrossModuleBootstrapConfigurationSet
 	 */
 	public Optional<AcrossModuleBootstrapConfiguration> getConfigurationForModule( @NonNull String moduleName ) {
 		return Optional.ofNullable( configurationsByModuleName.get( moduleName ) );
+	}
+
+	/**
+	 * @return number of distinct configurations in the set
+	 */
+	public int size() {
+		return configurationsInBootstrapOrder.size();
+	}
+
+	@Override
+	public Iterator<AcrossModuleBootstrapConfiguration> iterator() {
+		return configurationsInBootstrapOrder.iterator();
 	}
 
 	/**
@@ -91,7 +103,7 @@ public class AcrossModuleBootstrapConfigurationSet
 		// merge the extension configurations to the first available target
 		mergeExtensions( configurations, configurationsByModuleName );
 
-		// sort the remaining configurations, modified dependencies have changed
+		// sort the remaining configurations again, modified dependencies have changed and order might be impacted
 		Collection<AcrossModuleBootstrapConfiguration> sorted
 				= AcrossModuleDependencySorter.sort( configurations, AcrossModuleBootstrapConfiguration::toDependencySpec );
 

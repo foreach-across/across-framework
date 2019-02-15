@@ -45,7 +45,7 @@ import java.util.stream.Stream;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class AcrossLifecycleShutdownHandler
+public final class AcrossLifecycleShutdownHandler
 {
 	private final AcrossContext acrossContext;
 

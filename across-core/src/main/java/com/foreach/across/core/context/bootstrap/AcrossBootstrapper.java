@@ -77,7 +77,11 @@ import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigure
 
 /**
  * Takes care of bootstrapping an entire across context.
+ *
+ * @see AcrossLifecycleBootstrapHandler
+ * @deprecated since 5.0.0
  */
+@Deprecated
 public class AcrossBootstrapper
 {
 	static final String EXPOSE_SUPPORTING_APPLICATION_CONTEXT = "ax:expose-parent";
