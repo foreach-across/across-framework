@@ -17,6 +17,7 @@ package com.foreach.across.test.web.thymeleaf;
 
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import com.foreach.across.test.web.TestDefaultTemplate;
+import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,7 +45,6 @@ public class TestStaticAttribute
 
 	@Test
 	public void defaultAttributeNames() throws Exception {
-
 		verify( "auto static a", "a", "href" );
 		verify( "auto static link", "link", "href" );
 		verify( "auto static script", "script", "src" );
@@ -55,6 +56,33 @@ public class TestStaticAttribute
 		verify( "auto resource script", "script", "src" );
 		verify( "auto resource image", "image", "xlink:href" );
 		verify( "auto resource use", "use", "xlink:href" );
+	}
+
+	@Test
+	@SneakyThrows
+	// see https://github.com/spring-projects/spring-framework/issues/22067 - this should work once Spring supports it
+	public void urlFragmentIsNotYetSupported() {
+		mvc.perform( get( "/ctxPath/attributes" ).contextPath( "/ctxPath" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( not( containsString(
+				   "<use xlink:href=\"/ctxPath/across/resources/static/fixed/testResources/test.txt#with-fragment\">with fragment</use>" ) ) ) );
+		mvc.perform( get( "/ctxPath/attributes" ).contextPath( "/ctxPath" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( not( containsString(
+				   "<a other=\"/ctxPath/across/resources/static/fixed/testResources/test.txt#with-fragment\">manual with fragment</a>" ) ) ) );
+	}
+
+	@Test
+	@SneakyThrows
+	public void queryStringSupported() {
+		mvc.perform( get( "/ctxPath/attributes" ).contextPath( "/ctxPath" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( containsString(
+				   "<use xlink:href=\"/ctxPath/across/resources/static/fixed/testResources/test.txt?with-querystring\">with querystring</use>" ) ) );
+		mvc.perform( get( "/ctxPath/attributes" ).contextPath( "/ctxPath" ) )
+		   .andExpect( status().isOk() )
+		   .andExpect( content().string( containsString(
+				   "<a other=\"/ctxPath/across/resources/static/fixed/testResources/test.txt?with-querystring\">manual with querystring</a>" ) ) );
 	}
 
 	@Test
