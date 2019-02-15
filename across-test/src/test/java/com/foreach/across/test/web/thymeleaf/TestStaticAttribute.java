@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,21 +59,20 @@ public class TestStaticAttribute
 
 	@Test
 	@SneakyThrows
-	// see https://github.com/spring-projects/spring-framework/issues/22067 - this should work once Spring supports it
-	public void urlFragmentIsNotYetSupported() {
+	public void urlFragmentIsSupported() {
 		mvc.perform( get( "/ctxPath/attributes" ).contextPath( "/ctxPath" ) )
 		   .andExpect( status().isOk() )
-		   .andExpect( content().string( not( containsString(
-				   "<use xlink:href=\"/ctxPath/across/resources/static/fixed/testResources/test.txt#with-fragment\">with fragment</use>" ) ) ) );
+		   .andExpect( content().string( containsString(
+				   "<use xlink:href=\"/ctxPath/across/resources/static/fixed/testResources/test.txt#with-fragment\">with fragment</use>" ) ) );
 		mvc.perform( get( "/ctxPath/attributes" ).contextPath( "/ctxPath" ) )
 		   .andExpect( status().isOk() )
-		   .andExpect( content().string( not( containsString(
-				   "<a other=\"/ctxPath/across/resources/static/fixed/testResources/test.txt#with-fragment\">manual with fragment</a>" ) ) ) );
+		   .andExpect( content().string( containsString(
+				   "<a other=\"/ctxPath/across/resources/static/fixed/testResources/test.txt#with-fragment\">manual with fragment</a>" ) ) );
 	}
 
 	@Test
 	@SneakyThrows
-	public void queryStringSupported() {
+	public void queryStringIsSupported() {
 		mvc.perform( get( "/ctxPath/attributes" ).contextPath( "/ctxPath" ) )
 		   .andExpect( status().isOk() )
 		   .andExpect( content().string( containsString(
