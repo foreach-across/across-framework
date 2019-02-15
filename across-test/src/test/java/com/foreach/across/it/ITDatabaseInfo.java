@@ -58,9 +58,11 @@ public class ITDatabaseInfo
 
 		assertTrue(
 				databaseInfo.isHsql()
+						|| databaseInfo.isH2()
 						|| databaseInfo.isOracle()
 						|| databaseInfo.isSqlServer()
 						|| databaseInfo.isMySQL()
+						|| databaseInfo.isPostgres()
 		);
 	}
 

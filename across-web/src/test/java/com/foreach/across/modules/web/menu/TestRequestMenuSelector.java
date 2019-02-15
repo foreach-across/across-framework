@@ -62,24 +62,23 @@ public class TestRequestMenuSelector
 	public void pathScoring() {
 		assertThat( LookupPath.parse( "/one" ).calculateScore( LookupPath.parse( "/two" ) ) ).isEqualTo( LookupPath.NO_MATCH );
 		assertThat( LookupPath.parse( "/one" ).calculateScore( LookupPath.parse( "/one" ) ) ).isEqualTo( LookupPath.EXACT_MATCH );
-		assertThat( LookupPath.parse( "/one" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) ).isEqualTo( LookupPath.PATH_EQUALS );
+		assertThat( LookupPath.parse( "/one" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) ).isEqualTo( LookupPath.NO_MATCH );
 		assertThat( LookupPath.parse( "/one?x=y" ).calculateScore( LookupPath.parse( "/one" ) ) ).isEqualTo( LookupPath.PATH_EQUALS );
 		assertThat( LookupPath.parse( "/one?x=y" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) ).isEqualTo( LookupPath.EXACT_MATCH );
 		assertThat( LookupPath.parse( "/one/two" ).calculateScore( LookupPath.parse( "/one" ) ) ).isEqualTo( LookupPath.PATH_STARTS_WITH + 4 );
-		assertThat( LookupPath.parse( "/one/two" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) ).isEqualTo( LookupPath.PATH_STARTS_WITH + 4 );
-		assertThat( LookupPath.parse( "/one/two/three" ).calculateScore( LookupPath.parse( "/one/two?x=y" ) ) ).isEqualTo( LookupPath.PATH_STARTS_WITH + 8 );
-		assertThat( LookupPath.parse( "/one/two?x=y" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) ).isEqualTo( LookupPath.PATH_STARTS_WITH + 4 );
+		assertThat( LookupPath.parse( "/one/two" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) ).isEqualTo( LookupPath.NO_MATCH );
+		assertThat( LookupPath.parse( "/one/two/three" ).calculateScore( LookupPath.parse( "/one/two?x=y" ) ) ).isEqualTo( LookupPath.NO_MATCH );
+		assertThat( LookupPath.parse( "/one/two?x=y" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) ).isEqualTo( LookupPath.NO_MATCH );
 		assertThat( LookupPath.parse( "/one?x=y&z=1" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) )
 				.isEqualTo( LookupPath.PATH_EQUALS + LookupPath.QUERY_PARAM_MATCH );
-		assertThat( LookupPath.parse( "/one?x=y&test=dummy&z=1" ).calculateScore( LookupPath.parse( "/one?z=1&x=y&test=other" ) ) )
+		assertThat( LookupPath.parse( "/one?x=y&test=dummy&z=1" ).calculateScore( LookupPath.parse( "/one?z=1&x=y" ) ) )
 				.isEqualTo( LookupPath.PATH_EQUALS + 2 * LookupPath.QUERY_PARAM_MATCH );
+		assertThat( LookupPath.parse( "/one?x=y&test=dummy&z=1" ).calculateScore( LookupPath.parse( "/one?z=1&x=y&test=other" ) ) )
+				.isEqualTo( LookupPath.NO_MATCH );
 
+		// fragment is ignored to determine exact match - as it is usually not sent to the server anyway
 		assertThat( LookupPath.parse( "/one?x=y" ).calculateScore( LookupPath.parse( "/one?x=y#5" ) ) )
-				.isEqualTo( LookupPath.PATH_EQUALS + LookupPath.QUERY_PARAM_MATCH );
-		assertThat( LookupPath.parse( "/one?x=y#5" ).calculateScore( LookupPath.parse( "/one?x=y#5" ) ) )
 				.isEqualTo( LookupPath.EXACT_MATCH );
-		assertThat( LookupPath.parse( "/one?x=y#5" ).calculateScore( LookupPath.parse( "/one?x=y" ) ) )
-				.isEqualTo( LookupPath.PATH_EQUALS + LookupPath.QUERY_PARAM_MATCH );
 	}
 
 	@Test
@@ -102,7 +101,15 @@ public class TestRequestMenuSelector
 		assertSelected( menu, "http://localhost:8103/context/two/threeFour", "/two" );
 	}
 
-	// todo: url matching & with or without context path matching
+	@Test
+	public void noMatchOnItemsThatRequireQueryParameter() {
+		val menu = menu( "/one?x=y" );
+		assertSelected( menu, "http://localhost:8103/context/other", null );
+		assertSelected( menu, "http://localhost:8103/context/one", null );
+		assertSelected( menu, "http://localhost:8103/context/one?a=b", null );
+		assertSelected( menu, "http://localhost:8103/context/one?a=b&x=1", null );
+		assertSelected( menu, "http://localhost:8103/context/one?a=b&x=y", "/one?x=y" );
+	}
 
 	private void assertSelected( Menu menu, String url, String expectedPath ) {
 		RequestMenuSelector selector = new RequestMenuSelector(
@@ -112,8 +119,13 @@ public class TestRequestMenuSelector
 		);
 
 		Menu selectedItem = selector.find( menu );
-		assertThat( selectedItem ).isNotNull();
-		assertThat( selectedItem.getPath() ).isEqualTo( expectedPath );
+		if ( expectedPath == null ) {
+			assertThat( selectedItem ).isNull();
+		}
+		else {
+			assertThat( selectedItem ).isNotNull();
+			assertThat( selectedItem.getPath() ).isEqualTo( expectedPath );
+		}
 	}
 
 	private Menu menu( String... paths ) {
