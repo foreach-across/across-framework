@@ -22,6 +22,7 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -31,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
  * Builder class for creating a {@link ViewElement} of tag <script>
  *
  * @author Marc Vanbrabant
- * @since 3.1.3
+ * @since 3.2.0
  */
 @Accessors(fluent = true, chain = true)
 @Setter
@@ -46,7 +47,7 @@ public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 
 	@Override
 	@SneakyThrows
-	public MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
+	public MutableViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
 		NodeViewElement element = new NodeViewElement( "script" );
 
 		if ( StringUtils.isNotBlank( url ) ) {

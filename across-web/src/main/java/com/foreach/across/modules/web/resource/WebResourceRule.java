@@ -17,6 +17,7 @@ package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
+import lombok.NonNull;
 
 /**
  * <p>An abstract class that can be used to single {@link #add} a {@link CssWebResourceBuilder}, {@link JavascriptWebResourceBuilder}
@@ -24,21 +25,42 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
  * <p>A {@link WebResourcePackage} can be added with {@link #addPackage(String)}</p>
  *
  * @author Marc Vanbrabant
- * @since 3.1.3
+ * @since 3.2.0
  */
-public abstract class WebResourceRule
+@FunctionalInterface
+public interface WebResourceRule
 {
-	abstract void applyTo( WebResourceRegistry webResourceRegistry );
+	void applyTo( @NonNull WebResourceRegistry webResourceRegistry );
 
-	public static AddWebResourceRule add( ViewElementBuilder viewElementBuilder ) {
+	/**
+	 * A factory method which can be used to declare a {@link AddWebResourceRule} and
+	 * add a single {@link ViewElementBuilder} to the registry
+	 *
+	 * @see JavascriptWebResourceBuilder
+	 * @see CssWebResourceBuilder
+	 * @see WebResourceRegistry
+	 */
+	static AddWebResourceRule add( @NonNull ViewElementBuilder viewElementBuilder ) {
 		return new AddWebResourceRule().of( viewElementBuilder );
 	}
 
-	public static AddPackageResourceRule addPackage( String packageName ) {
+	/**
+	 * A factory method which can be used to declare a {@link AddPackageResourceRule} and
+	 * add a package of web resources to the registry
+	 *
+	 * @see SimpleWebResourcePackage
+	 * @see WebResourceRegistry
+	 */
+	static AddPackageResourceRule addPackage( @NonNull String packageName ) {
 		return new AddPackageResourceRule( packageName );
 	}
 
-	public static RemoveWebResourceRule remove() {
+	/**
+	 * A factory method why can be used to remove a web resource from the registry
+	 *
+	 * @see WebResourceRegistry
+	 */
+	static RemoveWebResourceRule remove() {
 		return new RemoveWebResourceRule();
 	}
 

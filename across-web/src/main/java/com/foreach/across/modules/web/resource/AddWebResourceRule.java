@@ -18,18 +18,20 @@ package com.foreach.across.modules.web.resource;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import lombok.Getter;
+import lombok.NonNull;
 
 /**
  * A rule which specifies that a {@link ViewElementBuilder} must be added to the {@link WebResourceRegistry}
  *
  * @author Marc Vanbrabant
+ * @since 3.2.0
  * @see WebResourceReference
  * @see ViewElementBuilderSupport
  * @see WebResourceRegistry
- * @since 3.1.3
+ *
  */
 @Getter
-public class AddWebResourceRule extends WebResourceRule implements WebResourceRuleKey
+public class AddWebResourceRule implements WebResourceRule
 {
 	private ViewElementBuilder viewElementBuilder;
 	private String after;
@@ -38,38 +40,38 @@ public class AddWebResourceRule extends WebResourceRule implements WebResourceRu
 	private String key;
 	private String bucket;
 
-	public AddWebResourceRule withKey( String key ) {
+	public AddWebResourceRule withKey( @NonNull String key ) {
 		this.key = key;
 		return this;
 	}
 
-	public AddWebResourceRule toBucket( String bucket ) {
+	public AddWebResourceRule toBucket( @NonNull String bucket ) {
 		this.bucket = bucket;
 		return this;
 	}
 
-	public AddWebResourceRule before( String key ) {
-		this.before = key;
+	public AddWebResourceRule before( @NonNull String before ) {
+		this.before = before;
 		return this;
 	}
 
-	public AddWebResourceRule after( String key ) {
-		this.after = key;
+	public AddWebResourceRule after( @NonNull String after ) {
+		this.after = after;
 		return this;
 	}
 
-	public AddWebResourceRule order( Integer order ) {
+	public AddWebResourceRule order( int order ) {
 		this.order = order;
 		return this;
 	}
 
-	public AddWebResourceRule of( ViewElementBuilder viewElementBuilder ) {
+	public AddWebResourceRule of( @NonNull ViewElementBuilder viewElementBuilder ) {
 		this.viewElementBuilder = viewElementBuilder;
 		return this;
 	}
 
 	@Override
-	void applyTo( WebResourceRegistry webResourceRegistry ) {
+	public void applyTo( WebResourceRegistry webResourceRegistry ) {
 		webResourceRegistry.add( getBucket(), new WebResourceReference( viewElementBuilder, getKey(), after, before, order ) );
 	}
 }

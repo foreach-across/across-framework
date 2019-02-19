@@ -27,20 +27,13 @@ import java.util.*;
  * The <code>before</code> field is logically translated into an <code>after</code> field.
  *
  * @author Marc Vanbrabant
- * @since 3.1.3
+ * @since 3.2.0
  */
 class WebResourceSorter
 {
 	public static List<WebResourceReference> sort( @NonNull List<WebResourceReference> items ) {
 		List<WebResourceReference> sorted = new LinkedList<>( items );
-		sorted.sort( ( o1, o2 ) -> {
-			if ( o1.getOrder() != null && o2.getOrder() != null ) {
-				return Comparator.comparingInt( WebResourceReference::getOrder ).compare( o1, o2 );
-			}
-			else {
-				return 0;
-			}
-		} );
+		sorted.sort( ( o1, o2 ) -> Comparator.comparingInt( WebResourceReference::getOrder ).compare( o1, o2 ) );
 
 		return sortByBeforeOrAfter( sorted );
 	}
@@ -62,10 +55,10 @@ class WebResourceSorter
 			current = toSort.remove( 0 );
 		}
 		processing.add( current );
-		Set<WebResourceReference> afterClasses = getClassesRequestedAfter( classes, current );
-		for ( WebResourceReference after : afterClasses ) {
+		Set<WebResourceReference> afterResources = webResourcesToBeSortedAfter( classes, current );
+		for ( WebResourceReference after : afterResources ) {
 			Assert.state( !processing.contains( after ),
-			              "AutoConfigure cycle detected between " + current + " and " + after );
+			              "WebResourceReference cycle detected between " + current + " and " + after );
 			if ( !sorted.contains( after ) && toSort.contains( after ) ) {
 				doSortByAfter( classes, toSort, sorted, processing, after );
 			}
@@ -74,7 +67,7 @@ class WebResourceSorter
 		sorted.add( current );
 	}
 
-	private static Set<WebResourceReference> getClassesRequestedAfter( List<WebResourceReference> classes, WebResourceReference after ) {
+	private static Set<WebResourceReference> webResourcesToBeSortedAfter( List<WebResourceReference> classes, WebResourceReference after ) {
 		Set<WebResourceReference> rtn = new LinkedHashSet<>();
 		if ( after.getAfter() != null ) {
 			classes.stream().filter( r -> after.getAfter() != null && StringUtils.equals( after.getAfter(), r.getKey() ) ).findFirst().ifPresent( rtn::add );

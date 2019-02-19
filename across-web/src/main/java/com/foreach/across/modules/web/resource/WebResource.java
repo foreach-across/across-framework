@@ -17,6 +17,7 @@
 package com.foreach.across.modules.web.resource;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 /**
@@ -74,7 +75,7 @@ public class WebResource
 	}
 
 	/**
-	 * @deprecated since 3.1.3 - replaced by {@link WebResourceReference}
+	 * @deprecated since 3.2.0- replaced by {@link WebResourceReference}
 	 *
 	 * @see WebResourceRegistry
 	 *
@@ -97,7 +98,7 @@ public class WebResource
 	/**
 	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a script tag for external resources
 	 */
-	public static JavascriptWebResourceBuilder javascript( String url ) {
+	public static JavascriptWebResourceBuilder javascript( @NonNull String url ) {
 		return javascript().url( url );
 	}
 
@@ -111,7 +112,7 @@ public class WebResource
 	/**
 	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a link tag
 	 */
-	public static CssWebResourceBuilder css( String url ) {
+	public static CssWebResourceBuilder css( @NonNull String url ) {
 		return css().url( url );
 	}
 }

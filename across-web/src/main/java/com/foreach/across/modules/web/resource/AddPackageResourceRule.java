@@ -15,22 +15,24 @@
  */
 package com.foreach.across.modules.web.resource;
 
+import lombok.NonNull;
+
 /**
  * A rule which specifies that a {@link WebResourcePackage} with the <code>packageName</code> must be added to the {@link WebResourceRegistry}
  *
  * @author Marc Vanbrabant
- * @since 3.1.3
+ * @since 3.2.0
  */
-public class AddPackageResourceRule extends WebResourceRule
+public class AddPackageResourceRule implements WebResourceRule
 {
 	private String packageName;
 
-	public AddPackageResourceRule( String packageName ) {
+	public AddPackageResourceRule( @NonNull String packageName ) {
 		this.packageName = packageName;
 	}
 
 	@Override
-	void applyTo( WebResourceRegistry webResourceRegistry ) {
+	public void applyTo( @NonNull WebResourceRegistry webResourceRegistry ) {
 		webResourceRegistry.addPackage( packageName );
 	}
 }

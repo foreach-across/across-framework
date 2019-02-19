@@ -18,6 +18,8 @@ package com.foreach.across.modules.web.resource;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
+import org.springframework.core.Ordered;
 
 /**
  * <p>Represents a single entry in a bucket in the {@link WebResourceRegistry}.</p>
@@ -27,7 +29,7 @@ import lombok.Getter;
  * @see WebResourceRegistry
  *
  * @author Marc Vanbrabant
- * @since 3.1.3
+ * @since 3.2.0
  */
 @Getter
 public class WebResourceReference
@@ -36,17 +38,17 @@ public class WebResourceReference
 	private final String key;
 	private final String before;
 	private final String after;
-	private final Integer order;
+	private final int order;
 
 	@Deprecated
 	@Getter(AccessLevel.PACKAGE)
 	private final WebResource resource;
 
-	public WebResourceReference( ViewElementBuilder viewElementBuilder,
-	                             String key,
-	                             String before,
-	                             String after,
-	                             Integer order ) {
+	public WebResourceReference( @NonNull ViewElementBuilder viewElementBuilder,
+	                             @NonNull String key,
+	                             @NonNull String before,
+	                             @NonNull String after,
+	                             @NonNull Integer order ) {
 		this( viewElementBuilder, key, before, after, order, null );
 	}
 
@@ -61,7 +63,7 @@ public class WebResourceReference
 		this.key = key;
 		this.before = before;
 		this.after = after;
-		this.order = order;
+		this.order = order == null ? Ordered.HIGHEST_PRECEDENCE + 1000 : order;
 		this.resource = resource;
 	}
 }

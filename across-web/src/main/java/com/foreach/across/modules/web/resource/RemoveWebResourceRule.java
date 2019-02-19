@@ -15,6 +15,8 @@
  */
 package com.foreach.across.modules.web.resource;
 
+import lombok.NonNull;
+
 /**
  * A rule which specifies that a {@link WebResourceReference} with a specific key must be removed from the {@link WebResourceRegistry}
  * <p>
@@ -22,26 +24,25 @@ package com.foreach.across.modules.web.resource;
  * If no bucket is specified, remove the item with this key from all buckets.
  *
  * @author Marc Vanbrabant
- * @since 3.1.3
+ * @since 3.2.0
  */
-public class RemoveWebResourceRule extends WebResourceRule implements WebResourceRuleKey
+public class RemoveWebResourceRule implements WebResourceRule
 {
 	private String key;
 	private String bucket;
 
-	@Override
-	public RemoveWebResourceRule withKey( String key ) {
+	public RemoveWebResourceRule withKey( @NonNull String key ) {
 		this.key = key;
 		return this;
 	}
 
-	public RemoveWebResourceRule fromBucket( String bucket ) {
+	public RemoveWebResourceRule fromBucket( @NonNull String bucket ) {
 		this.bucket = bucket;
 		return this;
 	}
 
 	@Override
-	void applyTo( WebResourceRegistry webResourceRegistry ) {
+	public void applyTo( @NonNull WebResourceRegistry webResourceRegistry ) {
 		if ( bucket != null ) {
 			webResourceRegistry.removeResourceWithKey( bucket, key );
 		}

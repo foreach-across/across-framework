@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.resource;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Iterator;
@@ -36,7 +37,7 @@ public class WebResourceReferenceCollection implements Iterable<WebResourceRefer
 	private final List<WebResourceReference> items;
 
 	@Override
-	public ContainerViewElement build( ViewElementBuilderContext builderContext ) {
+	public ContainerViewElement build( @NonNull ViewElementBuilderContext builderContext ) {
 		ContainerViewElement container = new ContainerViewElement();
 		items.forEach( webResourceReference -> container.addChild( webResourceReference.getViewElementBuilder().build() ) );
 		return container;
