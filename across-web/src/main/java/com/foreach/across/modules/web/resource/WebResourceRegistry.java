@@ -370,7 +370,7 @@ public class WebResourceRegistry
 
 		List<WebResourceReference> items = webResources.get( bucket );
 		if ( items != null ) {
-			filtered.addAll( WebResourceSorter.sort( items ) );
+			filtered.addAll( items );
 		}
 
 		return new WebResourceReferenceCollection( filtered );

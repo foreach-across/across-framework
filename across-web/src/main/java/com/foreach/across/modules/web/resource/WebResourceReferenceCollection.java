@@ -39,12 +39,12 @@ public class WebResourceReferenceCollection implements Iterable<WebResourceRefer
 	@Override
 	public ContainerViewElement build( @NonNull ViewElementBuilderContext builderContext ) {
 		ContainerViewElement container = new ContainerViewElement();
-		items.forEach( webResourceReference -> container.addChild( webResourceReference.getViewElementBuilder().build() ) );
+		iterator().forEachRemaining( webResourceReference -> container.addChild( webResourceReference.getViewElementBuilder().build() ) );
 		return container;
 	}
 
 	@Override
 	public Iterator<WebResourceReference> iterator() {
-		return items.iterator();
+		return WebResourceSorter.sort( items ).iterator();
 	}
 }
