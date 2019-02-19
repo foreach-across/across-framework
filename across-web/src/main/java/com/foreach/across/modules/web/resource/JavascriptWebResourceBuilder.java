@@ -52,10 +52,10 @@ public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 		if ( StringUtils.isNotBlank( url ) ) {
 			element.setAttribute( "src", builderContext.buildLink( url ) );
 			if ( async ) {
-				element.setAttribute( "async", "" );
+				element.setAttribute( "async", "async" );
 			}
 			if ( defer ) {
-				element.setAttribute( "defer", "" );
+				element.setAttribute( "defer", "defer" );
 			}
 		}
 		else {
