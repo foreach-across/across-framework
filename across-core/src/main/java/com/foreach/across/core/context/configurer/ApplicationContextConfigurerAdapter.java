@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,6 +89,9 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 
 		ApplicationContextConfigurerAdapter that = (ApplicationContextConfigurerAdapter) o;
 
+		if ( isOptional() != that.isOptional() ) {
+			return false;
+		}
 		if ( !Arrays.equals( annotatedClasses(), that.annotatedClasses() ) ) {
 			return false;
 		}
@@ -104,6 +107,9 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 		if ( !Objects.equals( propertySources(), that.propertySources() ) ) {
 			return false;
 		}
+		if ( !Objects.equals( excludedTypeFilters(), that.excludedTypeFilters() ) ) {
+			return false;
+		}
 
 		return true;
 	}
@@ -111,6 +117,6 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 	@Override
 	public int hashCode() {
 		return Objects.hash( annotatedClasses(), componentScanPackages(), postProcessors(), providedBeans(),
-		                     propertySources() );
+		                     propertySources(), isOptional() );
 	}
 }

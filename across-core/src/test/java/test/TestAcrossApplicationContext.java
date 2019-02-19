@@ -21,6 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -34,10 +35,12 @@ import static org.junit.Assert.assertNotSame;
 public class TestAcrossApplicationContext
 {
 	private AcrossApplicationContext ctx;
+	private ConfigurableListableBeanFactory beanFactory;
 
 	@Before
 	public void before() {
 		ctx = new AcrossApplicationContext();
+		beanFactory = ctx.getBeanFactory();
 	}
 
 	@After

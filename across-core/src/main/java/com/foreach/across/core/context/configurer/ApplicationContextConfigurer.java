@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.foreach.across.core.context.configurer;
 
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
+import lombok.NonNull;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.core.env.PropertySources;
@@ -81,5 +82,73 @@ public interface ApplicationContextConfigurer
 				|| !ArrayUtils.isEmpty( annotatedClasses() )
 				|| !ArrayUtils.isEmpty( postProcessors() )
 				|| ( providedBeans != null && !providedBeans.isEmpty() );
+	}
+
+	/**
+	 * Checks if the configurer should be considered optional. Optional configurers should
+	 * not force a module to be loaded, they often provide infrastructure components that are
+	 * only relevant if there are at least some other beans.
+	 *
+	 * @return true if this configuration should be considered optional
+	 */
+	default boolean isOptional() {
+		return false;
+	}
+
+	/**
+	 * Makes a configurer optional.
+	 *
+	 * @param configurer to make optional
+	 * @return new configurer
+	 */
+	static ApplicationContextConfigurer optional( @NonNull ApplicationContextConfigurer configurer ) {
+		return new ApplicationContextConfigurer()
+		{
+			@Override
+			public ProvidedBeansMap providedBeans() {
+				return configurer.providedBeans();
+			}
+
+			@Override
+			public Class[] annotatedClasses() {
+				return configurer.annotatedClasses();
+			}
+
+			@Override
+			public String[] componentScanPackages() {
+				return configurer.componentScanPackages();
+			}
+
+			@Override
+			public BeanFactoryPostProcessor[] postProcessors() {
+				return configurer.postProcessors();
+			}
+
+			@Override
+			public PropertySources propertySources() {
+				return configurer.propertySources();
+			}
+
+			@Override
+			public TypeFilter[] excludedTypeFilters() {
+				return configurer.excludedTypeFilters();
+			}
+
+			@Override
+			public boolean isOptional() {
+				return true;
+			}
+
+			@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+			@Override
+			public boolean equals( Object obj ) {
+				return configurer.equals( obj ) && ( (ApplicationContextConfigurer) obj ).isOptional() == isOptional();
+			}
+
+			@Override
+			public int hashCode() {
+				return 31 * configurer.hashCode() + ( configurer.isOptional() ? 0 : 1 );
+			}
+		};
 	}
 }
