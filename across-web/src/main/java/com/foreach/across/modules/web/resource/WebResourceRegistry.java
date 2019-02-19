@@ -32,6 +32,15 @@ import static com.foreach.across.modules.web.resource.WebResource.*;
  * <p><strong>When adding resources, both key and content are unique discriminators.  The same content can only
  * be added once, unless a different key is explicitly provided.</strong></p>
  * <p>Loosely based on Drupal constructions.</p>
+ * To declare a set of {@link WebResourceReference} items you can use the following construct:
+ *
+ * <pre>{@code
+ * webResourceRegistry.apply(
+ *     WebResourceRule.add( WebResource.css( "@static:/css/bootstrap.min.css" ) ).withKey( "bootstrap-min-css" ).toBucket( CSS ),
+ *     WebResourceRule.add( WebResource.javascript( "bootstrap.min.js" ) ).withKey( "bootstrap-min-js" ).toBucket( JAVASCRIPT_PAGE_END ),
+ *     WebResourceRule.add( WebResource.css().inline( "body {background-color: powderblue;}" ) ).withKey( "inline-body-blue" ).toBucket( CSS )
+ * );
+ * }</pre>
  */
 public class WebResourceRegistry
 {
