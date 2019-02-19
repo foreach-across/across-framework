@@ -34,36 +34,15 @@ import static org.junit.Assert.*;
 /**
  * @author Arne Vandamme
  */
-@ContextConfiguration(classes = TestCustomConfiguration.Config.class)
-@TestPropertySource(properties = { "acrossWebModule.resources.path=/static",
-                                   WEBJARS_RESOURCES_PATH + "=//cdn.jsdelivr.net/webjars/org.webjars/",
-                                   "acrossWebModule.views.thymeleaf.enabled=false" })
-public class TestCustomConfiguration extends AbstractWebIntegrationTest
+@ContextConfiguration(classes = TestDefaultWebjarConfiguration.Config.class)
+public class TestDefaultWebjarConfiguration extends AbstractWebIntegrationTest
 {
 	@Autowired
 	private WebAppPathResolver pathResolver;
 
 	@Test
-	public void staticResourcesShouldBeServedUnderConfiguredPath() {
-		String output = get( "/static/css/testResources/parent.css" );
-		assertNotNull( output );
-		assertTrue( output.contains( "body { background: url(\"images/test.png\"); }" ) );
-
-		output = get( "/static/js/testResources/javascript.js" );
-		assertNotNull( output );
-		assertTrue( output.contains( "alert('hello');" ) );
-	}
-
-	@Test(expected = HttpClientErrorException.class)
-	public void thymeleafShouldBeDisabled() {
-		get( "/testResources" );
-	}
-
-	@Test
-	public void resourcePrefixesShouldBeRegistered() {
-		assertEquals( "/static/pdf/list.pdf", pathResolver.path( "@resource:/pdf/list.pdf" ) );
-		assertEquals( "/static/static/pdf/list.pdf", pathResolver.path( "@static:/pdf/list.pdf" ) );
-		assertEquals( "//cdn.jsdelivr.net/webjars/org.webjars/bootstrap/3.1.0/css/bootstrap.min.css", pathResolver.path( "@webjars:/bootstrap/3.1.0/css/bootstrap.min.css" ) );
+	public void defaultWebjarsPathIsSlashWebjars() {
+		assertEquals( "/webjars/bootstrap/3.1.0/css/bootstrap.min.css", pathResolver.path( "@webjars:/bootstrap/3.1.0/css/bootstrap.min.css" ) );
 	}
 
 	@Configuration
