@@ -33,10 +33,10 @@ public class TestWebResourceSorter
 		items.add( new WebResourceReference( null, "1", null, null, 1, null ) );
 		items.add( new WebResourceReference( null, "4", null, null, null, null ) );
 		List<WebResourceReference> sorted = WebResourceSorter.sort( items );
-		assertEquals( "0", sorted.get( 0 ).getKey() );
-		assertEquals( "1", sorted.get( 1 ).getKey() );
-		assertEquals( "2", sorted.get( 2 ).getKey() );
-		assertEquals( "3", sorted.get( 3 ).getKey() );
+		assertEquals( "1", sorted.get( 0 ).getKey() );
+		assertEquals( "2", sorted.get( 1 ).getKey() );
+		assertEquals( "3", sorted.get( 2 ).getKey() );
+		assertEquals( "0", sorted.get( 3 ).getKey() );
 		assertEquals( "4", sorted.get( 4 ).getKey() );
 	}
 
@@ -65,8 +65,8 @@ public class TestWebResourceSorter
 		items.add( new WebResourceReference( null, "1", null, null, 1, null ) );
 		items.add( new WebResourceReference( null, "4", null, "3", null, null ) );
 		List<WebResourceReference> sorted = WebResourceSorter.sort( items );
-		assertEquals( "0", sorted.get( 0 ).getKey() );
-		assertEquals( "1", sorted.get( 1 ).getKey() );
+		assertEquals( "1", sorted.get( 0 ).getKey() );
+		assertEquals( "0", sorted.get( 1 ).getKey() );
 		assertEquals( "2", sorted.get( 2 ).getKey() );
 		assertEquals( "3", sorted.get( 3 ).getKey() );
 		assertEquals( "4", sorted.get( 4 ).getKey() );

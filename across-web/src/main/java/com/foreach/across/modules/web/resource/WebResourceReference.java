@@ -63,7 +63,7 @@ public class WebResourceReference
 		this.key = key;
 		this.before = before;
 		this.after = after;
-		this.order = order == null ? Ordered.HIGHEST_PRECEDENCE + 1000 : order;
+		this.order = order == null ? Ordered.LOWEST_PRECEDENCE - 1000 : order;
 		this.resource = resource;
 	}
 }
