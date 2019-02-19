@@ -19,6 +19,7 @@ package com.foreach.across.core.context;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.context.support.AcrossLifecycleProcessor;
 import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import com.foreach.across.core.context.support.AcrossOrderUtils;
 import com.foreach.across.core.registry.IncrementalRefreshableRegistry;
@@ -26,11 +27,9 @@ import com.foreach.across.core.registry.RefreshableRegistry;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TypeConverter;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
@@ -50,6 +49,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.springframework.beans.factory.BeanFactoryUtils.isFactoryDereference;
+import static org.springframework.context.support.AbstractApplicationContext.LIFECYCLE_PROCESSOR_BEAN_NAME;
 
 /**
  * Extends a {@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
@@ -69,6 +69,9 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	private transient final AcrossOrderComparator acrossOrderComparator = new AcrossOrderComparator();
 
 	public AcrossListableBeanFactory() {
+		AcrossLifecycleProcessor lifecycleProcessor = new AcrossLifecycleProcessor();
+		lifecycleProcessor.setBeanFactory( this );
+		registerSingleton( LIFECYCLE_PROCESSOR_BEAN_NAME, lifecycleProcessor );
 	}
 
 	public AcrossListableBeanFactory( BeanFactory parentBeanFactory ) {
@@ -142,6 +145,28 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		}
 
 		return super.doCreateBean( beanName, mbd, args );
+	}
+
+	@Override
+	public Class<?> getType( String name ) throws NoSuchBeanDefinitionException {
+		String beanName = transformedBeanName( name );
+
+		if ( beanName != null && containsBeanDefinition( beanName ) ) {
+			BeanDefinition bd = getBeanDefinition( beanName );
+
+			if ( bd instanceof ExposedBeanDefinition ) {
+				List<ConstructorArgumentValues.ValueHolder> factoryArguments =
+						bd.getConstructorArgumentValues().getGenericArgumentValues();
+
+				String moduleBeanName = (String) factoryArguments.get( 1 ).getValue();
+				return ( (AcrossContextBeanRegistry) getBean( bd.getFactoryBeanName() ) ).getBeanTypeFromModule(
+						(String) factoryArguments.get( 0 ).getValue(),
+						isFactoryDereference( name ) ? FACTORY_BEAN_PREFIX + moduleBeanName : moduleBeanName
+				);
+			}
+		}
+
+		return super.getType( name );
 	}
 
 	@Override
@@ -359,6 +384,39 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	 */
 	public boolean isExposedBean( String beanName ) {
 		return containsBeanDefinition( beanName ) && getBeanDefinition( beanName ) instanceof ExposedBeanDefinition;
+	}
+
+	@Override
+	public boolean containsSingleton( String beanName ) {
+		// exposed singletons are considered to be part of the bean factory
+		if ( containsBeanDefinition( beanName ) ) {
+			BeanDefinition bd = getBeanDefinition( beanName );
+			if ( bd instanceof ExposedBeanDefinition && bd.isSingleton() ) {
+				return true;
+			}
+		}
+
+		return super.containsSingleton( beanName );
+	}
+
+	@Override
+	public boolean isFactoryBean( String name ) throws NoSuchBeanDefinitionException {
+		// custom implementation that skips custom "containsSingleton"
+		String beanName = transformedBeanName( name );
+		Object beanInstance = getSingleton( beanName, false );
+		if ( beanInstance != null ) {
+			return ( beanInstance instanceof FactoryBean );
+		}
+		else if ( super.containsSingleton( beanName ) ) {
+			// null instance registered
+			return false;
+		}
+		// No singleton instance found -> check bean definition.
+		if ( !containsBeanDefinition( beanName ) && getParentBeanFactory() instanceof ConfigurableBeanFactory ) {
+			// No bean definition found in this factory -> delegate to parent.
+			return ( (ConfigurableBeanFactory) getParentBeanFactory() ).isFactoryBean( name );
+		}
+		return isFactoryBean( beanName, getMergedLocalBeanDefinition( beanName ) );
 	}
 
 	@Override
