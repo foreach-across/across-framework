@@ -66,7 +66,6 @@ public class WebResourceRegistry
 	 * Register a specific resource.
 	 *
 	 * @param webResource WebResource instance to add.
-	 *
 	 * @deprecated since 3.1.3 - replaced by {@link WebResourceRule#add(ViewElementBuilder)}
 	 */
 	@Deprecated
@@ -80,7 +79,6 @@ public class WebResourceRegistry
 	 *
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param data Data to register.
-	 *
 	 * @deprecated since 3.1.3 - replaced by {@link WebResourceRule#add(ViewElementBuilder)}
 	 */
 	@Deprecated
@@ -95,7 +93,6 @@ public class WebResourceRegistry
 	 * @param type     Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param data     Data to register.
 	 * @param location Where the data is available.
-	 *
 	 * @deprecated since 3.1.3 - replaced by {@link WebResourceRule#add(ViewElementBuilder)}
 	 */
 	@Deprecated
@@ -110,7 +107,6 @@ public class WebResourceRegistry
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param key  Unique key under which to register a resource.
 	 * @param data Data to register.
-	 *
 	 * @deprecated since 3.1.3 - replaced by {@link WebResourceRule#add(ViewElementBuilder)}
 	 */
 	@Deprecated
@@ -125,7 +121,6 @@ public class WebResourceRegistry
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param key  Unique key under which to register a resource.
 	 * @param data Data to register.
-	 *
 	 * @deprecated since 3.1.3 - replaced by {@link WebResourceRule#add(ViewElementBuilder)}
 	 */
 	@Deprecated
@@ -196,7 +191,6 @@ public class WebResourceRegistry
 	 * Requires that the resource data equals() the requested data.
 	 *
 	 * @param data Content the resource should have.
-	 *
 	 * @deprecated since 3.1.3 - removing by "data" is not supported anymore
 	 */
 	@Deprecated
@@ -219,7 +213,6 @@ public class WebResourceRegistry
 	 *
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param data Content the resource should have.
-	 *
 	 * @deprecated since 3.1.3 - removing by "data" is not supported anymore
 	 */
 	@Deprecated
@@ -252,11 +245,11 @@ public class WebResourceRegistry
 	/**
 	 * Will remove all resources of that type registered under the key specified.
 	 *
-	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
-	 * @param key  Key the resource is registered under.
+	 * @param bucket Bucket name, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
+	 * @param key    Key the resource is registered under.
 	 */
-	public void removeResourceWithKey( String type, String key ) {
-		List<WebResourceReference> references = webResources.get( type );
+	public void removeResourceWithKey( String bucket, String key ) {
+		List<WebResourceReference> references = webResources.get( bucket );
 		if ( references != null ) {
 			references.removeIf( resource -> StringUtils.equals( key, resource.getKey() ) );
 		}
@@ -324,7 +317,6 @@ public class WebResourceRegistry
 	 *
 	 * @param type Type of the resource.
 	 * @return Collection of WebResource instances.
-	 *
 	 * @deprecated since 3.1.3 - replaced by {@link #getBucketResources(String)}
 	 */
 	@Deprecated
@@ -348,18 +340,15 @@ public class WebResourceRegistry
 	 * Lists all resources in this registry.
 	 *
 	 * @return Collection of WebResource instances.
-	 *
 	 * @deprecated since 3.1.3 - replaced by {@link #getBucketResources(String)}
 	 */
 	@Deprecated
 	public Collection<WebResource> getResources() {
 		List<WebResource> items = new LinkedList<>();
 		for ( Map.Entry<String, List<WebResourceReference>> webResources : webResources.entrySet() ) {
-			if ( webResources.getValue() != null ) {
-				for ( WebResourceReference reference : webResources.getValue() ) {
-					if ( reference.getResource() != null ) {
-						items.add( reference.getResource() );
-					}
+			for ( WebResourceReference reference : webResources.getValue() ) {
+				if ( reference.getResource() != null ) {
+					items.add( reference.getResource() );
 				}
 			}
 		}
@@ -378,7 +367,7 @@ public class WebResourceRegistry
 	 *
 	 * @param bucket The bucket name.
 	 */
-	public WebResourceReferenceCollection getBucketResources( String bucket ) {
+	public WebResourceReferenceCollection getBucketResources( @NonNull String bucket ) {
 		List<WebResourceReference> filtered = new LinkedList<>();
 
 		List<WebResourceReference> items = webResources.get( bucket );

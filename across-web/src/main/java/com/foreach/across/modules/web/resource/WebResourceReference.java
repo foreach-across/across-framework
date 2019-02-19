@@ -24,6 +24,8 @@ import lombok.Getter;
  * <p>The key is unique within a bucket and ordering can be applied using the before, after and order fields.</p>
  * <p>Ordering is handled by {@link WebResourceSorter}.</p>
  *
+ * @see WebResourceRegistry
+ *
  * @author Marc Vanbrabant
  * @since 3.1.3
  */
@@ -35,6 +37,10 @@ public class WebResourceReference
 	private final String before;
 	private final String after;
 	private final Integer order;
+
+	@Deprecated
+	@Getter(AccessLevel.PACKAGE)
+	private final WebResource resource;
 
 	public WebResourceReference( ViewElementBuilder viewElementBuilder,
 	                             String key,
@@ -58,8 +64,4 @@ public class WebResourceReference
 		this.order = order;
 		this.resource = resource;
 	}
-
-	@Deprecated
-	@Getter(AccessLevel.PACKAGE)
-	private final WebResource resource;
 }

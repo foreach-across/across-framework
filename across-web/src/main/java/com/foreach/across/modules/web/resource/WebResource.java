@@ -74,7 +74,10 @@ public class WebResource
 	}
 
 	/**
-	 * @deprecated since 3.1.3 - replaced by {@link #javascript()} and {@link #css()} methods
+	 * @deprecated since 3.1.3 - replaced by {@link WebResourceReference}
+	 *
+	 * @see WebResourceRegistry
+	 *
 	 */
 	@Deprecated
 	public WebResource( String type, String key, Object data, String location ) {
@@ -85,32 +88,28 @@ public class WebResource
 	}
 
 	/**
-	 * A builder for constructing a {@link com.foreach.across.modules.web.ui.ViewElementBuilder}
-	 * This builder will generate a script tag and can be used for inline or json
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a script tag and can be used for inline or json
 	 */
 	public static JavascriptWebResourceBuilder javascript() {
 		return new JavascriptWebResourceBuilder();
 	}
 
 	/**
-	 * A builder for constructing a {@link com.foreach.across.modules.web.ui.ViewElementBuilder}
-	 * This builder will generate a script tag for external resources
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a script tag for external resources
 	 */
 	public static JavascriptWebResourceBuilder javascript( String url ) {
 		return javascript().url( url );
 	}
 
 	/**
-	 * A builder for constructing a {@link com.foreach.across.modules.web.ui.ViewElementBuilder}
-	 * This builder will generate a link or style tag, depending if inline or url is used
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a link or style tag, depending if inline or url is used
 	 */
 	public static CssWebResourceBuilder css() {
 		return new CssWebResourceBuilder();
 	}
 
 	/**
-	 * A builder for constructing a {@link com.foreach.across.modules.web.ui.ViewElementBuilder}
-	 * This builder will generate a link tag
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a link tag
 	 */
 	public static CssWebResourceBuilder css( String url ) {
 		return css().url( url );
