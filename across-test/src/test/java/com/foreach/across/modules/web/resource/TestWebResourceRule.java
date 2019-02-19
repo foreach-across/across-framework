@@ -15,6 +15,8 @@
  */
 package com.foreach.across.modules.web.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.ui.*;
 import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
@@ -67,13 +69,24 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 		}};
 
 		registry.apply(
-				WebResourceRule.add( WebResource.css( "favicon.ico" ).rel( "icon" ).type( "image/x-icon" ) ).toBucket( "FAVICON" ),
+				WebResourceRule.add( WebResource.css( "favicon.ico" ).rel( "icon" ).type( "image/x-icon" ) ).withKey( "favicon" ).toBucket( "FAVICON" ),
 				WebResourceRule.add( WebResource.css( "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" ).rel( "alternate" ) )
+				               .withKey( "bootstrap-3.3.5-min-css" )
 				               .toBucket( "CSS_CDN" ),
 				WebResourceRule.add( WebResource.css( "@static:/css/bootstrap.min.css" ) ).withKey( "bootstrap-min-css" ).toBucket( CSS ),
 				WebResourceRule.add( WebResource.css().inline( "body {background-color: powderblue;}" ) ).withKey( "inline-body-blue" ).toBucket( CSS ),
 				WebResourceRule.add( WebResource.javascript().inline( "alert('hello world');" ) ).withKey( "alert-page-top" ).toBucket( JAVASCRIPT ),
-				WebResourceRule.add( WebResource.javascript().data( vars ) ).withKey( "alert-page-top" ).toBucket( "javascript_vars" ),
+				WebResourceRule.add( WebResource.javascript().data( vars ).snippet( ( data ) -> {
+					try {
+						return "(function ( Across ) {\n" +
+								"var data=" + new ObjectMapper().writeValueAsString( data ) + ";\n" +
+								"for(var key in data) Across[key] = data[key];\n" +
+								"        })( window.Across = window.Across || {} );\n";
+					}
+					catch ( JsonProcessingException e ) {
+						throw new RuntimeException( e );
+					}
+				} ) ).withKey( "alert-page-top" ).toBucket( "javascript_vars" ),
 				WebResourceRule.add( WebResource.javascript( "bootstrap.min.js" ) ).withKey( "bootstrap-min-js" ).toBucket( JAVASCRIPT_PAGE_END ),
 				WebResourceRule.add( WebResource.javascript( "@resource:bootstrapui.js" ) ).withKey( "BootstrapUiModule-js" ).toBucket( JAVASCRIPT_PAGE_END ),
 				WebResourceRule.add( new ViewElementBuilderSupport()
@@ -85,7 +98,7 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 						element.setAttribute( "target", "_blank" );
 						return element;
 					}
-				} ).toBucket( "base" ),
+				} ).withKey( "base-w3-school" ).toBucket( "base" ),
 				WebResourceRule.add( new CssWebResourceBuilder()
 				{
 					@Override
@@ -94,7 +107,8 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 						( (AbstractNodeViewElement) element ).setAttribute( "crossorigin", "use-credentials" );
 						return element;
 					}
-				}.type( "application/json" ).rel( "license" ).url( "https://en.wikipedia.org/wiki/BSD_licenses" ) ).toBucket( "custom-element" )
+				}.type( "application/json" ).rel( "license" ).url( "https://en.wikipedia.org/wiki/BSD_licenses" ) ).withKey( "rel-license" )
+				               .toBucket( "custom-element" )
 		);
 
 		assertEquals( 8, registry.getBuckets().size() );
@@ -194,13 +208,13 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 		WebResourceRegistry original = new WebResourceRegistry( null );
 		WebResourceRegistry additional = new WebResourceRegistry( null );
 
-		original.apply( WebResourceRule.add( WebResource.css( "/one.css" ) ).toBucket( "bucket-css" ),
-		                WebResourceRule.add( WebResource.javascript( "/one.js" ) ).toBucket( "bucket-js" ) );
+		original.apply( WebResourceRule.add( WebResource.css( "/one.css" ) ).withKey( "1-css" ).toBucket( "bucket-css" ),
+		                WebResourceRule.add( WebResource.javascript( "/one.js" ) ).withKey( "1-js" ).toBucket( "bucket-js" ) );
 
-		additional.apply( WebResourceRule.add( WebResource.css( "two.css" ) ).toBucket( "bucket-css" ),
-		                  WebResourceRule.add( WebResource.javascript( "/two-1.js" ) ).toBucket( "bucket-two-js" ),
-		                  WebResourceRule.add( WebResource.javascript( "/two-2.js" ) ).toBucket( "bucket-two-js" ),
-		                  WebResourceRule.add( WebResource.javascript( "/two-3.js" ) ).toBucket( "bucket-two-js" )
+		additional.apply( WebResourceRule.add( WebResource.css( "two.css" ) ).withKey( "2-css" ).toBucket( "bucket-css" ),
+		                  WebResourceRule.add( WebResource.javascript( "/two-1.js" ) ).withKey( "2-1.js" ).toBucket( "bucket-two-js" ),
+		                  WebResourceRule.add( WebResource.javascript( "/two-2.js" ) ).withKey( "2-2.js" ).toBucket( "bucket-two-js" ),
+		                  WebResourceRule.add( WebResource.javascript( "/two-3.js" ) ).withKey( "2-3.js" ).toBucket( "bucket-two-js" )
 		);
 
 		original.merge( additional );

@@ -46,9 +46,9 @@ public class WebResourceReference
 
 	public WebResourceReference( @NonNull ViewElementBuilder viewElementBuilder,
 	                             @NonNull String key,
-	                             @NonNull String before,
-	                             @NonNull String after,
-	                             @NonNull Integer order ) {
+	                             String before,
+	                             String after,
+	                             Integer order ) {
 		this( viewElementBuilder, key, before, after, order, null );
 	}
 

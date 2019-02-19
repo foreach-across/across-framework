@@ -15,7 +15,6 @@
  */
 package com.foreach.across.modules.web.resource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -27,6 +26,8 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.function.Function;
 
 /**
  * Builder class for creating a {@link ViewElement} of tag <script>
@@ -44,6 +45,7 @@ public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 	private String inline;
 	private String type;
 	private Object data;
+	private Function<Object, String> snippet;
 
 	@Override
 	@SneakyThrows
@@ -64,11 +66,8 @@ public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 				element.addChild( TextViewElement.html( inline ) );
 			}
 			else {
-				if ( data != null ) {
-					element.addChild( TextViewElement.html( "(function ( Across ) {\n" +
-							                                        "var data=" + new ObjectMapper().writeValueAsString( data ) + ";\n" +
-							                                        "for(var key in data) Across[key] = data[key];\n" +
-							                                        "        })( window.Across = window.Across || {} );\n" ) );
+				if ( data != null && snippet != null ) {
+					element.addChild( TextViewElement.html( snippet.apply( data ) ) );
 				}
 			}
 

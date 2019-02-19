@@ -134,11 +134,9 @@ public class WebResourceRegistry
 				case JAVASCRIPT:
 				case JAVASCRIPT_PAGE_END:
 					if ( data instanceof String ) {
-						// INLINE and DATA
 						rule = WebResourceRule.add( WebResource.javascript( (String) data ) ).withKey( key ).toBucket( type );
 					}
 					else {
-						// INLINE and DATA
 						rule = WebResourceRule.add( WebResource.javascript().data( data ) ).withKey( key ).toBucket( type );
 					}
 
@@ -147,7 +145,7 @@ public class WebResourceRegistry
 					rule = WebResourceRule.add( WebResource.javascript( (String) data ) ).withKey( key ).toBucket( type );
 					break;
 				default:
-					rule = WebResourceRule.add( null ).withKey( key ).toBucket( type );
+					rule = new AddWebResourceRule().withKey( key ).toBucket( type );
 			}
 
 			WebResource resource = new WebResource( type, key, data, location );
