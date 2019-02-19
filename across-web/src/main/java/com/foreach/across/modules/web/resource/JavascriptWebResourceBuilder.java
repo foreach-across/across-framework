@@ -23,7 +23,6 @@ import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,7 +47,6 @@ public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 	private Function<Object, String> snippet;
 
 	@Override
-	@SneakyThrows
 	public MutableViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
 		NodeViewElement element = new NodeViewElement( "script" );
 
