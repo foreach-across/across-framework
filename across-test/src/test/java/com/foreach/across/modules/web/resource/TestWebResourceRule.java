@@ -16,10 +16,7 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.context.WebAppLinkBuilder;
-import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.MutableViewElement;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContextHolder;
+import com.foreach.across.modules.web.ui.*;
 import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
@@ -79,7 +76,7 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				WebResourceRule.add( WebResource.javascript().data( vars ) ).withKey( "alert-page-top" ).toBucket( "javascript_vars" ),
 				WebResourceRule.add( WebResource.javascript( "bootstrap.min.js" ) ).withKey( "bootstrap-min-js" ).toBucket( JAVASCRIPT_PAGE_END ),
 				WebResourceRule.add( WebResource.javascript( "@resource:bootstrapui.js" ) ).withKey( "BootstrapUiModule-js" ).toBucket( JAVASCRIPT_PAGE_END ),
-				WebResourceRule.add( new AbstractWebResourceBuilder()
+				WebResourceRule.add( new ViewElementBuilderSupport()
 				{
 					@Override
 					public MutableViewElement createElement( ViewElementBuilderContext builderContext ) {

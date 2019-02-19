@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import lombok.Setter;
@@ -34,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Accessors(fluent = true, chain = true)
 @Setter
-public class JavascriptWebResourceBuilder extends AbstractWebResourceBuilder
+public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 {
 	private boolean async;
 	private boolean defer;

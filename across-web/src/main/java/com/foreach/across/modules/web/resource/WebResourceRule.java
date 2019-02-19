@@ -16,10 +16,11 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
+import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 
 /**
  * <p>An abstract class that can be used to single {@link #add} a {@link CssWebResourceBuilder}, {@link JavascriptWebResourceBuilder}
- * or {@link AbstractWebResourceBuilder}. </p>
+ * or {@link ViewElementBuilderSupport}. </p>
  * <p>A {@link WebResourcePackage} can be added with {@link #addPackage(String)}</p>
  *
  * @author Marc Vanbrabant

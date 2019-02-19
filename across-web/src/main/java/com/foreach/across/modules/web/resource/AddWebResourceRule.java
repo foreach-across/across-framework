@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
+import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import lombok.Getter;
 
 /**
@@ -23,7 +24,7 @@ import lombok.Getter;
  *
  * @author Marc Vanbrabant
  * @see WebResourceReference
- * @see AbstractWebResourceBuilder
+ * @see ViewElementBuilderSupport
  * @see WebResourceRegistry
  * @since 3.1.3
  */
