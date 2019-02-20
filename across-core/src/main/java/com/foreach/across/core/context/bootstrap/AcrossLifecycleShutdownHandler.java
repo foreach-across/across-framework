@@ -80,6 +80,7 @@ public class AcrossLifecycleShutdownHandler
 
 					module.shutdown();
 					applicationContext.destroy();
+					AcrossContextUtils.setAcrossApplicationContextHolder( module, null );
 				}
 			}
 		}
@@ -87,6 +88,7 @@ public class AcrossLifecycleShutdownHandler
 		// Destroy the root ApplicationContext
 
 		rootApplicationContext.destroy();
+		AcrossContextUtils.setAcrossApplicationContextHolder( acrossContext, null );
 		LOG.debug( "Destroyed root ApplicationContext: {}", acrossContext.getId() );
 	}
 

@@ -167,8 +167,10 @@ public final class AcrossContextUtils
 		}
 
 		AbstractAcrossEntity aEntity = (AbstractAcrossEntity) contextOrModule;
-		return aEntity.hasApplicationContext() ?
-				aEntity.getAcrossApplicationContextHolder().getApplicationContext() : null;
+		if ( aEntity.hasApplicationContext() ) {
+			return aEntity.getAcrossApplicationContextHolder().getApplicationContext();
+		}
+		throw new IllegalStateException( "No ApplicationContext is available - has the Across context or module been bootstrapped?" );
 	}
 
 	/**
