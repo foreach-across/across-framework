@@ -190,18 +190,20 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 
 		if ( includeModuleInternals ) {
 			for ( AcrossModuleInfo module : contextInfo.getModules() ) {
-				beanFactory = beanFactory( module.getApplicationContext() );
+				if ( module.isBootstrapped() ) {
+					beanFactory = beanFactory( module.getApplicationContext() );
 
-				if ( beanFactory != null ) {
-					resolver.setBeanFactory( beanFactory );
+					if ( beanFactory != null ) {
+						resolver.setBeanFactory( beanFactory );
 
-					for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
-						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) && !beanFactory.isExposedBean( beanName ) ) {
-							Object bean = beanFactory.getBean( beanName );
-							comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
+						for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
+							if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) && !beanFactory.isExposedBean( beanName ) ) {
+								Object bean = beanFactory.getBean( beanName );
+								comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-							beans.add( (T) bean );
-							beanNames.put( (T) bean, module.getName() + ":" + beanName );
+								beans.add( (T) bean );
+								beanNames.put( (T) bean, module.getName() + ":" + beanName );
+							}
 						}
 					}
 				}
