@@ -26,7 +26,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.Field;
@@ -221,8 +220,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	}
 
 	private AcrossListableBeanFactory beanFactory( ApplicationContext applicationContext ) {
-		ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) applicationContext;
-		return ctx != null ? (AcrossListableBeanFactory) ctx.getBeanFactory() : null;
+		return (AcrossListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
 	}
 
 	protected static class ResolvableTypeDescriptor extends DependencyDescriptor
