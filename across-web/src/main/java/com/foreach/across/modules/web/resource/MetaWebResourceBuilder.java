@@ -20,61 +20,51 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
-import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Builder class for creating a {@link ViewElement} of tag <link> or <style>
+ * Builder class for creating a {@link ViewElement} of tag <meta>
  *
  * @author Marc Vanbrabant
  * @since 3.2.0
  */
 @Accessors(fluent = true, chain = true)
 @Setter
-public class CssWebResourceBuilder extends ViewElementBuilderSupport
+public class MetaWebResourceBuilder extends ViewElementBuilderSupport
 {
-	private String url;
-	private String rel;
-	private String type;
-	private String media;
-	private String inline;
+	private String metaName;
+	private String content;
+	private String httpEquiv;
 
 	@Override
 	public MutableViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
-		NodeViewElement element;
+		NodeViewElement element = new NodeViewElement( "meta" );
 
-		if ( StringUtils.isNotBlank( url ) ) {
-			element = new NodeViewElement( "link" );
-			element.setAttribute( "href", builderContext.buildLink( url ) );
-
-			if ( StringUtils.isNotBlank( rel ) ) {
-				element.setAttribute( "rel", rel );
-			}
-			else {
-				element.setAttribute( "rel", "stylesheet" );
-			}
+		if ( StringUtils.isNotBlank( httpEquiv ) ) {
+			element.setAttribute( "http-equiv", httpEquiv );
 		}
 		else {
-			element = new NodeViewElement( "style" );
-			if ( StringUtils.isNotBlank( inline ) ) {
-				element.addChild( TextViewElement.html( inline ) );
+			if ( StringUtils.isNotBlank( metaName ) ) {
+				element.setAttribute( "name", metaName );
 			}
 		}
 
-		if ( StringUtils.isNotBlank( type ) ) {
-			element.setAttribute( "type", type );
-		}
-		else {
-			element.setAttribute( "type", "text/css" );
-		}
-
-		if ( StringUtils.isNotBlank( media ) ) {
-			element.setAttribute( "media", media );
+		if ( StringUtils.isNotBlank( content ) ) {
+			element.setAttribute( "content", content );
 		}
 
 		return element;
+	}
+
+	/**
+	 * Short hand for a http-equiv refresh <meta> tag
+	 */
+	public MetaWebResourceBuilder refresh( String refresh ) {
+		this.httpEquiv = "refresh";
+		this.content = refresh;
+		return this;
 	}
 }

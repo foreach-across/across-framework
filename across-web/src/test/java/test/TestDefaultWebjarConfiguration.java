@@ -18,18 +18,20 @@ package test;
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.modules.web.context.WebAppPathResolver;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
-import static com.foreach.across.modules.web.AcrossWebModuleSettings.WEBJARS_RESOURCES_PATH;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Arne Vandamme
@@ -39,10 +41,16 @@ public class TestDefaultWebjarConfiguration extends AbstractWebIntegrationTest
 {
 	@Autowired
 	private WebAppPathResolver pathResolver;
+	private RestTemplate restTemplate = new RestTemplate();
 
 	@Test
 	public void defaultWebjarsPathIsSlashWebjars() {
-		assertEquals( "/webjars/bootstrap/3.1.0/css/bootstrap.min.css", pathResolver.path( "@webjars:/bootstrap/3.1.0/css/bootstrap.min.css" ) );
+		String resolvedPath = pathResolver.path( "@webjars:/jquery/3.3.0/jquery.js" );
+		assertEquals( "/webjars/jquery/3.3.0/jquery.js", resolvedPath );
+		ResponseEntity<String> response = restTemplate.getForEntity( host + resolvedPath, String.class );
+		assertEquals( HttpStatus.OK, response.getStatusCode() );
+		assertTrue( StringUtils.contains( response.getBody(), "jQuery JavaScript Library v3.3.0" ) );
+		assertEquals( "application/javascript;charset=UTF-8", response.getHeaders().getFirst( "Content-Type" ) );
 	}
 
 	@Configuration

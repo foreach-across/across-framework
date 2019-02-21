@@ -79,4 +79,20 @@ public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 
 		return element;
 	}
+
+	/**
+	 * Shorthand for <code>defer(true)</code>
+	 */
+	public JavascriptWebResourceBuilder defer() {
+		this.defer = true;
+		return this;
+	}
+
+	/**
+	 * Shorthand for <code>async(true)</code>
+	 */
+	public JavascriptWebResourceBuilder async() {
+		this.async = true;
+		return this;
+	}
 }

@@ -87,7 +87,8 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 						throw new RuntimeException( e );
 					}
 				} ) ).withKey( "alert-page-top" ).toBucket( "javascript_vars" ),
-				WebResourceRule.add( WebResource.javascript( "bootstrap.min.js" ) ).withKey( "bootstrap-min-js" ).toBucket( JAVASCRIPT_PAGE_END ),
+				WebResourceRule.add( WebResource.javascript( "bootstrap.min.js" ).defer().async() ).withKey( "bootstrap-min-js" )
+				               .toBucket( JAVASCRIPT_PAGE_END ),
 				WebResourceRule.add( WebResource.javascript( "@resource:bootstrapui.js" ) ).withKey( "BootstrapUiModule-js" ).toBucket( JAVASCRIPT_PAGE_END ),
 				WebResourceRule.add( new ViewElementBuilderSupport()
 				{
@@ -108,10 +109,12 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 						return element;
 					}
 				}.type( "application/json" ).rel( "license" ).url( "https://en.wikipedia.org/wiki/BSD_licenses" ) ).withKey( "rel-license" )
-				               .toBucket( "custom-element" )
+				               .toBucket( "custom-element" ),
+				WebResourceRule.add( WebResource.meta().metaName( "keywords" ).content( "HTML, CSS, XML, HTML" ) ).withKey( "meta-keywords" ).toBucket( META ),
+				WebResourceRule.add( WebResource.meta().refresh( "30;URL=https://www.google.com/" ) ).withKey( "meta-refresh" ).toBucket( META )
 		);
 
-		assertEquals( 8, registry.getBuckets().size() );
+		assertEquals( 9, registry.getBuckets().size() );
 
 		renderAndExpect( registry.getBucketResources( "FAVICON" ),
 		                 "<link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\" />" );
@@ -133,13 +136,16 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				                 "</script>" );
 
 		renderAndExpect( registry.getBucketResources( JAVASCRIPT_PAGE_END ),
-		                 "<script src=\"/bootstrap.min.js\" type=\"text/javascript\"></script><script src=\"/across/resources/bootstrapui.js\" type=\"text/javascript\"></script>" );
+		                 "<script src=\"/bootstrap.min.js\" defer=\"defer\" async=\"async\" type=\"text/javascript\"></script><script src=\"/across/resources/bootstrapui.js\" type=\"text/javascript\"></script>" );
 
 		renderAndExpect( registry.getBucketResources( "base" ),
 		                 "<base href=\"https://www.w3schools.com/images/\" target=\"_blank\"></base>" );
 
 		renderAndExpect( registry.getBucketResources( "custom-element" ),
 		                 "<link crossorigin=\"use-credentials\" rel=\"license\" href=\"https://en.wikipedia.org/wiki/BSD_licenses\" type=\"application/json\"></link>" );
+
+		renderAndExpect( registry.getBucketResources( META ),
+		                 "<meta name=\"keywords\" content=\"HTML, CSS, XML, HTML\"></meta><meta http-equiv=\"refresh\" content=\"30;URL=https://www.google.com/\"></meta>" );
 	}
 
 	@Test

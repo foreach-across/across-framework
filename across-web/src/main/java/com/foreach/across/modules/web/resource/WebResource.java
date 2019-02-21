@@ -28,11 +28,12 @@ import lombok.Setter;
 public class WebResource
 {
 	/**
-	 * Default type of web resources.
+	 * Default buckets of web resources.
 	 */
 	public static final String CSS = "css";
 	public static final String JAVASCRIPT = "javascript";
 	public static final String JAVASCRIPT_PAGE_END = "javascript-page-end";
+	public static final String META = "meta";
 
 	/**
 	 * Used for data that should be serialized and passed to the client (usually as json).
@@ -114,5 +115,12 @@ public class WebResource
 	 */
 	public static CssWebResourceBuilder css( @NonNull String url ) {
 		return css().url( url );
+	}
+
+	/**
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a meta tag
+	 */
+	public static MetaWebResourceBuilder meta() {
+		return new MetaWebResourceBuilder();
 	}
 }
