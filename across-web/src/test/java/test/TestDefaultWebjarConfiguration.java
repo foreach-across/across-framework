@@ -17,14 +17,17 @@ package test;
 
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
+import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.context.WebAppPathResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import test.modules.TestModules;
@@ -37,17 +40,26 @@ import static org.junit.Assert.assertTrue;
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = TestDefaultWebjarConfiguration.Config.class)
+@TestPropertySource(properties = "server.context-path=/custom/servlet")
 public class TestDefaultWebjarConfiguration extends AbstractWebIntegrationTest
 {
 	@Autowired
 	private WebAppPathResolver pathResolver;
+	@Autowired
+	private WebAppLinkBuilder linkBuilder;
+	@Autowired
+	private ServerProperties serverProperties;
+
 	private RestTemplate restTemplate = new RestTemplate();
 
 	@Test
 	public void defaultWebjarsPathIsSlashWebjars() {
+		assertEquals( "/custom/servlet", serverProperties.getContextPath() );
 		String resolvedPath = pathResolver.path( "@webjars:/jquery/3.3.0/jquery.js" );
+		String resolvedLink = linkBuilder.buildLink( "@webjars:/jquery/3.3.0/jquery.js" );
 		assertEquals( "/webjars/jquery/3.3.0/jquery.js", resolvedPath );
-		ResponseEntity<String> response = restTemplate.getForEntity( host + resolvedPath, String.class );
+		assertEquals( "/custom/servlet/webjars/jquery/3.3.0/jquery.js", resolvedLink );
+		ResponseEntity<String> response = restTemplate.getForEntity( host + resolvedLink, String.class );
 		assertEquals( HttpStatus.OK, response.getStatusCode() );
 		assertTrue( StringUtils.contains( response.getBody(), "jQuery JavaScript Library v3.3.0" ) );
 		assertEquals( "application/javascript;charset=UTF-8", response.getHeaders().getFirst( "Content-Type" ) );

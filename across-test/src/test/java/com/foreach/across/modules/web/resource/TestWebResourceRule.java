@@ -54,6 +54,19 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 	}
 
 	@Test
+	public void webResourceRuleSortWorks() {
+		WebResourceRegistry registry = new WebResourceRegistry( null );
+		registry.apply(
+				WebResourceRule.add( WebResource.css( "/css/1.css" ) ).order( 1 ).withKey( "first-css" ).toBucket( WebResource.CSS ),
+				WebResourceRule.add( WebResource.css( "/css/4.css" ) ).after( "third-css" ).withKey( "fourth-css" ).toBucket( WebResource.CSS ),
+				WebResourceRule.add( WebResource.css( "/css/3.css" ) ).withKey( "third-css" ).toBucket( WebResource.CSS ),
+				WebResourceRule.add( WebResource.css( "/css/2.css" ) ).before( "third-css" ).withKey( "second-css" ).toBucket( WebResource.CSS )
+		);
+		renderAndExpect( registry.getBucketResources( CSS ),
+		                 "<link rel=\"stylesheet\" href=\"/css/1.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/4.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/3.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/2.css\" type=\"text/css\"></link>" );
+	}
+
+	@Test
 	public void addRendersViewElements() {
 		WebResourceRegistry registry = new WebResourceRegistry( null );
 

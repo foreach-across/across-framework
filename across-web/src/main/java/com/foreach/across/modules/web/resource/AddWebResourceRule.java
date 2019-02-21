@@ -72,6 +72,6 @@ public class AddWebResourceRule implements WebResourceRule
 
 	@Override
 	public void applyTo( WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.add( getBucket(), new WebResourceReference( viewElementBuilder, getKey(), after, before, order ) );
+		webResourceRegistry.add( getBucket(), new WebResourceReference( viewElementBuilder, getKey(), before, after, order ) );
 	}
 }
