@@ -40,7 +40,7 @@ public class AddWebResourceRule implements WebResourceRule
 	private String key;
 	private String bucket;
 
-	public AddWebResourceRule withKey( @NonNull String key ) {
+	public AddWebResourceRule withKey( String key ) {
 		this.key = key;
 		return this;
 	}

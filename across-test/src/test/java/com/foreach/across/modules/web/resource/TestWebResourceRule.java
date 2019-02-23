@@ -63,7 +63,7 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				WebResourceRule.add( WebResource.css( "/css/2.css" ) ).before( "third-css" ).withKey( "second-css" ).toBucket( WebResource.CSS )
 		);
 		renderAndExpect( registry.getBucketResources( CSS ),
-		                 "<link rel=\"stylesheet\" href=\"/css/1.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/4.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/3.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/2.css\" type=\"text/css\"></link>" );
+		                 "<link rel=\"stylesheet\" href=\"/css/1.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/2.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/3.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/4.css\" type=\"text/css\"></link>" );
 	}
 
 	@Test
