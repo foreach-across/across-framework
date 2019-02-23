@@ -148,10 +148,9 @@ public class WebResourceRegistry
 					else {
 						rule = WebResourceRule.add( WebResource.javascript().data( data ) ).withKey( key ).toBucket( type );
 					}
-
 					break;
 				case CSS:
-					rule = WebResourceRule.add( WebResource.javascript( (String) data ) ).withKey( key ).toBucket( type );
+					rule = WebResourceRule.add( WebResource.css( (String) data ) ).withKey( key ).toBucket( type );
 					break;
 				default:
 					rule = new AddWebResourceRule().withKey( key ).toBucket( type );
