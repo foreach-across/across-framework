@@ -43,7 +43,7 @@ public class TestModuleBeanSelectorUtils
 	@After
 	public void stopContext() {
 		if ( context.isActive() ) {
-			context.stop();
+			context.close();
 		}
 	}
 

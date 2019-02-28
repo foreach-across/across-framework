@@ -88,7 +88,7 @@ public class TestLiquibaseInstallerSchemaConfiguration
 		);
 
 		ctx.shutdown();
-		parent.stop();
+		parent.close();
 		ds.shutdown();
 	}
 

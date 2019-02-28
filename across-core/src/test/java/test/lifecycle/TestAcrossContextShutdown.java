@@ -95,6 +95,8 @@ public class TestAcrossContextShutdown
 
 		assertNull( fetch( registry, "two" ) );
 		assertNull( fetch( registry, "one" ) );
+		assertNull( fetch( registry, "one", "exposedBean" ) );
+		assertNull( fetch( registry, "two", "exposedBean" ) );
 	}
 
 	@Test
@@ -144,6 +146,15 @@ public class TestAcrossContextShutdown
 	private String fetch( AcrossContextBeanRegistry registry, String moduleName ) {
 		try {
 			return registry.getBean( moduleName + "ExposedBean" ).toString();
+		}
+		catch ( IllegalStateException ise ) {
+			return null;
+		}
+	}
+
+	private String fetch( AcrossContextBeanRegistry registry, String moduleName, String beanName ) {
+		try {
+			return registry.getBeanFromModule( moduleName, beanName ).toString();
 		}
 		catch ( IllegalStateException ise ) {
 			return null;

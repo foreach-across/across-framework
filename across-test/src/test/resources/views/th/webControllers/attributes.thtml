@@ -23,6 +23,8 @@
 <script across:resource="/static/testResources/test.txt">auto resource script</script>
 <image across:resource="/static/testResources/test.txt">auto resource image</image>
 <use across:resource="/static/testResources/test.txt">auto resource use</use>
+<use across:static="/testResources/test.txt#with-fragment">with fragment</use>
+<use across:static="/testResources/test.txt?with-querystring">with querystring</use>
 
 <a across:static-xlink--href="/testResources/test.txt">manual static xlink</a>
 <span across:static-data-image-url="/testResources/test.txt">manual static data-image-url</span>
@@ -33,3 +35,5 @@
 
 <a th:href="@{@resource:/static/testResources/test.txt}">manual resource url</a>
 <a th:other="@{@static:/testResources/test.txt}">manual static url</a>
+<a th:other="@{@static:/testResources/test.txt#with-fragment}">manual with fragment</a>
+<a th:other="@{@static:/testResources/test.txt?with-querystring}">manual with querystring</a>
