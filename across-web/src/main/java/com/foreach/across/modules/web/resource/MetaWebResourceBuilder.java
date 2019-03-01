@@ -39,6 +39,15 @@ public class MetaWebResourceBuilder extends ViewElementBuilderSupport
 	private String content;
 	private String httpEquiv;
 
+	/**
+	 * Short hand for a http-equiv refresh <meta> tag
+	 */
+	public MetaWebResourceBuilder refresh( String refresh ) {
+		this.httpEquiv = "refresh";
+		this.content = refresh;
+		return this;
+	}
+
 	@Override
 	public MutableViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
 		NodeViewElement element = new NodeViewElement( "meta" );
@@ -57,14 +66,5 @@ public class MetaWebResourceBuilder extends ViewElementBuilderSupport
 		}
 
 		return element;
-	}
-
-	/**
-	 * Short hand for a http-equiv refresh <meta> tag
-	 */
-	public MetaWebResourceBuilder refresh( String refresh ) {
-		this.httpEquiv = "refresh";
-		this.content = refresh;
-		return this;
 	}
 }

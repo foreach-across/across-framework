@@ -40,10 +40,14 @@ public class CssWebResourceBuilder extends ViewElementBuilderSupport
 	private String rel;
 	private String type;
 	private String media;
+
+	/**
+	 * Style data that should be inlined, will result in a {@code style} tag being rendered.
+	 */
 	private String inline;
 
 	@Override
-	public MutableViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
+	protected MutableViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
 		NodeViewElement element;
 
 		if ( StringUtils.isNotBlank( url ) ) {
@@ -60,7 +64,7 @@ public class CssWebResourceBuilder extends ViewElementBuilderSupport
 		else {
 			element = new NodeViewElement( "style" );
 			if ( StringUtils.isNotBlank( inline ) ) {
-				element.addChild( TextViewElement.html( inline ) );
+				element.addFirstChild( TextViewElement.html( inline ) );
 			}
 		}
 

@@ -30,41 +30,62 @@ public class WebResource
 	/**
 	 * Default buckets of web resources.
 	 */
+	public static final String HEAD = "head";
 	public static final String CSS = "css";
 	public static final String JAVASCRIPT = "javascript";
 	public static final String JAVASCRIPT_PAGE_END = "javascript-page-end";
-	public static final String META = "meta";
 
 	/**
 	 * Used for data that should be serialized and passed to the client (usually as json).
+	 *
+	 * @deprecated since 3.2.0 - use {@link WebResource#css(String)} or {@link WebResource#javascript(String)} instead
 	 */
+	@Deprecated
 	public static final String DATA = "data";
 
 	/**
 	 * Inline resource - entire content
+	 *
+	 * @deprecated since 3.2.0 - use {@link WebResource#css(String)} or {@link WebResource#javascript(String)} instead
 	 */
+	@Deprecated
 	public static final String INLINE = "inline";
 
 	/**
 	 * External resource - usually an absolute link
+	 *
+	 * @deprecated since 3.2.0 - use {@link WebResource#css(String)} or {@link WebResource#javascript(String)} instead
 	 */
+	@Deprecated
 	public static final String EXTERNAL = "external";
 
 	/**
 	 * Relative to the context/controller being rendered - this is usually the default.
+	 *
+	 * @deprecated since 3.2.0 - use {@link WebResource#css(String)} or {@link WebResource#javascript(String)} instead
 	 */
+	@Deprecated
 	public static final String RELATIVE = "relative";
 
 	/**
 	 * Embedded resource in the views directory - these usually find translated into a path using a
 	 * {@link com.foreach.across.modules.web.resource.WebResourceTranslator}.
+	 *
+	 * @deprecated since 3.2.0 - use {@link WebResource#css(String)} or {@link WebResource#javascript(String)} instead
 	 */
 	public static final String VIEWS = "views";
 
+	/**
+	 * @deprecated since 3.2.0 - use {@link WebResource#css(String)} or {@link WebResource#javascript(String)} instead
+	 */
 	@Deprecated
 	@Getter
 	@Setter
 	private String key, type, location;
+
+	/**
+	 * @deprecated since 3.2.0 - use {@link WebResource#css(String)} or {@link WebResource#javascript(String)} instead
+	 */
 	@Deprecated
 	@Getter
 	@Setter
@@ -76,10 +97,8 @@ public class WebResource
 	}
 
 	/**
-	 * @deprecated since 3.2.0- replaced by {@link WebResourceReference}
-	 *
 	 * @see WebResourceRegistry
-	 *
+	 * @deprecated since 3.2.0- replaced by {@link WebResourceReference}
 	 */
 	@Deprecated
 	public WebResource( String type, String key, Object data, String location ) {

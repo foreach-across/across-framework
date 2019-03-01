@@ -63,7 +63,10 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				WebResourceRule.add( WebResource.css( "/css/2.css" ) ).before( "third-css" ).withKey( "second-css" ).toBucket( WebResource.CSS )
 		);
 		renderAndExpect( registry.getResourcesForBucket( CSS ),
-		                 "<link rel=\"stylesheet\" href=\"/css/1.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/2.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/3.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/4.css\" type=\"text/css\"></link>" );
+		                 "<link rel=\"stylesheet\" href=\"/css/1.css\" type=\"text/css\"></link>" +
+				                 "<link rel=\"stylesheet\" href=\"/css/2.css\" type=\"text/css\"></link>" +
+				                 "<link rel=\"stylesheet\" href=\"/css/3.css\" type=\"text/css\"></link>" +
+				                 "<link rel=\"stylesheet\" href=\"/css/4.css\" type=\"text/css\"></link>" );
 	}
 
 	@Test
@@ -89,7 +92,7 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				WebResourceRule.add( WebResource.css( "@static:/css/bootstrap.min.css" ) ).withKey( "bootstrap-min-css" ).toBucket( CSS ),
 				WebResourceRule.add( WebResource.css().inline( "body {background-color: powderblue;}" ) ).withKey( "inline-body-blue" ).toBucket( CSS ),
 				WebResourceRule.add( WebResource.javascript().inline( "alert('hello world');" ) ).withKey( "alert-page-top" ).toBucket( JAVASCRIPT ),
-				WebResourceRule.add( WebResource.javascript().data( vars ).snippet( ( data ) -> {
+				WebResourceRule.add( WebResource.javascript().data( vars ).dataWriter( ( data ) -> {
 					try {
 						return "(function ( Across ) {\n" +
 								"var data=" + new ObjectMapper().writeValueAsString( data ) + ";\n" +
@@ -116,15 +119,15 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				WebResourceRule.add( new CssWebResourceBuilder()
 				{
 					@Override
-					public MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
+					protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
 						MutableViewElement element = super.createElement( builderContext );
 						( (AbstractNodeViewElement) element ).setAttribute( "crossorigin", "use-credentials" );
 						return element;
 					}
 				}.type( "application/json" ).rel( "license" ).url( "https://en.wikipedia.org/wiki/BSD_licenses" ) ).withKey( "rel-license" )
 				               .toBucket( "custom-element" ),
-				WebResourceRule.add( WebResource.meta().metaName( "keywords" ).content( "HTML, CSS, XML, HTML" ) ).withKey( "meta-keywords" ).toBucket( META ),
-				WebResourceRule.add( WebResource.meta().refresh( "30;URL=https://www.google.com/" ) ).withKey( "meta-refresh" ).toBucket( META )
+				WebResourceRule.add( WebResource.meta().metaName( "keywords" ).content( "HTML, CSS, XML, HTML" ) ).withKey( "meta-keywords" ).toBucket( HEAD ),
+				WebResourceRule.add( WebResource.meta().refresh( "30;URL=https://www.google.com/" ) ).withKey( "meta-refresh" ).toBucket( HEAD )
 		);
 
 		assertEquals( 9, registry.getBuckets().size() );
@@ -157,7 +160,7 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 		renderAndExpect( registry.getResourcesForBucket( "custom-element" ),
 		                 "<link crossorigin=\"use-credentials\" rel=\"license\" href=\"https://en.wikipedia.org/wiki/BSD_licenses\" type=\"application/json\"></link>" );
 
-		renderAndExpect( registry.getResourcesForBucket( META ),
+		renderAndExpect( registry.getResourcesForBucket( HEAD ),
 		                 "<meta name=\"keywords\" content=\"HTML, CSS, XML, HTML\"></meta><meta http-equiv=\"refresh\" content=\"30;URL=https://www.google.com/\"></meta>" );
 	}
 
@@ -202,7 +205,6 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				WebResourceRule.add( WebResource.css( "/foo.css" ) ).withKey( "date-pickers" ).toBucket( "date-picker-bucket-css" ),
 				WebResourceRule.add( WebResource.css( "/foo.js" ) ).withKey( "date-pickers" ).toBucket( "date-picker-bucket-js" )
 		);
-
 
 		assertEquals( 1, resourceRegistry.getResources( "custom-package-css" ).size() );
 		resourceRegistry.removePackage( "CUSTOM-PACKAGE" );

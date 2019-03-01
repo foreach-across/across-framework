@@ -74,7 +74,9 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 	                          HttpServletResponse response,
 	                          Object handler ) {
 		WebResourceRegistry registry = new WebResourceRegistry( webResourcePackageManager );
-		registry.merge( defaultRegistry );
+		if ( defaultRegistry != null ) {
+			registry.merge( defaultRegistry );
+		}
 
 		eventPublisher.publishEvent( new BuildRegistryEvent<>( registry ) );
 

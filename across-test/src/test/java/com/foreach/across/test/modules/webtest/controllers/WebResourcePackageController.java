@@ -30,7 +30,7 @@ public class WebResourcePackageController
 
 	@RequestMapping(PATH)
 	public String webResourcePage() {
-		return "th/WebTestModule/webresource";
+		return "th/webControllers/webresource";
 	}
 
 	@ModelAttribute

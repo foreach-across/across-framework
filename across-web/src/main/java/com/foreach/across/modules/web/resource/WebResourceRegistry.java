@@ -267,16 +267,16 @@ public class WebResourceRegistry
 	}
 
 	/**
-	 * Will remove all resources of that type registered under the key specified.
+	 * Will remove the resource with a specific key from the bucket
 	 *
 	 * @param key    Key the resource is registered under.
 	 * @param bucket Bucket name, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
+	 * @return reference that was removed
 	 */
-	public void removeResourceWithKeyFromBucket( @NonNull String key, @NonNull String bucket ) {
-		List<WebResourceReference> references = webResources.get( bucket );
-		if ( references != null ) {
-			references.removeIf( resource -> StringUtils.equals( key, resource.getKey() ) );
-		}
+	public Optional<WebResourceReference> removeResourceWithKeyFromBucket( @NonNull String key, @NonNull String bucket ) {
+		List<WebResourceReference> resources = webResources.getOrDefault( bucket, Collections.emptyList() );
+		int index = findPosition( key, resources );
+		return index >= 0 ? Optional.of( resources.remove( index ) ) : Optional.empty();
 	}
 
 	/**
@@ -407,12 +407,10 @@ public class WebResourceRegistry
 	 *
 	 * @param registry Registry containing resource to be copied.
 	 */
-	public void merge( WebResourceRegistry registry ) {
-		if ( registry != null ) {
-			for ( Map.Entry<String, List<WebResourceReference>> references : registry.webResources.entrySet() ) {
-				for ( WebResourceReference reference : references.getValue() ) {
-					addResourceToBucket( reference, references.getKey() );
-				}
+	public void merge( @NonNull WebResourceRegistry registry ) {
+		for ( Map.Entry<String, List<WebResourceReference>> references : registry.webResources.entrySet() ) {
+			for ( WebResourceReference reference : references.getValue() ) {
+				addResourceToBucket( reference, references.getKey() );
 			}
 		}
 	}
@@ -421,15 +419,82 @@ public class WebResourceRegistry
 	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the  registry
 	 */
 	public void apply( @NonNull WebResourceRule... webResourceRules ) {
-		for ( WebResourceRule webResourceRule : webResourceRules ) {
-			webResourceRule.applyTo( this );
-		}
+		apply( Arrays.asList( webResourceRules ) );
+	}
+
+	/**
+	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the  registry
+	 */
+	public void apply( @NonNull Collection<WebResourceRule> webResourceRules ) {
+		webResourceRules.forEach( wr -> wr.applyTo( this ) );
 	}
 
 	/**
 	 * Adds a specific {@link WebResourceReference} to the specified bucket, creating the bucket if it does not exist.
+	 * If there is already a reference with that key in the bucket, it will be replaced, see
+	 * {@link #addResourceToBucket(WebResourceReference, String, boolean)} if you want to control this behaviour.
 	 */
-	public void addResourceToBucket( @NonNull WebResourceReference webResourceReference, @NonNull String bucket ) {
-		this.webResources.computeIfAbsent( bucket, w -> new LinkedList<>() ).add( webResourceReference );
+	public boolean addResourceToBucket( @NonNull WebResourceReference webResourceReference, @NonNull String bucket ) {
+		return addResourceToBucket( webResourceReference, bucket, true );
+	}
+
+	/**
+	 * Add a {@link WebResourceReference} to the specified bucket, creating the bucket if it does not exist.
+	 * The value of {@code replaceIfExists} will determine if a resource should be replaced if it is already
+	 * present in the bucket. Replacing a resource will remove the original and put the new value in exactly
+	 * the same spot. If {@code replaceIfExists} is {@code false} but a resource already has this key, the
+	 * new resource will <strong>not be added at all</strong> and {@code false} will be returned.
+	 *
+	 * @param webResourceReference resource to add
+	 * @param bucket               to which to add the resource
+	 * @param replaceIfExists      true if the resource should be replaced
+	 * @return true if resource was added or replaced, false if it already existed and has not been replaced
+	 */
+	public boolean addResourceToBucket( @NonNull WebResourceReference webResourceReference, @NonNull String bucket, boolean replaceIfExists ) {
+		String key = webResourceReference.getKey();
+
+		List<WebResourceReference> resources = webResources.computeIfAbsent( bucket, w -> new LinkedList<>() );
+
+		if ( key == null ) {
+			resources.add( webResourceReference );
+		}
+		else {
+			int index = findPosition( key, resources );
+			if ( index >= 0 ) {
+				if ( replaceIfExists ) {
+					resources.set( index, webResourceReference );
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				resources.add( webResourceReference );
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Find the resource reference registered under a specific key in a bucket.
+	 *
+	 * @param key    of the resource
+	 * @param bucket name
+	 * @return reference
+	 */
+	public Optional<WebResourceReference> findResourceWithKeyInBucket( @NonNull String key, @NonNull String bucket ) {
+		List<WebResourceReference> resources = webResources.getOrDefault( bucket, Collections.emptyList() );
+		return resources.stream().filter( r -> StringUtils.equals( r.getKey(), key ) ).findFirst();
+	}
+
+	private int findPosition( String key, List<WebResourceReference> references ) {
+		for ( int i = 0; i < references.size(); i++ ) {
+			if ( StringUtils.equals( key, references.get( i ).getKey() ) ) {
+				return i;
+			}
+		}
+
+		return -1;
 	}
 }

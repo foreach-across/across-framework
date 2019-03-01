@@ -15,8 +15,10 @@
  */
 package com.foreach.across.modules.web.resource;
 
+import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
@@ -25,6 +27,81 @@ import static org.mockito.Mockito.*;
  */
 public class TestWebResourceRegistry
 {
+	private WebResourceRegistry registry = new WebResourceRegistry( new WebResourcePackageManager() );
+
+	@Test
+	public void noResourcesForNonExistingBucket() {
+		assertThat( registry.getResourcesForBucket( "nothing" ) ).isEmpty();
+	}
+
+	@Test
+	public void addReferenceWithoutKey() {
+		WebResourceReference one = WebResourceReference.builder().viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+		WebResourceReference two = WebResourceReference.builder().viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+		assertThat( registry.addResourceToBucket( one, "one" ) ).isTrue();
+		assertThat( registry.addResourceToBucket( two, "one" ) ).isTrue();
+
+		assertThat( registry.getResourcesForBucket( "one" ) ).containsExactly( one, two );
+	}
+
+	@Test
+	public void addReferenceWithKeyReplacesByDefault() {
+		WebResourceReference one = WebResourceReference.builder().key( "resource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+		WebResourceReference two = WebResourceReference.builder().key( "otherResource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+		WebResourceReference three = WebResourceReference.builder().key( "resource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+		WebResourceReference four = WebResourceReference.builder().key( "resource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+		assertThat( registry.addResourceToBucket( one, "one", false ) ).isTrue();
+		assertThat( registry.addResourceToBucket( two, "one" ) ).isTrue();
+		assertThat( registry.addResourceToBucket( three, "one" ) ).isTrue();
+		assertThat( registry.addResourceToBucket( four, "one", false ) ).isFalse();
+
+		assertThat( registry.getResourcesForBucket( "one" ) ).containsExactly( three, two );
+	}
+
+	@Test
+	public void findResourceReferenceWithKey() {
+		WebResourceReference one = WebResourceReference.builder().key( "resource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+		WebResourceReference two = WebResourceReference.builder().key( "otherResource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+
+		assertThat( registry.findResourceWithKeyInBucket( "resource", "one" ) ).isEmpty();
+
+		registry.addResourceToBucket( one, "one" );
+		registry.addResourceToBucket( two, "one" );
+		assertThat( registry.findResourceWithKeyInBucket( "resource", "one" ) ).contains( one );
+		assertThat( registry.findResourceWithKeyInBucket( "otherResource", "one" ) ).contains( two );
+	}
+
+	@Test
+	public void bucketsAreSeparate() {
+		WebResourceReference one = WebResourceReference.builder().key( "resource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+		WebResourceReference two = WebResourceReference.builder().key( "resource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+
+		registry.addResourceToBucket( one, "one" );
+		registry.addResourceToBucket( two, "two" );
+
+		assertThat( registry.findResourceWithKeyInBucket( "resource", "one" ) ).contains( one );
+		assertThat( registry.findResourceWithKeyInBucket( "resource", "two" ) ).contains( two );
+	}
+
+	@Test
+	public void removeReferenceWithKeyFromBucket() {
+		WebResourceReference one = WebResourceReference.builder().key( "resource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+		WebResourceReference two = WebResourceReference.builder().key( "otherResource" ).viewElementBuilder( mock( ViewElementBuilder.class ) ).build();
+
+		assertThat( registry.findResourceWithKeyInBucket( "resource", "one" ) ).isEmpty();
+
+		registry.addResourceToBucket( one, "one" );
+		registry.addResourceToBucket( two, "one" );
+		assertThat( registry.getResourcesForBucket( "one" ) ).containsExactly( one, two );
+
+		assertThat( registry.removeResourceWithKeyFromBucket( "resource", "one" ) ).contains( one );
+
+		assertThat( registry.getResourcesForBucket( "one" ) ).containsExactly( two );
+		assertThat( registry.removeResourceWithKeyFromBucket( "otherResource", "one" ) ).contains( two );
+
+		assertThat( registry.getResourcesForBucket( "one" ) ).isEmpty();
+	}
+
 	@Test
 	public void samePackageShouldOnlyBeInstalledOnce() {
 		WebResourcePackageManager packageManager = new WebResourcePackageManager();

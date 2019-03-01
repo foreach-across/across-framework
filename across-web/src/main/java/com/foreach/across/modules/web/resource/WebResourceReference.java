@@ -16,24 +16,24 @@
 package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
 import org.springframework.core.Ordered;
 
 /**
  * <p>Represents a single entry in a bucket in the {@link WebResourceRegistry}.</p>
  * <p>The key is unique within a bucket and ordering can be applied using the before, after and order fields.</p>
- * <p>Ordering is handled by {@link WebResourceSorter}.</p>
- *
- * @see WebResourceRegistry
+ * <p>Ordering is handled by {@link WebResourceReferenceSorter}.</p>
  *
  * @author Marc Vanbrabant
+ * @see WebResourceRegistry
  * @since 3.2.0
  */
 @Getter
+@EqualsAndHashCode
 public class WebResourceReference
 {
+	public static final int DEFAULT_ORDER = Ordered.LOWEST_PRECEDENCE - 1000;
+
 	private final ViewElementBuilder viewElementBuilder;
 	private final String key;
 	private final String before;
@@ -44,8 +44,9 @@ public class WebResourceReference
 	@Getter(AccessLevel.PACKAGE)
 	private final WebResource resource;
 
+	@Builder(toBuilder = true)
 	public WebResourceReference( @NonNull ViewElementBuilder viewElementBuilder,
-	                             @NonNull String key,
+	                             String key,
 	                             String before,
 	                             String after,
 	                             Integer order ) {
@@ -60,10 +61,16 @@ public class WebResourceReference
 	                      Integer order,
 	                      WebResource resource ) {
 		this.viewElementBuilder = viewElementBuilder;
-		this.key = key;
+		this.key = key != null ? key : resolveDefaultKey( viewElementBuilder );
 		this.before = before;
 		this.after = after;
-		this.order = order == null ? Ordered.LOWEST_PRECEDENCE - 1000 : order;
+		this.order = order == null ? DEFAULT_ORDER : order;
 		this.resource = resource;
+	}
+
+	private String resolveDefaultKey( ViewElementBuilder viewElementBuilder ) {
+		return viewElementBuilder instanceof WebResourceKeyProvider
+				? ( (WebResourceKeyProvider) viewElementBuilder ).getWebResourceKey().orElse( null )
+				: null;
 	}
 }

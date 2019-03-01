@@ -28,7 +28,7 @@ import java.util.List;
  * A collection of {@link WebResourceReference} items to be rendered.
  *
  * @author Marc Vanbrabant
- * @see com.foreach.across.modules.web.thymeleaf.ViewElementElementProcessor
+ * @see ViewElementBuilder
  * @since 3.1.3
  */
 @RequiredArgsConstructor
@@ -45,6 +45,6 @@ public class WebResourceReferenceCollection implements Iterable<WebResourceRefer
 
 	@Override
 	public Iterator<WebResourceReference> iterator() {
-		return WebResourceSorter.sort( items ).iterator();
+		return WebResourceReferenceSorter.sort( items ).iterator();
 	}
 }

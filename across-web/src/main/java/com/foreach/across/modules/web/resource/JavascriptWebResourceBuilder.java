@@ -44,10 +44,34 @@ public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 	private String inline;
 	private String type;
 	private Object data;
-	private Function<Object, String> snippet;
+
+	/**
+	 * Data-writer function that should be used to convert a data object (when specified)
+	 * to the {@code ViewElement} that should be rendered inside
+	 * <p/>
+	 * Defaults to JSON writing of the data and assigning it as a global "Across" javascript variable.
+	 * This was done for compatibility purposes.
+	 */
+	private Function<Object, String> dataWriter;
+
+	/**
+	 * Shorthand for <code>defer(true)</code>
+	 */
+	public JavascriptWebResourceBuilder defer() {
+		this.defer = true;
+		return this;
+	}
+
+	/**
+	 * Shorthand for <code>async(true)</code>
+	 */
+	public JavascriptWebResourceBuilder async() {
+		this.async = true;
+		return this;
+	}
 
 	@Override
-	public MutableViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
+	protected MutableViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
 		NodeViewElement element = new NodeViewElement( "script" );
 
 		if ( StringUtils.isNotBlank( url ) ) {
@@ -64,11 +88,10 @@ public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 				element.addChild( TextViewElement.html( inline ) );
 			}
 			else {
-				if ( data != null && snippet != null ) {
-					element.addChild( TextViewElement.html( snippet.apply( data ) ) );
+				if ( data != null && dataWriter != null ) {
+					element.addChild( TextViewElement.html( dataWriter.apply( data ) ) );
 				}
 			}
-
 		}
 		if ( StringUtils.isNotBlank( type ) ) {
 			element.setAttribute( "type", type );
@@ -81,18 +104,16 @@ public class JavascriptWebResourceBuilder extends ViewElementBuilderSupport
 	}
 
 	/**
-	 * Shorthand for <code>defer(true)</code>
+	 * Returns a {@code Function} for {@link #dataWriter(Function)} which converts the data object
+	 * to JSON variables and register them as global variables on the window. The root key for
+	 * the global variables can be specified.
+	 * <p/>
+	 * Every property or key
+	 *
+	 * @param globalKey root key for the data object
+	 * @return data writer function
 	 */
-	public JavascriptWebResourceBuilder defer() {
-		this.defer = true;
-		return this;
-	}
-
-	/**
-	 * Shorthand for <code>async(true)</code>
-	 */
-	public JavascriptWebResourceBuilder async() {
-		this.async = true;
-		return this;
+	public static Function<Object, ViewElement> dataToWindowGlobalVariables( @NonNull String globalKey ) {
+		return null;
 	}
 }

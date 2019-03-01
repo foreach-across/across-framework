@@ -29,7 +29,7 @@ import java.util.*;
  * @author Marc Vanbrabant
  * @since 3.2.0
  */
-class WebResourceSorter
+class WebResourceReferenceSorter
 {
 	public static List<WebResourceReference> sort( @NonNull List<WebResourceReference> items ) {
 		List<WebResourceReference> sorted = new LinkedList<>( items );

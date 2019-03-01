@@ -18,7 +18,10 @@ package com.foreach.across.modules.web.resource;
 
 /**
  * Interface used by WebResourceRegistryInterceptor to translate WebResources before rendering.
+ *
+ * @deprecated since 3.2.0 - will be removed when deprecated {@link WebResourceRegistry} are being removed
  */
+@Deprecated
 public interface WebResourceTranslator
 {
 	/**
