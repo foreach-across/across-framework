@@ -25,22 +25,37 @@ import java.util.*;
 import static com.foreach.across.modules.web.resource.WebResource.*;
 
 /**
- * <p>Registry for a set of web resources.  Usually there is one registry per view.
- * Used to specify css files, javascript files to be loaded from code, including a rendering order.</p>
- * <p>A resource is configured with a certain type and a location.  These will determine how and when
- * the resource will be rendered.</p>
- * <p><strong>When adding resources, both key and content are unique discriminators.  The same content can only
- * be added once, unless a different key is explicitly provided.</strong></p>
- * <p>Loosely based on Drupal constructions.</p>
- * To declare a set of {@link WebResourceReference} items you can use the following construct:
- *
+ * <p>Registry for a set of web resources. Usually there is one registry per view.
+ * Used to specify things like css files, javascript files etc that should be loaded by the page.
+ * These can be added with a specific order.</p>
+ * <p>Web resources are divided into separate named buckets. A single bucket usually corresponds with
+ * a location in a layout page, for example "the resources that should be added inside the {@code <head>} of a page".
+ * <p>
+ * As of version {@code 3.2.0} the functionality of web resources and the registry has been thoroughly
+ * reworked for more flexibility.
+ * <p>
+ * A single web resource is represented by a {@link WebResourceReference}, the {@link WebResource} class itself is
+ * deprecated. The rendering of a resource is determined by the {@link ViewElementBuilder} attached to the reference.
+ * Default implementations for CSS, Javascript and META tags are available and can be created using the factory
+ * methods {@link WebResource#css()}, {@link WebResource#javascript()} or {@link WebResource#meta()}.
+ * <p>
+ * In practice the easiest way to add web resources is by configuring them as rules to apply to the registry: *
  * <pre>{@code
  * webResourceRegistry.apply(
- *     WebResourceRule.add( WebResource.css( "@static:/css/bootstrap.min.css" ) ).withKey( "bootstrap-min-css" ).toBucket( CSS ),
+ *     WebResourceRule.add( WebResource.css( "@static:/MODULE_RESORCES/css/bootstrap.min.css" ) ).withKey( "bootstrap-min-css" ).toBucket( CSS ),
  *     WebResourceRule.add( WebResource.javascript( "bootstrap.min.js" ) ).withKey( "bootstrap-min-js" ).toBucket( JAVASCRIPT_PAGE_END ),
  *     WebResourceRule.add( WebResource.css().inline( "body {background-color: powderblue;}" ) ).withKey( "inline-body-blue" ).toBucket( CSS )
  * );
  * }</pre>
+ * <p>
+ * A web resource can optionally be registered with a key. This is a {@code String} that identifies the resource in its bucket.
+ * Alternatively the {@link ViewElementBuilder} can implement {@link WebResourceKeyProvider} to provide a default key.
+ *
+ * @see WebResource
+ * @see WebResourceReference
+ * @see WebResourcePackage
+ * @see WebResourceKeyProvider
+ * @since 1.0.0
  */
 public class WebResourceRegistry
 {
@@ -58,6 +73,7 @@ public class WebResourceRegistry
 	/**
 	 * @return The default location resources will be registered with.
 	 * @see com.foreach.across.modules.web.resource.WebResource
+	 * @deprecated since 3.2.0
 	 */
 	public String getDefaultLocation() {
 		return defaultLocation;
@@ -66,7 +82,9 @@ public class WebResourceRegistry
 	/**
 	 * @param defaultLocation Default location to set.
 	 * @see com.foreach.across.modules.web.resource.WebResource
+	 * @deprecated since 3.2.0 - it's advised to always specify a bucket name
 	 */
+	@Deprecated
 	public void setDefaultLocation( String defaultLocation ) {
 		this.defaultLocation = defaultLocation;
 	}
@@ -251,10 +269,10 @@ public class WebResourceRegistry
 	/**
 	 * Will remove all resources of that type registered under the key specified.
 	 *
-	 * @param bucket Bucket name, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param key    Key the resource is registered under.
+	 * @param bucket Bucket name, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 */
-	public void removeResourceWithKey( @NonNull String bucket, @NonNull String key ) {
+	public void removeResourceWithKeyFromBucket( @NonNull String key, @NonNull String bucket ) {
 		List<WebResourceReference> references = webResources.get( bucket );
 		if ( references != null ) {
 			references.removeIf( resource -> StringUtils.equals( key, resource.getKey() ) );
@@ -323,7 +341,7 @@ public class WebResourceRegistry
 	 *
 	 * @param type Type of the resource.
 	 * @return Collection of WebResource instances.
-	 * @deprecated since 3.2.0 - replaced by {@link #getBucketResources(String)}
+	 * @deprecated since 3.2.0 - replaced by {@link #getResourcesForBucket(String)}
 	 */
 	@Deprecated
 	public Collection<WebResource> getResources( String type ) {
@@ -346,7 +364,7 @@ public class WebResourceRegistry
 	 * Lists all resources in this registry.
 	 *
 	 * @return Collection of WebResource instances.
-	 * @deprecated since 3.2.0 - replaced by {@link #getBucketResources(String)}
+	 * @deprecated since 3.2.0 - replaced by {@link #getResourcesForBucket(String)}
 	 */
 	@Deprecated
 	public Collection<WebResource> getResources() {
@@ -373,7 +391,7 @@ public class WebResourceRegistry
 	 *
 	 * @param bucket The bucket name.
 	 */
-	public WebResourceReferenceCollection getBucketResources( @NonNull String bucket ) {
+	public WebResourceReferenceCollection getResourcesForBucket( @NonNull String bucket ) {
 		List<WebResourceReference> filtered = new LinkedList<>();
 
 		List<WebResourceReference> items = webResources.get( bucket );
@@ -393,7 +411,7 @@ public class WebResourceRegistry
 		if ( registry != null ) {
 			for ( Map.Entry<String, List<WebResourceReference>> references : registry.webResources.entrySet() ) {
 				for ( WebResourceReference reference : references.getValue() ) {
-					add( references.getKey(), reference );
+					addResourceToBucket( reference, references.getKey() );
 				}
 			}
 		}
@@ -411,7 +429,7 @@ public class WebResourceRegistry
 	/**
 	 * Adds a specific {@link WebResourceReference} to the specified bucket, creating the bucket if it does not exist.
 	 */
-	public void add( @NonNull String bucket, @NonNull WebResourceReference webResourceReference ) {
+	public void addResourceToBucket( @NonNull WebResourceReference webResourceReference, @NonNull String bucket ) {
 		this.webResources.computeIfAbsent( bucket, w -> new LinkedList<>() ).add( webResourceReference );
 	}
 }

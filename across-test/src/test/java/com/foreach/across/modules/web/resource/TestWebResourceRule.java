@@ -62,7 +62,7 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				WebResourceRule.add( WebResource.css( "/css/3.css" ) ).withKey( "third-css" ).toBucket( WebResource.CSS ),
 				WebResourceRule.add( WebResource.css( "/css/2.css" ) ).before( "third-css" ).withKey( "second-css" ).toBucket( WebResource.CSS )
 		);
-		renderAndExpect( registry.getBucketResources( CSS ),
+		renderAndExpect( registry.getResourcesForBucket( CSS ),
 		                 "<link rel=\"stylesheet\" href=\"/css/1.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/2.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/3.css\" type=\"text/css\"></link><link rel=\"stylesheet\" href=\"/css/4.css\" type=\"text/css\"></link>" );
 	}
 
@@ -129,35 +129,35 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 
 		assertEquals( 9, registry.getBuckets().size() );
 
-		renderAndExpect( registry.getBucketResources( "FAVICON" ),
+		renderAndExpect( registry.getResourcesForBucket( "FAVICON" ),
 		                 "<link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\" />" );
 
-		renderAndExpect( registry.getBucketResources( "CSS_CDN" ),
+		renderAndExpect( registry.getResourcesForBucket( "CSS_CDN" ),
 		                 "<link href=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\" rel=\"alternate\" type=\"text/css\"></link>" );
 
-		renderAndExpect( registry.getBucketResources( CSS ),
+		renderAndExpect( registry.getResourcesForBucket( CSS ),
 		                 "<link href=\"/across/resources/static/css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\"></link><style type=\"text/css\">body {background-color: powderblue;}</style>" );
 
-		renderAndExpect( registry.getBucketResources( JAVASCRIPT ),
+		renderAndExpect( registry.getResourcesForBucket( JAVASCRIPT ),
 		                 "<script type=\"text/javascript\">alert('hello world');</script>" );
 
-		renderAndExpect( registry.getBucketResources( "javascript_vars" ),
+		renderAndExpect( registry.getResourcesForBucket( "javascript_vars" ),
 		                 "<script type=\"text/javascript\">(function ( Across ) {\n" +
 				                 "var data={\"rootPaths\":{\"static\":\"@static:/\",\"admin\":\"@adminWeb:/\"},\"language\":\"nl\"};\n" +
 				                 "for(var key in data) Across[key] = data[key];\n" +
 				                 "        })( window.Across = window.Across || {} );\n" +
 				                 "</script>" );
 
-		renderAndExpect( registry.getBucketResources( JAVASCRIPT_PAGE_END ),
+		renderAndExpect( registry.getResourcesForBucket( JAVASCRIPT_PAGE_END ),
 		                 "<script src=\"/bootstrap.min.js\" defer=\"defer\" async=\"async\" type=\"text/javascript\"></script><script src=\"/across/resources/bootstrapui.js\" type=\"text/javascript\"></script>" );
 
-		renderAndExpect( registry.getBucketResources( "base" ),
+		renderAndExpect( registry.getResourcesForBucket( "base" ),
 		                 "<base href=\"https://www.w3schools.com/images/\" target=\"_blank\"></base>" );
 
-		renderAndExpect( registry.getBucketResources( "custom-element" ),
+		renderAndExpect( registry.getResourcesForBucket( "custom-element" ),
 		                 "<link crossorigin=\"use-credentials\" rel=\"license\" href=\"https://en.wikipedia.org/wiki/BSD_licenses\" type=\"application/json\"></link>" );
 
-		renderAndExpect( registry.getBucketResources( META ),
+		renderAndExpect( registry.getResourcesForBucket( META ),
 		                 "<meta name=\"keywords\" content=\"HTML, CSS, XML, HTML\"></meta><meta http-equiv=\"refresh\" content=\"30;URL=https://www.google.com/\"></meta>" );
 	}
 
@@ -206,17 +206,17 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 
 		assertEquals( 1, resourceRegistry.getResources( "custom-package-css" ).size() );
 		resourceRegistry.removePackage( "CUSTOM-PACKAGE" );
-		assertFalse( resourceRegistry.getBucketResources( "custom-package-css" ).iterator().hasNext() );
+		assertFalse( resourceRegistry.getResourcesForBucket( "custom-package-css" ).iterator().hasNext() );
 
 		resourceRegistry.apply( WebResourceRule.remove().withKey( "bootstrap-min-css" ).fromBucket( CSS ) );
 		resourceRegistry.apply( WebResourceRule.remove().withKey( "date-pickers" ) );
 
-		assertFalse( resourceRegistry.getBucketResources( "date-picker-bucket-css" ).iterator().hasNext() );
-		assertFalse( resourceRegistry.getBucketResources( "date-picker-bucket-js" ).iterator().hasNext() );
+		assertFalse( resourceRegistry.getResourcesForBucket( "date-picker-bucket-css" ).iterator().hasNext() );
+		assertFalse( resourceRegistry.getResourcesForBucket( "date-picker-bucket-js" ).iterator().hasNext() );
 
-		size( 1, resourceRegistry.getBucketResources( CSS ) );
+		size( 1, resourceRegistry.getResourcesForBucket( CSS ) );
 
-		Iterator<WebResourceReference> it = resourceRegistry.getBucketResources( JAVASCRIPT_PAGE_END ).iterator();
+		Iterator<WebResourceReference> it = resourceRegistry.getResourcesForBucket( JAVASCRIPT_PAGE_END ).iterator();
 		assertEquals( "bootstrap-min-js", it.next().getKey() );
 		assertEquals( "bootstrap-extra-min-js", it.next().getKey() );
 		assertEquals( "bootstrap-custom-min-js", it.next().getKey() );
@@ -237,29 +237,29 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 		);
 
 		original.merge( additional );
-		size( 2, original.getBucketResources( "bucket-css" ) );
-		size( 1, original.getBucketResources( "bucket-js" ) );
-		size( 3, original.getBucketResources( "bucket-two-js" ) );
+		size( 2, original.getResourcesForBucket( "bucket-css" ) );
+		size( 1, original.getResourcesForBucket( "bucket-js" ) );
+		size( 3, original.getResourcesForBucket( "bucket-two-js" ) );
 
 		additional.clear();
-		size( 2, original.getBucketResources( "bucket-css" ) );
-		size( 1, original.getBucketResources( "bucket-js" ) );
-		size( 3, original.getBucketResources( "bucket-two-js" ) );
-		size( 0, additional.getBucketResources( "bucket-css" ) );
-		size( 0, additional.getBucketResources( "bucket-js" ) );
-		size( 0, additional.getBucketResources( "bucket-two-js" ) );
+		size( 2, original.getResourcesForBucket( "bucket-css" ) );
+		size( 1, original.getResourcesForBucket( "bucket-js" ) );
+		size( 3, original.getResourcesForBucket( "bucket-two-js" ) );
+		size( 0, additional.getResourcesForBucket( "bucket-css" ) );
+		size( 0, additional.getResourcesForBucket( "bucket-js" ) );
+		size( 0, additional.getResourcesForBucket( "bucket-two-js" ) );
 
 		original.clear( "bucket-js" );
-		size( 2, original.getBucketResources( "bucket-css" ) );
-		size( 2, original.getBucketResources( "bucket-css" ) );
-		size( 0, original.getBucketResources( "bucket-js" ) );
-		size( 3, original.getBucketResources( "bucket-two-js" ) );
+		size( 2, original.getResourcesForBucket( "bucket-css" ) );
+		size( 2, original.getResourcesForBucket( "bucket-css" ) );
+		size( 0, original.getResourcesForBucket( "bucket-js" ) );
+		size( 3, original.getResourcesForBucket( "bucket-two-js" ) );
 
 		original.clear();
-		size( 0, original.getBucketResources( "bucket-css" ) );
-		size( 0, original.getBucketResources( "bucket-css" ) );
-		size( 0, original.getBucketResources( "bucket-js" ) );
-		size( 0, original.getBucketResources( "bucket-two-js" ) );
+		size( 0, original.getResourcesForBucket( "bucket-css" ) );
+		size( 0, original.getResourcesForBucket( "bucket-css" ) );
+		size( 0, original.getResourcesForBucket( "bucket-js" ) );
+		size( 0, original.getResourcesForBucket( "bucket-two-js" ) );
 	}
 
 	public void size( int expectedSize, WebResourceReferenceCollection referenceCollection ) {

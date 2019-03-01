@@ -135,7 +135,7 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 * @param key  Key the resource is registered under.
 	 */
 	public void removeResourceWithKey( String type, String key ) {
-		webResourceRegistry.removeResourceWithKey( type, key );
+		webResourceRegistry.removeResourceWithKeyFromBucket( type, key );
 	}
 
 	/**

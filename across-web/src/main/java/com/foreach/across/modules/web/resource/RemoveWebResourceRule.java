@@ -44,7 +44,7 @@ public class RemoveWebResourceRule implements WebResourceRule
 	@Override
 	public void applyTo( @NonNull WebResourceRegistry webResourceRegistry ) {
 		if ( bucket != null ) {
-			webResourceRegistry.removeResourceWithKey( bucket, key );
+			webResourceRegistry.removeResourceWithKeyFromBucket( key, bucket );
 		}
 		else {
 			webResourceRegistry.removeResourceWithKey( key );
