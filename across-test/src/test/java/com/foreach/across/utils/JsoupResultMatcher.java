@@ -44,6 +44,15 @@ public class JsoupResultMatcher
 			);
 		}
 
+		public ResultMatcher htmlMatches( String expectedXml ) {
+			return result -> {
+				String receivedContent = Jsoup.parse( result.getResponse().getContentAsString() ).getElementById( elementId ).html();
+				String expectedContent = Jsoup.parseBodyFragment( expectedXml ).body().html();
+
+				assertEquals( "Response content does not match", expectedContent, receivedContent );
+			};
+		}
+
 		private String removeLineEndings( String text ) {
 			return text.replace( "\n", "" ).replace( "\r", "" );
 		}

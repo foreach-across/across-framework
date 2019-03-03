@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -70,12 +69,6 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 	@Test
 	public void addRendersViewElements() {
 		WebResourceRegistry registry = new WebResourceRegistry( null );
-
-		Map<String, String> statics = new HashMap<String, String>()
-		{{
-			put( "static", "@static:/" );
-			put( "admin", "@adminWeb:/" );
-		}};
 
 		registry.apply(
 				WebResourceRule.add( WebResource.css( "favicon.ico" ).rel( "icon" ).type( "image/x-icon" ) ).withKey( "favicon" ).toBucket( "FAVICON" ),

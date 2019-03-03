@@ -43,6 +43,8 @@ public interface WebResourceRule
 	 *
 	 * @see JavascriptWebResourceBuilder
 	 * @see CssWebResourceBuilder
+	 * @see com.foreach.across.modules.web.resource.elements.LinkWebResourceBuilder
+	 * @see com.foreach.across.modules.web.resource.elements.MetaWebResourceBuilder
 	 * @see WebResourceRegistry
 	 */
 	static AddWebResourceRule add( @NonNull ViewElementBuilder viewElementBuilder ) {

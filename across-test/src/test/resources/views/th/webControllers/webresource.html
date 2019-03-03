@@ -1,7 +1,7 @@
-<body>
+<body xmlns:th="http://www.thymeleaf.org" xmlns:across="http://across.foreach.be">
 <div id="inline-data-css">
     <style th:each="css : ${webResourceRegistry.getResources('css')}"
-          th:if="${css.location == 'inline' or css.location == 'data'}">[[${css.data}]]</style>
+           th:if="${css.location == 'inline' or css.location == 'data'}">[[${css.data}]]</style>
 </div>
 
 <div id="not-inline-or-data-css">
@@ -26,7 +26,7 @@
 
 <div id="not-inline-and-data-javascript">
     <script th:each="javascript : ${webResourceRegistry.getResources('javascript')}" th:src="@{${javascript.data}}"
-        th:if="${javascript.location != 'inline' and javascript.location != 'data'}"></script>
+            th:if="${javascript.location != 'inline' and javascript.location != 'data'}"></script>
 </div>
 
 <div id="javascript-page-end">
@@ -47,3 +47,20 @@
     <script th:each="javascript : ${webResourceRegistry.getResources('javascript-page-end')}" th:src="@{${javascript.data}}"
             th:if="${javascript.location == 'inline'}"></script>
 </div>
+
+<div id="bucket-css">
+    <across:web-resources bucket="css"/>
+</div>
+
+<div id="bucket-javascript">
+    <across:web-resources bucket="javascript"/>
+</div>
+
+<div id="bucket-javascript-page-end">
+    <across:web-resources bucket="javascript-page-end"/>
+</div>
+
+<div id="empty-bucket">
+    <across:web-resources bucket="non-existing"/>
+</div>
+</body>

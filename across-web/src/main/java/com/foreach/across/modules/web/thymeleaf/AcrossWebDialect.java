@@ -56,6 +56,7 @@ public class AcrossWebDialect extends AbstractProcessorDialect implements IExpre
 	public Set<IProcessor> getProcessors( final String dialectPrefix ) {
 		Set<IProcessor> processors = new HashSet<>();
 		processors.add( new ViewElementElementProcessor() );
+		processors.add( new WebResourcesElementProcessor() );
 		processors.add( new ResourceAttributeProcessor() );
 		return processors;
 	}

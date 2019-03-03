@@ -42,7 +42,7 @@ public class WebResourceController
 		webResourceRegistry.addWithKey( WebResource.CSS, "test-css-relative", "test-css-relative", WebResource.RELATIVE );
 
 		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT, "test-javascript-inline", "test-javascript-inline", WebResource.INLINE );
-		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT, "test-javascript-data", "test-javascript-data", WebResource.DATA );
+		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT, "test-javascript-data", "test-javascript-data-value", WebResource.DATA );
 		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT, "test-javascript-external", "test-javascript-external", WebResource.EXTERNAL );
 		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT, "test-javascript-views", "/test-javascript-views", WebResource.VIEWS );
 		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT, "test-javascript-relative", "test-javascript-relative", WebResource.RELATIVE );
@@ -51,7 +51,7 @@ public class WebResourceController
 		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "test-javascript-end-external", "test-javascript-end-external", WebResource.EXTERNAL );
 		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "test-javascript-end-views", "/test-javascript-end-views", WebResource.VIEWS );
 		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "test-javascript-end-relative", "test-javascript-end-relative", WebResource.RELATIVE );
-		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "test-javascript-end-data", "test-javascript-end-data", WebResource.DATA );
+		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "test-javascript-end-data", "test-javascript-end-data-value", WebResource.DATA );
 		webResourceRegistry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "test-javascript-end-inline", "test-javascript-end-inline", WebResource.INLINE );
 	}
 }

@@ -23,6 +23,7 @@ import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestConfiguration;
+import com.foreach.across.test.AcrossWebAppConfiguration;
 import com.foreach.across.test.modules.webtest.config.WebTestWebResourcePackage;
 import com.foreach.across.test.modules.webtest.controllers.WebResourceController;
 import com.foreach.across.test.modules.webtest.controllers.WebResourcePackageController;
@@ -35,7 +36,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -46,9 +46,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@WebAppConfiguration(value = "classpath:")
-@ContextConfiguration(classes = ITWebResource.Config.class)
-public class ITWebResource
+@AcrossWebAppConfiguration
+@ContextConfiguration(classes = TestDeprecatedWebResourceRendering.Config.class)
+public class TestDeprecatedWebResourceRendering
 {
 	@Autowired
 	private AcrossContextInfo contextInfo;
@@ -74,20 +74,62 @@ public class ITWebResource
 		       .andExpect( jsoup().elementById( "not-inline-and-data-javascript" ).valueIgnoringLineEndings(
 				       "<script src=\"test-javascript-external\"></script>\n<script src=\"/across/resources/test-javascript-views\"></script>\n<script src=\"test-javascript-relative\"></script>" ) )
 		       .andExpect( jsoup().elementById( "data-javascript" ).valueIgnoringLineEndings( "<script type=\"text/javascript\">\n" +
-				                                                                                             "        (function ( Across ) {\n" +
-				                                                                                             "            Across['' + \"test-javascript-data\"] = \"test-javascript-data\";\n" +
-				                                                                                             "        })( window.Across = window.Across || {} );\n" +
-				                                                                                             "    </script>" ) )
+				                                                                                      "        (function ( Across ) {\n" +
+				                                                                                      "            Across['' + \"test-javascript-data\"] = \"test-javascript-data-value\";\n" +
+				                                                                                      "        })( window.Across = window.Across || {} );\n" +
+				                                                                                      "    </script>" ) )
 
 		       // Assert foot javascript
 		       .andExpect( jsoup().elementById( "javascript-page-end" ).valueIgnoringLineEndings(
 				       "<script src=\"test-javascript-end-external\"></script>\n<script src=\"/across/resources/test-javascript-end-views\"></script>\n<script src=\"test-javascript-end-relative\"></script>" ) )
 		       .andExpect( jsoup().elementById( "javascript-page-end-data" ).valueIgnoringLineEndings(
-				       "<script type=\"text/javascript\">        (function ( Across ) {            Across['' + \"test-javascript-end-data\"] = \"test-javascript-end-data\";        })( window.Across = window.Across || {} );    </script>" ) )
+				       "<script type=\"text/javascript\">        (function ( Across ) {            Across['' + \"test-javascript-end-data\"] = \"test-javascript-end-data-value\";        })( window.Across = window.Across || {} );    </script>" ) )
 		       .andExpect(
 				       jsoup().elementById( "javascript-page-end-inline" ).valueIgnoringLineEndings(
 						       "<script src=\"test-javascript-end-inline\"></script>" ) );
 
+	}
+
+	@Test
+	public void emptyBucket() throws Exception {
+		mockMvc.perform( get( WebResourceController.PATH ) )
+		       .andExpect( jsoup().elementById( "empty-bucket" ).valueIgnoringLineEndings( "" ) );
+	}
+
+	@Test
+	public void cssBucket() throws Exception {
+		mockMvc.perform( get( WebResourceController.PATH ) )
+		       .andExpect( jsoup().elementById( "bucket-css" ).htmlMatches(
+				       "<link rel='stylesheet' href='test-css-external' type='text/css'>" +
+						       "<link rel='stylesheet' href='/across/resources/test-css-views' type='text/css'>" +
+						       "<style type='text/css'>test-css-inline</style>" +
+						       "<style type='text/css'>test-css-data</style>" +
+						       "<link rel='stylesheet' href='/test-css-relative' type='text/css'>"
+		       ) );
+	}
+
+	@Test
+	public void javascriptBucket() throws Exception {
+		mockMvc.perform( get( WebResourceController.PATH ) )
+		       .andExpect( jsoup().elementById( "bucket-javascript" ).htmlMatches(
+				       "<script type='text/javascript'>test-javascript-inline</script>" +
+						       "<script type='text/javascript'>(function( _data ) { _data[ \"test-javascript-data\" ] = \"test-javascript-data-value\"; })( window[\"Across\"] = window[\"Across\"] || {} );</script>" +
+						       "<script src='test-javascript-external' type='text/javascript'></script>" +
+						       "<script src='/across/resources/test-javascript-views' type='text/javascript'></script>" +
+						       "<script src='/test-javascript-relative' type='text/javascript'></script>"
+		       ) );
+	}
+
+	@Test
+	public void javascriptPageEndBucket() throws Exception {
+		mockMvc.perform( get( WebResourceController.PATH ) )
+		       .andExpect( jsoup().elementById( "bucket-javascript-page-end" ).htmlMatches(
+				       "<script src='test-javascript-end-external' type='text/javascript'></script>" +
+						       "<script src='/across/resources/test-javascript-end-views' type='text/javascript'></script>" +
+						       "<script src='/test-javascript-end-relative' type='text/javascript'></script>" +
+						       "<script type='text/javascript'>(function( _data ) { _data[ \"test-javascript-end-data\" ] = \"test-javascript-end-data-value\"; })( window[\"Across\"] = window[\"Across\"] || {} );</script>" +
+						       "<script type='text/javascript'>test-javascript-end-inline</script>"
+		       ) );
 	}
 
 	@Test
@@ -97,9 +139,7 @@ public class ITWebResource
 				       "<link rel=\"stylesheet\" href=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">" ) )
 		       .andExpect( jsoup().elementById( "javascript-page-end" )
 		                          .valueIgnoringLineEndings( "<script src=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>" ) )
-		       .andExpect( status().isOk() )
-		;
-
+		       .andExpect( status().isOk() );
 	}
 
 	@Configuration

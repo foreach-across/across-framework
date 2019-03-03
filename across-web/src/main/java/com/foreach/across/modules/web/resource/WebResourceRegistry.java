@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.web.resource;
 
-import com.foreach.across.modules.web.resource.rules.AddWebResourceRule;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -156,34 +155,57 @@ public class WebResourceRegistry
 		WebResource existing = findResource( type, key, data );
 
 		if ( existing == null ) {
-			List<WebResourceReference> rules = webResources.computeIfAbsent( type, k -> new LinkedList<>() );
-			AddWebResourceRule rule;
-			switch ( type ) {
-				case JAVASCRIPT:
-				case JAVASCRIPT_PAGE_END:
-					if ( data instanceof String ) {
-						rule = WebResourceRule.add( WebResource.javascript( (String) data ) ).withKey( key ).toBucket( type );
-					}
-					else {
-						rule = WebResourceRule.add( WebResource.globalJsonData( "Across." + key, data ) ).withKey( key ).toBucket( type );
-					}
-					break;
-				case CSS:
-					rule = WebResourceRule.add( WebResource.css( (String) data ) ).withKey( key ).toBucket( type );
-					break;
-				default:
-					rule = new AddWebResourceRule().withKey( key ).toBucket( type );
-			}
-
 			WebResource resource = new WebResource( type, key, data, location );
-			AddWebResourceRule addWebResourceRule = rule;
-			rules.add( new WebResourceReference( addWebResourceRule.getViewElementBuilder(), key, addWebResourceRule.getBefore(),
-			                                     addWebResourceRule.getAfter(), addWebResourceRule.getOrder(), resource ) );
+
+			addResourceToBucket(
+					new WebResourceReference( createViewElementBuilderForWebResource( resource ), key, null, null, null, resource ),
+					type
+			);
 		}
 		else {
 			existing.setKey( key );
 			existing.setData( data );
 			existing.setLocation( location );
+
+			// replace the reference
+			addResourceToBucket(
+					new WebResourceReference( createViewElementBuilderForWebResource( existing ), key, null, null, null, existing ),
+					type,
+					true
+			);
+		}
+	}
+
+	private ViewElementBuilder createViewElementBuilderForWebResource( WebResource webResource ) {
+		switch ( webResource.getType() ) {
+			case CSS:
+				switch ( webResource.getLocation() ) {
+					case INLINE:
+					case DATA:
+						return WebResource.css().inline( Objects.toString( webResource.getData() ) );
+					case EXTERNAL:
+						return WebResource.css( "!" + webResource.getData() );
+					case VIEWS:
+						return WebResource.css( "@resource:" + webResource.getData() );
+					default:
+						return WebResource.css( Objects.toString( webResource.getData() ) );
+				}
+			case JAVASCRIPT:
+			case JAVASCRIPT_PAGE_END:
+				switch ( webResource.getLocation() ) {
+					case INLINE:
+						return WebResource.javascript().inline( Objects.toString( webResource.getData() ) );
+					case DATA:
+						return WebResource.globalJsonData( "Across." + webResource.getKey(), webResource.getData() );
+					case EXTERNAL:
+						return WebResource.javascript( "!" + webResource.getData() );
+					case VIEWS:
+						return WebResource.javascript( "@resource:" + webResource.getData() );
+					default:
+						return WebResource.javascript( Objects.toString( webResource.getData() ) );
+				}
+			default:
+				return WebResource.javascript().inline( Objects.toString( webResource.getData() ) );
 		}
 	}
 
