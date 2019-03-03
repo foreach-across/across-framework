@@ -15,6 +15,11 @@
  */
 package com.foreach.across.modules.web.resource;
 
+import com.foreach.across.modules.web.resource.elements.CssWebResourceBuilder;
+import com.foreach.across.modules.web.resource.elements.JavascriptWebResourceBuilder;
+import com.foreach.across.modules.web.resource.rules.AddPackageResourceRule;
+import com.foreach.across.modules.web.resource.rules.AddWebResourceRule;
+import com.foreach.across.modules.web.resource.rules.RemoveWebResourceRule;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import lombok.NonNull;

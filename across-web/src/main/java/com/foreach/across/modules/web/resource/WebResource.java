@@ -16,6 +16,10 @@
 
 package com.foreach.across.modules.web.resource;
 
+import com.foreach.across.modules.web.resource.elements.CssWebResourceBuilder;
+import com.foreach.across.modules.web.resource.elements.JavascriptWebResourceBuilder;
+import com.foreach.across.modules.web.resource.elements.LinkWebResourceBuilder;
+import com.foreach.across.modules.web.resource.elements.MetaWebResourceBuilder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -24,6 +28,14 @@ import lombok.Setter;
  * <p>Represents a single entry in the WebResourceRegistry.</p>
  * <p>All constants are deliberately Strings so they can easily be used in different view
  * layers and custom values can be added in other modules.</p>
+ * <p>
+ * As of version {@code 3.2.0} the {@code WebResource} is mainly used as a static facade
+ * for commonly used web resource types (eg. {@link #css()} and {@link #javascript()}) and
+ * for the global constants of default buckets. Creating instances of {@code WebResource}
+ * is deprecated and only kept for backwards compatibility.
+ * </p>
+ *
+ * @see WebResourceRegistry
  */
 public class WebResource
 {
@@ -109,10 +121,16 @@ public class WebResource
 	}
 
 	/**
-	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a script tag and can be used for inline or json
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a {@code <script>}
+	 * element that registers the data argument as global JSON data. See {@link JavascriptWebResourceBuilder#globalJsonData(String, Object)}
+	 * for more details.
+	 *
+	 * @param key  qualified key under which to register the data
+	 * @param data object that should be converted to json
+	 * @return javascript element builder
 	 */
-	public static JavascriptWebResourceBuilder javascript() {
-		return new JavascriptWebResourceBuilder();
+	public static JavascriptWebResourceBuilder globalJsonData( @NonNull String key, Object data ) {
+		return javascript().inline( JavascriptWebResourceBuilder.globalJsonData( key, data ) );
 	}
 
 	/**
@@ -120,6 +138,13 @@ public class WebResource
 	 */
 	public static JavascriptWebResourceBuilder javascript( @NonNull String url ) {
 		return javascript().url( url );
+	}
+
+	/**
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a script tag and can be used for inline or json
+	 */
+	public static JavascriptWebResourceBuilder javascript() {
+		return new JavascriptWebResourceBuilder();
 	}
 
 	/**
@@ -137,7 +162,28 @@ public class WebResource
 	}
 
 	/**
-	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a meta tag
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a link tag for the url specified.
+	 */
+	public static LinkWebResourceBuilder link( @NonNull String url ) {
+		return link().url( url );
+	}
+
+	/**
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a link tag.
+	 */
+	public static LinkWebResourceBuilder link() {
+		return new LinkWebResourceBuilder();
+	}
+
+	/**
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a meta tag for the attribute name.
+	 */
+	public static MetaWebResourceBuilder meta( @NonNull String attributeName ) {
+		return meta().metaName( attributeName );
+	}
+
+	/**
+	 * A {@link com.foreach.across.modules.web.ui.ViewElementBuilder} which generates a meta tag.
 	 */
 	public static MetaWebResourceBuilder meta() {
 		return new MetaWebResourceBuilder();

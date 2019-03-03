@@ -15,11 +15,8 @@
  */
 package com.foreach.across.modules.web.resource;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.ui.*;
-import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.After;
@@ -33,6 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static com.foreach.across.modules.web.resource.WebResource.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -78,11 +76,6 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 			put( "static", "@static:/" );
 			put( "admin", "@adminWeb:/" );
 		}};
-		Map<String, Object> vars = new HashMap<String, Object>()
-		{{
-			put( "rootPaths", statics );
-			put( "language", "nl" );
-		}};
 
 		registry.apply(
 				WebResourceRule.add( WebResource.css( "favicon.ico" ).rel( "icon" ).type( "image/x-icon" ) ).withKey( "favicon" ).toBucket( "FAVICON" ),
@@ -92,17 +85,6 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 				WebResourceRule.add( WebResource.css( "@static:/css/bootstrap.min.css" ) ).withKey( "bootstrap-min-css" ).toBucket( CSS ),
 				WebResourceRule.add( WebResource.css().inline( "body {background-color: powderblue;}" ) ).withKey( "inline-body-blue" ).toBucket( CSS ),
 				WebResourceRule.add( WebResource.javascript().inline( "alert('hello world');" ) ).withKey( "alert-page-top" ).toBucket( JAVASCRIPT ),
-				WebResourceRule.add( WebResource.javascript().data( vars ).dataWriter( ( data ) -> {
-					try {
-						return "(function ( Across ) {\n" +
-								"var data=" + new ObjectMapper().writeValueAsString( data ) + ";\n" +
-								"for(var key in data) Across[key] = data[key];\n" +
-								"        })( window.Across = window.Across || {} );\n";
-					}
-					catch ( JsonProcessingException e ) {
-						throw new RuntimeException( e );
-					}
-				} ) ).withKey( "alert-page-top" ).toBucket( "javascript_vars" ),
 				WebResourceRule.add( WebResource.javascript( "bootstrap.min.js" ).defer().async() ).withKey( "bootstrap-min-js" )
 				               .toBucket( JAVASCRIPT_PAGE_END ),
 				WebResourceRule.add( WebResource.javascript( "@resource:bootstrapui.js" ) ).withKey( "BootstrapUiModule-js" ).toBucket( JAVASCRIPT_PAGE_END ),
@@ -116,21 +98,15 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 						return element;
 					}
 				} ).withKey( "base-w3-school" ).toBucket( "base" ),
-				WebResourceRule.add( new CssWebResourceBuilder()
-				{
-					@Override
-					protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
-						MutableViewElement element = super.createElement( builderContext );
-						( (AbstractNodeViewElement) element ).setAttribute( "crossorigin", "use-credentials" );
-						return element;
-					}
-				}.type( "application/json" ).rel( "license" ).url( "https://en.wikipedia.org/wiki/BSD_licenses" ) ).withKey( "rel-license" )
-				               .toBucket( "custom-element" ),
+				WebResourceRule.add(
+						WebResource.link().crossOrigin( "use-credentials" ).type( "application/json" ).rel( "license" )
+						           .url( "https://en.wikipedia.org/wiki/BSD_licenses" )
+				).withKey( "rel-license" ).toBucket( "custom-element" ),
 				WebResourceRule.add( WebResource.meta().metaName( "keywords" ).content( "HTML, CSS, XML, HTML" ) ).withKey( "meta-keywords" ).toBucket( HEAD ),
 				WebResourceRule.add( WebResource.meta().refresh( "30;URL=https://www.google.com/" ) ).withKey( "meta-refresh" ).toBucket( HEAD )
 		);
 
-		assertEquals( 9, registry.getBuckets().size() );
+		assertEquals( 8, registry.getBuckets().size() );
 
 		renderAndExpect( registry.getResourcesForBucket( "FAVICON" ),
 		                 "<link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\" />" );
@@ -143,13 +119,6 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 
 		renderAndExpect( registry.getResourcesForBucket( JAVASCRIPT ),
 		                 "<script type=\"text/javascript\">alert('hello world');</script>" );
-
-		renderAndExpect( registry.getResourcesForBucket( "javascript_vars" ),
-		                 "<script type=\"text/javascript\">(function ( Across ) {\n" +
-				                 "var data={\"rootPaths\":{\"static\":\"@static:/\",\"admin\":\"@adminWeb:/\"},\"language\":\"nl\"};\n" +
-				                 "for(var key in data) Across[key] = data[key];\n" +
-				                 "        })( window.Across = window.Across || {} );\n" +
-				                 "</script>" );
 
 		renderAndExpect( registry.getResourcesForBucket( JAVASCRIPT_PAGE_END ),
 		                 "<script src=\"/bootstrap.min.js\" defer=\"defer\" async=\"async\" type=\"text/javascript\"></script><script src=\"/across/resources/bootstrapui.js\" type=\"text/javascript\"></script>" );
@@ -175,11 +144,6 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 		resourceRegistry.addWithKey( WebResource.JAVASCRIPT, "AdminWebModule-data", adminWebPathVariables, WebResource.DATA );
 		resourceRegistry.addWithKey( JAVASCRIPT, "AdminWebModule-date-time-css",
 		                             "https://cdn.jsdelivr.net/webjars/org.webjars/Eonasdan-bootstrap-datetimepicker/4.14.30/bootstrap-datetimepicker.css" );
-
-		resourceRegistry.apply(
-				WebResourceRule.addPackage( "BOOTSTRAP" ),
-				WebResourceRule.add( WebResource.javascript().data( adminWebPathVariables ) ).withKey( "AdminWebModule" ).toBucket( JAVASCRIPT )
-		);
 
 		assertEquals( 1, resourceRegistry.getResources( "custom-bucket" ).size() );
 		assertEquals( 2, resourceRegistry.getResources( "javascript" ).size() );
@@ -216,7 +180,7 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 		assertFalse( resourceRegistry.getResourcesForBucket( "date-picker-bucket-css" ).iterator().hasNext() );
 		assertFalse( resourceRegistry.getResourcesForBucket( "date-picker-bucket-js" ).iterator().hasNext() );
 
-		size( 1, resourceRegistry.getResourcesForBucket( CSS ) );
+		assertThat( resourceRegistry.getResourcesForBucket( CSS ) ).hasSize( 1 );
 
 		Iterator<WebResourceReference> it = resourceRegistry.getResourcesForBucket( JAVASCRIPT_PAGE_END ).iterator();
 		assertEquals( "bootstrap-min-js", it.next().getKey() );
@@ -224,55 +188,7 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 		assertEquals( "bootstrap-custom-min-js", it.next().getKey() );
 	}
 
-	@Test
-	public void mergeTwoRegistries() {
-		WebResourceRegistry original = new WebResourceRegistry( null );
-		WebResourceRegistry additional = new WebResourceRegistry( null );
-
-		original.apply( WebResourceRule.add( WebResource.css( "/one.css" ) ).withKey( "1-css" ).toBucket( "bucket-css" ),
-		                WebResourceRule.add( WebResource.javascript( "/one.js" ) ).withKey( "1-js" ).toBucket( "bucket-js" ) );
-
-		additional.apply( WebResourceRule.add( WebResource.css( "two.css" ) ).withKey( "2-css" ).toBucket( "bucket-css" ),
-		                  WebResourceRule.add( WebResource.javascript( "/two-1.js" ) ).withKey( "2-1.js" ).toBucket( "bucket-two-js" ),
-		                  WebResourceRule.add( WebResource.javascript( "/two-2.js" ) ).withKey( "2-2.js" ).toBucket( "bucket-two-js" ),
-		                  WebResourceRule.add( WebResource.javascript( "/two-3.js" ) ).withKey( "2-3.js" ).toBucket( "bucket-two-js" )
-		);
-
-		original.merge( additional );
-		size( 2, original.getResourcesForBucket( "bucket-css" ) );
-		size( 1, original.getResourcesForBucket( "bucket-js" ) );
-		size( 3, original.getResourcesForBucket( "bucket-two-js" ) );
-
-		additional.clear();
-		size( 2, original.getResourcesForBucket( "bucket-css" ) );
-		size( 1, original.getResourcesForBucket( "bucket-js" ) );
-		size( 3, original.getResourcesForBucket( "bucket-two-js" ) );
-		size( 0, additional.getResourcesForBucket( "bucket-css" ) );
-		size( 0, additional.getResourcesForBucket( "bucket-js" ) );
-		size( 0, additional.getResourcesForBucket( "bucket-two-js" ) );
-
-		original.clear( "bucket-js" );
-		size( 2, original.getResourcesForBucket( "bucket-css" ) );
-		size( 2, original.getResourcesForBucket( "bucket-css" ) );
-		size( 0, original.getResourcesForBucket( "bucket-js" ) );
-		size( 3, original.getResourcesForBucket( "bucket-two-js" ) );
-
-		original.clear();
-		size( 0, original.getResourcesForBucket( "bucket-css" ) );
-		size( 0, original.getResourcesForBucket( "bucket-css" ) );
-		size( 0, original.getResourcesForBucket( "bucket-js" ) );
-		size( 0, original.getResourcesForBucket( "bucket-two-js" ) );
-	}
-
-	public void size( int expectedSize, WebResourceReferenceCollection referenceCollection ) {
-		int i = 0;
-		for ( WebResourceReference ignore : referenceCollection ) {
-			i++;
-		}
-		assertEquals( expectedSize, i );
-	}
-
-	public class BootstrapUiFormElementsWebResources extends SimpleWebResourcePackage
+	class BootstrapUiFormElementsWebResources extends SimpleWebResourcePackage
 	{
 		private static final String MODULE_NAME = "BootstrapUiModule";
 		public static final String NAME = "bootstrapui-formelements";
@@ -320,5 +236,4 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 			);
 		}
 	}
-
 }

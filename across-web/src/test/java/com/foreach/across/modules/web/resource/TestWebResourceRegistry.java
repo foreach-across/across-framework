@@ -115,4 +115,48 @@ public class TestWebResourceRegistry
 		registry.addPackage( "myPackage" );
 		verify( resourcePackage, times( 1 ) ).install( registry );
 	}
+
+	@Test
+	public void mergeTwoRegistries() {
+		WebResourceRegistry original = new WebResourceRegistry( null );
+		WebResourceRegistry additional = new WebResourceRegistry( null );
+
+		original.apply( WebResourceRule.add( WebResource.css( "/one.css" ) ).withKey( "1-css" ).toBucket( "bucket-css" ),
+		                WebResourceRule.add( WebResource.javascript( "/one.js" ) ).withKey( "1-js" ).toBucket( "bucket-js" ) );
+
+		additional.apply( WebResourceRule.add( WebResource.css( "two.css" ) ).withKey( "2-css" ).toBucket( "bucket-css" ),
+		                  WebResourceRule.add( WebResource.javascript( "/two-1.js" ) ).withKey( "2-1.js" ).toBucket( "bucket-two-js" ),
+		                  WebResourceRule.add( WebResource.javascript( "/two-2.js" ) ).withKey( "2-2.js" ).toBucket( "bucket-two-js" ),
+		                  WebResourceRule.add( WebResource.javascript( "/two-3.js" ) ).withKey( "2-3.js" ).toBucket( "bucket-two-js" )
+		);
+
+		original.merge( additional );
+		size( 2, original.getResourcesForBucket( "bucket-css" ) );
+		size( 1, original.getResourcesForBucket( "bucket-js" ) );
+		size( 3, original.getResourcesForBucket( "bucket-two-js" ) );
+
+		additional.clear();
+		size( 2, original.getResourcesForBucket( "bucket-css" ) );
+		size( 1, original.getResourcesForBucket( "bucket-js" ) );
+		size( 3, original.getResourcesForBucket( "bucket-two-js" ) );
+		size( 0, additional.getResourcesForBucket( "bucket-css" ) );
+		size( 0, additional.getResourcesForBucket( "bucket-js" ) );
+		size( 0, additional.getResourcesForBucket( "bucket-two-js" ) );
+
+		original.clear( "bucket-js" );
+		size( 2, original.getResourcesForBucket( "bucket-css" ) );
+		size( 2, original.getResourcesForBucket( "bucket-css" ) );
+		size( 0, original.getResourcesForBucket( "bucket-js" ) );
+		size( 3, original.getResourcesForBucket( "bucket-two-js" ) );
+
+		original.clear();
+		size( 0, original.getResourcesForBucket( "bucket-css" ) );
+		size( 0, original.getResourcesForBucket( "bucket-css" ) );
+		size( 0, original.getResourcesForBucket( "bucket-js" ) );
+		size( 0, original.getResourcesForBucket( "bucket-two-js" ) );
+	}
+
+	private void size( int expectedSize, WebResourceReferenceCollection referenceCollection ) {
+		assertThat( referenceCollection ).hasSize( expectedSize );
+	}
 }

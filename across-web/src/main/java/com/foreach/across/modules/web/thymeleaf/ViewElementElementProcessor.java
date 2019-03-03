@@ -60,8 +60,7 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 		structureHandler.setInliner( NoOpInliner.INSTANCE );
 
 		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
-		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext(
-				( (WebEngineContext) context ).getRequest() );
+		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
 		ViewElementModelWriterRegistry registry = appCtx.getBean( ViewElementModelWriterRegistry.class );
 		ViewElementAttributeConverter attributeConverter = appCtx.getBean( ViewElementAttributeConverter.class );
 		HtmlIdStore idStore = HtmlIdStore.fetch( context );

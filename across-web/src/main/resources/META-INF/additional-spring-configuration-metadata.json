@@ -4,7 +4,7 @@
       "name": "acrossWebModule.registerGlobalBuilderContext",
       "type": "java.lang.Boolean",
       "description": "Should an interceptor be added to create a DefaultViewElementBuilderContext for every request.",
-      "defaultValue": false
+      "defaultValue": true
     },
     {
       "name": "acrossWebModule.views.thymeleaf.enabled",

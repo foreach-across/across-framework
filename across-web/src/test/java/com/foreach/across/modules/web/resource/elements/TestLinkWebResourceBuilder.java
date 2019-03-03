@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.resource;
+package com.foreach.across.modules.web.resource.elements;
 
-import com.foreach.across.modules.web.resource.rules.AddWebResourceRule;
+import org.junit.Test;
 
-import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Interface that kan be implemented by {@link com.foreach.across.modules.web.ui.ViewElementBuilder}s that are
- * used inside {@link AddWebResourceRule}. If no explicit resource key is specified on the rule, the value of
- * {@link #getWebResourceKey()} will be used instead.
- *
  * @author Arne Vandamme
  * @since 3.2.0
  */
-@FunctionalInterface
-public interface WebResourceKeyProvider
+public class TestLinkWebResourceBuilder
 {
-	/**
-	 * @return the key that should be used for identifying the web resource
-	 */
-	Optional<String> getWebResourceKey();
+	private LinkWebResourceBuilder link = new LinkWebResourceBuilder();
+
+	@Test
+	public void defaultKeyIsUrl() {
+		assertThat( link.getWebResourceKey() ).isEmpty();
+
+		link.url( "someUrl" );
+		assertThat( link.getWebResourceKey() ).contains( "someUrl" );
+	}
 }

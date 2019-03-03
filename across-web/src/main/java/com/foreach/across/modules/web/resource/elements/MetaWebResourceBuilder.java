@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.resource;
+package com.foreach.across.modules.web.resource.elements;
 
-import com.foreach.across.modules.web.ui.MutableViewElement;
+import com.foreach.across.modules.web.resource.WebResourceKeyProvider;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
-import com.foreach.across.modules.web.ui.elements.NodeViewElement;
+import com.foreach.across.modules.web.ui.elements.VoidNodeViewElement;
+import com.foreach.across.modules.web.ui.elements.builder.AbstractVoidNodeViewElementBuilder;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Optional;
 
 /**
  * Builder class for creating a {@link ViewElement} of tag <meta>
@@ -33,11 +35,22 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Accessors(fluent = true, chain = true)
 @Setter
-public class MetaWebResourceBuilder extends ViewElementBuilderSupport
+public class MetaWebResourceBuilder extends AbstractVoidNodeViewElementBuilder<VoidNodeViewElement, MetaWebResourceBuilder> implements WebResourceKeyProvider
 {
+	/**
+	 * The {@code name} attribute for the meta tag, if not set explicitly, will be the same as {@link #name(String)}.
+	 */
 	private String metaName;
 	private String content;
 	private String httpEquiv;
+
+	@Override
+	public MetaWebResourceBuilder name( String name ) {
+		if ( metaName == null ) {
+			metaName = name;
+		}
+		return super.name( name );
+	}
 
 	/**
 	 * Short hand for a http-equiv refresh <meta> tag
@@ -49,22 +62,32 @@ public class MetaWebResourceBuilder extends ViewElementBuilderSupport
 	}
 
 	@Override
-	public MutableViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
-		NodeViewElement element = new NodeViewElement( "meta" );
-
+	public Optional<String> getWebResourceKey() {
+		if ( StringUtils.isNotBlank( metaName ) ) {
+			return Optional.of( metaName );
+		}
 		if ( StringUtils.isNotBlank( httpEquiv ) ) {
+			return Optional.of( httpEquiv );
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	public VoidNodeViewElement createElement( @NonNull ViewElementBuilderContext builderContext ) {
+		VoidNodeViewElement element = new VoidNodeViewElement( "meta" );
+
+		if ( StringUtils.isNotEmpty( httpEquiv ) ) {
 			element.setAttribute( "http-equiv", httpEquiv );
 		}
-		else {
-			if ( StringUtils.isNotBlank( metaName ) ) {
-				element.setAttribute( "name", metaName );
-			}
+
+		if ( StringUtils.isNotEmpty( metaName ) ) {
+			element.setAttribute( "name", metaName );
 		}
 
-		if ( StringUtils.isNotBlank( content ) ) {
+		if ( StringUtils.isNotEmpty( content ) ) {
 			element.setAttribute( "content", content );
 		}
 
-		return element;
+		return apply( element, builderContext );
 	}
 }

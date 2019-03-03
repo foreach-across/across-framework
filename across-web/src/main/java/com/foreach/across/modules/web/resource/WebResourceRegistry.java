@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.web.resource;
 
+import com.foreach.across.modules.web.resource.rules.AddWebResourceRule;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -164,7 +165,7 @@ public class WebResourceRegistry
 						rule = WebResourceRule.add( WebResource.javascript( (String) data ) ).withKey( key ).toBucket( type );
 					}
 					else {
-						rule = WebResourceRule.add( WebResource.javascript().data( data ) ).withKey( key ).toBucket( type );
+						rule = WebResourceRule.add( WebResource.globalJsonData( "Across." + key, data ) ).withKey( key ).toBucket( type );
 					}
 					break;
 				case CSS:

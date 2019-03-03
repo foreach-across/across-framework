@@ -13,26 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.modules.web.resource;
+package com.foreach.across.modules.web.resource.elements;
 
-import lombok.NonNull;
+import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A rule which specifies that a {@link WebResourcePackage} with the <code>packageName</code> must be added to the {@link WebResourceRegistry}
- *
- * @author Marc Vanbrabant
+ * @author Arne Vandamme
  * @since 3.2.0
  */
-public class AddPackageResourceRule implements WebResourceRule
+public class TestJavascriptWebResourceBuilder
 {
-	private String packageName;
+	private JavascriptWebResourceBuilder script = new JavascriptWebResourceBuilder();
 
-	public AddPackageResourceRule( @NonNull String packageName ) {
-		this.packageName = packageName;
-	}
-
-	@Override
-	public void applyTo( @NonNull WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.addPackage( packageName );
+	@Test
+	public void defaultKeyIsUrl() {
+		assertThat( script.getWebResourceKey() ).isEmpty();
+		assertThat( script.inline( "some inline javascript" ).getWebResourceKey() ).isEmpty();
+		assertThat( script.url( "someUrl" ).getWebResourceKey() ).contains( "someUrl" );
 	}
 }
