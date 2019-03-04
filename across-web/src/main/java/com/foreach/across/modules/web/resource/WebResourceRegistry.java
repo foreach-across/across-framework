@@ -439,14 +439,14 @@ public class WebResourceRegistry
 	}
 
 	/**
-	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the  registry
+	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the registry.
 	 */
 	public void apply( @NonNull WebResourceRule... webResourceRules ) {
 		apply( Arrays.asList( webResourceRules ) );
 	}
 
 	/**
-	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the  registry
+	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the registry.
 	 */
 	public void apply( @NonNull Collection<WebResourceRule> webResourceRules ) {
 		webResourceRules.forEach( wr -> wr.applyTo( this ) );
