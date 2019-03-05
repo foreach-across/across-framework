@@ -54,8 +54,8 @@ public class TestPrefixedControllerTemplates
 		mvc.perform( get( "/prefix/home" ) )
 		   .andExpect( status().isOk() )
 		   .andExpect( content().string( containsString( "otherhead-child-otherfoot" ) ) )
-		   .andExpect( content().string(
-				   containsString( "resources:[/across/resources/other.css,/across/resources/controller.css]" ) ) );
+		   .andExpect( content().string( containsString( "/across/resources/other.css" ) ) )
+		   .andExpect( content().string( containsString( "/across/resources/controller.css" ) ) );
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class TestPrefixedControllerTemplates
 		mvc.perform( get( "/prefix/databaseError" ) )
 		   .andExpect( status().isOk() )
 		   .andExpect( content().string( containsString( "otherhead-a database error has occurred-otherfoot" ) ) )
-		   .andExpect( content().string( containsString( "resources:[/across/resources/other.css]" ) ) );
+		   .andExpect( content().string( containsString( "/across/resources/other.css" ) ) );
 	}
 
 	@Test
@@ -95,7 +95,7 @@ public class TestPrefixedControllerTemplates
 		mvc.perform( get( "/prefix/runtimeError" ) )
 		   .andExpect( status().is5xxServerError() )
 		   .andExpect( content().string( containsString( "errorhead-Runtime error occurred.-errorfoot" ) ) )
-		   .andExpect( content().string( containsString( "resources:[/across/resources/error.css]" ) ) );
+		   .andExpect( content().string( containsString( "/across/resources/error.css" ) ) );
 	}
 
 	@Test

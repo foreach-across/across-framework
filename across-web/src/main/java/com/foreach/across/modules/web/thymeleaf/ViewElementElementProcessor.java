@@ -18,6 +18,7 @@ package com.foreach.across.modules.web.thymeleaf;
 import com.foreach.across.modules.web.config.AcrossWebModuleDevSettings;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
+import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -59,8 +60,7 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 		structureHandler.setInliner( NoOpInliner.INSTANCE );
 
 		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
-		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext(
-				( (WebEngineContext) context ).getRequest() );
+		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
 		ViewElementModelWriterRegistry registry = appCtx.getBean( ViewElementModelWriterRegistry.class );
 		ViewElementAttributeConverter attributeConverter = appCtx.getBean( ViewElementAttributeConverter.class );
 		HtmlIdStore idStore = HtmlIdStore.fetch( context );
@@ -84,9 +84,12 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 		if ( viewElement instanceof ViewElement ) {
 			return (ViewElement) viewElement;
 		}
+		else if ( viewElement instanceof ViewElementBuilder ) {
+			return ( (ViewElementBuilder) viewElement ).build();
+		}
 
 		throw new IllegalArgumentException(
-				ELEMENT_NAME + " element requires a " + ATTRIBUTE_ITEM + " attribute of type ViewElement"
+				ELEMENT_NAME + " element requires a " + ATTRIBUTE_ITEM + " attribute of type ViewElement or ViewElementBuilder"
 		);
 	}
 }

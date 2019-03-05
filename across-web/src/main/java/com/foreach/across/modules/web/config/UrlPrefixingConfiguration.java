@@ -45,6 +45,7 @@ public class UrlPrefixingConfiguration
 {
 	public static final String RESOURCE = "resource";
 	public static final String STATIC = "static";
+	public static final String WEBJARS = "webjars";
 
 	@Bean
 	@Primary
@@ -54,6 +55,8 @@ public class UrlPrefixingConfiguration
 		PrefixingPathContext resourceContext = new PrefixingPathContext( resourcesConfiguration.getPath() );
 		prefixingPathRegistry.add( RESOURCE, resourceContext );
 		prefixingPathRegistry.add( STATIC, new PrefixingPathContext( resourceContext.getPathPrefix() + "/static" ) );
+		prefixingPathRegistry.add( WEBJARS, new PrefixingPathContext( resourcesConfiguration.getWebjars() ) );
+
 		return prefixingPathRegistry;
 	}
 

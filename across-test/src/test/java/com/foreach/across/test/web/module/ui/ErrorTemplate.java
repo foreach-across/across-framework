@@ -17,6 +17,7 @@ package com.foreach.across.test.web.module.ui;
 
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.resource.WebResourceRule;
 import com.foreach.across.modules.web.template.LayoutTemplateProcessorAdapterBean;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,6 @@ public class ErrorTemplate extends LayoutTemplateProcessorAdapterBean
 
 	@Override
 	protected void registerWebResources( WebResourceRegistry registry ) {
-		registry.add( WebResource.CSS, "/error.css", WebResource.VIEWS );
+		registry.apply( WebResourceRule.add( WebResource.css( "@resource:/error.css" ) ).toBucket( WebResource.CSS ) );
 	}
 }
