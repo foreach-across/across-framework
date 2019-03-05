@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Exposed
 @Controller
+@SuppressWarnings( "deprecation" )
 public class WebResourceController
 {
 	public static final String PATH = "/webresource-demo";

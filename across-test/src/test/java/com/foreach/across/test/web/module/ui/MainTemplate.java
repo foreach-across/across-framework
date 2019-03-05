@@ -22,6 +22,8 @@ import com.foreach.across.modules.web.template.WebTemplateRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.foreach.across.modules.web.resource.WebResourceRule.add;
+
 /**
  * @author Arne Vandamme
  * @since 1.1.3
@@ -42,6 +44,6 @@ public class MainTemplate extends LayoutTemplateProcessorAdapterBean
 
 	@Override
 	protected void registerWebResources( WebResourceRegistry registry ) {
-		registry.add( WebResource.CSS, "/test.css", WebResource.VIEWS );
+		registry.apply( add( WebResource.css( "@resource:/test.css" ) ).toBucket( WebResource.CSS ) );
 	}
 }

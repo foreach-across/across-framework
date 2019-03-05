@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+@SuppressWarnings( "deprecation" )
 public class TestWebResourceRule extends AbstractViewElementTemplateTest
 {
 	@Autowired
@@ -181,6 +182,7 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 		assertEquals( "bootstrap-custom-min-js", it.next().getKey() );
 	}
 
+	@SuppressWarnings("deprecation")
 	class BootstrapUiFormElementsWebResources extends SimpleWebResourcePackage
 	{
 		private static final String MODULE_NAME = "BootstrapUiModule";

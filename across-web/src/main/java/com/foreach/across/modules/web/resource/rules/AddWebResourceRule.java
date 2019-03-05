@@ -19,19 +19,22 @@ import com.foreach.across.modules.web.resource.WebResourceReference;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceRule;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import lombok.Getter;
 import lombok.NonNull;
 
 /**
- * A rule which specifies that a {@link ViewElementBuilder} must be added to the {@link WebResourceRegistry}
+ * A rule which specifies that a {@link ViewElementBuilder} must be added to a specific bucket of a {@link WebResourceRegistry}.
+ * Allows specifying key and order related properties of the resulting {@link WebResourceRegistry}.
+ * <p/>
+ * Unlike directly calling {@link WebResourceRegistry#addResourceToBucket(WebResourceReference, String)} using this rule will
+ * not replace a previously registered resource with the same key, unless {@link #replaceIfPresent(boolean)} has explicitly
+ * been set to {@code true}.
  *
  * @author Marc Vanbrabant
- * @since 3.2.0
+ * @see ViewElementBuilder
  * @see WebResourceReference
- * @see ViewElementBuilderSupport
  * @see WebResourceRegistry
- *
+ * @since 3.2.0
  */
 @Getter
 public class AddWebResourceRule implements WebResourceRule
@@ -42,6 +45,7 @@ public class AddWebResourceRule implements WebResourceRule
 	private Integer order;
 	private String key;
 	private String bucket;
+	private boolean replaceIfPresent;
 
 	public AddWebResourceRule withKey( String key ) {
 		this.key = key;
@@ -68,6 +72,18 @@ public class AddWebResourceRule implements WebResourceRule
 		return this;
 	}
 
+	/**
+	 * Should the web resource be replaced if it is already present (based on the key).
+	 * Defaults to {@code false}.
+	 *
+	 * @param replaceIfPresent true if any previously registered resource with that key should be replaced
+	 * @return rule
+	 */
+	public AddWebResourceRule replaceIfPresent( boolean replaceIfPresent ) {
+		this.replaceIfPresent = replaceIfPresent;
+		return this;
+	}
+
 	public AddWebResourceRule of( @NonNull ViewElementBuilder viewElementBuilder ) {
 		this.viewElementBuilder = viewElementBuilder;
 		return this;
@@ -75,6 +91,8 @@ public class AddWebResourceRule implements WebResourceRule
 
 	@Override
 	public void applyTo( WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.addResourceToBucket( new WebResourceReference( viewElementBuilder, getKey(), before, after, order ), getBucket() );
+		webResourceRegistry.addResourceToBucket(
+				new WebResourceReference( viewElementBuilder, getKey(), before, after, order ), getBucket(), replaceIfPresent
+		);
 	}
 }
