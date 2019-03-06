@@ -33,7 +33,7 @@ import org.springframework.http.MediaType;
 import java.util.Optional;
 
 /**
- * Builder class for creating a {@link ViewElement} of tag <script> which supports either external
+ * Builder class for creating a {@link ViewElement} of tag {@code <script>} which supports either external
  * ({@code src} attribute) or inlined scripts. An inline script is specified using one of the overloaded
  * {@code inline()} methods. Either a static HTML output string is specified, or a custom {@link ViewElementBuilder}
  * which will return the elements that should be inlined.
