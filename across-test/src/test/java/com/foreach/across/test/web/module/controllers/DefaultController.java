@@ -17,6 +17,7 @@ package com.foreach.across.test.web.module.controllers;
 
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.resource.WebResourceRule;
 import com.foreach.across.modules.web.template.ClearTemplate;
 import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.dao.DataAccessException;
@@ -36,7 +37,7 @@ public class DefaultController
 {
 	@ModelAttribute
 	public void registerWebResources( WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.add( WebResource.CSS, "/controller.css", WebResource.VIEWS );
+		webResourceRegistry.apply( WebResourceRule.add( WebResource.css( "@resource:/controller.css" ) ).toBucket( WebResource.CSS ) );
 	}
 
 	@RequestMapping("/home")

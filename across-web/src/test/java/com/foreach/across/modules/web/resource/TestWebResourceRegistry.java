@@ -17,6 +17,10 @@ package com.foreach.across.modules.web.resource;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -25,9 +29,14 @@ import static org.mockito.Mockito.*;
  * @author Arne Vandamme
  * @since 1.1.2
  */
+@RunWith(MockitoJUnitRunner.class)
 public class TestWebResourceRegistry
 {
-	private WebResourceRegistry registry = new WebResourceRegistry( new WebResourcePackageManager() );
+	@Mock
+	private WebResourcePackageManager packageManager;
+
+	@InjectMocks
+	private WebResourceRegistry registry;
 
 	@Test
 	public void noResourcesForNonExistingBucket() {
@@ -154,6 +163,22 @@ public class TestWebResourceRegistry
 		size( 0, original.getResourcesForBucket( "bucket-css" ) );
 		size( 0, original.getResourcesForBucket( "bucket-js" ) );
 		size( 0, original.getResourcesForBucket( "bucket-two-js" ) );
+	}
+
+	@Test
+	public void packageIsOnlyInstalledFirstTime() {
+		WebResourcePackage pkg = mock( WebResourcePackage.class );
+		when( packageManager.getPackage( "PACKAGE" ) ).thenReturn( pkg );
+
+		registry.addPackage( "PACKAGE" );
+		verify( pkg ).install( registry );
+
+		registry.addPackage( "PACKAGE" );
+		verify( pkg, times( 1 ) ).install( registry );
+
+		when( packageManager.getPackage( "OTHER" ) ).thenReturn( pkg );
+		registry.addPackage( "PACKAGE", "OTHER", "PACKAGE", "OTHER" );
+		verify( pkg, times( 2 ) ).install( registry );
 	}
 
 	private void size( int expectedSize, WebResourceReferenceCollection referenceCollection ) {

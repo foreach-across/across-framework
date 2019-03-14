@@ -14,4 +14,4 @@
   ~ limitations under the License.
   -->
 otherhead-<th:block th:include="${childPage} :: content"></th:block>-otherfoot
-resources:[<th:block th:each="resource,iStat: ${webResourceRegistry.getResources('css')}" th:text="${iStat.last ? resource.data : resource.data + ','}"></th:block>]
+resources:[<across:web-resources bucket="css" />]

@@ -18,6 +18,10 @@ package com.foreach.across.modules.web.events;
 import com.foreach.across.core.events.NamedAcrossEvent;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.resource.WebResourceRule;
+import lombok.Getter;
+
+import java.util.Collection;
 
 /**
  * Event published by a {@link com.foreach.across.modules.web.template.LayoutTemplateProcessorAdapterBean} after
@@ -25,6 +29,7 @@ import com.foreach.across.modules.web.resource.WebResourceRegistry;
  *
  * @author Arne Vandamme
  */
+@Getter
 public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 {
 	private final String templateName;
@@ -40,14 +45,28 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 		return getTemplateName();
 	}
 
-	public String getTemplateName() {
-		return templateName;
+	/**
+	 * Apply a set of template specific {@link WebResourceRule} instances to the registry.
+	 *
+	 * @param rules to apply
+	 */
+	public void applyResourceRules( WebResourceRule... rules ) {
+		webResourceRegistry.apply( rules );
 	}
 
-	public WebResourceRegistry getWebResourceRegistry() {
-		return webResourceRegistry;
+	/**
+	 * Apply a set of template specific {@link WebResourceRule} instances to the registry.
+	 *
+	 * @param rules to apply
+	 */
+	public void applyResourceRules( Collection<WebResourceRule> rules ) {
+		webResourceRegistry.apply( rules );
 	}
 
+	/**
+	 * @deprecated since 3.2.0 - use {@link #applyResourceRules(WebResourceRule...)} instead
+	 */
+	@Deprecated
 	public void add( WebResource webResource ) {
 		webResourceRegistry.add( webResource );
 	}
@@ -58,7 +77,9 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 *
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param data Data to register.
+	 * @deprecated since 3.2.0 - use {@link #applyResourceRules(WebResourceRule...)} instead
 	 */
+	@Deprecated
 	public void add( String type, Object data ) {
 		webResourceRegistry.add( type, data );
 	}
@@ -70,7 +91,9 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 * @param type     Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param data     Data to register.
 	 * @param location Where the data is available.
+	 * @deprecated since 3.2.0 - use {@link #applyResourceRules(WebResourceRule...)} instead
 	 */
+	@Deprecated
 	public void add( String type, Object data, String location ) {
 		addWithKey( type, null, data, location );
 	}
@@ -82,7 +105,9 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param key  Unique key under which to register a resource.
 	 * @param data Data to register.
+	 * @deprecated since 3.2.0 - use {@link #applyResourceRules(WebResourceRule...)} instead
 	 */
+	@Deprecated
 	public void addWithKey( String type, String key, Object data ) {
 		webResourceRegistry.addWithKey( type, key, data );
 	}
@@ -94,7 +119,9 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param key  Unique key under which to register a resource.
 	 * @param data Data to register.
+	 * @deprecated since 3.2.0 - use {@link #applyResourceRules(WebResourceRule...)} instead
 	 */
+	@Deprecated
 	public void addWithKey( String type, String key, Object data, String location ) {
 		webResourceRegistry.addWithKey( type, key, data, location );
 	}
@@ -104,7 +131,9 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 * Requires that the resource data equals() the requested data.
 	 *
 	 * @param data Content the resource should have.
+	 * @deprecated since 3.2.0 - use {@link #applyResourceRules(WebResourceRule...)} instead
 	 */
+	@Deprecated
 	public void removeResource( Object data ) {
 		webResourceRegistry.removeResource( data );
 	}
@@ -115,6 +144,7 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param data Content the resource should have.
 	 */
+	@Deprecated
 	public void removeResource( String type, Object data ) {
 		webResourceRegistry.removeResource( type, data );
 	}
@@ -124,6 +154,7 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 *
 	 * @param key Key the resource is registered under.
 	 */
+	@Deprecated
 	public void removeResourceWithKey( String key ) {
 		webResourceRegistry.removeResourceWithKey( key );
 	}
@@ -134,6 +165,7 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 * @param type Type of the resource, see {@link com.foreach.across.modules.web.resource.WebResource} for constants.
 	 * @param key  Key the resource is registered under.
 	 */
+	@Deprecated
 	public void removeResourceWithKey( String type, String key ) {
 		webResourceRegistry.removeResourceWithKeyFromBucket( type, key );
 	}
@@ -143,7 +175,9 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 * This requires the packages to be registered in the attached WebResourcePackageManager.
 	 *
 	 * @param packageNames Names of the packages to install.
+	 * @deprecated since 3.2.0 - use {@link #applyResourceRules(WebResourceRule...)} instead
 	 */
+	@Deprecated
 	public void addPackage( String... packageNames ) {
 		webResourceRegistry.addPackage( packageNames );
 	}
@@ -152,7 +186,9 @@ public class BuildTemplateWebResourcesEvent implements NamedAcrossEvent
 	 * Will remove all resources of the packages with the specified names.
 	 *
 	 * @param packageNames Names of the packages.
+	 * @deprecated since 3.2.0 - use {@link #applyResourceRules(WebResourceRule...)} instead
 	 */
+	@Deprecated
 	public void removePackage( String... packageNames ) {
 		webResourceRegistry.removePackage( packageNames );
 	}

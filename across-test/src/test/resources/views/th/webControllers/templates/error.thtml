@@ -14,4 +14,4 @@
   ~ limitations under the License.
   -->
 errorhead-<th:block th:include="${childPage} :: content"></th:block>-errorfoot
-resources:[<th:block th:each="resource,iStat: ${webResourceRegistry.getResources('css')}" th:text="${iStat.last ? resource.data : resource.data + ','}"></th:block>]
+resources:[<across:web-resources bucket="css" />]

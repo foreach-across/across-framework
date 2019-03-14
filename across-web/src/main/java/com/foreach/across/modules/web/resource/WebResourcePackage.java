@@ -16,6 +16,18 @@
 
 package com.foreach.across.modules.web.resource;
 
+import lombok.NonNull;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+/**
+ * Represents a collection of web resources or related rules that should be applied to a registry.
+ * A {@code WebResourcePackage} is usually identified by name in a particular package manager.
+ *
+ * @see WebResourceRule
+ * @see WebResourcePackageManager
+ */
 public interface WebResourcePackage
 {
 	/**
@@ -28,7 +40,45 @@ public interface WebResourcePackage
 	/**
 	 * Uninstall the package from the given registry.
 	 *
-	 * @param registry Registry where the package is supposedly installed.
+	 * @param registry Registry where the package resource should be removed.
+	 * @deprecated since 3.2.0 as the ability to uninstall is rarely needed and requires knowledge of the exact previous state of a registry
 	 */
-	void uninstall( WebResourceRegistry registry );
+	@Deprecated
+	default void uninstall( WebResourceRegistry registry ) {
+	}
+
+	/**
+	 * Create a new package that executes the specified rules upon installation.
+	 *
+	 * @param rules to execute when installing the package in a registry
+	 * @return package
+	 */
+	static WebResourcePackage of( WebResourceRule... rules ) {
+		return of( Arrays.asList( rules ) );
+	}
+
+	/**
+	 * Create a new package that executes the specified rules upon installation.
+	 *
+	 * @param rules to execute when installing the package in a registry
+	 * @return package
+	 */
+	static WebResourcePackage of( @NonNull Collection<WebResourceRule> rules ) {
+		return registry -> rules.forEach( rule -> rule.applyTo( registry ) );
+	}
+
+	/**
+	 * Create a new package that combines two others: it first installs
+	 * the {@code original} and then the {@code extension}.
+	 *
+	 * @param original  package to install
+	 * @param extension package to install after the original
+	 * @return package combine both
+	 */
+	static WebResourcePackage combine( @NonNull WebResourcePackage original, @NonNull WebResourcePackage extension ) {
+		return registry -> {
+			original.install( registry );
+			extension.install( registry );
+		};
+	}
 }

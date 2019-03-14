@@ -82,6 +82,7 @@ public class ThymeleafTag extends BodyTagSupport
 		return TagSupport.EVAL_PAGE;
 	}
 
+	@SuppressWarnings( "deprecation" )
 	protected void renderFragment( final Map<String, ?> model,
 	                               final HttpServletRequest request,
 	                               final HttpServletResponse response,

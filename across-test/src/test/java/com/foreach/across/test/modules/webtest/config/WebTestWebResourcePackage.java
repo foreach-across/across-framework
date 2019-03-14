@@ -20,6 +20,10 @@ import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourcePackageManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Keep deprecations for compatibility testing.
+ */
+@SuppressWarnings("deprecation")
 public class WebTestWebResourcePackage extends SimpleWebResourcePackage
 {
 	public static final String VERSION = "3.3.5";

@@ -53,7 +53,8 @@ public class TestDefaultTemplate
 		mvc.perform( get( "/home" ) )
 		   .andExpect( status().isOk() )
 		   .andExpect( content().string( containsString( "header-child-footer" ) ) )
-		   .andExpect( content().string( containsString( "resources:[/across/resources/test.css,/across/resources/controller.css]" ) ) );
+		   .andExpect( content().string( containsString( "/across/resources/test.css" ) ) )
+		   .andExpect( content().string( containsString( "/across/resources/controller.css" ) ) );
 	}
 
 	// AX-123 - registry should be reset and handled
@@ -62,7 +63,7 @@ public class TestDefaultTemplate
 		mvc.perform( get( "/databaseError" ) )
 		   .andExpect( status().isOk() )
 		   .andExpect( content().string( containsString( "header-a database error has occurred-footer" ) ) )
-		   .andExpect( content().string( containsString( "resources:[/across/resources/test.css]" ) ) );
+		   .andExpect( content().string( containsString( "/across/resources/test.css" ) ) );
 	}
 
 	@Test

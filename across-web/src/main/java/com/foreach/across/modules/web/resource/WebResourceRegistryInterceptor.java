@@ -54,14 +54,17 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 		this.defaultRegistry = defaultRegistry;
 	}
 
+	@Deprecated
 	public Collection<WebResourceTranslator> getWebResourceTranslators() {
 		return webResourceTranslators;
 	}
 
+	@Deprecated
 	public void setWebResourceTranslators( Collection<WebResourceTranslator> webResourceTranslators ) {
 		this.webResourceTranslators = webResourceTranslators;
 	}
 
+	@Deprecated
 	public void addWebResourceTranslator( WebResourceTranslator translator ) {
 		webResourceTranslators.add( translator );
 	}

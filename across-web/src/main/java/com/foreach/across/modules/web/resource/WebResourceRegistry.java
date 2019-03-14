@@ -75,6 +75,7 @@ public class WebResourceRegistry
 	 * @see com.foreach.across.modules.web.resource.WebResource
 	 * @deprecated since 3.2.0
 	 */
+	@Deprecated
 	public String getDefaultLocation() {
 		return defaultLocation;
 	}
@@ -176,6 +177,7 @@ public class WebResourceRegistry
 		}
 	}
 
+	@SuppressWarnings( "deprecation" )
 	private ViewElementBuilder createViewElementBuilderForWebResource( WebResource webResource ) {
 		switch ( webResource.getType() ) {
 			case CSS:
@@ -209,6 +211,7 @@ public class WebResourceRegistry
 		}
 	}
 
+	@SuppressWarnings( "deprecation" )
 	private WebResource findResource( String type, String key, Object data ) {
 		WebResource matchOnKey = null, matchOnData = null;
 
@@ -304,11 +307,17 @@ public class WebResourceRegistry
 
 	/**
 	 * Installs all resources attached to the packages with the names specified.
-	 * This requires the packages to be registered in the attached WebResourcePackageManager.
+	 * This requires the packages to be registered in the attached {@link WebResourcePackageManager}.
+	 * <p>
+	 * Note that a package will only be installed the first time, if it has been installed previously, it will be skipped.
 	 *
 	 * @param packageNames Names of the packages to install.
 	 */
 	public void addPackage( @NonNull String... packageNames ) {
+		if ( packageManager == null ) {
+			throw new IllegalStateException( "A WebResourcePackageManager is required for using named packages" );
+		}
+
 		for ( String packageName : packageNames ) {
 			if ( !installedPackages.contains( packageName ) ) {
 				WebResourcePackage webResourcePackage = packageManager.getPackage( packageName );
@@ -324,18 +333,24 @@ public class WebResourceRegistry
 	}
 
 	/**
-	 * Will remove all resources of the packages with the specified names.
+	 * Will call the {@link WebResourcePackage#uninstall(WebResourceRegistry)} methods of the packages specified,
+	 * if they are installed in the current registry. Note that the uninstalling should be used with care
+	 * as it is hard to predict the exact behaviour.
 	 *
 	 * @param packageNames Names of the packages.
+	 * @deprecated since 3.2.0 - might be removed in a future release as behaviour is hard to get consistent
 	 */
+	@Deprecated
 	public void removePackage( @NonNull String... packageNames ) {
 		for ( String packageName : packageNames ) {
-			WebResourcePackage webResourcePackage = packageManager.getPackage( packageName );
+			if ( installedPackages.contains( packageName ) ) {
+				WebResourcePackage webResourcePackage = packageManager.getPackage( packageName );
 
-			// Package not found is ignored
-			if ( webResourcePackage != null ) {
-				webResourcePackage.uninstall( this );
-				installedPackages.remove( packageName );
+				// Package not found is ignored
+				if ( webResourcePackage != null ) {
+					webResourcePackage.uninstall( this );
+					installedPackages.remove( packageName );
+				}
 			}
 		}
 	}
@@ -439,14 +454,14 @@ public class WebResourceRegistry
 	}
 
 	/**
-	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the  registry
+	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the registry.
 	 */
 	public void apply( @NonNull WebResourceRule... webResourceRules ) {
 		apply( Arrays.asList( webResourceRules ) );
 	}
 
 	/**
-	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the  registry
+	 * Will apply the set of {@link com.foreach.across.modules.web.resource.WebResourceRule} items to the registry.
 	 */
 	public void apply( @NonNull Collection<WebResourceRule> webResourceRules ) {
 		webResourceRules.forEach( wr -> wr.applyTo( this ) );
