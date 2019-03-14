@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  */
 @ContextConfiguration(classes = TestCustomConfiguration.Config.class)
 @TestPropertySource(properties = { "acrossWebModule.resources.path=/static",
-                                   WEBJARS_RESOURCES_PATH + "=//cdn.jsdelivr.net/webjars/org.webjars/",
+                                   WEBJARS_RESOURCES_PATH + "=//cdn.jsdelivr.net/webjars/",
                                    "acrossWebModule.views.thymeleaf.enabled=false" })
 public class TestCustomConfiguration extends AbstractWebIntegrationTest
 {

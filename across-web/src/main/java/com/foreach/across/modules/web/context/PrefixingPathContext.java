@@ -125,6 +125,10 @@ public class PrefixingPathContext implements WebAppPathResolver
 			}
 		}
 
+		return applyPrefixToPath( prefix, path );
+	}
+
+	protected String applyPrefixToPath( String prefix, String path ) {
 		if ( path.startsWith( "/" ) ) {
 			return prefix + path;
 		}
