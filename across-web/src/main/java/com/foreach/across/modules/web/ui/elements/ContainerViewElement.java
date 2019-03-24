@@ -129,7 +129,7 @@ public class ContainerViewElement implements MutableViewElement
 	 *
 	 * @param elements to add
 	 */
-	public void addChildren( @NonNull Collection<ViewElement> elements ) {
+	public void addChildren( @NonNull Collection<? extends ViewElement> elements ) {
 		children.addAll( elements );
 	}
 
