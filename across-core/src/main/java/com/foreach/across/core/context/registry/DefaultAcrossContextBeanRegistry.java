@@ -26,7 +26,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.Field;
@@ -190,18 +189,20 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 
 		if ( includeModuleInternals ) {
 			for ( AcrossModuleInfo module : contextInfo.getModules() ) {
-				beanFactory = beanFactory( module.getApplicationContext() );
+				if ( module.isBootstrapped() ) {
+					beanFactory = beanFactory( module.getApplicationContext() );
 
-				if ( beanFactory != null ) {
-					resolver.setBeanFactory( beanFactory );
+					if ( beanFactory != null ) {
+						resolver.setBeanFactory( beanFactory );
 
-					for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
-						if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) && !beanFactory.isExposedBean( beanName ) ) {
-							Object bean = beanFactory.getBean( beanName );
-							comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
+						for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
+							if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) && !beanFactory.isExposedBean( beanName ) ) {
+								Object bean = beanFactory.getBean( beanName );
+								comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-							beans.add( (T) bean );
-							beanNames.put( (T) bean, module.getName() + ":" + beanName );
+								beans.add( (T) bean );
+								beanNames.put( (T) bean, module.getName() + ":" + beanName );
+							}
 						}
 					}
 				}
@@ -219,8 +220,7 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 	}
 
 	private AcrossListableBeanFactory beanFactory( ApplicationContext applicationContext ) {
-		ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) applicationContext;
-		return ctx != null ? (AcrossListableBeanFactory) ctx.getBeanFactory() : null;
+		return (AcrossListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
 	}
 
 	protected static class ResolvableTypeDescriptor extends DependencyDescriptor

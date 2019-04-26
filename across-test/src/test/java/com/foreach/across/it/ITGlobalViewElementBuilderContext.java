@@ -37,9 +37,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ITGlobalViewElementBuilderContext
 {
 	@Test
-	public void byDefaultNoGlobalBuilderContextIsAvailable() throws Exception {
+	public void globalBuilderContextIsNotRegisteredExplicitly() throws Exception {
 		try (AcrossTestWebContext ctx = web().register( TestController.class )
 		                                     .modules( AcrossWebModule.NAME )
+		                                     .property( "acrossWebModule.registerGlobalBuilderContext", "false" )
 		                                     .build()) {
 			assertFalse(
 					ctx.moduleContainsLocalBean( AcrossWebModule.NAME, "viewElementBuilderContextInterceptor" )
@@ -54,10 +55,9 @@ public class ITGlobalViewElementBuilderContext
 	}
 
 	@Test
-	public void globalBuilderContextIsRegistered() throws Exception {
+	public void byDefaultGlobalBuilderContextIsAvailable() throws Exception {
 		try (AcrossTestWebContext ctx = web().register( TestController.class )
 		                                     .modules( AcrossWebModule.NAME )
-		                                     .property( "across.web.registerGlobalBuilderContext", "true" )
 		                                     .build()) {
 			ctx.getBeansOfTypeAsMap( WebMvcConfigurer.class );
 			assertTrue(

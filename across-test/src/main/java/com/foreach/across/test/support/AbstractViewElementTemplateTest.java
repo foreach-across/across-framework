@@ -50,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Will generate the output by running through the entire view resolving/Thymeleaf template stack and
  * allows xml assertion to be used on the generated result, thus ignoring whitespace and attribute ordering.
  * </p>
- * <p>See the {@link #renderAndExpect(com.foreach.across.modules.web.ui.ViewElement, java.lang.String)} method.</p>
+ * <p>See the {@link #renderAndExpect(Object, java.lang.String)} method.</p>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
@@ -83,7 +83,7 @@ public abstract class AbstractViewElementTemplateTest
 	/**
 	 * <p>Set the callback method to be called before rendering the view element.
 	 * If set this way, the callback will be used for every test method.  See
-	 * {@link #renderAndExpect(ViewElement, RenderViewElementController.Callback, String)} to execute a
+	 * {@link #renderAndExpect(Object, RenderViewElementController.Callback, String)} to execute a
 	 * callback a single time only.
 	 * </p>
 	 * <p>Set to {@code null} to remove the callback.</p>
@@ -110,7 +110,7 @@ public abstract class AbstractViewElementTemplateTest
 	 * @param viewElement     element to render
 	 * @param expectedContent xml body that should be generated
 	 */
-	public void renderAndExpect( ViewElement viewElement, final String expectedContent ) {
+	public void renderAndExpect( Object viewElement, final String expectedContent ) {
 		renderAndExpect( viewElement, callback, expectedContent );
 	}
 
@@ -122,7 +122,7 @@ public abstract class AbstractViewElementTemplateTest
 	 * @param callback        to be executed before rendering
 	 * @param expectedContent xml body that should be generated
 	 */
-	public void renderAndExpect( ViewElement viewElement,
+	public void renderAndExpect( Object viewElement,
 	                             RenderViewElementController.Callback callback,
 	                             final String expectedContent ) {
 		renderController.setTemplate( template );

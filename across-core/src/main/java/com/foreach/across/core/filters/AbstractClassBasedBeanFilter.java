@@ -70,7 +70,16 @@ public abstract class AbstractClassBasedBeanFilter<T> implements BeanFilter
 				}
 			}
 		}
+		else if ( beanName != null && definition != null ) {
+			Class<?> beanType = beanFactory.getType( beanName );
+			for ( T allowed : allowedItems ) {
+				if ( matches( beanType, allowed ) ) {
+					return true;
+				}
+			}
+		}
 		else if ( definition != null ) {
+			// kept for compatibility (?)
 			if ( definition.getSource() instanceof MethodMetadata ) {
 				MethodMetadata metadata = (MethodMetadata) definition.getSource();
 

@@ -26,6 +26,7 @@ import java.util.Collections;
 /**
  * Groups a number of WebResources together.
  */
+@Deprecated
 public class SimpleWebResourcePackage implements WebResourcePackage
 {
 	private Collection<WebResource> webResources = Collections.emptyList();

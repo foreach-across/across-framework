@@ -54,14 +54,17 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 		this.defaultRegistry = defaultRegistry;
 	}
 
+	@Deprecated
 	public Collection<WebResourceTranslator> getWebResourceTranslators() {
 		return webResourceTranslators;
 	}
 
+	@Deprecated
 	public void setWebResourceTranslators( Collection<WebResourceTranslator> webResourceTranslators ) {
 		this.webResourceTranslators = webResourceTranslators;
 	}
 
+	@Deprecated
 	public void addWebResourceTranslator( WebResourceTranslator translator ) {
 		webResourceTranslators.add( translator );
 	}
@@ -74,7 +77,9 @@ public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
 	                          HttpServletResponse response,
 	                          Object handler ) {
 		WebResourceRegistry registry = new WebResourceRegistry( webResourcePackageManager );
-		registry.merge( defaultRegistry );
+		if ( defaultRegistry != null ) {
+			registry.merge( defaultRegistry );
+		}
 
 		eventPublisher.publishEvent( new BuildRegistryEvent<>( registry ) );
 

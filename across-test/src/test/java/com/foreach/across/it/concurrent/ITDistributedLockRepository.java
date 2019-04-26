@@ -35,6 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.sql.DataSource;
+import java.io.Closeable;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -117,7 +118,8 @@ public class ITDistributedLockRepository
 				Thread.sleep( startDelay );
 			}
 
-			AcrossContext context = new AcrossContextBuilder().dataSource( uniqueDataSource() ).build();
+			DataSource dataSource = uniqueDataSource();
+			AcrossContext context = new AcrossContextBuilder().dataSource( dataSource ).build();
 
 			try {
 				context.bootstrap();
@@ -157,6 +159,9 @@ public class ITDistributedLockRepository
 			}
 			finally {
 				context.destroy();
+				if ( dataSource instanceof Closeable ) {
+					( (Closeable) dataSource ).close();
+				}
 			}
 		}
 	}

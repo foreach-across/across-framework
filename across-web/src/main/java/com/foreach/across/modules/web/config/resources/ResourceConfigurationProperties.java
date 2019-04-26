@@ -16,7 +16,9 @@
 package com.foreach.across.modules.web.config.resources;
 
 import com.foreach.across.modules.web.AcrossWebModule;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,8 @@ import org.springframework.stereotype.Component;
  * Contains the different settings for the default resource configuration (path, folders, versioning and caching).
  */
 @Component
+@Getter
+@Setter
 @ConfigurationProperties(prefix = "across.web.resources")
 public class ResourceConfigurationProperties
 {
@@ -36,6 +40,11 @@ public class ResourceConfigurationProperties
 	 * Relative path for serving all static resources.
 	 */
 	private String path = AcrossWebModule.DEFAULT_VIEWS_RESOURCES_PATH;
+
+	/**
+	 * Relative path for serving all webjars
+	 */
+	private String webjars = AcrossWebModule.DEFAULT_WEBJARS_PATH;
 
 	public String[] getFolders() {
 		return folders.clone();

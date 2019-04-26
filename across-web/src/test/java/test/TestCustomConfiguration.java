@@ -28,6 +28,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
+import static com.foreach.across.modules.web.AcrossWebModuleSettings.WEBJARS_RESOURCES_PATH;
 import static org.junit.Assert.*;
 
 /**
@@ -35,6 +36,7 @@ import static org.junit.Assert.*;
  */
 @ContextConfiguration(classes = TestCustomConfiguration.Config.class)
 @TestPropertySource(properties = { "across.web.resources.path=/static",
+                                   WEBJARS_RESOURCES_PATH + "=//cdn.jsdelivr.net/webjars/",
                                    "across.web.views.thymeleaf.enabled=false" })
 public class TestCustomConfiguration extends AbstractWebIntegrationTest
 {
@@ -61,6 +63,7 @@ public class TestCustomConfiguration extends AbstractWebIntegrationTest
 	public void resourcePrefixesShouldBeRegistered() {
 		assertEquals( "/static/pdf/list.pdf", pathResolver.path( "@resource:/pdf/list.pdf" ) );
 		assertEquals( "/static/static/pdf/list.pdf", pathResolver.path( "@static:/pdf/list.pdf" ) );
+		assertEquals( "//cdn.jsdelivr.net/webjars/org.webjars/bootstrap/3.1.0/css/bootstrap.min.css", pathResolver.path( "@webjars:/bootstrap/3.1.0/css/bootstrap.min.css" ) );
 	}
 
 	@Configuration

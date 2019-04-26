@@ -38,6 +38,8 @@ public class AcrossWebModule extends AcrossModule
 {
 	public static final String DEFAULT_VIEWS_RESOURCES_PATH = "/across/resources";
 
+	public static final String DEFAULT_WEBJARS_PATH = "/webjars";
+
 	public static final String NAME = "AcrossWebModule";
 
 	/**
