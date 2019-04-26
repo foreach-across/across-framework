@@ -50,7 +50,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
 		<across.version>5.0.0-SNAPSHOT</across.version>
-		<spring.boot.dependencies.version>2.1.2.RELEASE</spring.boot.dependencies.version>
+		<spring.boot.dependencies.version>2.1.4.RELEASE</spring.boot.dependencies.version>
 		<foreach.common.version>1.1</foreach.common.version>
 		<jsp-api.version>2.3.3</jsp-api.version>
 	</properties>
@@ -208,7 +208,6 @@
 		<module>across-core</module>
 		<module>across-web</module>
 		<module>across-test</module>
-		<module>across-experimental</module>
 	</modules>
 
 	<scm>

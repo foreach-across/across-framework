@@ -18,10 +18,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="across-core" />
-        <module name="across-experimental" />
-        <module name="across-test" />
         <module name="across-web" />
+        <module name="across-core" />
+        <module name="across-test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

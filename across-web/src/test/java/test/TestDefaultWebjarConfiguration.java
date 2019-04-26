@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
@@ -37,10 +37,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author Arne Vandamme
+ * @author Stijn Vanhoof, Marc Vanbrabant
  */
 @ContextConfiguration(classes = TestDefaultWebjarConfiguration.Config.class)
-@TestPropertySource(properties = "server.context-path=/custom/servlet")
+@TestPropertySource(properties = "server.servlet.context-path=/custom/servlet")
 public class TestDefaultWebjarConfiguration extends AbstractWebIntegrationTest
 {
 	@Autowired
@@ -54,7 +54,7 @@ public class TestDefaultWebjarConfiguration extends AbstractWebIntegrationTest
 
 	@Test
 	public void defaultWebjarsPathIsSlashWebjars() {
-		assertEquals( "/custom/servlet", serverProperties.getContextPath() );
+		assertEquals( "/custom/servlet", serverProperties.getServlet().getContextPath() );
 		String resolvedPath = pathResolver.path( "@webjars:/jquery/3.3.0/jquery.js" );
 		String resolvedLink = linkBuilder.buildLink( "@webjars:/jquery/3.3.0/jquery.js" );
 		assertEquals( "/webjars/jquery/3.3.0/jquery.js", resolvedPath );
@@ -70,7 +70,7 @@ public class TestDefaultWebjarConfiguration extends AbstractWebIntegrationTest
 			modules = TestResourcesModule.NAME,
 			modulePackageClasses = { AcrossPlatform.class, TestModules.class }
 	)
-	public static class Config extends WebMvcConfigurerAdapter
+	public static class Config implements WebMvcConfigurer
 	{
 	}
 }

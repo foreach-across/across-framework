@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class AcrossWebModuleSettings
 
 	public static final String VIEWS_RESOURCES_PATH = "across.web.resources.path";
 
-	public static final String WEBJARS_RESOURCES_PATH = "acrossWebModule.resources.webjars";
+	public static final String WEBJARS_RESOURCES_PATH = "across.web.resources.webjars";
 
 	/**
 	 * Templates configuration.
