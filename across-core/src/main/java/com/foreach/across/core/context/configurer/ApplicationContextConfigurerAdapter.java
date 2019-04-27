@@ -107,7 +107,7 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 		if ( !Objects.equals( propertySources(), that.propertySources() ) ) {
 			return false;
 		}
-		if ( !Objects.equals( excludedTypeFilters(), that.excludedTypeFilters() ) ) {
+		if ( !Arrays.equals( excludedTypeFilters(), that.excludedTypeFilters() ) ) {
 			return false;
 		}
 
@@ -117,6 +117,6 @@ public abstract class ApplicationContextConfigurerAdapter implements Application
 	@Override
 	public int hashCode() {
 		return Objects.hash( annotatedClasses(), componentScanPackages(), postProcessors(), providedBeans(),
-		                     propertySources(), isOptional() );
+		                     propertySources(), excludedTypeFilters(), isOptional() );
 	}
 }
