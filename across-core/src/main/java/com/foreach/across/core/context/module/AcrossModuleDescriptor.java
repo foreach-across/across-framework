@@ -39,13 +39,15 @@ import java.util.stream.Collectors;
  * A module extension will always have its own separate descriptor.
  * <p/>
  * If you are looking for the modifiable configuration of a module, see {@link AcrossModuleConfiguration} instead.
+ * <p/>
+ * Two descriptors are considered equal if they have the same module name.
  *
  * @author Arne Vandamme
  * @see AcrossModuleConfiguration
  * @since 5.0.0
  */
 @Builder(toBuilder = true)
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "moduleName")
 @Getter
 public class AcrossModuleDescriptor
 {

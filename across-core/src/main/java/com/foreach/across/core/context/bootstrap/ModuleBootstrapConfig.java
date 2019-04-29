@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,10 @@ import java.util.stream.Stream;
  * Represents the actual bootstrap configuration of an AcrossModule.
  * This is the configuration that can be modified during the bootstrap process,
  * without changing the initial AcrossModule configuration.
+ *
+ * @deprecated replaced by {@link com.foreach.across.core.context.module.AcrossModuleBootstrapConfiguration}
  */
+@Deprecated
 public class ModuleBootstrapConfig
 {
 	private final AcrossModuleInfo moduleInfo;

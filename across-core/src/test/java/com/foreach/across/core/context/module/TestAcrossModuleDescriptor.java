@@ -82,6 +82,8 @@ class TestAcrossModuleDescriptor
 		assertThat( descriptor.getOptionalModules() ).isEmpty();
 		assertThat( descriptor.isEnabled() ).isTrue();
 		assertThat( descriptor.getInstallers() ).isEmpty();
+
+		assertEqualsAndHashCode( descriptor );
 	}
 
 	@Test
@@ -114,6 +116,8 @@ class TestAcrossModuleDescriptor
 
 		assertDescriptorProperties( descriptor );
 		assertThat( descriptor.getModuleNameAliases() ).containsExactly( "aliasOne", "aliasTwo" );
+
+		assertEqualsAndHashCode( descriptor );
 	}
 
 	@Test
@@ -183,6 +187,8 @@ class TestAcrossModuleDescriptor
 		assertThat( descriptor.isExtensionModule() ).isTrue();
 		assertThat( descriptor.getExtensionTargets() ).containsExactly( "MyModule", "OtherModule" );
 		assertThat( descriptor.isEnabled() ).isFalse();
+
+		assertEqualsAndHashCode( descriptor );
 	}
 
 	private void assertDescriptorProperties( AcrossModuleDescriptor descriptor ) {
@@ -209,10 +215,17 @@ class TestAcrossModuleDescriptor
 				.containsExactly( InstallerReference.from( "SomeClassName" ), InstallerReference.from( ExtensionModule.class ), InstallerReference.from( 10 ) );
 	}
 
+	private void assertEqualsAndHashCode( AcrossModuleDescriptor descriptor ) {
+		assertThat( descriptor.hashCode() ).isEqualTo( descriptor.hashCode() );
+		assertThat( descriptor ).isEqualTo( descriptor );
+		assertThat( descriptor.toBuilder().build() ).isEqualTo( descriptor );
+	}
+
 	@AcrossRole(value = AcrossModuleRole.INFRASTRUCTURE, order = 1000)
 	@AcrossDepends(required = "One", optional = { "Two", "Three" })
 	private class MyModule extends AcrossModule
 	{
+
 		@Override
 		public String getName() {
 			return "myModule";

@@ -45,7 +45,7 @@ public class AcrossVersionInfo
 
 	public static final AcrossVersionInfo UNKNOWN = new AcrossVersionInfo();
 
-	private static final String UNKNOWN_VALUE = "unknown";
+	private static final String UNKNOWN_VALUE = "NO_VERSION";
 
 	private Manifest manifest;
 	private Date buildTime;

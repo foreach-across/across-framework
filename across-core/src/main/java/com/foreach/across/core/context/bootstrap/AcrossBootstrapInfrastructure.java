@@ -39,6 +39,5 @@ class AcrossBootstrapInfrastructure
 			// expose target
 			// module parent context
 			// event bus
-
 	 */
 }

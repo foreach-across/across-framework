@@ -24,6 +24,8 @@ import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.module.AcrossModuleBootstrapConfiguration;
+import com.foreach.across.core.context.module.AcrossModuleDescriptor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -38,12 +40,27 @@ import java.util.Map;
 
 public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 {
+	@Getter
 	private final int index;
-	private final AcrossContextInfo context;
-	private final AcrossModule module;
 
-	private final String moduleName;
-	private final String[] aliases;
+	@Getter
+	private final AcrossContextInfo contextInfo;
+
+	private AcrossModule module;
+
+	@Getter
+	private String name;
+
+	@Getter
+	private AcrossVersionInfo versionInfo;
+
+	private String[] aliases;
+
+	@Getter
+	private String resourcesKey;
+
+	@Getter
+	@Setter
 	private boolean enabled;
 
 	private AcrossModuleRole moduleRole = AcrossModuleRole.APPLICATION;
@@ -53,43 +70,48 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	private int orderInModuleRole;
 
 	private ModuleBootstrapStatus bootstrapStatus;
+	@Deprecated
 	private ModuleBootstrapConfig bootstrapConfiguration;
 
-	private Collection<AcrossModuleInfo> requiredDependencies =
-			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
-	private Collection<AcrossModuleInfo> optionalDependencies =
-			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
+	@Deprecated
+	private Collection<AcrossModuleInfo> requiredDependencies = Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
+	@Deprecated
+	private Collection<AcrossModuleInfo> optionalDependencies = Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
 
 	private ExposedModuleBeanRegistry exposedBeanRegistry;
 
+	private AcrossModuleDescriptor moduleDescriptor;
+
+	@Getter
+	private AcrossModuleBootstrapConfiguration moduleBootstrapConfiguration;
+
+	public ConfigurableAcrossModuleInfo( @NonNull AcrossContextInfo context,
+	                                     @NonNull AcrossModuleBootstrapConfiguration moduleBootstrapConfiguration,
+	                                     int index ) {
+		this.contextInfo = context;
+		this.index = index;
+		this.moduleBootstrapConfiguration = moduleBootstrapConfiguration;
+
+		moduleDescriptor = moduleBootstrapConfiguration.getModuleDescriptor();
+		name = moduleDescriptor.getModuleName();
+		resourcesKey = moduleDescriptor.getResourcesKey();
+		enabled = moduleDescriptor.isEnabled();
+		versionInfo = moduleDescriptor.getVersionInfo();
+	}
+
+	@Deprecated
 	public ConfigurableAcrossModuleInfo( AcrossContextInfo context, AcrossModule module, int index ) {
-		this.context = context;
+		this.contextInfo = context;
 		this.module = module;
 		this.index = index;
 
-		moduleName = module.getName();
+		name = module.getName();
 		enabled = module.isEnabled();
 		aliases = module instanceof DynamicAcrossModule ? new String[] { module.getClass().getSimpleName() } : new String[0];
 		bootstrapStatus = enabled ? ModuleBootstrapStatus.AwaitingBootstrap : ModuleBootstrapStatus.Disabled;
-	}
 
-	public void setEnabled( boolean enabled ) {
-		this.enabled = enabled;
-	}
-
-	@Override
-	public int getIndex() {
-		return index;
-	}
-
-	@Override
-	public AcrossContextInfo getContextInfo() {
-		return context;
-	}
-
-	@Override
-	public String getName() {
-		return moduleName;
+		resourcesKey = module.getResourcesKey();
+		versionInfo = module.getVersionInfo();
 	}
 
 	@Override
@@ -99,7 +121,7 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 
 	@Override
 	public boolean matchesModuleName( @NonNull String moduleName ) {
-		return StringUtils.equals( this.moduleName, moduleName ) || ArrayUtils.contains( getAliases(), moduleName );
+		return StringUtils.equals( this.name, moduleName ) || ArrayUtils.contains( getAliases(), moduleName );
 	}
 
 	@Override
@@ -109,7 +131,7 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 
 	@Override
 	public String getResourcesKey() {
-		return getModule().getResourcesKey();
+		return moduleDescriptor.getResourcesKey();
 	}
 
 	@Override
@@ -142,11 +164,6 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 
 	public void setModuleRole( AcrossModuleRole moduleRole ) {
 		this.moduleRole = moduleRole;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
 	}
 
 	@Override
@@ -194,10 +211,5 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 
 	public ConfigurableListableBeanFactory getBeanFactory() {
 		return (ConfigurableListableBeanFactory) getApplicationContext().getAutowireCapableBeanFactory();
-	}
-
-	@Override
-	public AcrossVersionInfo getVersionInfo() {
-		return module.getVersionInfo();
 	}
 }

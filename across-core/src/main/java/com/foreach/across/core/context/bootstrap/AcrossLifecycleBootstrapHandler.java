@@ -18,17 +18,20 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossContextConfigurationModule;
 import com.foreach.across.core.context.AcrossModuleRole;
-import com.foreach.across.core.context.module.AcrossModuleBootstrapConfiguration;
-import com.foreach.across.core.context.module.AcrossModuleBootstrapConfigurationSet;
-import com.foreach.across.core.context.module.AcrossModuleDescriptor;
-import com.foreach.across.core.context.module.AcrossModuleDescriptorSetBuilder;
+import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.AcrossModuleInfo;
+import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
+import com.foreach.across.core.context.info.ConfigurableAcrossModuleInfo;
+import com.foreach.across.core.context.module.*;
 import com.foreach.across.core.events.AcrossLifecycleEvent;
 import com.foreach.across.core.installers.InstallerPhase;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE;
 import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE;
@@ -41,12 +44,14 @@ import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigure
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public final class AcrossLifecycleBootstrapHandler
 {
 	private final AcrossContext acrossContext;
 	private final AcrossBootstrapInfrastructure infrastructure;
 
 	private AcrossModuleBootstrapConfigurationSet moduleBootstrapConfigurations;
+	private AcrossContextInfo contextInfo;
 
 	public AcrossLifecycleBootstrapHandler( AcrossContext acrossContext ) {
 		this.acrossContext = acrossContext;
@@ -58,39 +63,34 @@ public final class AcrossLifecycleBootstrapHandler
 	 */
 	public void bootstrap() {
 		buildModuleBootstrapConfigurationSet();
+		buildContextAndModuleInfo();
 
-		LOG.info( "---" );
-		LOG.info( "AcrossContext: {} ({})", acrossContext.getDisplayName(), acrossContext.getId() );
-		LOG.info( "Bootstrapping {} modules in the following order:", moduleBootstrapConfigurations.size() );
-		/*for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
-			LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
-			          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
-		}*/
-		LOG.info( "---" );
+		printBootstrapSummary();
 
 		configureApplicationContextFactory();
 
 		try {
-			LOG.trace( "Executing installers: BeforeContextBootstrap" );
+			LOG.debug( "" );
+			LOG.debug( "--- Executing installers: BeforeContextBootstrap" );
 			moduleBootstrapConfigurations.forEach( cfg -> runInstallers( InstallerPhase.BeforeContextBootstrap, cfg ) );
 
 			LOG.info( "" );
 			LOG.info( "--- Starting module bootstrap" );
-			LOG.info( "" );
 
-			moduleBootstrapConfigurations.forEach( moduleConfiguration -> {
-				/*LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
-				          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );*/
+			contextInfo.getModules().forEach( moduleInfo -> {
+				printModuleSummary( moduleInfo, true );
+
 
 				LOG.info( "" );
+				LOG.info( "<<< {} - {} {}", String.format( "%2s", moduleInfo.getIndex() ), moduleInfo.getName(), moduleInfo.getVersionInfo().getVersion() );
 			} );
 
-			//LOG.info( "--- Module bootstrap finished: {} modules started", contextInfo.getModules().size() );
+			LOG.info( "" );
+			LOG.info( "--- Module bootstrap finished: {} modules started", contextInfo.getModules().size() );
 			LOG.info( "" );
 
-			LOG.trace( "Executing installers: AfterContextBootstrap" );
+			LOG.debug( "--- Executing installers: AfterContextBootstrap" );
 			moduleBootstrapConfigurations.forEach( cfg -> runInstallers( InstallerPhase.AfterContextBootstrap, cfg ) );
-
 
 		}
 		finally {
@@ -102,6 +102,63 @@ public final class AcrossLifecycleBootstrapHandler
 		// refresh beans
 
 		// cleanup
+	}
+
+	private void printBootstrapSummary() {
+		Collection<AcrossModuleInfo> modulesInOrder = contextInfo.getModules();
+
+		LOG.info( "---" );
+		LOG.info( "AcrossContext: {} ({})", acrossContext.getDisplayName(), acrossContext.getId() );
+		LOG.info( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
+		modulesInOrder.forEach( moduleInfo -> printModuleSummary( moduleInfo, false ) );
+		LOG.info( "---" );
+	}
+
+	private void printModuleSummary( AcrossModuleInfo moduleInfo, boolean detailed ) {
+		if ( detailed ) {
+			LOG.info( "" );
+		}
+
+		final String modulePrefix = detailed ? ">>> " : "";
+		LOG.info( "{}{} - {} {} [resources: {}]", modulePrefix, String.format( "%2s", moduleInfo.getIndex() ), moduleInfo.getName(),
+		          moduleInfo.getVersionInfo().getVersion(), moduleInfo.getResourcesKey() );
+
+		Collection<AcrossModuleConfiguration> extensions = moduleInfo.getModuleBootstrapConfiguration().getExtensions();
+
+		if ( !extensions.isEmpty() ) {
+			final String extensionPrefix = detailed ? "         - " : "   + ";
+
+			if ( detailed ) {
+				LOG.info( "" );
+				LOG.info( "         Module extensions:" );
+			}
+
+			extensions.forEach( extension -> {
+				AcrossModuleDescriptor extensionModuleDescriptor = extension.getModuleDescriptor();
+				LOG.info( "{} {} {} [resources: {}]", extensionPrefix, extensionModuleDescriptor.getModuleName(),
+				          extensionModuleDescriptor.getVersionInfo().getVersion(), extensionModuleDescriptor.getResourcesKey() );
+			} );
+
+		}
+
+		if ( detailed ) {
+			LOG.info( "" );
+		}
+	}
+
+	private void buildContextAndModuleInfo() {
+		ConfigurableAcrossContextInfo contextInfo = new ConfigurableAcrossContextInfo( acrossContext );
+
+		int row = 1;
+
+		List<AcrossModuleInfo> moduleInfoList = new ArrayList<>( moduleBootstrapConfigurations.size() );
+		for ( AcrossModuleBootstrapConfiguration moduleBootstrapConfiguration : moduleBootstrapConfigurations.getConfigurationsInOrder() ) {
+			moduleInfoList.add( new ConfigurableAcrossModuleInfo( contextInfo, moduleBootstrapConfiguration, row++ ) );
+		}
+
+		contextInfo.setConfiguredModules( moduleInfoList );
+
+		this.contextInfo = contextInfo;
 	}
 
 	private void configureApplicationContextFactory() {

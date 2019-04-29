@@ -21,6 +21,7 @@ import com.foreach.across.core.context.AcrossModuleEntity;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.module.AcrossModuleBootstrapConfiguration;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
@@ -98,6 +99,11 @@ public interface AcrossModuleInfo extends AcrossModuleEntity
 	 * @return Configuration object used for bootstrapping this module.  Null if module was disabled.
 	 */
 	ModuleBootstrapConfig getBootstrapConfiguration();
+
+	/**
+	 * @return configuration object used for bootstrapping the module
+	 */
+	AcrossModuleBootstrapConfiguration getModuleBootstrapConfiguration();
 
 	/**
 	 * @return The Spring application context for this module.

@@ -1,0 +1,6 @@
+<component name="ProjectTemplateVariables">
+  <templateVariables>
+    <variable name="authorName">Arne Vandamme</variable>
+    <variable name="projectVersion">5.0.0</variable>
+  </templateVariables>
+</component>

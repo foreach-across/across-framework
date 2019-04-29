@@ -54,6 +54,7 @@ public class AcrossModuleBootstrapConfigurationSet implements Iterable<AcrossMod
 	/**
 	 * Find the configuration attached to a particular module name. This can be the primary module name
 	 * or any of its aliases that might have been configured.
+	 * todo: this should probably return the actual extension (?)
 	 *
 	 * @param moduleName name of the module
 	 * @return configuration when module is present

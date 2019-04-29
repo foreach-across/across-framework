@@ -34,13 +34,16 @@ import java.util.stream.Collectors;
  * Represents the actual configuration that will be used to bootstrap a module.
  * Internal to the framework, clients usually use either {@link AcrossModuleConfiguration} or {@link MutableAcrossModuleConfiguration}.
  * Built from an {@link AcrossModuleDescriptor} using {@link #from(AcrossModuleDescriptor)}.
+ * <p/>
+ * Bootstrap configurations are considered equal if they are attached to an equal module descriptor.
+ * This is in line that there should be one bootstrap configuration per module descriptor.
  *
  * @author Arne Vandamme
  * @since 5.0.0
  */
 @Setter
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "moduleDescriptor")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Accessors(chain = true)
 @SuppressWarnings("WeakerAccess")
@@ -98,7 +101,7 @@ public class AcrossModuleBootstrapConfiguration implements MutableAcrossModuleCo
 	private ExposedBeanDefinitionTransformer exposeTransformer;
 
 	/**
-	 *
+	 * todo: excluded annotated classes
 	 */
 	private final Set<String> excludedAnnotatedClasses = new LinkedHashSet<>();
 
