@@ -23,8 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 /**
  * @author Arne Vandamme
  * @since 5.0.0
@@ -45,7 +43,6 @@ class TestAcrossLifecycleBootstrapHandler
 	void singleModule() {
 		AcrossContext ctx = new AcrossContext();
 		ctx.addModule( new EmptyAcrossModule( "SingleModule" ) );
-		fail( "deliberate failure for build" );
 		bootstrap( ctx );
 	}
 

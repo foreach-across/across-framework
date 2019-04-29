@@ -130,11 +130,6 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	}
 
 	@Override
-	public String getResourcesKey() {
-		return moduleDescriptor.getResourcesKey();
-	}
-
-	@Override
 	public AcrossModule getModule() {
 		return module;
 	}
