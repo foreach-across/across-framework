@@ -80,7 +80,6 @@ public final class AcrossLifecycleBootstrapHandler
 			contextInfo.getModules().forEach( moduleInfo -> {
 				printModuleSummary( moduleInfo, true );
 
-
 				LOG.info( "" );
 				LOG.info( "<<< {} - {} {}", String.format( "%2s", moduleInfo.getIndex() ), moduleInfo.getName(), moduleInfo.getVersionInfo().getVersion() );
 			} );

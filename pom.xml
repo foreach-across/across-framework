@@ -30,7 +30,7 @@
 		configuration files. Every module defines its own Spring application context and can share one or more beans
 		with other modules.
 	</description>
-	<url>https://across.foreach.be</url>
+	<url>https://across.dev</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
@@ -50,12 +50,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
 		<across.version>5.0.0-SNAPSHOT</across.version>
-		<spring.boot.dependencies.version>2.1.4.RELEASE</spring.boot.dependencies.version>
+		<spring.boot.dependencies.version>2.1.5.RELEASE</spring.boot.dependencies.version>
 		<foreach.common.version>1.1</foreach.common.version>
 		<jsp-api.version>2.3.3</jsp-api.version>
-		<junit5.version>5.4.2</junit5.version>
-		<mockito.junit5.version>2.27.0</mockito.junit5.version>
-		<spring.test.junit5>1.4.0</spring.test.junit5>
 	</properties>
 
 	<repositories>
@@ -171,13 +168,8 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.22.1</version>
+				<version>3.0.0-M3</version>
 				<configuration>
 					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
 				</configuration>
@@ -273,28 +265,6 @@
 				<groupId>com.foreach.libs</groupId>
 				<artifactId>common-concurrent</artifactId>
 				<version>${foreach.common.version}</version>
-			</dependency>
-
-			<!-- JUnit 5 compatibility -->
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-engine</artifactId>
-				<version>${junit5.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.vintage</groupId>
-				<artifactId>junit-vintage-engine</artifactId>
-				<version>${junit5.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-junit-jupiter</artifactId>
-				<version>${mockito.junit5.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.github.sbrannen</groupId>
-				<artifactId>spring-test-junit5</artifactId>
-				<version>${spring.test.junit5}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
