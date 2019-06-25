@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>3.2.0-SNAPSHOT</version>
+	<version>3.2.0.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -30,7 +30,7 @@
 		configuration files. Every module defines its own Spring application context and can share one or more beans
 		with other modules.
 	</description>
-	<url>https://across.foreach.be</url>
+	<url>https://across.dev</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
@@ -42,12 +42,12 @@
 		<developer>
 			<name>Arne Vandamme</name>
 			<organization>Foreach</organization>
-			<organizationUrl>http://www.foreach.be</organizationUrl>
+			<organizationUrl>https://www.foreach.be</organizationUrl>
 		</developer>
 	</developers>
 
 	<properties>
-		<across.version>3.2.0-SNAPSHOT</across.version>
+		<across.version>3.2.0.RELEASE</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring.platform.version>Brussels-SR17</spring.platform.version>

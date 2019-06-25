@@ -4,6 +4,6 @@
  //_\\ / __| '__/ _ \/ __/ __|   |_ \
 /  _  \ (__| | | (_) \__ \__ \  ___) |
 \_/ \_/\___|_|  \___/|___/___/ |____/
-      https://across.foreach.be
+           https://across.dev
 
 :: Powered by Spring Boot :: ${spring-boot.version}

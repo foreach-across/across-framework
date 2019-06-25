@@ -10,7 +10,7 @@ The source can be built using [Maven][] with JDK 8.
 ### License
 Licensed under version 2.0 of the [Apache License][].
 
-[website]: https://across.foreach.be
-[contributor guidelines]: https://across.foreach.be/contributing
-[Maven]: http://maven.apache.org
-[Apache License]: http://www.apache.org/licenses/LICENSE-2.0
+[website]: https://across.dev
+[contributor guidelines]: https://across.dev/contributing
+[Maven]: https://maven.apache.org
+[Apache License]: https://www.apache.org/licenses/LICENSE-2.0
