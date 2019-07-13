@@ -129,7 +129,7 @@ public abstract class AbstractViewElementTemplateTest
 		renderController.setElement( viewElement );
 		renderController.setCallback( callback );
 
-		final String pattern = "<?xml version=\"1.0\"?>" + generateDocType() + "<root xmlns:across='http://across.dev'>%s</root>";
+		final String pattern = "<?xml version=\"1.0\"?>" + generateDocType() + "<root xmlns:across='https://across.dev'>%s</root>";
 
 		try {
 			mockMvc.perform( get( RenderViewElementController.PATH ) )
