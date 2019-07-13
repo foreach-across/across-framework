@@ -247,11 +247,6 @@
       <option name="SPACE_WITHIN_METHOD_CALL_PARENTHESES" value="true" />
       <option name="SPACE_WITHIN_METHOD_PARENTHESES" value="true" />
     </codeStyleSettings>
-    <codeStyleSettings language="SQL">
-      <option name="SPACE_WITHIN_PARENTHESES" value="true" />
-      <option name="SPACE_WITHIN_METHOD_CALL_PARENTHESES" value="true" />
-      <option name="SPACE_WITHIN_METHOD_PARENTHESES" value="true" />
-    </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
       <option name="KEEP_LINE_BREAKS" value="false" />
       <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
