@@ -20,16 +20,16 @@ import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
-import test.modules.exposing.ExposingModule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.convert.ConversionService;
+import test.modules.exposing.ExposingModule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DevelopmentModeCondition @Exposed functionality within the AcrossContext.
@@ -41,7 +41,7 @@ public class TestAcrossContextExposedFilters
 	private GenericApplicationContext parent;
 	private AcrossContext context;
 
-	@Before
+	@BeforeEach
 	public void createContexts() {
 		parent = new GenericApplicationContext();
 		parent.refresh();
@@ -49,7 +49,7 @@ public class TestAcrossContextExposedFilters
 		context = new AcrossContext( parent );
 	}
 
-	@After
+	@AfterEach
 	public void destroyContexts() {
 		context.shutdown();
 		parent.close();

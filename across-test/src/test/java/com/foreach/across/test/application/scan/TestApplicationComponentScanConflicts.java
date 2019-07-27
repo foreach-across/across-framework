@@ -18,7 +18,7 @@ package com.foreach.across.test.application.scan;
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.context.AcrossApplicationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 

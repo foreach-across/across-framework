@@ -20,7 +20,7 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.context.WebAppPathResolver;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +33,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Stijn Vanhoof, Marc Vanbrabant

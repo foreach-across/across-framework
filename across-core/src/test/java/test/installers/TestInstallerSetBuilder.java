@@ -17,16 +17,14 @@ package test.installers;
 
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.context.installers.InstallerSetBuilder;
-import test.installers.examples.InstallerThree;
-import test.installers.scan.installers.InstallerOne;
-import test.installers.scan.installers.InstallerTwo;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import test.installers.examples.InstallerThree;
 import test.installers.scan.installers.InstallerOne;
 import test.installers.scan.installers.InstallerTwo;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * @author Arne Vandamme
@@ -35,7 +33,7 @@ public class TestInstallerSetBuilder
 {
 	private InstallerSetBuilder builder;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		builder = new InstallerSetBuilder();
 	}
@@ -79,19 +77,26 @@ public class TestInstallerSetBuilder
 		                  InstallerTwo.class, installerOne, InstallerThree.class );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void nullPassed() {
-		builder.add( ManualOne.class, null );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			builder.add( ManualOne.class, null );
+		} );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void beansWithoutInstallerAnnotation() {
-		builder.add( "test" );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			builder.add( "test" );
+		} );
+
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void classesWithoutInstallerAnnotation() {
-		builder.add( Integer.class );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			builder.add( Integer.class );
+		} );
 	}
 
 	@Test
@@ -114,16 +119,20 @@ public class TestInstallerSetBuilder
 		assertInstallers( ManualTwo.class, one, InstallerTwo.class, InstallerOne.class, InstallerThree.class );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void duplicateInstallerNameAddedManually() {
-		builder.scan( "test.installers.examples" );
-		builder.add( ManualThree.class );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			builder.scan( "test.installers.examples" );
+			builder.add( ManualThree.class );
+		} );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void duplicateInstallerNameScanned() {
-		builder.add( ManualThree.class );
-		builder.scan( "test.installers.examples" );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			builder.add( ManualThree.class );
+			builder.scan( "test.installers.examples" );
+		} );
 	}
 
 	@Test

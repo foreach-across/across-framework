@@ -24,8 +24,8 @@ import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
 import com.foreach.across.core.installers.InstallerPhase;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -40,19 +40,19 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration(classes = TestInstallerConditionals.Config.class)
 @ActiveProfiles("dev")
@@ -85,24 +85,24 @@ public class TestInstallerConditionals
 
 	private void assertInstalled( Class<?> installerClass ) {
 		assertEquals(
-				installerClass.getSimpleName() + " was not installed",
 				Integer.valueOf( 1 ),
 				core.queryForObject(
 						"SELECT count(*) FROM acrossmodules WHERE installer_id = '" + installerClass.getName() + "'",
 						Integer.class
-				)
+				),
+				installerClass.getSimpleName() + " was not installed"
 		);
 		assertTrue( createdInstallerBeans.contains( installerClass ) );
 	}
 
 	private void assertNotInstalled( Class<?> installerClass ) {
 		assertEquals(
-				installerClass.getSimpleName() + " was installed but was not supposed to be",
 				Integer.valueOf( 0 ),
 				core.queryForObject(
 						"SELECT count(*) FROM acrossmodules WHERE installer_id = '" + installerClass.getName() + "'",
 						Integer.class
-				)
+				),
+				installerClass.getSimpleName() + " was installed but was not supposed to be"
 		);
 		assertFalse( createdInstallerBeans.contains( installerClass ) );
 	}

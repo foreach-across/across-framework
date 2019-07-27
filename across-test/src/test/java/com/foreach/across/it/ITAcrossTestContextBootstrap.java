@@ -28,8 +28,8 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestContext;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -39,14 +39,14 @@ import java.util.Set;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.standard;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
 public class ITAcrossTestContextBootstrap
 {
-	@Before
+	@BeforeEach
 	public void resetInstaller() {
 		SimpleInstaller.installed = false;
 	}
@@ -100,7 +100,7 @@ public class ITAcrossTestContextBootstrap
 
 		int actualId = Integer.valueOf( StringUtils.substringAfterLast( actualContextId, "-" ) );
 		int nextId = Integer.valueOf( StringUtils.substringAfterLast( nextContextId, "-" ) );
-		assertEquals( "An additional unexpected AcrossContext has been created", actualId + 1, nextId );
+		assertEquals( actualId + 1, nextId, "An additional unexpected AcrossContext has been created" );
 	}
 
 	static class Config implements AcrossContextConfigurer

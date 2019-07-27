@@ -23,8 +23,9 @@ import com.foreach.across.core.DynamicAcrossModule.DynamicPostProcessorModule;
 import com.foreach.across.core.DynamicAcrossModuleFactory;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 import test.dynamic.pkg.PkgMember;
 import test.dynamic.pkg.config.PkgConfig;
@@ -34,7 +35,7 @@ import test.dynamic.pkg.installers.config.PkgInstallerConfig;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -43,14 +44,16 @@ public class TestDynamicAcrossModuleFactory
 {
 	private DynamicAcrossModuleFactory factory;
 
-	@Before
+	@BeforeEach
 	public void createFactory() {
 		factory = new DynamicAcrossModuleFactory();
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void nameOrBasePackageIsRequired() throws Exception {
-		factory.getObject();
+		Assertions.assertThrows( IllegalStateException.class, () -> {
+			factory.getObject();
+		} );
 	}
 
 	@Test

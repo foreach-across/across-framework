@@ -18,13 +18,11 @@ package test;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
-import test.modules.naming.NamingConfig;
-import test.modules.naming.NamingModule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import test.modules.naming.NamingConfig;
 import test.modules.naming.NamingModule;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class TestDefaultProvidedBeans
 {

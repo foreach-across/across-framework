@@ -21,9 +21,9 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import lombok.Getter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +43,7 @@ public class TestAcrossLifecycleProcessor
 	private AcrossContext context;
 	private GenericApplicationContext parent;
 
-	@Before
+	@BeforeEach
 	public void startAcrossContext() {
 		parent = new GenericApplicationContext();
 		parent.refresh();
@@ -56,7 +56,7 @@ public class TestAcrossLifecycleProcessor
 		parent.start();
 	}
 
-	@After
+	@AfterEach
 	public void destroyAcrossContext() {
 		context.shutdown();
 		parent.close();

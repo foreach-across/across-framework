@@ -19,7 +19,7 @@ import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.AcrossApplicationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.support.TestPropertySourceUtils;

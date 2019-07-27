@@ -18,10 +18,10 @@ package com.foreach.across.modules.web.menu;
 import com.foreach.across.modules.web.menu.RequestMenuSelector.LookupPath;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestRequestMenuSelector
 {

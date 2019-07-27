@@ -20,7 +20,7 @@ import com.foreach.across.modules.web.config.CharacterEncodingConfiguration;
 import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
 import com.foreach.across.modules.web.config.resources.ResourcesConfiguration;
 import com.foreach.across.modules.web.servlet.AcrossMultipartFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -34,7 +34,7 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme

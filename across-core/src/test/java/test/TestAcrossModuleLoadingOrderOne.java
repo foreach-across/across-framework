@@ -22,14 +22,15 @@ import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.AcrossRole;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapOrderBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TestAcrossModuleLoadingOrderOne
 {
@@ -110,14 +111,16 @@ public class TestAcrossModuleLoadingOrderOne
 		assertEquals( list( one, two, three, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void disabledRequiredDependencyCausesException() {
-		two.setEnabled( false );
+		Assertions.assertThrows( RuntimeException.class, () -> {
+			two.setEnabled( false );
 
-		Collection<AcrossModule> added = list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three );
-		Collection<AcrossModule> ordered = order( added );
+			Collection<AcrossModule> added = list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three );
+			Collection<AcrossModule> ordered = order( added );
 
-		assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
+			assertEquals( list( two, three, one, requiresTwoThreeAndOptionalOne, requiresTwo ), ordered );
+		} );
 	}
 
 	@Test
@@ -165,17 +168,21 @@ public class TestAcrossModuleLoadingOrderOne
 		                    postProcessorRequiringOther, postProcessorOptionalOther ), ordered );
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingRequiredDependencyWillBreak() {
-		Collection<AcrossModule> added = list( one, requiresTwo );
-		order( added );
+		Assertions.assertThrows( RuntimeException.class, () -> {
+			Collection<AcrossModule> added = list( one, requiresTwo );
+			order( added );
+		} );
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void cyclicDependencyWillBreak() {
-		Collection<AcrossModule> added =
-				list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three, cyclicOne, cyclicTwo );
-		order( added );
+		Assertions.assertThrows( RuntimeException.class, () -> {
+			Collection<AcrossModule> added =
+					list( requiresTwoThreeAndOptionalOne, one, requiresTwo, two, three, cyclicOne, cyclicTwo );
+			order( added );
+		} );
 	}
 
 	@Test
@@ -187,13 +194,15 @@ public class TestAcrossModuleLoadingOrderOne
 		assertEquals( list( three, two, one, requiresTwoAndOptionalThreeTen, requiresOneAndOptionalTwoNine ), ordered );
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingRuntimeDependencyWillBreak() {
-		ModuleTwo twoWithRuntimeDependency = new ModuleTwo();
-		twoWithRuntimeDependency.addRuntimeDependency( three.getName() );
+		Assertions.assertThrows( RuntimeException.class, () -> {
+			ModuleTwo twoWithRuntimeDependency = new ModuleTwo();
+			twoWithRuntimeDependency.addRuntimeDependency( three.getName() );
 
-		Collection<AcrossModule> added = list( one, twoWithRuntimeDependency );
-		order( added );
+			Collection<AcrossModule> added = list( one, twoWithRuntimeDependency );
+			order( added );
+		} );
 	}
 
 	@Test

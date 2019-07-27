@@ -31,14 +31,15 @@ import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.*;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import test.modules.installer.installers.*;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -60,7 +61,7 @@ public class TestAcrossInstallerRegistry
 
 	private InstallerSettings contextSettings;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		clean();
 
@@ -109,7 +110,7 @@ public class TestAcrossInstallerRegistry
 		registry = new AcrossBootstrapInstallerRegistry( contextConfig, null, applicationContextFactory );
 	}
 
-	@After
+	@AfterEach
 	public void clean() {
 		TestInstaller.reset();
 	}
@@ -466,27 +467,29 @@ public class TestAcrossInstallerRegistry
 		assertEquals( expected, actual );
 	}
 
-	@Test(expected = AcrossException.class)
+	@Test
 	public void parameterizedInstallerMethodsRequiredDependencyNotPresentShouldNotExecute() {
-		installers( MethodWithParametersInstaller.class );
+		Assertions.assertThrows( AcrossException.class, () -> {
+			installers( MethodWithParametersInstaller.class );
 
-		AcrossApplicationContext applicationContext = new AcrossApplicationContext();
-		applicationContext.refresh();
-		applicationContext.start();
-		applicationContext.getBeanFactory().registerSingleton( "anotherBean", new AnotherBean() );
+			AcrossApplicationContext applicationContext = new AcrossApplicationContext();
+			applicationContext.refresh();
+			applicationContext.start();
+			applicationContext.getBeanFactory().registerSingleton( "anotherBean", new AnotherBean() );
 
-		AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
-				AcrossApplicationContextHolder.class );
-		when( moduleAcrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
-		when( moduleAcrossApplicationContextHolder.getBeanFactory() )
-				.thenReturn( (AcrossListableBeanFactory) applicationContext.getBeanFactory() );
+			AcrossApplicationContextHolder moduleAcrossApplicationContextHolder = mock(
+					AcrossApplicationContextHolder.class );
+			when( moduleAcrossApplicationContextHolder.getApplicationContext() ).thenReturn( applicationContext );
+			when( moduleAcrossApplicationContextHolder.getBeanFactory() )
+					.thenReturn( (AcrossListableBeanFactory) applicationContext.getBeanFactory() );
 
-		when( module.hasApplicationContext() ).thenReturn( true );
-		when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
+			when( module.hasApplicationContext() ).thenReturn( true );
+			when( module.getAcrossApplicationContextHolder() ).thenReturn( moduleAcrossApplicationContextHolder );
 
-		when( contextSettings.shouldRun( anyString(), any() ) ).thenReturn( InstallerAction.EXECUTE );
+			when( contextSettings.shouldRun( anyString(), any() ) ).thenReturn( InstallerAction.EXECUTE );
 
-		registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
+			registry.runInstallersForModule( "module", InstallerPhase.BeforeContextBootstrap );
+		} );
 	}
 
 	@Test

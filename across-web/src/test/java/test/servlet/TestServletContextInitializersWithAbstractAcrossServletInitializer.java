@@ -20,7 +20,7 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.context.web.AcrossWebApplicationContext;
 import com.foreach.across.modules.web.config.CharacterEncodingConfiguration;
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -34,7 +34,7 @@ import test.modules.testResources.TestResourcesModule;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Arne Vandamme

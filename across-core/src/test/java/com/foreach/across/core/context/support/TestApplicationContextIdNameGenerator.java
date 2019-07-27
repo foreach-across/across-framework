@@ -21,11 +21,11 @@ import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.info.ConfigurableAcrossModuleInfo;
 import com.foreach.across.core.context.web.AcrossWebApplicationContext;
 import com.foreach.across.core.context.web.WebBootstrapApplicationContextFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestApplicationContextIdNameGenerator
 {

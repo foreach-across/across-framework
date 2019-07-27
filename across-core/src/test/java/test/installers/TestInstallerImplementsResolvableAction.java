@@ -22,8 +22,8 @@ import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.installers.InstallerActionResolver;
 import com.foreach.across.core.installers.InstallerMetaData;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -32,7 +32,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -42,7 +42,7 @@ public class TestInstallerImplementsResolvableAction
 	private static InstallerAction actionToResolve;
 	private static boolean resolved, executed;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		actionToResolve = null;
 		resolved = false;

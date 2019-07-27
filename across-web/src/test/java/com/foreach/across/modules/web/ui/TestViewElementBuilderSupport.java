@@ -16,9 +16,9 @@
 package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 /**

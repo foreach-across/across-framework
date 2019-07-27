@@ -16,8 +16,8 @@
 package test;
 
 import com.foreach.across.config.EnableAcrossContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +32,7 @@ import test.modules.async.AsyncModule;
 
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -50,7 +50,7 @@ public class TestAsyncSupported extends AbstractWebIntegrationTest
 	@Autowired
 	private DeferredResultProcessingInterceptor deferredResultProcessingInterceptor;
 
-	@Before
+	@BeforeEach
 	public void resetMocks() {
 		reset( callableProcessingInterceptor, deferredResultProcessingInterceptor, spyTaskExecutor );
 	}

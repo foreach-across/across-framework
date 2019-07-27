@@ -23,8 +23,8 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import lombok.Getter;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,19 +39,19 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.SmartValidator;
 import org.springframework.validation.Validator;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @TestPropertySource(properties = "across.displayName=My Application")
 @SpringBootTest(classes = { TestAcrossApplicationBootstrap.SampleApplication.class })
@@ -156,8 +156,8 @@ public class TestAcrossApplicationBootstrap
 	{
 		@Override
 		public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {
-			assertFalse( "AutoConfigurationPackages on application itself should always be empty",
-			             AutoConfigurationPackages.has( (BeanFactory) registry ) );
+			assertFalse( AutoConfigurationPackages.has( (BeanFactory) registry ),
+			             "AutoConfigurationPackages on application itself should always be empty" );
 		}
 	}
 }

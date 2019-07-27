@@ -19,7 +19,7 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.multipart.MultipartResolverConfiguration;
 import com.foreach.across.test.AcrossTestWebContext;
 import com.foreach.across.test.MockFilterRegistration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartResolver;
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 

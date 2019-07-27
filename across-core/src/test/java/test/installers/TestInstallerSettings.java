@@ -23,12 +23,12 @@ import com.foreach.across.core.installers.InstallerActionResolver;
 import com.foreach.across.core.installers.InstallerMetaData;
 import com.foreach.across.core.installers.InstallerSettings;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,7 +37,7 @@ public class TestInstallerSettings
 {
 	private InstallerSettings settings;
 
-	@Before
+	@BeforeEach
 	public void createSettings() {
 		settings = new InstallerSettings();
 	}

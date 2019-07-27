@@ -17,9 +17,9 @@ package test;
 
 import com.foreach.across.config.EnableAcrossContext;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,7 +33,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Marc Vanbrabant
@@ -44,7 +44,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	private RestTemplate restTemplate;
 	private String URL = "/cors/78";
 
-	@Before
+	@BeforeEach
 	public void allowRestrictedHeaders() throws NoSuchFieldException, IllegalAccessException {
 		restTemplate = new RestTemplate();
 		// RestTemplate uses HttpURLConnection, which disallows CORS headers by default.
@@ -52,7 +52,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 		setAllowRestrictedHeaders( true );
 	}
 
-	@After
+	@AfterEach
 	public void resetRestrictedHeaders() throws NoSuchFieldException, IllegalAccessException {
 		setAllowRestrictedHeaders(
 				Boolean.parseBoolean( System.getProperty( "sun.net.http.allowRestrictedHeaders" ) ) );

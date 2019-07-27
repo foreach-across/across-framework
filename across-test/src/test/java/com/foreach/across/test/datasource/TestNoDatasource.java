@@ -18,7 +18,7 @@ package com.foreach.across.test.datasource;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestContext;
 import com.foreach.across.test.support.AcrossTestBuilders;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 
 import javax.sql.DataSource;

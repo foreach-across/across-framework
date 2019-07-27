@@ -16,14 +16,14 @@
 package com.foreach.across.test;
 
 import com.foreach.across.test.MockFilterRegistration.MappingRule;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -34,7 +34,7 @@ public class TestMockFilterRegistration
 {
 	private MockAcrossServletContext servletContext;
 
-	@Before
+	@BeforeEach
 	public void resetServletContext() {
 		servletContext = new MockAcrossServletContext();
 	}

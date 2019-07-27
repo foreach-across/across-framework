@@ -22,8 +22,9 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.support.AcrossModuleMessageSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
@@ -32,7 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -40,14 +41,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests messagesource behavior in modules combined with ApplicationContext level messagesources.
  *
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestMessageSourceBehavior.Config.class)
 public class TestMessageSourceBehavior
 {
@@ -84,9 +85,11 @@ public class TestMessageSourceBehavior
 		assertEquals( "module3", message( "module3.value" ) );
 	}
 
-	@Test(expected = NoSuchMessageException.class)
+	@Test
 	public void internalModuleMessageSourceIsNotVisibleOutside() {
-		message( "module4.value" );
+		Assertions.assertThrows( NoSuchMessageException.class, () -> {
+			message( "module4.value" );
+		} );
 	}
 
 	@Test

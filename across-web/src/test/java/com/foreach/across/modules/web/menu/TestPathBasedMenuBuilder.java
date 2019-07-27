@@ -16,8 +16,8 @@
 
 package com.foreach.across.modules.web.menu;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
@@ -26,7 +26,7 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @SuppressWarnings( "unchecked" )
@@ -34,7 +34,7 @@ public class TestPathBasedMenuBuilder
 {
 	private PathBasedMenuBuilder builder;
 
-	@Before
+	@BeforeEach
 	public void createBuilder() {
 		builder = Menu.builder();
 	}

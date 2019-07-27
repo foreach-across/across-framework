@@ -16,15 +16,15 @@
 package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.ui.elements.ViewElementGenerator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestViewElementGenerator
 {
@@ -32,7 +32,7 @@ public class TestViewElementGenerator
 
 	private ViewElementGenerator<String, Text> generator;
 
-	@Before
+	@BeforeEach
 	public void reset() {
 		generator = new ViewElementGenerator<>();
 		generator.setItems( data );

@@ -19,16 +19,16 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * DevelopmentModeCondition that checks that bootstrap fails if an exception occurs during event handling.
@@ -37,7 +37,7 @@ public class TestBootstrap
 {
 	private static final Set<String> events = new HashSet<>();
 
-	@Before
+	@BeforeEach
 	public void clearEvents() {
 		events.clear();
 	}

@@ -17,8 +17,9 @@ package test.context;
 
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.support.BeanFactoryAnnotationUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,17 +27,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration(classes = { TestBeanFactoryAnnotationUtils.Config.class,
                                   TestBeanFactoryAnnotationUtils.OtherConfig.class })
@@ -45,9 +46,11 @@ public class TestBeanFactoryAnnotationUtils
 	@Autowired
 	private BeanFactory beanFactory;
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void notAConfigurableListableBeanFactory() {
-		BeanFactoryAnnotationUtils.findAnnotationOnBean( mock( BeanFactory.class ), "bean", Module.class );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			BeanFactoryAnnotationUtils.findAnnotationOnBean( mock( BeanFactory.class ), "bean", Module.class );
+		} );
 	}
 
 	@Test
@@ -79,7 +82,7 @@ public class TestBeanFactoryAnnotationUtils
 
 		Optional<AnnotationAttributes> attributes
 				= BeanFactoryAnnotationUtils.findAnnotationOnBean( beanFactory, beanName, Module.class );
-		assertTrue( "Annotation not found on bean " + beanName, attributes.isPresent() );
+		assertTrue( attributes.isPresent(), "Annotation not found on bean " + beanName );
 		assertEquals( annotationValue, attributes.get().getString( "value" ) );
 	}
 

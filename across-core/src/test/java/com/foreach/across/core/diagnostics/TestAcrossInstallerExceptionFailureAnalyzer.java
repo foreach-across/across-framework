@@ -23,7 +23,7 @@ import com.foreach.across.core.installers.InstallerMetaData;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.diagnostics.FailureAnalysis;
 
 import java.lang.reflect.Method;

@@ -16,11 +16,11 @@
 package com.foreach.across.condition;
 
 import com.foreach.across.config.AcrossServletContextInitializer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.context.annotation.ConditionContext;
@@ -28,7 +28,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import javax.servlet.ServletContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestOnConfigurableServletContext
 {
 	private final OnConfigurableServletContext condition = new OnConfigurableServletContext();
@@ -50,7 +50,7 @@ public class TestOnConfigurableServletContext
 	@Mock
 	private ConfigurableListableBeanFactory beanFactory;
 
-	@Before
+	@BeforeEach
 	public void returnBeanFactory() {
 		when( context.getBeanFactory() ).thenReturn( beanFactory );
 	}

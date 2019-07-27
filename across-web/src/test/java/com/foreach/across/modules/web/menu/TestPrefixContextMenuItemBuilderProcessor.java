@@ -17,19 +17,19 @@
 package com.foreach.across.modules.web.menu;
 
 import com.foreach.across.modules.web.context.PrefixingPathContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestPrefixContextMenuItemBuilderProcessor
 {
 	private MenuItemBuilderProcessor processor;
 
-	@Before
+	@BeforeEach
 	public void createProcessor() {
 		processor = new PrefixContextMenuItemBuilderProcessor( new PrefixingPathContext( "/test" ) );
 	}

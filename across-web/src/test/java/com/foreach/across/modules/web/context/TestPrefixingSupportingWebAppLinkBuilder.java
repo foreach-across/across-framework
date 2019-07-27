@@ -15,20 +15,22 @@
  */
 package com.foreach.across.modules.web.context;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +38,8 @@ import static org.mockito.Mockito.*;
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TestPrefixingSupportingWebAppLinkBuilder
 {
 	@Mock
@@ -51,14 +54,14 @@ public class TestPrefixingSupportingWebAppLinkBuilder
 	@InjectMocks
 	private PrefixingSupportingWebAppLinkBuilder linkBuilder;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		ServletRequestAttributes ra = new ServletRequestAttributes( request, response );
 		RequestContextHolder.setRequestAttributes( ra );
 		contextPath( "/ctx" );
 	}
 
-	@After
+	@AfterEach
 	public void destroy() {
 		RequestContextHolder.resetRequestAttributes();
 	}

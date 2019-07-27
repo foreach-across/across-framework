@@ -18,17 +18,14 @@ package test;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
-import test.modules.exposing.ExposingModule;
-import test.modules.installer.InstallerModule;
-import test.modules.module1.TestModule1;
-import test.modules.module2.TestModule2;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import test.modules.exposing.ExposingModule;
 import test.modules.installer.InstallerModule;
 import test.modules.module1.TestModule1;
 import test.modules.module2.TestModule2;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAcrossContext
 {
@@ -82,16 +79,18 @@ public class TestAcrossContext
 		assertSame( other, fetched );
 	}
 
-	@Test(expected = ClassCastException.class)
+	@Test
 	public void getInvalidTypedModuleByName() {
-		TestModule1 module = new TestModule1();
-		ExposingModule other = new ExposingModule( "my module" );
+		Assertions.assertThrows( ClassCastException.class, () -> {
+			TestModule1 module = new TestModule1();
+			ExposingModule other = new ExposingModule( "my module" );
 
-		AcrossContext context = new AcrossContext();
-		context.addModule( module );
-		context.addModule( other );
+			AcrossContext context = new AcrossContext();
+			context.addModule( module );
+			context.addModule( other );
 
-		context.getModule( "my module", TestModule1.class );
+			context.getModule( "my module", TestModule1.class );
+		} );
 	}
 
 	@Test
@@ -127,7 +126,7 @@ public class TestAcrossContext
 			failed = true;
 		}
 
-		assertTrue( "A datasource should be required if installers want to run.", failed );
+		assertTrue( failed, "A datasource should be required if installers want to run." );
 	}
 
 	@Test
@@ -154,7 +153,7 @@ public class TestAcrossContext
 			failed = true;
 		}
 
-		assertTrue( "Adding same module instance should not be allowed", failed );
+		assertTrue( failed, "Adding same module instance should not be allowed" );
 	}
 
 	@Test
@@ -175,6 +174,6 @@ public class TestAcrossContext
 			failed = true;
 		}
 
-		assertTrue( "Adding same module to another Across context should not be allowed", failed );
+		assertTrue( failed, "Adding same module to another Across context should not be allowed" );
 	}
 }

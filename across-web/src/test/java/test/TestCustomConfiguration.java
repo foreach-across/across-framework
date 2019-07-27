@@ -18,7 +18,8 @@ package test;
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.modules.web.context.WebAppPathResolver;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,7 +30,7 @@ import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
 import static com.foreach.across.modules.web.AcrossWebModuleSettings.WEBJARS_RESOURCES_PATH;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -54,9 +55,11 @@ public class TestCustomConfiguration extends AbstractWebIntegrationTest
 		assertTrue( output.contains( "alert('hello');" ) );
 	}
 
-	@Test(expected = HttpClientErrorException.class)
+	@Test
 	public void thymeleafShouldBeDisabled() {
-		get( "/testResources" );
+		Assertions.assertThrows( HttpClientErrorException.class, () -> {
+			get( "/testResources" );
+		} );
 	}
 
 	@Test

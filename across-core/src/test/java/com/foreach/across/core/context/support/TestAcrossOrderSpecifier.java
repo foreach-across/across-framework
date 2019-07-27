@@ -18,13 +18,13 @@ package com.foreach.across.core.context.support;
 import com.foreach.across.core.OrderedInModule;
 import com.foreach.across.core.annotations.OrderInModule;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme

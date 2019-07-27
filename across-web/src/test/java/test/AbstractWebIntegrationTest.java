@@ -16,8 +16,8 @@
 package test;
 
 import com.foreach.across.config.AcrossServletContextInitializer;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -44,7 +44,7 @@ import java.io.IOException;
  *
  * @author Arne Vandamme
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = AbstractWebIntegrationTest.AcrossWebApplicationConfiguration.class)
 public abstract class AbstractWebIntegrationTest
 {
@@ -54,7 +54,7 @@ public abstract class AbstractWebIntegrationTest
 	protected RestTemplate template = new RestTemplate();
 	protected String host;
 
-	@Before
+	@BeforeEach
 	public void determineHost() {
 		host = "http://localhost:" + server.getWebServer().getPort();
 	}

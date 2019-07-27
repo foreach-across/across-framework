@@ -16,11 +16,11 @@
 package test.scan;
 
 import com.foreach.across.core.context.ModuleConfigurationSet;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme
@@ -29,7 +29,7 @@ public class TestModuleConfigurationSet
 {
 	private ModuleConfigurationSet set;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		set = new ModuleConfigurationSet();
 	}

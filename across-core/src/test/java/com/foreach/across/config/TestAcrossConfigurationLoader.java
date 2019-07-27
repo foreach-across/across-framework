@@ -18,7 +18,7 @@ package com.foreach.across.config;
 import com.foreach.across.config.AcrossConfiguration.AutoConfigurationClass;
 import com.foreach.across.config.AcrossConfiguration.IllegalConfiguration.ClassEntry;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 

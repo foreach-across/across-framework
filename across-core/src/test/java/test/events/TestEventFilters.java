@@ -20,9 +20,9 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.val;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ResolvableType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test.modules.EventPubSub;
 import test.modules.module1.ReplyEvent;
 import test.modules.module1.TestModule1;
@@ -41,9 +41,9 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestEventFilters.Config.class)
 @DirtiesContext
 public class TestEventFilters
@@ -77,7 +77,7 @@ public class TestEventFilters
 		context.publishEvent( original );
 
 		assertNotNull( original.getByName() );
-		Assert.assertEquals( Arrays.asList( "moduleOne", "moduleTwo" ), original.getByName().getReceivedBy() );
+		Assertions.assertEquals( Arrays.asList( "moduleOne", "moduleTwo" ), original.getByName().getReceivedBy() );
 	}
 
 	@Test

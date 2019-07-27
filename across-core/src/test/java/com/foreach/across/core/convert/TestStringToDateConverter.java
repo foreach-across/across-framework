@@ -17,14 +17,14 @@ package com.foreach.across.core.convert;
 
 import com.foreach.across.core.AcrossContext;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.text.ParseException;
 import java.time.*;
@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Steven Gentens
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 public class TestStringToDateConverter
 {
 	private GenericApplicationContext parent;
@@ -55,7 +55,7 @@ public class TestStringToDateConverter
 	private final TypeDescriptor OFFSETDATETIME_DESCRIPTOR = TypeDescriptor.valueOf( OffsetDateTime.class );
 	private final TypeDescriptor OFFSETTIME_DESCRIPTOR = TypeDescriptor.valueOf( OffsetTime.class );
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		parent = new GenericApplicationContext();
 		parent.refresh();
@@ -69,7 +69,7 @@ public class TestStringToDateConverter
 		converter = new StringToDateTimeConverter( conversionService );
 	}
 
-	@After
+	@AfterEach
 	public void shutdown() {
 		context.shutdown();
 		parent.close();
