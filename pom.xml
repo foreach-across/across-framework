@@ -265,11 +265,10 @@
 				<artifactId>mysql-connector-java</artifactId>
 				<version>5.1.47</version>
 			</dependency>
-			<!-- Use Liquibase that can still connect to SQL Server 2008 -->
 			<dependency>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-core</artifactId>
-				<version>3.5.5</version>
+				<version>3.7.0</version>
 			</dependency>
 
 			<!-- Foreach commons -->
