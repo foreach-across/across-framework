@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>across-base</artifactId>
-		<version>3.2.0.RELEASE</version>
+		<version>3.2.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -33,12 +33,12 @@
 		<dependency>
 			<groupId>com.foreach.across</groupId>
 			<artifactId>across-core</artifactId>
-			<version>3.2.0.RELEASE</version>
+			<version>3.2.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across</groupId>
 			<artifactId>across-web</artifactId>
-			<version>3.2.0.RELEASE</version>
+			<version>3.2.1-SNAPSHOT</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

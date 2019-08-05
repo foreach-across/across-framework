@@ -20,7 +20,7 @@
 
 	<groupId>com.foreach.across</groupId>
 	<artifactId>across-base</artifactId>
-	<version>3.2.0.RELEASE</version>
+	<version>3.2.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -47,7 +47,7 @@
 	</developers>
 
 	<properties>
-		<across.version>3.2.0.RELEASE</across.version>
+		<across.version>3.2.1-SNAPSHOT</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring.platform.version>Brussels-SR17</spring.platform.version>
@@ -66,7 +66,7 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/content/groups/public/</url>
+			<url>https://repository.foreach.be/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>spring-milestones</id>
@@ -385,12 +385,12 @@
 				<repository>
 					<id>foreach-nexus</id>
 					<name>Foreach nexus</name>
-					<url>http://repository.foreach.be/nexus/repository/releases/</url>
+					<url>https://repository.foreach.be/nexus/repository/across-releases/</url>
 				</repository>
 				<snapshotRepository>
 					<id>foreach-nexus</id>
 					<name>Foreach nexus</name>
-					<url>http://repository.foreach.be/nexus/repository/snapshots/</url>
+					<url>https://repository.foreach.be/nexus/repository/across-snapshots/</url>
 				</snapshotRepository>
 			</distributionManagement>
 		</profile>
