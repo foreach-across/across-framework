@@ -28,11 +28,11 @@
 		Base BOM pom for creating an Across Standard Module or any module wishing to adhere to the
 		standard module conventions.
 	</description>
-	<url>https://foreach.atlassian.net/wiki/display/AX</url>
+	<url>https://across.dev</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 
@@ -65,7 +65,7 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/repository/public/</url>
+			<url>https://repository.foreach.be/nexus/repository/public/</url>
 		</repository>
 	</repositories>
 
@@ -313,12 +313,12 @@
 				<repository>
 					<id>foreach-nexus</id>
 					<name>Foreach nexus</name>
-					<url>http://repository.foreach.be/nexus/repository/releases/</url>
+					<url>https://repository.foreach.be/nexus/repository/across-releases/</url>
 				</repository>
 				<snapshotRepository>
 					<id>foreach-nexus</id>
 					<name>Foreach nexus</name>
-					<url>http://repository.foreach.be/nexus/repository/snapshots/</url>
+					<url>https://repository.foreach.be/nexus/repository/across-snapshots/</url>
 				</snapshotRepository>
 			</distributionManagement>
 		</profile>
