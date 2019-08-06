@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,11 @@ import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,13 +49,24 @@ import java.util.stream.Stream;
  * @author Arne Vandamme
  * @see com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils
  */
+@Accessors(chain = true)
 public class ContainerViewElement implements MutableViewElement
 {
 	public static final String ELEMENT_TYPE = StandardViewElements.CONTAINER;
 
 	private final List<ViewElement> children = new ArrayList<>();
 
-	private String name, customTemplate, elementType;
+	@Getter
+	@Setter
+	private String name;
+
+	@Getter
+	@Setter
+	private String customTemplate;
+
+	@Getter
+	@Setter(AccessLevel.PROTECTED)
+	private String elementType;
 
 	public ContainerViewElement() {
 		setElementType( ELEMENT_TYPE );
@@ -59,35 +74,6 @@ public class ContainerViewElement implements MutableViewElement
 
 	public ContainerViewElement( String name ) {
 		setName( name );
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName( String name ) {
-		this.name = name;
-	}
-
-	@Override
-	public String getCustomTemplate() {
-		return customTemplate;
-	}
-
-	@Override
-	public void setCustomTemplate( String customTemplate ) {
-		this.customTemplate = customTemplate;
-	}
-
-	@Override
-	public String getElementType() {
-		return elementType;
-	}
-
-	protected void setElementType( String elementType ) {
-		this.elementType = elementType;
 	}
 
 	/**
@@ -120,8 +106,9 @@ public class ContainerViewElement implements MutableViewElement
 	 *
 	 * @param element to add
 	 */
-	public void addChild( @NonNull ViewElement element ) {
+	public ContainerViewElement addChild( @NonNull ViewElement element ) {
 		children.add( element );
+		return this;
 	}
 
 	/**
@@ -129,8 +116,9 @@ public class ContainerViewElement implements MutableViewElement
 	 *
 	 * @param elements to add
 	 */
-	public void addChildren( @NonNull Collection<? extends ViewElement> elements ) {
+	public ContainerViewElement addChildren( @NonNull Collection<? extends ViewElement> elements ) {
 		children.addAll( elements );
+		return this;
 	}
 
 	/**
@@ -138,8 +126,9 @@ public class ContainerViewElement implements MutableViewElement
 	 *
 	 * @param element to add
 	 */
-	public void addFirstChild( @NonNull ViewElement element ) {
+	public ContainerViewElement addFirstChild( @NonNull ViewElement element ) {
 		children.add( 0, element );
+		return this;
 	}
 
 	/**
@@ -163,8 +152,9 @@ public class ContainerViewElement implements MutableViewElement
 	/**
 	 * Remove all children from this container.
 	 */
-	public void clearChildren() {
+	public ContainerViewElement clearChildren() {
 		children.clear();
+		return this;
 	}
 
 	/**
@@ -173,8 +163,9 @@ public class ContainerViewElement implements MutableViewElement
 	 *
 	 * @param consumer to execute
 	 */
-	public void apply( @NonNull Consumer<ContainerViewElement> consumer ) {
+	public ContainerViewElement apply( @NonNull Consumer<ContainerViewElement> consumer ) {
 		consumer.accept( this );
+		return this;
 	}
 
 	/**
@@ -188,8 +179,9 @@ public class ContainerViewElement implements MutableViewElement
 	 * @param consumer to execute
 	 */
 	@SuppressWarnings("unchecked")
-	public <U extends ViewElement> void applyUnsafe( @NonNull Consumer<U> consumer ) {
+	public <U extends ViewElement> ContainerViewElement applyUnsafe( @NonNull Consumer<U> consumer ) {
 		consumer.accept( (U) this );
+		return this;
 	}
 
 	/**

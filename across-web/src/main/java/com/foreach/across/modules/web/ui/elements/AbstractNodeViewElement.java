@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,18 @@
 package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.ui.StandardViewElements;
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.support.CssClassAttributeUtils;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Base class for a {@link HtmlViewElement} that supports child nodes.
@@ -29,65 +36,62 @@ import java.util.Map;
  * @see NodeViewElement
  * @see AbstractVoidNodeViewElement
  */
+@Accessors(chain = true)
 public abstract class AbstractNodeViewElement extends ContainerViewElement implements HtmlViewElement
 {
 	private Map<String, Object> attributes = new HashMap<>();
 
-	private String tagName, htmlId;
+	@NonNull
+	@Getter
+	@Setter(AccessLevel.PROTECTED)
+	private String tagName;
+
+	@Getter
+	@Setter
+	private String htmlId;
 
 	protected AbstractNodeViewElement( String tagName ) {
 		setElementType( StandardViewElements.NODE );
 		setTagName( tagName );
 	}
 
-	public String getTagName() {
-		return tagName;
-	}
-
-	protected void setTagName( @NonNull String tagName ) {
-		this.tagName = tagName;
-	}
-
 	@Override
-	public String getHtmlId() {
-		return htmlId;
-	}
-
-	@Override
-	public void setHtmlId( String htmlId ) {
-		this.htmlId = htmlId;
-	}
-
-	public void addCssClass( String... cssClass ) {
+	public AbstractNodeViewElement addCssClass( String... cssClass ) {
 		CssClassAttributeUtils.addCssClass( attributes, cssClass );
+		return this;
 	}
 
 	public boolean hasCssClass( String cssClass ) {
 		return CssClassAttributeUtils.hasCssClass( attributes, cssClass );
 	}
 
-	public void removeCssClass( String... cssClass ) {
+	public AbstractNodeViewElement removeCssClass( String... cssClass ) {
 		CssClassAttributeUtils.removeCssClass( attributes, cssClass );
+		return this;
 	}
 
 	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes( @NonNull Map<String, Object> attributes ) {
+	public AbstractNodeViewElement setAttributes( @NonNull Map<String, Object> attributes ) {
 		this.attributes = attributes;
+		return this;
 	}
 
-	public void setAttribute( String attributeName, Object attributeValue ) {
+	public AbstractNodeViewElement setAttribute( String attributeName, Object attributeValue ) {
 		attributes.put( attributeName, attributeValue );
+		return this;
 	}
 
-	public void addAttributes( Map<String, Object> attributes ) {
+	public AbstractNodeViewElement addAttributes( Map<String, Object> attributes ) {
 		this.attributes.putAll( attributes );
+		return this;
 	}
 
-	public void removeAttribute( String attributeName ) {
+	public AbstractNodeViewElement removeAttribute( String attributeName ) {
 		attributes.remove( attributeName );
+		return this;
 	}
 
 	@Override
@@ -102,6 +106,51 @@ public abstract class AbstractNodeViewElement extends ContainerViewElement imple
 
 	public boolean hasAttribute( String attributeName ) {
 		return attributes.containsKey( attributeName );
+	}
+
+	@Override
+	public AbstractNodeViewElement setName( String name ) {
+		return (AbstractNodeViewElement) super.setName( name );
+	}
+
+	@Override
+	public AbstractNodeViewElement setCustomTemplate( String customTemplate ) {
+		return (AbstractNodeViewElement) super.setCustomTemplate( customTemplate );
+	}
+
+	@Override
+	protected AbstractNodeViewElement setElementType( String elementType ) {
+		return (AbstractNodeViewElement) super.setElementType( elementType );
+	}
+
+	@Override
+	public AbstractNodeViewElement addChild( @NonNull ViewElement element ) {
+		return (AbstractNodeViewElement) super.addChild( element );
+	}
+
+	@Override
+	public AbstractNodeViewElement addChildren( @NonNull Collection<? extends ViewElement> elements ) {
+		return (AbstractNodeViewElement) super.addChildren( elements );
+	}
+
+	@Override
+	public AbstractNodeViewElement addFirstChild( @NonNull ViewElement element ) {
+		return (AbstractNodeViewElement) super.addFirstChild( element );
+	}
+
+	@Override
+	public AbstractNodeViewElement clearChildren() {
+		return (AbstractNodeViewElement) super.clearChildren();
+	}
+
+	@Override
+	public AbstractNodeViewElement apply( @NonNull Consumer<ContainerViewElement> consumer ) {
+		return (AbstractNodeViewElement) super.apply( consumer );
+	}
+
+	@Override
+	public <U extends ViewElement> AbstractNodeViewElement applyUnsafe( @NonNull Consumer<U> consumer ) {
+		return (AbstractNodeViewElement) super.applyUnsafe( consumer );
 	}
 
 	@SuppressWarnings("unchecked")

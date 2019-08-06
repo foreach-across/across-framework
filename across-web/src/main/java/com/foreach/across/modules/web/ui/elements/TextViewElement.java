@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,22 @@ package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.ViewElementSupport;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * A simple text item.
  */
+@Accessors(chain = true)
+@Getter
+@Setter
 public class TextViewElement extends ViewElementSupport implements ConfigurableTextViewElement
 {
 	public static final String ELEMENT_TYPE = StandardViewElements.TEXT;
-	boolean escapeXml = true;
+
+	private boolean escapeXml;
+
 	private String text;
 
 	public TextViewElement() {
@@ -54,21 +62,13 @@ public class TextViewElement extends ViewElementSupport implements ConfigurableT
 	}
 
 	@Override
-	public String getText() {
-		return text;
+	public TextViewElement setName( String name ) {
+		return (TextViewElement) super.setName( name );
 	}
 
 	@Override
-	public void setText( String text ) {
-		this.text = text;
-	}
-
-	public boolean isEscapeXml() {
-		return escapeXml;
-	}
-
-	public void setEscapeXml( boolean escapeXml ) {
-		this.escapeXml = escapeXml;
+	public TextViewElement setCustomTemplate( String customTemplate ) {
+		return (TextViewElement) super.setCustomTemplate( customTemplate );
 	}
 
 	/**

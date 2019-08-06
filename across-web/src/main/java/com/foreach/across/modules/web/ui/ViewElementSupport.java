@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,9 @@ public abstract class ViewElementSupport implements MutableViewElement
 	}
 
 	@Override
-	public void setName( String name ) {
+	public MutableViewElement setName( String name ) {
 		this.name = name;
+		return this;
 	}
 
 	@Override
@@ -39,8 +40,9 @@ public abstract class ViewElementSupport implements MutableViewElement
 	}
 
 	@Override
-	public void setCustomTemplate( String customTemplate ) {
+	public MutableViewElement setCustomTemplate( String customTemplate ) {
 		this.customTemplate = customTemplate;
+		return this;
 	}
 
 	@Override
@@ -48,7 +50,8 @@ public abstract class ViewElementSupport implements MutableViewElement
 		return elementType;
 	}
 
-	protected void setElementType( String elementType ) {
+	protected MutableViewElement setElementType( String elementType ) {
 		this.elementType = elementType;
+		return this;
 	}
 }

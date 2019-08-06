@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -168,17 +168,20 @@ public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implem
 		this.name = name;
 	}
 
-	public void setItems( Collection<ITEM> items ) {
+	public ViewElementGenerator<ITEM, VIEW_ELEMENT> setItems( Collection<ITEM> items ) {
 		this.items = new ArrayList<>( items );
 		generated = new ArrayList<>( items.size() );
+		return this;
 	}
 
-	public void setItemTemplate( VIEW_ELEMENT element ) {
+	public ViewElementGenerator<ITEM, VIEW_ELEMENT> setItemTemplate( VIEW_ELEMENT element ) {
 		this.itemTemplate = element;
+		return this;
 	}
 
-	public void setItemTemplate( ViewElementBuilder<VIEW_ELEMENT> builder ) {
+	public ViewElementGenerator<ITEM, VIEW_ELEMENT> setItemTemplate( ViewElementBuilder<VIEW_ELEMENT> builder ) {
 		this.itemTemplate = builder;
+		return this;
 	}
 
 	/**
@@ -188,8 +191,9 @@ public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implem
 	 *
 	 * @param itemBuilderContext that contains the attributes that should be available to the builder
 	 */
-	public void setItemBuilderContext( ViewElementBuilderContext itemBuilderContext ) {
+	public ViewElementGenerator<ITEM, VIEW_ELEMENT> setItemBuilderContext( ViewElementBuilderContext itemBuilderContext ) {
 		this.itemBuilderContext = itemBuilderContext;
+		return this;
 	}
 
 	public ViewElementBuilderContext getItemBuilderContext() {
@@ -224,8 +228,9 @@ public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implem
 		return name;
 	}
 
-	public void setName( String name ) {
+	public ViewElementGenerator<ITEM, VIEW_ELEMENT> setName( String name ) {
 		this.name = name;
+		return this;
 	}
 
 	@Override
@@ -233,8 +238,9 @@ public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implem
 		return customTemplate;
 	}
 
-	public void setCustomTemplate( String customTemplate ) {
+	public ViewElementGenerator<ITEM, VIEW_ELEMENT> setCustomTemplate( String customTemplate ) {
 		this.customTemplate = customTemplate;
+		return this;
 	}
 
 	@Override
@@ -242,8 +248,9 @@ public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implem
 		return elementType;
 	}
 
-	protected void setElementType( String elementType ) {
+	protected ViewElementGenerator<ITEM, VIEW_ELEMENT> setElementType( String elementType ) {
 		this.elementType = elementType;
+		return this;
 	}
 
 	/**
@@ -253,8 +260,9 @@ public class ViewElementGenerator<ITEM, VIEW_ELEMENT extends ViewElement> implem
 	 *
 	 * @param callback implementation
 	 */
-	public void setCreationCallback( CreationCallback<ITEM, VIEW_ELEMENT> callback ) {
+	public ViewElementGenerator<ITEM, VIEW_ELEMENT> setCreationCallback( CreationCallback<ITEM, VIEW_ELEMENT> callback ) {
 		this.callback = callback;
+		return this;
 	}
 
 	public CreationCallback<ITEM, VIEW_ELEMENT> getCreationCallback() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,28 +49,32 @@ public class TemplateViewElement extends ViewElementSupport
 	}
 
 	@Override
-	public void setElementType( String elementType ) {
-		super.setElementType( elementType );
+	public TemplateViewElement setElementType( String elementType ) {
+		return (TemplateViewElement) super.setElementType( elementType );
 	}
 
 	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes( @NonNull Map<String, Object> attributes ) {
+	public TemplateViewElement setAttributes( @NonNull Map<String, Object> attributes ) {
 		this.attributes = attributes;
+		return this;
 	}
 
-	public void setAttribute( String attributeName, Object attributeValue ) {
+	public TemplateViewElement setAttribute( String attributeName, Object attributeValue ) {
 		attributes.put( attributeName, attributeValue );
+		return this;
 	}
 
-	public void addAttributes( Map<String, Object> attributes ) {
+	public TemplateViewElement addAttributes( Map<String, Object> attributes ) {
 		this.attributes.putAll( attributes );
+		return this;
 	}
 
-	public void removeAttribute( String attributeName ) {
+	public TemplateViewElement removeAttribute( String attributeName ) {
 		attributes.remove( attributeName );
+		return this;
 	}
 
 	public Object getAttribute( String attributeName ) {

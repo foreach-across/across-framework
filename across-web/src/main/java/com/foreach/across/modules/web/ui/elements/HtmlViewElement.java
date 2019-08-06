@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,25 +28,25 @@ public interface HtmlViewElement extends MutableViewElement
 {
 	String getTagName();
 
-	void addCssClass( String... cssClass );
+	HtmlViewElement addCssClass( String... cssClass );
 
 	boolean hasCssClass( String cssClass );
 
-	void removeCssClass( String... cssClass );
+	HtmlViewElement removeCssClass( String... cssClass );
 
-	void setHtmlId( String id );
+	HtmlViewElement setHtmlId( String id );
 
 	String getHtmlId();
 
 	Map<String, Object> getAttributes();
 
-	void setAttributes( Map<String, Object> attributes );
+	HtmlViewElement setAttributes( Map<String, Object> attributes );
 
-	void setAttribute( String attributeName, Object attributeValue );
+	HtmlViewElement setAttribute( String attributeName, Object attributeValue );
 
-	void addAttributes( Map<String, Object> attributes );
+	HtmlViewElement addAttributes( Map<String, Object> attributes );
 
-	void removeAttribute( String attributeName );
+	HtmlViewElement removeAttribute( String attributeName );
 
 	Object getAttribute( String attributeName );
 

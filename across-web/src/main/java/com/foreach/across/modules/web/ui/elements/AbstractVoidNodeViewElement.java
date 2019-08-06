@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,11 @@ package com.foreach.across.modules.web.ui.elements;
 import com.foreach.across.modules.web.ui.StandardViewElements;
 import com.foreach.across.modules.web.ui.ViewElementSupport;
 import com.foreach.across.modules.web.ui.elements.support.CssClassAttributeUtils;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,65 +34,61 @@ import java.util.Map;
  * @see VoidNodeViewElement
  * @see AbstractNodeViewElement
  */
+@Accessors(chain = true)
 public abstract class AbstractVoidNodeViewElement extends ViewElementSupport implements HtmlViewElement
 {
 	private Map<String, Object> attributes = new HashMap<>();
 
-	private String tagName, htmlId;
+	@NonNull
+	@Getter
+	@Setter(AccessLevel.PROTECTED)
+	private String tagName;
+
+	@Getter
+	@Setter
+	private String htmlId;
 
 	protected AbstractVoidNodeViewElement( String tagName ) {
 		super( StandardViewElements.NODE );
 		setTagName( tagName );
 	}
 
-	public String getTagName() {
-		return tagName;
-	}
-
-	protected void setTagName( @NonNull String tagName ) {
-		this.tagName = tagName;
-	}
-
-	@Override
-	public String getHtmlId() {
-		return htmlId;
-	}
-
-	@Override
-	public void setHtmlId( String htmlId ) {
-		this.htmlId = htmlId;
-	}
-
-	public void addCssClass( String... cssClass ) {
+	public HtmlViewElement addCssClass( String... cssClass ) {
 		CssClassAttributeUtils.addCssClass( attributes, cssClass );
+		return this;
 	}
 
 	public boolean hasCssClass( String cssClass ) {
 		return CssClassAttributeUtils.hasCssClass( attributes, cssClass );
 	}
 
-	public void removeCssClass( String... cssClass ) {
+	public HtmlViewElement removeCssClass( String... cssClass ) {
 		CssClassAttributeUtils.removeCssClass( attributes, cssClass );
+		return this;
 	}
 
 	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes( @NonNull Map<String, Object> attributes ) {
+	public HtmlViewElement setAttributes( @NonNull Map<String, Object> attributes ) {
 		this.attributes = attributes;
+		return this;
 	}
 
-	public void setAttribute( String attributeName, Object attributeValue ) {
+	public HtmlViewElement setAttribute( String attributeName, Object attributeValue ) {
 		attributes.put( attributeName, attributeValue );
+		return this;
 	}
 
-	public void addAttributes( Map<String, Object> attributes ) {
+	public HtmlViewElement addAttributes( Map<String, Object> attributes ) {
 		this.attributes.putAll( attributes );
+		return this;
 	}
 
-	public void removeAttribute( String attributeName ) {
+	public HtmlViewElement removeAttribute( String attributeName ) {
 		attributes.remove( attributeName );
+		return this;
 	}
 
 	@Override
