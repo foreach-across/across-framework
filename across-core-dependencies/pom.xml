@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2019 the original author or authors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <groupId>org.springframework.boot</groupId>
+        <version>2.1.7.RELEASE</version>
+    </parent>
+
+    <groupId>com.foreach.across</groupId>
+    <artifactId>across-core-dependencies</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Across Core Dependencies</description>
+    <url>https://across.dev</url>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Foreach</name>
+            <organization>Foreach</organization>
+            <organizationUrl>https://www.foreach.be</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://bitbucket.org/beforeach/across</url>
+    </scm>
+
+    <properties>
+        <!-- Overriden from spring-boot-dependencies -->
+        <junit-jupiter.version>5.4.2</junit-jupiter.version>
+        <!-- Across properties -->
+        <revision>5.0.0-TEST-SNAPSHOT</revision>
+        <maven.deploy.skip>false</maven.deploy.skip>
+        <foreach.common.version>1.1</foreach.common.version>
+        <commons-io.version>2.6</commons-io.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>across</id>
+            <name>Across Repository</name>
+            <url>https://repository.foreach.be/nexus/repository/public/</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Across core -->
+            <dependency>
+                <groupId>com.foreach.across</groupId>
+                <artifactId>across-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.foreach.across</groupId>
+                <artifactId>across-test</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.foreach.across</groupId>
+                <artifactId>across-web</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- Non-spring managed -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.1</version>
+            </dependency>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>3.1</version>
+            </dependency>
+
+            <!-- Foreach commons -->
+            <dependency>
+                <groupId>com.foreach.libs</groupId>
+                <artifactId>common-spring</artifactId>
+                <version>${foreach.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.foreach.libs</groupId>
+                <artifactId>common-web</artifactId>
+                <version>${foreach.common.version}</version>
+            </dependency>
+            <!-- Foreach commons -->
+            <dependency>
+                <groupId>com.foreach.libs</groupId>
+                <artifactId>common-concurrent</artifactId>
+                <version>${foreach.common.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.foreach.libs</groupId>
+                <artifactId>common-test</artifactId>
+                <version>${foreach.common.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-all</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Backwards compatibility with Spring Platform -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>bom</flattenMode>
+                    <pomElements>
+                        <pluginManagement>keep</pluginManagement>
+                        <properties>keep</properties>
+                        <repositories>remove</repositories>
+                    </pomElements>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>sonatype</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>sonatype</id>
+                    <name>Sonatype snapshots</name>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>sonatype</id>
+                    <name>Sonatype release staging</name>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>across</id>
+            <distributionManagement>
+                <repository>
+                    <id>across</id>
+                    <name>Across Releases Repository</name>
+                    <url>https://repository.foreach.be/nexus/repository/across-releases/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>across</id>
+                    <name>Across Snapshot Repository</name>
+                    <url>https://repository.foreach.be/nexus/repository/across-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+</project>

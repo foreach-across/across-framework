@@ -19,17 +19,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>across-web</artifactId>
-	<version>5.0.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
-
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>across-base</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>${revision}</version>
 	</parent>
 
+	<artifactId>across-web</artifactId>
+	<packaging>jar</packaging>
+
 	<name>${project.groupId}:${project.artifactId}</name>
+
+	<properties>
+		<maven.deploy.skip>false</maven.deploy.skip>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -41,12 +44,6 @@
 			<artifactId>jstl</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-		</dependency>
-		-->
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf-spring5</artifactId>
@@ -58,7 +55,6 @@
 		<dependency>
 			<groupId>com.foreach.across</groupId>
 			<artifactId>across-core</artifactId>
-			<version>5.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -70,8 +66,8 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>javax.servlet.jsp-api</artifactId>
+			<groupId>org.eclipse.jetty.orbit</groupId>
+			<artifactId>javax.servlet.jsp</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -127,7 +123,6 @@
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery</artifactId>
-			<version>3.3.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -141,5 +136,15 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
