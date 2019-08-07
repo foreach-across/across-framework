@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.foreach.across.autoconfigure.AcrossWebModuleAutoConfiguration
-
-org.springframework.boot.env.EnvironmentPostProcessor=com.foreach.across.autoconfigure.AcrossWebEnvironmentPostProcessor

@@ -1,5 +1,0 @@
-boot:
-  properties:
-    yaml:
-      one: yamlOne
-      two: yamlTwo

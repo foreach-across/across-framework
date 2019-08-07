@@ -2,10 +2,10 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/across-core" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/across-experimental" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/across-test" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/across-web" charset="UTF-8" />
-    <file url="PROJECT" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/across-base" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/across-base/across-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/across-base/across-test" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/across-base/across-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/across-standard-module-parent" charset="UTF-8" />
   </component>
 </project>
