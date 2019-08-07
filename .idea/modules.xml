@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/across-base.iml" filepath="$PROJECT_DIR$/across-base.iml" />
-      <module fileurl="file://$PROJECT_DIR$/across-core/across-core.iml" filepath="$PROJECT_DIR$/across-core/across-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/across-test/across-test.iml" filepath="$PROJECT_DIR$/across-test/across-test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/across-web/across-web.iml" filepath="$PROJECT_DIR$/across-web/across-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/across-base/across-base.iml" filepath="$PROJECT_DIR$/across-base/across-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/across-base/across-core/across-core.iml" filepath="$PROJECT_DIR$/across-base/across-core/across-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/across-core-dependencies.iml" filepath="$PROJECT_DIR$/across-core-dependencies.iml" />
+      <module fileurl="file://$PROJECT_DIR$/across-standard-module-parent/across-standard-module-parent.iml" filepath="$PROJECT_DIR$/across-standard-module-parent/across-standard-module-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/across-base/across-test/across-test.iml" filepath="$PROJECT_DIR$/across-base/across-test/across-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/across-base/across-web/across-web.iml" filepath="$PROJECT_DIR$/across-base/across-web/across-web.iml" />
     </modules>
   </component>
 </project>

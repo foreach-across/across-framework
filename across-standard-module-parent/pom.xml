@@ -22,7 +22,6 @@
         <groupId>com.foreach.across</groupId>
         <artifactId>across-core-dependencies</artifactId>
         <version>${revision}</version>
-        <relativePath>../across-core-dependencies</relativePath>
     </parent>
 
     <artifactId>across-standard-module-parent</artifactId>
@@ -56,6 +55,35 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <pomElements>
+                        <parent>resolve</parent>
+                        <dependencyManagement>remove</dependencyManagement>
+                        <pluginManagement>remove</pluginManagement>
+                        <modules>remove</modules>
+                        <properties>remove</properties>
+                        <build>remove</build>
+                    </pomElements>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -1,44 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <wildcardResourcePatterns>
-      <entry name="?*.properties" />
-      <entry name="?*.xml" />
-      <entry name="?*.gif" />
-      <entry name="?*.png" />
-      <entry name="?*.jpeg" />
-      <entry name="?*.jpg" />
-      <entry name="?*.html" />
-      <entry name="?*.dtd" />
-      <entry name="?*.tld" />
-      <entry name="?*.ftl" />
-    </wildcardResourcePatterns>
     <annotationProcessing>
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="across-web" />
-        <module name="across-core" />
         <module name="across-test" />
+        <module name="across-core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="across-base" target="1.8" />
       <module name="across-core" target="1.8" />
-      <module name="across-experimental" target="1.8" />
+      <module name="across-core-dependencies" target="1.8" />
+      <module name="across-standard-module-parent" target="1.8" />
       <module name="across-test" target="1.8" />
       <module name="across-web" target="1.8" />
     </bytecodeTargetLevel>
-  </component>
-  <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:unchecked" />
-    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="across-base" options="" />
-      <module name="across-core" options="" />
-      <module name="across-experimental" options="" />
-      <module name="across-test" options="" />
-      <module name="across-web" options="" />
-    </option>
   </component>
 </project>
