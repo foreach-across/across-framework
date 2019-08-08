@@ -156,14 +156,18 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
                 <inherited>false</inherited>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
-                    <flattenMode>bom</flattenMode>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
                     <pomElements>
                         <pluginManagement>keep</pluginManagement>
                         <properties>keep</properties>
                         <repositories>remove</repositories>
+                        <profiles>remove</profiles>
+                        <modules>remove</modules>
+                        <build>remove</build>
                     </pomElements>
                 </configuration>
                 <executions>

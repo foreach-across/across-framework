@@ -60,9 +60,8 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<!-- Across properties -->
-		<!--		<revision>5.0.0-TEST-SNAPSHOT</revision>-->
 		<maven.javadoc.skip>false</maven.javadoc.skip>
-		<maven.deploy.skip>true</maven.deploy.skip>
+		<maven.deploy.skip>false</maven.deploy.skip>
 	</properties>
 
 	<modules>
@@ -149,14 +148,17 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>flatten-maven-plugin</artifactId>
+					<version>1.1.0</version>
 					<configuration>
 						<updatePomFile>true</updatePomFile>
-						<flattenMode>oss</flattenMode>
+						<flattenMode>resolveCiFriendliesOnly</flattenMode>
 						<pomElements>
-							<dependencyManagement>expand</dependencyManagement>
-							<pluginManagement>expand</pluginManagement>
-							<properties>remove</properties>
+							<pluginManagement>keep</pluginManagement>
+							<properties>keep</properties>
 							<repositories>remove</repositories>
+							<profiles>remove</profiles>
+							<modules>remove</modules>
+							<build>remove</build>
 						</pomElements>
 					</configuration>
 					<executions>
@@ -281,6 +283,10 @@
 						<version>${junit-jupiter.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
