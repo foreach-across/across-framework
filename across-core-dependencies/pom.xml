@@ -30,7 +30,7 @@
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Across Core Dependencies</description>
+    <description>Across Core Dependencies.</description>
     <url>https://across.dev</url>
     <licenses>
         <license>
@@ -58,7 +58,11 @@
         <revision>5.0.0-TEST-SNAPSHOT</revision>
         <maven.deploy.skip>false</maven.deploy.skip>
         <foreach.common.version>1.1</foreach.common.version>
+        <commons-collections4.version>4.1</commons-collections4.version>
         <commons-io.version>2.6</commons-io.version>
+        <liquibase.version>3.7.0</liquibase.version>
+        <lombok-maven-plugin.version>1.16.18.0</lombok-maven-plugin.version>
+        <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
     </properties>
 
     <repositories>
@@ -92,12 +96,46 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
-                <version>4.1</version>
+                <version>${commons-collections4.version}</version>
             </dependency>
             <dependency>
                 <groupId>cglib</groupId>
                 <artifactId>cglib</artifactId>
                 <version>3.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mattbertolini</groupId>
+                <artifactId>liquibase-slf4j</artifactId>
+                <version>1.2.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.liquibase</groupId>
+                        <artifactId>liquibase-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Overrides for backwards compatibility -->
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc6</artifactId>
+                <version>11.2.0</version>
+            </dependency>
+            <!-- Newest MySQL driver has timezone issues -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.47</version>
+            </dependency>
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${liquibase.version}</version>
             </dependency>
 
             <!-- Foreach commons -->
@@ -111,13 +149,11 @@
                 <artifactId>common-web</artifactId>
                 <version>${foreach.common.version}</version>
             </dependency>
-            <!-- Foreach commons -->
             <dependency>
                 <groupId>com.foreach.libs</groupId>
                 <artifactId>common-concurrent</artifactId>
                 <version>${foreach.common.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.foreach.libs</groupId>
                 <artifactId>common-test</artifactId>
@@ -150,13 +186,23 @@
                         <target>1.8</target>
                     </configuration>
                 </plugin>
+                <!-- Non-spring managed plugins -->
+                <plugin>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok-maven-plugin</artifactId>
+                    <version>${lombok-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>${flatten-maven-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.1.0</version>
                 <inherited>false</inherited>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
