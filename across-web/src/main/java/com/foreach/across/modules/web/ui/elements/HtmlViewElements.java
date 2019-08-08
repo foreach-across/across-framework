@@ -29,449 +29,449 @@ public interface HtmlViewElements
 {
 	// -- begin generated section
 
-	default VoidNodeViewElement area() {
+	static VoidNodeViewElement area() {
 		return new VoidNodeViewElement( "area" );
 	}
 
-	default VoidNodeViewElement base() {
+	static VoidNodeViewElement base() {
 		return new VoidNodeViewElement( "base" );
 	}
 
-	default VoidNodeViewElement br() {
+	static VoidNodeViewElement br() {
 		return new VoidNodeViewElement( "br" );
 	}
 
-	default VoidNodeViewElement col() {
+	static VoidNodeViewElement col() {
 		return new VoidNodeViewElement( "col" );
 	}
 
-	default VoidNodeViewElement embed() {
+	static VoidNodeViewElement embed() {
 		return new VoidNodeViewElement( "embed" );
 	}
 
-	default VoidNodeViewElement hr() {
+	static VoidNodeViewElement hr() {
 		return new VoidNodeViewElement( "hr" );
 	}
 
-	default VoidNodeViewElement img() {
+	static VoidNodeViewElement img() {
 		return new VoidNodeViewElement( "img" );
 	}
 
-	default VoidNodeViewElement input() {
+	static VoidNodeViewElement input() {
 		return new VoidNodeViewElement( "input" );
 	}
 
-	default VoidNodeViewElement keygen() {
+	static VoidNodeViewElement keygen() {
 		return new VoidNodeViewElement( "keygen" );
 	}
 
-	default VoidNodeViewElement link() {
+	static VoidNodeViewElement link() {
 		return new VoidNodeViewElement( "link" );
 	}
 
-	default VoidNodeViewElement meta() {
+	static VoidNodeViewElement meta() {
 		return new VoidNodeViewElement( "meta" );
 	}
 
-	default VoidNodeViewElement param() {
+	static VoidNodeViewElement param() {
 		return new VoidNodeViewElement( "param" );
 	}
 
-	default VoidNodeViewElement source() {
+	static VoidNodeViewElement source() {
 		return new VoidNodeViewElement( "source" );
 	}
 
-	default VoidNodeViewElement track() {
+	static VoidNodeViewElement track() {
 		return new VoidNodeViewElement( "track" );
 	}
 
-	default VoidNodeViewElement wbr() {
+	static VoidNodeViewElement wbr() {
 		return new VoidNodeViewElement( "wbr" );
 	}
 
-	default NodeViewElement a( ViewElement... children ) {
+	static NodeViewElement a( ViewElement... children ) {
 		return createNode( "a", children );
 	}
 
-	default NodeViewElement abbr( ViewElement... children ) {
+	static NodeViewElement abbr( ViewElement... children ) {
 		return createNode( "abbr", children );
 	}
 
-	default NodeViewElement address( ViewElement... children ) {
+	static NodeViewElement address( ViewElement... children ) {
 		return createNode( "address", children );
 	}
 
-	default NodeViewElement article( ViewElement... children ) {
+	static NodeViewElement article( ViewElement... children ) {
 		return createNode( "article", children );
 	}
 
-	default NodeViewElement aside( ViewElement... children ) {
+	static NodeViewElement aside( ViewElement... children ) {
 		return createNode( "aside", children );
 	}
 
-	default NodeViewElement audio( ViewElement... children ) {
+	static NodeViewElement audio( ViewElement... children ) {
 		return createNode( "audio", children );
 	}
 
-	default NodeViewElement b( ViewElement... children ) {
+	static NodeViewElement b( ViewElement... children ) {
 		return createNode( "b", children );
 	}
 
-	default NodeViewElement bdi( ViewElement... children ) {
+	static NodeViewElement bdi( ViewElement... children ) {
 		return createNode( "bdi", children );
 	}
 
-	default NodeViewElement bdo( ViewElement... children ) {
+	static NodeViewElement bdo( ViewElement... children ) {
 		return createNode( "bdo", children );
 	}
 
-	default NodeViewElement blockquote( ViewElement... children ) {
+	static NodeViewElement blockquote( ViewElement... children ) {
 		return createNode( "blockquote", children );
 	}
 
-	default NodeViewElement body( ViewElement... children ) {
+	static NodeViewElement body( ViewElement... children ) {
 		return createNode( "body", children );
 	}
 
-	default NodeViewElement button( ViewElement... children ) {
+	static NodeViewElement button( ViewElement... children ) {
 		return createNode( "button", children );
 	}
 
-	default NodeViewElement canvas( ViewElement... children ) {
+	static NodeViewElement canvas( ViewElement... children ) {
 		return createNode( "canvas", children );
 	}
 
-	default NodeViewElement caption( ViewElement... children ) {
+	static NodeViewElement caption( ViewElement... children ) {
 		return createNode( "caption", children );
 	}
 
-	default NodeViewElement cite( ViewElement... children ) {
+	static NodeViewElement cite( ViewElement... children ) {
 		return createNode( "cite", children );
 	}
 
-	default NodeViewElement code( ViewElement... children ) {
+	static NodeViewElement code( ViewElement... children ) {
 		return createNode( "code", children );
 	}
 
-	default NodeViewElement colgroup( ViewElement... children ) {
+	static NodeViewElement colgroup( ViewElement... children ) {
 		return createNode( "colgroup", children );
 	}
 
-	default NodeViewElement datalist( ViewElement... children ) {
+	static NodeViewElement datalist( ViewElement... children ) {
 		return createNode( "datalist", children );
 	}
 
-	default NodeViewElement dd( ViewElement... children ) {
+	static NodeViewElement dd( ViewElement... children ) {
 		return createNode( "dd", children );
 	}
 
-	default NodeViewElement del( ViewElement... children ) {
+	static NodeViewElement del( ViewElement... children ) {
 		return createNode( "del", children );
 	}
 
-	default NodeViewElement details( ViewElement... children ) {
+	static NodeViewElement details( ViewElement... children ) {
 		return createNode( "details", children );
 	}
 
-	default NodeViewElement dfn( ViewElement... children ) {
+	static NodeViewElement dfn( ViewElement... children ) {
 		return createNode( "dfn", children );
 	}
 
-	default NodeViewElement dialog( ViewElement... children ) {
+	static NodeViewElement dialog( ViewElement... children ) {
 		return createNode( "dialog", children );
 	}
 
-	default NodeViewElement div( ViewElement... children ) {
+	static NodeViewElement div( ViewElement... children ) {
 		return createNode( "div", children );
 	}
 
-	default NodeViewElement dl( ViewElement... children ) {
+	static NodeViewElement dl( ViewElement... children ) {
 		return createNode( "dl", children );
 	}
 
-	default NodeViewElement dt( ViewElement... children ) {
+	static NodeViewElement dt( ViewElement... children ) {
 		return createNode( "dt", children );
 	}
 
-	default NodeViewElement em( ViewElement... children ) {
+	static NodeViewElement em( ViewElement... children ) {
 		return createNode( "em", children );
 	}
 
-	default NodeViewElement fieldset( ViewElement... children ) {
+	static NodeViewElement fieldset( ViewElement... children ) {
 		return createNode( "fieldset", children );
 	}
 
-	default NodeViewElement figcaption( ViewElement... children ) {
+	static NodeViewElement figcaption( ViewElement... children ) {
 		return createNode( "figcaption", children );
 	}
 
-	default NodeViewElement figure( ViewElement... children ) {
+	static NodeViewElement figure( ViewElement... children ) {
 		return createNode( "figure", children );
 	}
 
-	default NodeViewElement footer( ViewElement... children ) {
+	static NodeViewElement footer( ViewElement... children ) {
 		return createNode( "footer", children );
 	}
 
-	default NodeViewElement form( ViewElement... children ) {
+	static NodeViewElement form( ViewElement... children ) {
 		return createNode( "form", children );
 	}
 
-	default NodeViewElement h1( ViewElement... children ) {
+	static NodeViewElement h1( ViewElement... children ) {
 		return createNode( "h1", children );
 	}
 
-	default NodeViewElement h2( ViewElement... children ) {
+	static NodeViewElement h2( ViewElement... children ) {
 		return createNode( "h2", children );
 	}
 
-	default NodeViewElement h3( ViewElement... children ) {
+	static NodeViewElement h3( ViewElement... children ) {
 		return createNode( "h3", children );
 	}
 
-	default NodeViewElement h4( ViewElement... children ) {
+	static NodeViewElement h4( ViewElement... children ) {
 		return createNode( "h4", children );
 	}
 
-	default NodeViewElement h5( ViewElement... children ) {
+	static NodeViewElement h5( ViewElement... children ) {
 		return createNode( "h5", children );
 	}
 
-	default NodeViewElement h6( ViewElement... children ) {
+	static NodeViewElement h6( ViewElement... children ) {
 		return createNode( "h6", children );
 	}
 
-	default NodeViewElement head( ViewElement... children ) {
+	static NodeViewElement head( ViewElement... children ) {
 		return createNode( "head", children );
 	}
 
-	default NodeViewElement header( ViewElement... children ) {
+	static NodeViewElement header( ViewElement... children ) {
 		return createNode( "header", children );
 	}
 
-	default NodeViewElement html( ViewElement... children ) {
+	static NodeViewElement html( ViewElement... children ) {
 		return createNode( "html", children );
 	}
 
-	default NodeViewElement i( ViewElement... children ) {
+	static NodeViewElement i( ViewElement... children ) {
 		return createNode( "i", children );
 	}
 
-	default NodeViewElement iframe( ViewElement... children ) {
+	static NodeViewElement iframe( ViewElement... children ) {
 		return createNode( "iframe", children );
 	}
 
-	default NodeViewElement ins( ViewElement... children ) {
+	static NodeViewElement ins( ViewElement... children ) {
 		return createNode( "ins", children );
 	}
 
-	default NodeViewElement kbd( ViewElement... children ) {
+	static NodeViewElement kbd( ViewElement... children ) {
 		return createNode( "kbd", children );
 	}
 
-	default NodeViewElement label( ViewElement... children ) {
+	static NodeViewElement label( ViewElement... children ) {
 		return createNode( "label", children );
 	}
 
-	default NodeViewElement legend( ViewElement... children ) {
+	static NodeViewElement legend( ViewElement... children ) {
 		return createNode( "legend", children );
 	}
 
-	default NodeViewElement li( ViewElement... children ) {
+	static NodeViewElement li( ViewElement... children ) {
 		return createNode( "li", children );
 	}
 
-	default NodeViewElement main( ViewElement... children ) {
+	static NodeViewElement main( ViewElement... children ) {
 		return createNode( "main", children );
 	}
 
-	default NodeViewElement map( ViewElement... children ) {
+	static NodeViewElement map( ViewElement... children ) {
 		return createNode( "map", children );
 	}
 
-	default NodeViewElement mark( ViewElement... children ) {
+	static NodeViewElement mark( ViewElement... children ) {
 		return createNode( "mark", children );
 	}
 
-	default NodeViewElement menu( ViewElement... children ) {
+	static NodeViewElement menu( ViewElement... children ) {
 		return createNode( "menu", children );
 	}
 
-	default NodeViewElement menuitem( ViewElement... children ) {
+	static NodeViewElement menuitem( ViewElement... children ) {
 		return createNode( "menuitem", children );
 	}
 
-	default NodeViewElement meter( ViewElement... children ) {
+	static NodeViewElement meter( ViewElement... children ) {
 		return createNode( "meter", children );
 	}
 
-	default NodeViewElement nav( ViewElement... children ) {
+	static NodeViewElement nav( ViewElement... children ) {
 		return createNode( "nav", children );
 	}
 
-	default NodeViewElement noscript( ViewElement... children ) {
+	static NodeViewElement noscript( ViewElement... children ) {
 		return createNode( "noscript", children );
 	}
 
-	default NodeViewElement object( ViewElement... children ) {
+	static NodeViewElement object( ViewElement... children ) {
 		return createNode( "object", children );
 	}
 
-	default NodeViewElement ol( ViewElement... children ) {
+	static NodeViewElement ol( ViewElement... children ) {
 		return createNode( "ol", children );
 	}
 
-	default NodeViewElement optgroup( ViewElement... children ) {
+	static NodeViewElement optgroup( ViewElement... children ) {
 		return createNode( "optgroup", children );
 	}
 
-	default NodeViewElement option( ViewElement... children ) {
+	static NodeViewElement option( ViewElement... children ) {
 		return createNode( "option", children );
 	}
 
-	default NodeViewElement output( ViewElement... children ) {
+	static NodeViewElement output( ViewElement... children ) {
 		return createNode( "output", children );
 	}
 
-	default NodeViewElement p( ViewElement... children ) {
+	static NodeViewElement p( ViewElement... children ) {
 		return createNode( "p", children );
 	}
 
-	default NodeViewElement pre( ViewElement... children ) {
+	static NodeViewElement pre( ViewElement... children ) {
 		return createNode( "pre", children );
 	}
 
-	default NodeViewElement progress( ViewElement... children ) {
+	static NodeViewElement progress( ViewElement... children ) {
 		return createNode( "progress", children );
 	}
 
-	default NodeViewElement q( ViewElement... children ) {
+	static NodeViewElement q( ViewElement... children ) {
 		return createNode( "q", children );
 	}
 
-	default NodeViewElement rp( ViewElement... children ) {
+	static NodeViewElement rp( ViewElement... children ) {
 		return createNode( "rp", children );
 	}
 
-	default NodeViewElement rt( ViewElement... children ) {
+	static NodeViewElement rt( ViewElement... children ) {
 		return createNode( "rt", children );
 	}
 
-	default NodeViewElement ruby( ViewElement... children ) {
+	static NodeViewElement ruby( ViewElement... children ) {
 		return createNode( "ruby", children );
 	}
 
-	default NodeViewElement s( ViewElement... children ) {
+	static NodeViewElement s( ViewElement... children ) {
 		return createNode( "s", children );
 	}
 
-	default NodeViewElement samp( ViewElement... children ) {
+	static NodeViewElement samp( ViewElement... children ) {
 		return createNode( "samp", children );
 	}
 
-	default NodeViewElement script( ViewElement... children ) {
+	static NodeViewElement script( ViewElement... children ) {
 		return createNode( "script", children );
 	}
 
-	default NodeViewElement section( ViewElement... children ) {
+	static NodeViewElement section( ViewElement... children ) {
 		return createNode( "section", children );
 	}
 
-	default NodeViewElement select( ViewElement... children ) {
+	static NodeViewElement select( ViewElement... children ) {
 		return createNode( "select", children );
 	}
 
-	default NodeViewElement small( ViewElement... children ) {
+	static NodeViewElement small( ViewElement... children ) {
 		return createNode( "small", children );
 	}
 
-	default NodeViewElement span( ViewElement... children ) {
+	static NodeViewElement span( ViewElement... children ) {
 		return createNode( "span", children );
 	}
 
-	default NodeViewElement strong( ViewElement... children ) {
+	static NodeViewElement strong( ViewElement... children ) {
 		return createNode( "strong", children );
 	}
 
-	default NodeViewElement style( ViewElement... children ) {
+	static NodeViewElement style( ViewElement... children ) {
 		return createNode( "style", children );
 	}
 
-	default NodeViewElement sub( ViewElement... children ) {
+	static NodeViewElement sub( ViewElement... children ) {
 		return createNode( "sub", children );
 	}
 
-	default NodeViewElement summary( ViewElement... children ) {
+	static NodeViewElement summary( ViewElement... children ) {
 		return createNode( "summary", children );
 	}
 
-	default NodeViewElement sup( ViewElement... children ) {
+	static NodeViewElement sup( ViewElement... children ) {
 		return createNode( "sup", children );
 	}
 
-	default NodeViewElement table( ViewElement... children ) {
+	static NodeViewElement table( ViewElement... children ) {
 		return createNode( "table", children );
 	}
 
-	default NodeViewElement tbody( ViewElement... children ) {
+	static NodeViewElement tbody( ViewElement... children ) {
 		return createNode( "tbody", children );
 	}
 
-	default NodeViewElement td( ViewElement... children ) {
+	static NodeViewElement td( ViewElement... children ) {
 		return createNode( "td", children );
 	}
 
-	default NodeViewElement textarea( ViewElement... children ) {
+	static NodeViewElement textarea( ViewElement... children ) {
 		return createNode( "textarea", children );
 	}
 
-	default NodeViewElement tfoot( ViewElement... children ) {
+	static NodeViewElement tfoot( ViewElement... children ) {
 		return createNode( "tfoot", children );
 	}
 
-	default NodeViewElement th( ViewElement... children ) {
+	static NodeViewElement th( ViewElement... children ) {
 		return createNode( "th", children );
 	}
 
-	default NodeViewElement thead( ViewElement... children ) {
+	static NodeViewElement thead( ViewElement... children ) {
 		return createNode( "thead", children );
 	}
 
-	default NodeViewElement time( ViewElement... children ) {
+	static NodeViewElement time( ViewElement... children ) {
 		return createNode( "time", children );
 	}
 
-	default NodeViewElement title( ViewElement... children ) {
+	static NodeViewElement title( ViewElement... children ) {
 		return createNode( "title", children );
 	}
 
-	default NodeViewElement tr( ViewElement... children ) {
+	static NodeViewElement tr( ViewElement... children ) {
 		return createNode( "tr", children );
 	}
 
-	default NodeViewElement u( ViewElement... children ) {
+	static NodeViewElement u( ViewElement... children ) {
 		return createNode( "u", children );
 	}
 
-	default NodeViewElement ul( ViewElement... children ) {
+	static NodeViewElement ul( ViewElement... children ) {
 		return createNode( "ul", children );
 	}
 
-	default NodeViewElement var( ViewElement... children ) {
+	static NodeViewElement var( ViewElement... children ) {
 		return createNode( "var", children );
 	}
 
-	default NodeViewElement video( ViewElement... children ) {
+	static NodeViewElement video( ViewElement... children ) {
 		return createNode( "video", children );
 	}
 
 	// -- end generated section
 
-	default TextViewElement text( String text ) {
+	static TextViewElement text( String text ) {
 		return new TextViewElement( text );
 	}
 
-	default NodeViewElement createNode( String tagName, ViewElement... children ) {
+	static NodeViewElement createNode( String tagName, ViewElement... children ) {
 		NodeViewElement node = new NodeViewElement( tagName );
 		if ( children.length > 0 ) {
 			node.addChildren( Arrays.asList( children ) );

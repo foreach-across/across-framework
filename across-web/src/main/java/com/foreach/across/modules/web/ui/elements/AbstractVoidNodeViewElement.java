@@ -53,7 +53,7 @@ public abstract class AbstractVoidNodeViewElement extends ViewElementSupport imp
 		setTagName( tagName );
 	}
 
-	public HtmlViewElement addCssClass( String... cssClass ) {
+	public AbstractVoidNodeViewElement addCssClass( String... cssClass ) {
 		CssClassAttributeUtils.addCssClass( attributes, cssClass );
 		return this;
 	}
@@ -62,7 +62,7 @@ public abstract class AbstractVoidNodeViewElement extends ViewElementSupport imp
 		return CssClassAttributeUtils.hasCssClass( attributes, cssClass );
 	}
 
-	public HtmlViewElement removeCssClass( String... cssClass ) {
+	public AbstractVoidNodeViewElement removeCssClass( String... cssClass ) {
 		CssClassAttributeUtils.removeCssClass( attributes, cssClass );
 		return this;
 	}
@@ -71,22 +71,22 @@ public abstract class AbstractVoidNodeViewElement extends ViewElementSupport imp
 		return attributes;
 	}
 
-	public HtmlViewElement setAttributes( @NonNull Map<String, Object> attributes ) {
+	public AbstractVoidNodeViewElement setAttributes( @NonNull Map<String, Object> attributes ) {
 		this.attributes = attributes;
 		return this;
 	}
 
-	public HtmlViewElement setAttribute( String attributeName, Object attributeValue ) {
+	public AbstractVoidNodeViewElement setAttribute( String attributeName, Object attributeValue ) {
 		attributes.put( attributeName, attributeValue );
 		return this;
 	}
 
-	public HtmlViewElement addAttributes( Map<String, Object> attributes ) {
+	public AbstractVoidNodeViewElement addAttributes( Map<String, Object> attributes ) {
 		this.attributes.putAll( attributes );
 		return this;
 	}
 
-	public HtmlViewElement removeAttribute( String attributeName ) {
+	public AbstractVoidNodeViewElement removeAttribute( String attributeName ) {
 		attributes.remove( attributeName );
 		return this;
 	}
@@ -97,7 +97,7 @@ public abstract class AbstractVoidNodeViewElement extends ViewElementSupport imp
 	}
 
 	@Override
-	public <V> V getAttribute( String attributeName, Class<V> expectedType ) {
+	public <V, U extends V> U getAttribute( String attributeName, Class<V> expectedType ) {
 		return returnIfType( attributes.get( attributeName ), expectedType );
 	}
 
@@ -105,8 +105,26 @@ public abstract class AbstractVoidNodeViewElement extends ViewElementSupport imp
 		return attributes.containsKey( attributeName );
 	}
 
+	@Override
+	public AbstractVoidNodeViewElement setName( String name ) {
+		super.setName( name );
+		return this;
+	}
+
+	@Override
+	public AbstractVoidNodeViewElement setCustomTemplate( String customTemplate ) {
+		super.setCustomTemplate( customTemplate );
+		return this;
+	}
+
+	@Override
+	protected AbstractVoidNodeViewElement setElementType( String elementType ) {
+		super.setElementType( elementType );
+		return this;
+	}
+
 	@SuppressWarnings("unchecked")
-	protected <V> V returnIfType( Object value, Class<V> elementType ) {
-		return elementType.isInstance( value ) ? (V) value : null;
+	protected <V, U extends V> U returnIfType( Object value, Class<V> elementType ) {
+		return elementType.isInstance( value ) ? (U) value : null;
 	}
 }

@@ -50,7 +50,7 @@ public interface HtmlViewElement extends MutableViewElement
 
 	Object getAttribute( String attributeName );
 
-	<V> V getAttribute( String attributeName, Class<V> expectedType );
+	<V, U extends V> U getAttribute( String attributeName, Class<V> expectedType );
 
 	boolean hasAttribute( String attributeName );
 }

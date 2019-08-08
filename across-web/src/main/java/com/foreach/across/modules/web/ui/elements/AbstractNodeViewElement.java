@@ -100,7 +100,7 @@ public abstract class AbstractNodeViewElement extends ContainerViewElement imple
 	}
 
 	@Override
-	public <V> V getAttribute( String attributeName, Class<V> expectedType ) {
+	public <V, U extends V> U getAttribute( String attributeName, Class<V> expectedType ) {
 		return returnIfType( attributes.get( attributeName ), expectedType );
 	}
 
@@ -154,7 +154,7 @@ public abstract class AbstractNodeViewElement extends ContainerViewElement imple
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <V> V returnIfType( Object value, Class<V> elementType ) {
-		return elementType.isInstance( value ) ? (V) value : null;
+	protected <V, U extends V> U returnIfType( Object value, Class<V> elementType ) {
+		return elementType.isInstance( value ) ? (U) value : null;
 	}
 }

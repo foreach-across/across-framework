@@ -153,13 +153,13 @@ class GenerateHtmlViewElements
 	}
 
 	private void writeVoidNode( String tag ) {
-		out.print( "default VoidNodeViewElement " + tag + "() {\n" +
+		out.print( "static VoidNodeViewElement " + tag + "() {\n" +
 				           "\t\treturn new VoidNodeViewElement( \"" + tag + "\" );\n" +
 				           "\t}\n" );
 	}
 
 	private void writeNode( String tag ) {
-		out.print( "default NodeViewElement " + tag + "( ViewElement... children ) {\n" +
+		out.print( "static NodeViewElement " + tag + "( ViewElement... children ) {\n" +
 				           "\t\treturn createNode( \"" + tag + "\", children );\n" +
 				           "\t}" );
 	}

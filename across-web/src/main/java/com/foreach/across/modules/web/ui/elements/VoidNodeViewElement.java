@@ -57,7 +57,7 @@ public class VoidNodeViewElement extends AbstractVoidNodeViewElement
 	}
 
 	@Override
-	public HtmlViewElement setAttributes( @NonNull Map<String, Object> attributes ) {
+	public VoidNodeViewElement setAttributes( @NonNull Map<String, Object> attributes ) {
 		return (VoidNodeViewElement) super.setAttributes( attributes );
 	}
 
