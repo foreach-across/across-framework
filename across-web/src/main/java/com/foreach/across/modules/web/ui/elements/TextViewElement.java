@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.ui.StandardViewElements;
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementSupport;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Getter
 @Setter
-public class TextViewElement extends ViewElementSupport implements ConfigurableTextViewElement
+public class TextViewElement extends ViewElementSupport implements ConfigurableTextViewElement, ViewElement.WitherSetter<ViewElement>
 {
 	public static final String ELEMENT_TYPE = StandardViewElements.TEXT;
 
@@ -69,6 +70,37 @@ public class TextViewElement extends ViewElementSupport implements ConfigurableT
 	@Override
 	public TextViewElement setCustomTemplate( String customTemplate ) {
 		return (TextViewElement) super.setCustomTemplate( customTemplate );
+	}
+
+	@Override
+	public TextViewElement set( WitherSetter... setters ) {
+		super.set( setters );
+		return this;
+	}
+
+	@Override
+	public TextViewElement remove( WitherRemover... functions ) {
+		super.remove( functions );
+		return this;
+	}
+
+	/**
+	 * If the target implements {@link ConfigurableTextViewElement} then the text property will be copied.
+	 * Else if the target is a {@link ContainerViewElement} the element itself will be added as the first child.
+	 */
+	@Override
+	public void applyTo( ViewElement target ) {
+		if ( target instanceof ConfigurableTextViewElement ) {
+			( (ConfigurableTextViewElement) target ).setText( text );
+		}
+		else if ( target instanceof ContainerViewElement ) {
+			if ( text != null ) {
+				( (ContainerViewElement) target ).addFirstChild( this );
+			}
+		}
+		else {
+			throw new IllegalArgumentException( "Unable to configure text on " + target );
+		}
 	}
 
 	/**

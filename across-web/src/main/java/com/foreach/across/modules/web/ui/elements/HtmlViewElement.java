@@ -16,7 +16,12 @@
 package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.ui.MutableViewElement;
+import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.web.ui.elements.support.AttributeWitherFunction;
+import com.foreach.across.modules.web.ui.elements.support.CssClassWitherFunction;
+import lombok.NonNull;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -53,4 +58,93 @@ public interface HtmlViewElement extends MutableViewElement
 	<V, U extends V> U getAttribute( String attributeName, Class<V> expectedType );
 
 	boolean hasAttribute( String attributeName );
+
+	/**
+	 * Nested interface which contains wither functions specific for HTML view elements.
+	 */
+	interface Functions
+	{
+		/**
+		 * Set internal {@link #getTagName()} property.
+		 */
+		static WitherSetter tagName( String name ) {
+			return e -> {
+				if ( e instanceof AbstractNodeViewElement ) {
+					( (AbstractNodeViewElement) e ).setTagName( name );
+				}
+				else if ( e instanceof AbstractVoidNodeViewElement ) {
+					( (AbstractVoidNodeViewElement) e ).setTagName( name );
+				}
+				else {
+					throw new IllegalArgumentException( "Setting tag name only possible on AbstractNodeViewElement or AbstractVoidNodeViewElement" );
+				}
+			};
+		}
+
+		/**
+		 * Set internal {@link #getHtmlId()} property.
+		 */
+		static WitherSetter htmlId( String id ) {
+			return e -> ( (HtmlViewElement) e ).setHtmlId( id );
+		}
+
+		/**
+		 * Configure one or more CSS classes. Can also be used for removal.
+		 */
+		static CssClassWitherFunction css( String... cssClassNames ) {
+			return new CssClassWitherFunction( cssClassNames );
+		}
+
+		/**
+		 * Configure a {@code data-} attribute value.
+		 */
+		static WitherSetter<HtmlViewElement> data( String attributeName, Object attributeValue ) {
+			return data( attributeName ).withValue( attributeValue );
+		}
+
+		/**
+		 * Configure a {@code data-} attribute value. Can be used for getting the attribute value,
+		 * removing the attribute, or setting it using {@link AttributeWitherFunction#withValue(Object)}.
+		 */
+		static AttributeWitherFunction<Object> data( @NonNull String attributeName ) {
+			return attribute( "data-" + attributeName );
+		}
+
+		/**
+		 * Configure an {@code aria-} attribute value.
+		 */
+		static WitherSetter<HtmlViewElement> aria( String attributeName, Object attributeValue ) {
+			return aria( attributeName ).withValue( attributeValue );
+		}
+
+		/**
+		 * Configure a {@code aria-} attribute value. Can be used for getting the attribute value,
+		 * removing the attribute, or setting it using {@link AttributeWitherFunction#withValue(Object)}.
+		 */
+		static AttributeWitherFunction<Object> aria( @NonNull String attributeName ) {
+			return attribute( "aria-" + attributeName );
+		}
+
+		/**
+		 * Configure a custom attribute value.
+		 */
+		static WitherSetter<HtmlViewElement> attribute( String attributeName, Object attributeValue ) {
+			return new AttributeWitherFunction<>( attributeName ).withValue( attributeValue );
+		}
+
+		/**
+		 * Configure a custom attribute value. Can be used for getting the attribute value,
+		 * removing the attribute, or setting it using {@link AttributeWitherFunction#withValue(Object)}.
+		 */
+		static AttributeWitherFunction<Object> attribute( String attributeName ) {
+			return new AttributeWitherFunction<>( attributeName );
+		}
+
+		/**
+		 * Add children to a container element.
+		 */
+		static WitherSetter<ContainerViewElement> children( ViewElement... elements ) {
+			return container -> container.addChildren( Arrays.asList( elements ) );
+		}
+	}
 }

@@ -93,4 +93,16 @@ public class TemplateViewElement extends ViewElementSupport
 	protected <V> V returnIfType( Object value, Class<V> elementType ) {
 		return elementType.isInstance( value ) ? (V) value : null;
 	}
+
+	@Override
+	public TemplateViewElement set( WitherSetter... setters ) {
+		super.set( setters );
+		return this;
+	}
+
+	@Override
+	public TemplateViewElement remove( WitherRemover... functions ) {
+		super.remove( functions );
+		return this;
+	}
 }

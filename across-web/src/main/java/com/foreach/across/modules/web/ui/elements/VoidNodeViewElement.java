@@ -90,4 +90,16 @@ public class VoidNodeViewElement extends AbstractVoidNodeViewElement
 	protected VoidNodeViewElement setElementType( String elementType ) {
 		return (VoidNodeViewElement) super.setElementType( elementType );
 	}
+
+	@Override
+	public VoidNodeViewElement set( WitherSetter... setters ) {
+		super.set( setters );
+		return this;
+	}
+
+	@Override
+	public VoidNodeViewElement remove( WitherRemover... functions ) {
+		super.remove( functions );
+		return this;
+	}
 }

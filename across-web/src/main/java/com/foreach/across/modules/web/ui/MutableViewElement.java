@@ -20,4 +20,31 @@ public interface MutableViewElement extends ViewElement
 	MutableViewElement setName( String name );
 
 	MutableViewElement setCustomTemplate( String customTemplate );
+
+	/**
+	 * Common {@link Wither} functions for the default {@link MutableViewElement} properties.
+	 */
+	interface Functions
+	{
+		/**
+		 * Set internal {@link #getName()} property.
+		 */
+		static WitherSetter elementName( String name ) {
+			return e -> ( (MutableViewElement) e ).setName( name );
+		}
+
+		/**
+		 * Set internal {@link #getCustomTemplate()} ()} property.
+		 */
+		static WitherSetter customTemplate( String template ) {
+			return e -> ( (MutableViewElement) e ).setCustomTemplate( template );
+		}
+
+		/**
+		 * Set internal {@link #getElementType()} property.
+		 */
+		static WitherSetter elementType( String elementType ) {
+			return e -> ( (ViewElementSupport) e ).setElementType( elementType );
+		}
+	}
 }

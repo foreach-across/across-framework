@@ -149,4 +149,16 @@ public abstract class AbstractTextNodeViewElement extends AbstractNodeViewElemen
 
 		return super.getChildren();
 	}
+
+	@Override
+	public AbstractTextNodeViewElement set( WitherSetter... setters ) {
+		super.set( setters );
+		return this;
+	}
+
+	@Override
+	public AbstractTextNodeViewElement remove( WitherRemover... functions ) {
+		super.remove( functions );
+		return this;
+	}
 }

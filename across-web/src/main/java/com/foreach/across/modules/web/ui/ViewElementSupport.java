@@ -54,4 +54,16 @@ public abstract class ViewElementSupport implements MutableViewElement
 		this.elementType = elementType;
 		return this;
 	}
+
+	@Override
+	public ViewElementSupport set( WitherSetter... setters ) {
+		MutableViewElement.super.set( setters );
+		return this;
+	}
+
+	@Override
+	public ViewElementSupport remove( WitherRemover... functions ) {
+		MutableViewElement.super.remove( functions );
+		return this;
+	}
 }

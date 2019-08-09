@@ -127,4 +127,21 @@ public abstract class AbstractVoidNodeViewElement extends ViewElementSupport imp
 	protected <V, U extends V> U returnIfType( Object value, Class<V> elementType ) {
 		return elementType.isInstance( value ) ? (U) value : null;
 	}
+
+	@Override
+	public AbstractVoidNodeViewElement set( WitherSetter... setters ) {
+		super.set( setters );
+		return this;
+	}
+
+	@Override
+	public AbstractVoidNodeViewElement remove( WitherRemover... functions ) {
+		super.remove( functions );
+		return this;
+	}
+
+	@Override
+	public <U> U get( WitherGetter<?, U> function ) {
+		return super.get( function );
+	}
 }

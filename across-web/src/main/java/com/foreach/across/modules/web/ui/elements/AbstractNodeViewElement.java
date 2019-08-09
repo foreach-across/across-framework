@@ -157,4 +157,21 @@ public abstract class AbstractNodeViewElement extends ContainerViewElement imple
 	protected <V, U extends V> U returnIfType( Object value, Class<V> elementType ) {
 		return elementType.isInstance( value ) ? (U) value : null;
 	}
+
+	@Override
+	public AbstractNodeViewElement set( WitherSetter... setters ) {
+		super.set( setters );
+		return this;
+	}
+
+	@Override
+	public AbstractNodeViewElement remove( WitherRemover... functions ) {
+		super.remove( functions );
+		return this;
+	}
+
+	@Override
+	public <U> U get( WitherGetter<?, U> function ) {
+		return super.get( function );
+	}
 }

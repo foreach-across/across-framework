@@ -119,6 +119,18 @@ public class NodeViewElement extends AbstractNodeViewElement
 	}
 
 	@Override
+	public NodeViewElement set( WitherSetter... setters ) {
+		super.set( setters );
+		return this;
+	}
+
+	@Override
+	public NodeViewElement remove( WitherRemover... functions ) {
+		super.remove( functions );
+		return this;
+	}
+
+	@Override
 	public <U extends ViewElement> NodeViewElement applyUnsafe( @NonNull Consumer<U> consumer ) {
 		return (NodeViewElement) super.applyUnsafe( consumer );
 	}

@@ -162,7 +162,9 @@ public class ContainerViewElement implements MutableViewElement
 	 * to provide actions on the container itself.
 	 *
 	 * @param consumer to execute
+	 * @deprecated use {@link ViewElement#with(ViewElement)} instead
 	 */
+	@Deprecated
 	public ContainerViewElement apply( @NonNull Consumer<ContainerViewElement> consumer ) {
 		consumer.accept( this );
 		return this;
@@ -177,10 +179,23 @@ public class ContainerViewElement implements MutableViewElement
 	 * {@link ContainerViewElement}, you will receive class cast exceptions at runtime, hence the <em>unsafe</em>.
 	 *
 	 * @param consumer to execute
+	 * @deprecated use {@link ViewElement#with(ViewElement)} instead
 	 */
 	@SuppressWarnings("unchecked")
 	public <U extends ViewElement> ContainerViewElement applyUnsafe( @NonNull Consumer<U> consumer ) {
 		consumer.accept( (U) this );
+		return this;
+	}
+
+	@Override
+	public ContainerViewElement set( WitherSetter... setters ) {
+		MutableViewElement.super.set( setters );
+		return this;
+	}
+
+	@Override
+	public ContainerViewElement remove( WitherRemover... functions ) {
+		MutableViewElement.super.remove( functions );
 		return this;
 	}
 

@@ -20,9 +20,10 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import java.util.Arrays;
 
 /**
- * Contains factory methods for HTML5 nodes as {@link ViewElement}.
+ * Contains factory methods and {@link ViewElement.Wither} functions for HTML5 nodes.
  *
  * @author Arne Vandamme
+ * @see HtmlViewElement.Functions
  * @since 5.0.0
  */
 public interface HtmlViewElements
