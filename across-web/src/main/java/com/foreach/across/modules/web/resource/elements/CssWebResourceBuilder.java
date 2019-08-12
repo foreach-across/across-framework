@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.foreach.across.modules.web.resource.elements;
 import com.foreach.across.modules.web.resource.WebResourceKeyProvider;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
-import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.AbstractNodeViewElementBuilder;
 import lombok.NonNull;
 import lombok.Setter;
@@ -27,6 +26,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 
 import java.util.Optional;
+
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.style;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.unescapedText;
 
 /**
  * Builder class for CSS elements that can be represented either as a {@code <link>} tag or an inline {@code <style>}.
@@ -85,8 +87,7 @@ public class CssWebResourceBuilder extends AbstractNodeViewElementBuilder<NodeVi
 		NodeViewElement element;
 
 		if ( StringUtils.isNotEmpty( inline ) ) {
-			element = new NodeViewElement( "style" );
-			element.addChild( TextViewElement.html( inline ) );
+			element = style( unescapedText( inline ) );
 		}
 		else {
 			element = new NodeViewElement( "link" );

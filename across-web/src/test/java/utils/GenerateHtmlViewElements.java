@@ -153,15 +153,21 @@ class GenerateHtmlViewElements
 	}
 
 	private void writeVoidNode( String tag ) {
-		out.print( "static VoidNodeViewElement " + tag + "() {\n" +
+		out.print( "static VoidNodeViewElement " + tag + "( ViewElement.WitherSetter... setters ) {\n" +
+				           "\t\treturn " + tag + "().set( setters );\n" +
+				           "\t}\n\n" +
+				           "static VoidNodeViewElement " + tag + "() {\n" +
 				           "\t\treturn new VoidNodeViewElement( \"" + tag + "\" );\n" +
 				           "\t}\n" );
 	}
 
 	private void writeNode( String tag ) {
-		out.print( "static NodeViewElement " + tag + "( ViewElement... children ) {\n" +
-				           "\t\treturn createNode( \"" + tag + "\", children );\n" +
-				           "\t}" );
+		out.print( "static NodeViewElement " + tag + "( ViewElement.WitherSetter... setters ) {\n" +
+				           "\t\treturn " + tag + "().set( setters );\n" +
+				           "\t}\n\n" +
+				           "static NodeViewElement " + tag + "() {\n" +
+				           "\t\treturn new NodeViewElement( \"" + tag + "\" );\n" +
+				           "\t}\n" );
 	}
 
 	public static void main( String[] args ) {

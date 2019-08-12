@@ -30,446 +30,892 @@ public interface HtmlViewElements
 {
 	// -- begin generated section
 
+	static VoidNodeViewElement area( ViewElement.WitherSetter... setters ) {
+		return area().set( setters );
+	}
+
 	static VoidNodeViewElement area() {
 		return new VoidNodeViewElement( "area" );
+	}
+
+	static VoidNodeViewElement base( ViewElement.WitherSetter... setters ) {
+		return base().set( setters );
 	}
 
 	static VoidNodeViewElement base() {
 		return new VoidNodeViewElement( "base" );
 	}
 
+	static VoidNodeViewElement br( ViewElement.WitherSetter... setters ) {
+		return br().set( setters );
+	}
+
 	static VoidNodeViewElement br() {
 		return new VoidNodeViewElement( "br" );
+	}
+
+	static VoidNodeViewElement col( ViewElement.WitherSetter... setters ) {
+		return col().set( setters );
 	}
 
 	static VoidNodeViewElement col() {
 		return new VoidNodeViewElement( "col" );
 	}
 
+	static VoidNodeViewElement embed( ViewElement.WitherSetter... setters ) {
+		return embed().set( setters );
+	}
+
 	static VoidNodeViewElement embed() {
 		return new VoidNodeViewElement( "embed" );
+	}
+
+	static VoidNodeViewElement hr( ViewElement.WitherSetter... setters ) {
+		return hr().set( setters );
 	}
 
 	static VoidNodeViewElement hr() {
 		return new VoidNodeViewElement( "hr" );
 	}
 
+	static VoidNodeViewElement img( ViewElement.WitherSetter... setters ) {
+		return img().set( setters );
+	}
+
 	static VoidNodeViewElement img() {
 		return new VoidNodeViewElement( "img" );
+	}
+
+	static VoidNodeViewElement input( ViewElement.WitherSetter... setters ) {
+		return input().set( setters );
 	}
 
 	static VoidNodeViewElement input() {
 		return new VoidNodeViewElement( "input" );
 	}
 
+	static VoidNodeViewElement keygen( ViewElement.WitherSetter... setters ) {
+		return keygen().set( setters );
+	}
+
 	static VoidNodeViewElement keygen() {
 		return new VoidNodeViewElement( "keygen" );
+	}
+
+	static VoidNodeViewElement link( ViewElement.WitherSetter... setters ) {
+		return link().set( setters );
 	}
 
 	static VoidNodeViewElement link() {
 		return new VoidNodeViewElement( "link" );
 	}
 
+	static VoidNodeViewElement meta( ViewElement.WitherSetter... setters ) {
+		return meta().set( setters );
+	}
+
 	static VoidNodeViewElement meta() {
 		return new VoidNodeViewElement( "meta" );
+	}
+
+	static VoidNodeViewElement param( ViewElement.WitherSetter... setters ) {
+		return param().set( setters );
 	}
 
 	static VoidNodeViewElement param() {
 		return new VoidNodeViewElement( "param" );
 	}
 
+	static VoidNodeViewElement source( ViewElement.WitherSetter... setters ) {
+		return source().set( setters );
+	}
+
 	static VoidNodeViewElement source() {
 		return new VoidNodeViewElement( "source" );
+	}
+
+	static VoidNodeViewElement track( ViewElement.WitherSetter... setters ) {
+		return track().set( setters );
 	}
 
 	static VoidNodeViewElement track() {
 		return new VoidNodeViewElement( "track" );
 	}
 
+	static VoidNodeViewElement wbr( ViewElement.WitherSetter... setters ) {
+		return wbr().set( setters );
+	}
+
 	static VoidNodeViewElement wbr() {
 		return new VoidNodeViewElement( "wbr" );
 	}
 
-	static NodeViewElement a( ViewElement... children ) {
-		return createNode( "a", children );
+	static NodeViewElement a( ViewElement.WitherSetter... setters ) {
+		return a().set( setters );
 	}
 
-	static NodeViewElement abbr( ViewElement... children ) {
-		return createNode( "abbr", children );
+	static NodeViewElement a() {
+		return new NodeViewElement( "a" );
 	}
 
-	static NodeViewElement address( ViewElement... children ) {
-		return createNode( "address", children );
+	static NodeViewElement abbr( ViewElement.WitherSetter... setters ) {
+		return abbr().set( setters );
 	}
 
-	static NodeViewElement article( ViewElement... children ) {
-		return createNode( "article", children );
+	static NodeViewElement abbr() {
+		return new NodeViewElement( "abbr" );
 	}
 
-	static NodeViewElement aside( ViewElement... children ) {
-		return createNode( "aside", children );
+	static NodeViewElement address( ViewElement.WitherSetter... setters ) {
+		return address().set( setters );
 	}
 
-	static NodeViewElement audio( ViewElement... children ) {
-		return createNode( "audio", children );
+	static NodeViewElement address() {
+		return new NodeViewElement( "address" );
 	}
 
-	static NodeViewElement b( ViewElement... children ) {
-		return createNode( "b", children );
+	static NodeViewElement article( ViewElement.WitherSetter... setters ) {
+		return article().set( setters );
 	}
 
-	static NodeViewElement bdi( ViewElement... children ) {
-		return createNode( "bdi", children );
+	static NodeViewElement article() {
+		return new NodeViewElement( "article" );
 	}
 
-	static NodeViewElement bdo( ViewElement... children ) {
-		return createNode( "bdo", children );
+	static NodeViewElement aside( ViewElement.WitherSetter... setters ) {
+		return aside().set( setters );
 	}
 
-	static NodeViewElement blockquote( ViewElement... children ) {
-		return createNode( "blockquote", children );
+	static NodeViewElement aside() {
+		return new NodeViewElement( "aside" );
 	}
 
-	static NodeViewElement body( ViewElement... children ) {
-		return createNode( "body", children );
+	static NodeViewElement audio( ViewElement.WitherSetter... setters ) {
+		return audio().set( setters );
 	}
 
-	static NodeViewElement button( ViewElement... children ) {
-		return createNode( "button", children );
+	static NodeViewElement audio() {
+		return new NodeViewElement( "audio" );
 	}
 
-	static NodeViewElement canvas( ViewElement... children ) {
-		return createNode( "canvas", children );
+	static NodeViewElement b( ViewElement.WitherSetter... setters ) {
+		return b().set( setters );
 	}
 
-	static NodeViewElement caption( ViewElement... children ) {
-		return createNode( "caption", children );
+	static NodeViewElement b() {
+		return new NodeViewElement( "b" );
 	}
 
-	static NodeViewElement cite( ViewElement... children ) {
-		return createNode( "cite", children );
+	static NodeViewElement bdi( ViewElement.WitherSetter... setters ) {
+		return bdi().set( setters );
 	}
 
-	static NodeViewElement code( ViewElement... children ) {
-		return createNode( "code", children );
+	static NodeViewElement bdi() {
+		return new NodeViewElement( "bdi" );
 	}
 
-	static NodeViewElement colgroup( ViewElement... children ) {
-		return createNode( "colgroup", children );
+	static NodeViewElement bdo( ViewElement.WitherSetter... setters ) {
+		return bdo().set( setters );
 	}
 
-	static NodeViewElement datalist( ViewElement... children ) {
-		return createNode( "datalist", children );
+	static NodeViewElement bdo() {
+		return new NodeViewElement( "bdo" );
 	}
 
-	static NodeViewElement dd( ViewElement... children ) {
-		return createNode( "dd", children );
+	static NodeViewElement blockquote( ViewElement.WitherSetter... setters ) {
+		return blockquote().set( setters );
 	}
 
-	static NodeViewElement del( ViewElement... children ) {
-		return createNode( "del", children );
+	static NodeViewElement blockquote() {
+		return new NodeViewElement( "blockquote" );
 	}
 
-	static NodeViewElement details( ViewElement... children ) {
-		return createNode( "details", children );
+	static NodeViewElement body( ViewElement.WitherSetter... setters ) {
+		return body().set( setters );
 	}
 
-	static NodeViewElement dfn( ViewElement... children ) {
-		return createNode( "dfn", children );
+	static NodeViewElement body() {
+		return new NodeViewElement( "body" );
 	}
 
-	static NodeViewElement dialog( ViewElement... children ) {
-		return createNode( "dialog", children );
+	static NodeViewElement button( ViewElement.WitherSetter... setters ) {
+		return button().set( setters );
 	}
 
-	static NodeViewElement div( ViewElement... children ) {
-		return createNode( "div", children );
+	static NodeViewElement button() {
+		return new NodeViewElement( "button" );
 	}
 
-	static NodeViewElement dl( ViewElement... children ) {
-		return createNode( "dl", children );
+	static NodeViewElement canvas( ViewElement.WitherSetter... setters ) {
+		return canvas().set( setters );
 	}
 
-	static NodeViewElement dt( ViewElement... children ) {
-		return createNode( "dt", children );
+	static NodeViewElement canvas() {
+		return new NodeViewElement( "canvas" );
 	}
 
-	static NodeViewElement em( ViewElement... children ) {
-		return createNode( "em", children );
+	static NodeViewElement caption( ViewElement.WitherSetter... setters ) {
+		return caption().set( setters );
 	}
 
-	static NodeViewElement fieldset( ViewElement... children ) {
-		return createNode( "fieldset", children );
+	static NodeViewElement caption() {
+		return new NodeViewElement( "caption" );
 	}
 
-	static NodeViewElement figcaption( ViewElement... children ) {
-		return createNode( "figcaption", children );
+	static NodeViewElement cite( ViewElement.WitherSetter... setters ) {
+		return cite().set( setters );
 	}
 
-	static NodeViewElement figure( ViewElement... children ) {
-		return createNode( "figure", children );
+	static NodeViewElement cite() {
+		return new NodeViewElement( "cite" );
 	}
 
-	static NodeViewElement footer( ViewElement... children ) {
-		return createNode( "footer", children );
+	static NodeViewElement code( ViewElement.WitherSetter... setters ) {
+		return code().set( setters );
 	}
 
-	static NodeViewElement form( ViewElement... children ) {
-		return createNode( "form", children );
+	static NodeViewElement code() {
+		return new NodeViewElement( "code" );
 	}
 
-	static NodeViewElement h1( ViewElement... children ) {
-		return createNode( "h1", children );
+	static NodeViewElement colgroup( ViewElement.WitherSetter... setters ) {
+		return colgroup().set( setters );
 	}
 
-	static NodeViewElement h2( ViewElement... children ) {
-		return createNode( "h2", children );
+	static NodeViewElement colgroup() {
+		return new NodeViewElement( "colgroup" );
 	}
 
-	static NodeViewElement h3( ViewElement... children ) {
-		return createNode( "h3", children );
+	static NodeViewElement datalist( ViewElement.WitherSetter... setters ) {
+		return datalist().set( setters );
 	}
 
-	static NodeViewElement h4( ViewElement... children ) {
-		return createNode( "h4", children );
+	static NodeViewElement datalist() {
+		return new NodeViewElement( "datalist" );
 	}
 
-	static NodeViewElement h5( ViewElement... children ) {
-		return createNode( "h5", children );
+	static NodeViewElement dd( ViewElement.WitherSetter... setters ) {
+		return dd().set( setters );
 	}
 
-	static NodeViewElement h6( ViewElement... children ) {
-		return createNode( "h6", children );
+	static NodeViewElement dd() {
+		return new NodeViewElement( "dd" );
 	}
 
-	static NodeViewElement head( ViewElement... children ) {
-		return createNode( "head", children );
+	static NodeViewElement del( ViewElement.WitherSetter... setters ) {
+		return del().set( setters );
 	}
 
-	static NodeViewElement header( ViewElement... children ) {
-		return createNode( "header", children );
+	static NodeViewElement del() {
+		return new NodeViewElement( "del" );
 	}
 
-	static NodeViewElement html( ViewElement... children ) {
-		return createNode( "html", children );
+	static NodeViewElement details( ViewElement.WitherSetter... setters ) {
+		return details().set( setters );
 	}
 
-	static NodeViewElement i( ViewElement... children ) {
-		return createNode( "i", children );
+	static NodeViewElement details() {
+		return new NodeViewElement( "details" );
 	}
 
-	static NodeViewElement iframe( ViewElement... children ) {
-		return createNode( "iframe", children );
+	static NodeViewElement dfn( ViewElement.WitherSetter... setters ) {
+		return dfn().set( setters );
 	}
 
-	static NodeViewElement ins( ViewElement... children ) {
-		return createNode( "ins", children );
+	static NodeViewElement dfn() {
+		return new NodeViewElement( "dfn" );
 	}
 
-	static NodeViewElement kbd( ViewElement... children ) {
-		return createNode( "kbd", children );
+	static NodeViewElement dialog( ViewElement.WitherSetter... setters ) {
+		return dialog().set( setters );
 	}
 
-	static NodeViewElement label( ViewElement... children ) {
-		return createNode( "label", children );
+	static NodeViewElement dialog() {
+		return new NodeViewElement( "dialog" );
 	}
 
-	static NodeViewElement legend( ViewElement... children ) {
-		return createNode( "legend", children );
+	static NodeViewElement div( ViewElement.WitherSetter... setters ) {
+		return div().set( setters );
 	}
 
-	static NodeViewElement li( ViewElement... children ) {
-		return createNode( "li", children );
+	static NodeViewElement div() {
+		return new NodeViewElement( "div" );
 	}
 
-	static NodeViewElement main( ViewElement... children ) {
-		return createNode( "main", children );
+	static NodeViewElement dl( ViewElement.WitherSetter... setters ) {
+		return dl().set( setters );
 	}
 
-	static NodeViewElement map( ViewElement... children ) {
-		return createNode( "map", children );
+	static NodeViewElement dl() {
+		return new NodeViewElement( "dl" );
 	}
 
-	static NodeViewElement mark( ViewElement... children ) {
-		return createNode( "mark", children );
+	static NodeViewElement dt( ViewElement.WitherSetter... setters ) {
+		return dt().set( setters );
 	}
 
-	static NodeViewElement menu( ViewElement... children ) {
-		return createNode( "menu", children );
+	static NodeViewElement dt() {
+		return new NodeViewElement( "dt" );
 	}
 
-	static NodeViewElement menuitem( ViewElement... children ) {
-		return createNode( "menuitem", children );
+	static NodeViewElement em( ViewElement.WitherSetter... setters ) {
+		return em().set( setters );
 	}
 
-	static NodeViewElement meter( ViewElement... children ) {
-		return createNode( "meter", children );
+	static NodeViewElement em() {
+		return new NodeViewElement( "em" );
 	}
 
-	static NodeViewElement nav( ViewElement... children ) {
-		return createNode( "nav", children );
+	static NodeViewElement fieldset( ViewElement.WitherSetter... setters ) {
+		return fieldset().set( setters );
 	}
 
-	static NodeViewElement noscript( ViewElement... children ) {
-		return createNode( "noscript", children );
+	static NodeViewElement fieldset() {
+		return new NodeViewElement( "fieldset" );
 	}
 
-	static NodeViewElement object( ViewElement... children ) {
-		return createNode( "object", children );
+	static NodeViewElement figcaption( ViewElement.WitherSetter... setters ) {
+		return figcaption().set( setters );
 	}
 
-	static NodeViewElement ol( ViewElement... children ) {
-		return createNode( "ol", children );
+	static NodeViewElement figcaption() {
+		return new NodeViewElement( "figcaption" );
 	}
 
-	static NodeViewElement optgroup( ViewElement... children ) {
-		return createNode( "optgroup", children );
+	static NodeViewElement figure( ViewElement.WitherSetter... setters ) {
+		return figure().set( setters );
 	}
 
-	static NodeViewElement option( ViewElement... children ) {
-		return createNode( "option", children );
+	static NodeViewElement figure() {
+		return new NodeViewElement( "figure" );
 	}
 
-	static NodeViewElement output( ViewElement... children ) {
-		return createNode( "output", children );
+	static NodeViewElement footer( ViewElement.WitherSetter... setters ) {
+		return footer().set( setters );
 	}
 
-	static NodeViewElement p( ViewElement... children ) {
-		return createNode( "p", children );
+	static NodeViewElement footer() {
+		return new NodeViewElement( "footer" );
 	}
 
-	static NodeViewElement pre( ViewElement... children ) {
-		return createNode( "pre", children );
+	static NodeViewElement form( ViewElement.WitherSetter... setters ) {
+		return form().set( setters );
 	}
 
-	static NodeViewElement progress( ViewElement... children ) {
-		return createNode( "progress", children );
+	static NodeViewElement form() {
+		return new NodeViewElement( "form" );
 	}
 
-	static NodeViewElement q( ViewElement... children ) {
-		return createNode( "q", children );
+	static NodeViewElement h1( ViewElement.WitherSetter... setters ) {
+		return h1().set( setters );
 	}
 
-	static NodeViewElement rp( ViewElement... children ) {
-		return createNode( "rp", children );
+	static NodeViewElement h1() {
+		return new NodeViewElement( "h1" );
 	}
 
-	static NodeViewElement rt( ViewElement... children ) {
-		return createNode( "rt", children );
+	static NodeViewElement h2( ViewElement.WitherSetter... setters ) {
+		return h2().set( setters );
 	}
 
-	static NodeViewElement ruby( ViewElement... children ) {
-		return createNode( "ruby", children );
+	static NodeViewElement h2() {
+		return new NodeViewElement( "h2" );
 	}
 
-	static NodeViewElement s( ViewElement... children ) {
-		return createNode( "s", children );
+	static NodeViewElement h3( ViewElement.WitherSetter... setters ) {
+		return h3().set( setters );
 	}
 
-	static NodeViewElement samp( ViewElement... children ) {
-		return createNode( "samp", children );
+	static NodeViewElement h3() {
+		return new NodeViewElement( "h3" );
 	}
 
-	static NodeViewElement script( ViewElement... children ) {
-		return createNode( "script", children );
+	static NodeViewElement h4( ViewElement.WitherSetter... setters ) {
+		return h4().set( setters );
 	}
 
-	static NodeViewElement section( ViewElement... children ) {
-		return createNode( "section", children );
+	static NodeViewElement h4() {
+		return new NodeViewElement( "h4" );
 	}
 
-	static NodeViewElement select( ViewElement... children ) {
-		return createNode( "select", children );
+	static NodeViewElement h5( ViewElement.WitherSetter... setters ) {
+		return h5().set( setters );
 	}
 
-	static NodeViewElement small( ViewElement... children ) {
-		return createNode( "small", children );
+	static NodeViewElement h5() {
+		return new NodeViewElement( "h5" );
 	}
 
-	static NodeViewElement span( ViewElement... children ) {
-		return createNode( "span", children );
+	static NodeViewElement h6( ViewElement.WitherSetter... setters ) {
+		return h6().set( setters );
 	}
 
-	static NodeViewElement strong( ViewElement... children ) {
-		return createNode( "strong", children );
+	static NodeViewElement h6() {
+		return new NodeViewElement( "h6" );
 	}
 
-	static NodeViewElement style( ViewElement... children ) {
-		return createNode( "style", children );
+	static NodeViewElement head( ViewElement.WitherSetter... setters ) {
+		return head().set( setters );
 	}
 
-	static NodeViewElement sub( ViewElement... children ) {
-		return createNode( "sub", children );
+	static NodeViewElement head() {
+		return new NodeViewElement( "head" );
 	}
 
-	static NodeViewElement summary( ViewElement... children ) {
-		return createNode( "summary", children );
+	static NodeViewElement header( ViewElement.WitherSetter... setters ) {
+		return header().set( setters );
 	}
 
-	static NodeViewElement sup( ViewElement... children ) {
-		return createNode( "sup", children );
+	static NodeViewElement header() {
+		return new NodeViewElement( "header" );
 	}
 
-	static NodeViewElement table( ViewElement... children ) {
-		return createNode( "table", children );
+	static NodeViewElement html( ViewElement.WitherSetter... setters ) {
+		return html().set( setters );
 	}
 
-	static NodeViewElement tbody( ViewElement... children ) {
-		return createNode( "tbody", children );
+	static NodeViewElement html() {
+		return new NodeViewElement( "html" );
 	}
 
-	static NodeViewElement td( ViewElement... children ) {
-		return createNode( "td", children );
+	static NodeViewElement i( ViewElement.WitherSetter... setters ) {
+		return i().set( setters );
 	}
 
-	static NodeViewElement textarea( ViewElement... children ) {
-		return createNode( "textarea", children );
+	static NodeViewElement i() {
+		return new NodeViewElement( "i" );
 	}
 
-	static NodeViewElement tfoot( ViewElement... children ) {
-		return createNode( "tfoot", children );
+	static NodeViewElement iframe( ViewElement.WitherSetter... setters ) {
+		return iframe().set( setters );
 	}
 
-	static NodeViewElement th( ViewElement... children ) {
-		return createNode( "th", children );
+	static NodeViewElement iframe() {
+		return new NodeViewElement( "iframe" );
 	}
 
-	static NodeViewElement thead( ViewElement... children ) {
-		return createNode( "thead", children );
+	static NodeViewElement ins( ViewElement.WitherSetter... setters ) {
+		return ins().set( setters );
 	}
 
-	static NodeViewElement time( ViewElement... children ) {
-		return createNode( "time", children );
+	static NodeViewElement ins() {
+		return new NodeViewElement( "ins" );
 	}
 
-	static NodeViewElement title( ViewElement... children ) {
-		return createNode( "title", children );
+	static NodeViewElement kbd( ViewElement.WitherSetter... setters ) {
+		return kbd().set( setters );
 	}
 
-	static NodeViewElement tr( ViewElement... children ) {
-		return createNode( "tr", children );
+	static NodeViewElement kbd() {
+		return new NodeViewElement( "kbd" );
 	}
 
-	static NodeViewElement u( ViewElement... children ) {
-		return createNode( "u", children );
+	static NodeViewElement label( ViewElement.WitherSetter... setters ) {
+		return label().set( setters );
 	}
 
-	static NodeViewElement ul( ViewElement... children ) {
-		return createNode( "ul", children );
+	static NodeViewElement label() {
+		return new NodeViewElement( "label" );
 	}
 
-	static NodeViewElement var( ViewElement... children ) {
-		return createNode( "var", children );
+	static NodeViewElement legend( ViewElement.WitherSetter... setters ) {
+		return legend().set( setters );
 	}
 
-	static NodeViewElement video( ViewElement... children ) {
-		return createNode( "video", children );
+	static NodeViewElement legend() {
+		return new NodeViewElement( "legend" );
+	}
+
+	static NodeViewElement li( ViewElement.WitherSetter... setters ) {
+		return li().set( setters );
+	}
+
+	static NodeViewElement li() {
+		return new NodeViewElement( "li" );
+	}
+
+	static NodeViewElement main( ViewElement.WitherSetter... setters ) {
+		return main().set( setters );
+	}
+
+	static NodeViewElement main() {
+		return new NodeViewElement( "main" );
+	}
+
+	static NodeViewElement map( ViewElement.WitherSetter... setters ) {
+		return map().set( setters );
+	}
+
+	static NodeViewElement map() {
+		return new NodeViewElement( "map" );
+	}
+
+	static NodeViewElement mark( ViewElement.WitherSetter... setters ) {
+		return mark().set( setters );
+	}
+
+	static NodeViewElement mark() {
+		return new NodeViewElement( "mark" );
+	}
+
+	static NodeViewElement menu( ViewElement.WitherSetter... setters ) {
+		return menu().set( setters );
+	}
+
+	static NodeViewElement menu() {
+		return new NodeViewElement( "menu" );
+	}
+
+	static NodeViewElement menuitem( ViewElement.WitherSetter... setters ) {
+		return menuitem().set( setters );
+	}
+
+	static NodeViewElement menuitem() {
+		return new NodeViewElement( "menuitem" );
+	}
+
+	static NodeViewElement meter( ViewElement.WitherSetter... setters ) {
+		return meter().set( setters );
+	}
+
+	static NodeViewElement meter() {
+		return new NodeViewElement( "meter" );
+	}
+
+	static NodeViewElement nav( ViewElement.WitherSetter... setters ) {
+		return nav().set( setters );
+	}
+
+	static NodeViewElement nav() {
+		return new NodeViewElement( "nav" );
+	}
+
+	static NodeViewElement noscript( ViewElement.WitherSetter... setters ) {
+		return noscript().set( setters );
+	}
+
+	static NodeViewElement noscript() {
+		return new NodeViewElement( "noscript" );
+	}
+
+	static NodeViewElement object( ViewElement.WitherSetter... setters ) {
+		return object().set( setters );
+	}
+
+	static NodeViewElement object() {
+		return new NodeViewElement( "object" );
+	}
+
+	static NodeViewElement ol( ViewElement.WitherSetter... setters ) {
+		return ol().set( setters );
+	}
+
+	static NodeViewElement ol() {
+		return new NodeViewElement( "ol" );
+	}
+
+	static NodeViewElement optgroup( ViewElement.WitherSetter... setters ) {
+		return optgroup().set( setters );
+	}
+
+	static NodeViewElement optgroup() {
+		return new NodeViewElement( "optgroup" );
+	}
+
+	static NodeViewElement option( ViewElement.WitherSetter... setters ) {
+		return option().set( setters );
+	}
+
+	static NodeViewElement option() {
+		return new NodeViewElement( "option" );
+	}
+
+	static NodeViewElement output( ViewElement.WitherSetter... setters ) {
+		return output().set( setters );
+	}
+
+	static NodeViewElement output() {
+		return new NodeViewElement( "output" );
+	}
+
+	static NodeViewElement p( ViewElement.WitherSetter... setters ) {
+		return p().set( setters );
+	}
+
+	static NodeViewElement p() {
+		return new NodeViewElement( "p" );
+	}
+
+	static NodeViewElement pre( ViewElement.WitherSetter... setters ) {
+		return pre().set( setters );
+	}
+
+	static NodeViewElement pre() {
+		return new NodeViewElement( "pre" );
+	}
+
+	static NodeViewElement progress( ViewElement.WitherSetter... setters ) {
+		return progress().set( setters );
+	}
+
+	static NodeViewElement progress() {
+		return new NodeViewElement( "progress" );
+	}
+
+	static NodeViewElement q( ViewElement.WitherSetter... setters ) {
+		return q().set( setters );
+	}
+
+	static NodeViewElement q() {
+		return new NodeViewElement( "q" );
+	}
+
+	static NodeViewElement rp( ViewElement.WitherSetter... setters ) {
+		return rp().set( setters );
+	}
+
+	static NodeViewElement rp() {
+		return new NodeViewElement( "rp" );
+	}
+
+	static NodeViewElement rt( ViewElement.WitherSetter... setters ) {
+		return rt().set( setters );
+	}
+
+	static NodeViewElement rt() {
+		return new NodeViewElement( "rt" );
+	}
+
+	static NodeViewElement ruby( ViewElement.WitherSetter... setters ) {
+		return ruby().set( setters );
+	}
+
+	static NodeViewElement ruby() {
+		return new NodeViewElement( "ruby" );
+	}
+
+	static NodeViewElement s( ViewElement.WitherSetter... setters ) {
+		return s().set( setters );
+	}
+
+	static NodeViewElement s() {
+		return new NodeViewElement( "s" );
+	}
+
+	static NodeViewElement samp( ViewElement.WitherSetter... setters ) {
+		return samp().set( setters );
+	}
+
+	static NodeViewElement samp() {
+		return new NodeViewElement( "samp" );
+	}
+
+	static NodeViewElement script( ViewElement.WitherSetter... setters ) {
+		return script().set( setters );
+	}
+
+	static NodeViewElement script() {
+		return new NodeViewElement( "script" );
+	}
+
+	static NodeViewElement section( ViewElement.WitherSetter... setters ) {
+		return section().set( setters );
+	}
+
+	static NodeViewElement section() {
+		return new NodeViewElement( "section" );
+	}
+
+	static NodeViewElement select( ViewElement.WitherSetter... setters ) {
+		return select().set( setters );
+	}
+
+	static NodeViewElement select() {
+		return new NodeViewElement( "select" );
+	}
+
+	static NodeViewElement small( ViewElement.WitherSetter... setters ) {
+		return small().set( setters );
+	}
+
+	static NodeViewElement small() {
+		return new NodeViewElement( "small" );
+	}
+
+	static NodeViewElement span( ViewElement.WitherSetter... setters ) {
+		return span().set( setters );
+	}
+
+	static NodeViewElement span() {
+		return new NodeViewElement( "span" );
+	}
+
+	static NodeViewElement strong( ViewElement.WitherSetter... setters ) {
+		return strong().set( setters );
+	}
+
+	static NodeViewElement strong() {
+		return new NodeViewElement( "strong" );
+	}
+
+	static NodeViewElement style( ViewElement.WitherSetter... setters ) {
+		return style().set( setters );
+	}
+
+	static NodeViewElement style() {
+		return new NodeViewElement( "style" );
+	}
+
+	static NodeViewElement sub( ViewElement.WitherSetter... setters ) {
+		return sub().set( setters );
+	}
+
+	static NodeViewElement sub() {
+		return new NodeViewElement( "sub" );
+	}
+
+	static NodeViewElement summary( ViewElement.WitherSetter... setters ) {
+		return summary().set( setters );
+	}
+
+	static NodeViewElement summary() {
+		return new NodeViewElement( "summary" );
+	}
+
+	static NodeViewElement sup( ViewElement.WitherSetter... setters ) {
+		return sup().set( setters );
+	}
+
+	static NodeViewElement sup() {
+		return new NodeViewElement( "sup" );
+	}
+
+	static NodeViewElement table( ViewElement.WitherSetter... setters ) {
+		return table().set( setters );
+	}
+
+	static NodeViewElement table() {
+		return new NodeViewElement( "table" );
+	}
+
+	static NodeViewElement tbody( ViewElement.WitherSetter... setters ) {
+		return tbody().set( setters );
+	}
+
+	static NodeViewElement tbody() {
+		return new NodeViewElement( "tbody" );
+	}
+
+	static NodeViewElement td( ViewElement.WitherSetter... setters ) {
+		return td().set( setters );
+	}
+
+	static NodeViewElement td() {
+		return new NodeViewElement( "td" );
+	}
+
+	static NodeViewElement textarea( ViewElement.WitherSetter... setters ) {
+		return textarea().set( setters );
+	}
+
+	static NodeViewElement textarea() {
+		return new NodeViewElement( "textarea" );
+	}
+
+	static NodeViewElement tfoot( ViewElement.WitherSetter... setters ) {
+		return tfoot().set( setters );
+	}
+
+	static NodeViewElement tfoot() {
+		return new NodeViewElement( "tfoot" );
+	}
+
+	static NodeViewElement th( ViewElement.WitherSetter... setters ) {
+		return th().set( setters );
+	}
+
+	static NodeViewElement th() {
+		return new NodeViewElement( "th" );
+	}
+
+	static NodeViewElement thead( ViewElement.WitherSetter... setters ) {
+		return thead().set( setters );
+	}
+
+	static NodeViewElement thead() {
+		return new NodeViewElement( "thead" );
+	}
+
+	static NodeViewElement time( ViewElement.WitherSetter... setters ) {
+		return time().set( setters );
+	}
+
+	static NodeViewElement time() {
+		return new NodeViewElement( "time" );
+	}
+
+	static NodeViewElement title( ViewElement.WitherSetter... setters ) {
+		return title().set( setters );
+	}
+
+	static NodeViewElement title() {
+		return new NodeViewElement( "title" );
+	}
+
+	static NodeViewElement tr( ViewElement.WitherSetter... setters ) {
+		return tr().set( setters );
+	}
+
+	static NodeViewElement tr() {
+		return new NodeViewElement( "tr" );
+	}
+
+	static NodeViewElement u( ViewElement.WitherSetter... setters ) {
+		return u().set( setters );
+	}
+
+	static NodeViewElement u() {
+		return new NodeViewElement( "u" );
+	}
+
+	static NodeViewElement ul( ViewElement.WitherSetter... setters ) {
+		return ul().set( setters );
+	}
+
+	static NodeViewElement ul() {
+		return new NodeViewElement( "ul" );
+	}
+
+	static NodeViewElement var( ViewElement.WitherSetter... setters ) {
+		return var().set( setters );
+	}
+
+	static NodeViewElement var() {
+		return new NodeViewElement( "var" );
+	}
+
+	static NodeViewElement video( ViewElement.WitherSetter... setters ) {
+		return video().set( setters );
+	}
+
+	static NodeViewElement video() {
+		return new NodeViewElement( "video" );
 	}
 
 	// -- end generated section
 
+	/**
+	 * Add escaped text.
+	 */
 	static TextViewElement text( String text ) {
 		return new TextViewElement( text );
+	}
+
+	/**
+	 * Add unescaped text (usually html).
+	 */
+	static TextViewElement unescapedText( String text ) {
+		return new TextViewElement( text, false );
 	}
 
 	static NodeViewElement createNode( String tagName, ViewElement... children ) {
