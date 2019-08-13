@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -34,6 +35,16 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 {
 	protected String name, customTemplate;
 	private Collection<ViewElementPostProcessor<T>> postProcessors = new ArrayList<>();
+	private Collection<ViewElement.WitherSetter> setters = new ArrayList<>();
+
+	/**
+	 * Apply a collection of setters to the element.
+	 */
+	@SuppressWarnings("unchecked")
+	public SELF with( ViewElement.WitherSetter... setters ) {
+		this.setters.addAll( Arrays.asList( setters ) );
+		return (SELF) this;
+	}
 
 	@SuppressWarnings("unchecked")
 	public SELF name( String name ) {
@@ -76,6 +87,7 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 	@Override
 	public final T build( ViewElementBuilderContext builderContext ) {
 		T element = createElement( builderContext );
+		setters.forEach( element::set );
 
 		WebResourceRegistry webResourceRegistry = builderContext.getAttribute( WebResourceRegistry.class );
 		if ( webResourceRegistry != null ) {

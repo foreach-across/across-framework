@@ -19,6 +19,8 @@ import com.foreach.across.modules.web.ui.ViewElement;
 
 import java.util.Arrays;
 
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElement.Functions.children;
+
 /**
  * Contains factory methods and {@link ViewElement.Wither} functions for HTML5 nodes.
  *
@@ -916,6 +918,14 @@ public interface HtmlViewElements
 	 */
 	static TextViewElement unescapedText( String text ) {
 		return new TextViewElement( text, false );
+	}
+
+	static ContainerViewElement container( ViewElement... childElements ) {
+		return container( children( childElements ) );
+	}
+
+	static ContainerViewElement container( ViewElement.WitherSetter... setters ) {
+		return new ContainerViewElement().set( setters );
 	}
 
 	static NodeViewElement createNode( String tagName, ViewElement... children ) {
