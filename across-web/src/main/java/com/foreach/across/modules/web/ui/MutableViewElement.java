@@ -15,6 +15,8 @@
  */
 package com.foreach.across.modules.web.ui;
 
+import java.util.stream.Stream;
+
 public interface MutableViewElement extends ViewElement
 {
 	MutableViewElement setName( String name );
@@ -26,6 +28,29 @@ public interface MutableViewElement extends ViewElement
 	 */
 	interface Functions
 	{
+		/**
+		 * Combines a number of wither setters into a single one.
+		 */
+		@SuppressWarnings("unchecked")
+		static WitherSetter wither( WitherSetter... setters ) {
+			return e -> Stream.of( setters ).forEach( s -> s.applyTo( e ) );
+		}
+
+		/**
+		 * Short-hand for creating an anonymous typed wither setter, can be used to inline create setters.
+		 */
+		static <U extends ViewElement> WitherSetter<U> witherFor( Class<U> elementType, WitherSetter<U> setter ) {
+			return setter;
+		}
+
+		/**
+		 * Converts a number of removers into a single setter.
+		 */
+		@SuppressWarnings("unchecked")
+		static WitherSetter remove( WitherRemover... removers ) {
+			return e -> Stream.of( removers ).forEach( r -> r.removeFrom( e ) );
+		}
+
 		/**
 		 * Set internal {@link #getName()} property.
 		 */

@@ -15,11 +15,13 @@
  */
 package com.foreach.across.modules.web.ui;
 
+import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.foreach.across.modules.web.ui.MutableViewElement.Functions.*;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElement.Functions.attribute;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -47,5 +49,27 @@ class TestMutableViewElement
 	void customTemplateWither() {
 		text.set( customTemplate( "template" ) );
 		assertThat( text.getCustomTemplate() ).isEqualTo( "template" );
+	}
+
+	@Test
+	void removeConvertsRemoverToSetter() {
+		NodeViewElement node = new NodeViewElement( "tag" );
+		node.set( attribute( "x", 1 ), attribute( "y", 3 ), remove( attribute( "x" ) ) );
+		assertThat( node.getAttributes() ).containsEntry( "y", 3 ).hasSize( 1 );
+	}
+
+	@Test
+	void witherComposesSetters() {
+		NodeViewElement node = new NodeViewElement( "tag" );
+		node.set( wither( attribute( "x", 1 ), attribute( "y", 2 ) ) );
+		assertThat( node.getAttributes() ).containsOnlyKeys( "x", "y" );
+	}
+
+	@Test
+	void witherForAllowsInlineDefinition() {
+		NodeViewElement node = new NodeViewElement( "tag" );
+		node.set( witherFor( NodeViewElement.class, n -> n.setAttribute( "x", true ) ) );
+		assertThat( node.getAttributes() ).containsEntry( "x", true ).hasSize( 1 );
+
 	}
 }

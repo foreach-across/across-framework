@@ -587,6 +587,17 @@ public class PathBasedMenuBuilder
 		}
 
 		/**
+		 * Apply an attribute registrar to the collection of attributes for this menu item.
+		 *
+		 * @param attributeRegistrar to execute
+		 * @return current item builder
+		 */
+		public PathBasedMenuItemBuilder attribute( @NonNull Consumer<Map<String, Object>> attributeRegistrar ) {
+			attributeRegistrar.accept( attributes );
+			return this;
+		}
+
+		/**
 		 * Add one or more option attributes to this menu item.
 		 * An option attribute is an attribute where the key is identical to the value.
 		 * For every argument X, an attribute with key X and value X will be added.

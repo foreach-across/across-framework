@@ -29,18 +29,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-@SuppressWarnings( "unchecked" )
-public class TestPathBasedMenuBuilder
+@SuppressWarnings("unchecked")
+class TestPathBasedMenuBuilder
 {
 	private PathBasedMenuBuilder builder;
 
 	@BeforeEach
-	public void createBuilder() {
+	void createBuilder() {
 		builder = Menu.builder();
 	}
 
 	@Test
-	public void javadocExample() {
+	void javadocExample() {
 		Menu menu = builder.item( "/my-group/item-1" ).and()
 		                   .item( "/my-group" ).and()
 		                   .item( "/my-item" ).and()
@@ -63,7 +63,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void itemBuilder() {
+	void itemBuilder() {
 		builder.item( "child", "Child", "url" );
 		Menu menu = builder.build();
 
@@ -77,7 +77,7 @@ public class TestPathBasedMenuBuilder
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void comparatorOnItems() {
+	void comparatorOnItems() {
 		Comparator<Menu> comparator = mock( Comparator.class );
 		Comparator<Menu> otherComparator = mock( Comparator.class );
 
@@ -110,7 +110,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void requestMatcherAttributes() {
+	void requestMatcherAttributes() {
 		Menu menu = builder.item( "item" ).matchRequests( "/test/", "/other" ).and().build();
 
 		Collection<String> matchers = menu.getFirstItem().getAttribute( RequestMenuSelector.ATTRIBUTE_MATCHERS );
@@ -120,13 +120,17 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void buildItems() {
+	void buildItems() {
 		builder.item( "1" ).title( "Title one" ).url( "URL one" );
 		builder.item( "2" ).title( "Title two" ).url( "URL two" ).disable();
 		builder.item( "3" ).title( "Title three" ).url( "URL three" ).order( 33 ).options( "option-one", "option-two" );
 		builder.item( "4" ).title( "Title four" ).group( true )
 		       .attribute( "attribute-one", "value" )
 		       .attribute( "attribute-two", "value2" )
+		       .attribute( attrs -> {
+			       attrs.remove( "attribute-two" );
+			       attrs.put( "attribute-three", "value3" );
+		       } )
 		       .options( "test-option", "test-option-2" )
 		       .removeAttributes( "test-option-2" );
 
@@ -170,11 +174,12 @@ public class TestPathBasedMenuBuilder
 		assertTrue( four.hasAttribute( "test-option" ) );
 		assertFalse( four.hasAttribute( "test-option-2" ) );
 		assertEquals( "value", four.getAttribute( "attribute-one" ) );
-		assertEquals( "value2", four.getAttribute( "attribute-two" ) );
+		assertFalse( four.hasAttribute( "attribute-two" ) );
+		assertEquals( "value3", four.getAttribute( "attribute-three" ) );
 	}
 
 	@Test
-	public void concatenatingItems() {
+	void concatenatingItems() {
 		builder.root( "home" ).title( "Home" ).url( "/home" )
 		       .and()
 		       .group( "/news", "News" ).url( "http://news-section" )
@@ -203,13 +208,13 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void changeItemPathOfUnknownItemsDoesNothing() {
+	void changeItemPathOfUnknownItemsDoesNothing() {
 		assertThat( builder.changeItemPath( "/one", "/two" ).build() ).isNotNull();
 		assertThat( builder.changeItemPath( "/one", "/two", false ).build() ).isNotNull();
 	}
 
 	@Test
-	public void changeItemPathOfSeparateItems() {
+	void changeItemPathOfSeparateItems() {
 		builder.item( "/list/servers", "Servers" ).and()
 		       .item( "/list/laptops", "Laptops", "/custom/url" );
 
@@ -232,7 +237,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void changeItemPathOfItemAndChildren() {
+	void changeItemPathOfItemAndChildren() {
 		Menu menu = builder.group( "/group" ).title( "Group title" ).and()
 		                   .item( "/group/one" ).and()
 		                   .item( "group/two" ).and()
@@ -253,7 +258,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void changeItemPathOfItemOnly() {
+	void changeItemPathOfItemOnly() {
 		Menu menu = builder.group( "/group" ).title( "Group title" ).and()
 		                   .item( "/group/one" ).and()
 		                   .item( "group/two" ).and()
@@ -273,7 +278,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void changeItemPathOfChildrenOnly() {
+	void changeItemPathOfChildrenOnly() {
 		Menu menu = builder.group( "group" ).title( "Group title" ).and()
 		                   .item( "group/one" ).and()
 		                   .item( "group/two" ).and()
@@ -294,7 +299,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void changePathOfItemWithChildrenReturnsSameItem() {
+	void changePathOfItemWithChildrenReturnsSameItem() {
 		Menu menu = builder.group( "/group" ).url( "Group url" ).and()
 		                   .item( "/group/one" ).and()
 		                   .item( "group/two" ).and()
@@ -316,7 +321,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void changePathOfItemOnlyReturnsSameItem() {
+	void changePathOfItemOnlyReturnsSameItem() {
 		Menu menu = builder.group( "/group" ).url( "Group url" ).and()
 		                   .item( "/group/one" ).and()
 		                   .item( "group/two" ).and()
@@ -337,7 +342,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void removeItemAndChildrenOnItem() {
+	void removeItemAndChildrenOnItem() {
 		Menu menu = builder.group( "/group" ).title( "Group title" ).and()
 		                   .item( "/group/one" ).and()
 		                   .item( "group/two" ).and()
@@ -349,7 +354,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void removeItemOnlyOnItem() {
+	void removeItemOnlyOnItem() {
 		Menu menu = builder.group( "/group" ).title( "Group title" ).and()
 		                   .item( "/group/one" ).and()
 		                   .item( "group/two" ).and()
@@ -362,7 +367,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void removeItemAndChildren() {
+	void removeItemAndChildren() {
 		Menu menu = builder.group( "/group" ).title( "Group title" ).and()
 		                   .item( "/group/one" ).and()
 		                   .item( "group/two" ).and()
@@ -374,7 +379,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void removeItemOnly() {
+	void removeItemOnly() {
 		Menu menu = builder.group( "/group" ).title( "Group title" ).and()
 		                   .item( "/group/one" ).and()
 		                   .item( "group/two" ).and()
@@ -387,7 +392,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void removeChildrenOnly() {
+	void removeChildrenOnly() {
 		Menu menu = builder.group( "/group" ).title( "Group title" ).and()
 		                   .item( "/group/one" ).and()
 		                   .item( "/group/two" ).and()
@@ -399,7 +404,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void optionalItemDoesNothingIfOriginalDoesNotExist() {
+	void optionalItemDoesNothingIfOriginalDoesNotExist() {
 		Menu menu = builder.optionalItem( "/test" ).title( "Updated test" ).and()
 		                   .item( "/other/child" ).and()
 		                   .item( "/my/child" ).and()
@@ -413,7 +418,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void optionalItemModifiesExisting() {
+	void optionalItemModifiesExisting() {
 		Menu menu = builder.item( "/test" ).title( "Original test" ).and()
 		                   .group( "/other" ).and()
 		                   .optionalItem( "/test" ).title( "Updated test" ).and()
@@ -465,7 +470,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void moveToWithItemToOriginalPlaceRetainsProperties() {
+	void moveToWithItemToOriginalPlaceRetainsProperties() {
 		builder.item( "/item/a" ).title( "Item A" ).disable().order( 33 );
 
 		builder.group( "/item" ).and()
@@ -479,7 +484,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void changeItemPathForSubtreeMovesAllPrefixingItems() {
+	void changeItemPathForSubtreeMovesAllPrefixingItems() {
 		builder.item( "/list/servers", "Servers" ).and()
 		       .item( "/list/laptops", "Laptops" ).and()
 		       .item( "/list/screens", "Screens" ).and()
@@ -502,7 +507,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void movingOnlyMovesNestedPath() {
+	void movingOnlyMovesNestedPath() {
 		builder.item( "/list/business", "Business" ).and()
 		       .item( "/list/business/details", "Details" ).and()
 		       .item( "/list/businessDescription", "Business description" );
@@ -527,7 +532,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void itemProcessors() {
+	void itemProcessors() {
 		builder = new PathBasedMenuBuilder( new PrefixTitleProcessor( "processed:" ) );
 
 		builder.item( "test1", "One", "urlOne" )
@@ -551,7 +556,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void buildIntoExisting() {
+	void buildIntoExisting() {
 		Menu existing = new Menu( "one" );
 		existing.addItem( "two" ).addItem( "three" );
 
@@ -564,7 +569,7 @@ public class TestPathBasedMenuBuilder
 	}
 
 	@Test
-	public void mergeIntoExistingWithoutRoot() {
+	void mergeIntoExistingWithoutRoot() {
 		Menu existing = new Menu( "one" );
 		existing.addItem( "two" ).addItem( "three" );
 
@@ -578,7 +583,7 @@ public class TestPathBasedMenuBuilder
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void mergeIntoExistingWithRoot() {
+	void mergeIntoExistingWithRoot() {
 		Menu existing = new Menu( "one" );
 		assertThat( existing.getName() ).isEqualTo( "one" );
 		assertThat( existing.getPath() ).isEqualTo( "one" );
@@ -609,7 +614,7 @@ public class TestPathBasedMenuBuilder
 	{
 		private final String prefix;
 
-		public PrefixTitleProcessor( String prefix ) {
+		PrefixTitleProcessor( String prefix ) {
 			this.prefix = prefix;
 		}
 
