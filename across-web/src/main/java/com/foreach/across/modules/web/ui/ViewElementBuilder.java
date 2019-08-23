@@ -127,6 +127,8 @@ public interface ViewElementBuilder<T extends ViewElement>
 		};
 	}
 
+	// don't use yet - work in progress
+	@Deprecated
 	default ViewElementBuilder<T> doWith( Wither... operations ) {
 		return null;
 	}

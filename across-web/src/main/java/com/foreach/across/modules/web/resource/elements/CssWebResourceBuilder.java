@@ -27,8 +27,7 @@ import org.springframework.http.MediaType;
 
 import java.util.Optional;
 
-import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.style;
-import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.unescapedText;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * Builder class for CSS elements that can be represented either as a {@code <link>} tag or an inline {@code <style>}.
@@ -87,7 +86,7 @@ public class CssWebResourceBuilder extends AbstractNodeViewElementBuilder<NodeVi
 		NodeViewElement element;
 
 		if ( StringUtils.isNotEmpty( inline ) ) {
-			element = style( unescapedText( inline ) );
+			element = html.style( html.unescapedText( inline ) );
 		}
 		else {
 			element = new NodeViewElement( "link" );

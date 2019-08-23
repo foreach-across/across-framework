@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Base class for a {@link ViewElementBuilder} of a {@link MutableViewElement}.  Provides defaults functionality
@@ -36,6 +38,30 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 	protected String name, customTemplate;
 	private Collection<ViewElementPostProcessor<T>> postProcessors = new ArrayList<>();
 	private Collection<ViewElement.WitherSetter> setters = new ArrayList<>();
+
+	private Function<ViewElementBuilderContext, ? extends T> elementSupplier;
+
+	/**
+	 * Set a separate supplier which supplies the initial element to which this builder should be applied.
+	 *
+	 * @param supplier to use instead of calling {@link #createElement(ViewElementBuilderContext)}
+	 * @return current builder
+	 */
+	public SELF elementSupplier( Supplier<? extends T> supplier ) {
+		return elementSupplier( buildContext -> supplier.get() );
+	}
+
+	/**
+	 * Set a separate supplier which supplies the initial element to which this builder should be applied.
+	 *
+	 * @param supplierFunction to use instead of calling {@link #createElement(ViewElementBuilderContext)}
+	 * @return current builder
+	 */
+	@SuppressWarnings("unchecked")
+	public SELF elementSupplier( Function<ViewElementBuilderContext, ? extends T> supplierFunction ) {
+		elementSupplier = supplierFunction;
+		return (SELF) this;
+	}
 
 	/**
 	 * Apply a collection of setters to the element.
@@ -86,7 +112,7 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 	 */
 	@Override
 	public final T build( ViewElementBuilderContext builderContext ) {
-		T element = createElement( builderContext );
+		T element = elementSupplier != null ? elementSupplier.apply( builderContext ) : createElement( builderContext );
 		setters.forEach( element::set );
 
 		WebResourceRegistry webResourceRegistry = builderContext.getAttribute( WebResourceRegistry.class );
@@ -109,6 +135,7 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 
 	}
 
+	// todo: refactor so this always gets applied
 	protected T apply( T viewElement, ViewElementBuilderContext builderContext ) {
 		if ( name != null ) {
 			viewElement.setName( name );

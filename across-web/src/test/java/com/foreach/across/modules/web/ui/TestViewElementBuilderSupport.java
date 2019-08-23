@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,16 @@
 package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
@@ -25,7 +33,8 @@ import static org.mockito.Mockito.*;
  * @author Arne Vandamme
  */
 @SuppressWarnings("unchecked")
-public class TestViewElementBuilderSupport
+@ExtendWith(MockitoExtension.class)
+class TestViewElementBuilderSupport
 {
 	static class Builder extends ViewElementBuilderSupport<MutableViewElement, Builder>
 	{
@@ -41,7 +50,23 @@ public class TestViewElementBuilderSupport
 	}
 
 	@Test
-	public void postProcessorsAreExecuted() {
+	void customSupplierIsUsed( @Mock ViewElementBuilderContext builderContext ) {
+		when( builderContext.getMessage( "say.hello" ) ).thenReturn( "hello!" );
+
+		Function<ViewElementBuilderContext, TextViewElement> function = bc -> new TextViewElement( bc.getMessage( "say.hello" ) );
+		Supplier<TextViewElement> supplier = () -> new TextViewElement( "goodbye" );
+
+		MutableViewElement text = new Builder().elementSupplier( supplier ).build( builderContext );
+		assertNotNull( text );
+		assertEquals( "goodbye", ( (TextViewElement) text ).getText() );
+
+		text = new Builder().elementSupplier( function ).build( builderContext );
+		assertNotNull( text );
+		assertEquals( "hello!", ( (TextViewElement) text ).getText() );
+	}
+
+	@Test
+	void postProcessorsAreExecuted() {
 		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
@@ -53,7 +78,7 @@ public class TestViewElementBuilderSupport
 	}
 
 	@Test
-	public void defaultPostProcessorsAreExecuted() {
+	void defaultPostProcessorsAreExecuted() {
 		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
@@ -67,7 +92,7 @@ public class TestViewElementBuilderSupport
 	}
 
 	@Test
-	public void manuallyRegisteringADefaultPostProcessor() {
+	void manuallyRegisteringADefaultPostProcessor() {
 		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext();
 		ViewElementPostProcessor one = mock( ViewElementPostProcessor.class );
 		ViewElementPostProcessor two = mock( ViewElementPostProcessor.class );
@@ -84,7 +109,7 @@ public class TestViewElementBuilderSupport
 	}
 
 	@Test
-	public void webResourcesAreRegisteredIfRegistryPresent() {
+	void webResourcesAreRegisteredIfRegistryPresent() {
 		WebResourceRegistry registry = mock( WebResourceRegistry.class );
 		ViewElementBuilderContext builderContext = mock( ViewElementBuilderContext.class );
 		when( builderContext.getAttribute( WebResourceRegistry.class ) ).thenReturn( registry );

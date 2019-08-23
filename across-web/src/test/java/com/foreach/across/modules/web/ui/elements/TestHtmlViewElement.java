@@ -23,8 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.foreach.across.modules.web.ui.MutableViewElement.Functions.elementName;
 import static com.foreach.across.modules.web.ui.elements.HtmlViewElement.Functions.*;
-import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.div;
-import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.text;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -57,7 +56,7 @@ class TestHtmlViewElement
 	void conditionalWithers() {
 		boolean enabled = true;
 
-		node.set(  css( "x" ).ifTrue( enabled ), css( "y" ).ifFalse( enabled ) );
+		node.set( css( "x" ).ifTrue( enabled ), css( "y" ).ifFalse( enabled ) );
 		assertThat( node.hasCssClass( "x" ) ).isTrue();
 		assertThat( node.hasCssClass( "y" ) ).isFalse();
 
@@ -106,7 +105,7 @@ class TestHtmlViewElement
 
 	@Test
 	void childrenWither() {
-		node.set( children( text( "one" ), div() ) );
+		node.set( children( html.text( "one" ), html.div() ) );
 		assertThat( node.getChildren().size() ).isEqualTo( 2 );
 
 		assertThat( node.getChildren().get( 0 ) ).isInstanceOf( TextViewElement.class );
@@ -118,7 +117,7 @@ class TestHtmlViewElement
 		node.set( tagName( "span" ) );
 		assertThat( node.getTagName() ).isEqualTo( "span" );
 
-		assertThat( HtmlViewElements.br().set( tagName( "myTag" ) ).getTagName() ).isEqualTo( "myTag" );
+		assertThat( html.br( tagName( "myTag" ) ).getTagName() ).isEqualTo( "myTag" );
 	}
 
 	@Test
@@ -130,10 +129,10 @@ class TestHtmlViewElement
 	@Test
 	void textAddsAsChildOrText() {
 		TextViewElement other = TextViewElement.html( "other text" );
-		other.set( text( "added as property" ) );
+		other.set( html.text( "added as property" ) );
 		assertThat( other.getText() ).isEqualTo( "added as property" );
 
-		node.set( text( "added as child" ) );
+		node.set( html.text( "added as child" ) );
 		assertThat( ( (TextViewElement) node.getChildren().get( 0 ) ).getText() ).isEqualTo( "added as child" );
 	}
 }

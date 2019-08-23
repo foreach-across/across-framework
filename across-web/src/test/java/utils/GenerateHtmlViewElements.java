@@ -144,7 +144,9 @@ class GenerateHtmlViewElements
 			"video"
 	};
 
-	private final PrintStream out;
+	private final PrintStream elements;
+	private final PrintStream builders;
+	private final PrintStream elementTests;
 
 	public GenerateHtmlViewElements writeViewElements() {
 		Stream.of( VOID_NODES ).forEach( this::writeVoidNode );
@@ -153,27 +155,47 @@ class GenerateHtmlViewElements
 	}
 
 	private void writeVoidNode( String tag ) {
-		out.print( "static VoidNodeViewElement " + tag + "( ViewElement.WitherSetter... setters ) {\n" +
-				           "\t\treturn " + tag + "().set( setters );\n" +
-				           "\t}\n\n" +
-				           "static VoidNodeViewElement " + tag + "() {\n" +
-				           "\t\treturn new VoidNodeViewElement( \"" + tag + "\" );\n" +
-				           "\t}\n" );
+		elements.print( "public VoidNodeViewElement " + tag + "( ViewElement.WitherSetter... setters ) {\n" +
+				                "\t\treturn " + tag + "().set( setters );\n" +
+				                "\t}\n\n" +
+				                "public VoidNodeViewElement " + tag + "() {\n" +
+				                "\t\treturn new VoidNodeViewElement( \"" + tag + "\" );\n" +
+				                "\t}\n" );
+		elementTests.println( "assertVoidNode( html::" + tag + ", \"" + tag + "\" );" );
+
+		builders.print( "public VoidNodeViewElementBuilder " + tag + "( ViewElement.WitherSetter... setters ) {\n" +
+				                "\t\treturn " + tag + "().with( setters );\n" +
+				                "\t}\n\n" +
+				                "public VoidNodeViewElementBuilder " + tag + "() {\n" +
+				                "\t\treturn new VoidNodeViewElementBuilder( \"" + tag + "\" );\n" +
+				                "\t}\n" );
 	}
 
 	private void writeNode( String tag ) {
-		out.print( "static NodeViewElement " + tag + "( ViewElement.WitherSetter... setters ) {\n" +
-				           "\t\treturn " + tag + "().set( setters );\n" +
-				           "\t}\n\n" +
-				           "static NodeViewElement " + tag + "() {\n" +
-				           "\t\treturn new NodeViewElement( \"" + tag + "\" );\n" +
-				           "\t}\n" );
+		elements.print( "public NodeViewElement " + tag + "( ViewElement.WitherSetter... setters ) {\n" +
+				                "\t\treturn " + tag + "().set( setters );\n" +
+				                "\t}\n\n" +
+				                "public NodeViewElement " + tag + "() {\n" +
+				                "\t\treturn new NodeViewElement( \"" + tag + "\" );\n" +
+				                "\t}\n" );
+		elementTests.println( "assertNode( html::" + tag + ", \"" + tag + "\" );" );
+
+		builders.print( "public NodeViewElementBuilder " + tag + "( ViewElement.WitherSetter... setters ) {\n" +
+				                "\t\treturn " + tag + "().with( setters );\n" +
+				                "\t}\n\n" +
+				                "public NodeViewElementBuilder " + tag + "() {\n" +
+				                "\t\treturn new NodeViewElementBuilder( \"" + tag + "\" );\n" +
+				                "\t}\n" );
 	}
 
-	public static void main( String[] args ) {
-		new GenerateHtmlViewElements( System.out )
-				.writeViewElements();
-
+	public static void main( String[] args ) throws Exception {
+		try (PrintStream elements = new PrintStream( "target/elements.txt" )) {
+			try (PrintStream builders = new PrintStream( "target/builders.txt" )) {
+				try (PrintStream tests = new PrintStream( "target/elementTests.txt" )) {
+					new GenerateHtmlViewElements( elements, builders, tests ).writeViewElements();
+				}
+			}
+		}
 	}
 
 }
