@@ -47,7 +47,7 @@
 	</developers>
 
 	<properties>
-		<across.version>3.2.1-SNAPSHOT</across.version>
+		<across.version>3.2.1.RELEASE</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring.platform.version>Brussels-SR17</spring.platform.version>
