@@ -203,7 +203,7 @@
                         <phase>prepare-package</phase>
                         <inherited>true</inherited>
                         <goals>
-                            <goal>aggregate</goal>
+                            <goal>aggregate-no-fork</goal>
                         </goals>
                         <configuration>
                             <skip>${maven.javadoc.skip}</skip>

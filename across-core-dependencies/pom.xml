@@ -68,6 +68,7 @@
         <!--        <liquibase.version>3.7.0</liquibase.version>-->
         <lombok-maven-plugin.version>1.16.18.0</lombok-maven-plugin.version>
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
+        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
     </properties>
 
     <repositories>
