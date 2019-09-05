@@ -205,7 +205,7 @@
 						<id>aggregate</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>aggregate</goal>
+							<goal>aggregate-no-fork</goal>
 						</goals>
 						<configuration>
 							<reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>

@@ -297,10 +297,19 @@
             <plugin>
                 <!-- By default always skip deploying in child poms, set the property to true in the module you want to deploy -->
                 <artifactId>maven-deploy-plugin</artifactId>
+	            <inherited>true</inherited>
                 <configuration>
                     <skip>${maven.deploy.skip}</skip>
                 </configuration>
             </plugin>
+	        <plugin>
+		        <!-- By default always skip deploying in child poms, set the property to true in the module you want to deploy -->
+		        <artifactId>maven-deploy-plugin</artifactId>
+		        <inherited>false</inherited>
+		        <configuration>
+			        <skip>false</skip>
+		        </configuration>
+	        </plugin>
         </plugins>
     </build>
 
