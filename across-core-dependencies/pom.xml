@@ -29,7 +29,6 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>${project.groupId}:${project.artifactId}</name>
     <description>Across Core Dependencies.</description>
     <url>https://across.dev</url>
     <licenses>
@@ -52,6 +51,12 @@
     </scm>
 
     <properties>
+        <!-- Maven/IDE specific -->
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <!-- Overriden from spring-boot-dependencies -->
         <junit-jupiter.version>5.4.2</junit-jupiter.version>
         <!-- Across properties -->
@@ -60,7 +65,7 @@
         <foreach.common.version>1.1</foreach.common.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <commons-io.version>2.6</commons-io.version>
-        <liquibase.version>3.7.0</liquibase.version>
+        <!--        <liquibase.version>3.7.0</liquibase.version>-->
         <lombok-maven-plugin.version>1.16.18.0</lombok-maven-plugin.version>
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
     </properties>
@@ -211,7 +216,7 @@
                         <pluginManagement>keep</pluginManagement>
                         <properties>keep</properties>
                         <repositories>remove</repositories>
-                        <profiles>remove</profiles>
+                        <profiles>keep</profiles>
                         <modules>remove</modules>
                         <build>remove</build>
                     </pomElements>

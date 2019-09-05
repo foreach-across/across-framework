@@ -29,7 +29,6 @@
 	<version>${revision}</version>
 	<packaging>pom</packaging>
 
-	<name>${project.groupId}:${project.artifactId}</name>
 	<description>
 		Across is a Java framework that aims to facilitate module based development for Java (web) applications.
 		It builds heavily on Spring framework and allows defining a module consisting of a number of classes and
@@ -197,16 +196,17 @@
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>jar</goal>
 						</goals>
 					</execution>
 					<execution>
 						<id>aggregate</id>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>aggregate</goal>
 						</goals>
-						<phase>prepare-package</phase>
 						<configuration>
 							<reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
 							<destDir>${project.version}/javadoc</destDir>
