@@ -920,6 +920,10 @@ public class HtmlViewElementBuilders
 		return new TextViewElementBuilder().text( text ).escapeXml( false );
 	}
 
+	public ContainerViewElementBuilder container() {
+		return new ContainerViewElementBuilder();
+	}
+
 	public ContainerViewElementBuilder container( ViewElementBuilder... childElements ) {
 		return new ContainerViewElementBuilder().add( childElements );
 	}
