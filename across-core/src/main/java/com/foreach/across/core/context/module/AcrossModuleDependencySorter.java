@@ -17,6 +17,7 @@ package com.foreach.across.core.context.module;
 
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.bootstrap.CyclicModuleDependencyException;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapOrderBuilder;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
  *
  * @author Arne Vandamme
  * @since 5.0.0
+ * @see ModuleBootstrapOrderBuilder
  */
 @NotThreadSafe
 @Slf4j

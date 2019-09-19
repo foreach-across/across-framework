@@ -70,12 +70,9 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 	private int orderInModuleRole;
 
 	private ModuleBootstrapStatus bootstrapStatus;
-	@Deprecated
 	private ModuleBootstrapConfig bootstrapConfiguration;
 
-	@Deprecated
 	private Collection<AcrossModuleInfo> requiredDependencies = Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
-	@Deprecated
 	private Collection<AcrossModuleInfo> optionalDependencies = Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
 
 	private ExposedModuleBeanRegistry exposedBeanRegistry;

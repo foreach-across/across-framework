@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.boot.autoconfigure.AutoConfigurationImportSelector;
+import org.springframework.boot.autoconfigure.AutoConfigurationMetadata;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
@@ -93,15 +94,18 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 		String[] excludedAutoConfigurations = attributes.getStringArray( "excludeAutoConfigurations" );
 		registry.addExcludedAutoConfigurations( excludedAutoConfigurations );
 
-		String[] actualImports = Stream.of( sortedOriginalImports )
-		                               .map( registry::requestAutoConfiguration )
-		                               .filter( Objects::nonNull )
-		                               .filter( registry::notExcluded )
-		                               .toArray( String[]::new );
+		return Stream.of( sortedOriginalImports )
+		             .map( registry::requestAutoConfiguration )
+		             .filter( Objects::nonNull )
+		             .filter( registry::notExcluded )
+		             .toArray( String[]::new );
+	}
 
-		registry.printAutoConfigurationReport();
-
-		return actualImports;
+	@Override
+	protected AutoConfigurationEntry getAutoConfigurationEntry( AutoConfigurationMetadata autoConfigurationMetadata, AnnotationMetadata annotationMetadata ) {
+		AutoConfigurationEntry autoConfigurationEntry = super.getAutoConfigurationEntry( autoConfigurationMetadata, annotationMetadata );
+		retrieveAutoConfigurationRegistry().printAutoConfigurationReport();
+		return autoConfigurationEntry;
 	}
 
 	@Override

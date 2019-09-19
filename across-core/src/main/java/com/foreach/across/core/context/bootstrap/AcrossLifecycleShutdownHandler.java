@@ -78,7 +78,6 @@ public final class AcrossLifecycleShutdownHandler
 				if ( applicationContext != null ) {
 					LOG.debug( "Destroying ApplicationContext for module {}", module.getName() );
 
-					module.shutdown();
 					applicationContext.close();
 					AcrossContextUtils.setAcrossApplicationContextHolder( module, null );
 				}

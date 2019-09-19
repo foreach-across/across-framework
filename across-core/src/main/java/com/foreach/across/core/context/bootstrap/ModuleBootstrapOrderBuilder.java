@@ -34,9 +34,10 @@ import java.util.*;
  * Creates an ordered list of all modules, depending on the AcrossDepends annotations configured.
  * This class creates the optimal bootstrap order for all modules and can throw an exception if two
  * modules have a cyclic dependency and are impossible to bootstrap (very bad - impossible to fix).
+ *
+ * Should be removed in the future, replaced by {@code AcrossModuleDependencySorter}.
  */
 @SuppressWarnings("all")
-@Deprecated
 public class ModuleBootstrapOrderBuilder
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ModuleBootstrapOrderBuilder.class );

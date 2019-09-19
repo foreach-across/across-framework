@@ -32,11 +32,11 @@ import java.util.function.Supplier;
 
 /**
  * Helper that builds a {@link ModuleSet}.
+ * Should be deprecated in the future, replace by {@link com.foreach.across.core.context.module.AcrossModuleDescriptorSetBuilder}
  *
  * @author Arne Vandamme
- * @deprecated see {@link com.foreach.across.core.context.module.AcrossModuleDescriptorSetBuilder}
+ * @deprecated see
  */
-@Deprecated
 public class ModuleSetBuilder
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ModuleSetBuilder.class );

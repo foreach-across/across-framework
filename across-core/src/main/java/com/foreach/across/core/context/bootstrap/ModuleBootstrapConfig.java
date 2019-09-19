@@ -37,10 +37,11 @@ import java.util.stream.Stream;
  * Represents the actual bootstrap configuration of an AcrossModule.
  * This is the configuration that can be modified during the bootstrap process,
  * without changing the initial AcrossModule configuration.
+ * <p>
+ * Should be deprecated in the future, replace by {@link com.foreach.across.core.context.module.AcrossModuleBootstrapConfiguration}
  *
- * @deprecated replaced by {@link com.foreach.across.core.context.module.AcrossModuleBootstrapConfiguration}
+ * @see com.foreach.across.core.context.module.AcrossModuleBootstrapConfiguration
  */
-@Deprecated
 public class ModuleBootstrapConfig
 {
 	private final AcrossModuleInfo moduleInfo;

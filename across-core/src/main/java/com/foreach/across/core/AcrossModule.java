@@ -362,28 +362,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	 * @param currentModule Bootstrap configuration of the current module.
 	 * @param contextConfig Bootstrap configuration of the entire context.
 	 */
-	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
-	                                 AcrossBootstrapConfig contextConfig ) {
-	}
-
-	/**
-	 * Called after all modules have been installed and - depending on the registration order in the context -
-	 * previous modules have been bootstrapped already.
-	 *
-	 * @deprecated since 5.0.0 - no longer called
-	 */
-	@Deprecated
-	public void bootstrap() {
-	}
-
-	/**
-	 * Called in case of a context shutdown.  Modules registered after this one in the context will have
-	 * been shutdown already.
-	 *
-	 * @deprecated since 5.0.0 - no longer called
-	 */
-	@Deprecated
-	public void shutdown() {
+	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
 	}
 
 	@Override

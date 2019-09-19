@@ -38,8 +38,11 @@ import java.util.stream.Collectors;
  * Bootstrap configurations are considered equal if they are attached to an equal module descriptor.
  * This is in line that there should be one bootstrap configuration per module descriptor.
  *
+ * NOTE: not yet used.
+ *
  * @author Arne Vandamme
  * @since 5.0.0
+ * @see com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig
  */
 @Setter
 @Getter
