@@ -35,7 +35,6 @@ import java.util.function.Supplier;
  * Should be deprecated in the future, replace by {@link com.foreach.across.core.context.module.AcrossModuleDescriptorSetBuilder}
  *
  * @author Arne Vandamme
- * @deprecated see
  */
 public class ModuleSetBuilder
 {

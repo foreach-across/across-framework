@@ -96,7 +96,6 @@ public class ConfigurableAcrossModuleInfo implements AcrossModuleInfo
 		versionInfo = moduleDescriptor.getVersionInfo();
 	}
 
-	@Deprecated
 	public ConfigurableAcrossModuleInfo( AcrossContextInfo context, AcrossModule module, int index ) {
 		this.contextInfo = context;
 		this.module = module;
