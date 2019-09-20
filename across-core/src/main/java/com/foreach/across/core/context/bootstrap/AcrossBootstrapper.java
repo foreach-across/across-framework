@@ -31,6 +31,7 @@ import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
 import com.foreach.across.core.context.installers.ClassPathScanningInstallerProvider;
 import com.foreach.across.core.context.installers.InstallerSetBuilder;
+import com.foreach.across.core.context.module.ModuleConfigurationExtension;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
@@ -178,7 +179,7 @@ public class AcrossBootstrapper
 					bootstrappedModules.forEach( previous -> config.addPreviouslyExposedBeans( previous.getExposedBeanRegistry() ) );
 
 					// Add scanned (or edited) module configurations - first registered on the context, then on module itself
-					config.addConfigurationsToImport( moduleConfigurationSet.getConfigurations( moduleInfo.getName(), moduleInfo.getAliases() ) );
+					config.extendModule( moduleConfigurationSet.getConfigurations( moduleInfo.getName(), moduleInfo.getAliases() ) );
 					bootstrapConfigurers.forEach( configurer -> configurer.configureModule( config ) );
 
 					LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
@@ -346,10 +347,13 @@ public class AcrossBootstrapper
 		      } );
 
 		// filter classes to import
-		Set<String> configurationsToImport = new LinkedHashSet<>( config.getConfigurationsToImport() );
-		configurationsToImport.removeAll( notAllowedAnnotatedClasses );
-		config.setConfigurationsToImport( configurationsToImport );
+		Set<ModuleConfigurationExtension> configurationExtensions = new LinkedHashSet<>();
+		config.getConfigurationExtensions()
+		      .stream()
+		      .filter( e -> !notAllowedAnnotatedClasses.contains( e.getAnnotatedClass() ) )
+		      .forEach( configurationExtensions::add );
 
+		config.setConfigurationExtensions( configurationExtensions );
 		config.setApplicationContextConfigurers( filtered );
 	}
 
@@ -574,6 +578,9 @@ public class AcrossBootstrapper
 			// Provided singletons do not influence initial load
 			config.addApplicationContextConfigurer( true, new ProvidedBeansConfigurer( providedSingletons ) );
 
+			// add the module configuration importer
+			config.addApplicationContextConfigurer( true, ModuleConfigurationImportSelector.class );
+
 			if ( !isContextModule( config ) ) {
 				// Only add default configurations if not a core module
 				config.addApplicationContextConfigurers( AcrossContextUtils.getApplicationContextConfigurers( context, module ) );
@@ -584,8 +591,6 @@ public class AcrossBootstrapper
 			config.addInstallerContextConfigurers( contextInfo.getContext().getInstallerContextConfigurers() );
 			config.addInstallerContextConfigurers( AcrossContextUtils.getInstallerContextConfigurers( module ) );
 
-			// add the module configuration importer
-			config.addApplicationContextConfigurer( true, ModuleConfigurationImportSelector.class );
 			configs.add( config );
 
 			( (ConfigurableAcrossModuleInfo) moduleInfo ).setBootstrapConfiguration( config );

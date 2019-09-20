@@ -13,33 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.foreach.across.test.application.app.modules.one;
+package com.foreach.across.test.application.app.application.extensions;
 
-import com.foreach.across.test.application.app.modules.MyInterface;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import com.foreach.across.core.annotations.ModuleConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Arne Vandamme
- * @since 3.2.1
+ * @since 5.0.0
  */
-@Configuration
-public class ComponentsConfiguration
+@ModuleConfiguration(value = "ModuleOne", deferred = false)
+class NonDeferredModuleOneConfiguration
 {
 	@Bean
-	MyInterface myInterfaceComponent() {
-		return new MyInterfaceFromOne();
-	}
-
-	@Bean
-	OtherComponentFromOne otherComponentFromOne() {
-		return new OtherComponentFromOne();
-	}
-
-	@Bean
-	@ConditionalOnMissingBean(name = "nonDeferredBeanFromApplication")
-	String conditionalComponent() {
-		return "conditionally-created";
+	Long nonDeferredBeanFromApplication() {
+		return 123L;
 	}
 }

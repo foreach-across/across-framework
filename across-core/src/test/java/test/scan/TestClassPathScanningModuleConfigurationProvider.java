@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,18 +26,21 @@ import test.scan.moduleExtendingValidModule.extensions.SameBeanConfiguration;
 import test.scan.packageOne.ValidModule;
 import test.scan.packageTwo.OtherValidModule;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.foreach.across.core.context.module.ModuleConfigurationExtension.of;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Arne Vandamme
  */
-public class TestClassPathScanningModuleConfigurationProvider
+class TestClassPathScanningModuleConfigurationProvider
 {
 	private ClassPathScanningModuleConfigurationProvider provider
 			= new ClassPathScanningModuleConfigurationProvider( new PathMatchingResourcePatternResolver() );
 
 	@Test
-	public void noAnnotatedClasses() {
+	void noAnnotatedClasses() {
 		ModuleConfigurationSet configurationSet = provider.scan( "illegal" );
 
 		assertNotNull( configurationSet );
@@ -47,46 +50,44 @@ public class TestClassPathScanningModuleConfigurationProvider
 	}
 
 	@Test
-	public void annotatedClassForAllModulesExceptOne() {
+	void annotatedClassForAllModulesExceptOne() {
 		ModuleConfigurationSet configurationSet = provider.scan(
 				"test.scan.moduleExtendingValidModule.config"
 		);
 
 		assertNotNull( configurationSet );
-		assertArrayEquals(
-				new String[] { BeanOneConfiguration.class.getName() }, configurationSet.getConfigurations( ValidModule.NAME )
-		);
-		assertArrayEquals(
-				new String[] { BeanOneConfiguration.class.getName() },
-				configurationSet.getConfigurations( OtherValidModule.NAME )
-		);
-		assertArrayEquals(
-				new String[] { BeanOneConfiguration.class.getName() }, configurationSet.getConfigurations( "badModule" )
-		);
+		assertThat( configurationSet.getConfigurations( ValidModule.NAME ) )
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
+		assertThat( configurationSet.getConfigurations( OtherValidModule.NAME ) )
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
+		assertThat( configurationSet.getConfigurations( "badModule" ) )
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
 
 		// excluded
 		assertEquals( 0, configurationSet.getConfigurations( ModuleExtendingValidModule.NAME ).length );
 	}
 
 	@Test
-	public void multiplePackages() {
+	void multiplePackages() {
 		ModuleConfigurationSet configurationSet = provider.scan(
 				"test.scan.moduleExtendingValidModule.config",
 				"test.scan.moduleExtendingValidModule.extensions"
 		);
 
 		assertNotNull( configurationSet );
-		assertArrayEquals(
-				new String[] { BeanOneConfiguration.class.getName(), BeanTwoConfiguration.class.getName(), SameBeanConfiguration.class.getName() },
-				configurationSet.getConfigurations( ValidModule.NAME )
-		);
-		assertArrayEquals(
-				new String[] { BeanOneConfiguration.class.getName() },
-				configurationSet.getConfigurations( OtherValidModule.NAME )
-		);
-		assertArrayEquals(
-				new String[] { BeanOneConfiguration.class.getName() }, configurationSet.getConfigurations( "badModule" )
-		);
+		assertThat( configurationSet.getConfigurations( ValidModule.NAME ) )
+				.containsExactly(
+						of( BeanOneConfiguration.class.getName(), true ),
+						of( BeanTwoConfiguration.class.getName(), false ),
+						of( SameBeanConfiguration.class.getName(), true )
+				);
+
+		assertThat( configurationSet.getConfigurations( OtherValidModule.NAME ) )
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
+
+		assertThat( configurationSet.getConfigurations( "badModule" ) )
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
+
 		assertEquals( 0, configurationSet.getConfigurations( ModuleExtendingValidModule.NAME ).length );
 	}
 }

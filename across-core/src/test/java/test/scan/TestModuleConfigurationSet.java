@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,90 +16,95 @@
 package test.scan;
 
 import com.foreach.across.core.context.ModuleConfigurationSet;
-import org.junit.jupiter.api.BeforeEach;
+import com.foreach.across.core.context.module.ModuleConfigurationExtension;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme
  */
-public class TestModuleConfigurationSet
+class TestModuleConfigurationSet
 {
-	private ModuleConfigurationSet set;
-
-	@BeforeEach
-	public void setUp() throws Exception {
-		set = new ModuleConfigurationSet();
-	}
+	private ModuleConfigurationSet set = new ModuleConfigurationSet();
 
 	@Test
-	public void nothingRegistered() {
+	void nothingRegistered() {
 		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
 		assertEquals( 0, set.getConfigurations( "moduleTwo" ).length );
 	}
 
 	@Test
-	public void registerToAll() {
-		set.register( One.class );
+	void registerToAll() {
+		set.register( One.class, true );
 
-		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleOne" ) );
-		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
+		assertThat( set.getConfigurations( "moduleOne" ) ).containsExactly( deferred( One.class ) );
+		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ) );
 	}
 
 	@Test
-	public void includesNoImpactIfAlreadyRegisteredToAll() {
-		set.register( One.class );
-		set.register( One.class, "moduleTwo" );
+	void includesNoImpactIfAlreadyRegisteredToAll() {
+		set.register( One.class, true );
+		set.register( One.class, true, "moduleTwo" );
 
-		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleOne" ) );
-		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
+		assertThat( set.getConfigurations( "moduleOne" ) ).containsExactly( deferred( One.class ) );
+		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ) );
 	}
 
 	@Test
-	public void specificIncludes() {
-		set.register( One.class, "moduleTwo" );
+	void specificIncludes() {
+		set.register( One.class, true, "moduleTwo" );
 
 		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
-		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
+		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ) );
 	}
 
 	@Test
-	public void aliasing() {
-		set.register( One.class, "moduleTwo" );
-		set.register( One.class, "aliasOne" );
-		set.register( Three.class, "aliasOne" );
-		set.register( Two.class, "aliasTwo" );
+	void aliasing() {
+		set.register( One.class, true, "moduleTwo" );
+		set.register( One.class, true, "aliasOne" );
+		set.register( Three.class, true, "aliasOne" );
+		set.register( Two.class, true, "aliasTwo" );
 
-		String[] annotatedClasses = set.getConfigurations( "moduleOne", "aliasOne", "aliasTwo" );
-		assertEquals( 3, annotatedClasses.length );
-		assertArrayEquals( new String[] { One.class.getName(), Three.class.getName(), Two.class.getName() }, annotatedClasses );
+		assertThat( set.getConfigurations( "moduleOne", "aliasOne", "aliasTwo" ) )
+				.containsExactly( deferred( One.class ), deferred( Three.class ), deferred( Two.class ) );
 	}
 
 	@Test
-	public void specificExcludes() {
-		set.register( One.class );
+	void deferredAndNonDeferred() {
+		set.register( One.class, true, "moduleTwo" );
+		set.register( Two.class, false, "moduleTwo" );
+		set.register( One.class, false, "moduleTwo" );
+
+		assertThat( set.getConfigurations( "moduleTwo" ) )
+				.containsExactly( deferred( One.class ), nonDeferred( Two.class ), nonDeferred( One.class ) );
+	}
+
+	@Test
+	void specificExcludes() {
+		set.register( One.class, true );
 		set.exclude( One.class, "moduleOne" );
 
 		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
-		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
+		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ) );
 		assertArrayEquals( new String[] { One.class.getName() }, set.getExcludedConfigurations( "moduleOne" ) );
 		assertEquals( 0, set.getExcludedConfigurations( "moduleTwo" ).length );
 	}
 
 	@Test
-	public void excludeTakesPrecedence() {
-		set.register( One.class, "moduleOne", "moduleTwo" );
+	void excludeTakesPrecedence() {
+		set.register( One.class, true, "moduleOne", "moduleTwo" );
 		set.exclude( One.class, "moduleOne" );
 
 		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
-		assertArrayEquals( new String[] { One.class.getName() }, set.getConfigurations( "moduleTwo" ) );
+		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ) );
 	}
 
 	@Test
-	public void removeRegistrations() {
-		set.register( One.class, "moduleOne", "moduleTwo" );
+	void removeRegistrations() {
+		set.register( One.class, true, "moduleOne", "moduleTwo" );
 		set.exclude( One.class, "moduleTwo" );
 		set.remove( One.class );
 
@@ -110,25 +115,35 @@ public class TestModuleConfigurationSet
 	}
 
 	@Test
-	public void registrationsAreKeptInOrderEvenAfterUpdates() {
-		set.register( One.class );
-		set.register( Two.class, "moduleTwo" );
-		set.register( Three.class, "moduleOne", "moduleTwo" );
-		set.register( One.class, "moduleOne" );
+	void registrationsAreKeptInOrderEvenAfterUpdates() {
+		set.register( One.class, true );
+		set.register( Two.class, true, "moduleTwo" );
+		set.register( Three.class, true, "moduleOne", "moduleTwo" );
+		set.register( One.class, true, "moduleOne" );
 
-		assertArrayEquals( new String[] { One.class.getName(), Three.class.getName() }, set.getConfigurations( "moduleOne" ) );
-		assertArrayEquals( new String[] { One.class.getName(), Two.class.getName(), Three.class.getName() }, set.getConfigurations( "moduleTwo" ) );
+		assertThat( set.getConfigurations( "moduleOne" ) ).containsExactly( deferred( One.class ), deferred( Three.class ) );
+		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ), deferred( Two.class ), deferred( Three.class ) );
 	}
 
-	static class One
+	private ModuleConfigurationExtension deferred( Class c ) {
+		return ModuleConfigurationExtension.of( c.getTypeName(), true );
+	}
+
+	private ModuleConfigurationExtension nonDeferred( Class c ) {
+		return ModuleConfigurationExtension.of( c.getTypeName(), false );
+	}
+
+	private static class One
 	{
+
 	}
 
-	static class Two
+	private static class Two
 	{
+
 	}
 
-	static class Three
+	private static class Three
 	{
 
 	}

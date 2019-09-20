@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,35 +28,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-public class TestModuleBootstrapConfig
+class TestModuleBootstrapConfig
 {
 	private ModuleBootstrapConfig config = new ModuleBootstrapConfig( new ConfigurableAcrossModuleInfo( null, new EmptyAcrossModule( "myModule" ), 1 ) );
 
 	@Test
-	public void configIsEmptyIfNoInstallerOrApplicationContextConfigurers() {
+	void configIsEmptyIfNoInstallerOrApplicationContextConfigurers() {
 		assertTrue( config.isEmpty() );
 	}
 
 	@Test
-	public void configNonEmptyIfContextConfigurers() {
+	void configNonEmptyIfContextConfigurers() {
 		config.addApplicationContextConfigurer( TestModuleBootstrapConfig.class );
 		assertFalse( config.isEmpty() );
 	}
 
 	@Test
-	public void configNonEmptyIfClassesToImport() {
-		config.addConfigurationsToImport( "my.config" );
+	void configNonEmptyIfClassesToImport() {
+		config.extendModule( true, TestModuleBootstrapConfig.class.getName() );
 		assertFalse( config.isEmpty() );
 	}
 
 	@Test
-	public void configStaysEmptyIfOptionalAdded() {
+	void configStaysEmptyIfOptionalAdded() {
 		config.addApplicationContextConfigurer( true, TestModuleBootstrapConfig.class );
 		assertTrue( config.isEmpty() );
 	}
 
 	@Test
-	public void configNonEmptyIfThereAreInstallers() {
+	void configNonEmptyIfThereAreInstallers() {
 		config.setInstallers( Collections.singleton( "" ) );
 		assertFalse( config.isEmpty() );
 	}

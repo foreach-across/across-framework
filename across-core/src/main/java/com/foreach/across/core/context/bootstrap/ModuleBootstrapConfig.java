@@ -21,6 +21,7 @@ import com.foreach.across.core.context.ExposedModuleBeanRegistry;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
+import com.foreach.across.core.context.module.ModuleConfigurationExtension;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
@@ -52,10 +53,13 @@ public class ModuleBootstrapConfig
 	private Set<ApplicationContextConfigurer> installerContextConfigurers = new LinkedHashSet<>();
 	private Set<String> excludedAnnotatedClasses = new LinkedHashSet<>();
 
+	/**
+	 * List of module configuration extensions that should be added when bootstrapping the module.
+	 */
 	@Getter
 	@Setter
 	@NonNull
-	private Set<String> configurationsToImport = new LinkedHashSet<>();
+	private Set<ModuleConfigurationExtension> configurationExtensions = new LinkedHashSet<>();
 
 	private Collection<Object> installers = new LinkedList<>();
 	private InstallerSettings installerSettings;
@@ -202,11 +206,38 @@ public class ModuleBootstrapConfig
 
 	/**
 	 * Add a number of configurations that should be imported when bootstrapping this module.
+	 * By default you usually want to import deferred configuration, in order to override bean definitions from the original module.
 	 *
+	 * @param deferred             true if the configuration should be added after the initial module configuration and extensions
 	 * @param configurationClasses to import
 	 */
-	public void addConfigurationsToImport( String... configurationClasses ) {
-		configurationsToImport.addAll( Arrays.asList( configurationClasses ) );
+	public void extendModule( boolean deferred, Class... configurationClasses ) {
+		Stream.of( configurationClasses )
+		      .map( clazz -> ModuleConfigurationExtension.of( clazz.getName(), deferred ) )
+		      .forEach( configurationExtensions::add );
+	}
+
+	/**
+	 * Add a number of configurations that should be imported when bootstrapping this module.
+	 * By default you usually want to import deferred configuration, in order to override bean definitions from the original module.
+	 *
+	 * @param deferred             true if the configuration should be added after the initial module configuration and extensions
+	 * @param configurationClasses to import
+	 */
+	public void extendModule( boolean deferred, String... configurationClasses ) {
+		Stream.of( configurationClasses )
+		      .filter( className -> ClassLoadingUtils.resolveClass( className ) != null )
+		      .map( className -> ModuleConfigurationExtension.of( className, deferred ) )
+		      .forEach( configurationExtensions::add );
+	}
+
+	/**
+	 * Add a number of configuration extensions that should be added when bootstrapping this module.
+	 *
+	 * @param extensions to add
+	 */
+	public void extendModule( ModuleConfigurationExtension... extensions ) {
+		configurationExtensions.addAll( Arrays.asList( extensions ) );
 	}
 
 	public Set<ApplicationContextConfigurer> getInstallerContextConfigurers() {
@@ -246,7 +277,7 @@ public class ModuleBootstrapConfig
 	}
 
 	public boolean isEmpty() {
-		return installers.isEmpty() && !hasComponents && configurationsToImport.isEmpty();
+		return installers.isEmpty() && !hasComponents && configurationExtensions.isEmpty();
 	}
 
 	public Collection<ExposedModuleBeanRegistry> getPreviouslyExposedBeans() {

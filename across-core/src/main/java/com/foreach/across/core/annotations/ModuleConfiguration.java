@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,13 @@ import java.lang.annotation.*;
 @Configuration
 public @interface ModuleConfiguration
 {
+	/**
+	 * Should this additional configuration be added after the initial module configuration ({@code true})
+	 * or before ({@code false}). Default is {@code true} so extension configurations can override beandefinitions
+	 * or act on conditional creation from the original module config.
+	 */
+	boolean deferred() default true;
+
 	/**
 	 * List of module names where this configuration should be imported.
 	 * If the list is empty this configuration will be added to all modules.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,12 +70,13 @@ public class ClassPathScanningModuleConfigurationProvider extends AbstractClassP
 						if ( classMetadata.isConcrete() ) {
 							Map<String, Object> attributes = annotationMetadata.getAnnotationAttributes( ANNOTATION_NAME );
 							String[] moduleNames = (String[]) attributes.get( "value" );
+							boolean deferred = (boolean) attributes.get( "deferred" );
 
 							if ( moduleNames == null || moduleNames.length == 0 ) {
-								moduleConfigurationSet.register( classMetadata.getClassName() );
+								moduleConfigurationSet.register( classMetadata.getClassName(), deferred );
 							}
 							else {
-								moduleConfigurationSet.register( classMetadata.getClassName(), moduleNames );
+								moduleConfigurationSet.register( classMetadata.getClassName(), deferred, moduleNames );
 							}
 
 							String[] excludedModuleNames = (String[]) attributes.get( "exclude" );

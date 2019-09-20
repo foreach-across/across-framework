@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration(classes = TestSameNameBeanOverriding.Config.class)
-public class TestSameNameBeanOverriding
+class TestSameNameBeanOverriding
 {
 	private ApplicationContext module;
 
@@ -58,12 +58,12 @@ public class TestSameNameBeanOverriding
 	}
 
 	@Test
-	public void sameNameComponentsAreDifferent() {
+	void sameNameComponentsAreDifferent() {
 		assertEquals( 3, module.getBeansOfType( MyInterface.class ).size() );
 	}
 
 	@Test
-	public void allConfigurationBeansShouldHaveBeenAdded() {
+	void allConfigurationBeansShouldHaveBeenAdded() {
 		Map<String, Long> values = module.getBeansOfType( Long.class );
 		assertEquals( 3, values.size() );
 		assertTrue( values.containsValue( 1L ) );
@@ -72,7 +72,7 @@ public class TestSameNameBeanOverriding
 	}
 
 	@Test
-	public void beanDefinitionShouldBeOverruled() {
+	void beanDefinitionShouldBeOverruled() {
 		assertEquals( 123, module.getBean( "myBean" ) );
 	}
 
@@ -95,8 +95,7 @@ public class TestSameNameBeanOverriding
 		@Override
 		public void configureModule( ModuleBootstrapConfig moduleConfiguration ) {
 			if ( "myModule".equalsIgnoreCase( moduleConfiguration.getModuleName() ) ) {
-				moduleConfiguration.addApplicationContextConfigurer( test.bootstrap.two.CustomConfiguration.class,
-				                                                     test.bootstrap.two.CustomComponent.class );
+				moduleConfiguration.extendModule( true, test.bootstrap.two.CustomConfiguration.class, test.bootstrap.two.CustomComponent.class );
 			}
 		}
 	}
