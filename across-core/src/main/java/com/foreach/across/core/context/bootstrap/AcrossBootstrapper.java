@@ -126,8 +126,8 @@ public class AcrossBootstrapper
 			LOG.info( "AcrossContext: {} ({})", context.getDisplayName(), context.getId() );
 			LOG.info( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
 			for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
-				LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
-				          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
+				LOG.info( "{} - {} {} [resources: {}]", moduleInfo.getIndex(), moduleInfo.getName(),
+				          moduleInfo.getVersionInfo().getVersion(), moduleInfo.getResourcesKey() );
 			}
 			LOG.info( "---" );
 
@@ -167,7 +167,6 @@ public class AcrossBootstrapper
 
 				LOG.info( "" );
 				LOG.info( "--- Starting module bootstrap" );
-				LOG.info( "" );
 
 				List<ConfigurableAcrossModuleInfo> bootstrappedModules = new ArrayList<>();
 
@@ -182,8 +181,11 @@ public class AcrossBootstrapper
 					config.extendModule( moduleConfigurationSet.getConfigurations( moduleInfo.getName(), moduleInfo.getAliases() ) );
 					bootstrapConfigurers.forEach( configurer -> configurer.configureModule( config ) );
 
-					LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
-					          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
+					LOG.info( "" );
+					LOG.info( "{} - {} {} [resources: {}]", String.format( "%2s", moduleInfo.getIndex() ), moduleInfo.getName(),
+					          moduleInfo.getVersionInfo().getVersion(), moduleInfo.getResourcesKey() );
+					LOG.info( "     {}", moduleInfo.getModule().getClass() );
+					LOG.info( "" );
 
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
 
@@ -233,12 +235,11 @@ public class AcrossBootstrapper
 					                   .forEach( bf -> moduleExposedBeans.copyTo( bf, false ) );
 
 					bootstrappedModules.add( configurableAcrossModuleInfo );
-
-					LOG.info( "" );
 				}
 
 				moduleBeingProcessed = null;
 
+				LOG.info( "" );
 				LOG.info( "--- Module bootstrap finished: {} modules started", contextInfo.getModules().size() );
 				LOG.info( "" );
 
