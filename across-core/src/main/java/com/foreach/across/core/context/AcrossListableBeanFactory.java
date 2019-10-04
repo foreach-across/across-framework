@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,9 +112,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	 * Ensures ExposedBeanDefinition instances are returned as the RootBeanDefinition.
 	 */
 	@Override
-	protected RootBeanDefinition getMergedBeanDefinition( String beanName,
-	                                                      BeanDefinition bd,
-	                                                      BeanDefinition containingBd ) {
+	protected RootBeanDefinition getMergedBeanDefinition( String beanName, BeanDefinition bd, BeanDefinition containingBd ) {
 		if ( bd instanceof ExposedBeanDefinition ) {
 			return (ExposedBeanDefinition) bd;
 		}
@@ -386,8 +384,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	}
 
 	@Override
-	public void registerBeanDefinition( String beanName,
-	                                    BeanDefinition beanDefinition ) throws BeanDefinitionStoreException {
+	public void registerBeanDefinition( String beanName, BeanDefinition beanDefinition ) throws BeanDefinitionStoreException {
 		destroySingleton( beanName );
 		super.registerBeanDefinition( beanName, beanDefinition );
 	}
