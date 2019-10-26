@@ -116,7 +116,12 @@ public class AcrossBootstrapper
 	public void bootstrap() {
 		String moduleBeingProcessed = null;
 
+		AcrossBootstrapTimer bootstrapTimer = new AcrossBootstrapTimer();
+		bootstrapTimer.start();
+
 		try {
+			bootstrapTimer.startConfigurationPhase();
+
 			checkBootstrapIsPossible();
 
 			ConfigurableAcrossContextInfo contextInfo = buildContextAndModuleInfo();
@@ -153,6 +158,8 @@ public class AcrossBootstrapper
 								applicationContextFactory
 						);
 
+				bootstrapTimer.finishConfigurationPhase();
+
 				// Run installers that don't need anything bootstrapped
 				installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
 
@@ -171,6 +178,8 @@ public class AcrossBootstrapper
 				List<ConfigurableAcrossModuleInfo> bootstrappedModules = new ArrayList<>();
 
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
+					bootstrapTimer.startModuleBootstrap( moduleInfo );
+
 					moduleBeingProcessed = moduleInfo.getName();
 
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
@@ -192,9 +201,10 @@ public class AcrossBootstrapper
 					rootContext.publishEvent( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
 
 					if ( config.isEmpty() ) {
-						LOG.info( "Nothing to be done - disabling module" );
+						LOG.info( "     Nothing to be done - disabling module" );
 						configurableAcrossModuleInfo.setEnabled( false );
 						configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Disabled );
+						bootstrapTimer.finishModuleBootstrap( moduleInfo );
 						continue;
 					}
 
@@ -235,6 +245,8 @@ public class AcrossBootstrapper
 					                   .forEach( bf -> moduleExposedBeans.copyTo( bf, false ) );
 
 					bootstrappedModules.add( configurableAcrossModuleInfo );
+
+					bootstrapTimer.finishModuleBootstrap( moduleInfo );
 				}
 
 				moduleBeingProcessed = null;
@@ -248,12 +260,16 @@ public class AcrossBootstrapper
 				}
 
 				// Refresh beans
+				bootstrapTimer.startRefreshBeansPhase();
 				AcrossContextUtils.refreshBeans( context );
+				bootstrapTimer.finishRefreshBeansPhase();
 
 				contextInfo.setBootstrapped( true );
 
 				// Bootstrapping done, run installers that require context bootstrap finished
 				installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
+
+				bootstrapTimer.addInstallerTimeReports( installerRegistry.getInstallerTimeReports() );
 
 				// Destroy the installer contexts
 				installerRegistry.destroy();
@@ -266,7 +282,9 @@ public class AcrossBootstrapper
 			}
 
 			// Bootstrap finished - publish the event
+			bootstrapTimer.startContextBootstrappedEventHandling();
 			rootContext.publishEvent( new AcrossContextBootstrappedEvent( contextInfo ) );
+			bootstrapTimer.finishContextBootstrappedEventHandling();
 
 			createdApplicationContexts.clear();
 		}
@@ -283,6 +301,9 @@ public class AcrossBootstrapper
 
 			throw ae;
 		}
+
+		bootstrapTimer.finish();
+		bootstrapTimer.printReport();
 	}
 
 	/**

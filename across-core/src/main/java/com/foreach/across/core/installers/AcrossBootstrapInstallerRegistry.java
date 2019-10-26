@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.BootstrapApplicationContextFactory;
 import com.foreach.across.core.context.bootstrap.BootstrapLockManager;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -58,6 +61,9 @@ public class AcrossBootstrapInstallerRegistry
 	private final BootstrapApplicationContextFactory applicationContextFactory;
 
 	private final Map<AcrossModule, AcrossConfigurableApplicationContext> installerContexts = new HashMap<>();
+
+	@Getter
+	private final Collection<ModuleInstallersTimeReport> installerTimeReports = new ArrayList<>();
 
 	private AcrossInstallerRepository installerRepository;
 
@@ -93,6 +99,9 @@ public class AcrossBootstrapInstallerRegistry
 	private void runInstallers( ModuleBootstrapConfig moduleConfig, InstallerPhase phase ) {
 		LOG.trace( "Running {} installers for module {}", phase.name(), moduleConfig.getModuleName() );
 
+		long startTime = System.currentTimeMillis();
+		boolean hasInstallersForPhase = false;
+
 		for ( Object installerOrClass : moduleConfig.getInstallers() ) {
 			Assert.notNull( installerOrClass, "Installer instance should never be null." );
 
@@ -102,6 +111,8 @@ public class AcrossBootstrapInstallerRegistry
 			InstallerMetaData metadata = InstallerMetaData.forClass( installerClass );
 
 			if ( metadata.getInstallerPhase() == phase ) {
+				hasInstallersForPhase = true;
+
 				// Create installer instance if necessary
 				InstallerAction action = determineInstallerAction( metadata, moduleConfig );
 				LOG.trace( "Determined action {} for installer {}.", action, metadata.getName() );
@@ -130,6 +141,10 @@ public class AcrossBootstrapInstallerRegistry
 				LOG.trace( "Ignoring installer {} because it is defined for phase {}", metadata.getName(),
 				           metadata.getInstallerPhase().name() );
 			}
+		}
+
+		if ( hasInstallersForPhase ) {
+			installerTimeReports.add( new ModuleInstallersTimeReport( moduleConfig.getModuleName(), phase, System.currentTimeMillis() - startTime ) );
 		}
 
 		LOG.trace( "Finished {} installers for module {}", phase.name(), moduleConfig.getModuleName() );
@@ -435,5 +450,14 @@ public class AcrossBootstrapInstallerRegistry
 			                 c.close();
 		                 } );
 		installerContexts.clear();
+	}
+
+	@Getter
+	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class ModuleInstallersTimeReport
+	{
+		private final String moduleName;
+		private final InstallerPhase installerPhase;
+		private final long durationInMillis;
 	}
 }

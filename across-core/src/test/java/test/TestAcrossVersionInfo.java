@@ -37,5 +37,4 @@ class TestAcrossVersionInfo
 		AcrossVersionInfo info = AcrossVersionInfo.load( mockedClass );
 		assertFalse( info.isAvailable() );
 	}
-
 }

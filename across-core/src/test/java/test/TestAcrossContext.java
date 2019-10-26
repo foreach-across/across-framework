@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestAcrossContext
 {
 	@Test
-	public void withinSameJvmIdChanges() {
+	void withinSameJvmIdChanges() {
 		String firstId = new AcrossContext().getId();
 		String secondId = new AcrossContext().getId();
 
@@ -40,7 +40,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void displayNameAndId() {
+	void displayNameAndId() {
 		AcrossContext ctx = new AcrossContext();
 		String id = ctx.getId();
 		assertNotNull( id );
@@ -52,7 +52,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void getModuleByName() {
+	void getModuleByName() {
 		TestModule1 module = new TestModule1();
 		ExposingModule other = new ExposingModule( "my module" );
 
@@ -66,7 +66,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void getValidTypedModuleByName() {
+	void getValidTypedModuleByName() {
 		TestModule1 module = new TestModule1();
 		ExposingModule other = new ExposingModule( "my module" );
 
@@ -80,7 +80,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void getInvalidTypedModuleByName() {
+	void getInvalidTypedModuleByName() {
 		Assertions.assertThrows( ClassCastException.class, () -> {
 			TestModule1 module = new TestModule1();
 			ExposingModule other = new ExposingModule( "my module" );
@@ -94,7 +94,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void dataSourceIsNotRequiredIfNoInstallers() {
+	void dataSourceIsNotRequiredIfNoInstallers() {
 		AcrossContext context = new AcrossContext();
 		context.setInstallerAction( InstallerAction.EXECUTE );
 		context.addModule( new TestModule1() );
@@ -103,7 +103,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void dataSourceIsNotRequiredIfInstallersWontRun() {
+	void dataSourceIsNotRequiredIfInstallersWontRun() {
 		AcrossContext context = new AcrossContext();
 		// Default installer action is disabled
 		context.addModule( new InstallerModule() );
@@ -112,7 +112,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void dataSourceIsRequiredIfInstallersWantToRun() {
+	void dataSourceIsRequiredIfInstallersWantToRun() {
 		AcrossContext context = new AcrossContext();
 		context.setInstallerAction( InstallerAction.EXECUTE );
 		context.addModule( new InstallerModule() );
@@ -130,13 +130,13 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void unableToAddModuleAfterBootstrap() {
+	void unableToAddModuleAfterBootstrap() {
 		AcrossContext context = new AcrossContext();
 		context.bootstrap();
 	}
 
 	@Test
-	public void sameModuleIsNotAllowed() {
+	void sameModuleIsNotAllowed() {
 		AcrossContext context = new AcrossContext();
 
 		TestModule1 duplicate = new TestModule1();
@@ -157,7 +157,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void sameModuleCanOnlyBeInOneAcrossContext() {
+	void sameModuleCanOnlyBeInOneAcrossContext() {
 		TestModule1 module = new TestModule1();
 
 		AcrossContext contextOne = new AcrossContext();
