@@ -57,11 +57,11 @@ class TestClassPathScanningModuleConfigurationProvider
 
 		assertNotNull( configurationSet );
 		assertThat( configurationSet.getConfigurations( ValidModule.NAME ) )
-				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true, false ) );
 		assertThat( configurationSet.getConfigurations( OtherValidModule.NAME ) )
-				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true, false ) );
 		assertThat( configurationSet.getConfigurations( "badModule" ) )
-				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true, false ) );
 
 		// excluded
 		assertEquals( 0, configurationSet.getConfigurations( ModuleExtendingValidModule.NAME ).length );
@@ -77,16 +77,16 @@ class TestClassPathScanningModuleConfigurationProvider
 		assertNotNull( configurationSet );
 		assertThat( configurationSet.getConfigurations( ValidModule.NAME ) )
 				.containsExactly(
-						of( BeanOneConfiguration.class.getName(), true ),
-						of( BeanTwoConfiguration.class.getName(), false ),
-						of( SameBeanConfiguration.class.getName(), true )
+						of( BeanOneConfiguration.class.getName(), true, false ),
+						of( BeanTwoConfiguration.class.getName(), false, false ),
+						of( SameBeanConfiguration.class.getName(), true, false )
 				);
 
 		assertThat( configurationSet.getConfigurations( OtherValidModule.NAME ) )
-				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true, false ) );
 
 		assertThat( configurationSet.getConfigurations( "badModule" ) )
-				.containsExactly( of( BeanOneConfiguration.class.getName(), true ) );
+				.containsExactly( of( BeanOneConfiguration.class.getName(), true, false ) );
 
 		assertEquals( 0, configurationSet.getConfigurations( ModuleExtendingValidModule.NAME ).length );
 	}

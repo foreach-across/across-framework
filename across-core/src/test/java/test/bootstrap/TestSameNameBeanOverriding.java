@@ -95,7 +95,7 @@ class TestSameNameBeanOverriding
 		@Override
 		public void configureModule( ModuleBootstrapConfig moduleConfiguration ) {
 			if ( "myModule".equalsIgnoreCase( moduleConfiguration.getModuleName() ) ) {
-				moduleConfiguration.extendModule( true, test.bootstrap.two.CustomConfiguration.class, test.bootstrap.two.CustomComponent.class );
+				moduleConfiguration.extendModule( true, false, test.bootstrap.two.CustomConfiguration.class, test.bootstrap.two.CustomComponent.class );
 			}
 		}
 	}

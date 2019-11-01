@@ -41,6 +41,12 @@ public @interface ModuleConfiguration
 	boolean deferred() default true;
 
 	/**
+	 * Should this additional configuration be considered optional (defaults to {@code false}).
+	 * Optional module configurations will not force a separate module {@code ApplicationContext} to be started.
+	 */
+	boolean optional() default false;
+
+	/**
 	 * List of module names where this configuration should be imported.
 	 * If the list is empty this configuration will be added to all modules.
 	 */

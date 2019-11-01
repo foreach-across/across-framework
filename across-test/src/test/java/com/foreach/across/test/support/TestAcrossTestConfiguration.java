@@ -56,7 +56,7 @@ public class TestAcrossTestConfiguration
 	private MyManuallyExposedComponent manuallyExposedComponent;
 
 	@Test
-	public void dataSourceForTestShouldBeCreated() {
+	void dataSourceForTestShouldBeCreated() {
 		AcrossContext ctx = contextInfo.getContext();
 		assertNotNull( ctx.getDataSource() );
 		assertNotNull( ctx.getInstallerDataSource() );
@@ -64,13 +64,15 @@ public class TestAcrossTestConfiguration
 	}
 
 	@Test
-	public void installerDataSourceShouldBeReset() {
+	void installerDataSourceShouldBeReset() {
 		assertTestQueryFails( contextInfo.getContext().getInstallerDataSource() );
 	}
 
 	@Test
-	public void modulesShouldBePresent() {
-		assertEquals( 4, contextInfo.getModules().size() );
+	void modulesShouldBePresent() {
+		assertEquals( 3, contextInfo.getModules().size() );
+		assertEquals( 4, contextInfo.getConfiguredModules().size() );
+		assertFalse( contextInfo.getModuleInfo( AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE ).isBootstrapped() );
 		assertTrue( contextInfo.hasModule( AcrossWebModule.NAME ) );
 		assertTrue( contextInfo.hasModule( "named" ) );
 		assertTrue( contextInfo.hasModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ) );
@@ -78,7 +80,7 @@ public class TestAcrossTestConfiguration
 	}
 
 	@Test
-	public void manuallyExposedComponentShouldActuallyBeExposed() {
+	void manuallyExposedComponentShouldActuallyBeExposed() {
 		assertNotNull( manuallyExposedComponent );
 	}
 

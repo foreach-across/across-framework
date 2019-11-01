@@ -38,7 +38,7 @@ class TestModuleConfigurationSet
 
 	@Test
 	void registerToAll() {
-		set.register( One.class, true );
+		set.register( deferred( One.class ) );
 
 		assertThat( set.getConfigurations( "moduleOne" ) ).containsExactly( deferred( One.class ) );
 		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ) );
@@ -46,8 +46,8 @@ class TestModuleConfigurationSet
 
 	@Test
 	void includesNoImpactIfAlreadyRegisteredToAll() {
-		set.register( One.class, true );
-		set.register( One.class, true, "moduleTwo" );
+		set.register( deferred( One.class ) );
+		set.register( deferred( One.class ), "moduleTwo" );
 
 		assertThat( set.getConfigurations( "moduleOne" ) ).containsExactly( deferred( One.class ) );
 		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ) );
@@ -55,7 +55,7 @@ class TestModuleConfigurationSet
 
 	@Test
 	void specificIncludes() {
-		set.register( One.class, true, "moduleTwo" );
+		set.register( deferred( One.class ), "moduleTwo" );
 
 		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
 		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ) );
@@ -63,10 +63,10 @@ class TestModuleConfigurationSet
 
 	@Test
 	void aliasing() {
-		set.register( One.class, true, "moduleTwo" );
-		set.register( One.class, true, "aliasOne" );
-		set.register( Three.class, true, "aliasOne" );
-		set.register( Two.class, true, "aliasTwo" );
+		set.register( deferred( One.class ), "moduleTwo" );
+		set.register( deferred( One.class ), "aliasOne" );
+		set.register( deferred( Three.class ), "aliasOne" );
+		set.register( deferred( Two.class ), "aliasTwo" );
 
 		assertThat( set.getConfigurations( "moduleOne", "aliasOne", "aliasTwo" ) )
 				.containsExactly( deferred( One.class ), deferred( Three.class ), deferred( Two.class ) );
@@ -74,9 +74,9 @@ class TestModuleConfigurationSet
 
 	@Test
 	void deferredAndNonDeferred() {
-		set.register( One.class, true, "moduleTwo" );
-		set.register( Two.class, false, "moduleTwo" );
-		set.register( One.class, false, "moduleTwo" );
+		set.register( deferred( One.class ), "moduleTwo" );
+		set.register( nonDeferred( Two.class ), "moduleTwo" );
+		set.register( nonDeferred( One.class ), "moduleTwo" );
 
 		assertThat( set.getConfigurations( "moduleTwo" ) )
 				.containsExactly( deferred( One.class ), nonDeferred( Two.class ), nonDeferred( One.class ) );
@@ -84,7 +84,7 @@ class TestModuleConfigurationSet
 
 	@Test
 	void specificExcludes() {
-		set.register( One.class, true );
+		set.register( deferred( One.class ) );
 		set.exclude( One.class, "moduleOne" );
 
 		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
@@ -95,7 +95,7 @@ class TestModuleConfigurationSet
 
 	@Test
 	void excludeTakesPrecedence() {
-		set.register( One.class, true, "moduleOne", "moduleTwo" );
+		set.register( deferred( One.class ), "moduleOne", "moduleTwo" );
 		set.exclude( One.class, "moduleOne" );
 
 		assertEquals( 0, set.getConfigurations( "moduleOne" ).length );
@@ -104,7 +104,7 @@ class TestModuleConfigurationSet
 
 	@Test
 	void removeRegistrations() {
-		set.register( One.class, true, "moduleOne", "moduleTwo" );
+		set.register( deferred( One.class ), "moduleOne", "moduleTwo" );
 		set.exclude( One.class, "moduleTwo" );
 		set.remove( One.class );
 
@@ -116,21 +116,21 @@ class TestModuleConfigurationSet
 
 	@Test
 	void registrationsAreKeptInOrderEvenAfterUpdates() {
-		set.register( One.class, true );
-		set.register( Two.class, true, "moduleTwo" );
-		set.register( Three.class, true, "moduleOne", "moduleTwo" );
-		set.register( One.class, true, "moduleOne" );
+		set.register( deferred( One.class ) );
+		set.register( deferred( Two.class ), "moduleTwo" );
+		set.register( deferred( Three.class ), "moduleOne", "moduleTwo" );
+		set.register( deferred( One.class ), "moduleOne" );
 
 		assertThat( set.getConfigurations( "moduleOne" ) ).containsExactly( deferred( One.class ), deferred( Three.class ) );
 		assertThat( set.getConfigurations( "moduleTwo" ) ).containsExactly( deferred( One.class ), deferred( Two.class ), deferred( Three.class ) );
 	}
 
 	private ModuleConfigurationExtension deferred( Class c ) {
-		return ModuleConfigurationExtension.of( c.getTypeName(), true );
+		return ModuleConfigurationExtension.of( c.getTypeName(), true, false );
 	}
 
 	private ModuleConfigurationExtension nonDeferred( Class c ) {
-		return ModuleConfigurationExtension.of( c.getTypeName(), false );
+		return ModuleConfigurationExtension.of( c.getTypeName(), false, false );
 	}
 
 	private static class One

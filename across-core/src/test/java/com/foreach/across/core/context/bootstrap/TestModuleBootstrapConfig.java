@@ -45,8 +45,14 @@ class TestModuleBootstrapConfig
 
 	@Test
 	void configNonEmptyIfClassesToImport() {
-		config.extendModule( true, TestModuleBootstrapConfig.class.getName() );
+		config.extendModule( true, false, TestModuleBootstrapConfig.class.getName() );
 		assertFalse( config.isEmpty() );
+	}
+
+	@Test
+	void configEmptyIfClassesToImportAreOptional() {
+		config.extendModule( true, true, TestModuleBootstrapConfig.class.getName() );
+		assertTrue( config.isEmpty() );
 	}
 
 	@Test

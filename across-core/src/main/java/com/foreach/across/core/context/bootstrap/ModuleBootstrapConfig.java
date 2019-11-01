@@ -209,11 +209,12 @@ public class ModuleBootstrapConfig
 	 * By default you usually want to import deferred configuration, in order to override bean definitions from the original module.
 	 *
 	 * @param deferred             true if the configuration should be added after the initial module configuration and extensions
+	 * @param optional             true if the configuration should <strong>not</strong> force the module ApplicationContext to be started
 	 * @param configurationClasses to import
 	 */
-	public void extendModule( boolean deferred, Class... configurationClasses ) {
+	public void extendModule( boolean deferred, boolean optional, Class... configurationClasses ) {
 		Stream.of( configurationClasses )
-		      .map( clazz -> ModuleConfigurationExtension.of( clazz.getName(), deferred ) )
+		      .map( clazz -> ModuleConfigurationExtension.of( clazz.getName(), deferred, optional ) )
 		      .forEach( configurationExtensions::add );
 	}
 
@@ -222,12 +223,13 @@ public class ModuleBootstrapConfig
 	 * By default you usually want to import deferred configuration, in order to override bean definitions from the original module.
 	 *
 	 * @param deferred             true if the configuration should be added after the initial module configuration and extensions
+	 * @param optional             true if the configuration should <strong>not</strong> force the module ApplicationContext to be started
 	 * @param configurationClasses to import
 	 */
-	public void extendModule( boolean deferred, String... configurationClasses ) {
+	public void extendModule( boolean deferred, boolean optional, String... configurationClasses ) {
 		Stream.of( configurationClasses )
 		      .filter( className -> ClassLoadingUtils.resolveClass( className ) != null )
-		      .map( className -> ModuleConfigurationExtension.of( className, deferred ) )
+		      .map( className -> ModuleConfigurationExtension.of( className, deferred, optional ) )
 		      .forEach( configurationExtensions::add );
 	}
 
@@ -277,7 +279,7 @@ public class ModuleBootstrapConfig
 	}
 
 	public boolean isEmpty() {
-		return installers.isEmpty() && !hasComponents && configurationExtensions.isEmpty();
+		return installers.isEmpty() && !hasComponents && configurationExtensions.stream().allMatch( ModuleConfigurationExtension::isOptional );
 	}
 
 	public Collection<ExposedModuleBeanRegistry> getPreviouslyExposedBeans() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,13 +42,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration(classes = TestModuleConfiguration.Config.class)
-public class TestModuleConfiguration
+class TestModuleConfiguration
 {
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
 
 	@Test
-	public void moduleExtendingValidModuleShouldOnlyHaveBeanFourAndFive() {
+	void moduleExtendingValidModuleShouldOnlyHaveBeanFourAndFive() {
 		// bean one is also present because it is defined in the config package, which is scanned for regular
 		// configurations as well - @ModuleConfiguration is also a regular configuration
 		assertTrue( beanRegistry.moduleContainsLocalBean( ModuleExtendingValidModule.NAME, "beanOne" ) );
@@ -59,7 +59,7 @@ public class TestModuleConfiguration
 	}
 
 	@Test
-	public void allBeansShouldHaveBeenCreatedInValidModule() {
+	void allBeansShouldHaveBeenCreatedInValidModule() {
 		assertTrue( beanRegistry.moduleContainsLocalBean( ValidModule.NAME, "beanOne" ) );
 		assertTrue( beanRegistry.moduleContainsLocalBean( ValidModule.NAME, "beanTwo" ) );
 		assertTrue( beanRegistry.moduleContainsLocalBean( ValidModule.NAME, "beanThree" ) );
@@ -68,7 +68,7 @@ public class TestModuleConfiguration
 	}
 
 	@Test
-	public void beanOneAndFiveShouldAlsoHaveBeenCreatedInOtherValidModule() {
+	void beanOneAndFiveShouldAlsoHaveBeenCreatedInOtherValidModule() {
 		assertTrue( beanRegistry.moduleContainsLocalBean( OtherValidModule.NAME, "beanOne" ) );
 		assertFalse( beanRegistry.moduleContainsLocalBean( OtherValidModule.NAME, "beanTwo" ) );
 		assertFalse( beanRegistry.moduleContainsLocalBean( OtherValidModule.NAME, "beanThree" ) );
@@ -77,7 +77,7 @@ public class TestModuleConfiguration
 	}
 
 	@Test
-	public void twoBeansShouldExistFromTheSameBeanConfigurations() {
+	void twoBeansShouldExistFromTheSameBeanConfigurations() {
 		List<SomeBeanInterface> beans = beanRegistry.getBeansOfType( SomeBeanInterface.class, true );
 		assertEquals( 2, beans.size() );
 	}

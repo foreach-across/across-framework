@@ -16,6 +16,7 @@
 package com.foreach.across.core.context;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
+import com.foreach.across.core.context.module.ModuleConfigurationExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -70,13 +71,18 @@ public class ClassPathScanningModuleConfigurationProvider extends AbstractClassP
 						if ( classMetadata.isConcrete() ) {
 							Map<String, Object> attributes = annotationMetadata.getAnnotationAttributes( ANNOTATION_NAME );
 							String[] moduleNames = (String[]) attributes.get( "value" );
-							boolean deferred = (boolean) attributes.get( "deferred" );
+
+							ModuleConfigurationExtension extension = ModuleConfigurationExtension.of(
+									classMetadata.getClassName(),
+									(boolean) attributes.get( "deferred" ),
+									(boolean) attributes.get( "optional" )
+							);
 
 							if ( moduleNames == null || moduleNames.length == 0 ) {
-								moduleConfigurationSet.register( classMetadata.getClassName(), deferred );
+								moduleConfigurationSet.register( extension );
 							}
 							else {
-								moduleConfigurationSet.register( classMetadata.getClassName(), deferred, moduleNames );
+								moduleConfigurationSet.register( extension, moduleNames );
 							}
 
 							String[] excludedModuleNames = (String[]) attributes.get( "exclude" );
