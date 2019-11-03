@@ -153,6 +153,7 @@ public class AcrossBootstrapTimer
 			             .sorted( Comparator.comparingInt( tr -> tr.moduleInfo.getIndex() ) )
 			             .forEach( tr -> {
 				             LOG.info( "    {}:", tr.moduleInfo.getName() );
+				             LOG.info( "    - Status: {}", tr.moduleInfo.getBootstrapStatus().name() );
 				             LOG.info( "    - ApplicationContext: {}", tr.getApplicationContextTimeInMillis() / 1000.0 );
 				             LOG.info( "    - Installers: {}", tr.getTotalInstallersTimeInMillis() / 1000.0 );
 
