@@ -201,9 +201,8 @@ public class AcrossBootstrapper
 					rootContext.publishEvent( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
 
 					if ( config.isEmpty() ) {
-						LOG.info( "     Nothing to be done - disabling module" );
-						configurableAcrossModuleInfo.setEnabled( false );
-						configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Disabled );
+						LOG.info( "     Nothing to be done - skipping module bootstrap" );
+						configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Skipped );
 						bootstrapTimer.finishModuleBootstrap( moduleInfo );
 						continue;
 					}

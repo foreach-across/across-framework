@@ -23,6 +23,7 @@ import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.module.AcrossModuleBootstrapConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.NonNull;
 
 import java.util.Collection;
 import java.util.Map;
@@ -101,13 +102,16 @@ public interface AcrossModuleInfo extends AcrossModuleEntity
 	ModuleBootstrapConfig getBootstrapConfiguration();
 
 	/**
+	 * experimental - unused
+	 *
 	 * @return configuration object used for bootstrapping the module
 	 */
 	AcrossModuleBootstrapConfiguration getModuleBootstrapConfiguration();
 
 	/**
-	 * @return The Spring application context for this module.
+	 * @return The Spring application context for this module, can be {@code null} if the module has not been bootstrapped or was skipped
 	 */
+	@NonNull
 	ApplicationContext getApplicationContext();
 
 	/**

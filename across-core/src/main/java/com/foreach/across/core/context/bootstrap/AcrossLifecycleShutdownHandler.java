@@ -62,6 +62,7 @@ public final class AcrossLifecycleShutdownHandler
 		removeExposedBeanDefinitions( rootApplicationContext );
 		contextInfo.getModules()
 		           .stream()
+		           .filter( AcrossModuleInfo::isBootstrapped )
 		           .map( AcrossModuleInfo::getApplicationContext )
 		           .forEach( this::removeExposedBeanDefinitions );
 

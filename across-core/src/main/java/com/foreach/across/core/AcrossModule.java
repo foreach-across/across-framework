@@ -330,7 +330,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 
 	/**
 	 * The collection of packages that should be scanned for module configurations.
-	 * Defaults to the "extensionq" packages relative to the package of the implementing class.
+	 * Defaults to the "extension" packages relative to the package of the implementing class.
 	 *
 	 * @return Array of package names.
 	 */

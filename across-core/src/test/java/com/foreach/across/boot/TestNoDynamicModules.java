@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package com.foreach.across.boot;
 
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.core.context.info.ModuleBootstrapStatus;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE;
+import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,13 +44,20 @@ public class TestNoDynamicModules
 	private AcrossContextInfo contextInfo;
 
 	@Test
-	public void displayNameShouldBeGenerated() {
+	void displayNameShouldBeGenerated() {
 		assertEquals( "TestNoDynamicModules$SampleApplication", contextInfo.getDisplayName() );
 	}
 
 	@Test
-	public void noModulesShouldBeLoaded() {
-		assertTrue( contextInfo.getModules().isEmpty() );
+	void noModulesShouldBeBootstrapped() {
+		assertTrue( contextInfo.getBootstrappedModules().isEmpty() );
+	}
+
+	@Test
+	void allModulesShouldBeSkipped() {
+		Assertions.assertThat( contextInfo.getModules() ).hasSize( 2 );
+		Assertions.assertThat( contextInfo.getModuleInfo( CONTEXT_INFRASTRUCTURE_MODULE ).getBootstrapStatus() ).isEqualTo( ModuleBootstrapStatus.Skipped );
+		Assertions.assertThat( contextInfo.getModuleInfo( CONTEXT_POSTPROCESSOR_MODULE ).getBootstrapStatus() ).isEqualTo( ModuleBootstrapStatus.Skipped );
 	}
 
 	@AcrossApplication(enableDynamicModules = false)

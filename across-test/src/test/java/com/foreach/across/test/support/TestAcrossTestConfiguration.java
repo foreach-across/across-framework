@@ -70,9 +70,11 @@ public class TestAcrossTestConfiguration
 
 	@Test
 	void modulesShouldBePresent() {
-		assertEquals( 3, contextInfo.getModules().size() );
+		assertEquals( 4, contextInfo.getModules().size() );
+		assertEquals( 3, contextInfo.getBootstrappedModules().size() );
 		assertEquals( 4, contextInfo.getConfiguredModules().size() );
 		assertFalse( contextInfo.getModuleInfo( AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE ).isBootstrapped() );
+		assertTrue( contextInfo.getModuleInfo( AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE ).isEnabled() );
 		assertTrue( contextInfo.hasModule( AcrossWebModule.NAME ) );
 		assertTrue( contextInfo.hasModule( "named" ) );
 		assertTrue( contextInfo.hasModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ) );

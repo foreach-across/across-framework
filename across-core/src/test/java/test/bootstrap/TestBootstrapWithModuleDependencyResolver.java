@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class TestBootstrapWithModuleDependencyResolver
 		context.bootstrap();
 
 		AcrossContextInfo contextInfo = AcrossContextUtils.getContextInfo( context );
-		assertEquals( 3, contextInfo.getModules().size() );
+		assertEquals( 3, contextInfo.getBootstrappedModules().size() );
 
 		assertTrue( contextInfo.hasModule( "ModuleOne" ) );
 		assertTrue( contextInfo.hasModule( "ModuleTwo" ) );

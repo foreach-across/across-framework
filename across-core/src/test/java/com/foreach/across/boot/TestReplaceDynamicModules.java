@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,29 +47,29 @@ public class TestReplaceDynamicModules
 	private AcrossContextInfo contextInfo;
 
 	@Test
-	public void displayNameShouldBeFixedFromAnnotation() {
+	void displayNameShouldBeFixedFromAnnotation() {
 		assertEquals( "Sample", contextInfo.getDisplayName() );
 	}
 
 	@Test
-	public void totalModuleCountShouldBeThree() {
-		assertEquals( 3, contextInfo.getModules().size() );
+	void totalBootstrappedModuleCountShouldBeThree() {
+		assertEquals( 3, contextInfo.getBootstrappedModules().size() );
 	}
 
 	@Test
-	public void infrastructureModuleShouldBeEmpty() {
+	void infrastructureModuleShouldBeEmpty() {
 		assertTrue( contextInfo.getModuleInfo( "SampleInfrastructureModule" )
 		                       .getModule() instanceof EmptyAcrossModule );
 	}
 
 	@Test
-	public void applicationModuleShouldBeAdded() {
+	void applicationModuleShouldBeAdded() {
 		assertTrue( contextInfo.getModuleInfo( "SampleApplicationModule" )
 		                       .getModule() instanceof DynamicAcrossModule );
 	}
 
 	@Test
-	public void postProcessorModuleShouldBeScanned() {
+	void postProcessorModuleShouldBeScanned() {
 		assertTrue( contextInfo.getModuleInfo( "SamplePostProcessorModule" )
 		                       .getModule() instanceof SamplePostProcessorModule );
 	}
