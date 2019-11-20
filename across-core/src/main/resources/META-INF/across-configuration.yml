@@ -44,6 +44,7 @@ across.core:
     org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration: true
     org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration: true
     org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration: true
+    org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration: true
     org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration: true
     org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration: true
     org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration: true
