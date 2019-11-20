@@ -48,6 +48,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.CachedIntrospectionResults;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -61,11 +62,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -91,10 +95,9 @@ public class AcrossBootstrapper
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossBootstrapper.class );
 
 	private final AcrossContext context;
+	private final Deque<ConfigurableApplicationContext> createdApplicationContexts = new ArrayDeque<>();
 	private BootstrapApplicationContextFactory applicationContextFactory;
 	private List<AcrossBootstrapConfigurer> bootstrapConfigurers;
-
-	private final Deque<ConfigurableApplicationContext> createdApplicationContexts = new ArrayDeque<>();
 
 	public AcrossBootstrapper( AcrossContext context ) {
 		this.context = context;
@@ -286,6 +289,8 @@ public class AcrossBootstrapper
 			bootstrapTimer.finishContextBootstrappedEventHandling();
 
 			createdApplicationContexts.clear();
+
+			resetCommonCaches();
 		}
 		catch ( RuntimeException e ) {
 			LOG.debug( "Exception during bootstrapping, destroying all created ApplicationContext instances" );
@@ -303,6 +308,13 @@ public class AcrossBootstrapper
 
 		bootstrapTimer.finish();
 		bootstrapTimer.printReport();
+	}
+
+	private void resetCommonCaches() {
+		ReflectionUtils.clearCache();
+		AnnotationUtils.clearCache();
+		ResolvableType.clearCache();
+		CachedIntrospectionResults.clearClassLoader( AcrossContextUtils.getApplicationContext( context ).getClassLoader() );
 	}
 
 	/**

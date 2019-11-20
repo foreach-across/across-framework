@@ -55,7 +55,7 @@ class TestApplicationContextStartup
 	/**
 	 * Number of times an application should be started for the timings test.
 	 */
-	private static final int TIMES_TO_RUN = 5;
+	private static final int TIMES_TO_RUN = 20;
 
 	/**
 	 * Total number of beans that should be registered and created.
@@ -65,7 +65,7 @@ class TestApplicationContextStartup
 	/**
 	 * Number of child contexts or modules that should be created.
 	 */
-	private static final int NUMBER_OF_CHILD_CONTEXTS = 50;
+	private static final int NUMBER_OF_CHILD_CONTEXTS = 20;
 
 	/**
 	 * Number of beans that a single child context should have (when working with child contexts).

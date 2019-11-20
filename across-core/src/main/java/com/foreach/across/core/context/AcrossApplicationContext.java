@@ -43,13 +43,12 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 {
 	private boolean installerMode = false;
 	private Integer moduleIndex;
+	private BeanNameGenerator beanNameGenerator;
+	private ScopeMetadataResolver scopeMetadataResolver;
 
 	public AcrossApplicationContext() {
 		this( new AcrossListableBeanFactory() );
 	}
-
-	private BeanNameGenerator beanNameGenerator;
-	private ScopeMetadataResolver scopeMetadataResolver;
 
 	protected AcrossApplicationContext( AcrossListableBeanFactory beanFactory ) {
 		super( beanFactory );
@@ -172,5 +171,13 @@ public class AcrossApplicationContext extends AnnotationConfigApplicationContext
 		}
 
 		scanner.scan( basePackages );
+	}
+
+	@Override
+	protected void resetCommonCaches() {
+		if ( getParent() == null ) {
+			// only reset if there is no parent
+			super.resetCommonCaches();
+		}
 	}
 }
