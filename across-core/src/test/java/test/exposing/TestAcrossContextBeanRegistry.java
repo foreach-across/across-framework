@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,14 +52,14 @@ public class TestAcrossContextBeanRegistry
 	private AcrossContextBeanRegistry beanRegistry;
 
 	@Test
-	public void exposedPrototypeBeanShouldBeFoundInRoot() {
+	void exposedPrototypeBeanShouldBeFoundInRoot() {
 		List<MyPrototypeBean> beans = beanRegistry.getBeansOfType( MyPrototypeBean.class );
 		assertEquals( 2, beans.size() );
 		assertNotNull( beans.get( 0 ) );
 	}
 
 	@Test
-	public void exposedPrototypeBeanShouldBeFoundWithInternalModulesLookup() {
+	void exposedPrototypeBeanShouldBeFoundWithInternalModulesLookup() {
 		List<MyPrototypeBean> beans = beanRegistry.getBeansOfType( MyPrototypeBean.class, true );
 		assertEquals( 2, beans.size() );
 		assertNotNull( beans.get( 0 ) );
@@ -67,7 +67,7 @@ public class TestAcrossContextBeanRegistry
 	}
 
 	@Test
-	public void beansOfTypeShouldReturnAllBeansEvenWhenEqual() {
+	void beansOfTypeShouldReturnAllBeansEvenWhenEqual() {
 		assertEquals( 2, beanRegistry.getBeansOfType( EqualBean.class ).size() );
 		assertEquals( 2, beanRegistry.getBeansOfType( EqualBean.class, true ).size() );
 	}

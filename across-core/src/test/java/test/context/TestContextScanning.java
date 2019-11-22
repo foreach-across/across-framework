@@ -47,17 +47,17 @@ public class TestContextScanning
 	private AcrossContext context;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		context = new AcrossContext();
 	}
 
 	@AfterEach
-	public void tearDown() {
+	void tearDown() {
 		context.shutdown();
 	}
 
 	@Test
-	public void beansShouldBeReturnedInTheRegisteredOrderOfTheModules() {
+	void beansShouldBeReturnedInTheRegisteredOrderOfTheModules() {
 		context.addModule( new ModuleOne() );
 		context.addModule( new ModuleTwo() );
 		context.addModule( new ModuleThree() );
@@ -86,7 +86,7 @@ public class TestContextScanning
 	}
 
 	@Test
-	public void internalGenericBeanResolving() {
+	void internalGenericBeanResolving() {
 		context.addModule( new ModuleOne() );
 		context.addModule( new ModuleTwo() );
 		context.addModule( new ModuleThree() );
@@ -139,7 +139,7 @@ public class TestContextScanning
 	}
 
 	@Test
-	public void refreshableCollectionTesting() {
+	void refreshableCollectionTesting() {
 		context.addModule( new ModuleOne() );
 		context.addModule( new ModuleTwo() );
 		context.bootstrap();
@@ -170,7 +170,7 @@ public class TestContextScanning
 	}
 
 	@Test
-	public void refreshableTesting() {
+	void refreshableTesting() {
 		context.addModule( new ModuleOne() );
 		context.addModule( new ModuleTwo() );
 		context.bootstrap();
@@ -216,7 +216,7 @@ public class TestContextScanning
 	}
 
 	@Test
-	public void beansShouldBeReturnedInTheBootstrapOrderOfModules() {
+	void beansShouldBeReturnedInTheBootstrapOrderOfModules() {
 		ModuleOne moduleOne = new ModuleOne();
 		moduleOne.addRuntimeDependency( "ModuleThree" );
 		context.addModule( moduleOne );
@@ -244,7 +244,7 @@ public class TestContextScanning
 	}
 
 	@Test
-	public void beansFromTheParentContextArePositionedBeforeTheModuleBeans() {
+	void beansFromTheParentContextArePositionedBeforeTheModuleBeans() {
 		GenericApplicationContext applicationContext = new GenericApplicationContext();
 		applicationContext.getBeanFactory().registerSingleton( "fixed-config", new MyFixedBeanConfig() );
 		applicationContext.refresh();
@@ -361,7 +361,7 @@ public class TestContextScanning
 			this.conversionServiceSet = conversionServiceSet;
 		}
 
-		public Set<ConversionService> getConversionServiceSet() {
+		Set<ConversionService> getConversionServiceSet() {
 			return conversionServiceSet;
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration(classes = TestModuleBeanOrdering.Config.class)
-public class TestModuleBeanOrdering
+class TestModuleBeanOrdering
 {
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
@@ -70,13 +70,13 @@ public class TestModuleBeanOrdering
 	private ApplicationContext moduleOne, moduleTwo;
 
 	@BeforeEach
-	public void setUp() throws Exception {
+	void setUp() throws Exception {
 		moduleOne = contextInfo.getModuleInfo( "ModuleOne" ).getApplicationContext();
 		moduleTwo = contextInfo.getModuleInfo( "ModuleTwo" ).getApplicationContext();
 	}
 
 	@Test
-	public void wiredComponentListOnModuleOneIncludesOnlyModuleOneBeansInOrder() {
+	void wiredComponentListOnModuleOneIncludesOnlyModuleOneBeansInOrder() {
 		assertEquals(
 				Arrays.asList(
 						moduleOne.getBean( "moduleOneComponentOne" ),
@@ -89,7 +89,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void wiredComponentListOnModuleTwoIncludesModuleOneExposedBeans() {
+	void wiredComponentListOnModuleTwoIncludesModuleOneExposedBeans() {
 		assertEquals(
 				Arrays.asList(
 						moduleTwo.getBean( "moduleTwoComponentThree" ),
@@ -103,7 +103,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void moduleOneIncludesAllExposedBeans() {
+	void moduleOneIncludesAllExposedBeans() {
 		assertBeans(
 				moduleOne.getBeansOfType( MyComponent.class ),
 				// first exposed ordered bean from module two
@@ -118,7 +118,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void moduleTwoIncludesAllExposedBeansAsWell() {
+	void moduleTwoIncludesAllExposedBeansAsWell() {
 		assertBeans(
 				moduleTwo.getBeansOfType( MyComponent.class ),
 				// first exposed ordered bean from module two
@@ -133,7 +133,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void contextWithoutInternalsReturnsAllExposedBeansInOrder() {
+	void contextWithoutInternalsReturnsAllExposedBeansInOrder() {
 		assertBeans(
 				beanRegistry.getBeansOfTypeAsMap( MyComponent.class, false ),
 				// explicitly ordered module two bean
@@ -149,7 +149,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void contextWithInternalsReturnsAlsoNonExposedBeansInOrder() {
+	void contextWithInternalsReturnsAlsoNonExposedBeansInOrder() {
 		assertBeans(
 				beanRegistry.getBeansOfTypeAsMap( MyComponent.class, true ),
 				// module two bean explicitly ordered

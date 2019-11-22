@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,13 @@ import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
 import lombok.Getter;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegistry
@@ -156,34 +155,27 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> Map<String, T> getBeansOfTypeAsMap( ResolvableType resolvableType, boolean includeModuleInternals ) {
+	public <T> Map<String, T> getBeansOfTypeAsMap( @NonNull ResolvableType resolvableType, boolean includeModuleInternals ) {
 		List<T> beans = new ArrayList<>();
 		AcrossOrderSpecifierComparator comparator = new AcrossOrderSpecifierComparator();
-
-		Map<T, String> beanNames = new IdentityHashMap<>();
-
-		DependencyDescriptor dd = new ResolvableTypeDescriptor( resolvableType );
-		ResolvableTypeAutowireCandidateResolver resolver = new ResolvableTypeAutowireCandidateResolver();
 		AcrossListableBeanFactory beanFactory = beanFactory( contextInfo.getApplicationContext() );
 
-		resolver.setBeanFactory( beanFactory );
+		String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors( beanFactory, resolvableType );
+		Map<T, String> beanNameForBean = new IdentityHashMap<>(
+				includeModuleInternals ? beanNames.length + contextInfo.getModules().size() : beanNames.length
+		);
 
-		for ( String beanName : BeanFactoryUtils.beansOfTypeIncludingAncestors( beanFactory, resolvableType.getRawClass() ).keySet() ) {
-			if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) ) {
-				boolean isExposedNonSingleton = !beanFactory.isSingleton( beanName )
-						&& beanFactory.isExposedBean( beanName );
+		for ( String beanName : beanNames ) {
+			if ( includeModuleInternals && beanFactory.isExposedBean( beanName ) ) {
+				// when including module internals, skip any exposed beans on the root context
+				continue;
+			}
 
-				// only include exposed non-singletons if we don't include module internals, else we will end up
-				// with double entries
-				if ( !includeModuleInternals || !isExposedNonSingleton ) {
-					Object bean = beanFactory.getBean( beanName );
-					comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
+			Object bean = beanFactory.getBean( beanName );
+			comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-					if ( !beanNames.containsKey( bean ) ) {
-						beans.add( (T) bean );
-						beanNames.put( (T) bean, beanName );
-					}
-				}
+			if ( beanNameForBean.put( (T) bean, beanName ) == null ) {
+				beans.add( (T) bean );
 			}
 		}
 
@@ -192,16 +184,13 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 				if ( module.isBootstrapped() ) {
 					beanFactory = beanFactory( module.getApplicationContext() );
 
-					if ( beanFactory != null ) {
-						resolver.setBeanFactory( beanFactory );
+					for ( String beanName : beanFactory.getBeanNamesForType( resolvableType ) ) {
+						if ( !beanFactory.isExposedBean( beanName ) ) {
+							Object bean = beanFactory.getBean( beanName );
+							comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-						for ( String beanName : beanFactory.getBeansOfType( resolvableType.getRawClass() ).keySet() ) {
-							if ( beanFactory.isAutowireCandidate( beanName, dd, resolver ) && !beanFactory.isExposedBean( beanName ) ) {
-								Object bean = beanFactory.getBean( beanName );
-								comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
-
+							if ( beanNameForBean.put( (T) bean, module.getName() + ":" + beanName ) == null ) {
 								beans.add( (T) bean );
-								beanNames.put( (T) bean, module.getName() + ":" + beanName );
 							}
 						}
 					}
@@ -209,11 +198,12 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 			}
 		}
 
+		LinkedHashMap<String, T> beansMap = new LinkedHashMap<>( beans.size() );
+
 		comparator.sort( beans );
 
-		LinkedHashMap<String, T> beansMap = new LinkedHashMap<>();
 		for ( T bean : beans ) {
-			beansMap.put( beanNames.get( bean ), bean );
+			beansMap.put( beanNameForBean.get( bean ), bean );
 		}
 
 		return beansMap;
@@ -221,47 +211,5 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 
 	private AcrossListableBeanFactory beanFactory( ApplicationContext applicationContext ) {
 		return (AcrossListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
-	}
-
-	protected static class ResolvableTypeDescriptor extends DependencyDescriptor
-	{
-		private static final Field DUMMY_FIELD;
-
-		private final ResolvableType resolvableType;
-
-		static {
-			try {
-				DUMMY_FIELD = ResolvableTypeDescriptor.class.getDeclaredField( "resolvableType" );
-			}
-			catch ( NoSuchFieldException nsfe ) {
-				throw new RuntimeException( nsfe );
-			}
-		}
-
-		ResolvableTypeDescriptor( ResolvableType resolvableType ) {
-			super( DUMMY_FIELD, false );
-			this.resolvableType = resolvableType;
-		}
-
-		@Override
-		public ResolvableType getResolvableType() {
-			return resolvableType;
-		}
-
-		@Override
-		public boolean fallbackMatchAllowed() {
-			return false;
-		}
-
-		@Override
-		public Class<?> getDependencyType() {
-			return resolvableType.getRawClass();
-		}
-
-		@Override
-		public boolean equals( Object other ) {
-			return super.equals( other );
-		}
-
 	}
 }
