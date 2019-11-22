@@ -16,6 +16,7 @@
 package performance;
 
 import com.foreach.across.core.EmptyAcrossModule;
+import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.test.AcrossTestContext;
@@ -31,12 +32,14 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigRegistry;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
@@ -55,22 +58,27 @@ class TestApplicationContextStartup
 	/**
 	 * Number of times an application should be started for the timings test.
 	 */
-	private static final int TIMES_TO_RUN = 20;
-
-	/**
-	 * Total number of beans that should be registered and created.
-	 */
-	private static final int TOTAL_BEANS = 1000;
+	private static final int TIMES_TO_RUN = 5;
 
 	/**
 	 * Number of child contexts or modules that should be created.
 	 */
-	private static final int NUMBER_OF_CHILD_CONTEXTS = 20;
+	private static final int NUMBER_OF_CHILD_CONTEXTS = 30;
 
 	/**
 	 * Number of beans that a single child context should have (when working with child contexts).
 	 */
-	private static final int BEANS_PER_CHILD_CONTEXT = TOTAL_BEANS / NUMBER_OF_CHILD_CONTEXTS;
+	private static final int BEANS_PER_CHILD_CONTEXT = 400;
+
+	/**
+	 * Number of the beans that should be exposed by a single child context.
+	 */
+	private static final int EXPOSED_PER_CHILD_CONTEXT = 20;
+
+	/**
+	 * Total number of beans that should be registered and created.
+	 */
+	private static final int TOTAL_BEANS = NUMBER_OF_CHILD_CONTEXTS * BEANS_PER_CHILD_CONTEXT;
 
 	@Test
 	@DisplayName("Compare ApplicationContext startup times")
@@ -104,28 +112,13 @@ class TestApplicationContextStartup
 
 			out.println( "AcrossContext with exposed" );
 			BigDecimal acrossContextWithExposed = calculateAverage( () -> acrossContext( true ) );
-			//
-			// out.println( "Simple: Across using AcrossApplicationRunner" );
-			// BigDecimal simpleAcrossAvg = calculateAverage( PerformanceTestApplications::acrossApplicationSimple );
-			//
-			// out.println( "Simple Web: regular SpringBootApplication" );
-			// BigDecimal simpleWebBootAvg = calculateAverage( PerformanceTestApplications::springBootSimpleWeb );
-			//
-			// out.println( "Simple Web: Boot using AcrossApplicationRunner" );
-			// BigDecimal simpleWebBootAsAcrossApp = calculateAverage( PerformanceTestApplications::springBootSimpleWebAsAcrossApplication );
-			//
-			// out.println( "Simple Web: Across as SpringBootApplication" );
-			// BigDecimal simpleWebAcrossAsBootAvg = calculateAverage( PerformanceTestApplications::acrossAsSpringBootApplicationSimpleWeb );
-			//
-			// out.println( "Simple Web: Across using AcrossApplicationRunner" );
-			// BigDecimal simpleWebAcrossAvg = calculateAverage( PerformanceTestApplications::acrossApplicationSimpleWeb );
 
 			System.setOut( out );
 
 			System.out.println();
 			System.out.println( "Performance timing results - average of " + TIMES_TO_RUN + " times each:" );
 			System.out.println(
-					TOTAL_BEANS + " beans in total, " + NUMBER_OF_CHILD_CONTEXTS + " child contexts, " + BEANS_PER_CHILD_CONTEXT + " beans per context" );
+					TOTAL_BEANS + " beans in total, " + NUMBER_OF_CHILD_CONTEXTS + " child contexts, " + BEANS_PER_CHILD_CONTEXT + " beans per context, " + EXPOSED_PER_CHILD_CONTEXT + " exposed" );
 			System.out.println();
 			System.out.println( "+----------------------------------------------------+------+" );
 
@@ -137,9 +130,6 @@ class TestApplicationContextStartup
 			System.out.println( String.format( pattern, "Multiple AcrossApplicationContext", multipleAcrossApplicationContexts ) );
 			System.out.println( String.format( pattern, "AcrossContext without exposed beans", acrossContextWithoutExposed ) );
 			System.out.println( String.format( pattern, "AcrossContext with exposed beans", acrossContextWithExposed ) );
-			// System.out.println( String.format( pattern, "Simple", simpleBootAvg, simpleBootAsAcrossApp, simpleAcrossAsBootAvg, simpleAcrossAvg ) );
-			// System.out.println(
-			// 		String.format( pattern, "Simple Web", simpleWebBootAvg, simpleWebBootAsAcrossApp, simpleWebAcrossAsBootAvg, simpleWebAcrossAvg ) );
 			System.out.println( "+----------------------------------------------------+------+" );
 		}
 		finally {
@@ -148,14 +138,108 @@ class TestApplicationContextStartup
 		}
 	}
 
-	void acrossContext( boolean exposed ) {
+	@Test
+	@DisplayName("DefaultAcrossContextBeanRegistry getBeansOfType performance")
+	void calculateBeansOfTypePerformance() {
 		AcrossTestContextBuilder testContextBuilder = AcrossTestBuilders.standard( false );
 
 		IntStream.range( 0, NUMBER_OF_CHILD_CONTEXTS )
 		         .forEach( i -> {
-			         EmptyAcrossModule module = new EmptyAcrossModule( "Module" + i, SmallBeansRegistrar.class );
-			         if ( exposed ) {
-				         module.expose( MyBean.class );
+			         EmptyAcrossModule module = new EmptyAcrossModule( "Module" + i, SimpleContextConfiguration.class );
+			         module.expose( MyBean.class );
+			         testContextBuilder.modules( module );
+		         } );
+
+		int testCount = 10;
+		long exposedOnly, moduleInternals, nonExisting;
+
+		PrintStream out = System.out;
+
+		try {
+			System.setOut( null );
+
+			try (AcrossTestContext ctx = testContextBuilder.build()) {
+				exposedOnly = timeStartup( () -> IntStream.range( 0, testCount )
+				                                          .forEach( i -> assertThat( ctx.getBeansOfType( MyBean.class, false ) )
+						                                          .hasSize( TOTAL_BEANS ) ) );
+				moduleInternals = timeStartup( () -> IntStream.range( 0, testCount )
+				                                              .forEach( i -> assertThat( ctx.getBeansOfType( MyBean.class, true ) )
+						                                              .hasSize( TOTAL_BEANS ) ) );
+
+				nonExisting = timeStartup( () -> IntStream.range( 0, testCount )
+				                                          .forEach( i -> assertThat( ctx.getBeansOfType( String.class, true ) ).isEmpty() ) );
+			}
+		}
+		finally {
+			// make sure output is set back
+			System.setOut( out );
+		}
+
+		System.out.println();
+		System.out.println( "Performance timing results - average of " + testCount + " times each:" );
+		System.out.println(
+				TOTAL_BEANS + " beans in total, " + NUMBER_OF_CHILD_CONTEXTS + " child contexts, " + BEANS_PER_CHILD_CONTEXT + " beans per context" );
+		System.out.println();
+		System.out.println( "+----------------------------------------------------+------+" );
+
+		String pattern = "| %-50s | %4.0f |";
+		System.out.println( String.format( pattern, "Only exposed beans", BigDecimal.valueOf( exposedOnly ) ) );
+		System.out.println( String.format( pattern, "With module internals", BigDecimal.valueOf( moduleInternals ) ) );
+		System.out.println( String.format( pattern, "Non-existing module internals", BigDecimal.valueOf( nonExisting ) ) );
+		System.out.println( "+----------------------------------------------------+------+" );
+	}
+
+	@Test
+	@DisplayName("RefreshableCollection performance")
+	void refreshableCollectionPerformance() {
+		PrintStream out = System.out;
+		System.out.println( "Executing " + TIMES_TO_RUN + " times each - warmup of " + WARMUP_RUNS );
+		System.out.println( "Temporarily disabling system output." );
+		System.setOut( null );
+
+		try {
+			out.println( "Simple RefreshableCollection" );
+			BigDecimal simpleRefreshableCollection = calculateAverage( () -> acrossContext( WithRefreshableCollection.class ) );
+
+			out.println( "Incremental RefreshableCollection" );
+			BigDecimal incrementalRefreshableCollection = calculateAverage( () -> acrossContext( WithIncrementalRefreshableCollection.class ) );
+
+			out.println( "RefreshableCollection with internals" );
+			BigDecimal simpleWithInternals = calculateAverage( () -> acrossContext( WithInternalsRefreshableCollection.class ) );
+
+			out.println( "Incremental RefreshableCollection with internals" );
+			BigDecimal incrementalWithInternals = calculateAverage( () -> acrossContext( WithIncrementalRefreshableCollection.class ) );
+
+			System.setOut( out );
+
+			System.out.println();
+			System.out.println( "Performance timing results - average of " + TIMES_TO_RUN + " times each:" );
+			System.out.println(
+					TOTAL_BEANS + " beans in total, " + NUMBER_OF_CHILD_CONTEXTS + " child contexts, " + BEANS_PER_CHILD_CONTEXT + " beans per context, " + EXPOSED_PER_CHILD_CONTEXT + " exposed" );
+			System.out.println();
+			System.out.println( "+----------------------------------------------------+------+" );
+
+			String pattern = "| %-50s | %4.0f |";
+			System.out.println( String.format( pattern, "Simple RefreshableCollection", simpleRefreshableCollection ) );
+			System.out.println( String.format( pattern, "Incremental RefreshableCollection", incrementalRefreshableCollection ) );
+			System.out.println( String.format( pattern, "RefreshableCollection with internals", simpleWithInternals ) );
+			System.out.println( String.format( pattern, "Incremental RefreshableCollection with internals", incrementalWithInternals ) );
+			System.out.println( "+----------------------------------------------------+------+" );
+		}
+		finally {
+			// make sure output is set back
+			System.setOut( out );
+		}
+	}
+
+	void acrossContext( boolean exposeBeans ) {
+		AcrossTestContextBuilder testContextBuilder = AcrossTestBuilders.standard( false );
+
+		IntStream.range( 0, NUMBER_OF_CHILD_CONTEXTS )
+		         .forEach( i -> {
+			         EmptyAcrossModule module = new EmptyAcrossModule( "Module" + i, SimpleContextConfiguration.class );
+			         if ( exposeBeans ) {
+				         module.expose( ExposedBean.class );
 			         }
 			         testContextBuilder.modules( module );
 		         } );
@@ -170,14 +254,36 @@ class TestApplicationContextStartup
 					   .sum()
 			).isEqualTo( TOTAL_BEANS );
 			assertThat( ctx.getBeansOfType( MyBean.class, true ) ).hasSize( TOTAL_BEANS );
-			assertThat( ctx.getBeansOfType( MyBean.class ) ).hasSize( exposed ? TOTAL_BEANS : 0 );
+			assertThat( ctx.getBeansOfType( MyBean.class ) ).hasSize( exposeBeans ? EXPOSED_PER_CHILD_CONTEXT * NUMBER_OF_CHILD_CONTEXTS : 0 );
+		}
+	}
+
+	void acrossContext( Class additionalConfiguration ) {
+		AcrossTestContextBuilder testContextBuilder = AcrossTestBuilders.standard( false );
+
+		IntStream.range( 0, NUMBER_OF_CHILD_CONTEXTS )
+		         .forEach( i -> {
+			         EmptyAcrossModule module = new EmptyAcrossModule( "Module" + i, SimpleContextConfiguration.class, additionalConfiguration );
+			         module.expose( ExposedBean.class );
+			         testContextBuilder.modules( module );
+		         } );
+
+		try (AcrossTestContext ctx = testContextBuilder.build()) {
+			assertThat(
+					ctx.getContextInfo().getModules()
+					   .stream()
+					   .filter( AcrossModuleInfo::isBootstrapped )
+					   .map( AcrossModuleInfo::getApplicationContext )
+					   .mapToInt( applicationContext -> applicationContext.getBeansOfType( MyBean.class ).size() )
+					   .sum()
+			).isEqualTo( TOTAL_BEANS );
 		}
 	}
 
 	private <U extends ConfigurableApplicationContext & AnnotationConfigRegistry> void singleApplicationContext( Supplier<U> supplier ) {
 		ConfigurableApplicationContext applicationContext = supplier.get();
 		try {
-			( (AnnotationConfigRegistry) applicationContext ).register( SmallBeansRegistrar.class );
+			( (AnnotationConfigRegistry) applicationContext ).register( SimpleContextConfiguration.class );
 			applicationContext.refresh();
 			applicationContext.start();
 			assertThat( applicationContext.getBeansOfType( MyBean.class ) ).hasSize( TOTAL_BEANS );
@@ -197,7 +303,7 @@ class TestApplicationContextStartup
 		         .forEach( i -> {
 			         ConfigurableApplicationContext applicationContext = supplier.get();
 			         applicationContext.setParent( parentContext );
-			         ( (AnnotationConfigRegistry) applicationContext ).register( SmallBeansRegistrar.class );
+			         ( (AnnotationConfigRegistry) applicationContext ).register( SimpleContextConfiguration.class );
 			         applicationContext.refresh();
 			         applicationContext.start();
 			         createdContexts.add( applicationContext );
@@ -242,7 +348,11 @@ class TestApplicationContextStartup
 		return l.get();
 	}
 
-	static class SmallBeansRegistrar implements ApplicationContextAware
+	interface MyBean
+	{
+	}
+
+	static class SimpleContextConfiguration implements ApplicationContextAware
 	{
 		@Override
 		public void setApplicationContext( ApplicationContext applicationContext ) throws BeansException {
@@ -253,13 +363,51 @@ class TestApplicationContextStartup
 			}
 			else {
 				AnnotationConfigApplicationContext appCtx = (AnnotationConfigApplicationContext) applicationContext;
-				IntStream.range( 0, applicationContext.getParent() != null ? BEANS_PER_CHILD_CONTEXT : TOTAL_BEANS )
-				         .forEach( i -> appCtx.registerBean( "registeredBean" + i, MyBean.class ) );
+				int nonExposedBeans = applicationContext.getParent() != null
+						? BEANS_PER_CHILD_CONTEXT - EXPOSED_PER_CHILD_CONTEXT
+						: TOTAL_BEANS - ( NUMBER_OF_CHILD_CONTEXTS * EXPOSED_PER_CHILD_CONTEXT );
+				int exposedBeans = applicationContext.getParent() != null ? EXPOSED_PER_CHILD_CONTEXT : NUMBER_OF_CHILD_CONTEXTS * EXPOSED_PER_CHILD_CONTEXT;
+				IntStream.range( 0, nonExposedBeans )
+				         .forEach( i -> appCtx.registerBean( "nonExposedBean" + i, NonExposedBean.class ) );
+				IntStream.range( 0, exposedBeans )
+				         .forEach( i -> appCtx.registerBean( "exposedBean" + i, ExposedBean.class ) );
 			}
 		}
 	}
 
-	static class MyBean
+	@Component
+	static class WithRefreshableCollection
+	{
+		@RefreshableCollection
+		private Collection<ExposedBean> exposedBeans;
+	}
+
+	@Component
+	static class WithIncrementalRefreshableCollection
+	{
+		@RefreshableCollection(incremental = true)
+		private Collection<ExposedBean> exposedBeans;
+	}
+
+	@Component
+	static class WithInternalsRefreshableCollection
+	{
+		@RefreshableCollection(includeModuleInternals = true)
+		private Collection<ExposedBean> exposedBeans;
+	}
+
+	@Component
+	static class WithInternalsIncrementalRefreshableCollection
+	{
+		@RefreshableCollection(includeModuleInternals = true, incremental = true)
+		private Collection<ExposedBean> exposedBeans;
+	}
+
+	static class NonExposedBean implements MyBean
+	{
+	}
+
+	static class ExposedBean implements MyBean
 	{
 
 	}
