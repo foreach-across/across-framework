@@ -52,6 +52,7 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 	private final Map<String[], TypeFilter[]> packagesToScan = new HashMap<>();
 	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
 	private Integer moduleIndex;
+	private String moduleName;
 
 	public AcrossWebApplicationContext() {
 		setId( ApplicationContextIdNameGenerator.forContext( this ) );

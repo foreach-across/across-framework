@@ -39,7 +39,6 @@ import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.filters.BeanFilterComposite;
-import com.foreach.across.core.filters.NamedBeanFilter;
 import com.foreach.across.core.installers.AcrossBootstrapInstallerRegistry;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
@@ -233,8 +232,7 @@ public class AcrossBootstrapper
 					installerRegistry.runInstallersForModule( moduleInfo.getName(), InstallerPhase.AfterModuleBootstrap );
 
 					// Copy the beans to the parent context
-					exposeBeans( configurableAcrossModuleInfo, config.getExposeFilter(), config.getExposeTransformer(),
-					             rootContext );
+					exposeBeans( configurableAcrossModuleInfo, config.getExposeFilter(), config.getExposeTransformer(), rootContext );
 
 					if ( pushExposedToParentContext ) {
 						contextExposedBeans.addAll( configurableAcrossModuleInfo.getExposedBeanDefinitions() );
@@ -475,17 +473,16 @@ public class AcrossBootstrapper
 	                          AcrossConfigurableApplicationContext parentContext ) {
 		BeanFilter exposeFilterToApply = exposeFilter;
 
-		AcrossListableBeanFactory moduleBeanFactory = AcrossContextUtils.getBeanFactory(
-				acrossModuleInfo );
+		AcrossListableBeanFactory moduleBeanFactory = AcrossContextUtils.beanFactory( acrossModuleInfo );
 
-		String[] exposedBeanNames = moduleBeanFactory.getExposedBeanNames();
-
-		if ( exposedBeanNames.length > 0 ) {
-			exposeFilterToApply = new BeanFilterComposite(
-					exposeFilter,
-					new NamedBeanFilter( exposedBeanNames )
-			);
-		}
+		// String[] exposedBeanNames = moduleBeanFactory.getExposedBeanNames();
+		//
+		// if ( exposedBeanNames.length > 0 ) {
+		// 	exposeFilterToApply = new BeanFilterComposite(
+		// 			exposeFilter,
+		// 			new NamedBeanFilter( exposedBeanNames )
+		// 	);
+		// }
 
 		ExposedModuleBeanRegistry exposedBeanRegistry = new ExposedModuleBeanRegistry(
 				AcrossContextUtils.getBeanRegistry( acrossModuleInfo.getContextInfo() ),
@@ -828,5 +825,21 @@ public class AcrossBootstrapper
 		applicationContextFactory.loadApplicationContext( context, root );
 
 		return root;
+	}
+
+	/**
+	 * Holds the exposed bean definitions that have been created by this Across context.
+	 */
+	private static class ExposedBeanDefinitions
+	{
+		/**
+		 * Bean definitions that are pushed upwards to the parent application context.
+		 */
+		private final Map<String, ExposedBeanDefinition> exposedToParentApplicationContext = new HashMap<>();
+
+		/**
+		 * Bean definitions that are available as local beans inside the modules of this Across context.
+		 */
+		private final Map<String, ExposedBeanDefinition> exposedWithinAcrossContext = new HashMap<>();
 	}
 }

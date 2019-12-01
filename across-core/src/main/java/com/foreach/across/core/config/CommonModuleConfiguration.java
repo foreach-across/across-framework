@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
+import com.foreach.across.core.context.support.AcrossContextEagerRefreshHandler;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.condition.*;
@@ -43,6 +44,13 @@ import javax.validation.executable.ExecutableValidator;
 @Import(CommonModuleConfiguration.ExposedBeanDefinitionImporter.class)
 public class CommonModuleConfiguration
 {
+	@Bean
+	@Lazy
+	@Primary
+	AcrossContextEagerRefreshHandler acrossContextEagerRefreshHandler() {
+		return new AcrossContextEagerRefreshHandler();
+	}
+
 	@Bean
 	@ConditionalOnMissingBean(search = SearchStrategy.CURRENT)
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {

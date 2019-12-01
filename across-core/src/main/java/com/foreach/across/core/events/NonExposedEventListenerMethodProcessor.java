@@ -21,6 +21,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.beans.factory.support.NewAcrossListableBeanFactory.LocalBeanListingScope;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.event.EventListenerMethodProcessor;
 
@@ -46,13 +47,8 @@ public final class NonExposedEventListenerMethodProcessor extends EventListenerM
 
 	@Override
 	public void afterSingletonsInstantiated() {
-		beanFactory.setHideExposedBeans( true );
-
-		try {
+		try (LocalBeanListingScope ignore = beanFactory.withLocalBeanListingOnly()) {
 			super.afterSingletonsInstantiated();
-		}
-		finally {
-			beanFactory.setHideExposedBeans( false );
 		}
 	}
 

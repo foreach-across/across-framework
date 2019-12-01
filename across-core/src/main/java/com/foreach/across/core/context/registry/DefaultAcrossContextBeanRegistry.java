@@ -16,10 +16,12 @@
 
 package com.foreach.across.core.context.registry;
 
+import com.foreach.across.core.AcrossModuleUtils;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.AcrossOrderSpecifierComparator;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
+import com.foreach.across.core.context.info.ModuleBootstrapStatus;
 import lombok.Getter;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -166,31 +168,40 @@ public class DefaultAcrossContextBeanRegistry implements AcrossContextBeanRegist
 		);
 
 		for ( String beanName : beanNames ) {
-			if ( includeModuleInternals && beanFactory.isExposedBean( beanName ) ) {
-				// when including module internals, skip any exposed beans on the root context
-				continue;
+			if ( includeModuleInternals ) {
+				try (AcrossListableBeanFactory.LocalBeanListingScope ignore = beanFactory.withLocalBeanListingOnly()) {
+					Object bean = beanFactory.getBean( beanName );
+					comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
+
+					if ( beanNameForBean.put( (T) bean, beanName ) == null ) {
+						beans.add( (T) bean );
+					}
+				}
 			}
+			else {
+				Object bean = beanFactory.getBean( beanName );
+				comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-			Object bean = beanFactory.getBean( beanName );
-			comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
-
-			if ( beanNameForBean.put( (T) bean, beanName ) == null ) {
-				beans.add( (T) bean );
+				if ( beanNameForBean.put( (T) bean, beanName ) == null ) {
+					beans.add( (T) bean );
+				}
 			}
 		}
 
 		if ( includeModuleInternals ) {
 			for ( AcrossModuleInfo module : contextInfo.getModules() ) {
-				if ( module.isBootstrapped() ) {
-					beanFactory = beanFactory( module.getApplicationContext() );
+				if ( ModuleBootstrapStatus.Bootstrapped == module.getBootstrapStatus() || ModuleBootstrapStatus.BootstrapBusy == module.getBootstrapStatus() ) {
+					beanFactory = AcrossModuleUtils.beanFactory( module );
 
-					for ( String beanName : beanFactory.getBeanNamesForType( resolvableType ) ) {
-						if ( !beanFactory.isExposedBean( beanName ) ) {
-							Object bean = beanFactory.getBean( beanName );
-							comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
+					try (AcrossListableBeanFactory.LocalBeanListingScope ignore = beanFactory.withLocalBeanListingOnly()) {
+						for ( String beanName : beanFactory.getBeanNamesForType( resolvableType ) ) {
+							if ( !beanFactory.isExposedBean( beanName ) ) {
+								Object bean = beanFactory.getBean( beanName );
+								comparator.register( bean, beanFactory.retrieveOrderSpecifier( beanName ) );
 
-							if ( beanNameForBean.put( (T) bean, module.getName() + ":" + beanName ) == null ) {
-								beans.add( (T) bean );
+								if ( beanNameForBean.put( (T) bean, module.getName() + ":" + beanName ) == null ) {
+									beans.add( (T) bean );
+								}
 							}
 						}
 					}

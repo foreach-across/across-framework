@@ -126,6 +126,7 @@ public final class AcrossLifecycleShutdownHandler
 	}
 
 	private void removeExposedBeanDefinitions( ApplicationContext applicationContext ) {
+		// todo: refactor, remove from the central registry
 		AcrossListableBeanFactory beanFactory = (AcrossListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
 		Stream.of( beanFactory.getBeanDefinitionNames() )
 		      .filter( beanFactory::isExposedBean )

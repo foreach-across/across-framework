@@ -165,7 +165,6 @@ class TestApplicationContextStartup
 				moduleInternals = timeStartup( () -> IntStream.range( 0, testCount )
 				                                              .forEach( i -> assertThat( ctx.getBeansOfType( MyBean.class, true ) )
 						                                              .hasSize( TOTAL_BEANS ) ) );
-
 				nonExisting = timeStartup( () -> IntStream.range( 0, testCount )
 				                                          .forEach( i -> assertThat( ctx.getBeansOfType( String.class, true ) ).isEmpty() ) );
 			}
@@ -176,7 +175,7 @@ class TestApplicationContextStartup
 		}
 
 		System.out.println();
-		System.out.println( "Performance timing results - average of " + testCount + " times each:" );
+		System.out.println( "Performance timing results - total of " + testCount + " times:" );
 		System.out.println(
 				TOTAL_BEANS + " beans in total, " + NUMBER_OF_CHILD_CONTEXTS + " child contexts, " + BEANS_PER_CHILD_CONTEXT + " beans per context" );
 		System.out.println();

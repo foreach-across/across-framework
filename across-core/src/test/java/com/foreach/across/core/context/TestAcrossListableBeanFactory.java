@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import java.util.Comparator;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class TestAcrossListableBeanFactory
+class TestAcrossListableBeanFactory
 {
 	@Test
-	public void acrossListableBeanFactoryShouldSerialize() {
+	void acrossListableBeanFactoryShouldSerialize() {
 		DefaultListableBeanFactory beanFactory = new AcrossListableBeanFactory();
 		Comparator comparator = beanFactory.getDependencyComparator();
 		beanFactory.setSerializationId( RandomStringUtils.randomAlphanumeric( 100 ) );

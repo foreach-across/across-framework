@@ -30,6 +30,7 @@ import com.foreach.across.core.context.configurer.PropertySourcesConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.core.context.support.AcrossContextEagerRefreshHandler;
 import com.foreach.across.core.filters.AnnotatedMethodFilter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,7 @@ import org.springframework.aop.target.LazyInitTargetSource;
 import org.springframework.aop.target.SimpleBeanTargetSource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TypeConverter;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -78,12 +80,20 @@ public final class AcrossContextUtils
 		AcrossContextInfo contextInfo = getContextInfo( context );
 
 		if ( contextInfo != null ) {
+			AcrossListableBeanFactory contextBeanFactory = AcrossContextUtils.beanFactory( contextInfo );
+			BeanFactoryUtils.beansOfTypeIncludingAncestors( contextBeanFactory, AcrossContextEagerRefreshHandler.class, false, false )
+			                .forEach( ( beanName, refreshHandler ) -> refreshHandler.refresh() );
+
 			for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 				if ( !moduleInfo.isBootstrapped() ) {
 					continue;
 				}
 
 				ApplicationContext moduleContext = moduleInfo.getApplicationContext();
+
+				moduleContext.getBeansOfType( AcrossContextEagerRefreshHandler.class, false, false )
+				             .forEach( ( beanName, refreshHandler ) -> refreshHandler.refresh() );
+
 				ConfigurableListableBeanFactory beanFactory = AcrossModuleUtils.beanFactory( moduleInfo );
 
 				Collection<Object> refreshableBeans = ApplicationContextScanner.findBeansWithAnnotation( moduleContext, Refreshable.class );
@@ -190,7 +200,7 @@ public final class AcrossContextUtils
 	 * @param contextOrModule AcrossApplicationHolder instance.
 	 * @return BeanFactory linked to the ApplicationContext in the holder or null if not yet available.
 	 */
-	public static AcrossListableBeanFactory getBeanFactory( AcrossEntity contextOrModule ) {
+	public static AcrossListableBeanFactory beanFactory( AcrossEntity contextOrModule ) {
 		return getAcrossApplicationContextHolder( contextOrModule ).getBeanFactory();
 	}
 

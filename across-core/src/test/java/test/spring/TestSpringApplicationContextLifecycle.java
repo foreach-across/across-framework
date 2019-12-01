@@ -103,9 +103,9 @@ public class TestSpringApplicationContextLifecycle
 		across.bootstrap();
 
 		AcrossConfigurableApplicationContext acrossApplicationContext = AcrossContextUtils.getApplicationContext( across );
-		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.getBeanFactory( across );
-		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.getBeanFactory( moduleOne );
-		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.getBeanFactory( moduleTwo );
+		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.beanFactory( across );
+		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.beanFactory( moduleOne );
+		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.beanFactory( moduleTwo );
 
 		assertTrue( acrossApplicationContext.isActive() );
 		assertNotNull( acrossFactory.getSingleton( AcrossContextInfo.BEAN ) );
@@ -142,9 +142,9 @@ public class TestSpringApplicationContextLifecycle
 
 		AcrossConfigurableApplicationContext acrossApplicationContext = AcrossContextUtils.getApplicationContext(
 				across );
-		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.getBeanFactory( across );
-		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.getBeanFactory( moduleOne );
-		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.getBeanFactory( moduleTwo );
+		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.beanFactory( across );
+		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.beanFactory( moduleOne );
+		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.beanFactory( moduleTwo );
 
 		assertTrue( acrossApplicationContext.isActive() );
 		assertEquals( parent, acrossApplicationContext.getParent() );
@@ -187,9 +187,9 @@ public class TestSpringApplicationContextLifecycle
 
 		AcrossConfigurableApplicationContext acrossApplicationContext
 				= AcrossContextUtils.getApplicationContext( across );
-		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.getBeanFactory( across );
-		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.getBeanFactory( moduleOne );
-		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.getBeanFactory( moduleTwo );
+		ConfigurableListableBeanFactory acrossFactory = AcrossContextUtils.beanFactory( across );
+		ConfigurableListableBeanFactory moduleOneFactory = AcrossContextUtils.beanFactory( moduleOne );
+		ConfigurableListableBeanFactory moduleTwoFactory = AcrossContextUtils.beanFactory( moduleTwo );
 
 		assertTrue( acrossApplicationContext.isActive() );
 		assertEquals( parent, acrossApplicationContext.getParent() );

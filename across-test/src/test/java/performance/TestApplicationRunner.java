@@ -173,7 +173,7 @@ class TestApplicationRunner
 		}
 	}
 
-	private BigDecimal calculateAverage( Supplier<ConfigurableApplicationContext> supplier ) {
+	static BigDecimal calculateAverage( Supplier<ConfigurableApplicationContext> supplier ) {
 		for ( int i = 0; i < WARMUP_RUNS; i++ ) {
 			timeStartup( supplier );
 		}
@@ -188,7 +188,7 @@ class TestApplicationRunner
 	}
 
 	@SneakyThrows
-	private long timeStartup( Supplier<ConfigurableApplicationContext> supplier ) {
+	static long timeStartup( Supplier<ConfigurableApplicationContext> supplier ) {
 		AtomicLong l = new AtomicLong();
 		Thread thread = new Thread(
 				() -> {

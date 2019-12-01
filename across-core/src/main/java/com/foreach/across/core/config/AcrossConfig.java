@@ -20,6 +20,7 @@ import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
+import com.foreach.across.core.context.support.AcrossContextEagerRefreshHandler;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
 import com.foreach.across.core.convert.StringToDateTimeConverter;
@@ -59,6 +60,12 @@ import java.util.UUID;
 @Import({ ValidationAutoConfiguration.class, AcrossDataSourceRegistrar.class })
 public class AcrossConfig
 {
+	@Bean
+	@Lazy
+	AcrossContextEagerRefreshHandler acrossContextEagerRefreshHandler() {
+		return new AcrossContextEagerRefreshHandler();
+	}
+
 	/**
 	 * @return central Across event publisher
 	 */
@@ -101,6 +108,7 @@ public class AcrossConfig
 	 */
 	@Bean(name = ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
 	@Exposed
+	@Lazy
 	@ConditionalOnMissingBean(name = ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
 	public DefaultFormattingConversionService conversionService() {
 		LOG.info( "Creating a default ConversionService as no valid bean '{}' is present",
