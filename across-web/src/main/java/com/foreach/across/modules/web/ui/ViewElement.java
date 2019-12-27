@@ -19,7 +19,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -187,35 +186,13 @@ public interface ViewElement
 	interface WitherSetter<T extends ViewElement>
 	{
 		void applyTo( T target );
-
-		default WitherSetter<T> ifFalse( boolean condition ) {
-			return ifTrue( !condition );
-		}
-
-		default WitherSetter<T> ifTrue( boolean condition ) {
-			return target -> {
-				if ( condition ) {
-					this.applyTo( target );
-				}
-			};
-		}
-
-		default WitherSetter<T> ifFalse( @NonNull Supplier<Boolean> condition ) {
-			return ifTrue( () -> !condition.get() );
-		}
-
-		default WitherSetter<T> ifTrue( @NonNull Supplier<Boolean> condition ) {
-			return target -> {
-				if ( condition.get() ) {
-					this.applyTo( target );
-				}
-			};
-		}
 	}
 
 	/**
 	 * Function that modifies a view element by removing values.
 	 * Typical example: removing an attribute.
+	 * See also {@link MutableViewElement.Functions#remove(WitherRemover[])} to
+	 * convert a remover functions into {@link WitherSetter}.
 	 *
 	 * @param <T> type of the view element
 	 */

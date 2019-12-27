@@ -15,11 +15,8 @@
  */
 package com.foreach.across.modules.web.ui.elements;
 
-import com.foreach.across.modules.web.ui.ViewElement;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.foreach.across.modules.web.ui.MutableViewElement.Functions.elementName;
 import static com.foreach.across.modules.web.ui.elements.HtmlViewElement.Functions.*;
@@ -50,25 +47,6 @@ class TestHtmlViewElement
 		assertThat( node.hasCssClass( "x" ) ).isTrue();
 		assertThat( node.hasCssClass( "y" ) ).isFalse();
 		assertThat( node.hasCssClass( "z" ) ).isFalse();
-	}
-
-	@Test
-	void conditionalWithers() {
-		boolean enabled = true;
-
-		node.set( css( "x" ).ifTrue( enabled ), css( "y" ).ifFalse( enabled ) );
-		assertThat( node.hasCssClass( "x" ) ).isTrue();
-		assertThat( node.hasCssClass( "y" ) ).isFalse();
-
-		AtomicBoolean ref = new AtomicBoolean();
-		ViewElement.WitherSetter<HtmlViewElement> conditionalCss = css( "z" ).ifTrue( ref::get );
-		node.set( conditionalCss );
-		assertThat( node.hasCssClass( "z" ) ).isFalse();
-
-		ref.set( true );
-
-		node.set( conditionalCss );
-		assertThat( node.hasCssClass( "z" ) ).isTrue();
 	}
 
 	@Test
