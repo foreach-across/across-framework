@@ -19,6 +19,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.foreach.across.modules.web.ui.MutableViewElement.Functions.elementName;
+import static com.foreach.across.modules.web.ui.ViewElement.predicateFor;
 import static com.foreach.across.modules.web.ui.elements.HtmlViewElement.Functions.*;
 import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,11 +43,19 @@ class TestHtmlViewElement
 		assertThat( node.hasCssClass( "y" ) ).isTrue();
 		assertThat( node.hasCssClass( "z" ) ).isTrue();
 
+		assertThat( node.matches( css( "a" ) ) ).isFalse();
+		assertThat( node.matches( css( "x", "y", "z" ) ) ).isTrue();
+		assertThat( node.matches( css( "x" ).and( css( "y" ) ) ) ).isTrue();
+
 		node.remove( css( "y", "z" ) );
 
 		assertThat( node.hasCssClass( "x" ) ).isTrue();
 		assertThat( node.hasCssClass( "y" ) ).isFalse();
 		assertThat( node.hasCssClass( "z" ) ).isFalse();
+
+		assertThat( node.matches( css( "x" ) ) ).isTrue();
+		assertThat( node.matches( css( "x" ).and( css( "y" ) ) ) ).isFalse();
+		assertThat( node.matches( css( "x" ).or( css( "y" ) ) ) ).isTrue();
 	}
 
 	@Test
@@ -63,6 +72,22 @@ class TestHtmlViewElement
 				.isEqualTo( node.get( attribute( "key1" ) ) )
 				.isEqualTo( node.get( attribute( "key1" ).as( String.class ) ) );
 		assertThat( node.getAttribute( "key2" ) ).isEqualTo( "val2" );
+
+		assertThat( node.matches( attribute( "key1" ) ) ).isTrue();
+		assertThat( node.matches( attribute( "key3" ) ) ).isFalse();
+		assertThat( node.matches( data( "key3" ) ) ).isTrue();
+		assertThat( node.matches( data( "key5" ) ) ).isFalse();
+		assertThat( node.matches( aria( "key5" ) ) ).isTrue();
+		assertThat( node.matches( aria( "key7" ) ) ).isFalse();
+
+		assertThat( node.matches( attribute( "key2" ).withValue( "val2" ) ) ).isTrue();
+		assertThat( node.matches( attribute( "key2", "val1" ) ) ).isFalse();
+		assertThat( node.matches( data( "key3" ).withValue( "val3" ) ) ).isTrue();
+		assertThat( node.matches( data( "key4", "val3" ) ) ).isFalse();
+		assertThat( node.matches( aria( "key5" ).withValue( "val5" ) ) ).isTrue();
+		assertThat( node.matches( aria( "key6", "val5" ) ) ).isFalse();
+
+		assertThat( node.matches( predicateFor( NodeViewElement.class, node -> node.hasAttribute( "key2" ) ) ) ).isTrue();
 
 		assertThat( node.getAttribute( "data-key3" ) )
 				.isEqualTo( "val3" )

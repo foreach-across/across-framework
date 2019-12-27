@@ -98,7 +98,7 @@ public interface HtmlViewElement extends MutableViewElement
 		/**
 		 * Configure a {@code data-} attribute value.
 		 */
-		static WitherSetter<HtmlViewElement> data( String attributeName, Object attributeValue ) {
+		static AttributeWitherFunction.AttributeValueWitherFunction<Object> data( String attributeName, Object attributeValue ) {
 			return data( attributeName ).withValue( attributeValue );
 		}
 
@@ -113,7 +113,7 @@ public interface HtmlViewElement extends MutableViewElement
 		/**
 		 * Configure an {@code aria-} attribute value.
 		 */
-		static WitherSetter<HtmlViewElement> aria( String attributeName, Object attributeValue ) {
+		static AttributeWitherFunction.AttributeValueWitherFunction<Object> aria( String attributeName, Object attributeValue ) {
 			return aria( attributeName ).withValue( attributeValue );
 		}
 
@@ -128,13 +128,14 @@ public interface HtmlViewElement extends MutableViewElement
 		/**
 		 * Configure a custom attribute value.
 		 */
-		static WitherSetter<HtmlViewElement> attribute( String attributeName, Object attributeValue ) {
+		static AttributeWitherFunction.AttributeValueWitherFunction<Object> attribute( String attributeName, Object attributeValue ) {
 			return new AttributeWitherFunction<>( attributeName ).withValue( attributeValue );
 		}
 
 		/**
 		 * Configure a custom attribute value. Can be used for getting the attribute value,
 		 * removing the attribute, or setting it using {@link AttributeWitherFunction#withValue(Object)}.
+		 * Can also be used to check for the presence of the attribute (as {@link java.util.function.Predicate}).
 		 */
 		static AttributeWitherFunction<Object> attribute( String attributeName ) {
 			return new AttributeWitherFunction<>( attributeName );

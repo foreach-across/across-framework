@@ -19,15 +19,18 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import lombok.RequiredArgsConstructor;
 
+import java.util.function.Predicate;
+
 /**
  * Function for {@link com.foreach.across.modules.web.ui.ViewElement.Wither} which allows for
  * setting and removing of css classes on a {@link com.foreach.across.modules.web.ui.elements.HtmlViewElement}.
+ * Also a {@link Predicate} which can be used with {@link ViewElement#matches(Predicate)} to check if the css classes are present.
  *
  * @author Arne Vandamme
  * @since 5.0.0
  */
 @RequiredArgsConstructor
-public class CssClassWitherFunction implements ViewElement.WitherSetter<HtmlViewElement>, ViewElement.WitherRemover<HtmlViewElement>
+public class CssClassWitherFunction implements ViewElement.WitherSetter<HtmlViewElement>, ViewElement.WitherRemover<HtmlViewElement>, Predicate<HtmlViewElement>
 {
 	private final String[] cssClassNames;
 
@@ -39,5 +42,15 @@ public class CssClassWitherFunction implements ViewElement.WitherSetter<HtmlView
 	@Override
 	public void removeFrom( HtmlViewElement target ) {
 		target.removeCssClass( cssClassNames );
+	}
+
+	@Override
+	public boolean test( HtmlViewElement target ) {
+		for ( String cssClassName : cssClassNames ) {
+			if ( !target.hasCssClass( cssClassName ) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

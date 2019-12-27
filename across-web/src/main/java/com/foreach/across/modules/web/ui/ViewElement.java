@@ -19,6 +19,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -70,6 +71,19 @@ public interface ViewElement
 	default ViewElement remove( WitherRemover... functions ) {
 		with( this ).remove( functions );
 		return this;
+	}
+
+	/**
+	 * Check if the element matches the predicate given.
+	 * Note there is no compiler type-safety on this method, predicate implementations should do the type checking.
+	 * See also {@link #predicateFor(Class, Predicate)} for a helper function to create a typed predicate inline.
+	 *
+	 * @param predicate to test
+	 * @return predicate outcome
+	 */
+	@SuppressWarnings("unchecked")
+	default boolean matches( @NonNull Predicate predicate ) {
+		return predicate.test( this );
 	}
 
 	/**
@@ -221,5 +235,12 @@ public interface ViewElement
 		default <V extends U, W extends V> WitherGetter<T, W> as( Class<V> clazz ) {
 			return (WitherGetter<T, W>) this;
 		}
+	}
+
+	/**
+	 * Short-hand for creating an anonymous typed predicate, can be used to inline type predicate creation.
+	 */
+	static <U extends ViewElement> Predicate<U> predicateFor( Class<U> elementType, Predicate<U> predicate ) {
+		return predicate;
 	}
 }

@@ -17,8 +17,12 @@ package com.foreach.across.modules.web.ui.elements.support;
 
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
+import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Function for {@link com.foreach.across.modules.web.ui.ViewElement.Wither} which allows for
@@ -28,7 +32,7 @@ import lombok.RequiredArgsConstructor;
  * @since 5.0.0
  */
 @RequiredArgsConstructor
-public class AttributeWitherFunction<T> implements ViewElement.WitherRemover<HtmlViewElement>, ViewElement.WitherGetter<HtmlViewElement, T>
+public class AttributeWitherFunction<T> implements ViewElement.WitherRemover<HtmlViewElement>, ViewElement.WitherGetter<HtmlViewElement, T>, Predicate<HtmlViewElement>
 {
 	@NonNull
 	private final String attributeKey;
@@ -39,12 +43,34 @@ public class AttributeWitherFunction<T> implements ViewElement.WitherRemover<Htm
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	public T getValueFrom( HtmlViewElement target ) {
 		return (T) target.getAttribute( attributeKey );
 	}
 
-	public ViewElement.WitherSetter<HtmlViewElement> withValue( T value ) {
-		return t -> t.setAttribute( attributeKey, value );
+	@Override
+	public boolean test( HtmlViewElement htmlViewElement ) {
+		return htmlViewElement.hasAttribute( attributeKey );
+	}
+
+	public AttributeValueWitherFunction<T> withValue( T value ) {
+		return new AttributeValueWitherFunction<>( attributeKey, value );
+	}
+
+	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+	public static class AttributeValueWitherFunction<T> implements ViewElement.WitherSetter<HtmlViewElement>, Predicate<HtmlViewElement>
+	{
+		private final String attributeKey;
+		private final T value;
+
+		@Override
+		public void applyTo( HtmlViewElement target ) {
+			target.setAttribute( attributeKey, value );
+		}
+
+		@Override
+		public boolean test( HtmlViewElement htmlViewElement ) {
+			return Objects.equals( htmlViewElement.getAttribute( attributeKey ), value );
+		}
 	}
 }
