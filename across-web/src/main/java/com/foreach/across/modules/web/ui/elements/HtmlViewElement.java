@@ -59,6 +59,17 @@ public interface HtmlViewElement extends MutableViewElement
 
 	boolean hasAttribute( String attributeName );
 
+	@Override
+	default HtmlViewElement set( WitherSetter... setters ) {
+		MutableViewElement.super.set( setters );
+		return this;
+	}
+
+	@Override
+	default HtmlViewElement remove( WitherRemover... functions ) {
+		MutableViewElement.super.remove( functions );
+		return this;
+	}
 	/**
 	 * Nested interface which contains wither functions specific for HTML view elements.
 	 */

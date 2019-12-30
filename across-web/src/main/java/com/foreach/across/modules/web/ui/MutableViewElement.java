@@ -23,6 +23,18 @@ public interface MutableViewElement extends ViewElement
 
 	MutableViewElement setCustomTemplate( String customTemplate );
 
+	@Override
+	default MutableViewElement set( WitherSetter... setters ) {
+		ViewElement.super.set( setters );
+		return this;
+	}
+
+	@Override
+	default MutableViewElement remove( WitherRemover... functions ) {
+		ViewElement.super.remove( functions );
+		return this;
+	}
+
 	/**
 	 * Common {@link Wither} functions for the default {@link MutableViewElement} properties.
 	 */
