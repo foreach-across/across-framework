@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 /**
  * Function for {@link com.foreach.across.modules.web.ui.ViewElement.Wither} which allows for
  * setting and removing of attributes on a {@link com.foreach.across.modules.web.ui.elements.HtmlViewElement}.
+ * When a specific value is specified, the remover will only remove the attribute if if has the exact value.
  *
  * @author Arne Vandamme
  * @since 5.0.0
@@ -58,7 +59,7 @@ public class AttributeWitherFunction<T> implements ViewElement.WitherRemover<Htm
 	}
 
 	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-	public static class AttributeValueWitherFunction<T> implements ViewElement.WitherSetter<HtmlViewElement>, Predicate<HtmlViewElement>
+	public static class AttributeValueWitherFunction<T> implements ViewElement.WitherSetter<HtmlViewElement>, ViewElement.WitherRemover<HtmlViewElement>, Predicate<HtmlViewElement>
 	{
 		private final String attributeKey;
 		private final T value;
@@ -66,6 +67,14 @@ public class AttributeWitherFunction<T> implements ViewElement.WitherRemover<Htm
 		@Override
 		public void applyTo( HtmlViewElement target ) {
 			target.setAttribute( attributeKey, value );
+		}
+
+		@Override
+		public void removeFrom( HtmlViewElement target ) {
+			Object attribute = target.getAttribute( attributeKey );
+			if ( Objects.equals( attribute, value ) ) {
+				target.removeAttribute( attributeKey );
+			}
 		}
 
 		@Override

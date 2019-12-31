@@ -104,6 +104,16 @@ class TestHtmlViewElement
 		node.remove( attribute( "key1" ), data( "key3" ), aria( "key5" ) );
 
 		assertThat( node.getAttributes().keySet() ).containsExactly( "key2", "data-key4", "aria-key6" );
+
+		node.remove( attribute( "key2", "val3" ), data( "key4", "val5" ), aria( "key6", "val7" ) );
+		assertThat( node.getAttributes().keySet() ).containsExactly( "key2", "data-key4", "aria-key6" );
+
+		node.remove(
+				attribute( "key2" ).withValue( "val2" ),
+				data( "key4" ).withValue( "val4" ),
+				aria( "key6" ).withValue( "val6" )
+		);
+		assertThat( node.getAttributes() ).isEmpty();
 	}
 
 	@Test
