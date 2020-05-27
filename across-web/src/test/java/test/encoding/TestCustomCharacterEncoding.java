@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = TestDefaultCharacterEncoding.Config.class)
-@TestPropertySource(properties = "spring.http.encoding.charset=UTF-16")
+@TestPropertySource(properties = "server.servlet.encoding.charset=UTF-16")
 public class TestCustomCharacterEncoding extends AbstractWebIntegrationTest
 {
 	@Test

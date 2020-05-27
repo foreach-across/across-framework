@@ -42,7 +42,7 @@ import java.util.Collections;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Configuration
 @Import(HttpEncodingAutoConfiguration.class)
-@ConditionalOnProperty(prefix = "spring.http.encoding", value = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "server.servlet.encoding", value = "enabled", matchIfMissing = true)
 public class CharacterEncodingConfiguration
 {
 	public static final String FILTER_NAME = "characterEncodingFilter";

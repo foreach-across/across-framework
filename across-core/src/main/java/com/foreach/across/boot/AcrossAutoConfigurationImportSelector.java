@@ -102,8 +102,8 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 	}
 
 	@Override
-	protected AutoConfigurationEntry getAutoConfigurationEntry( AutoConfigurationMetadata autoConfigurationMetadata, AnnotationMetadata annotationMetadata ) {
-		AutoConfigurationEntry autoConfigurationEntry = super.getAutoConfigurationEntry( autoConfigurationMetadata, annotationMetadata );
+	protected AutoConfigurationEntry getAutoConfigurationEntry( AnnotationMetadata annotationMetadata ) {
+		AutoConfigurationEntry autoConfigurationEntry = super.getAutoConfigurationEntry( annotationMetadata );
 		retrieveAutoConfigurationRegistry().printAutoConfigurationReport();
 		return autoConfigurationEntry;
 	}

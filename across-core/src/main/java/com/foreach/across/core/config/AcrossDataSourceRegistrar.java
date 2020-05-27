@@ -23,9 +23,7 @@ import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.beans.factory.support.*;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -66,6 +64,10 @@ class AcrossDataSourceRegistrar implements BeanDefinitionRegistryPostProcessor
 				BeanDefinitionRegistry primaryRegistry = getRegistryWithLocalBeanDefinition( beanFactory, DATASOURCE );
 				if ( primaryRegistry != null ) {
 					primaryRegistry.registerAlias( DATASOURCE, INSTALLER_DATASOURCE );
+					if( primaryRegistry instanceof AbstractBeanFactory ) {
+						// getAliases() would fail because this gets cached before the registrar is called
+						(( AbstractBeanFactory) primaryRegistry).clearMetadataCache();
+					}
 				}
 			}
 		}

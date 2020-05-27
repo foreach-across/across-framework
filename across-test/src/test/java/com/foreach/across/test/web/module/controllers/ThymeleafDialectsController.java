@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @ClearTemplate
 public class ThymeleafDialectsController
 {
-	@RequestMapping
+	@RequestMapping("/thymeleafDialects")
 	public String thymeleafDialects() {
 		return "th/webControllers/thymeleafDialects";
 	}

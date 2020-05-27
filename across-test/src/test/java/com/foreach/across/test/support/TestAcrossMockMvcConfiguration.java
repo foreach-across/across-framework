@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AcrossWebAppConfiguration
 @TestPropertySource(properties = {
 		"build.number=unit-test",
-		"spring.http.encoding.force=true"
+		"server.servlet.encoding.force=true"
 })
 public class TestAcrossMockMvcConfiguration
 {

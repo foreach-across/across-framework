@@ -369,8 +369,9 @@ public class TestCustomRequestCondition
 	}
 
 	@SuppressWarnings("unused")
-	@RestController
 	@ReferrerMapping({ FOREACH, MICROSOFT })
+	@RequestMapping("**")
+	@RestController
 	protected static class ReferrerController
 	{
 		@GetMapping("/hello")
@@ -397,6 +398,7 @@ public class TestCustomRequestCondition
 
 	@SuppressWarnings("unused")
 	@RestController
+	@RequestMapping("**")
 	protected static class CustomOnlyController
 	{
 		@ReferrerMapping(MICROSOFT)

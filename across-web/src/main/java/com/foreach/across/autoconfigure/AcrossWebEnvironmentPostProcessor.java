@@ -32,7 +32,7 @@ class AcrossWebEnvironmentPostProcessor implements EnvironmentPostProcessor
 	@Override
 	public void postProcessEnvironment( ConfigurableEnvironment environment, SpringApplication application ) {
 		Properties properties = new Properties();
-		properties.put( "spring.http.encoding.force", true );
+		properties.put( "server.servlet.encoding.force", true );
 		environment.getPropertySources().addLast( new PropertiesPropertySource( "springHttpEncodingPropertySource", properties ) );
 	}
 }
