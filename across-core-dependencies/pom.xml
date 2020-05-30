@@ -65,10 +65,6 @@
         <foreach.common.version>1.1</foreach.common.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <commons-io.version>2.6</commons-io.version>
-        <!--        <liquibase.version>3.7.0</liquibase.version>-->
-        <lombok-maven-plugin.version>1.16.18.0</lombok-maven-plugin.version>
-        <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
-        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
     </properties>
 
     <repositories>
@@ -138,11 +134,6 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>5.1.47</version>
             </dependency>
-            <dependency>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-core</artifactId>
-                <version>${liquibase.version}</version>
-            </dependency>
 
             <!-- Foreach commons -->
             <dependency>
@@ -196,12 +187,7 @@
                 <plugin>
                     <groupId>org.projectlombok</groupId>
                     <artifactId>lombok-maven-plugin</artifactId>
-                    <version>${lombok-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>flatten-maven-plugin</artifactId>
-                    <version>${flatten-maven-plugin.version}</version>
+                    <version>${lombok.version}.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
