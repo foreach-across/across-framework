@@ -15,13 +15,13 @@
  */
 package com.foreach.across.modules.web.ui;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -32,8 +32,8 @@ public class TestViewElementBuilderContextHolder
 {
 	private ViewElementBuilderContext renderContext = mock( ViewElementBuilderContext.class );
 
-	@After
-	@Before
+	@AfterEach
+	@BeforeEach
 	public void clean() {
 		ViewElementBuilderContextHolder.clearViewElementBuilderContext();
 	}

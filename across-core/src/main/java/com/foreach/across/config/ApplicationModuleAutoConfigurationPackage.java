@@ -30,6 +30,6 @@ class ApplicationModuleAutoConfigurationPackage implements AcrossBootstrapConfig
 {
 	@Override
 	public void configureContext( AcrossBootstrapConfig contextConfiguration ) {
-		contextConfiguration.extendModule( "DynamicApplicationModule", ApplicationModuleAutoConfigurationPackageRegistrar.class );
+		contextConfiguration.extendModule( "DynamicApplicationModule", false, false, ApplicationModuleAutoConfigurationPackageRegistrar.class );
 	}
 }

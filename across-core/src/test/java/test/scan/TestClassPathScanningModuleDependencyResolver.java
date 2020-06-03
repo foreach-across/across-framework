@@ -16,16 +16,14 @@
 package test.scan;
 
 import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
-import test.scan.packageOne.ExtendedValidModule;
-import test.scan.packageOne.ValidModule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import test.scan.packageOne.ExtendedValidModule;
 import test.scan.packageOne.ValidModule;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Arne Vandamme

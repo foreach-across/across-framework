@@ -17,10 +17,10 @@ package test.context;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
+import org.junit.jupiter.api.Test;
 import test.TestAcrossContext;
-import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme

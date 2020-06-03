@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@ package com.foreach.across.core.config;
 
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
-import lombok.val;
+import com.foreach.across.core.context.module.ModuleConfigurationExtension;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DeferredImportSelector;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
@@ -36,13 +37,14 @@ import org.springframework.core.type.AnnotationMetadata;
  * @since 3.0.0
  */
 @Configuration
-@Import(ModuleConfigurationImportSelector.Registrar.class)
+@Import({ ModuleConfigurationImportSelector.ModuleConfigurationExtensionSelector.class,
+          ModuleConfigurationImportSelector.DeferredModuleConfigurationExtensionSelector.class })
 public class ModuleConfigurationImportSelector
 {
 	/**
-	 * Returns the actual imports.
+	 * Returns the non-deferred imports.
 	 */
-	static class Registrar implements ImportSelector, BeanFactoryAware
+	static class ModuleConfigurationExtensionSelector implements ImportSelector, BeanFactoryAware
 	{
 		private AcrossModuleInfo moduleInfo;
 
@@ -53,8 +55,31 @@ public class ModuleConfigurationImportSelector
 
 		@Override
 		public String[] selectImports( AnnotationMetadata importingClassMetadata ) {
-			val configurationsToImport = moduleInfo.getBootstrapConfiguration().getConfigurationsToImport();
-			return configurationsToImport.isEmpty() ? new String[0] : configurationsToImport.toArray( new String[0] );
+			return moduleInfo.getBootstrapConfiguration().getConfigurationExtensions().stream()
+			                 .filter( extension -> !extension.isDeferred() )
+			                 .map( ModuleConfigurationExtension::getAnnotatedClass )
+			                 .toArray( String[]::new );
+		}
+	}
+
+	/**
+	 * Returns the actual deferred imports.
+	 */
+	static class DeferredModuleConfigurationExtensionSelector implements DeferredImportSelector, BeanFactoryAware
+	{
+		private AcrossModuleInfo moduleInfo;
+
+		@Override
+		public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
+			moduleInfo = beanFactory.getBean( AcrossContextInfo.BEAN, AcrossContextInfo.class ).getModuleBeingBootstrapped();
+		}
+
+		@Override
+		public String[] selectImports( AnnotationMetadata importingClassMetadata ) {
+			return moduleInfo.getBootstrapConfiguration().getConfigurationExtensions().stream()
+			                 .filter( ModuleConfigurationExtension::isDeferred )
+			                 .map( ModuleConfigurationExtension::getAnnotatedClass )
+			                 .toArray( String[]::new );
 		}
 	}
 }

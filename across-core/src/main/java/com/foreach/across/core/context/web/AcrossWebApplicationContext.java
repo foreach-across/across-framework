@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +49,8 @@ import java.util.Map;
  */
 public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationContext implements AcrossConfigurableApplicationContext
 {
-	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
 	private final Map<String[], TypeFilter[]> packagesToScan = new HashMap<>();
-
+	private Collection<ProvidedBeansMap> providedBeansMaps = new LinkedHashSet<ProvidedBeansMap>();
 	private Integer moduleIndex;
 
 	public AcrossWebApplicationContext() {
@@ -165,5 +164,13 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 		}
 
 		super.initApplicationEventMulticaster();
+	}
+
+	@Override
+	protected void resetCommonCaches() {
+		if ( getParent() == null ) {
+			// only reset if there is no parent
+			super.resetCommonCaches();
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.foreach.across.core.events;
 
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
-import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 
@@ -58,17 +57,6 @@ public final class AcrossModuleBeforeBootstrapEvent extends AcrossLifecycleEvent
 	@Override
 	public AcrossContextInfo getSource() {
 		return (AcrossContextInfo) super.getSource();
-	}
-
-	/**
-	 * Add any number of configurers to the module being bootstrapped.
-	 *
-	 * @param configurers One or more ApplicationContextConfigurer instances to add.
-	 * @deprecated use {@link #getBootstrapConfig()} to alter the bootstrap configuration
-	 */
-	@Deprecated
-	public void addApplicationContextConfigurers( ApplicationContextConfigurer... configurers ) {
-		getBootstrapConfig().addApplicationContextConfigurer( configurers );
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package test;
 
 import com.foreach.across.config.EnableAcrossContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,12 +27,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.context.request.async.CallableProcessingInterceptor;
 import org.springframework.web.context.request.async.DeferredResultProcessingInterceptor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import test.modules.async.AsyncModule;
 
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -50,7 +50,7 @@ public class TestAsyncSupported extends AbstractWebIntegrationTest
 	@Autowired
 	private DeferredResultProcessingInterceptor deferredResultProcessingInterceptor;
 
-	@Before
+	@BeforeEach
 	public void resetMocks() {
 		reset( callableProcessingInterceptor, deferredResultProcessingInterceptor, spyTaskExecutor );
 	}
@@ -84,7 +84,7 @@ public class TestAsyncSupported extends AbstractWebIntegrationTest
 
 	@Configuration
 	@EnableAcrossContext(modules = AsyncModule.NAME)
-	protected static class Config extends WebMvcConfigurerAdapter
+	protected static class Config implements WebMvcConfigurer
 	{
 		@Bean
 		public AsyncTaskExecutor spyTaskExecutor() {

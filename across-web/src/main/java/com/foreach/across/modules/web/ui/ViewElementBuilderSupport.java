@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,12 @@ import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Base class for a {@link ViewElementBuilder} of a {@link MutableViewElement}.  Provides defaults functionality
@@ -34,6 +37,40 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 {
 	protected String name, customTemplate;
 	private Collection<ViewElementPostProcessor<T>> postProcessors = new ArrayList<>();
+	private Collection<ViewElement.WitherSetter> setters = new ArrayList<>();
+
+	private Function<ViewElementBuilderContext, ? extends T> elementSupplier;
+
+	/**
+	 * Set a separate supplier which supplies the initial element to which this builder should be applied.
+	 *
+	 * @param supplier to use instead of calling {@link #createElement(ViewElementBuilderContext)}
+	 * @return current builder
+	 */
+	public SELF elementSupplier( Supplier<? extends T> supplier ) {
+		return elementSupplier( buildContext -> supplier.get() );
+	}
+
+	/**
+	 * Set a separate supplier which supplies the initial element to which this builder should be applied.
+	 *
+	 * @param supplierFunction to use instead of calling {@link #createElement(ViewElementBuilderContext)}
+	 * @return current builder
+	 */
+	@SuppressWarnings("unchecked")
+	public SELF elementSupplier( Function<ViewElementBuilderContext, ? extends T> supplierFunction ) {
+		elementSupplier = supplierFunction;
+		return (SELF) this;
+	}
+
+	/**
+	 * Apply a collection of setters to the element.
+	 */
+	@SuppressWarnings("unchecked")
+	public SELF with( ViewElement.WitherSetter... setters ) {
+		this.setters.addAll( Arrays.asList( setters ) );
+		return (SELF) this;
+	}
 
 	@SuppressWarnings("unchecked")
 	public SELF name( String name ) {
@@ -75,7 +112,8 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 	 */
 	@Override
 	public final T build( ViewElementBuilderContext builderContext ) {
-		T element = createElement( builderContext );
+		T element = elementSupplier != null ? elementSupplier.apply( builderContext ) : createElement( builderContext );
+		setters.forEach( element::set );
 
 		WebResourceRegistry webResourceRegistry = builderContext.getAttribute( WebResourceRegistry.class );
 		if ( webResourceRegistry != null ) {
@@ -97,6 +135,7 @@ public abstract class ViewElementBuilderSupport<T extends MutableViewElement, SE
 
 	}
 
+	// todo: refactor so this always gets applied
 	protected T apply( T viewElement, ViewElementBuilderContext builderContext ) {
 		if ( name != null ) {
 			viewElement.setName( name );

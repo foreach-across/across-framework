@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,19 @@ package com.foreach.across.test.support;
 
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.servlet.AcrossWebDynamicServletConfigurer;
 import com.foreach.across.test.AcrossTestWebContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,7 +57,7 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 
 			ServletConfigurer configurer = ctx.getBeanOfType( ServletConfigurer.class );
 			assertNotNull( configurer );
-			assertEquals( Boolean.TRUE, configurer.getAllowed() );
+			assertTrue( configurer.allowed );
 		}
 	}
 
@@ -75,7 +74,7 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 
 			ServletConfigurer configurer = ctx.getBeanOfType( ServletConfigurer.class );
 			assertNotNull( configurer );
-			assertNull( configurer.getAllowed() );
+			assertFalse( configurer.allowed );
 		}
 	}
 
@@ -111,22 +110,13 @@ public class TestAcrossTestWebContextBuilder extends TestAcrossTestContextBuilde
 	}
 
 	@Configuration
-	public static class ServletConfigurer extends AcrossWebDynamicServletConfigurer
+	public static class ServletConfigurer implements ServletContextInitializer
 	{
-		private Boolean allowed;
-
-		public Boolean getAllowed() {
-			return allowed;
-		}
+		private boolean allowed;
 
 		@Override
-		protected void dynamicConfigurationAllowed( ServletContext servletContext ) throws ServletException {
+		public void onStartup( ServletContext servletContext ) {
 			allowed = true;
-		}
-
-		@Override
-		protected void dynamicConfigurationDenied( ServletContext servletContext ) throws ServletException {
-			allowed = false;
 		}
 	}
 }

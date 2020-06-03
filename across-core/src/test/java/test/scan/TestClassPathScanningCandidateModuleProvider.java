@@ -17,12 +17,7 @@ package test.scan;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.context.ClassPathScanningCandidateModuleProvider;
-import test.scan.packageOne.ExtendedValidModule;
-import test.scan.packageOne.ValidModule;
-import test.scan.packageTwo.OtherValidModule;
-import test.scan.packageTwo.ReplacementValidModule;
-import test.scan.packageTwo.YetAnotherValidModule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import test.scan.packageOne.ExtendedValidModule;
 import test.scan.packageOne.ValidModule;
@@ -33,7 +28,7 @@ import test.scan.packageTwo.YetAnotherValidModule;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme

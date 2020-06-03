@@ -27,7 +27,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
  * Creates a JSP/JSTL view resolver.
  */
 @Configuration
-@ConditionalOnProperty(value = "acrossWebModule.views.jsp.enabled")
+@ConditionalOnProperty(value = "across.web.views.jsp.enabled")
 public class JstlViewSupportConfiguration
 {
 	@Bean

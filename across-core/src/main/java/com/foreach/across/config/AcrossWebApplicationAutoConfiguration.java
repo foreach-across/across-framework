@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@
 package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -37,14 +33,13 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
  * @see AcrossApplication
  * @since 1.1.2
  */
-@ConditionalOnWebApplication
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@ConditionalOnBean(AcrossContext.class)
 @Configuration
-@AutoConfigureAfter(EmbeddedServletContainerAutoConfiguration.class)
-@Import({ DispatcherServletAutoConfiguration.class, EmbeddedServletContainerAutoConfiguration.class, ServerPropertiesAutoConfiguration.class })
+@Import({ DispatcherServletAutoConfiguration.class, ServletWebServerFactoryAutoConfiguration.class })
 public class AcrossWebApplicationAutoConfiguration
 {
 	@Bean
-	@ConditionalOnBean({ EmbeddedServletContainerFactory.class, SpringBootServletInitializer.class })
 	public static AcrossServletContextInitializer embeddedAcrossServletContextInitializer( ConfigurableWebApplicationContext webApplicationContext ) {
 		return new AcrossServletContextInitializer( webApplicationContext );
 	}

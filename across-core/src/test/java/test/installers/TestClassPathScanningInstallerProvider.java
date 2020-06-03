@@ -16,10 +16,7 @@
 package test.installers;
 
 import com.foreach.across.core.context.installers.ClassPathScanningInstallerProvider;
-import test.installers.examples.InstallerThree;
-import test.installers.scan.installers.InstallerOne;
-import test.installers.scan.installers.InstallerTwo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import test.installers.examples.InstallerThree;
 import test.installers.scan.installers.InstallerOne;
@@ -29,7 +26,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme

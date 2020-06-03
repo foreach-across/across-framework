@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package com.foreach.across.modules.web.config;
 
 import com.foreach.across.condition.ConditionalOnConfigurableServletContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.HttpEncodingAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +34,7 @@ import java.util.Collections;
  * filter in the chain.  It is vital that this filter comes first so the encoding is applied as early as possible.
  * <p>
  * This configuration reuses {@link HttpEncodingAutoConfiguration} and corresponding
- * {@link org.springframework.boot.autoconfigure.web.HttpEncodingProperties}.
+ * {@link org.springframework.boot.autoconfigure.http.HttpProperties.Encoding}.
  *
  * @author Arne Vandamme
  * @see HttpEncodingAutoConfiguration
@@ -50,9 +50,8 @@ public class CharacterEncodingConfiguration
 	@Bean
 	@ConditionalOnConfigurableServletContext
 	public FilterRegistrationBean characterEncodingFilterRegistration( CharacterEncodingFilter characterEncodingFilter ) {
-		FilterRegistrationBean registration = new FilterRegistrationBean();
+		FilterRegistrationBean<CharacterEncodingFilter> registration = new FilterRegistrationBean<>( characterEncodingFilter );
 		registration.setName( FILTER_NAME );
-		registration.setFilter( characterEncodingFilter );
 		registration.setAsyncSupported( true );
 		registration.setMatchAfter( false );
 		registration.setUrlPatterns( Collections.singletonList( "/*" ) );

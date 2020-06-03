@@ -20,15 +20,15 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import lombok.val;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.ConstraintViolation;
@@ -39,14 +39,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration(classes = TestMethodValidation.Config.class)
 public class TestMethodValidation
@@ -78,7 +78,7 @@ public class TestMethodValidation
 	public void methodFailsIfValueNull() {
 		assertThatExceptionOfType( ConstraintViolationException.class )
 				.isThrownBy( () -> myService.validateArguments( 56, null ) )
-				.satisfies( exception -> hasConstraintMessage( exception, "may not be null" ) );
+				.satisfies( exception -> hasConstraintMessage( exception, "must not be null" ) );
 	}
 
 	private void hasConstraintMessage( ConstraintViolationException exception, String message ) {

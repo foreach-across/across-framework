@@ -16,22 +16,22 @@
 
 package com.foreach.across.core.context.beans;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 import java.math.BigDecimal;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class TestProvidedBeansMap
 {
 	private ProvidedBeansMap beans;
 
-	@Before
+	@BeforeEach
 	public void reset() {
 		beans = new ProvidedBeansMap();
 	}

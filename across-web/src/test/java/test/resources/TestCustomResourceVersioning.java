@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,26 @@ package test.resources;
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.modules.web.AcrossWebModule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.FixedVersionStrategy;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 import test.AbstractWebIntegrationTest;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = TestCustomResourceVersioning.Config.class)
-@TestPropertySource(properties = { "build.number=95247852", "acrossWebModule.resources.versioning.enabled=true" })
+@TestPropertySource(properties = { "build.number=95247852", "across.web.resources.versioning.enabled=true" })
 public class TestCustomResourceVersioning extends AbstractWebIntegrationTest
 {
 	@Test
@@ -82,7 +82,7 @@ public class TestCustomResourceVersioning extends AbstractWebIntegrationTest
 			modules = TestResourcesModule.NAME,
 			modulePackageClasses = { AcrossPlatform.class, TestModules.class }
 	)
-	public static class Config extends WebMvcConfigurerAdapter
+	public static class Config implements WebMvcConfigurer
 	{
 		@Bean
 		public AcrossWebModule acrossWebModule() {

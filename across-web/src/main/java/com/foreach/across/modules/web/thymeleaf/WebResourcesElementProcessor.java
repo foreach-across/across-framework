@@ -15,7 +15,7 @@
  */
 package com.foreach.across.modules.web.thymeleaf;
 
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.model.IModel;

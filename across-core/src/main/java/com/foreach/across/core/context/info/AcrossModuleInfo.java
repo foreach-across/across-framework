@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import com.foreach.across.core.context.AcrossModuleEntity;
 import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.module.AcrossModuleBootstrapConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.NonNull;
 
 import java.util.Collection;
 import java.util.Map;
@@ -100,14 +102,27 @@ public interface AcrossModuleInfo extends AcrossModuleEntity
 	ModuleBootstrapConfig getBootstrapConfiguration();
 
 	/**
-	 * @return The Spring application context for this module.
+	 * experimental - unused
+	 *
+	 * @return configuration object used for bootstrapping the module
 	 */
+	AcrossModuleBootstrapConfiguration getModuleBootstrapConfiguration();
+
+	/**
+	 * @return The Spring application context for this module, can be {@code null} if the module has not been bootstrapped or was skipped
+	 */
+	@NonNull
 	ApplicationContext getApplicationContext();
 
 	/**
 	 * @return The specific role of the module in the context.
 	 */
 	AcrossModuleRole getModuleRole();
+
+	/**
+	 * @return The relative order assigned to this module in the scope of that module role.
+	 */
+	int getOrderInModuleRole();
 
 	/**
 	 * @return The collection of exposed BeanDefinitions.

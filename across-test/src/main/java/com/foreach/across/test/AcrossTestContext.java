@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,10 @@
  */
 package com.foreach.across.test;
 
-import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.context.AcrossApplicationContext;
-import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.AcrossContextUtils;
-import com.foreach.across.core.context.beans.ProvidedBeansMap;
-import com.foreach.across.core.context.beans.SingletonBean;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.ConfigurableAcrossContextInfo;
-import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -51,36 +45,9 @@ public class AcrossTestContext extends DefaultAcrossContextBeanRegistry implemen
 {
 	private ConfigurableApplicationContext applicationContext;
 	private AcrossContext acrossContext;
-	private AcrossContextBeanRegistry beanRegistry;
 	private AcrossContextInfo contextInfo;
 
 	protected AcrossTestContext() {
-	}
-
-	/**
-	 * @param configurers list of configures
-	 * @deprecated use {@link com.foreach.across.test.support.AcrossTestBuilders} instead
-	 */
-	@Deprecated
-	public AcrossTestContext( AcrossContextConfigurer... configurers ) {
-		AcrossConfigurableApplicationContext parent = createApplicationContext();
-
-		ProvidedBeansMap providedBeans = new ProvidedBeansMap();
-
-		for ( int i = 0; i < configurers.length; i++ ) {
-			providedBeans.put(
-					"QueryableAcrossTestContext.AcrossContextConfigurer~" + i,
-					new SingletonBean( configurers[i] )
-			);
-		}
-
-		parent.provide( providedBeans );
-
-		parent.refresh();
-		parent.start();
-
-		setApplicationContext( parent );
-		setAcrossContext( parent.getBean( AcrossContext.class ) );
 	}
 
 	protected void setApplicationContext( ConfigurableApplicationContext applicationContext ) {
@@ -90,16 +57,8 @@ public class AcrossTestContext extends DefaultAcrossContextBeanRegistry implemen
 	protected void setAcrossContext( AcrossContext acrossContext ) {
 		this.acrossContext = acrossContext;
 
-		beanRegistry = AcrossContextUtils.getBeanRegistry( acrossContext );
 		contextInfo = AcrossContextUtils.getContextInfo( acrossContext );
 		setContextInfo( (ConfigurableAcrossContextInfo) contextInfo );
-	}
-
-	protected AcrossConfigurableApplicationContext createApplicationContext() {
-		AcrossApplicationContext ctx = new AcrossApplicationContext();
-		ctx.register( AcrossTestContextConfiguration.class );
-
-		return ctx;
 	}
 
 	@Override
@@ -108,17 +67,6 @@ public class AcrossTestContext extends DefaultAcrossContextBeanRegistry implemen
 		if ( applicationContext != null ) {
 			applicationContext.close();
 		}
-	}
-
-	/**
-	 * Provides access to registry for the {@link AcrossContext}.
-	 *
-	 * @return bean registry
-	 * @deprecated no longer useful as {@link AcrossTestContext} implements the bean registry interface directly
-	 */
-	@Deprecated
-	public AcrossContextBeanRegistry beanRegistry() {
-		return beanRegistry;
 	}
 
 	/**

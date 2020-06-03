@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,7 @@ import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.web.config.AcrossWebModuleDevSettings;
 import com.foreach.across.modules.web.error.AcrossModuleDefaultErrorViewResolver;
 import com.foreach.across.modules.web.menu.Menu;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.validation.Validator;
@@ -55,32 +54,6 @@ public class AcrossWebModule extends AcrossModule
 	public AcrossWebModule() {
 		expose( RestTemplateBuilder.class, HttpMessageConverters.class, ObjectMapper.class, Jackson2ObjectMapperBuilder.class );
 		exposeClass( "com.google.gson.Gson" );
-	}
-
-	/**
-	 * Set the base url path that will be used to access views.
-	 *
-	 * @param viewsResourcePath Url path prefix for views resources.
-	 * @deprecated set via properties instead
-	 */
-	@Deprecated
-	public void setViewsResourcePath( String viewsResourcePath ) {
-		setProperty( AcrossWebModuleSettings.VIEWS_RESOURCES_PATH, viewsResourcePath );
-	}
-
-	/**
-	 * Configure the view resolvers that should be created.
-	 * By default both JSP and Thymeleaf are created.
-	 *
-	 * @param viewSupport View engine that should be configured.
-	 * @deprecated set via properties instead
-	 */
-	@Deprecated
-	public void setSupportViews( AcrossWebViewSupport... viewSupport ) {
-		setProperty( "acrossWebModule.views.thymeleaf.enabled",
-		             ArrayUtils.contains( viewSupport, AcrossWebViewSupport.THYMELEAF ) );
-		setProperty( "acrossWebModule.views.jsp.enabled",
-		             ArrayUtils.contains( viewSupport, AcrossWebViewSupport.JSP ) );
 	}
 
 	@Override

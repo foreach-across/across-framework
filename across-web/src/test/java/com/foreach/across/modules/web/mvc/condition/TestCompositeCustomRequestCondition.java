@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,25 @@
  */
 package com.foreach.across.modules.web.mvc.condition;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestCompositeCustomRequestCondition
 {
 	@Mock
@@ -52,9 +53,11 @@ public class TestCompositeCustomRequestCondition
 		assertSame( composite, composite.getMatchingCondition( request ) );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void sameConditionTypesAreNotAllowed() {
-		composite = new CompositeCustomRequestCondition( Arrays.asList( one, two, mock( CustomOne.class ) ) );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			composite = new CompositeCustomRequestCondition( Arrays.asList( one, two, mock( CustomOne.class ) ) );
+		} );
 	}
 
 	@Test

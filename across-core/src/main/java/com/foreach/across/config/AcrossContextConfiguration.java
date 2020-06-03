@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,29 @@ package com.foreach.across.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.context.ClassPathScanningCandidateModuleProvider;
-import com.foreach.across.core.context.ClassPathScanningModuleDependencyResolver;
-import com.foreach.across.core.context.ModuleDependencyResolver;
-import com.foreach.across.core.context.SharedMetadataReaderFactory;
+import com.foreach.across.core.context.*;
 import com.foreach.across.core.support.AcrossContextBuilder;
 import com.foreach.across.core.util.ClassLoadingUtils;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory;
+import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.*;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 
@@ -72,6 +78,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	private Environment environment;
 	private BeanFactory beanFactory;
 	private ClassLoader beanClassLoader;
+	private AcrossContext acrossContext;
 
 	@Override
 	public void setImportMetadata( AnnotationMetadata importMetadata ) {
@@ -110,7 +117,24 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		AcrossContext context = contextBuilder.build();
 		context.bootstrap();
 
+		this.acrossContext = context;
+
 		return context;
+	}
+
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	@EventListener
+	public void forwardApplicationEvent( ApplicationEvent event ) {
+		if ( event instanceof SpringApplicationEvent || event instanceof WebServerInitializedEvent ) {
+			// todo: extend across-configuration to allow specifying which events should be forwarded
+			if ( acrossContext != null ) {
+				val multicaster = AcrossContextUtils.getContextInfo( acrossContext )
+				                                    .getApplicationContext()
+				                                    .getBean( ApplicationEventMulticaster.class );
+
+				multicaster.multicastEvent( event );
+			}
+		}
 	}
 
 	private DataSource selectAcrossDataSource() {
@@ -152,7 +176,7 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		if ( environment.containsProperty( "across.development.active" ) ) {
 			return environment.getProperty( "across.development.active", Boolean.class, false );
 		}
-		else if ( environment.acceptsProfiles( "dev" ) ) {
+		else if ( environment.acceptsProfiles( Profiles.of( "dev" ) ) ) {
 			LOG.info( "Activating development mode for Across because of 'dev' Spring profile" );
 			return true;
 		}

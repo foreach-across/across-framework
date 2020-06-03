@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,22 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.ordering.one.ModuleOne;
 import com.foreach.across.test.ordering.two.ModuleTwo;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests that exposed beans show up in every module context,
@@ -55,11 +55,11 @@ import static org.junit.Assert.assertEquals;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration(classes = TestModuleBeanOrdering.Config.class)
-public class TestModuleBeanOrdering
+class TestModuleBeanOrdering
 {
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
@@ -69,14 +69,14 @@ public class TestModuleBeanOrdering
 
 	private ApplicationContext moduleOne, moduleTwo;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		moduleOne = contextInfo.getModuleInfo( "ModuleOne" ).getApplicationContext();
 		moduleTwo = contextInfo.getModuleInfo( "ModuleTwo" ).getApplicationContext();
 	}
 
 	@Test
-	public void wiredComponentListOnModuleOneIncludesOnlyModuleOneBeansInOrder() {
+	void wiredComponentListOnModuleOneIncludesOnlyModuleOneBeansInOrder() {
 		assertEquals(
 				Arrays.asList(
 						moduleOne.getBean( "moduleOneComponentOne" ),
@@ -89,7 +89,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void wiredComponentListOnModuleTwoIncludesModuleOneExposedBeans() {
+	void wiredComponentListOnModuleTwoIncludesModuleOneExposedBeans() {
 		assertEquals(
 				Arrays.asList(
 						moduleTwo.getBean( "moduleTwoComponentThree" ),
@@ -103,7 +103,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void moduleOneIncludesAllExposedBeans() {
+	void moduleOneIncludesAllExposedBeans() {
 		assertBeans(
 				moduleOne.getBeansOfType( MyComponent.class ),
 				// first exposed ordered bean from module two
@@ -118,7 +118,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void moduleTwoIncludesAllExposedBeansAsWell() {
+	void moduleTwoIncludesAllExposedBeansAsWell() {
 		assertBeans(
 				moduleTwo.getBeansOfType( MyComponent.class ),
 				// first exposed ordered bean from module two
@@ -133,7 +133,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void contextWithoutInternalsReturnsAllExposedBeansInOrder() {
+	void contextWithoutInternalsReturnsAllExposedBeansInOrder() {
 		assertBeans(
 				beanRegistry.getBeansOfTypeAsMap( MyComponent.class, false ),
 				// explicitly ordered module two bean
@@ -149,7 +149,7 @@ public class TestModuleBeanOrdering
 	}
 
 	@Test
-	public void contextWithInternalsReturnsAlsoNonExposedBeansInOrder() {
+	void contextWithInternalsReturnsAlsoNonExposedBeansInOrder() {
 		assertBeans(
 				beanRegistry.getBeansOfTypeAsMap( MyComponent.class, true ),
 				// module two bean explicitly ordered
@@ -180,6 +180,6 @@ public class TestModuleBeanOrdering
 	private void assertBeans( Map<String, MyComponent> beans, String... expected ) {
 		assertEquals( expected.length, beans.size() );
 		String[] beanNames = beans.keySet().toArray( new String[0] );
-		assertArrayEquals( "Bean names: " + Arrays.toString( beanNames ), expected, beanNames );
+		assertArrayEquals( expected, beanNames, "Bean names: " + Arrays.toString( beanNames ) );
 	}
 }

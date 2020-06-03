@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,27 +24,27 @@ import com.foreach.across.test.support.config.TestDataSourceConfigurer;
 import com.foreach.common.concurrent.locks.distributed.DistributedLock;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.sql.DataSource;
 import java.io.Closeable;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration
 public class ITDistributedLockRepository
@@ -61,7 +61,7 @@ public class ITDistributedLockRepository
 
 	private final Map<String, Integer> resultsByLock = Collections.synchronizedMap( new HashMap<>() );
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		resultsByLock.clear();
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,19 @@
 package com.foreach.across.modules.web.ui;
 
 import com.foreach.across.modules.web.resource.WebResourceUtils;
+import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -34,15 +36,15 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 3.1.1
  */
-@RunWith(MockitoJUnitRunner.class)
-public class TestViewElementBuilder
+@ExtendWith(MockitoExtension.class)
+class TestViewElementBuilder
 {
 	@Mock
 	private ViewElementBuilderContext threadLocal;
@@ -50,15 +52,56 @@ public class TestViewElementBuilder
 	@Mock
 	private ViewElementBuilderContext requestBound;
 
-	@Before
-	@After
-	public void reset() {
+	@BeforeEach
+	@AfterEach
+	void reset() {
 		RequestContextHolder.resetRequestAttributes();
 		ViewElementBuilderContextHolder.clearViewElementBuilderContext();
 	}
 
 	@Test
-	public void customBuilderContextIsCreatedIfNoGlobalAvailable() {
+	void builderFromSupplier() {
+		ViewElementBuilder<NodeViewElement> builder = ViewElementBuilder.of( () -> new NodeViewElement( "div" ) );
+		assertElementOf( builder ).isEqualTo( new NodeViewElement( "div" ) );
+
+		assertElementOf(
+				builder.postProcess( ( bc, node ) -> node.setAttribute( "one", 1 ) )
+				       .postProcess( ( bc, node ) -> node.setAttribute( "two", "two" ) )
+		)
+				.isEqualTo(
+						new NodeViewElement( "div" )
+								.setAttribute( "one", 1 )
+								.setAttribute( "two", "two" )
+				);
+	}
+
+	@Test
+	void builderFromFunction() {
+		ViewElementBuilder<NodeViewElement> builder = ViewElementBuilder.of( builderContext -> {
+			assertThat( builderContext ).isSameAs( threadLocal );
+			return new NodeViewElement( "head" );
+		} );
+		assertElementOf( builder ).isEqualTo( new NodeViewElement( "head" ) );
+	}
+
+	private NodeViewElementAssert assertElementOf( ViewElementBuilder<NodeViewElement> builder ) {
+		return new NodeViewElementAssert( builder.build( threadLocal ) );
+	}
+
+	@RequiredArgsConstructor
+	private class NodeViewElementAssert
+	{
+		private final AbstractNodeViewElement actual;
+
+		NodeViewElementAssert isEqualTo( AbstractNodeViewElement expected ) {
+			assertThat( actual.getTagName() ).isEqualTo( expected.getTagName() );
+			assertThat( actual.getAttributes() ).isEqualTo( expected.getAttributes() );
+			return this;
+		}
+	}
+
+	@Test
+	void customBuilderContextIsCreatedIfNoGlobalAvailable() {
 		AtomicReference<ViewElementBuilderContext> holder = new AtomicReference<>();
 		ViewElementBuilder<?> builder = builderContext -> {
 			if ( holder.get() != null ) {
@@ -74,7 +117,7 @@ public class TestViewElementBuilder
 	}
 
 	@Test
-	public void requestBoundGlobalContextIsUsedIfNoThreadLocal() {
+	void requestBoundGlobalContextIsUsedIfNoThreadLocal() {
 		bindBuilderContextToRequest();
 
 		ViewElementBuilder<?> target = mock( ViewElementBuilder.class );
@@ -87,7 +130,7 @@ public class TestViewElementBuilder
 	}
 
 	@Test
-	public void threadLocalTakesPrecedenceOverRequestBound() {
+	void threadLocalTakesPrecedenceOverRequestBound() {
 		bindBuilderContextToRequest();
 		ViewElementBuilderContextHolder.setViewElementBuilderContext( threadLocal );
 
@@ -112,13 +155,13 @@ public class TestViewElementBuilder
 	}
 
 	@Test
-	public void andThenDoesNothingIfNullPostProcessorPassed() {
+	void andThenDoesNothingIfNullPostProcessorPassed() {
 		ViewElementBuilder<?> builder = builderContext -> new NodeViewElement( "div" );
 		assertThat( builder.andThen( null ) ).isSameAs( builder );
 	}
 
 	@Test
-	public void andThenReturnsNewBuilderWithSettingsApplied() {
+	void andThenReturnsNewBuilderWithSettingsApplied() {
 		ViewElementBuilder<NodeViewElement> builder = builderContext -> new NodeViewElement( "div" );
 		ViewElementBuilder<NodeViewElement> composed = builder.andThen( ( ( builderContext, element ) -> element.setAttribute( "test", "hello" ) ) );
 		assertThat( composed ).isNotSameAs( builder );
@@ -129,7 +172,7 @@ public class TestViewElementBuilder
 	}
 
 	@Test
-	public void mapReturnsNewBuilderOfNewType() {
+	void mapReturnsNewBuilderOfNewType() {
 		NodeViewElementBuilder node = new NodeViewElementBuilder( "mytag" );
 
 		ViewElementBuilder<TextViewElement> tagName = node.map( n -> TextViewElement.text( n.getTagName() ) );

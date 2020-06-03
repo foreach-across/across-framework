@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,19 @@ package test;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
-import test.modules.exposing.ExposingModule;
-import test.modules.installer.InstallerModule;
-import test.modules.module1.TestModule1;
-import test.modules.module2.TestModule2;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import test.modules.exposing.ExposingModule;
 import test.modules.installer.InstallerModule;
 import test.modules.module1.TestModule1;
 import test.modules.module2.TestModule2;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAcrossContext
 {
 	@Test
-	public void withinSameJvmIdChanges() {
+	void withinSameJvmIdChanges() {
 		String firstId = new AcrossContext().getId();
 		String secondId = new AcrossContext().getId();
 
@@ -43,7 +40,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void displayNameAndId() {
+	void displayNameAndId() {
 		AcrossContext ctx = new AcrossContext();
 		String id = ctx.getId();
 		assertNotNull( id );
@@ -55,7 +52,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void getModuleByName() {
+	void getModuleByName() {
 		TestModule1 module = new TestModule1();
 		ExposingModule other = new ExposingModule( "my module" );
 
@@ -69,7 +66,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void getValidTypedModuleByName() {
+	void getValidTypedModuleByName() {
 		TestModule1 module = new TestModule1();
 		ExposingModule other = new ExposingModule( "my module" );
 
@@ -82,20 +79,22 @@ public class TestAcrossContext
 		assertSame( other, fetched );
 	}
 
-	@Test(expected = ClassCastException.class)
-	public void getInvalidTypedModuleByName() {
-		TestModule1 module = new TestModule1();
-		ExposingModule other = new ExposingModule( "my module" );
+	@Test
+	void getInvalidTypedModuleByName() {
+		Assertions.assertThrows( ClassCastException.class, () -> {
+			TestModule1 module = new TestModule1();
+			ExposingModule other = new ExposingModule( "my module" );
 
-		AcrossContext context = new AcrossContext();
-		context.addModule( module );
-		context.addModule( other );
+			AcrossContext context = new AcrossContext();
+			context.addModule( module );
+			context.addModule( other );
 
-		context.getModule( "my module", TestModule1.class );
+			context.getModule( "my module", TestModule1.class );
+		} );
 	}
 
 	@Test
-	public void dataSourceIsNotRequiredIfNoInstallers() {
+	void dataSourceIsNotRequiredIfNoInstallers() {
 		AcrossContext context = new AcrossContext();
 		context.setInstallerAction( InstallerAction.EXECUTE );
 		context.addModule( new TestModule1() );
@@ -104,7 +103,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void dataSourceIsNotRequiredIfInstallersWontRun() {
+	void dataSourceIsNotRequiredIfInstallersWontRun() {
 		AcrossContext context = new AcrossContext();
 		// Default installer action is disabled
 		context.addModule( new InstallerModule() );
@@ -113,7 +112,7 @@ public class TestAcrossContext
 	}
 
 	@Test
-	public void dataSourceIsRequiredIfInstallersWantToRun() {
+	void dataSourceIsRequiredIfInstallersWantToRun() {
 		AcrossContext context = new AcrossContext();
 		context.setInstallerAction( InstallerAction.EXECUTE );
 		context.addModule( new InstallerModule() );
@@ -127,17 +126,17 @@ public class TestAcrossContext
 			failed = true;
 		}
 
-		assertTrue( "A datasource should be required if installers want to run.", failed );
+		assertTrue( failed, "A datasource should be required if installers want to run." );
 	}
 
 	@Test
-	public void unableToAddModuleAfterBootstrap() {
+	void unableToAddModuleAfterBootstrap() {
 		AcrossContext context = new AcrossContext();
 		context.bootstrap();
 	}
 
 	@Test
-	public void sameModuleIsNotAllowed() {
+	void sameModuleIsNotAllowed() {
 		AcrossContext context = new AcrossContext();
 
 		TestModule1 duplicate = new TestModule1();
@@ -154,11 +153,11 @@ public class TestAcrossContext
 			failed = true;
 		}
 
-		assertTrue( "Adding same module instance should not be allowed", failed );
+		assertTrue( failed, "Adding same module instance should not be allowed" );
 	}
 
 	@Test
-	public void sameModuleCanOnlyBeInOneAcrossContext() {
+	void sameModuleCanOnlyBeInOneAcrossContext() {
 		TestModule1 module = new TestModule1();
 
 		AcrossContext contextOne = new AcrossContext();
@@ -175,6 +174,6 @@ public class TestAcrossContext
 			failed = true;
 		}
 
-		assertTrue( "Adding same module to another Across context should not be allowed", failed );
+		assertTrue( failed, "Adding same module to another Across context should not be allowed" );
 	}
 }

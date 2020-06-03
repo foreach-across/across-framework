@@ -16,11 +16,13 @@
 
 package test.properties.settings;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class SetPropertyConfig
 {
 	@Value("${contextValue}")
@@ -38,14 +40,6 @@ public class SetPropertyConfig
 	@Value("${unresolvable:50}")
 	public long unresolvable;
 
-	@Autowired
-	private PropertiesModuleSettings settings;
-
-	public String getProperty( String propertyName ) {
-		return settings.getProperty( propertyName );
-	}
-
-	public <T> T getProperty( String propertyName, Class<T> propertyClass ) {
-		return settings.getProperty( propertyName, propertyClass );
-	}
+	@Getter
+	private final PropertiesModuleSettings settings;
 }

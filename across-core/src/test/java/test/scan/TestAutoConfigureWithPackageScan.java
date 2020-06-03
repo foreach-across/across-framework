@@ -17,27 +17,24 @@ package test.scan;
 
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
-import test.scan.packageOne.ExtendedValidModule;
-import test.scan.packageThree.ThirdValidModule;
-import test.scan.packageTwo.OtherValidModule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test.scan.packageOne.ExtendedValidModule;
 import test.scan.packageThree.ThirdValidModule;
 import test.scan.packageTwo.OtherValidModule;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration(classes = TestAutoConfigureWithPackageScan.Config.class)
 public class TestAutoConfigureWithPackageScan

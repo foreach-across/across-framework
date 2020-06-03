@@ -16,19 +16,20 @@
 
 package test.properties.settings;
 
-import com.foreach.across.core.AcrossModuleSettings;
-import com.foreach.across.core.AcrossModuleSettingsRegistry;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Arne Vandamme
  */
-public class PropertiesModuleSettings extends AcrossModuleSettings
+@ConfigurationProperties
+@Setter
+@Getter
+public class PropertiesModuleSettings
 {
-	@Override
-	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
-		registry.register( "moduleSourceValue", String.class, "defaultModuleSourceValue" );
-		registry.register( "moduleDirectValue", String.class, "defaultModuleDirectValue" );
-		registry.register( "contextValue", String.class, "defaultContextValue" );
-		registry.register( "defaultOnlyValue", String.class, "default" );
-	}
+	private String moduleSourceValue = "defaultModuleSourceValue";
+	private String moduleDirectValue = "defaultModuleDirectValue";
+	private String contextValue = "defaultContextValue";
+	private String defaultOnlyValue = "default";
 }

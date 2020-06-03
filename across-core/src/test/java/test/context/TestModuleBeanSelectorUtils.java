@@ -19,9 +19,10 @@ import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.support.ModuleBeanSelectorUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -29,18 +30,18 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestModuleBeanSelectorUtils
 {
 	private AnnotationConfigApplicationContext context;
 
-	@Before
+	@BeforeEach
 	public void initContext() {
 		context = new AnnotationConfigApplicationContext();
 	}
 
-	@After
+	@AfterEach
 	public void stopContext() {
 		if ( context.isActive() ) {
 			context.close();
@@ -82,18 +83,22 @@ public class TestModuleBeanSelectorUtils
 		assertValidMultipleFetches( "module2", "module2" );
 	}
 
-	@Test(expected = NoUniqueBeanDefinitionException.class)
+	@Test
 	public void ambiguousDefaultBeanDefinitionsInSingleApplicationContext() {
-		context( AmbiguousDefaultNameHoldersConfig.class );
+		Assertions.assertThrows( NoUniqueBeanDefinitionException.class, () -> {
+			context( AmbiguousDefaultNameHoldersConfig.class );
 
-		assertAndFetchBean( RandomStringUtils.random( 10 ), "default" );
+			assertAndFetchBean( RandomStringUtils.random( 10 ), "default" );
+		} );
 	}
 
-	@Test(expected = NoUniqueBeanDefinitionException.class)
+	@Test
 	public void ambiguouslyQualifiedBeanDefinitionsInSingleApplicationContext() {
-		context( AmbiguouslyQualifiedNameHoldersConfig.class );
+		Assertions.assertThrows( NoUniqueBeanDefinitionException.class, () -> {
+			context( AmbiguouslyQualifiedNameHoldersConfig.class );
 
-		assertAndFetchBean( "module1", "module1" );
+			assertAndFetchBean( "module1", "module1" );
+		} );
 	}
 
 	private void context( Class<?>... annotatedClasses ) {

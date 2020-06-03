@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,27 @@ package test;
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.modules.web.context.WebAppPathResolver;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
 import static com.foreach.across.modules.web.AcrossWebModuleSettings.WEBJARS_RESOURCES_PATH;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = TestCustomConfiguration.Config.class)
-@TestPropertySource(properties = { "acrossWebModule.resources.path=/static",
+@TestPropertySource(properties = { "across.web.resources.path=/static",
                                    WEBJARS_RESOURCES_PATH + "=//cdn.jsdelivr.net/webjars/",
-                                   "acrossWebModule.views.thymeleaf.enabled=false" })
+                                   "across.web.views.thymeleaf.enabled=false" })
 public class TestCustomConfiguration extends AbstractWebIntegrationTest
 {
 	@Autowired
@@ -54,9 +55,11 @@ public class TestCustomConfiguration extends AbstractWebIntegrationTest
 		assertTrue( output.contains( "alert('hello');" ) );
 	}
 
-	@Test(expected = HttpClientErrorException.class)
+	@Test
 	public void thymeleafShouldBeDisabled() {
-		get( "/testResources" );
+		Assertions.assertThrows( HttpClientErrorException.class, () -> {
+			get( "/testResources" );
+		} );
 	}
 
 	@Test
@@ -71,7 +74,7 @@ public class TestCustomConfiguration extends AbstractWebIntegrationTest
 			modules = TestResourcesModule.NAME,
 			modulePackageClasses = { AcrossPlatform.class, TestModules.class }
 	)
-	public static class Config extends WebMvcConfigurerAdapter
+	public static class Config implements WebMvcConfigurer
 	{
 	}
 }

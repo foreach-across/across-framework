@@ -16,12 +16,7 @@
 package test.scan;
 
 import com.foreach.across.core.context.ClassPathScanningChildPackageProvider;
-import test.dynamic.pkg.PkgMember;
-import test.dynamic.pkg.config.PkgConfig;
-import test.dynamic.pkg.controllers.PkgController;
-import test.dynamic.pkg.extensions.PkgExtensionConfig;
-import test.dynamic.pkg.installers.PkgInstaller;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import test.dynamic.pkg.PkgMember;
 import test.dynamic.pkg.config.PkgConfig;
@@ -29,7 +24,7 @@ import test.dynamic.pkg.controllers.PkgController;
 import test.dynamic.pkg.extensions.PkgExtensionConfig;
 import test.dynamic.pkg.installers.PkgInstaller;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme

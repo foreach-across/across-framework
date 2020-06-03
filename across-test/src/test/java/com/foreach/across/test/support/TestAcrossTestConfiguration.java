@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestConfiguration;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,19 +31,19 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.sql.DataSource;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  * @since 1.1.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration
@@ -56,7 +56,7 @@ public class TestAcrossTestConfiguration
 	private MyManuallyExposedComponent manuallyExposedComponent;
 
 	@Test
-	public void dataSourceForTestShouldBeCreated() {
+	void dataSourceForTestShouldBeCreated() {
 		AcrossContext ctx = contextInfo.getContext();
 		assertNotNull( ctx.getDataSource() );
 		assertNotNull( ctx.getInstallerDataSource() );
@@ -64,20 +64,25 @@ public class TestAcrossTestConfiguration
 	}
 
 	@Test
-	public void installerDataSourceShouldBeReset() {
+	void installerDataSourceShouldBeReset() {
 		assertTestQueryFails( contextInfo.getContext().getInstallerDataSource() );
 	}
 
 	@Test
-	public void modulesShouldBePresent() {
-		assertEquals( 3, contextInfo.getModules().size() );
+	void modulesShouldBePresent() {
+		assertEquals( 4, contextInfo.getModules().size() );
+		assertEquals( 3, contextInfo.getBootstrappedModules().size() );
+		assertEquals( 4, contextInfo.getConfiguredModules().size() );
+		assertFalse( contextInfo.getModuleInfo( AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE ).isBootstrapped() );
+		assertTrue( contextInfo.getModuleInfo( AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE ).isEnabled() );
 		assertTrue( contextInfo.hasModule( AcrossWebModule.NAME ) );
 		assertTrue( contextInfo.hasModule( "named" ) );
 		assertTrue( contextInfo.hasModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ) );
+		assertTrue( contextInfo.hasModule( AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE ) );
 	}
 
 	@Test
-	public void manuallyExposedComponentShouldActuallyBeExposed() {
+	void manuallyExposedComponentShouldActuallyBeExposed() {
 		assertNotNull( manuallyExposedComponent );
 	}
 

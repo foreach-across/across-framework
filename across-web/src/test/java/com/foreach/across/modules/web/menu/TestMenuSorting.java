@@ -16,14 +16,14 @@
 
 package com.foreach.across.modules.web.menu;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMenuSorting
 {

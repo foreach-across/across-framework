@@ -20,7 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author Arne Vandamme
  */
-@ConfigurationProperties(prefix = "bootProperties")
+@ConfigurationProperties(prefix = "boot.properties")
 public class SpringBootPropertiesModuleSettings
 {
 	private String directValue;

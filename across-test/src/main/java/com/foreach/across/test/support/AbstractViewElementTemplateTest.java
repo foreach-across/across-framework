@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ package com.foreach.across.test.support;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
+import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.ui.ViewElement;
-import com.foreach.across.test.AcrossTestWebConfiguration;
+import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.modules.webtest.WebTestModule;
 import com.foreach.across.test.modules.webtest.controllers.RenderViewElementController;
 import org.junit.Before;
@@ -198,7 +199,7 @@ public abstract class AbstractViewElementTemplateTest
 	}
 
 	@Configuration
-	@AcrossTestWebConfiguration
+	@AcrossTestConfiguration(modules = AcrossWebModule.NAME)
 	protected static class Config implements AcrossContextConfigurer
 	{
 		@Override

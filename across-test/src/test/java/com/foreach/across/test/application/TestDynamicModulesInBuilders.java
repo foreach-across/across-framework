@@ -19,12 +19,12 @@ import com.foreach.across.config.AcrossDynamicModulesConfigurer;
 import com.foreach.across.test.AcrossTestContext;
 import com.foreach.across.test.AcrossTestWebContext;
 import com.foreach.across.test.application.app.DummyApplication;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.standard;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Arne Vandamme

@@ -18,11 +18,10 @@ package test;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.StandardAcrossEnvironment;
-import test.modules.exposing.ExposingModule;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -36,7 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -46,7 +45,7 @@ public class TestConversionService
 	private GenericApplicationContext parent;
 	private AcrossContext context;
 
-	@Before
+	@BeforeEach
 	public void createContexts() {
 		parent = new GenericApplicationContext();
 		parent.refresh();
@@ -54,7 +53,7 @@ public class TestConversionService
 		context = new AcrossContext( parent );
 	}
 
-	@After
+	@AfterEach
 	public void destroyContexts() {
 		context.shutdown();
 		parent.close();

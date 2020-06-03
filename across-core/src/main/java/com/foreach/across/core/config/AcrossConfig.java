@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,9 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.cache.AcrossCompositeCacheManager;
 import com.foreach.across.core.context.support.AcrossContextOrderedMessageSource;
 import com.foreach.across.core.context.support.MessageSourceBuilder;
-import com.foreach.across.core.convert.StringToDateConverter;
 import com.foreach.across.core.convert.StringToDateTimeConverter;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.core.events.AcrossContextApplicationEventMulticaster;
-import com.foreach.across.core.events.AcrossEventPublisher;
-import com.foreach.across.core.events.DefaultAcrossEventPublisher;
 import com.foreach.across.core.events.SpringContextRefreshedEventListener;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepositoryImpl;
@@ -72,12 +69,6 @@ public class AcrossConfig
 	}
 
 	@Bean
-	@Exposed
-	public AcrossEventPublisher acrossEventPublisher( ApplicationContext applicationContext ) {
-		return new DefaultAcrossEventPublisher( applicationContext );
-	}
-
-	@Bean
 	public SpringContextRefreshedEventListener refreshedEventListener() {
 		return new SpringContextRefreshedEventListener();
 	}
@@ -119,12 +110,6 @@ public class AcrossConfig
 		conversionService.addConverter( defaultDateTimeConverter( conversionService ) );
 
 		return conversionService;
-	}
-
-	@Bean
-	@Lazy
-	public StringToDateConverter defaultDateConverter() {
-		return new StringToDateConverter();
 	}
 
 	@Bean

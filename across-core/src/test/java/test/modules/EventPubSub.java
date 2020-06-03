@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ package test.modules;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.events.AcrossEvent;
-import com.foreach.across.core.events.AcrossEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 
 import java.util.ArrayList;
@@ -36,16 +36,16 @@ import java.util.List;
 public class EventPubSub
 {
 	private final String name;
-	private final AcrossEventPublisher eventPublisher;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@EventListener
-	void receive( ByName byName ) {
+	public void receive( ByName byName ) {
 		byName.received( this );
 	}
 
 	public ByName publish( String name ) {
 		ByName event = new ByName( name );
-		eventPublisher.publish( event );
+		eventPublisher.publishEvent( event );
 		return event;
 	}
 
@@ -55,7 +55,7 @@ public class EventPubSub
 		private final String name;
 		private final List<String> receivedBy = new ArrayList<>();
 
-		public void received( EventPubSub listener ) {
+		void received( EventPubSub listener ) {
 			receivedBy.add( listener.name );
 		}
 	}

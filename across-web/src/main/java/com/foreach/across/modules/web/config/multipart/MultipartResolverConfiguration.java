@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.MultipartProperties;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.PathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartResolver;
@@ -127,9 +127,8 @@ public class MultipartResolverConfiguration
 
 		MultipartFilter multipartFilter = new AcrossMultipartFilter( multipartResolver );
 
-		FilterRegistrationBean registration = new FilterRegistrationBean();
+		FilterRegistrationBean<MultipartFilter> registration = new FilterRegistrationBean<>( multipartFilter );
 		registration.setName( FILTER_NAME );
-		registration.setFilter( multipartFilter );
 		registration.setAsyncSupported( true );
 		registration.setMatchAfter( false );
 		registration.setUrlPatterns( Collections.singletonList( "/*" ) );
@@ -153,7 +152,7 @@ public class MultipartResolverConfiguration
 		multipartResolver.setResolveLazily( multipartProperties.isResolveLazily() );
 
 		try {
-			multipartResolver.setUploadTempDir( new PathResource( multipartConfig.getLocation() ) );
+			multipartResolver.setUploadTempDir( new FileSystemResource( multipartConfig.getLocation() ) );
 		}
 		catch ( IOException ioe ) {
 			throw new ServletException( "Illegal location for multipart uploads: " + multipartConfig.getLocation() );

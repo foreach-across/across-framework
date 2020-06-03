@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package test.modules.module2;
 
-import com.foreach.across.core.events.ParameterizedAcrossEvent;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.ResolvableTypeProvider;
 
-public class GenericEvent<T, Y> extends SimpleEvent implements ParameterizedAcrossEvent
+public class GenericEvent<T, Y> extends SimpleEvent implements ResolvableTypeProvider
 {
 	private final ResolvableType[] genericTypes;
 
@@ -37,7 +37,7 @@ public class GenericEvent<T, Y> extends SimpleEvent implements ParameterizedAcro
 	}
 
 	@Override
-	public ResolvableType[] getEventGenericTypes() {
-		return genericTypes;
+	public ResolvableType getResolvableType() {
+		return ResolvableType.forClassWithGenerics( getClass(), genericTypes );
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@ package com.foreach.across.config;
 
 import com.foreach.across.config.IllegalConfigurationValidator.ModuleMatcher;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -29,7 +31,8 @@ import static org.mockito.Mockito.when;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TestIllegalConfigurationValidator
 {
 	@Mock
@@ -37,32 +40,32 @@ public class TestIllegalConfigurationValidator
 
 	@Test
 	public void illegalOnApplicationButNotOnModule() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( null );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( null, null );
 		assertThat( moduleMatcher.test( null ) ).isTrue();
 		assertThat( moduleMatcher.test( moduleInfo ) ).isFalse();
 
-		moduleMatcher = new ModuleMatcher( "AcrossContext" );
+		moduleMatcher = new ModuleMatcher( null, "AcrossContext" );
 		assertThat( moduleMatcher.test( null ) ).isTrue();
 		assertThat( moduleMatcher.test( moduleInfo ) ).isFalse();
 	}
 
 	@Test
 	public void allowedOnApplicationButNotModule() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( "!AcrossContext" );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( "AcrossContext", null );
 		assertThat( moduleMatcher.test( null ) ).isFalse();
 		assertThat( moduleMatcher.test( moduleInfo ) ).isTrue();
 	}
 
 	@Test
 	public void illegalAnywhere() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( "AcrossContext|AcrossModule" );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( null, "AcrossContext,AcrossModule" );
 		assertThat( moduleMatcher.test( null ) ).isTrue();
 		assertThat( moduleMatcher.test( moduleInfo ) ).isTrue();
 	}
 
 	@Test
 	public void illegalInSpecificModuleOnly() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( "!AcrossContext|!AcrossModule|MyModule|OtherModule" );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( null, "MyModule,OtherModule" );
 		assertThat( moduleMatcher.test( null ) ).isFalse();
 
 		when( moduleInfo.matchesModuleName( "MyModule" ) ).thenReturn( false );
@@ -80,7 +83,7 @@ public class TestIllegalConfigurationValidator
 
 	@Test
 	public void allowedInSpecificModulesOnly() {
-		ModuleMatcher moduleMatcher = new ModuleMatcher( "!MyModule|!OtherModule" );
+		ModuleMatcher moduleMatcher = new ModuleMatcher( "MyModule,OtherModule", null );
 		assertThat( moduleMatcher.test( null ) ).isTrue();
 
 		when( moduleInfo.matchesModuleName( "MyModule" ) ).thenReturn( false );

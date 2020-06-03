@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.AcrossModuleUtils;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.config.AcrossConfig;
@@ -60,6 +61,7 @@ import java.util.*;
 
 /**
  * Helper methods for AcrossContext configuration.
+ * Only to be used internal in the framework or
  */
 public final class AcrossContextUtils
 {
@@ -77,77 +79,76 @@ public final class AcrossContextUtils
 
 		if ( contextInfo != null ) {
 			for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
+				if ( !moduleInfo.isBootstrapped() ) {
+					continue;
+				}
+
 				ApplicationContext moduleContext = moduleInfo.getApplicationContext();
+				ConfigurableListableBeanFactory beanFactory = AcrossModuleUtils.beanFactory( moduleInfo );
 
-				// If no ApplicationContext the module will not have bootstrapped
-				if ( moduleContext != null ) {
-					ConfigurableListableBeanFactory beanFactory = AcrossContextUtils.getBeanFactory( moduleInfo );
+				Collection<Object> refreshableBeans = ApplicationContextScanner.findBeansWithAnnotation( moduleContext, Refreshable.class );
 
-					Collection<Object> refreshableBeans =
-							ApplicationContextScanner.findBeansWithAnnotation( moduleContext, Refreshable.class );
-
-					for ( Object singleton : refreshableBeans ) {
-						Object bean = AcrossContextUtils.getProxyTarget( singleton );
-						if ( bean != null ) {
-							beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
-						}
+				for ( Object singleton : refreshableBeans ) {
+					Object bean = AcrossContextUtils.getProxyTarget( singleton );
+					if ( bean != null ) {
+						beanFactory.autowireBeanProperties( bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false );
 					}
+				}
 
-					Map<String, Object> postRefreshBeans = ApplicationContextScanner.findSingletonsMatching(
-							moduleContext,
-							new AnnotatedMethodFilter( PostRefresh.class ) );
+				Map<String, Object> postRefreshBeans = ApplicationContextScanner.findSingletonsMatching(
+						moduleContext,
+						new AnnotatedMethodFilter( PostRefresh.class ) );
 
-					postRefreshBeans.forEach( ( beanName, singleton ) -> {
-						Object bean = AcrossContextUtils.getProxyTarget( singleton );
-						if ( bean != null ) {
-							Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
+				postRefreshBeans.forEach( ( beanName, singleton ) -> {
+					Object bean = AcrossContextUtils.getProxyTarget( singleton );
+					if ( bean != null ) {
+						Class beanClass = ClassUtils.getUserClass( AopProxyUtils.ultimateTargetClass( singleton ) );
 
-							for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
-								PostRefresh postRefresh = AnnotationUtils.getAnnotation( method, PostRefresh.class );
-								if ( postRefresh != null ) {
-									boolean required = postRefresh.required();
-									Class<?>[] paramTypes = method.getParameterTypes();
-									Object[] arguments = new Object[paramTypes.length];
-									Set<String> autowiredBeans = new LinkedHashSet<>( paramTypes.length );
-									TypeConverter typeConverter = beanFactory.getTypeConverter();
+						for ( Method method : ReflectionUtils.getUniqueDeclaredMethods( beanClass ) ) {
+							PostRefresh postRefresh = AnnotationUtils.getAnnotation( method, PostRefresh.class );
+							if ( postRefresh != null ) {
+								boolean required = postRefresh.required();
+								Class<?>[] paramTypes = method.getParameterTypes();
+								Object[] arguments = new Object[paramTypes.length];
+								Set<String> autowiredBeans = new LinkedHashSet<>( paramTypes.length );
+								TypeConverter typeConverter = beanFactory.getTypeConverter();
 
-									for ( int i = 0; i < arguments.length; i++ ) {
-										MethodParameter methodParam = new MethodParameter( method, i );
-										DependencyDescriptor currDesc = new DependencyDescriptor( methodParam, required );
-										currDesc.setContainingClass( bean.getClass() );
+								for ( int i = 0; i < arguments.length; i++ ) {
+									MethodParameter methodParam = new MethodParameter( method, i );
+									DependencyDescriptor currDesc = new DependencyDescriptor( methodParam, required );
+									currDesc.setContainingClass( bean.getClass() );
 
-										try {
-											Object arg = beanFactory.resolveDependency( currDesc, beanName, autowiredBeans, typeConverter );
+									try {
+										Object arg = beanFactory.resolveDependency( currDesc, beanName, autowiredBeans, typeConverter );
 
-											if ( arg == null && !required ) {
-												arguments = null;
-												break;
-											}
-
-											arguments[i] = arg;
+										if ( arg == null && !required ) {
+											arguments = null;
+											break;
 										}
-										catch ( BeansException ex ) {
-											throw new UnsatisfiedDependencyException( null, beanName, new InjectionPoint( methodParam ), ex );
-										}
+
+										arguments[i] = arg;
 									}
+									catch ( BeansException ex ) {
+										throw new UnsatisfiedDependencyException( null, beanName, new InjectionPoint( methodParam ), ex );
+									}
+								}
 
-									if ( arguments != null ) {
-										try {
-											ReflectionUtils.makeAccessible( method );
-											method.invoke( bean, arguments );
-										}
-										catch ( RuntimeException rte ) {
-											throw rte;
-										}
-										catch ( Exception ex ) {
-											throw new RuntimeException( ex );
-										}
+								if ( arguments != null ) {
+									try {
+										ReflectionUtils.makeAccessible( method );
+										method.invoke( bean, arguments );
+									}
+									catch ( RuntimeException rte ) {
+										throw rte;
+									}
+									catch ( Exception ex ) {
+										throw new RuntimeException( ex );
 									}
 								}
 							}
 						}
-					} );
-				}
+					}
+				} );
 			}
 		}
 	}

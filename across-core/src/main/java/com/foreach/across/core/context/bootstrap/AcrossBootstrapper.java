@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.foreach.across.core.context.bootstrap;
 
-import com.foreach.across.config.AcrossConfigurationLoader;
+import com.foreach.across.config.AcrossConfiguration;
 import com.foreach.across.core.*;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.config.ModuleConfigurationImportSelector;
@@ -31,6 +31,7 @@ import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
 import com.foreach.across.core.context.info.*;
 import com.foreach.across.core.context.installers.ClassPathScanningInstallerProvider;
 import com.foreach.across.core.context.installers.InstallerSetBuilder;
+import com.foreach.across.core.context.module.ModuleConfigurationExtension;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.registry.DefaultAcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
@@ -47,6 +48,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.CachedIntrospectionResults;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -59,18 +61,30 @@ import org.springframework.boot.autoconfigure.condition.ConditionEvaluationRepor
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.Ordered;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.PropertySources;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer.CONTEXT_INFRASTRUCTURE_MODULE;
+import static com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE;
+
 /**
  * Takes care of bootstrapping an entire across context.
+ * To be replaced by {@link AcrossLifecycleBootstrapHandler} in the future.
+ *
+ * @see AcrossLifecycleBootstrapHandler
  */
 public class AcrossBootstrapper
 {
@@ -81,10 +95,9 @@ public class AcrossBootstrapper
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossBootstrapper.class );
 
 	private final AcrossContext context;
+	private final Deque<ConfigurableApplicationContext> createdApplicationContexts = new ArrayDeque<>();
 	private BootstrapApplicationContextFactory applicationContextFactory;
 	private List<AcrossBootstrapConfigurer> bootstrapConfigurers;
-
-	private final Deque<ConfigurableApplicationContext> createdApplicationContexts = new ArrayDeque<>();
 
 	public AcrossBootstrapper( AcrossContext context ) {
 		this.context = context;
@@ -106,7 +119,12 @@ public class AcrossBootstrapper
 	public void bootstrap() {
 		String moduleBeingProcessed = null;
 
+		AcrossBootstrapTimer bootstrapTimer = new AcrossBootstrapTimer();
+		bootstrapTimer.start();
+
 		try {
+			bootstrapTimer.startConfigurationPhase();
+
 			checkBootstrapIsPossible();
 
 			ConfigurableAcrossContextInfo contextInfo = buildContextAndModuleInfo();
@@ -116,8 +134,8 @@ public class AcrossBootstrapper
 			LOG.info( "AcrossContext: {} ({})", context.getDisplayName(), context.getId() );
 			LOG.info( "Bootstrapping {} modules in the following order:", modulesInOrder.size() );
 			for ( AcrossModuleInfo moduleInfo : modulesInOrder ) {
-				LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
-				          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
+				LOG.info( "{} - {} {} [resources: {}]", moduleInfo.getIndex(), moduleInfo.getName(),
+				          moduleInfo.getVersionInfo().getVersion(), moduleInfo.getResourcesKey() );
 			}
 			LOG.info( "---" );
 
@@ -143,6 +161,8 @@ public class AcrossBootstrapper
 								applicationContextFactory
 						);
 
+				bootstrapTimer.finishConfigurationPhase();
+
 				// Run installers that don't need anything bootstrapped
 				installerRegistry.runInstallers( InstallerPhase.BeforeContextBootstrap );
 
@@ -157,11 +177,12 @@ public class AcrossBootstrapper
 
 				LOG.info( "" );
 				LOG.info( "--- Starting module bootstrap" );
-				LOG.info( "" );
 
 				List<ConfigurableAcrossModuleInfo> bootstrappedModules = new ArrayList<>();
 
 				for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
+					bootstrapTimer.startModuleBootstrap( moduleInfo );
+
 					moduleBeingProcessed = moduleInfo.getName();
 
 					ConfigurableAcrossModuleInfo configurableAcrossModuleInfo = (ConfigurableAcrossModuleInfo) moduleInfo;
@@ -169,20 +190,23 @@ public class AcrossBootstrapper
 					bootstrappedModules.forEach( previous -> config.addPreviouslyExposedBeans( previous.getExposedBeanRegistry() ) );
 
 					// Add scanned (or edited) module configurations - first registered on the context, then on module itself
-					config.addConfigurationsToImport( moduleConfigurationSet.getConfigurations( moduleInfo.getName(), moduleInfo.getAliases() ) );
+					config.extendModule( moduleConfigurationSet.getConfigurations( moduleInfo.getName(), moduleInfo.getAliases() ) );
 					bootstrapConfigurers.forEach( configurer -> configurer.configureModule( config ) );
 
-					LOG.info( "{} - {} [resources: {}]: {}", moduleInfo.getIndex(), moduleInfo.getName(),
-					          moduleInfo.getResourcesKey(), moduleInfo.getModule().getClass() );
+					LOG.info( "" );
+					LOG.info( "{} - {} {} [resources: {}]", String.format( "%2s", moduleInfo.getIndex() ), moduleInfo.getName(),
+					          moduleInfo.getVersionInfo().getVersion(), moduleInfo.getResourcesKey() );
+					LOG.info( "     {}", moduleInfo.getModule().getClass() );
+					LOG.info( "" );
 
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.BootstrapBusy );
 
 					rootContext.publishEvent( new AcrossModuleBeforeBootstrapEvent( contextInfo, moduleInfo ) );
 
 					if ( config.isEmpty() ) {
-						LOG.info( "Nothing to be done - disabling module" );
-						configurableAcrossModuleInfo.setEnabled( false );
-						configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Disabled );
+						LOG.info( "     Nothing to be done - skipping module bootstrap" );
+						configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Skipped );
+						bootstrapTimer.finishModuleBootstrap( moduleInfo );
 						continue;
 					}
 
@@ -200,8 +224,6 @@ public class AcrossBootstrapper
 					applicationContextFactory.loadApplicationContext( context, config, moduleApplicationContext );
 
 					// Bootstrap the module
-					config.getModule().bootstrap();
-
 					configurableAcrossModuleInfo.setBootstrapStatus( ModuleBootstrapStatus.Bootstrapped );
 
 					// Send event that this module has bootstrapped
@@ -226,11 +248,12 @@ public class AcrossBootstrapper
 
 					bootstrappedModules.add( configurableAcrossModuleInfo );
 
-					LOG.info( "" );
+					bootstrapTimer.finishModuleBootstrap( moduleInfo );
 				}
 
 				moduleBeingProcessed = null;
 
+				LOG.info( "" );
 				LOG.info( "--- Module bootstrap finished: {} modules started", contextInfo.getModules().size() );
 				LOG.info( "" );
 
@@ -239,12 +262,16 @@ public class AcrossBootstrapper
 				}
 
 				// Refresh beans
+				bootstrapTimer.startRefreshBeansPhase();
 				AcrossContextUtils.refreshBeans( context );
+				bootstrapTimer.finishRefreshBeansPhase();
 
 				contextInfo.setBootstrapped( true );
 
 				// Bootstrapping done, run installers that require context bootstrap finished
 				installerRegistry.runInstallers( InstallerPhase.AfterContextBootstrap );
+
+				bootstrapTimer.addInstallerTimeReports( installerRegistry.getInstallerTimeReports() );
 
 				// Destroy the installer contexts
 				installerRegistry.destroy();
@@ -257,9 +284,13 @@ public class AcrossBootstrapper
 			}
 
 			// Bootstrap finished - publish the event
+			bootstrapTimer.startContextBootstrappedEventHandling();
 			rootContext.publishEvent( new AcrossContextBootstrappedEvent( contextInfo ) );
+			bootstrapTimer.finishContextBootstrappedEventHandling();
 
 			createdApplicationContexts.clear();
+
+			resetCommonCaches();
 		}
 		catch ( RuntimeException e ) {
 			LOG.debug( "Exception during bootstrapping, destroying all created ApplicationContext instances" );
@@ -274,6 +305,16 @@ public class AcrossBootstrapper
 
 			throw ae;
 		}
+
+		bootstrapTimer.finish();
+		bootstrapTimer.printReport();
+	}
+
+	private void resetCommonCaches() {
+		ReflectionUtils.clearCache();
+		AnnotationUtils.clearCache();
+		ResolvableType.clearCache();
+		CachedIntrospectionResults.clearClassLoader( AcrossContextUtils.getApplicationContext( context ).getClassLoader() );
 	}
 
 	/**
@@ -339,10 +380,13 @@ public class AcrossBootstrapper
 		      } );
 
 		// filter classes to import
-		Set<String> configurationsToImport = new LinkedHashSet<>( config.getConfigurationsToImport() );
-		configurationsToImport.removeAll( notAllowedAnnotatedClasses );
-		config.setConfigurationsToImport( configurationsToImport );
+		Set<ModuleConfigurationExtension> configurationExtensions = new LinkedHashSet<>();
+		config.getConfigurationExtensions()
+		      .stream()
+		      .filter( e -> !notAllowedAnnotatedClasses.contains( e.getAnnotatedClass() ) )
+		      .forEach( configurationExtensions::add );
 
+		config.setConfigurationExtensions( configurationExtensions );
 		config.setApplicationContextConfigurers( filtered );
 	}
 
@@ -391,6 +435,11 @@ public class AcrossBootstrapper
 			if ( !( beanFactory instanceof AcrossListableBeanFactory ) ) {
 				AcrossConfigurableApplicationContext parentApplicationContext = applicationContextFactory.createApplicationContext();
 				parentApplicationContext.setId( EXPOSE_SUPPORTING_APPLICATION_CONTEXT );
+
+				if ( parentApplicationContext instanceof WebApplicationContext && rootContext instanceof WebApplicationContext ) {
+					( (ConfigurableWebApplicationContext) parentApplicationContext )
+							.setServletContext( ( (WebApplicationContext) rootContext ).getServletContext() );
+				}
 
 				ProvidedBeansMap providedBeansMap = new ProvidedBeansMap();
 				providedBeansMap.put(
@@ -460,28 +509,35 @@ public class AcrossBootstrapper
 		Collection<AcrossModuleInfo> configured = new LinkedList<>();
 
 		int row = 1;
+
+		AcrossContextConfigurationModule infrastructureModule = new AcrossContextConfigurationModule( CONTEXT_INFRASTRUCTURE_MODULE );
+		infrastructureModule.setOrder( Ordered.HIGHEST_PRECEDENCE + 1000 );
+		ConfigurableAcrossModuleInfo moduleInfo = new ConfigurableAcrossModuleInfo( contextInfo, infrastructureModule, row++ );
+		moduleInfo.setModuleRole( AcrossModuleRole.INFRASTRUCTURE );
+		moduleInfo.setOrderInModuleRole( infrastructureModule.getOrder() );
+
+		configured.add( moduleInfo );
+
 		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
-			ConfigurableAcrossModuleInfo moduleInfo = new ConfigurableAcrossModuleInfo( contextInfo, module, row++ );
-			configured.add( moduleInfo );
+			configured.add( new ConfigurableAcrossModuleInfo( contextInfo, module, row++ ) );
 		}
 
-		configured.add(
-				new ConfigurableAcrossModuleInfo( contextInfo, new AcrossContextConfigurationModule( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ),
-				                                  row )
-		);
+		AcrossContextConfigurationModule postProcessorModule = new AcrossContextConfigurationModule( CONTEXT_POSTPROCESSOR_MODULE );
+		postProcessorModule.setOrder( Ordered.LOWEST_PRECEDENCE - 1000 );
+		moduleInfo = new ConfigurableAcrossModuleInfo( contextInfo, postProcessorModule, row );
+		moduleInfo.setModuleRole( AcrossModuleRole.POSTPROCESSOR );
+		moduleInfo.setOrderInModuleRole( postProcessorModule.getOrder() );
+		configured.add( moduleInfo );
 
 		contextInfo.setConfiguredModules( configured );
 
 		for ( AcrossModule module : moduleBootstrapOrderBuilder.getOrderedModules() ) {
-			ConfigurableAcrossModuleInfo moduleInfo = contextInfo.getConfigurableModuleInfo( module.getName() );
+			moduleInfo = contextInfo.getConfigurableModuleInfo( module.getName() );
 
-			moduleInfo.setRequiredDependencies(
-					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( module ),
-					                     contextInfo ) );
-			moduleInfo.setOptionalDependencies(
-					convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredOptionalDependencies( module ),
-					                     contextInfo ) );
+			moduleInfo.setRequiredDependencies( convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredRequiredDependencies( module ), contextInfo ) );
+			moduleInfo.setOptionalDependencies( convertToModuleInfo( moduleBootstrapOrderBuilder.getConfiguredOptionalDependencies( module ), contextInfo ) );
 			moduleInfo.setModuleRole( moduleBootstrapOrderBuilder.getModuleRole( module ) );
+			moduleInfo.setOrderInModuleRole( moduleBootstrapOrderBuilder.getOrderInRole( module ) );
 		}
 
 		return contextInfo;
@@ -555,6 +611,9 @@ public class AcrossBootstrapper
 			// Provided singletons do not influence initial load
 			config.addApplicationContextConfigurer( true, new ProvidedBeansConfigurer( providedSingletons ) );
 
+			// add the module configuration importer
+			config.addApplicationContextConfigurer( true, ModuleConfigurationImportSelector.class );
+
 			if ( !isContextModule( config ) ) {
 				// Only add default configurations if not a core module
 				config.addApplicationContextConfigurers( AcrossContextUtils.getApplicationContextConfigurers( context, module ) );
@@ -565,8 +624,6 @@ public class AcrossBootstrapper
 			config.addInstallerContextConfigurers( contextInfo.getContext().getInstallerContextConfigurers() );
 			config.addInstallerContextConfigurers( AcrossContextUtils.getInstallerContextConfigurers( module ) );
 
-			// add the module configuration importer
-			config.addApplicationContextConfigurer( true, ModuleConfigurationImportSelector.class );
 			configs.add( config );
 
 			( (ConfigurableAcrossModuleInfo) moduleInfo ).setBootstrapConfiguration( config );
@@ -595,8 +652,7 @@ public class AcrossBootstrapper
 	}
 
 	private BeanFilter buildDefaultExposeFilter( ClassLoader classLoader ) {
-		final List<String> exposedItems = AcrossConfigurationLoader
-				.loadValues( "com.foreach.across.Exposed", classLoader );
+		final Collection<String> exposedItems = AcrossConfiguration.get( classLoader ).getExposeRules();
 
 		Class<?>[] classesOrAnnotations = exposedItems
 				.stream()
@@ -644,19 +700,6 @@ public class AcrossBootstrapper
 					);
 
 					beansMap.put( AcrossModule.CURRENT_MODULE + "Settings", beanDefinition );
-				}
-				else if ( AcrossModuleSettings.class.isAssignableFrom( settingsClass ) ) {
-					// If this is an old settings class, register it in the parent context as well,
-					// note that this means the bean will be wired in a different context than in the module
-					GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
-					beanDefinition.setBeanClass( settingsClass );
-					beanDefinition.setPrimary( false );
-					beanDefinition.setLazyInit( true );
-					beanDefinition.addQualifier(
-							new AutowireCandidateQualifier( Module.class.getName(), module.getName() )
-					);
-
-					beansMap.put( settingsClassName, beanDefinition );
 				}
 			}
 		}

@@ -14,7 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:across="http://across.foreach.be">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:across="http://across.dev">
 <body>
 
 <ul th:fragment="render(component)">

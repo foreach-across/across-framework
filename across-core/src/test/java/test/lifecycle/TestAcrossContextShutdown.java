@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -40,7 +41,7 @@ import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -138,7 +139,7 @@ public class TestAcrossContextShutdown
 		try {
 			return context.getBean( moduleName + "ExposedBean" ).toString();
 		}
-		catch ( IllegalStateException ise ) {
+		catch ( BeanCreationException | IllegalStateException ise ) {
 			return null;
 		}
 	}
@@ -147,7 +148,7 @@ public class TestAcrossContextShutdown
 		try {
 			return registry.getBean( moduleName + "ExposedBean" ).toString();
 		}
-		catch ( IllegalStateException ise ) {
+		catch ( BeanCreationException | IllegalStateException ise ) {
 			return null;
 		}
 	}
@@ -163,7 +164,7 @@ public class TestAcrossContextShutdown
 
 	private void destroy( AcrossContext context, String moduleName ) {
 		AcrossContextInfo contextInfo = AcrossContextUtils.getContextInfo( context );
-		( (AbstractApplicationContext) contextInfo.getModuleInfo( moduleName ).getApplicationContext() ).destroy();
+		( (AbstractApplicationContext) contextInfo.getModuleInfo( moduleName ).getApplicationContext() ).close();
 	}
 
 	private AcrossContext boot() {

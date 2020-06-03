@@ -21,8 +21,9 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.AcrossInstallerRepository;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockException;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -34,14 +35,14 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration(classes = TestCoreSchemaInstallerDataSource.Config.class)
 public class TestCoreSchemaInstallerDataSource
@@ -81,14 +82,18 @@ public class TestCoreSchemaInstallerDataSource
 		);
 	}
 
-	@Test(expected = BadSqlGrammarException.class)
+	@Test
 	public void usingInstallerRepositoryShouldFailBecauseSchemaInOtherDatasource() {
-		installerRepository.getInstalledVersion( "nothing", "nowhere" );
+		Assertions.assertThrows( BadSqlGrammarException.class, () -> {
+			installerRepository.getInstalledVersion( "nothing", "nowhere" );
+		} );
 	}
 
-	@Test(expected = DistributedLockException.class)
+	@Test
 	public void usingDistributedLockShouldFailBecauseSchemaInOtherDataSource() {
-		lockRepository.lock( "someLock" ).unlock();
+		Assertions.assertThrows( DistributedLockException.class, () -> {
+			lockRepository.lock( "someLock" ).unlock();
+		} );
 	}
 
 	@EnableAcrossContext

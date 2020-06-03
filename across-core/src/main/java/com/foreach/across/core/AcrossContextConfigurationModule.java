@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 package com.foreach.across.core;
 
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.core.Ordered;
 
 import java.util.Set;
 
@@ -23,9 +26,13 @@ import java.util.Set;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-public final class AcrossContextConfigurationModule extends AcrossModule
+public final class AcrossContextConfigurationModule extends AcrossModule implements Ordered
 {
 	private final String name;
+
+	@Getter
+	@Setter
+	private int order = 0;
 
 	public AcrossContextConfigurationModule( String name ) {
 		this.name = name;

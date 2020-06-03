@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 package com.foreach.across.core.annotations;
-
-import org.springframework.context.annotation.Conditional;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -36,13 +34,13 @@ import java.lang.annotation.Target;
  * A module is always specified either by the name it exposes (eg. AcrossWebModule).
  * <p/>
  * NOTE: Before Across 3.0.0 the same annotation was to be used as a conditional for components.
- * As of 3.0.0 this use has been deprecated, a specialized {@link ConditionalOnAcrossModule} has been added instead.
+ * Between 3.0.0 and 5.0.0 this was deprecated. As of 5.0.0 this behaviour is no longer supported, developers
+ * should use the specialized {@link ConditionalOnAcrossModule} instead.
  *
  * @see ConditionalOnAcrossModule
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@Conditional(AcrossModuleCondition.class)
 public @interface AcrossDepends
 {
 	/**

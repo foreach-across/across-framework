@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,10 @@ import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebExpressionContext;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.spring4.expression.ThymeleafEvaluationContext;
-import org.thymeleaf.spring4.naming.SpringContextVariableNames;
+import org.thymeleaf.spring5.expression.ThymeleafEvaluationContext;
+import org.thymeleaf.spring5.naming.SpringContextVariableNames;
 import org.thymeleaf.standard.expression.FragmentExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
-import org.thymeleaf.standard.expression.StandardExpressionExecutionContext;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
 import javax.servlet.http.HttpServletRequest;
@@ -125,9 +124,7 @@ public class ThymeleafTag extends BodyTagSupport
 				throw new IllegalArgumentException( "Invalid template name specification: '" + viewTemplateName + "'" );
 			}
 
-			final FragmentExpression.ExecutedFragmentExpression fragment =
-					FragmentExpression.createExecutedFragmentExpression( context, fragmentExpression,
-					                                                     StandardExpressionExecutionContext.NORMAL );
+			final FragmentExpression.ExecutedFragmentExpression fragment = FragmentExpression.createExecutedFragmentExpression( context, fragmentExpression );
 
 			templateName = FragmentExpression.resolveTemplateName( fragment );
 			markupSelectors = FragmentExpression.resolveFragments( fragment );

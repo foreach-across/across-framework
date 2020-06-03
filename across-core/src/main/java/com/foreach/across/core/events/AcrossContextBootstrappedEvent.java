@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,17 +61,19 @@ public final class AcrossContextBootstrappedEvent extends AcrossLifecycleEvent
 	}
 
 	/**
-	 * @return The actual collection of all modules that have bootstrapped.
+	 * @return The actual collection of all modules that were supposed to have bootstrapped.
+	 * @deprecated since 5.0.0 - use the appropriate method from {@link AcrossContextInfo} instead, keeping into account the bootstrap status
 	 */
+	@Deprecated
 	public Collection<AcrossModuleInfo> getModules() {
-		return contextInfo.getModules();
+		return contextInfo.getBootstrappedModules();
 	}
 
 	@Override
 	public String toString() {
 		return "AcrossContextBootstrappedEvent{" +
 				"context=" + contextInfo.getDisplayName() +
-				", modulesBootstrapped=" + contextInfo.getModules().size() +
+				", modulesBootstrapped=" + contextInfo.getBootstrappedModules().size() +
 				'}';
 	}
 }

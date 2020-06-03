@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,19 @@
  */
 package test;
 
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.context.AcrossApplicationContext;
 import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
  * @author Arne Vandamme
@@ -34,13 +35,15 @@ import static org.junit.Assert.assertNotSame;
 public class TestAcrossApplicationContext
 {
 	private AcrossApplicationContext ctx;
+	private ConfigurableListableBeanFactory beanFactory;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		ctx = new AcrossApplicationContext();
+		beanFactory = ctx.getBeanFactory();
 	}
 
-	@After
+	@AfterEach
 	public void after() {
 		ctx.stop();
 		ctx.close();
@@ -156,7 +159,7 @@ public class TestAcrossApplicationContext
 		}
 	}
 
-	@AcrossCondition("@someBean != null")
+	@ConditionalOnExpression("@someBean != null")
 	static class ConditionalBeanReference extends BeanReference
 	{
 		@Autowired

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,23 +21,23 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration(classes = TestReplaceDynamicModules.SampleApplication.class)
 @TestPropertySource(properties = "across.displayName=My Application")
@@ -47,29 +47,29 @@ public class TestReplaceDynamicModules
 	private AcrossContextInfo contextInfo;
 
 	@Test
-	public void displayNameShouldBeFixedFromAnnotation() {
+	void displayNameShouldBeFixedFromAnnotation() {
 		assertEquals( "Sample", contextInfo.getDisplayName() );
 	}
 
 	@Test
-	public void totalModuleCountShouldBeThree() {
-		assertEquals( 3, contextInfo.getModules().size() );
+	void totalBootstrappedModuleCountShouldBeThree() {
+		assertEquals( 3, contextInfo.getBootstrappedModules().size() );
 	}
 
 	@Test
-	public void infrastructureModuleShouldBeEmpty() {
+	void infrastructureModuleShouldBeEmpty() {
 		assertTrue( contextInfo.getModuleInfo( "SampleInfrastructureModule" )
 		                       .getModule() instanceof EmptyAcrossModule );
 	}
 
 	@Test
-	public void applicationModuleShouldBeAdded() {
+	void applicationModuleShouldBeAdded() {
 		assertTrue( contextInfo.getModuleInfo( "SampleApplicationModule" )
 		                       .getModule() instanceof DynamicAcrossModule );
 	}
 
 	@Test
-	public void postProcessorModuleShouldBeScanned() {
+	void postProcessorModuleShouldBeScanned() {
 		assertTrue( contextInfo.getModuleInfo( "SamplePostProcessorModule" )
 		                       .getModule() instanceof SamplePostProcessorModule );
 	}

@@ -15,9 +15,9 @@
  */
 package com.foreach.across.modules.web.resource;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
@@ -25,7 +25,7 @@ import org.springframework.web.context.request.WebRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,8 +35,8 @@ import static org.mockito.Mockito.when;
  */
 public class TestWebResourceUtils
 {
-	@Before
-	@After
+	@BeforeEach
+	@AfterEach
 	public void reset() {
 		RequestContextHolder.resetRequestAttributes();
 	}

@@ -24,22 +24,22 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import com.foreach.across.test.MockAcrossServletContext;
 import com.foreach.across.test.support.config.MockMvcConfiguration;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @SpringBootTest(classes = { ITFilterRegistrationOrder.AcrossApplicationWithCustomFilterOnTheContext.class,
                             MockMvcConfiguration.class })
@@ -53,7 +53,7 @@ public class ITFilterRegistrationOrder
 	public void additionalCustomFilter() {
 		String[] filterNames = servletContext.getFilterRegistrations().keySet().toArray( new String[0] );
 		assertArrayEquals(
-				new String[] { "characterEncodingFilter", "multipartFilter", "hiddenHttpMethodFilter", "httpPutFormContentFilter", "requestContextFilter",
+				new String[] { "characterEncodingFilter", "multipartFilter", "hiddenHttpMethodFilter", "formContentFilter", "requestContextFilter",
 				               "resourceUrlEncodingFilter", "corsFilter" },
 				filterNames
 		);

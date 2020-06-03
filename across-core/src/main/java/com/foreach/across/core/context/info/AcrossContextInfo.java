@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Holds the intermediate and final state of a running AcrossContext.
@@ -57,8 +58,19 @@ public interface AcrossContextInfo extends AcrossEntity
 	Collection<AcrossModuleInfo> getConfiguredModules();
 
 	/**
-	 * Gets the collection of all modules that are either bootstrapped, or
-	 * slated to be bootstrapped.
+	 * Gets the collection of modules that have fully bootstrapped.
+	 * A bootstrapped module has its own {@link ApplicationContext} available.
+	 *
+	 * @return collection of module info instances
+	 */
+	default Collection<AcrossModuleInfo> getBootstrappedModules() {
+		return getModules().stream().filter( AcrossModuleInfo::isBootstrapped ).collect( Collectors.toList() );
+	}
+
+	/**
+	 * Gets the collection of all modules that were slated to be bootstrapped.
+	 * These will include modules still to bootstrap, fully bootstrapped modules
+	 * as well as modules with a {@link ModuleBootstrapStatus#Skipped}.
 	 *
 	 * @return Collection of AcrossModuleInfo instances.
 	 */

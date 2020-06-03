@@ -39,7 +39,8 @@ import java.util.Collection;
  * @author Arne Vandamme
  * @since 1.1.2
  */
-public class AcrossMockMvcBuilders extends MockMvcBuilders
+// todo: fixme 5.1 - no longer extends MockMvcBuilders
+public class AcrossMockMvcBuilders
 {
 	private static final Logger LOG = LoggerFactory.getLogger( AcrossMockMvcBuilders.class );
 

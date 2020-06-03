@@ -16,7 +16,7 @@
 package com.foreach.across.core.diagnostics;
 
 import com.foreach.across.core.AcrossException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.diagnostics.FailureAnalysis;
 
 import static org.assertj.core.api.Assertions.assertThat;

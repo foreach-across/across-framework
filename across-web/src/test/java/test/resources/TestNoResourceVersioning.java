@@ -19,7 +19,7 @@ import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.modules.web.AcrossWebModule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -34,16 +34,16 @@ import test.AbstractWebIntegrationTest;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = TestDefaultResourceVersioning.Config.class)
 @TestPropertySource(properties = {
-		"acrossWebModule.resources.versioning.enabled=false",
-		"acrossWebModule.resources.folders=js,css,custom",
-		"acrossWebModule.resources.caching.period=1000",
+		"across.web.resources.versioning.enabled=false",
+		"across.web.resources.folders=js,css,custom",
+		"across.web.resources.caching.period=1000",
 		"build.number=95247852"
 })
 public class TestNoResourceVersioning extends AbstractWebIntegrationTest
@@ -112,7 +112,7 @@ public class TestNoResourceVersioning extends AbstractWebIntegrationTest
 			found = false;
 		}
 
-		assertFalse( "Bean of type " + beanType.getName() + " was found", found );
+		assertFalse( found, "Bean of type " + beanType.getName() + " was found" );
 	}
 
 	@Configuration

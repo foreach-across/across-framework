@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test.scan.extensions.BeanFourAndFiveConfiguration;
 import test.scan.extensions.SomeBeanInterface;
 import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
@@ -34,21 +34,21 @@ import test.scan.packageTwo.OtherValidModule;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ContextConfiguration(classes = TestModuleConfiguration.Config.class)
-public class TestModuleConfiguration
+class TestModuleConfiguration
 {
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
 
 	@Test
-	public void moduleExtendingValidModuleShouldOnlyHaveBeanFourAndFive() {
+	void moduleExtendingValidModuleShouldOnlyHaveBeanFourAndFive() {
 		// bean one is also present because it is defined in the config package, which is scanned for regular
 		// configurations as well - @ModuleConfiguration is also a regular configuration
 		assertTrue( beanRegistry.moduleContainsLocalBean( ModuleExtendingValidModule.NAME, "beanOne" ) );
@@ -59,7 +59,7 @@ public class TestModuleConfiguration
 	}
 
 	@Test
-	public void allBeansShouldHaveBeenCreatedInValidModule() {
+	void allBeansShouldHaveBeenCreatedInValidModule() {
 		assertTrue( beanRegistry.moduleContainsLocalBean( ValidModule.NAME, "beanOne" ) );
 		assertTrue( beanRegistry.moduleContainsLocalBean( ValidModule.NAME, "beanTwo" ) );
 		assertTrue( beanRegistry.moduleContainsLocalBean( ValidModule.NAME, "beanThree" ) );
@@ -68,7 +68,7 @@ public class TestModuleConfiguration
 	}
 
 	@Test
-	public void beanOneAndFiveShouldAlsoHaveBeenCreatedInOtherValidModule() {
+	void beanOneAndFiveShouldAlsoHaveBeenCreatedInOtherValidModule() {
 		assertTrue( beanRegistry.moduleContainsLocalBean( OtherValidModule.NAME, "beanOne" ) );
 		assertFalse( beanRegistry.moduleContainsLocalBean( OtherValidModule.NAME, "beanTwo" ) );
 		assertFalse( beanRegistry.moduleContainsLocalBean( OtherValidModule.NAME, "beanThree" ) );
@@ -77,7 +77,7 @@ public class TestModuleConfiguration
 	}
 
 	@Test
-	public void twoBeansShouldExistFromTheSameBeanConfigurations() {
+	void twoBeansShouldExistFromTheSameBeanConfigurations() {
 		List<SomeBeanInterface> beans = beanRegistry.getBeansOfType( SomeBeanInterface.class, true );
 		assertEquals( 2, beans.size() );
 	}

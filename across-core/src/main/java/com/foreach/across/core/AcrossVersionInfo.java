@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class AcrossVersionInfo
 
 	public static final AcrossVersionInfo UNKNOWN = new AcrossVersionInfo();
 
-	private static final String UNKNOWN_VALUE = "unknown";
+	private static final String UNKNOWN_VALUE = "NO_VERSION";
 
 	private Manifest manifest;
 	private Date buildTime;
@@ -139,50 +139,55 @@ public class AcrossVersionInfo
 
 			// Retrieve the manifest
 			String className = c.getSimpleName() + ".class";
-			String classPath = c.getResource( className ).toString();
+			URL resource = c.getResource( className );
 
-			if ( classPath.contains( ".jar" ) ) {
-				String packageSuffix = c.getName().replace( ".", "/" );
-				String manifestPath = classPath.replace( "/" + packageSuffix + ".class", "/META-INF/MANIFEST.MF" );
+			if ( resource != null ) {
+				String classPath = resource.toString();
 
-				LOG.trace( "Loading manifest: {}", manifestPath );
+				if ( classPath.contains( ".jar" ) ) {
+					String packageSuffix = c.getName().replace( ".", "/" );
+					String manifestPath = classPath.replace( "/" + packageSuffix + ".class", "/META-INF/MANIFEST.MF" );
 
-				try (InputStream is = new URL( manifestPath ).openStream()) {
-					Manifest manifest = new Manifest( is );
-					Attributes attr = manifest.getMainAttributes();
+					LOG.trace( "Loading manifest: {}", manifestPath );
 
-					versionInfo = new AcrossVersionInfo();
-					versionInfo.manifest = manifest;
-					versionInfo.available = true;
-					versionInfo.projectName = StringUtils.defaultString(
-							attr.getValue( "Implementation-Title" ), UNKNOWN_VALUE
-					);
-					versionInfo.version = StringUtils.defaultString(
-							attr.getValue( "Implementation-Version" ), UNKNOWN_VALUE
-					);
+					try (InputStream is = new URL( manifestPath ).openStream()) {
+						Manifest manifest = new Manifest( is );
+						Attributes attr = manifest.getMainAttributes();
 
-					String buildTime = attr.getValue( "Build-Time" );
+						versionInfo = new AcrossVersionInfo();
+						versionInfo.manifest = manifest;
+						versionInfo.available = true;
+						versionInfo.projectName = StringUtils.defaultString(
+								attr.getValue( "Implementation-Title" ), UNKNOWN_VALUE
+						);
+						versionInfo.version = StringUtils.defaultString(
+								attr.getValue( "Implementation-Version" ), UNKNOWN_VALUE
+						);
 
-					if ( buildTime != null ) {
-						try {
-							versionInfo.buildTime = DateUtils.parseDate( buildTime, "yyyyMMdd-HHmm",
-							                                             "yyyy-MM-dd'T'HH:mm:ss'Z'" );
-						}
-						catch ( ParseException pe ) {
-							LOG.error(
-									"Manifest {} specifies Build-Time attribute with value {}, but not in the expected format of yyyyMMdd-HHmm",
-									manifestPath, buildTime );
+						String buildTime = attr.getValue( "Build-Time" );
+
+						if ( buildTime != null ) {
+							try {
+								versionInfo.buildTime = DateUtils.parseDate( buildTime, "yyyyMMdd-HHmm",
+								                                             "yyyy-MM-dd'T'HH:mm:ss'Z'" );
+							}
+							catch ( ParseException pe ) {
+								LOG.error(
+										"Manifest {} specifies Build-Time attribute with value {}, but not in the expected format of yyyyMMdd-HHmm",
+										manifestPath, buildTime );
+							}
 						}
 					}
-				}
-				catch ( IOException ioe ) {
-					LOG.warn( "No MANIFEST.MF found at {}", manifestPath );
+					catch ( IOException ioe ) {
+						LOG.warn( "No MANIFEST.MF found at {}", manifestPath );
+					}
 				}
 			}
 
 			if ( AcrossEntity.class.isAssignableFrom( clazz ) ) {
 				versionInfoCache.put( clazz, versionInfo );
 			}
+
 		}
 
 		return versionInfo;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.jsp.ThymeleafTag;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -33,10 +33,10 @@ import org.springframework.mock.web.MockPageContext;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.jsp.JspException;
 import java.io.UnsupportedEncodingException;
@@ -45,7 +45,7 @@ import java.io.UnsupportedEncodingException;
  * @author Marc Vanbrabant
  * @since 1.1.3
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration(classes = TestThymeleafTag.Config.class)
@@ -68,15 +68,15 @@ public class TestThymeleafTag
 		tag.doEndTag();
 		MockHttpServletResponse response = (MockHttpServletResponse) pageContext.getResponse();
 		String content = response.getContentAsString();
-		Assert.assertTrue( StringUtils.contains( StringUtils.deleteWhitespace( content ),
-		                                         StringUtils.deleteWhitespace( "<p>Hello, Joe Doe!</p>" ) ) );
-		Assert.assertTrue( StringUtils.contains( content, "mvcConversionService found" ) );
-		Assert.assertTrue( StringUtils.contains( content, "environment found" ) );
+		Assertions.assertTrue( StringUtils.contains( StringUtils.deleteWhitespace( content ),
+		                                             StringUtils.deleteWhitespace( "<p>Hello, Joe Doe!</p>" ) ) );
+		Assertions.assertTrue( StringUtils.contains( content, "mvcConversionService found" ) );
+		Assertions.assertTrue( StringUtils.contains( content, "environment found" ) );
 	}
 
 	@EnableAcrossContext
 	@Configuration
-	protected static class Config extends WebMvcConfigurerAdapter implements AcrossContextConfigurer
+	protected static class Config implements WebMvcConfigurer, AcrossContextConfigurer
 	{
 		@Override
 		public void configure( AcrossContext context ) {

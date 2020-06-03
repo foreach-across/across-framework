@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -31,8 +31,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.function.Supplier;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author Arne Vandamme
@@ -43,7 +43,7 @@ public class TestDefaultViewElementAttributeConverter
 	private DefaultViewElementAttributeConverter converter;
 	private ObjectMapper objectMapper;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		objectMapper = new ObjectMapper();
 		converter = new DefaultViewElementAttributeConverter( objectMapper );

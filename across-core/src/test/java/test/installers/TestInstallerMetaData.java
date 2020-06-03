@@ -21,36 +21,45 @@ import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerMetaData;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.installers.InstallerRunCondition;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.annotation.Order;
 
 import java.lang.reflect.Method;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
 public class TestInstallerMetaData
 {
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void noInstallerAnnotation() {
-		InstallerMetaData.forClass( String.class );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			InstallerMetaData.forClass( String.class );
+		} );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void abstractClass() {
-		InstallerMetaData.forClass( AbstractInstaller.class );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			InstallerMetaData.forClass( AbstractInstaller.class );
+		} );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void interfaceClass() {
-		InstallerMetaData.forClass( InstallerInterface.class );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			InstallerMetaData.forClass( InstallerInterface.class );
+		} );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void installerMetaDataIsNotInherited() {
-		InstallerMetaData.forClass( ImplementedInstallerWithoutAnnotation.class );
+		Assertions.assertThrows( IllegalArgumentException.class, () -> {
+			InstallerMetaData.forClass( ImplementedInstallerWithoutAnnotation.class );
+		} );
 	}
 
 	@Test

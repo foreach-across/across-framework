@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 package com.foreach.across.modules.web.ui.elements.builder;
 
+import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
-import com.foreach.across.modules.web.ui.elements.support.CssClassAttributeUtils;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,19 +41,13 @@ public abstract class AbstractNodeViewElementBuilder<T extends AbstractNodeViewE
 		return (SELF) this;
 	}
 
-	@SuppressWarnings("unchecked")
 	public SELF css( String... cssClasses ) {
-		CssClassAttributeUtils.addCssClass( attributes, cssClasses );
-		return (SELF) this;
+		return with( HtmlViewElement.Functions.css( cssClasses ) );
 	}
 
-	@SuppressWarnings("unchecked")
 	public SELF removeCss( String... cssClasses ) {
-		CssClassAttributeUtils.removeCssClass( attributes, cssClasses );
-		return (SELF) this;
+		return with( MutableViewElement.Functions.remove( HtmlViewElement.Functions.css( cssClasses ) ) );
 	}
-
-
 
 	@SuppressWarnings("unchecked")
 	public SELF attribute( String name, Object value ) {

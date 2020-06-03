@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package com.foreach.across.modules.web.ui.elements.builder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderFactory;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.test.support.AbstractViewElementBuilderTest;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 public class TestTextViewElementBuilder extends AbstractViewElementBuilderTest<TextViewElementBuilder, TextViewElement>
 {
@@ -97,5 +99,22 @@ public class TestTextViewElementBuilder extends AbstractViewElementBuilderTest<T
 		build();
 
 		assertFalse( element.isEscapeXml() );
+	}
+
+	@Test
+	public void customSupplier() {
+		Assertions.assertThat( builder.elementSupplier( () -> new TextViewElement( "hello" ) ) ).isInstanceOf( TextViewElementBuilder.class );
+		build();
+		assertEquals( "hello", element.getText() );
+	}
+
+	@Test
+	public void customSupplierFunction() {
+		when( builderContext.getMessage( "say.hello" ) ).thenReturn( "hello!" );
+
+		Assertions.assertThat( builder.elementSupplier( bc -> new TextViewElement( bc.getMessage( "say.hello" ) ) ) ).isInstanceOf(
+				TextViewElementBuilder.class );
+		build();
+		assertEquals( "hello!", element.getText() );
 	}
 }

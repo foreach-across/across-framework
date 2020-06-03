@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,17 @@ import java.util.Collections;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@ConfigurationProperties(prefix = "acrossWebModule")
+@ConfigurationProperties(prefix = "across.web")
 public class AcrossWebModuleSettings
 {
-	public static final String TEMPLATES_ENABLED = "acrossWebModule.templates.enabled";
-	public static final String TEMPLATES_AUTO_REGISTER = "acrossWebModule.templates.auto-register";
+	public static final String TEMPLATES_ENABLED = "across.web.templates.enabled";
+	public static final String TEMPLATES_AUTO_REGISTER = "across.web.templates.auto-register";
 
-	public static final String DEVELOPMENT_VIEWS = "acrossWebModule.developmentViews";
+	public static final String DEVELOPMENT_VIEWS = "across.web.developmentViews";
 
-	public static final String VIEWS_RESOURCES_PATH = "acrossWebModule.resources.path";
+	public static final String VIEWS_RESOURCES_PATH = "across.web.resources.path";
 
-	public static final String WEBJARS_RESOURCES_PATH = "acrossWebModule.resources.webjars";
+	public static final String WEBJARS_RESOURCES_PATH = "across.web.resources.webjars";
 
 	/**
 	 * Templates configuration.

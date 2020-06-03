@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.foreach.across.core.context.bootstrap;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.ModuleConfigurationSet;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.module.ModuleConfigurationExtension;
 import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
@@ -124,6 +125,7 @@ public class AcrossBootstrapConfig
 	 * @param classNames Annotated class names.
 	 * @return True if the module was present.
 	 */
+	@SuppressWarnings("RedundantCast")
 	public boolean excludeFromModule( String moduleName, String... classNames ) {
 		return excludeFromModule(
 				moduleName,
@@ -160,9 +162,29 @@ public class AcrossBootstrapConfig
 	 * @param classNames Annotated class names.
 	 * @return True if the module was present.
 	 */
+	@SuppressWarnings("RedundantCast")
 	public boolean extendModule( String moduleName, String... classNames ) {
+		return extendModule( moduleName, true, false, classNames );
+	}
+
+	/**
+	 * Method to add one or more configuration classes to a module bootstrap configuration.
+	 * The module is identified by its name.  This method is safe to use in all circumstances:
+	 * if the module is not configured in the context only the return value will be false but no
+	 * exception will occur.  If the class with the name is not present on the classpath, it will be skipped.
+	 *
+	 * @param moduleName Unique name of the module in the context.
+	 * @param deferred   false if the configuration classes should be added before the initial configuration
+	 * @param optional   true if the configuration classes should <strong>not</strong> force the module ApplicationContext to start
+	 * @param classNames Annotated class names.
+	 * @return True if the module was present.
+	 */
+	@SuppressWarnings("RedundantCast")
+	public boolean extendModule( String moduleName, boolean deferred, boolean optional, String... classNames ) {
 		return extendModule(
 				moduleName,
+				deferred,
+				optional,
 				(Class[]) Stream.of( classNames )
 				                .map( ClassLoadingUtils::resolveClass )
 				                .filter( Objects::nonNull )
@@ -181,9 +203,42 @@ public class AcrossBootstrapConfig
 	 * @return True if the module was present.
 	 */
 	public boolean extendModule( String moduleName, Class... configurationClasses ) {
-		for ( Class configurationClass : configurationClasses ) {
-			moduleConfigurationSet.register( configurationClass, moduleName );
-		}
+		return extendModule( moduleName, true, false, configurationClasses );
+	}
+
+	/**
+	 * Method to add one or more configuration classes to a module bootstrap configuration.
+	 * The module is identified by its name.  This method is safe to use in all circumstances:
+	 * if the module is not configured in the context only the return value will be false but no
+	 * exception will occur.
+	 *
+	 * @param moduleName           Unique name of the module in the context.
+	 * @param deferred             false if the configuration classes should be added before the initial configuration
+	 * @param optional             true if the configuration classes should <strong>not</strong> force the module ApplicationContext to start
+	 * @param configurationClasses Annotated class instances.
+	 * @return True if the module was present.
+	 */
+	public boolean extendModule( String moduleName, boolean deferred, boolean optional, Class... configurationClasses ) {
+		return extendModule(
+				moduleName,
+				Stream.of( configurationClasses )
+				      .map( configurationClass -> ModuleConfigurationExtension.of( configurationClass, deferred, optional ) )
+				      .toArray( ModuleConfigurationExtension[]::new )
+		);
+	}
+
+	/**
+	 * Method to add one or more configuration extensions to a module bootstrap configuration.
+	 * The module is identified by its name.  This method is safe to use in all circumstances:
+	 * if the module is not configured in the context only the return value will be false but no
+	 * exception will occur.
+	 *
+	 * @param moduleName Unique name of the module in the context.
+	 * @param extensions Configuration extensions
+	 * @return True if the module was present.
+	 */
+	public boolean extendModule( String moduleName, ModuleConfigurationExtension... extensions ) {
+		Stream.of( extensions ).forEach( e -> moduleConfigurationSet.register( e, moduleName ) );
 		return hasModule( moduleName );
 	}
 

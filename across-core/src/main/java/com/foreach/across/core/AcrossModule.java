@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,19 +53,6 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 		registerDefaultInstallerContextConfigurers( installerContextConfigurers );
 	}
 
-	/**
-	 * This method is now deprecated as default expose rules are configured in across.configuration instead,
-	 * and the defaults can only be overruled by the module implementing {@link #prepareForBootstrap(ModuleBootstrapConfig, AcrossBootstrapConfig)}.
-	 * The module specific {@link #getExposeFilter()} should only specify additional beans that should be exposed.
-	 *
-	 * @deprecated since 3.0.0 - replaced by across.configuration settings
-	 */
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public static BeanFilter defaultExposeFilter() {
-		return BeanFilter.empty();
-	}
-
 	public AcrossContext getContext() {
 		return context;
 	}
@@ -91,6 +78,21 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	 */
 	public void setEnabled( boolean enabled ) {
 		this.enabled = enabled;
+	}
+
+	/**
+	 * Returns an array of module names for which this module is an extension.
+	 * Any non-empty array will effectively turn this module descriptor into a module extension.
+	 * <p/>
+	 * If more than one module name is specified, the first one present will be extended.
+	 * <p/>
+	 * Specifying extension targets does not impact dependencies, if the target of the extension
+	 * is required, than it should also be specified using {@link com.foreach.across.core.annotations.AcrossDepends}.
+	 *
+	 * @return array of module names
+	 */
+	public String[] getExtensionTargets() {
+		return new String[0];
 	}
 
 	/**
@@ -328,7 +330,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 
 	/**
 	 * The collection of packages that should be scanned for module configurations.
-	 * Defaults to the "config" and "extension" packages relative to the package of the implementing class.
+	 * Defaults to the "extension" packages relative to the package of the implementing class.
 	 *
 	 * @return Array of package names.
 	 */
@@ -360,22 +362,7 @@ public abstract class AcrossModule extends AbstractAcrossEntity implements Acros
 	 * @param currentModule Bootstrap configuration of the current module.
 	 * @param contextConfig Bootstrap configuration of the entire context.
 	 */
-	public void prepareForBootstrap( ModuleBootstrapConfig currentModule,
-	                                 AcrossBootstrapConfig contextConfig ) {
-	}
-
-	/**
-	 * Called after all modules have been installed and - depending on the registration order in the context -
-	 * previous modules have been bootstrapped already.
-	 */
-	public void bootstrap() {
-	}
-
-	/**
-	 * Called in case of a context shutdown.  Modules registered after this one in the context will have
-	 * been shutdown already.
-	 */
-	public void shutdown() {
+	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
 	}
 
 	@Override

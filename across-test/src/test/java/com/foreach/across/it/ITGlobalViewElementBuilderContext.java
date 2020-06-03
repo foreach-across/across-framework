@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,15 @@ package com.foreach.across.it;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
 import com.foreach.across.test.AcrossTestWebContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,7 +40,7 @@ public class ITGlobalViewElementBuilderContext
 	public void globalBuilderContextIsNotRegisteredExplicitly() throws Exception {
 		try (AcrossTestWebContext ctx = web().register( TestController.class )
 		                                     .modules( AcrossWebModule.NAME )
-		                                     .property( "acrossWebModule.registerGlobalBuilderContext", "false" )
+		                                     .property( "across.web.registerGlobalBuilderContext", "false" )
 		                                     .build()) {
 			assertFalse(
 					ctx.moduleContainsLocalBean( AcrossWebModule.NAME, "viewElementBuilderContextInterceptor" )

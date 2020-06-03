@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,24 @@
 package test;
 
 import com.foreach.across.core.AcrossVersionInfo;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestAcrossVersionInfo
+class TestAcrossVersionInfo
 {
 	@Test
-	public void testDefaultManifestLoading() {
+	void testDefaultManifestLoading() {
 		Class mockedClass = Boolean.class;
 		AcrossVersionInfo info = AcrossVersionInfo.load( mockedClass );
 		assertTrue( info.isAvailable() );
 	}
 
 	@Test
-	public void testNoManifestLoadingForFileResource() {
+	void testNoManifestLoadingForFileResource() {
 		Class mockedClass = TestAcrossVersionInfo.class;
 		AcrossVersionInfo info = AcrossVersionInfo.load( mockedClass );
 		assertFalse( info.isAvailable() );
 	}
-
 }

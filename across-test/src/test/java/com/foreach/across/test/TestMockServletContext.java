@@ -17,7 +17,7 @@ package com.foreach.across.test;
 
 import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
 import com.foreach.across.modules.web.servlet.JspPropertyGroupDescriptorStub;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
@@ -26,7 +26,7 @@ import javax.servlet.descriptor.JspConfigDescriptor;
 import javax.servlet.descriptor.JspPropertyGroupDescriptor;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -250,6 +250,6 @@ public class TestMockServletContext
 		catch ( IllegalStateException ignore ) {
 			exceptionThrown = true;
 		}
-		assertTrue( "IllegalStateException was expected but not thrown", exceptionThrown );
+		assertTrue( exceptionThrown, "IllegalStateException was expected but not thrown" );
 	}
 }

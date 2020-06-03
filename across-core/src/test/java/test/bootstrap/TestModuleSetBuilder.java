@@ -23,11 +23,11 @@ import com.foreach.across.core.context.AcrossModuleRole;
 import com.foreach.across.core.context.ModuleDependencyResolver;
 import com.foreach.across.core.context.support.ModuleSet;
 import com.foreach.across.core.context.support.ModuleSetBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

@@ -18,14 +18,14 @@ package test.exposing;
 import com.foreach.across.AcrossPlatform;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.filters.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**

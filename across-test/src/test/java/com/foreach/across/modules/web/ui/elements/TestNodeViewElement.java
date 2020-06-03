@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,23 @@ import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestNodeViewElement extends AbstractViewElementTemplateTest
 {
+	@Test
+	public void attributeTyping() {
+		NodeViewElement node = new NodeViewElement( "div" );
+		node.setAttribute( "my attr", Arrays.asList( 1, 2 ) );
+		List values = node.getAttribute( "my attr", List.class );
+		assertNotNull( values );
+		List<Integer> integers = node.getAttribute( "my attr", List.class );
+		assertNotNull( integers );
+		assertSame( values, integers );
+	}
+
 	@Test
 	public void simpleNodeWithoutContentOrAttributes() {
 		NodeViewElement node = new NodeViewElement( "div" );

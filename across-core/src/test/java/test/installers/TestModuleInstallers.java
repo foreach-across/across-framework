@@ -17,8 +17,8 @@ package test.installers;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import test.installers.examples.InstallerThree;
@@ -27,15 +27,15 @@ import test.installers.scan.installers.InstallerOne;
 import test.installers.scan.installers.InstallerTwo;
 import test.modules.installer.installers.TestInstaller;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme
  */
 public class TestModuleInstallers
 {
-	@Before
+	@BeforeEach
 	public void after() {
 		TestInstaller.reset();
 	}

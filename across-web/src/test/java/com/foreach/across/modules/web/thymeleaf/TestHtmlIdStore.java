@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,17 @@ package com.foreach.across.modules.web.thymeleaf;
 
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.context.IdentifierSequences;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,8 +35,8 @@ import static org.mockito.Mockito.when;
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@RunWith(MockitoJUnitRunner.class)
-public class TestHtmlIdStore
+@ExtendWith(MockitoExtension.class)
+class TestHtmlIdStore
 {
 	@Mock
 	private ITemplateContext templateContext;
@@ -44,26 +45,25 @@ public class TestHtmlIdStore
 	private HtmlViewElement one, two;
 
 	private HtmlIdStore htmlIdStore;
-	private IdentifierSequences identifierSequences;
 
-	@Before
-	public void before() {
+	@BeforeEach
+	void before() {
 		htmlIdStore = new HtmlIdStore();
-		identifierSequences = new IdentifierSequences();
-		when( templateContext.getIdentifierSequences() ).thenReturn( identifierSequences );
+		IdentifierSequences identifierSequences = new IdentifierSequences();
+		Mockito.lenient().when( templateContext.getIdentifierSequences() ).thenReturn( identifierSequences );
 
-		when( one.getHtmlId() ).thenReturn( "one" );
-		when( two.getHtmlId() ).thenReturn( "two" );
+		Mockito.lenient().when( one.getHtmlId() ).thenReturn( "one" );
+		Mockito.lenient().when( two.getHtmlId() ).thenReturn( "two" );
 	}
 
 	@Test
-	public void noIdSpecified() {
+	void noIdSpecified() {
 		assertNull( htmlIdStore.retrieveHtmlId( templateContext, mock( ViewElement.class ) ) );
 		assertNull( htmlIdStore.retrieveHtmlId( templateContext, mock( HtmlViewElement.class ) ) );
 	}
 
 	@Test
-	public void sameIdReturnedForSameInstance() {
+	void sameIdReturnedForSameInstance() {
 		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
 		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
 		assertEquals( "two", htmlIdStore.retrieveHtmlId( templateContext, two ) );
@@ -71,7 +71,7 @@ public class TestHtmlIdStore
 	}
 
 	@Test
-	public void differentInstanceIncrementsId() {
+	void differentInstanceIncrementsId() {
 		when( two.getHtmlId() ).thenReturn( "one" );
 		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
 		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
@@ -80,7 +80,7 @@ public class TestHtmlIdStore
 	}
 
 	@Test
-	public void increaseAndDecreaseLevel() {
+	void increaseAndDecreaseLevel() {
 		assertEquals( "one", htmlIdStore.retrieveHtmlId( templateContext, one ) );
 
 		htmlIdStore.increaseLevel();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,14 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.thymeleaf.context.IEngineContext;
 import org.thymeleaf.model.*;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -32,14 +34,15 @@ import org.thymeleaf.templatemode.TemplateMode;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TestThymeleafModelBuilder
 {
 	@Mock
@@ -62,12 +65,12 @@ public class TestThymeleafModelBuilder
 
 	private ThymeleafModelBuilder modelBuilder;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		when( context.getModelFactory() ).thenReturn( modelFactory );
 		when( modelFactory.createModel() ).thenReturn( model );
-		doAnswer( invocation -> invocation.getArgumentAt( 0, String.class ) )
-				.when( attributeConverter ).apply( anyObject() );
+		doAnswer( invocation -> invocation.getArgument( 0 ) )
+				.when( attributeConverter ).apply( any() );
 
 		when( context.getTemplateMode() ).thenReturn( TemplateMode.HTML );
 
@@ -124,7 +127,6 @@ public class TestThymeleafModelBuilder
 		when( modelFactory.createOpenElementTag( "div", Collections.emptyMap(), AttributeValueQuotes.DOUBLE, false ) )
 				.thenReturn( openElementTag );
 		ICloseElementTag closeElementTag = mock( ICloseElementTag.class );
-		when( modelFactory.createCloseElementTag( "div" ) ).thenReturn( closeElementTag );
 
 		modelBuilder.addOpenElement( "div" );
 		verify( modelFactory, never() ).createOpenElementTag( anyString() );
@@ -553,7 +555,7 @@ public class TestThymeleafModelBuilder
 
 		modelBuilder.addOpenElement( "div" );
 		doAnswer( invocation -> {
-			          ThymeleafModelBuilder childBuilder = invocation.getArgumentAt( 1, ThymeleafModelBuilder.class );
+			          ThymeleafModelBuilder childBuilder = invocation.getArgument( 1 );
 			          assertNotSame( modelBuilder, childBuilder );
 			          assertSame( context, childBuilder.getTemplateContext() );
 			          assertSame( childModel, childBuilder.retrieveModel() );

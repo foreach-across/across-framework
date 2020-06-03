@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 package com.foreach.across.core.context.web;
 
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.context.AcrossConfigurableApplicationContext;
 import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Arne Vandamme
@@ -33,12 +33,12 @@ public class TestAcrossWebApplicationContext
 {
 	private AcrossConfigurableApplicationContext ctx;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		ctx = new AcrossWebApplicationContext();
 	}
 
-	@After
+	@AfterEach
 	public void after() {
 		ctx.stop();
 		ctx.close();
@@ -117,7 +117,7 @@ public class TestAcrossWebApplicationContext
 		}
 	}
 
-	@AcrossCondition("@someBean != null")
+	@ConditionalOnExpression("@someBean != null")
 	static class ConditionalBeanReference extends BeanReference
 	{
 		@Autowired

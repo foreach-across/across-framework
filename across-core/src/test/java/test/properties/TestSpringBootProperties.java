@@ -16,30 +16,30 @@
 package test.properties;
 
 import com.foreach.across.config.EnableAcrossContext;
-import test.properties.boot.SpringBootPropertiesModule;
-import test.properties.boot.config.BeanWithProps;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test.properties.boot.SpringBootPropertiesModule;
 import test.properties.boot.config.BeanWithProps;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
+ * TODO: original bootProperties have been changed to boot.properties for Spring Boot 2 support - check behaviour
+ *
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @SpringBootTest(classes = TestSpringBootProperties.Config.class, properties = {
-		"bootProperties.directValue=parent",
-		"bootProperties.yaml.two=parentTwo"
+		"boot.properties.directValue=parent",
+		"boot.properties.yaml.two=parentTwo"
 })
 @ActiveProfiles("props")
 public class TestSpringBootProperties
@@ -61,7 +61,7 @@ public class TestSpringBootProperties
 		@Bean
 		public SpringBootPropertiesModule springBootPropertiesModule() {
 			SpringBootPropertiesModule springBootPropertiesModule = new SpringBootPropertiesModule();
-			springBootPropertiesModule.setProperty( "bootProperties.directValue", "code" );
+			springBootPropertiesModule.setProperty( "boot.properties.directValue", "code" );
 			return springBootPropertiesModule;
 		}
 	}

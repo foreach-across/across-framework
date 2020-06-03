@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
  */
 package com.foreach.across.core.context;
 
+import com.foreach.across.core.context.module.ModuleConfigurationExtension;
 import lombok.NonNull;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 /**
  * Represents a collection of - usually {@link @ModuleConfiguration} - classes, mapped on the module names they apply for.
@@ -30,10 +31,12 @@ import java.util.stream.Stream;
  *
  * @author Arne Vandamme
  * @see ClassPathScanningModuleConfigurationProvider
+ * @see ModuleConfigurationExtension
  */
 public class ModuleConfigurationSet
 {
-	private final Map<String, ModuleConfigurationScope> scopedAnnotatedClasses = new LinkedHashMap<>();
+	private final Map<ModuleConfigurationExtension, Collection<String>> moduleExtensions = new LinkedHashMap<>();
+	private final Map<String, Collection<String>> excludedClasses = new HashMap<>();
 
 	/**
 	 * Get the configuration classes that should be added to the module specified by the name.
@@ -43,17 +46,25 @@ public class ModuleConfigurationSet
 	 * @param aliases    additional module names
 	 * @return configurations
 	 */
-	public String[] getConfigurations( String moduleName, String... aliases ) {
-		String[] moduleNames = ArrayUtils.addAll( aliases, moduleName );
-		List<String> configurations = new ArrayList<>();
-		scopedAnnotatedClasses.forEach( ( annotatedClass, modules ) -> {
-			if ( !containsAny( modules.excludedModules, moduleNames )
-					&& ( modules.addToAll || containsAny( modules.includedModules, moduleNames ) ) ) {
-				configurations.add( annotatedClass );
-			}
-		} );
+	public ModuleConfigurationExtension[] getConfigurations( String moduleName, String... aliases ) {
+		List<String> moduleNames = moduleNames( moduleName, aliases );
 
-		return configurations.toArray( new String[0] );
+		return moduleExtensions.entrySet()
+		                       .stream()
+		                       .filter( e -> {
+			                       Collection<String> modulesToInclude = e.getValue();
+			                       Collection<String> excludedModules = excludedClasses.get( e.getKey().getAnnotatedClass() );
+
+			                       if ( excludedModules != null ) {
+				                       if ( excludedModules.isEmpty() || CollectionUtils.containsAny( excludedModules, moduleNames ) ) {
+					                       return false;
+				                       }
+			                       }
+
+			                       return modulesToInclude.isEmpty() || CollectionUtils.containsAny( modulesToInclude, moduleNames );
+		                       } )
+		                       .map( Map.Entry::getKey )
+		                       .toArray( ModuleConfigurationExtension[]::new );
 	}
 
 	/**
@@ -65,67 +76,51 @@ public class ModuleConfigurationSet
 	 * @return configurations
 	 */
 	public String[] getExcludedConfigurations( String moduleName, String... aliases ) {
-		String[] moduleNames = ArrayUtils.addAll( aliases, moduleName );
-		List<String> configurations = new ArrayList<>();
-		scopedAnnotatedClasses.forEach( ( annotatedClass, modules ) -> {
-			if ( containsAny( modules.excludedModules, moduleNames ) ) {
-				configurations.add( annotatedClass );
-			}
-		} );
+		List<String> moduleNames = moduleNames( moduleName, aliases );
 
-		return configurations.toArray( new String[0] );
-	}
-
-	private boolean containsAny( Set<String> moduleNameSet, String... moduleName ) {
-		return Stream.of( moduleName ).anyMatch( moduleNameSet::contains );
+		return excludedClasses.entrySet()
+		                      .stream()
+		                      .filter( e -> e.getValue().isEmpty() || CollectionUtils.containsAny( e.getValue(), moduleNames ) )
+		                      .map( Map.Entry::getKey )
+		                      .toArray( String[]::new );
 	}
 
 	/**
 	 * Register a configuration class to be added to all modules.
-	 * Any additional {@link #register(Class, String...)} calls will have no effect as this module will be added
+	 * Any additional {@link #register(ModuleConfigurationExtension, String...)} calls will have no effect as this module will be added
 	 * for all anyway.
 	 *
-	 * @param configurationClass configuration
+	 * @param extension configuration to be added
 	 */
-	public void register( @NonNull Class<?> configurationClass ) {
-		register( configurationClass.getName() );
-	}
-
-	/**
-	 * Register a configuration class to be added to all modules.
-	 * Any additional {@link #register(Class, String...)} calls will have no effect as this module will be added
-	 * for all anyway.
-	 *
-	 * @param configurationClass configuration
-	 */
-	public void register( @NonNull String configurationClass ) {
-		ModuleConfigurationScope scope = scopedAnnotatedClasses.getOrDefault( configurationClass, new ModuleConfigurationScope() );
-		scope.addToAll = true;
-
-		scopedAnnotatedClasses.put( configurationClass, scope );
+	public void register( @NonNull ModuleConfigurationExtension extension ) {
+		moduleExtensions.put( extension, Collections.emptyList() );
 	}
 
 	/**
 	 * Register a configuration class to be added to a specific set of modules.
 	 *
-	 * @param configurationClass configuration
-	 * @param moduleNames        names of the modules to which this configuration should be added
+	 * @param extension   configuration to be added
+	 * @param moduleNames names of the modules to which this configuration should be added
 	 */
-	public void register( @NonNull Class<?> configurationClass, String... moduleNames ) {
-		register( configurationClass.getName(), moduleNames );
+	public void register( @NonNull ModuleConfigurationExtension extension, String... moduleNames ) {
+		Collection<String> includedModules = moduleExtensions.get( extension );
+
+		if ( includedModules == null ) {
+			includedModules = new HashSet<>( moduleNames.length );
+			moduleExtensions.put( extension, includedModules );
+		}
+		else if ( includedModules.isEmpty() ) {
+			return;
+		}
+
+		includedModules.addAll( Arrays.asList( moduleNames ) );
 	}
 
-	/**
-	 * Register a configuration class to be added to a specific set of modules.
-	 *
-	 * @param configurationClass configuration
-	 * @param moduleNames        names of the modules to which this configuration should be added
-	 */
-	public void register( @NonNull String configurationClass, String... moduleNames ) {
-		ModuleConfigurationScope scope = scopedAnnotatedClasses.getOrDefault( configurationClass, new ModuleConfigurationScope() );
-		Collections.addAll( scope.includedModules, moduleNames );
-
-		scopedAnnotatedClasses.put( configurationClass, scope );
+	private List<String> moduleNames( String moduleName, String[] aliases ) {
+		List<String> moduleNames = new ArrayList<>( 1 + aliases.length );
+		moduleNames.add( moduleName );
+		moduleNames.addAll( Arrays.asList( aliases ) );
+		return moduleNames;
 	}
 
 	/**
@@ -145,11 +140,17 @@ public class ModuleConfigurationSet
 	 * @param moduleNames        names of the modules to which this configuration should <strong>never</strong> be added
 	 */
 	public void exclude( @NonNull String configurationClass, String... moduleNames ) {
-		ModuleConfigurationScope scope
-				= scopedAnnotatedClasses.getOrDefault( configurationClass, new ModuleConfigurationScope() );
-		Collections.addAll( scope.excludedModules, moduleNames );
+		Collection<String> excludedModules = excludedClasses.get( configurationClass );
 
-		scopedAnnotatedClasses.put( configurationClass, scope );
+		if ( excludedModules == null ) {
+			excludedModules = new HashSet<>( moduleNames.length );
+			excludedClasses.put( configurationClass, excludedModules );
+		}
+		else if ( excludedModules.isEmpty() ) {
+			return;
+		}
+
+		excludedModules.addAll( Arrays.asList( moduleNames ) );
 	}
 
 	/**
@@ -157,23 +158,22 @@ public class ModuleConfigurationSet
 	 *
 	 * @param configurationClass configuration
 	 */
-	public void remove( Class<?> configurationClass ) {
+	public void remove( @NonNull Class<?> configurationClass ) {
 		remove( configurationClass.getName() );
 	}
 
 	/**
 	 * Remove a configuration class from the set altogether.
+	 * This will remove the class from both exclusions and registered extensions.
 	 *
 	 * @param configurationClass configuration
 	 */
-	public void remove( String configurationClass ) {
-		scopedAnnotatedClasses.remove( configurationClass );
-	}
-
-	private static class ModuleConfigurationScope
-	{
-		boolean addToAll = false;
-		final Set<String> includedModules = new HashSet<>();
-		final Set<String> excludedModules = new HashSet<>();
+	public void remove( @NonNull String configurationClass ) {
+		moduleExtensions.keySet()
+		                .stream()
+		                .filter( e -> configurationClass.equals( e.getAnnotatedClass() ) )
+		                .collect( Collectors.toList() )
+		                .forEach( moduleExtensions::remove );
+		excludedClasses.remove( configurationClass );
 	}
 }

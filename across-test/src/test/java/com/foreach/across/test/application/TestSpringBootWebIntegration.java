@@ -22,8 +22,8 @@ import com.foreach.across.modules.web.context.WebAppPathResolver;
 import com.foreach.across.test.ExposeForTest;
 import com.foreach.across.test.application.app.DummyApplication;
 import com.foreach.across.test.application.app.application.controllers.NonExposedComponent;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +39,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Full stack bootstrap with embedded tomcat.
@@ -51,11 +51,11 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 1.1.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DummyApplication.class)
-@TestPropertySource(properties = "server.context-path=/custom/servlet")
+@TestPropertySource(properties = { "server.servlet.context-path=/custom/servlet" })
 @ExposeForTest(NonExposedComponent.class)
 public class TestSpringBootWebIntegration
 {
@@ -90,9 +90,9 @@ public class TestSpringBootWebIntegration
 	}
 
 	@Test
-	public void requestMappingsWithDateTimeFormatPattnerWorkCorrectly() {
+	public void requestMappingsWithDateTimeFormatPatternWorkCorrectly() {
 		assertEquals( "Wed Nov 29 00:00:00 CET 2017", get( "/stringToDateConverterWithoutAnnotationPattern?time=2017-11-29" ) );
-		assertEquals( "Fri Dec 29 17:59:00 CET 2017", get( "/stringToDateConverterWithAnnotationPattern?time=2017-12-29T16:59:00+0000" ) );
+		assertEquals( "Fri Dec 29 17:59:00 CET 2017", get( "/stringToDateConverterWithAnnotationPattern?time=29/12/2017T17:59:00" ) );
 	}
 
 	@Test

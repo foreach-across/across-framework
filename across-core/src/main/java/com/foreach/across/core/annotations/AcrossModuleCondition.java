@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.util.Assert;
 
 import java.util.Map;
 
@@ -34,8 +35,6 @@ import java.util.Map;
  * Condition that checks that a given module is present in the AcrossContext.
  * To be used on @Configuration and @Bean instances to load components only if other modules
  * are being loaded.
- * <p/>
- * For compatibility purposes also still added to {@link AcrossDepends}.
  *
  * @see com.foreach.across.core.annotations.ConditionalOnAcrossModule
  */
@@ -44,24 +43,16 @@ class AcrossModuleCondition extends SpringBootCondition
 {
 	@Override
 	public ConditionOutcome getMatchOutcome( ConditionContext context, AnnotatedTypeMetadata metadata ) {
-		String[] allOf, anyOf, noneOf;
+		Map<String, Object> attributes = metadata.getAnnotationAttributes( ConditionalOnAcrossModule.class.getName() );
 
-		if ( metadata.isAnnotated( AcrossDepends.class.getName() ) ) {
-			LOG.warn( "Use of @AcrossDepends for conditional component creation - this has been deprecated, please use @ConditionalOnAcrossModule instead" );
-			Map<String, Object> attributes = metadata.getAnnotationAttributes( AcrossDepends.class.getName() );
-			allOf = (String[]) attributes.get( "required" );
-			anyOf = (String[]) attributes.get( "optional" );
-			noneOf = new String[0];
+		Assert.notNull( attributes, "@ConditionalOnAcrossModule was expected" );
+
+		String[] allOf = (String[]) attributes.get( "allOf" );
+		if ( allOf == null || allOf.length == 0 ) {
+			allOf = (String[]) attributes.get( "value" );
 		}
-		else {
-			Map<String, Object> attributes = metadata.getAnnotationAttributes( ConditionalOnAcrossModule.class.getName() );
-			allOf = (String[]) attributes.get( "allOf" );
-			if ( allOf == null || allOf.length == 0 ) {
-				allOf = (String[]) attributes.get( "value" );
-			}
-			anyOf = (String[]) attributes.get( "anyOf" );
-			noneOf = (String[]) attributes.get( "noneOf" );
-		}
+		String[] anyOf = (String[]) attributes.get( "anyOf" );
+		String[] noneOf = (String[]) attributes.get( "noneOf" );
 
 		try {
 			AcrossContextInfo acrossContext = findAcrossContextInfo( context.getBeanFactory() );

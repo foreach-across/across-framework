@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.event.EventListenerFactory;
 import org.springframework.context.event.EventListenerMethodProcessor;
-
-import java.util.List;
 
 import static org.springframework.context.annotation.AnnotationConfigUtils.EVENT_LISTENER_PROCESSOR_BEAN_NAME;
 
@@ -40,18 +35,24 @@ import static org.springframework.context.annotation.AnnotationConfigUtils.EVENT
  */
 public final class NonExposedEventListenerMethodProcessor extends EventListenerMethodProcessor
 {
-	private ConfigurableApplicationContext applicationContext;
+	private AcrossListableBeanFactory beanFactory;
 
 	@Override
-	public void setApplicationContext( ApplicationContext applicationContext ) throws BeansException {
-		super.setApplicationContext( applicationContext );
-		this.applicationContext = (ConfigurableApplicationContext) applicationContext;
+	public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
+		this.beanFactory = (AcrossListableBeanFactory) beanFactory;
+
+		super.postProcessBeanFactory( beanFactory );
 	}
 
 	@Override
-	protected void processBean( List<EventListenerFactory> factories, String beanName, Class<?> targetType ) {
-		if ( !( (AcrossListableBeanFactory) applicationContext.getBeanFactory() ).isExposedBean( beanName ) ) {
-			super.processBean( factories, beanName, targetType );
+	public void afterSingletonsInstantiated() {
+		beanFactory.setHideExposedBeans( true );
+
+		try {
+			super.afterSingletonsInstantiated();
+		}
+		finally {
+			beanFactory.setHideExposedBeans( false );
 		}
 	}
 

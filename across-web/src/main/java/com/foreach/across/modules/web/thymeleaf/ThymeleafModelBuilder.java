@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,6 +181,13 @@ public final class ThymeleafModelBuilder
 		ThymeleafModelBuilder nestedBuilder = new ThymeleafModelBuilder( this );
 		nestedBuilder.addViewElement( viewElement );
 		return nestedBuilder.retrieveModel();
+	}
+
+	/**
+	 * @return a separate model builder using the same configuration as the current one
+	 */
+	public ThymeleafModelBuilder createChildModelBuilder() {
+		return new ThymeleafModelBuilder( this );
 	}
 
 	/**

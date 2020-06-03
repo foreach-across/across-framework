@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package test.modules.module2;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.core.events.AcrossEventPublisher;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import test.modules.EventPubSub;
@@ -44,7 +44,7 @@ public class TestModule2Config
 	}
 
 	@Bean
-	public EventPubSub publisherModuleTwo( AcrossEventPublisher eventPublisher ) {
+	public EventPubSub publisherModuleTwo( ApplicationEventPublisher eventPublisher ) {
 		return new EventPubSub( "moduleTwo", eventPublisher );
 	}
 }

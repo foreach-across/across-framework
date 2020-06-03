@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
@@ -56,7 +55,7 @@ import java.util.Map;
  * @author Arne Vandamme
  */
 @Configuration
-public class ResourcesConfiguration extends WebMvcConfigurerAdapter
+public class ResourcesConfiguration implements WebMvcConfigurer
 {
 	public static final String RESOURCE_URL_ENCODING_FILTER = "resourceUrlEncodingFilter";
 
@@ -122,9 +121,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 		SimpleUrlHandlerMapping resourceHandlerMapping = resourceHandlerMapping();
 
 		if ( resourceUrlProviderExposingInterceptor != null && resourceUrlProvider != null ) {
-			resourceHandlerMapping.setInterceptors(
-					new HandlerInterceptor[] { resourceUrlProviderExposingInterceptor }
-			);
+			resourceHandlerMapping.setInterceptors( resourceUrlProviderExposingInterceptor );
 		}
 		resourceHandlerMapping.setCorsConfigurations( corsConfigurations );
 		resourceHandlerMapping.setUrlMap( resourceHandlerRegistry.getUrlMap() );
@@ -144,12 +141,11 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	}
 
 	@Bean
-	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)
 	@ConditionalOnConfigurableServletContext
 	public FilterRegistrationBean resourceUrlEncodingFilterRegistration() {
-		FilterRegistrationBean registration = new FilterRegistrationBean();
+		FilterRegistrationBean<ResourceUrlEncodingFilter> registration = new FilterRegistrationBean<>( new ResourceUrlEncodingFilter() );
 		registration.setName( RESOURCE_URL_ENCODING_FILTER );
-		registration.setFilter( new ResourceUrlEncodingFilter() );
 		registration.setAsyncSupported( true );
 		registration.setMatchAfter( true );
 		registration.setUrlPatterns( Collections.singletonList( "/*" ) );
@@ -164,7 +160,7 @@ public class ResourcesConfiguration extends WebMvcConfigurerAdapter
 	 * Ensures the interceptor is registered so all controllers have access to it.
 	 */
 	@Configuration("resourceUrlProviderExposingInterceptorConfiguration")
-	@ConditionalOnProperty(prefix = "acrossWebModule.resources.versioning", value = "enabled", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)
 	public static class ResourceUrlProviderExposingInterceptorConfiguration extends PrefixingHandlerMappingConfigurerAdapter
 	{
 		@Override

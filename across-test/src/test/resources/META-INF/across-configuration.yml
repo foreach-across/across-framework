@@ -1,0 +1,4 @@
+across.test:
+  auto-configuration:
+    com.foreach.across.DummyAutoConfiguration:
+      destination: DynamicApplicationModule

@@ -15,8 +15,8 @@
  */
 package com.foreach.across.test;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 
 import javax.servlet.MultipartConfigElement;
@@ -27,7 +27,7 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -38,7 +38,7 @@ public class TestMockServletRegistration
 {
 	private MockAcrossServletContext servletContext;
 
-	@Before
+	@BeforeEach
 	public void resetServletContext() {
 		servletContext = new MockAcrossServletContext();
 	}

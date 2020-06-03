@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package test.modules.module2;
 
-import com.foreach.across.core.annotations.Event;
-import com.foreach.across.core.annotations.EventName;
 import lombok.Getter;
 import org.springframework.context.event.EventListener;
 
@@ -80,13 +78,13 @@ public class CustomEventHandlers
 		return receivedSingleDecimal;
 	}
 
-	@Event
+	@EventListener
 	public void allEvents( SimpleEvent event ) {
 		receivedAll.add( event );
 	}
 
-	@Event
-	public void namedOne( @EventName({ "one", "three" }) NamedEvent myNamedEvent ) {
+	@EventListener(condition = "#myNamedEvent.eventName == 'one' || #myNamedEvent.eventName == 'three'")
+	public void namedOne( NamedEvent myNamedEvent ) {
 		receivedOne.add( myNamedEvent );
 	}
 
@@ -95,7 +93,7 @@ public class CustomEventHandlers
 		receivedTwo.add( event );
 	}
 
-	@Event
+	@EventListener
 	public void typedLongMap( GenericEvent<Long, ? extends Map> event ) {
 		receivedTypedLongMap.add( event );
 	}
@@ -105,12 +103,12 @@ public class CustomEventHandlers
 		receivedTypedIntegerList.add( event );
 	}
 
-	@Event
+	@EventListener
 	public void typedNumberCollection( GenericEvent<? extends Number, ? extends Collection> event ) {
 		receivedTypedNumberCollection.add( event );
 	}
 
-	@Event
+	@EventListener
 	public void singleNumber( SingleGenericEvent<? extends Number> number ) {
 		receivedSingleNumber.add( number );
 	}

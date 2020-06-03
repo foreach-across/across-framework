@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 package test.scan.moduleExtendingValidModule.extensions;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
-import test.scan.packageOne.ValidModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import test.scan.packageOne.ValidModule;
 
 /**
  * @author Arne Vandamme
  */
-@ModuleConfiguration(ValidModule.NAME)
+@ModuleConfiguration(value = ValidModule.NAME, deferred = false)
 @Import(BeanThreeConfiguration.class)
 public class BeanTwoConfiguration
 {

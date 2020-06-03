@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,28 +15,31 @@
  */
 package com.foreach.across.modules.web.context;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TestPrefixingSupportingWebAppLinkBuilder
 {
 	@Mock
@@ -51,14 +54,14 @@ public class TestPrefixingSupportingWebAppLinkBuilder
 	@InjectMocks
 	private PrefixingSupportingWebAppLinkBuilder linkBuilder;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		ServletRequestAttributes ra = new ServletRequestAttributes( request, response );
 		RequestContextHolder.setRequestAttributes( ra );
 		contextPath( "/ctx" );
 	}
 
-	@After
+	@AfterEach
 	public void destroy() {
 		RequestContextHolder.resetRequestAttributes();
 	}
@@ -92,7 +95,6 @@ public class TestPrefixingSupportingWebAppLinkBuilder
 	@Test
 	public void relativePathWithoutEncode() {
 		when( pathResolver.path( "/test-link" ) ).thenReturn( "/prefixed" );
-		when( response.encodeURL( "/ctx/prefixed" ) ).thenReturn( "encoded" );
 
 		assertEquals( "/ctx/prefixed", linkBuilder.buildLink( "/test-link", false ) );
 	}

@@ -18,51 +18,79 @@ package com.foreach.across.it;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestContext;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Set;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.standard;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
 public class ITAcrossTestContextBootstrap
 {
-	@Before
+	@BeforeEach
 	public void resetInstaller() {
 		SimpleInstaller.installed = false;
 	}
 
 	@Test
-	public void bootstrapWithoutWebModule() {
-		try (AcrossTestContext ctx = standard().configurer( new Config() ).build()) {
+	public void bootstrapWithoutWebModuleAndCamelCaseProperties() {
+		try (AcrossTestContext ctx = standard().configurer( new Config() )
+		                                       .property( "customProps.myProperty", "camelCaseIsSupported" )
+		                                       .property( "customProps.conditionalOnProperty.enabled", "true" )
+		                                       .build()) {
 			assertTrue( SimpleInstaller.installed );
 			assertTrue( ctx.contextInfo().getModuleInfo( "MyModule" ).isBootstrapped() );
 			assertFalse( ctx.contextInfo().hasModule( AcrossWebModule.NAME ) );
 
 			assertSingleAcrossContextCreated( ctx );
+
+			CustomProps props = ctx.getBeanOfType( CustomProps.class );
+			assertEquals( "camelCaseIsSupported", props.getMyProperty() );
+
+			assertTrue( ctx.containsBean( "conditionalOnPropertyEnabled" ) );
+			assertFalse( ctx.containsBean( "conditionalOnPropertyDisabled" ) );
+			assertEquals( "conditionalOnPropertyEnabled", ctx.getBean( "conditionalOnPropertyEnabled" ) );
 		}
 	}
 
 	@Test
-	public void bootstrapWithWebModule() {
-		try (AcrossTestContext ctx = web().modules( AcrossWebModule.NAME ).configurer( new Config() ).build()) {
+	public void bootstrapWithWebModuleAndKebabCaseProperties() {
+		try (AcrossTestContext ctx = web().modules( AcrossWebModule.NAME )
+		                                  .configurer( new Config() )
+		                                  .property( "custom-props.my-property", "kebabCaseIsSupported" )
+		                                  .property( "custom-props.conditional-on-property.enabled", "true" )
+		                                  .build()) {
 			assertTrue( SimpleInstaller.installed );
 			assertTrue( ctx.contextInfo().getModuleInfo( "MyModule" ).isBootstrapped() );
 			assertTrue( ctx.contextInfo().hasModule( AcrossWebModule.NAME ) );
 
 			assertSingleAcrossContextCreated( ctx );
+
+			CustomProps props = ctx.getBeanOfType( CustomProps.class );
+			assertEquals( "kebabCaseIsSupported", props.getMyProperty() );
+
+			assertTrue( ctx.containsBean( "conditionalOnPropertyEnabled" ) );
+			assertFalse( ctx.containsBean( "conditionalOnPropertyDisabled" ) );
+			assertEquals( "conditionalOnPropertyEnabled", ctx.getBean( "conditionalOnPropertyEnabled" ) );
 		}
 	}
 
@@ -72,7 +100,7 @@ public class ITAcrossTestContextBootstrap
 
 		int actualId = Integer.valueOf( StringUtils.substringAfterLast( actualContextId, "-" ) );
 		int nextId = Integer.valueOf( StringUtils.substringAfterLast( nextContextId, "-" ) );
-		assertEquals( "An additional unexpected AcrossContext has been created", actualId + 1, nextId );
+		assertEquals( actualId + 1, nextId, "An additional unexpected AcrossContext has been created" );
 	}
 
 	static class Config implements AcrossContextConfigurer
@@ -102,6 +130,32 @@ public class ITAcrossTestContextBootstrap
 
 		@Override
 		protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+			contextConfigurers.add( new AnnotatedClassConfigurer( CustomProps.class, ConditionalBeanConfiguration.class ) );
+		}
+	}
+
+	@Exposed
+	@ConfigurationProperties("custom-props")
+	@Data
+	private static class CustomProps
+	{
+		private String myProperty;
+	}
+
+	@Configuration
+	@Exposed
+	public static class ConditionalBeanConfiguration
+	{
+		@ConditionalOnProperty(value = "custom-props.conditional-on-property.enabled", havingValue = "true")
+		@Bean
+		public String conditionalOnPropertyEnabled() {
+			return "conditionalOnPropertyEnabled";
+		}
+
+		@ConditionalOnProperty(value = "custom-props.conditional-on-property.enabled", havingValue = "false")
+		@Bean
+		public String conditionalOnPropertyDisabled() {
+			return "conditionalOnPropertyDisabled";
 		}
 	}
 

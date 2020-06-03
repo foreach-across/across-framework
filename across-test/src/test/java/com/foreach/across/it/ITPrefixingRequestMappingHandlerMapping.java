@@ -25,7 +25,7 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfiguration;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ITPrefixingRequestMappingHandlerMapping
 {
@@ -103,7 +103,7 @@ public class ITPrefixingRequestMappingHandlerMapping
 		for ( String expectedPath : expectedPaths ) {
 
 			LinkedList<?> mappings = (LinkedList<?>) urlLookup.get( expectedPath );
-			assertNotNull( "Could not find url " + expectedPath + " in urlLookup", mappings );
+			assertNotNull( mappings, "Could not find url " + expectedPath + " in urlLookup" );
 			HttpServletRequest request = new MockHttpServletRequest( "GET", expectedPath );
 			HandlerExecutionChain chain = requestMappingHandlerMapping.getHandler( request );
 			assertNotNull( chain );

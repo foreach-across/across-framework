@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@ package test;
 
 import com.foreach.across.config.EnableAcrossContext;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import sun.net.www.protocol.http.HttpURLConnection;
 import test.modules.cors.CorsModule;
 
@@ -33,7 +33,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Marc Vanbrabant
@@ -44,7 +44,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	private RestTemplate restTemplate;
 	private String URL = "/cors/78";
 
-	@Before
+	@BeforeEach
 	public void allowRestrictedHeaders() throws NoSuchFieldException, IllegalAccessException {
 		restTemplate = new RestTemplate();
 		// RestTemplate uses HttpURLConnection, which disallows CORS headers by default.
@@ -52,7 +52,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 		setAllowRestrictedHeaders( true );
 	}
 
-	@After
+	@AfterEach
 	public void resetRestrictedHeaders() throws NoSuchFieldException, IllegalAccessException {
 		setAllowRestrictedHeaders(
 				Boolean.parseBoolean( System.getProperty( "sun.net.http.allowRestrictedHeaders" ) ) );
@@ -71,7 +71,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	public void preflightIsNotAllowedForOtherOrigin() throws Exception {
 		restTemplate.setErrorHandler( new NoOpResponseErrorHandler() );
 		ResponseEntity<String> response = restTemplate.exchange( url( URL ), HttpMethod.OPTIONS,
-		                                                         new HttpEntity( new HttpHeaders()
+		                                                         new HttpEntity<>( new HttpHeaders()
 		                                                         {
 			                                                         {
 				                                                         set( HttpHeaders.ORIGIN, "http://foo.bar" );
@@ -85,7 +85,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	@Test
 	public void preflightAndCorsRequestShouldWork() throws Exception {
 		ResponseEntity<String> response = restTemplate.exchange( url( URL ), HttpMethod.OPTIONS,
-		                                                         new HttpEntity( new HttpHeaders()
+		                                                         new HttpEntity<>( new HttpHeaders()
 		                                                         {
 			                                                         {
 				                                                         set( HttpHeaders.ORIGIN,
@@ -110,7 +110,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	public void preflightAndCorsRequestShouldWorkForGlobalConfig() throws Exception {
 		Long randomLong = RandomUtils.nextLong( 1, 100 );
 		ResponseEntity<String> response = restTemplate.exchange( url( "/cors/global/" + randomLong ),
-		                                                         HttpMethod.OPTIONS, new HttpEntity( new HttpHeaders()
+		                                                         HttpMethod.OPTIONS, new HttpEntity<>( new HttpHeaders()
 				{
 					{
 						set( HttpHeaders.ORIGIN, "http://thirddomain.com" );
@@ -133,7 +133,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 	public void corsWorksForResourceHandlers() throws Exception {
 		ResponseEntity<String> response = restTemplate.exchange(
 				url( "/across/resources/js/testResources/javascript.js" ), HttpMethod.OPTIONS,
-				new HttpEntity( new HttpHeaders()
+				new HttpEntity<>( new HttpHeaders()
 				{
 					{
 						set( HttpHeaders.ORIGIN, "http://staticscrossdomain.com" );
@@ -145,7 +145,7 @@ public class TestCorsSupported extends AbstractWebIntegrationTest
 
 	@Configuration
 	@EnableAcrossContext(modules = CorsModule.NAME)
-	protected static class Config extends WebMvcConfigurerAdapter
+	protected static class Config implements WebMvcConfigurer
 	{
 	}
 }

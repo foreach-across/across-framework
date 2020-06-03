@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ import java.util.stream.Stream;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class AcrossLifecycleShutdownHandler
+public final class AcrossLifecycleShutdownHandler
 {
 	private final AcrossContext acrossContext;
 
@@ -62,6 +62,7 @@ public class AcrossLifecycleShutdownHandler
 		removeExposedBeanDefinitions( rootApplicationContext );
 		contextInfo.getModules()
 		           .stream()
+		           .filter( AcrossModuleInfo::isBootstrapped )
 		           .map( AcrossModuleInfo::getApplicationContext )
 		           .forEach( this::removeExposedBeanDefinitions );
 
@@ -78,8 +79,7 @@ public class AcrossLifecycleShutdownHandler
 				if ( applicationContext != null ) {
 					LOG.debug( "Destroying ApplicationContext for module {}", module.getName() );
 
-					module.shutdown();
-					applicationContext.destroy();
+					applicationContext.close();
 					AcrossContextUtils.setAcrossApplicationContextHolder( module, null );
 				}
 			}
@@ -87,7 +87,7 @@ public class AcrossLifecycleShutdownHandler
 
 		// Destroy the root ApplicationContext
 
-		rootApplicationContext.destroy();
+		rootApplicationContext.close();
 		AcrossContextUtils.setAcrossApplicationContextHolder( acrossContext, null );
 		LOG.debug( "Destroyed root ApplicationContext: {}", acrossContext.getId() );
 	}
@@ -117,7 +117,7 @@ public class AcrossLifecycleShutdownHandler
 				updateParentApplicationContext( parent, null );
 
 				removeExposedBeanDefinitions( parent );
-				( (AcrossConfigurableApplicationContext) parent ).destroy();
+				( (AcrossConfigurableApplicationContext) parent ).close();
 			}
 			else if ( parent instanceof ConfigurableApplicationContext ) {
 				removeIntroducedParentContext( parent );

@@ -18,16 +18,17 @@ package com.foreach.across.test.web;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import com.foreach.across.test.web.module.WebControllersModule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.util.NestedServletException;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -41,9 +42,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AcrossWebAppConfiguration
 public class TestDefaultTemplate
 {
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
 	@Autowired
 	private MockMvc mvc;
 
@@ -92,16 +90,18 @@ public class TestDefaultTemplate
 
 	@Test
 	public void defaultTemplateWithDefaultExceptionHandlerShouldHaveCorrectNestedException() throws Exception {
-		thrown.expectMessage( containsString( "Runtime error occurred." ) );
-
-		mvc.perform( get( "/runtimeError" ) );
+		NestedServletException e = Assertions.assertThrows( NestedServletException.class, () -> {
+			mvc.perform( get( "/runtimeError" ) );
+		} );
+		assertThat( e.getMessage(), containsString( "Runtime error occurred." ) );
 	}
 
 	@Test
 	public void defaultTemplateWithPartialOnDefaultExceptionHandlerShouldHaveCorrectNestedException() throws Exception {
-		thrown.expectMessage( containsString( "Runtime error occurred." ) );
-
-		mvc.perform( get( "/runtimeError?_partial=content" ) );
+		NestedServletException e = Assertions.assertThrows( NestedServletException.class, () -> {
+			mvc.perform( get( "/runtimeError?_partial=content" ) );
+		} );
+		assertThat( e.getMessage(), containsString( "Runtime error occurred." ) );
 	}
 
 	@AcrossTestConfiguration

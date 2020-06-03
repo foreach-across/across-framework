@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@ package com.foreach.across.modules.web.ui;
 
 import lombok.NonNull;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Base interface to create a single {@link ViewElement} instance.
@@ -122,5 +125,39 @@ public interface ViewElementBuilder<T extends ViewElement>
 			T element = this.build( builderContext );
 			return mappingFunction.apply( builderContext, element );
 		};
+	}
+
+	// don't use yet - work in progress
+	@Deprecated
+	default ViewElementBuilder<T> doWith( Wither... operations ) {
+		return null;
+	}
+
+	default ViewElementBuilder<T> postProcess( ViewElementPostProcessor<T> postProcessors ) {
+		return postProcess( Collections.singleton( postProcessors ) );
+	}
+
+	default ViewElementBuilder<T> postProcess( Collection<ViewElementPostProcessor<T>> postProcessors ) {
+		return builderContext -> {
+			T element = build( builderContext );
+			postProcessors.forEach( processor -> processor.postProcess( builderContext, element ) );
+			return element;
+		};
+	}
+
+	static <U extends ViewElement> ViewElementBuilder<U> of( Supplier<U> supplier ) {
+		return ( builderContext ) -> supplier.get();
+	}
+
+	static <U extends ViewElement> ViewElementBuilder<U> of( Function<ViewElementBuilderContext, U> supplier ) {
+		return supplier::apply;
+	}
+
+	@FunctionalInterface
+	interface Wither<T extends ViewElementBuilder>
+	{
+		void applyTo( T builder );
+		// div( children(), postProcess() )
+		// ViewElementBuilder.of( () -> new NodeViewElement("div" ).with( text( "hello" ), attribute( "hm" ) )
 	}
 }

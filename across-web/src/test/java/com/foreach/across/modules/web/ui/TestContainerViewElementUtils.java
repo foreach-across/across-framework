@@ -19,8 +19,8 @@ import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 import static com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils.find;
 import static com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils.findOrSelf;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -39,7 +39,7 @@ public class TestContainerViewElementUtils
 {
 	private ContainerViewElement container;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		container = new ContainerViewElement();
 	}

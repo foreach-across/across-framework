@@ -21,9 +21,9 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import com.foreach.across.core.context.ExposedBeanDefinition;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -43,7 +43,7 @@ public class TestExposingFactoryBeans
 {
 	private AcrossContext context;
 
-	@Before
+	@BeforeEach
 	public void startAcrossContext() {
 		context = new AcrossContext();
 		context.addModule( new EmptyAcrossModule( "FactoryBeanHolder", BeanConfiguration.class ) );
@@ -51,7 +51,7 @@ public class TestExposingFactoryBeans
 		context.bootstrap();
 	}
 
-	@After
+	@AfterEach
 	public void destroyAcrossContext() {
 		context.shutdown();
 	}

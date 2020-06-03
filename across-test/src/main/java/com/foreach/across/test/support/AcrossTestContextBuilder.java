@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import com.foreach.across.test.AcrossTestContext;
 import com.foreach.across.test.support.config.AcrossContextBuilderConfigurerRegistrar;
 import com.foreach.across.test.support.config.ResetDatabaseConfigurer;
 import com.foreach.across.test.support.config.TestDataSourceConfigurer;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -367,6 +368,7 @@ public class AcrossTestContextBuilder
 
 		ConfigurableEnvironment environment = applicationContext.getEnvironment();
 		propertySources.forEach( environment.getPropertySources()::addLast );
+		ConfigurationPropertySources.attach( environment );
 	}
 
 	protected Class<?>[] annotatedClasses() {
@@ -375,8 +377,7 @@ public class AcrossTestContextBuilder
 
 	private static class RunningAcrossContext extends AcrossTestContext
 	{
-		RunningAcrossContext( ConfigurableApplicationContext parentApplicationContext,
-		                      AcrossContext acrossContext ) {
+		RunningAcrossContext( ConfigurableApplicationContext parentApplicationContext, AcrossContext acrossContext ) {
 			setApplicationContext( parentApplicationContext );
 			setAcrossContext( acrossContext );
 		}

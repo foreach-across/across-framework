@@ -22,12 +22,12 @@ import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.zaxxer.hikari.HikariDataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +38,7 @@ import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.springframework.orm.hibernate5.SessionHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import test.modules.hibernate1.Hibernate1Module;
@@ -51,9 +51,9 @@ import test.modules.hibernate2.UserRepository;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestTransactionalWithoutBaseModule.Config.class)
 @DirtiesContext
 public class TestTransactionalWithoutBaseModule
@@ -67,13 +67,13 @@ public class TestTransactionalWithoutBaseModule
 	@Autowired
 	private UserRepository userRepository;
 
-	@Before
+	@BeforeEach
 	public void openSession() {
 		Session session = sessionFactory.openSession();
 		TransactionSynchronizationManager.bindResource( sessionFactory, new SessionHolder( session ) );
 	}
 
-	@After
+	@AfterEach
 	public void closeSession() {
 		SessionFactoryUtils.closeSession( sessionFactory.getCurrentSession() );
 		TransactionSynchronizationManager.unbindResource( sessionFactory );

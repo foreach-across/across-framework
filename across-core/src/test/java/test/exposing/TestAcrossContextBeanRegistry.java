@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,16 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
 import com.zaxxer.hikari.HikariDataSource;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test.modules.exposing.EqualBean;
 import test.modules.exposing.ExposingModule;
 import test.modules.exposing.MyPrototypeBean;
@@ -36,14 +36,14 @@ import test.modules.exposing.MyPrototypeBean;
 import javax.sql.DataSource;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Arne Vandamme
  * @since 1.1.3
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestAcrossContextBeanRegistry.Config.class })
 @DirtiesContext
 public class TestAcrossContextBeanRegistry
@@ -52,14 +52,14 @@ public class TestAcrossContextBeanRegistry
 	private AcrossContextBeanRegistry beanRegistry;
 
 	@Test
-	public void exposedPrototypeBeanShouldBeFoundInRoot() {
+	void exposedPrototypeBeanShouldBeFoundInRoot() {
 		List<MyPrototypeBean> beans = beanRegistry.getBeansOfType( MyPrototypeBean.class );
 		assertEquals( 2, beans.size() );
 		assertNotNull( beans.get( 0 ) );
 	}
 
 	@Test
-	public void exposedPrototypeBeanShouldBeFoundWithInternalModulesLookup() {
+	void exposedPrototypeBeanShouldBeFoundWithInternalModulesLookup() {
 		List<MyPrototypeBean> beans = beanRegistry.getBeansOfType( MyPrototypeBean.class, true );
 		assertEquals( 2, beans.size() );
 		assertNotNull( beans.get( 0 ) );
@@ -67,7 +67,7 @@ public class TestAcrossContextBeanRegistry
 	}
 
 	@Test
-	public void beansOfTypeShouldReturnAllBeansEvenWhenEqual() {
+	void beansOfTypeShouldReturnAllBeansEvenWhenEqual() {
 		assertEquals( 2, beanRegistry.getBeansOfType( EqualBean.class ).size() );
 		assertEquals( 2, beanRegistry.getBeansOfType( EqualBean.class, true ).size() );
 	}

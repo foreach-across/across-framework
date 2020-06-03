@@ -1,0 +1,44 @@
+#
+# Name of this configuration group.
+#
+test:
+  #
+  # List of interfaces, classes, annotations that should always be exposed.
+  #
+  exposed:
+    - my.class
+    - your.class
+  #
+  # Auto-configuration class rules.
+  #
+  auto-configuration:
+    enabled.class: true
+    disabled.class: false
+    other.enabled.class:
+      enabled: true
+    other.disabled.class:
+      enabled: false
+    adapted.class:
+      adapter: my.class
+    moved.class:
+      destination: AcrossContextPostProcessorModule
+    adapted.and.moved.class:
+      adapter: my.class
+      destination: SomewhereModule
+    org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration:
+      enabled: true
+      destination: SomeModule
+      adapter: my.class
+  #
+  # Illegal configurations
+  #
+  illegal-configurations:
+    spring-data:
+      configuration:
+        my.class:
+          allowed: AcrossContext,AcrossContextPostProcessorModule
+          illegal: AcrossModule,OtherModule
+        other.class:
+          illegal: AcrossContext
+      description: Cause of this error.
+      action: What you should do.

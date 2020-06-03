@@ -17,13 +17,13 @@ package com.foreach.across.modules.web.error;
 
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.web.DefaultErrorViewResolver;
-import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
+import org.springframework.boot.autoconfigure.web.servlet.error.DefaultErrorViewResolver;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -69,7 +69,7 @@ public class AcrossModuleDefaultErrorViewResolver implements ErrorViewResolver, 
 		// Remove the already applied template
 		request.removeAttribute( PROCESSOR_ATTRIBUTE );
 
-		ModelAndView modelAndView = resolve( String.valueOf( status ), model );
+		ModelAndView modelAndView = resolve( String.valueOf( status.value() ), model );
 		if ( modelAndView == null && SERIES_VIEWS.containsKey( status.series() ) ) {
 			modelAndView = resolve( SERIES_VIEWS.get( status.series() ), model );
 		}

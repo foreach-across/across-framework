@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,14 @@ import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.test.support.AbstractViewElementBuilderTest;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<NodeViewElementBuilder, NodeViewElement>
 {
@@ -123,5 +125,22 @@ public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<N
 		assertEquals( "link", element.getAttribute( "data-role" ) );
 		assertNull( element.getAttribute( "class" ) );
 		assertTrue( element.hasAttribute( "class" ) );
+	}
+
+	@Test
+	public void customSupplier() {
+		Assertions.assertThat( builder.elementSupplier( () -> new NodeViewElement( "hello" ) ) ).isInstanceOf( NodeViewElementBuilder.class );
+		build();
+		assertEquals( "hello", element.getTagName() );
+	}
+
+	@Test
+	public void customSupplierFunction() {
+		when( builderContext.getMessage( "node" ) ).thenReturn( "div" );
+
+		Assertions.assertThat( builder.elementSupplier( bc -> new NodeViewElement( bc.getMessage( "node" ) ) ) )
+		          .isInstanceOf( NodeViewElementBuilder.class );
+		build();
+		assertEquals( "div", element.getTagName() );
 	}
 }

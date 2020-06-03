@@ -23,7 +23,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +32,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.testcontainers.containers.MySQLContainer;
 
 import javax.sql.DataSource;
 import java.util.UUID;
@@ -98,6 +99,12 @@ public class TestDataSourceConfigurer implements EnvironmentAware, AcrossContext
 		}
 
 		LOG.info( "Creating Across test datasource with profile: {}", dsName );
+
+		if ( StringUtils.startsWith( dsName, "jdbc:tc" ) ) {
+				return DataSourceBuilder.create().type( HikariDataSource.class )
+				                        .url( dsName )
+				                        .driverClassName( "org.testcontainers.jdbc.ContainerDatabaseDriver" ).build();
+		}
 
 		if ( StringUtils.equals( "auto", dsName ) ) {
 			return DataSourceBuilder.create().type( HikariDataSource.class )

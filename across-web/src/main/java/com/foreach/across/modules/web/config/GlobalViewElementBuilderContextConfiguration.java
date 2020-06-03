@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Responsible for adding the {@link com.foreach.across.modules.web.ui.ViewElementBuilderContextInterceptor}.
@@ -29,10 +29,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @author Arne Vandamme
  * @since 2.0.0
  */
-@ConditionalOnProperty(value = "acrossWebModule.registerGlobalBuilderContext", matchIfMissing = true)
+@ConditionalOnProperty(value = "across.web.registerGlobalBuilderContext", matchIfMissing = true)
 @OrderInModule(3)
 @Configuration
-public class GlobalViewElementBuilderContextConfiguration extends WebMvcConfigurerAdapter
+public class GlobalViewElementBuilderContextConfiguration implements WebMvcConfigurer
 {
 	@Override
 	public void addInterceptors( InterceptorRegistry registry ) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestConditi
 import com.foreach.across.modules.web.mvc.condition.CustomRequestCondition;
 import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -42,7 +43,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.*;
@@ -57,7 +58,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration(classes = TestCustomRequestCondition.Config.class)
@@ -68,11 +69,16 @@ public class TestCustomRequestCondition
 	private static final String GOOGLE = "http://www.google.be";
 	private static final String FACEBOOK = "http://www.facebook.com";
 
+	@Autowired
+	private WebApplicationContext webApplicationContext;
 	private MockMvc mvc;
 
-	@Autowired
-	public void createMockMvc( WebApplicationContext webApplicationContext ) {
+	@BeforeEach
+	public void createMockMvc() {
+		System.out.println( "BeforeEach" );
+		System.out.println( webApplicationContext );
 		mvc = MockMvcBuilders.webAppContextSetup( webApplicationContext ).build();
+		System.out.println( mvc );
 	}
 
 	@Test
@@ -162,6 +168,7 @@ public class TestCustomRequestCondition
 	}
 
 	private ResultActions fromForeach( MockHttpServletRequestBuilder builder ) throws Exception {
+		System.out.println( "mcv" + mvc );
 		return mvc.perform( builder.header( HttpHeaders.REFERER, FOREACH ) );
 	}
 
@@ -179,7 +186,7 @@ public class TestCustomRequestCondition
 
 	@EnableAcrossContext
 	@Configuration
-	protected static class Config extends WebMvcConfigurerAdapter implements AcrossContextConfigurer
+	protected static class Config implements WebMvcConfigurer, AcrossContextConfigurer
 	{
 		@Override
 		public void configure( AcrossContext context ) {

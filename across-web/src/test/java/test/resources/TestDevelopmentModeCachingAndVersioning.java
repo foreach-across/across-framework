@@ -19,7 +19,7 @@ import com.foreach.across.AcrossPlatform;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +29,7 @@ import test.AbstractWebIntegrationTest;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme

@@ -1,4 +1,4 @@
-<body xmlns:th="http://www.thymeleaf.org" xmlns:across="http://across.foreach.be">
+<body xmlns:th="http://www.thymeleaf.org" xmlns:across="http://across.dev">
 <div id="inline-data-css">
     <style th:each="css : ${webResourceRegistry.getResources('css')}"
            th:if="${css.location == 'inline' or css.location == 'data'}">[[${css.data}]]</style>

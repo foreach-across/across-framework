@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "acrossWebModule.resources")
+@ConfigurationProperties(prefix = "across.web.resources")
 public class ResourceConfigurationProperties
 {
 	/**

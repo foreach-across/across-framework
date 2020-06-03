@@ -17,17 +17,21 @@ package com.foreach.across.autoconfigure;
 
 import com.foreach.across.boot.ConditionalOnAutoConfiguration;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.web.servlet.ErrorPage;
-import org.springframework.boot.web.servlet.ErrorPageRegistrar;
-import org.springframework.boot.web.servlet.ErrorPageRegistry;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletPath;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.server.ErrorPageRegistrar;
+import org.springframework.boot.web.server.ErrorPageRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.Ordered;
+import org.springframework.core.type.AnnotationMetadata;
 
 /**
  * Auto-configuration when AcrossWebModule is on the class path.
@@ -41,33 +45,44 @@ import org.springframework.core.Ordered;
 @ConditionalOnWebApplication
 @ConditionalOnBean(ErrorPageRegistry.class)
 @ConditionalOnAutoConfiguration(ErrorMvcAutoConfiguration.class)
+@Import(AcrossWebModuleAutoConfiguration.MyBeans.class)
 public class AcrossWebModuleAutoConfiguration
 {
 	private final ServerProperties serverProperties;
+	private final DispatcherServletPath dispatcherServletPath;
+
+	static class MyBeans implements ImportBeanDefinitionRegistrar
+	{
+		@Override
+		public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {
+			if ( registry.containsBeanDefinition( "errorPageCustomizer" ) ) {
+				registry.removeBeanDefinition( "errorPageCustomizer" );
+			}
+			registry.registerAlias( "acrossErrorPageCustomizer", "errorPageCustomizer" );
+		}
+	}
 
 	/**
 	 * Configure the error pages.
 	 */
 	@Bean
-	public ErrorPageCustomizer errorPageCustomizer() {
-		return new ErrorPageCustomizer( this.serverProperties );
+	public ErrorPageCustomizer acrossErrorPageCustomizer() {
+		return new ErrorPageCustomizer( this.serverProperties, this.dispatcherServletPath );
 	}
 
 	/**
-	 * {@link EmbeddedServletContainerCustomizer} that configures the container's error
+	 * {@link org.springframework.boot.web.server.WebServerFactoryCustomizer} that configures the container's error
 	 * pages.
 	 */
+	@RequiredArgsConstructor
 	private static class ErrorPageCustomizer implements ErrorPageRegistrar, Ordered
 	{
 		private final ServerProperties properties;
-
-		ErrorPageCustomizer( ServerProperties properties ) {
-			this.properties = properties;
-		}
+		private final DispatcherServletPath dispatcherServletPath;
 
 		@Override
 		public void registerErrorPages( ErrorPageRegistry errorPageRegistry ) {
-			ErrorPage errorPage = new ErrorPage( this.properties.getServletPrefix() + this.properties.getError().getPath() );
+			ErrorPage errorPage = new ErrorPage( this.dispatcherServletPath.getRelativePath( this.properties.getError().getPath() ) );
 			errorPageRegistry.addErrorPages( errorPage );
 		}
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 the original author or authors
+  Copyright 2019 the original author or authors
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,12 +18,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.foreach.across</groupId>
+	<parent>
+		<groupId>com.foreach.across</groupId>
+		<artifactId>across-core-dependencies</artifactId>
+		<version>${revision}</version>
+		<relativePath>across-core-dependencies</relativePath>
+	</parent>
+
 	<artifactId>across-base</artifactId>
-	<version>3.2.1.RELEASE</version>
+	<version>${revision}</version>
 	<packaging>pom</packaging>
 
-	<name>${project.groupId}:${project.artifactId}</name>
 	<description>
 		Across is a Java framework that aims to facilitate module based development for Java (web) applications.
 		It builds heavily on Spring framework and allows defining a module consisting of a number of classes and
@@ -34,70 +39,144 @@
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 
 	<developers>
 		<developer>
-			<name>Arne Vandamme</name>
+			<name>Foreach</name>
 			<organization>Foreach</organization>
 			<organizationUrl>https://www.foreach.be</organizationUrl>
 		</developer>
 	</developers>
 
 	<properties>
-		<across.version>3.2.1.RELEASE</across.version>
+		<!-- Maven/IDE specific -->
+		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<spring.platform.version>Brussels-SR17</spring.platform.version>
-		<foreach.common.version>1.1</foreach.common.version>
-		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
-		<thymeleaf-extras.springsecurity4.version>3.0.4.RELEASE</thymeleaf-extras.springsecurity4.version>
-		<thymeleaf-extras.java8time.version>3.0.1.RELEASE</thymeleaf-extras.java8time.version>
-		<assertj.version>3.11.1</assertj.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<!-- Across properties -->
 		<maven.javadoc.skip>false</maven.javadoc.skip>
-		<junit5.version>5.4.2</junit5.version>
-		<mockito.junit5.version>2.27.0</mockito.junit5.version>
-		<spring.test.junit5>1.4.0</spring.test.junit5>
+		<maven.deploy.skip>false</maven.deploy.skip>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>foreach-nexus</id>
-			<name>Foreach nexus</name>
-			<url>https://repository.foreach.be/nexus/content/groups/public/</url>
-		</repository>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/libs-milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+	<modules>
+		<module>across-core</module>
+		<module>across-web</module>
+		<module>across-test</module>
+		<module>across-core-dependencies</module>
+		<module>across-standard-module-parent</module>
+	</modules>
+
+	<scm>
+		<url>https://bitbucket.org/beforeach/across</url>
+	</scm>
+
+	<dependencyManagement>
+		<!-- pinned versions only for across-core, across-test, across-web -->
+		<dependencies>
+			<dependency>
+				<groupId>org.webjars</groupId>
+				<artifactId>jquery</artifactId>
+				<version>3.3.0</version>
+			</dependency>
+			<dependency>
+				<!-- jsoup HTML parser library @ http://jsoup.org/ -->
+				<groupId>org.jsoup</groupId>
+				<artifactId>jsoup</artifactId>
+				<version>1.9.1</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>3.0.2</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>flatten-maven-plugin</artifactId>
+					<configuration>
+						<updatePomFile>true</updatePomFile>
+						<flattenMode>resolveCiFriendliesOnly</flattenMode>
+						<pomElements>
+							<pluginManagement>keep</pluginManagement>
+							<properties>keep</properties>
+							<repositories>remove</repositories>
+							<profiles>remove</profiles>
+							<modules>remove</modules>
+							<build>remove</build>
+						</pomElements>
+					</configuration>
+					<executions>
+						<execution>
+							<id>flatten</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>flatten</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>flatten.clean</id>
+							<phase>clean</phase>
+							<goals>
+								<goal>clean</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -110,24 +189,24 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
 				<configuration>
 					<failOnError>false</failOnError>
-					<additionalparam>-Xdoclint:none</additionalparam>
+					<doclint>none</doclint>
 				</configuration>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>jar</goal>
 						</goals>
 					</execution>
 					<execution>
 						<id>aggregate</id>
-						<goals>
-							<goal>aggregate</goal>
-						</goals>
 						<phase>prepare-package</phase>
+						<goals>
+							<goal>aggregate-no-fork</goal>
+						</goals>
 						<configuration>
 							<reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
 							<destDir>${project.version}/javadoc</destDir>
@@ -138,7 +217,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -152,7 +230,6 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.3</version>
 				<inherited>false</inherited>
 				<configuration>
 					<finalName>${project.artifactId}</finalName>
@@ -175,13 +252,9 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.22.1</version>
+				<!-- specific version for JUnit 5 -->
+				<version>3.0.0-M3</version>
 				<configuration>
 					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
 				</configuration>
@@ -194,206 +267,21 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>${junit-jupiter.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
-
-	<modules>
-		<module>across-core</module>
-		<module>across-web</module>
-		<module>across-test</module>
-	</modules>
-
-	<scm>
-		<connection>scm:git:https://bitbucket.org/beforeach/across.git</connection>
-		<developerConnection>scm:git:https://bitbucket.org/beforeach/across.git</developerConnection>
-		<url>https://bitbucket.org/beforeach/across</url>
-	</scm>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.spring.platform</groupId>
-				<artifactId>platform-bom</artifactId>
-				<version>${spring.platform.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
-			<!-- Specific versions overriding platform-->
-			<dependency>
-				<groupId>org.thymeleaf</groupId>
-				<artifactId>thymeleaf</artifactId>
-				<version>${thymeleaf.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.thymeleaf</groupId>
-				<artifactId>thymeleaf-spring4</artifactId>
-				<version>${thymeleaf.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.thymeleaf.extras</groupId>
-				<artifactId>thymeleaf-extras-springsecurity4</artifactId>
-				<version>${thymeleaf-extras.springsecurity4.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.thymeleaf.extras</groupId>
-				<artifactId>thymeleaf-extras-java8time</artifactId>
-				<version>${thymeleaf-extras.java8time.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.assertj</groupId>
-				<artifactId>assertj-core</artifactId>
-				<version>${assertj.version}</version>
-			</dependency>
-			<!-- Workaround for https://issues.apache.org/jira/browse/LANG-1285 -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>3.7</version>
-			</dependency>
-
-			<!-- Non-spring managed -->
-			<dependency>
-				<groupId>com.mattbertolini</groupId>
-				<artifactId>liquibase-slf4j</artifactId>
-				<version>1.2.1</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.liquibase</groupId>
-						<artifactId>liquibase-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<!-- Mbassador kept for version compatibility for now -->
-			<dependency>
-				<groupId>net.engio</groupId>
-				<artifactId>mbassador</artifactId>
-				<version>1.2.0</version>
-				<exclusions>
-					<exclusion>
-						<groupId>javax.el</groupId>
-						<artifactId>el-api</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>com.oracle</groupId>
-				<artifactId>ojdbc6</artifactId>
-				<version>11.2.0</version>
-			</dependency>
-
-			<!-- Foreach commons -->
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-concurrent</artifactId>
-				<version>${foreach.common.version}</version>
-			</dependency>
-
-			<!-- JUnit 5 compatibility -->
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-engine</artifactId>
-				<version>${junit5.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.vintage</groupId>
-				<artifactId>junit-vintage-engine</artifactId>
-				<version>${junit5.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-junit-jupiter</artifactId>
-				<version>${mockito.junit5.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.github.sbrannen</groupId>
-				<artifactId>spring-test-junit5</artifactId>
-				<version>${spring.test.junit5}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>sonatype</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.5</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-			<distributionManagement>
-				<snapshotRepository>
-					<id>sonatype</id>
-					<name>Sonatype snapshots</name>
-					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-				</snapshotRepository>
-				<repository>
-					<id>sonatype</id>
-					<name>Sonatype release staging</name>
-					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-				</repository>
-			</distributionManagement>
-		</profile>
-		<profile>
-			<id>foreach</id>
-			<distributionManagement>
-				<repository>
-					<id>foreach-nexus</id>
-					<name>Foreach nexus</name>
-					<url>https://repository.foreach.be/nexus/repository/across-releases/</url>
-				</repository>
-				<snapshotRepository>
-					<id>foreach-nexus</id>
-					<name>Foreach nexus</name>
-					<url>https://repository.foreach.be/nexus/repository/across-snapshots/</url>
-				</snapshotRepository>
-			</distributionManagement>
-		</profile>
-	</profiles>
-
 </project>

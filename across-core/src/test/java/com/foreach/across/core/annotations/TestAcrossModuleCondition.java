@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package com.foreach.across.core.annotations;
 
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -28,14 +28,14 @@ import org.springframework.core.type.StandardAnnotationMetadata;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class TestAcrossModuleCondition
 {
 	private AcrossBootstrapConfig contextConfig;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		contextConfig = mock( AcrossBootstrapConfig.class );
 	}
@@ -249,12 +249,12 @@ public class TestAcrossModuleCondition
 
 	}
 
-	@AcrossDepends(required = { "moduleOne", "moduleTwo" }, optional = { "moduleThree", "moduleFour" })
+	@ConditionalOnAcrossModule(allOf = { "moduleOne", "moduleTwo" }, anyOf = { "moduleThree", "moduleFour" })
 	static class ClassWithCondition
 	{
 	}
 
-	@AcrossDepends
+	@ConditionalOnAcrossModule
 	static class ClassWithEmptyCondition
 	{
 

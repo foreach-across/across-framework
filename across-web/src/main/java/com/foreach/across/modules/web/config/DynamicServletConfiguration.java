@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ListableBeanFactory;
-import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletContextInitializerBeans;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +36,7 @@ import java.util.Collection;
  * Registers all {@link ServletContextInitializer} beans created in any module or in the Across context itself. Picks up any
  * {@link Servlet} and {@link Filter} beans and converts them to registrations using {@link ServletContextInitializerBeans}.
  * <p/>
- * Any initializers created in the parent context should be registered by the Spring Boot {@link EmbeddedWebApplicationContext},
+ * Any initializers created in the parent context should be registered by the Spring Boot {@link org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext},
  * or manually in a non-embedded configuration.
  *
  * @author Arne Vandamme

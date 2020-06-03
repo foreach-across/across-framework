@@ -24,12 +24,24 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="across" target="1.8" />
       <module name="across-base" target="1.8" />
       <module name="across-core" target="1.8" />
+      <module name="across-core-dependencies" target="1.8" />
+      <module name="across-experimental" target="1.8" />
+      <module name="across-standard-module-parent" target="1.8" />
       <module name="across-test" target="1.8" />
       <module name="across-web" target="1.8" />
-      <module name="platform-bom" target="1.7" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:unchecked" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="across-base" options="" />
+      <module name="across-core" options="" />
+      <module name="across-experimental" options="" />
+      <module name="across-standard-module-parent" options="" />
+      <module name="across-test" options="" />
+      <module name="across-web" options="" />
+    </option>
   </component>
 </project>

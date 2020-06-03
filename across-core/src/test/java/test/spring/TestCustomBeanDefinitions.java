@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors
+ * Copyright 2019 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package test.spring;
 
-import test.modules.exposing.LazyExposedBean;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -33,7 +32,7 @@ import test.modules.exposing.LazyExposedBean;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DevelopmentModeCondition general approach of Spring ApplicationContext hierarchy and the way to expose beans
@@ -48,7 +47,7 @@ public class TestCustomBeanDefinitions
 
 	private CustomPostProcessor parentProcessor, childOneProcessor, childTwoProcessor;
 
-	@Before
+	@BeforeEach
 	public void createContext() {
 		LazyExposedBean.reset();
 
@@ -81,11 +80,11 @@ public class TestCustomBeanDefinitions
 		parent.getBeanFactory().registerSingleton( "factoryTwo", factoryTwo );
 	}
 
-	@After
+	@AfterEach
 	public void destroyContext() {
-		childOne.destroy();
-		childTwo.destroy();
-		parent.destroy();
+		childOne.stop();
+		childTwo.stop();
+		parent.stop();
 	}
 
 	@Test
