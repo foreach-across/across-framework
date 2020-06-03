@@ -16,280 +16,287 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <groupId>org.springframework.boot</groupId>
-        <version>2.1.12.RELEASE</version>
-    </parent>
+	<parent>
+		<artifactId>spring-boot-dependencies</artifactId>
+		<groupId>org.springframework.boot</groupId>
+		<version>2.1.12.RELEASE</version>
+	</parent>
 
-    <groupId>com.foreach.across</groupId>
-    <artifactId>across-core-dependencies</artifactId>
-    <version>${revision}</version>
-    <packaging>pom</packaging>
+	<groupId>com.foreach.across</groupId>
+	<artifactId>across-core-dependencies</artifactId>
+	<version>${revision}</version>
+	<packaging>pom</packaging>
 
-    <description>Across Core Dependencies.</description>
-    <url>https://across.dev</url>
-    <licenses>
-        <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
+	<description>Across Core Dependencies.</description>
+	<url>https://across.dev</url>
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
 
-    <developers>
-        <developer>
-            <name>Foreach</name>
-            <organization>Foreach</organization>
-            <organizationUrl>https://www.foreach.be</organizationUrl>
-        </developer>
-    </developers>
+	<developers>
+		<developer>
+			<name>Foreach</name>
+			<organization>Foreach</organization>
+			<organizationUrl>https://www.foreach.be</organizationUrl>
+		</developer>
+	</developers>
 
-    <scm>
-        <url>https://bitbucket.org/beforeach/across</url>
-    </scm>
+	<scm>
+		<url>https://bitbucket.org/beforeach/across</url>
+	</scm>
 
-    <properties>
-        <!-- Maven/IDE specific -->
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <!-- Overriden from spring-boot-dependencies -->
-        <junit-jupiter.version>5.4.2</junit-jupiter.version>
-        <!-- Across properties -->
-        <revision>5.0.0.RC1</revision>
-        <maven.deploy.skip>false</maven.deploy.skip>
-        <foreach.common.version>1.1</foreach.common.version>
-        <commons-collections4.version>4.1</commons-collections4.version>
-        <commons-io.version>2.6</commons-io.version>
-        <!--        <liquibase.version>3.7.0</liquibase.version>-->
-        <lombok-maven-plugin.version>1.16.18.0</lombok-maven-plugin.version>
-        <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
-        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
-    </properties>
+	<properties>
+		<!-- Maven/IDE specific -->
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<!-- Overriden from spring-boot-dependencies -->
+		<junit-jupiter.version>5.4.2</junit-jupiter.version>
+		<!-- Across properties -->
+		<revision>5.0.0-SNAPSHOT</revision>
+		<maven.deploy.skip>false</maven.deploy.skip>
+		<foreach.common.version>1.1</foreach.common.version>
+		<commons-collections4.version>4.1</commons-collections4.version>
+		<commons-io.version>2.6</commons-io.version>
+		<!--        <liquibase.version>3.7.0</liquibase.version>-->
+		<lombok-maven-plugin.version>1.16.18.0</lombok-maven-plugin.version>
+		<flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
+		<maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+	</properties>
 
-    <repositories>
-        <repository>
-            <id>across</id>
-            <name>Across Repository</name>
-            <url>https://repository.foreach.be/nexus/repository/public/</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+			<id>across</id>
+			<name>Across Repository</name>
+			<url>https://repository.foreach.be/nexus/repository/public/</url>
+		</repository>
+	</repositories>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Across core -->
+	<dependencyManagement>
+
+		<dependencies>
+			<!-- Across core -->
+			<dependency>
+				<groupId>com.foreach.across</groupId>
+				<artifactId>across-core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.across</groupId>
+				<artifactId>across-test</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.across</groupId>
+				<artifactId>across-web</artifactId>
+				<version>${revision}</version>
+			</dependency>
             <dependency>
-                <groupId>com.foreach.across</groupId>
-                <artifactId>across-core</artifactId>
-                <version>${revision}</version>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.14.3</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>com.foreach.across</groupId>
-                <artifactId>across-test</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.foreach.across</groupId>
-                <artifactId>across-web</artifactId>
-                <version>${revision}</version>
-            </dependency>
+			<!-- Non-spring managed -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>${commons-collections4.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib</artifactId>
+				<version>3.1</version>
+			</dependency>
 
-            <!-- Non-spring managed -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-collections4</artifactId>
-                <version>${commons-collections4.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>3.1</version>
-            </dependency>
+			<dependency>
+				<groupId>com.mattbertolini</groupId>
+				<artifactId>liquibase-slf4j</artifactId>
+				<version>1.2.1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 
-            <dependency>
-                <groupId>com.mattbertolini</groupId>
-                <artifactId>liquibase-slf4j</artifactId>
-                <version>1.2.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.liquibase</groupId>
-                        <artifactId>liquibase-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+			<!-- Overrides for backwards compatibility -->
+			<dependency>
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc6</artifactId>
+				<version>11.2.0</version>
+			</dependency>
+			<!-- Newest MySQL driver has timezone issues -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.47</version>
+			</dependency>
+			<dependency>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-core</artifactId>
+				<version>${liquibase.version}</version>
+			</dependency>
 
-            <!-- Overrides for backwards compatibility -->
-            <dependency>
-                <groupId>com.oracle</groupId>
-                <artifactId>ojdbc6</artifactId>
-                <version>11.2.0</version>
-            </dependency>
-            <!-- Newest MySQL driver has timezone issues -->
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.47</version>
-            </dependency>
-            <dependency>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-core</artifactId>
-                <version>${liquibase.version}</version>
-            </dependency>
+			<!-- Foreach commons -->
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-spring</artifactId>
+				<version>${foreach.common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-web</artifactId>
+				<version>${foreach.common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-concurrent</artifactId>
+				<version>${foreach.common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-test</artifactId>
+				<version>${foreach.common.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.mockito</groupId>
+						<artifactId>mockito-all</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 
-            <!-- Foreach commons -->
-            <dependency>
-                <groupId>com.foreach.libs</groupId>
-                <artifactId>common-spring</artifactId>
-                <version>${foreach.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.foreach.libs</groupId>
-                <artifactId>common-web</artifactId>
-                <version>${foreach.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.foreach.libs</groupId>
-                <artifactId>common-concurrent</artifactId>
-                <version>${foreach.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.foreach.libs</groupId>
-                <artifactId>common-test</artifactId>
-                <version>${foreach.common.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.mockito</groupId>
-                        <artifactId>mockito-all</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+			<!-- Backwards compatibility with Spring Platform -->
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
-            <!-- Backwards compatibility with Spring Platform -->
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+				<!-- Non-spring managed plugins -->
+				<plugin>
+					<groupId>org.projectlombok</groupId>
+					<artifactId>lombok-maven-plugin</artifactId>
+					<version>${lombok-maven-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>flatten-maven-plugin</artifactId>
+					<version>${flatten-maven-plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<inherited>false</inherited>
+				<configuration>
+					<updatePomFile>true</updatePomFile>
+					<flattenMode>resolveCiFriendliesOnly</flattenMode>
+					<pomElements>
+						<pluginManagement>keep</pluginManagement>
+						<properties>keep</properties>
+						<repositories>remove</repositories>
+						<profiles>keep</profiles>
+						<modules>remove</modules>
+						<build>remove</build>
+					</pomElements>
+				</configuration>
+				<executions>
+					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                    </configuration>
-                </plugin>
-                <!-- Non-spring managed plugins -->
-                <plugin>
-                    <groupId>org.projectlombok</groupId>
-                    <artifactId>lombok-maven-plugin</artifactId>
-                    <version>${lombok-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>flatten-maven-plugin</artifactId>
-                    <version>${flatten-maven-plugin.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <inherited>false</inherited>
-                <configuration>
-                    <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                    <pomElements>
-                        <pluginManagement>keep</pluginManagement>
-                        <properties>keep</properties>
-                        <repositories>remove</repositories>
-                        <profiles>keep</profiles>
-                        <modules>remove</modules>
-                        <build>remove</build>
-                    </pomElements>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>sonatype</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>sonatype</id>
-                    <name>Sonatype snapshots</name>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>sonatype</id>
-                    <name>Sonatype release staging</name>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-        <profile>
-            <id>across</id>
-            <distributionManagement>
-                <repository>
-                    <id>across</id>
-                    <name>Across Releases Repository</name>
-                    <url>https://repository.foreach.be/nexus/repository/across-releases/</url>
-                </repository>
-                <snapshotRepository>
-                    <id>across</id>
-                    <name>Across Snapshot Repository</name>
-                    <url>https://repository.foreach.be/nexus/repository/across-snapshots/</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-    </profiles>
+	<profiles>
+		<profile>
+			<id>sonatype</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>sonatype</id>
+					<name>Sonatype snapshots</name>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+				</snapshotRepository>
+				<repository>
+					<id>sonatype</id>
+					<name>Sonatype release staging</name>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>across</id>
+			<distributionManagement>
+				<repository>
+					<id>across</id>
+					<name>Across Releases Repository</name>
+					<url>https://repository.foreach.be/nexus/repository/across-releases/</url>
+				</repository>
+				<snapshotRepository>
+					<id>across</id>
+					<name>Across Snapshot Repository</name>
+					<url>https://repository.foreach.be/nexus/repository/across-snapshots/</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 </project>
