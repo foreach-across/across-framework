@@ -16,6 +16,7 @@
 package com.foreach.across.core.config;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.AcrossContextUtils;
 import com.foreach.across.core.context.AcrossListableBeanFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -62,13 +63,7 @@ class AcrossDataSourceRegistrar implements BeanDefinitionRegistryPostProcessor
 			}
 			else {
 				BeanDefinitionRegistry primaryRegistry = getRegistryWithLocalBeanDefinition( beanFactory, DATASOURCE );
-				if ( primaryRegistry != null ) {
-					primaryRegistry.registerAlias( DATASOURCE, INSTALLER_DATASOURCE );
-					if( primaryRegistry instanceof AbstractBeanFactory ) {
-						// getAliases() would fail because this gets cached before the registrar is called
-						(( AbstractBeanFactory) primaryRegistry).clearMetadataCache();
-					}
-				}
+				AcrossContextUtils.registerBeanDefinitionAlias( primaryRegistry, DATASOURCE, INSTALLER_DATASOURCE );
 			}
 		}
 	}

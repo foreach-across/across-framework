@@ -152,7 +152,7 @@ public abstract class AbstractExposedBeanRegistry
 			registry.registerBeanDefinition( beanName, beanDefinition );
 
 			for ( String alias : beanDefinition.getAliases() ) {
-				registry.registerAlias( beanName, alias );
+				AcrossContextUtils.registerBeanDefinitionAlias( registry, beanName, alias );
 			}
 		}
 	}

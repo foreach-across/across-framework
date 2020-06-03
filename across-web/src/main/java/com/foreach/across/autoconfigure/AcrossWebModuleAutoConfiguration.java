@@ -16,6 +16,7 @@
 package com.foreach.across.autoconfigure;
 
 import com.foreach.across.boot.ConditionalOnAutoConfiguration;
+import com.foreach.across.core.context.AcrossContextUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -58,7 +59,7 @@ public class AcrossWebModuleAutoConfiguration
 			if ( registry.containsBeanDefinition( "errorPageCustomizer" ) ) {
 				registry.removeBeanDefinition( "errorPageCustomizer" );
 			}
-			registry.registerAlias( "acrossErrorPageCustomizer", "errorPageCustomizer" );
+			AcrossContextUtils.registerBeanDefinitionAlias( registry, "acrossErrorPageCustomizer", "errorPageCustomizer" );
 		}
 	}
 
