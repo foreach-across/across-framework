@@ -29,6 +29,7 @@
 	<version>${revision}</version>
 	<packaging>pom</packaging>
 
+	<name>Across Core Dependencies.</name>
 	<description>Across Core Dependencies.</description>
 	<url>https://across.dev</url>
 	<licenses>

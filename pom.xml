@@ -29,6 +29,7 @@
 	<version>${revision}</version>
 	<packaging>pom</packaging>
 
+	<name>Across Base</name>
 	<description>
 		Across is a Java framework that aims to facilitate module based development for Java (web) applications.
 		It builds heavily on Spring framework and allows defining a module consisting of a number of classes and
@@ -146,6 +147,10 @@
 						<updatePomFile>true</updatePomFile>
 						<flattenMode>resolveCiFriendliesOnly</flattenMode>
 						<pomElements>
+							<name>resolve</name>
+							<description>resolve</description>
+							<developers>resolve</developers>
+							<scm>resolve</scm>
 							<pluginManagement>keep</pluginManagement>
 							<properties>keep</properties>
 							<repositories>remove</repositories>
