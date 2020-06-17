@@ -61,7 +61,7 @@
 		<!-- Overriden from spring-boot-dependencies -->
 		<junit-jupiter.version>5.4.2</junit-jupiter.version>
 		<!-- Across properties -->
-		<revision>5.0.1-SNAPSHOT</revision>
+		<revision>5.0.0.RELEASE</revision>
 		<maven.deploy.skip>false</maven.deploy.skip>
 		<foreach.common.version>1.1</foreach.common.version>
 		<commons-collections4.version>4.1</commons-collections4.version>
