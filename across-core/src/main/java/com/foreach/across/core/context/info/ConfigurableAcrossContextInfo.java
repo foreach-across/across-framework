@@ -24,14 +24,15 @@ import com.foreach.across.core.context.ExposedBeanDefinition;
 import com.foreach.across.core.context.ExposedContextBeanRegistry;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 {
@@ -39,11 +40,10 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	private final AcrossContext context;
 
 	private boolean bootstrapped;
-	private Collection<AcrossModuleInfo> configuredModules =
-			Collections.unmodifiableCollection( Collections.<AcrossModuleInfo>emptyList() );
+	private Map<String, AcrossModuleInfo> configuredModules = Collections.unmodifiableMap( Collections.emptyMap() );
+	private Map<String, AcrossModuleInfo> enabledModules = Collections.unmodifiableMap( Collections.emptyMap() );
 
 	private AcrossBootstrapConfig bootstrapConfiguration;
-
 	private ExposedContextBeanRegistry exposedBeanRegistry;
 
 	public ConfigurableAcrossContextInfo( AcrossContext context ) {
@@ -68,24 +68,26 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 
 	@Override
 	public Collection<AcrossModuleInfo> getConfiguredModules() {
-		return configuredModules;
+		return configuredModules.values();
 	}
 
 	public void setConfiguredModules( Collection<AcrossModuleInfo> configuredModules ) {
-		this.configuredModules = Collections.unmodifiableCollection( configuredModules );
+		this.configuredModules = configuredModules.stream()
+		                                          .collect(
+				                                          Collectors.collectingAndThen( Collectors.toMap( AcrossModuleInfo::getName, Function.identity(),
+				                                                                                          ( v1, v2 ) -> v1, LinkedHashMap::new ),
+				                                                                        Collections::unmodifiableMap ) );
+		this.enabledModules = configuredModules.stream()
+		                                       .filter( AcrossModuleInfo::isEnabled )
+		                                       .collect(
+				                                       Collectors.collectingAndThen( Collectors.toMap( AcrossModuleInfo::getName, Function.identity(),
+				                                                                                       ( v1, v2 ) -> v1, LinkedHashMap::new ),
+				                                                                     Collections::unmodifiableMap ) );
 	}
 
 	@Override
 	public Collection<AcrossModuleInfo> getModules() {
-		Collection<AcrossModuleInfo> modules = new LinkedList<>();
-
-		for ( AcrossModuleInfo module : configuredModules ) {
-			if ( module.isEnabled() ) {
-				modules.add( module );
-			}
-		}
-
-		return Collections.unmodifiableCollection( modules );
+		return enabledModules.values();
 	}
 
 	@Override
@@ -95,13 +97,7 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 
 	@Override
 	public AcrossModuleInfo getModuleInfo( String moduleName ) {
-		for ( AcrossModuleInfo module : configuredModules ) {
-			if ( StringUtils.equals( moduleName, module.getName() ) ) {
-				return module;
-			}
-		}
-
-		return null;
+		return configuredModules.get( moduleName );
 	}
 
 	public ConfigurableAcrossModuleInfo getConfigurableModuleInfo( String moduleName ) {
@@ -144,10 +140,9 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 
 	@Override
 	public int getModuleIndex( String moduleName ) {
-		for ( AcrossModuleInfo moduleInfo : configuredModules ) {
-			if ( StringUtils.equals( moduleName, moduleInfo.getName() ) ) {
-				return moduleInfo.getIndex();
-			}
+		AcrossModuleInfo moduleInfo = configuredModules.get( moduleName );
+		if ( moduleInfo != null ) {
+			return moduleInfo.getIndex();
 		}
 		return Ordered.LOWEST_PRECEDENCE;
 	}
@@ -174,7 +169,7 @@ public class ConfigurableAcrossContextInfo implements AcrossContextInfo
 	public Map<String, ExposedBeanDefinition> getExposedBeanDefinitions() {
 		return exposedBeanRegistry != null
 				? exposedBeanRegistry.getExposedDefinitions()
-				: Collections.<String, ExposedBeanDefinition>emptyMap();
+				: Collections.emptyMap();
 	}
 
 	@Override
