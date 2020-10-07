@@ -53,18 +53,21 @@
     <properties>
         <!-- Maven/IDE specific -->
         <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <!-- Overriden from spring-boot-dependencies -->
-        <junit-jupiter.version>5.4.2</junit-jupiter.version>
-        <!-- Across properties -->
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	    <maven.compiler.source>${java.version}</maven.compiler.source>
+	    <maven.compiler.target>${java.version}</maven.compiler.target>
+	    <!-- Overriden from spring-boot-dependencies -->
+	    <junit-jupiter.version>5.4.2</junit-jupiter.version>
+	    <!-- Across properties -->
 	    <revision>5.1.0-SNAPSHOT</revision>
-        <maven.deploy.skip>false</maven.deploy.skip>
-        <foreach.common.version>1.1</foreach.common.version>
-        <commons-collections4.version>4.1</commons-collections4.version>
-        <commons-io.version>2.6</commons-io.version>
+	    <maven.deploy.skip>false</maven.deploy.skip>
+	    <foreach.common.version>1.1</foreach.common.version>
+	    <commons-collections4.version>4.4</commons-collections4.version>
+	    <testcontainers-bom.version>1.14.3</testcontainers-bom.version>
+	    <liquibase-slf4j.version>2.0.0</liquibase-slf4j.version>
+	    <commons-io.version>2.6</commons-io.version>
+	    <oracle-ojdbc6.version>11.2.0</oracle-ojdbc6.version>
     </properties>
 
 	<repositories>
@@ -76,7 +79,6 @@
 	</repositories>
 
 	<dependencyManagement>
-
 		<dependencies>
 			<!-- Across core -->
 			<dependency>
@@ -97,7 +99,7 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.14.3</version>
+	            <version>${testcontainers-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -108,15 +110,9 @@
 				<version>${commons-collections4.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>cglib</groupId>
-				<artifactId>cglib</artifactId>
-				<version>3.1</version>
-			</dependency>
-
-			<dependency>
 				<groupId>com.mattbertolini</groupId>
 				<artifactId>liquibase-slf4j</artifactId>
-				<version>1.2.1</version>
+				<version>${liquibase-slf4j.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.liquibase</groupId>
@@ -133,7 +129,7 @@
 			<dependency>
 				<groupId>com.oracle</groupId>
 				<artifactId>ojdbc6</artifactId>
-				<version>11.2.0</version>
+				<version>${oracle-ojdbc6.version}</version>
 			</dependency>
 
 			<!-- Foreach commons -->
