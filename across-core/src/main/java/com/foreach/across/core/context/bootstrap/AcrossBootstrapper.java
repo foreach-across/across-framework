@@ -55,8 +55,9 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionEvaluationReport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -692,9 +693,7 @@ public class AcrossBootstrapper
 			if ( !settingsClass.isInterface() && !Modifier.isAbstract( settingsClass.getModifiers() ) ) {
 				if ( !compatibility ) {
 					// Register settings as bean in the module application context
-					GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
-					beanDefinition.setBeanClass( settingsClass );
-					beanDefinition.setPrimary( true );
+					AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition( settingsClass ).setPrimary( true ).getBeanDefinition();
 					beanDefinition.addQualifier(
 							new AutowireCandidateQualifier( Module.class.getName(), AcrossModule.CURRENT_MODULE )
 					);

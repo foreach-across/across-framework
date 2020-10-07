@@ -24,7 +24,9 @@ import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.*;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -89,18 +91,14 @@ class AcrossDataSourceRegistrar implements BeanDefinitionRegistryPostProcessor
 		BeanDefinitionRegistry registry = getRegistryWithLocalBeanDefinition( beanFactory, INSTALLER_DATASOURCE );
 
 		if ( registry == null ) {
-			GenericBeanDefinition definition = new GenericBeanDefinition();
-			definition.setPrimary( false );
-			definition.setBeanClass( DataSource.class );
+			BeanDefinition definition = BeanDefinitionBuilder.genericBeanDefinition( DataSource.class ).setPrimary( false ).getBeanDefinition();
 			beanFactory.registerBeanDefinition( INSTALLER_DATASOURCE, definition );
 			beanFactory.registerSingleton( INSTALLER_DATASOURCE, installerDataSource );
 		}
 	}
 
 	private void registerPrimaryDataSourceBeanDefinition( AcrossListableBeanFactory beanFactory, DataSource dataSource ) {
-		GenericBeanDefinition definition = new GenericBeanDefinition();
-		definition.setPrimary( true );
-		definition.setBeanClass( DataSource.class );
+		BeanDefinition definition = BeanDefinitionBuilder.genericBeanDefinition( DataSource.class ).setPrimary( true ).getBeanDefinition();
 		beanFactory.registerBeanDefinition( DATASOURCE, definition );
 		beanFactory.registerSingleton( DATASOURCE, dataSource );
 	}
