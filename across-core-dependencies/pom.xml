@@ -58,7 +58,7 @@
 	    <maven.compiler.source>${java.version}</maven.compiler.source>
 	    <maven.compiler.target>${java.version}</maven.compiler.target>
 	    <!-- Overriden from spring-boot-dependencies -->
-	    <junit-jupiter.version>5.4.2</junit-jupiter.version>
+	    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 	    <!-- Across properties -->
 	    <revision>5.1.0-SNAPSHOT</revision>
 	    <maven.deploy.skip>false</maven.deploy.skip>
