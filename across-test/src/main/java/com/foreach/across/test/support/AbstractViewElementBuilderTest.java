@@ -16,11 +16,11 @@
 package com.foreach.across.test.support;
 
 import com.foreach.across.modules.web.ui.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -44,7 +44,7 @@ public abstract class AbstractViewElementBuilderTest<T extends ViewElementBuilde
 	protected ViewElementBuilderFactory builderFactory;
 	protected ViewElementBuilderContext builderContext;
 
-	@Before
+	@BeforeEach
 	public void reset() {
 		builderFactory = mock( ViewElementBuilderFactory.class );
 		builderContext = spy( new DefaultViewElementBuilderContext() );

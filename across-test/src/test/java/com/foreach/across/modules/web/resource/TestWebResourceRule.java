@@ -19,9 +19,9 @@ import com.foreach.across.modules.web.context.WebAppLinkBuilder;
 import com.foreach.across.modules.web.ui.*;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
@@ -30,8 +30,8 @@ import java.util.Map;
 
 import static com.foreach.across.modules.web.resource.WebResource.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SuppressWarnings( "deprecation" )
 public class TestWebResourceRule extends AbstractViewElementTemplateTest
@@ -39,14 +39,14 @@ public class TestWebResourceRule extends AbstractViewElementTemplateTest
 	@Autowired
 	private WebAppLinkBuilder webAppLinkBuilder;
 
-	@Before
+	@BeforeEach
 	public void setBuilderContext() {
 		DefaultViewElementBuilderContext defaultViewElementBuilderContext = new DefaultViewElementBuilderContext();
 		defaultViewElementBuilderContext.setWebAppLinkBuilder( webAppLinkBuilder );
 		ViewElementBuilderContextHolder.setViewElementBuilderContext( defaultViewElementBuilderContext );
 	}
 
-	@After
+	@AfterEach
 	public void resetBuilderContext() {
 		ViewElementBuilderContextHolder.clearViewElementBuilderContext();
 	}

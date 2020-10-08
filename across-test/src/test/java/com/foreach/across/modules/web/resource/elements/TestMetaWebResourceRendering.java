@@ -17,7 +17,7 @@ package com.foreach.across.modules.web.resource.elements;
 
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Arne Vandamme

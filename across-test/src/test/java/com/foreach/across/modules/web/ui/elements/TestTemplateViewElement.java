@@ -16,31 +16,36 @@
 package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.exceptions.TemplateProcessingException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Arne Vandamme
  */
 public class TestTemplateViewElement extends AbstractViewElementTemplateTest
 {
-	@Before
+	@BeforeEach
 	public void globalCallback() {
 		setCallback( model -> model.put( "customAttribute", 123 ) );
 	}
 
-	@Test(expected = TemplateProcessingException.class)
+	@Test
 	public void illegalFramentInTemplate() throws Throwable {
 		TemplateViewElement template = new TemplateViewElement( "th/test/elements/text :: illegalFragment" );
-		try {
-			renderAndExpect( template, "Custom attribute value: 123" );
-		}
-		catch ( RuntimeException rte ) {
-			throw rte.getCause().getCause();
-		}
+		assertThrows( TemplateInputException.class, () -> {
+			try {
+				renderAndExpect( template, "Custom attribute value: 123" );
+			}
+			catch ( RuntimeException rte ) {
+				throw rte.getCause().getCause();
+			}
+		} );
 	}
 
 	@Test
