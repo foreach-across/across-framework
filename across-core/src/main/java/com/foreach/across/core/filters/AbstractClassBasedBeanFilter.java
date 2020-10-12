@@ -77,6 +77,13 @@ public abstract class AbstractClassBasedBeanFilter<T> implements BeanFilter
 					return true;
 				}
 			}
+			if ( beanFactory.isFactoryBean( beanName ) ) {
+				for ( T allowed : allowedItems ) {
+					if ( matches( definition.getResolvableType().getRawClass(), allowed ) ) {
+						return true;
+					}
+				}
+			}
 		}
 		else if ( definition != null ) {
 			// kept for compatibility (?)
