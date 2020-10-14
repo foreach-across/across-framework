@@ -44,17 +44,17 @@ public abstract class AbstractAcrossModuleConventionsTest
 	@Test
 	public void moduleProperties() throws IllegalAccessException {
 		assertNotNull( module );
-		assertNotNull( "A module should provide a name", module.getName() );
+		assertNotNull( module.getName(), "A module should provide a name" );
 
 		int nameLength = StringUtils.length( StringUtils.trim( module.getName() ) );
 
 		assertTrue( nameLength > 0, "Module name must not be only whitespace" );
 		assertFalse( StringUtils.containsWhitespace(
-						module.getName() ), "Module name must not contain any whitespace" );
+				module.getName() ), "Module name must not contain any whitespace" );
 		assertTrue( nameLength <= 250, "Module name should not be longer than 250 characters" );
 		assertTrue( StringUtils.isAlphanumeric(
-						module.getName() ), "Module name should only contain alphanumeric characters" );
-		assertNotNull( "A module should provide a description", module.getDescription() );
+				module.getName() ), "Module name should only contain alphanumeric characters" );
+		assertNotNull( module.getDescription(), "A module should provide a description" );
 		assertFalse( StringUtils.isBlank( module.getDescription() ), "A module should provide a description" );
 
 		Class moduleClass = module.getClass();
@@ -73,11 +73,11 @@ public abstract class AbstractAcrossModuleConventionsTest
 			String resourcesKey = module.getResourcesKey();
 
 			if ( !AcrossWebModule.NAME.equals( module.getName() ) || !"".equals( resourcesKey ) ) {
-				assertNotNull( "A valid resources key must be specified", resourcesKey );
+				assertNotNull( resourcesKey, "A valid resources key must be specified" );
 				assertFalse( StringUtils.containsWhitespace(
-										resourcesKey ), "Resources key must not contain any whitespace" );
+						resourcesKey ), "Resources key must not contain any whitespace" );
 				assertTrue( StringUtils.isAlphanumeric(
-										resourcesKey ), "Resources key must only be alphanumeric characters" );
+						resourcesKey ), "Resources key must only be alphanumeric characters" );
 
 				Field resourcesKeyField = ReflectionUtils.findField( moduleClass, "RESOURCES" );
 
@@ -88,8 +88,8 @@ public abstract class AbstractAcrossModuleConventionsTest
 				assertTrue( ReflectionUtils.isPublicStaticFinal( resourcesKeyField ), resourcesKeyMsg );
 
 				String constantResourcesKey = (String) resourcesKeyField.get( module );
-				assertEquals( "Resources key does not match with the public RESOURCES field", resourcesKey,
-				              constantResourcesKey );
+				assertEquals( resourcesKey,
+				              constantResourcesKey, "Resources key does not match with the public RESOURCES field" );
 			}
 		}
 	}
