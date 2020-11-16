@@ -142,6 +142,7 @@ public class AcrossBootstrapper
 
 			runModuleBootstrapperCustomizations( modulesInOrder, context.getParentApplicationContext() );
 
+			LazyCompositeAutowireCandidateResolver.clearAdditionalResolvers();
 			AcrossApplicationContextHolder root = createRootContext( contextInfo );
 			AcrossConfigurableApplicationContext rootContext = root.getApplicationContext();
 
@@ -556,6 +557,7 @@ public class AcrossBootstrapper
 	}
 
 	private void prepareForBootstrap( AcrossContextInfo contextInfo ) {
+
 		for ( ModuleBootstrapConfig moduleConfig : contextInfo.getBootstrapConfiguration().getModules() ) {
 			moduleConfig.getModule().prepareForBootstrap( moduleConfig, contextInfo.getBootstrapConfiguration() );
 		}

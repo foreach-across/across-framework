@@ -17,6 +17,7 @@
 package test;
 
 import com.foreach.across.core.AcrossVersionInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,7 +27,7 @@ class TestAcrossVersionInfo
 {
 	@Test
 	void testDefaultManifestLoading() {
-		Class mockedClass = Boolean.class;
+		Class mockedClass = StringUtils.class;
 		AcrossVersionInfo info = AcrossVersionInfo.load( mockedClass );
 		assertTrue( info.isAvailable() );
 	}

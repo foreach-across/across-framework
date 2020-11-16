@@ -77,10 +77,12 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		AcrossLifecycleProcessor lifecycleProcessor = new AcrossLifecycleProcessor();
 		lifecycleProcessor.setBeanFactory( this );
 		registerSingleton( LIFECYCLE_PROCESSOR_BEAN_NAME, lifecycleProcessor );
+		setAutowireCandidateResolver( new LazyCompositeAutowireCandidateResolver() );
 	}
 
 	public AcrossListableBeanFactory( BeanFactory parentBeanFactory ) {
 		setParentBeanFactory( parentBeanFactory );
+		setAutowireCandidateResolver( new LazyCompositeAutowireCandidateResolver() );
 	}
 
 	@Override
