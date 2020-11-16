@@ -18,7 +18,6 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.context.info.AcrossContextInfo;
-import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.support.AcrossLifecycleProcessor;
 import com.foreach.across.core.context.support.AcrossOrderSpecifier;
 import com.foreach.across.core.context.support.AcrossOrderUtils;
@@ -30,7 +29,6 @@ import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -65,7 +63,6 @@ import static org.springframework.context.support.AbstractApplicationContext.LIF
 public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 {
 	private final Set<String> exposedBeanNames = new HashSet<>();
-	private final Map<String, AcrossContextBeanRegistry> acrossBeanRegistriesCache = new HashMap<>( 1 );
 	private final ConcurrentMap<String, Boolean> exposedBeansCache = new ConcurrentHashMap<>();
 	private final ConcurrentMap<String, Optional<AcrossOrderSpecifier>> orderSpecifierCache = new ConcurrentHashMap<>();
 	private transient final AcrossOrderComparator acrossOrderComparator = new AcrossOrderComparator();
@@ -140,12 +137,11 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	@Override
 	protected Object doCreateBean( String beanName, RootBeanDefinition mbd, Object[] args ) {
 		if ( mbd instanceof ExposedBeanDefinition ) {
-			List<ConstructorArgumentValues.ValueHolder> factoryArguments =
-					mbd.getConstructorArgumentValues().getGenericArgumentValues();
+			ExposedBeanDefinition exposedBeanDefinition = (ExposedBeanDefinition) mbd;
 
-			return acrossContextBeanRegistry( mbd.getFactoryBeanName() ).getBeanFromModule(
-					(String) factoryArguments.get( 0 ).getValue(),
-					(String) factoryArguments.get( 1 ).getValue()
+			return exposedBeanDefinition.getAcrossContextBeanRegistry().getBeanFromModule(
+					exposedBeanDefinition.getModuleName(),
+					exposedBeanDefinition.getOriginalBeanName()
 			);
 		}
 
@@ -160,12 +156,12 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 			BeanDefinition bd = getBeanDefinition( beanName );
 
 			if ( bd instanceof ExposedBeanDefinition ) {
-				List<ConstructorArgumentValues.ValueHolder> factoryArguments = bd.getConstructorArgumentValues().getGenericArgumentValues();
+				ExposedBeanDefinition exposedBeanDefinition = (ExposedBeanDefinition) bd;
 
-				String moduleBeanName = (String) factoryArguments.get( 1 ).getValue();
-				return acrossContextBeanRegistry( bd.getFactoryBeanName() ).getBeanTypeFromModule(
-						(String) factoryArguments.get( 0 ).getValue(),
-						isFactoryDereference( name ) ? FACTORY_BEAN_PREFIX + moduleBeanName : moduleBeanName
+				return exposedBeanDefinition.getAcrossContextBeanRegistry().getBeanTypeFromModule(
+						exposedBeanDefinition.getModuleName(),
+						isFactoryDereference( name ) ? FACTORY_BEAN_PREFIX + exposedBeanDefinition.getOriginalBeanName() : exposedBeanDefinition
+								.getOriginalBeanName()
 				);
 			}
 		}
@@ -176,12 +172,11 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	@Override
 	protected Class<?> getTypeForFactoryBean( String beanName, RootBeanDefinition mbd ) {
 		if ( mbd instanceof ExposedBeanDefinition ) {
-			List<ConstructorArgumentValues.ValueHolder> factoryArguments =
-					mbd.getConstructorArgumentValues().getGenericArgumentValues();
+			ExposedBeanDefinition exposedBeanDefinition = (ExposedBeanDefinition) mbd;
 
-			return acrossContextBeanRegistry( mbd.getFactoryBeanName() ).getBeanTypeFromModule(
-					(String) factoryArguments.get( 0 ).getValue(),
-					(String) factoryArguments.get( 1 ).getValue()
+			return exposedBeanDefinition.getAcrossContextBeanRegistry().getBeanTypeFromModule(
+					exposedBeanDefinition.getModuleName(),
+					exposedBeanDefinition.getOriginalBeanName()
 			);
 		}
 
@@ -241,7 +236,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		String beanName = BeanFactoryUtils.transformedBeanName( name );
 		if ( isExposedBean( beanName ) ) {
 			ExposedBeanDefinition mbd = (ExposedBeanDefinition) getBeanDefinition( beanName );
-			AcrossContextInfo contextInfo = acrossContextBeanRegistry( mbd.getFactoryBeanName() ).getContextInfo();
+			AcrossContextInfo contextInfo = mbd.getAcrossContextBeanRegistry().getContextInfo();
 			AcrossListableBeanFactory moduleBeanFactory =
 					(AcrossListableBeanFactory) ( mbd.getModuleName() != null
 							? contextInfo.getModuleInfo( mbd.getModuleName() ).getApplicationContext().getAutowireCapableBeanFactory()
@@ -470,7 +465,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 
 		if ( bd instanceof ExposedBeanDefinition ) {
 			ExposedBeanDefinition ebd = (ExposedBeanDefinition) bd;
-			AcrossContextInfo contextInfo = acrossContextBeanRegistry( ebd.getFactoryBeanName() ).getContextInfo();
+			AcrossContextInfo contextInfo = ebd.getAcrossContextBeanRegistry().getContextInfo();
 			try {
 				AcrossListableBeanFactory moduleBeanFactory =
 						(AcrossListableBeanFactory) ( ebd.getModuleName() != null
@@ -496,7 +491,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 			String beanName = BeanFactoryUtils.transformedBeanName( name );
 			if ( isExposedBean( beanName ) ) {
 				ExposedBeanDefinition mbd = (ExposedBeanDefinition) getBeanDefinition( beanName );
-				AcrossContextInfo contextInfo = acrossContextBeanRegistry( mbd.getFactoryBeanName() ).getContextInfo();
+				AcrossContextInfo contextInfo = mbd.getAcrossContextBeanRegistry().getContextInfo();
 				AcrossListableBeanFactory moduleBeanFactory =
 						(AcrossListableBeanFactory) ( mbd.getModuleName() != null
 								? contextInfo.getModuleInfo( mbd.getModuleName() ).getApplicationContext().getAutowireCapableBeanFactory()
@@ -525,10 +520,6 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	 */
 	public void setHideExposedBeans( boolean hideExposedBeans ) {
 		this.hideExposedBeans = hideExposedBeans;
-	}
-
-	private AcrossContextBeanRegistry acrossContextBeanRegistry( String beanName ) {
-		return acrossBeanRegistriesCache.computeIfAbsent( beanName, bn -> (AcrossContextBeanRegistry) getBean( bn ) );
 	}
 
 	/**
