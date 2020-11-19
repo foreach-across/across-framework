@@ -50,7 +50,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AbstractBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.AliasRegistry;
@@ -62,9 +61,6 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.*;
-
-import static com.foreach.across.core.AcrossContext.DATASOURCE;
-import static com.foreach.across.core.AcrossContext.INSTALLER_DATASOURCE;
 
 /**
  * Helper methods for AcrossContext configuration.
