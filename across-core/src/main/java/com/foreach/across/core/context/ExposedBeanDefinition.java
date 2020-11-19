@@ -21,6 +21,7 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.AutowireCandidateQualifier;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -42,30 +43,23 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 {
 	public static final int ROLE_EXPOSED = 10;
 
-	@Getter
 	private final String contextId;
-	@Getter
 	private final String moduleName;
-	@Getter
+
 	private final String fullyQualifiedBeanName;
-	@Getter
 	private final String originalBeanName;
 	@Getter
 	private final Integer moduleIndex;
-	@Getter
 	private String preferredBeanName;
 
-	private final Set<String> aliases = new HashSet<>();
+	private Set<String> aliases = new HashSet<>();
 
 	private RootBeanDefinition originalRootBeanDefinition;
-	@Getter
-	private final AcrossContextBeanRegistry acrossContextBeanRegistry;
 
 	public ExposedBeanDefinition( ExposedBeanDefinition original ) {
 		super( original );
 
 		originalRootBeanDefinition = original.originalRootBeanDefinition;
-		acrossContextBeanRegistry = original.getAcrossContextBeanRegistry();
 
 		contextId = original.contextId;
 		moduleName = original.moduleName;
@@ -88,9 +82,12 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		this.contextId = contextBeanRegistry.getContextId();
 		this.moduleName = moduleName;
 		this.moduleIndex = moduleIndex;
-		this.acrossContextBeanRegistry = contextBeanRegistry;
 
 		setSynthetic( true );
+
+		setFactoryBeanName( contextBeanRegistry.getFactoryName() );
+		setFactoryMethodName( "getBeanFromModule" );
+
 		setScope( SCOPE_SINGLETON );
 
 		if ( beanClass != null ) {
@@ -102,6 +99,12 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		setAutowireMode( AUTOWIRE_NO );
 		setAutowireCandidate( true );
 		setDependencyCheck( DEPENDENCY_CHECK_NONE );
+
+		ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
+		constructorArgumentValues.addGenericArgumentValue( moduleName );
+		constructorArgumentValues.addGenericArgumentValue( originalBeanName );
+
+		setConstructorArgumentValues( constructorArgumentValues );
 
 		addQualifier( new AutowireCandidateQualifier( Module.class.getName(), moduleName ) );
 		//addQualifier( new AutowireCandidateQualifier( Context.class.getName(), contextId ) );
@@ -156,9 +159,29 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		setRole( ROLE_EXPOSED );
 	}
 
+	public String getOriginalBeanName() {
+		return originalBeanName;
+	}
+
+	public String getFullyQualifiedBeanName() {
+		return fullyQualifiedBeanName;
+	}
+
+	public String getPreferredBeanName() {
+		return preferredBeanName;
+	}
+
 	public void setPreferredBeanName( String preferredBeanName ) {
 		this.preferredBeanName = preferredBeanName;
 		addQualifier( new AutowireCandidateQualifier( Qualifier.class.getName(), preferredBeanName ) );
+	}
+
+	public String getContextId() {
+		return contextId;
+	}
+
+	public String getModuleName() {
+		return moduleName;
 	}
 
 	public Set<String> getAliases() {
