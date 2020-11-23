@@ -32,6 +32,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+
 import javax.sql.DataSource;
 import java.util.UUID;
 
@@ -98,19 +99,18 @@ public class TestDataSourceConfigurer implements EnvironmentAware, AcrossContext
 
 		LOG.info( "Creating Across test datasource with profile: {}", dsName );
 
-		if ( StringUtils.startsWith( dsName, "jdbc:tc" ) ) {
+		if ( StringUtils.equals( "auto", dsName ) ) {
+			return DataSourceBuilder.create().type( HikariDataSource.class )
+			                        .driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).url( "jdbc:hsqldb:mem:" + dataSourceName ).username( "sa" ).build();
+		}
+		else if ( StringUtils.startsWith( dsName, "jdbc:tc" ) ) {
 			if ( StringUtils.startsWith( dsName, "jdbc:tc:oracle:" ) ) {
 				dsName = StringUtils.replaceOnce( dsName, "jdbc:tc:oracle:", "jdbc:tc:axoracle:" );
 				LOG.info( "Across test datasource replaced with: " + dsName );
 			}
-			return DataSourceBuilder.create().type( HikariDataSource.class )
-			                        .url( dsName )
-			                        .driverClassName( "org.testcontainers.jdbc.ContainerDatabaseDriver" ).build();
-		}
-
-		if ( StringUtils.equals( "auto", dsName ) ) {
-			return DataSourceBuilder.create().type( HikariDataSource.class )
-			                        .driverClassName( "org.hsqldb.jdbc.JDBCDriver" ).url( "jdbc:hsqldb:mem:" + dataSourceName ).username( "sa" ).build();
+			dataSource = DataSourceBuilder.create().type( HikariDataSource.class )
+			                              .url( dsName )
+			                              .driverClassName( "org.testcontainers.jdbc.ContainerDatabaseDriver" ).build();
 		}
 		else {
 			dataSource = (HikariDataSource) DataSourceBuilder.create()
