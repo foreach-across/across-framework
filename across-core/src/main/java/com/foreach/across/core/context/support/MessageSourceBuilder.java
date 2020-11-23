@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.core.type.MethodMetadata;
@@ -96,9 +96,7 @@ public class MessageSourceBuilder
 		Optional<String> moduleName = moduleNameForBeanFactory();
 
 		if ( moduleName.isPresent() ) {
-			GenericBeanDefinition rootBeanDefinition = new GenericBeanDefinition();
-			rootBeanDefinition.setBeanClass( AcrossModuleMessageSource.class );
-
+			BeanDefinition rootBeanDefinition = BeanDefinitionBuilder.genericBeanDefinition( AcrossModuleMessageSource.class ).getBeanDefinition();
 			registry.registerBeanDefinition( BEAN_NAME, rootBeanDefinition );
 
 			return true;

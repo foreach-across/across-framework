@@ -23,12 +23,12 @@ import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.test.support.AbstractViewElementBuilderTest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 public class TestNodeViewElementBuilder extends AbstractViewElementBuilderTest<NodeViewElementBuilder, NodeViewElement>

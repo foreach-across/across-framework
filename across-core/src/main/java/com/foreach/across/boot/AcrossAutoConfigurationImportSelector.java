@@ -20,7 +20,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.boot.autoconfigure.AutoConfigurationImportSelector;
-import org.springframework.boot.autoconfigure.AutoConfigurationMetadata;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
@@ -102,8 +101,8 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 	}
 
 	@Override
-	protected AutoConfigurationEntry getAutoConfigurationEntry( AutoConfigurationMetadata autoConfigurationMetadata, AnnotationMetadata annotationMetadata ) {
-		AutoConfigurationEntry autoConfigurationEntry = super.getAutoConfigurationEntry( autoConfigurationMetadata, annotationMetadata );
+	protected AutoConfigurationEntry getAutoConfigurationEntry( AnnotationMetadata annotationMetadata ) {
+		AutoConfigurationEntry autoConfigurationEntry = super.getAutoConfigurationEntry( annotationMetadata );
 		retrieveAutoConfigurationRegistry().printAutoConfigurationReport();
 		return autoConfigurationEntry;
 	}

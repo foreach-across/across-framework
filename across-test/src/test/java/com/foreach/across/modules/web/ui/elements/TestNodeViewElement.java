@@ -17,11 +17,11 @@ package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestNodeViewElement extends AbstractViewElementTemplateTest
 {

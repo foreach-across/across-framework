@@ -69,7 +69,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 @Configuration
 @ConditionalOnClass({ Servlet.class, StandardServletMultipartResolver.class, MultipartConfigElement.class })
-@ConditionalOnProperty(prefix = "spring.http.multipart", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "spring.servlet.multipart", name = "enabled", matchIfMissing = true)
 @EnableConfigurationProperties(MultipartProperties.class)
 public class MultipartResolverConfiguration
 {

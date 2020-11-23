@@ -24,7 +24,7 @@ import java.util.Properties;
 
 /**
  * Servlet version of an Across environment.
- * Note this environment fixes a Spring Boot property: always sets the spring.http.encoding.force to {@code true}.
+ * Note this environment fixes a Spring Boot property: always sets the server.servlet.encoding.force to {@code true}.
  *
  * @author Arne Vandamme
  * @see com.foreach.across.core.context.StandardAcrossEnvironment
@@ -40,7 +40,7 @@ public class StandardAcrossServletEnvironment extends StandardServletEnvironment
 		super.merge( parent );
 
 		Properties properties = new Properties();
-		properties.put( "spring.http.encoding.force", true );
+		properties.put( "server.servlet.encoding.force", true );
 		getPropertySources().addLast( new PropertiesPropertySource( "springHttpEncodingPropertySource", properties ) );
 	}
 

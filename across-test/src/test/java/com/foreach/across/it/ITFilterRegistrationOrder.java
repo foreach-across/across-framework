@@ -53,7 +53,7 @@ public class ITFilterRegistrationOrder
 	public void additionalCustomFilter() {
 		String[] filterNames = servletContext.getFilterRegistrations().keySet().toArray( new String[0] );
 		assertArrayEquals(
-				new String[] { "characterEncodingFilter", "multipartFilter", "hiddenHttpMethodFilter", "formContentFilter", "requestContextFilter",
+				new String[] { "characterEncodingFilter", "multipartFilter", "formContentFilter", "requestContextFilter",
 				               "resourceUrlEncodingFilter", "corsFilter" },
 				filterNames
 		);

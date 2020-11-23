@@ -16,15 +16,15 @@
 package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.unbescape.html.HtmlEscape;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Arne Vandamme

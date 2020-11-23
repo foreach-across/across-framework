@@ -68,7 +68,7 @@ public class TestAcrossMockMvcConfigurationWithAcrossWebProperty
 		mvc.perform( get( "/across/resources/static/unit-test/testResources/test.txt" ) )
 		   .andExpect( status().isOk() )
 		   .andExpect(
-				   content().string( is( "hÃ¹llÂµâ\u0082¬" ) ) ); // ISO-8859-1 when spring.http.encoding.force is false
+				   content().string( is( "hÃ¹llÂµâ\u0082¬" ) ) ); // ISO-8859-1 when server.servlet.encoding.force is false
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class TestAcrossMockMvcConfigurationWithAcrossWebProperty
 		@Bean
 		public AcrossWebModule acrossWebModule() {
 			AcrossWebModule acrossWebModule = new AcrossWebModule();
-			acrossWebModule.setProperty( "spring.http.encoding.force", false );
+			acrossWebModule.setProperty( "server.servlet.encoding.force", false );
 			return acrossWebModule;
 		}
 	}

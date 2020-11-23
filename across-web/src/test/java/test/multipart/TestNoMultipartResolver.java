@@ -52,7 +52,7 @@ public class TestNoMultipartResolver
 		@Override
 		public void configure( AcrossContext context ) {
 			AcrossWebModule webModule = new AcrossWebModule();
-			webModule.setProperty( "spring.http.multipart.enabled", false );
+			webModule.setProperty( "spring.servlet.multipart.enabled", false );
 
 			context.addModule( webModule );
 		}

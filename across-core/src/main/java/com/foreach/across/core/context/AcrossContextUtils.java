@@ -49,7 +49,10 @@ import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.beans.factory.support.AbstractBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.AliasRegistry;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -390,5 +393,22 @@ public final class AcrossContextUtils
 		}
 
 		return instance;
+	}
+
+	/***
+	 * Since Spring 5.2, {@link DefaultListableBeanFactory} will cache mergedBeanDefinitionHolders.
+	 *
+	 * After registering an alias, it is required to remove this cached item.
+	 *
+	 * Since {@link DefaultListableBeanFactory#clearMergedBeanDefinition(String)} is protected, we can only flush all caches.
+	 */
+	public static void registerBeanDefinitionAlias( AliasRegistry registry, String name, String alias ) {
+		if ( registry != null ) {
+			registry.registerAlias( name, alias );
+			if( registry instanceof AbstractBeanFactory ) {
+				// getAliases() would fail because this gets cached before the registrar is called
+				(( AbstractBeanFactory) registry).clearMetadataCache();
+			}
+		}
 	}
 }

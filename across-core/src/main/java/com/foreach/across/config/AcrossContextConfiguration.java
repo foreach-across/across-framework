@@ -61,14 +61,6 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	static final String ANNOTATION_TYPE = EnableAcrossContext.class.getName();
 
 	@Autowired(required = false)
-	@Qualifier(AcrossContext.DATASOURCE)
-	private DataSource acrossDataSource;
-
-	@Autowired(required = false)
-	@Qualifier(AcrossContext.INSTALLER_DATASOURCE)
-	private DataSource installerDataSource;
-
-	@Autowired(required = false)
 	private Collection<AcrossContextConfigurer> configurers = Collections.emptyList();
 
 	@Autowired(required = false)
@@ -101,13 +93,16 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	}
 
 	@Bean
-	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
+	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext,
+	                                    @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource,
+	                                    @Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource
+	                                    ) {
 		Map<String, Object> configuration = importMetadata.getAnnotationAttributes( ANNOTATION_TYPE );
 
 		AcrossContextBuilder contextBuilder = new AcrossContextBuilder()
 				.applicationContext( applicationContext )
-				.dataSource( selectAcrossDataSource() )
-				.installerDataSource( installerDataSource )
+				.dataSource( selectAcrossDataSource( acrossDataSource ) )
+				.installerDataSource( installerDataSource.orElse( null ) )
 				.developmentMode( isDevelopmentMode() )
 				.moduleConfigurationPackages( determineModuleConfigurationPackages( configuration ) )
 				.configurer( configurers.toArray( new AcrossContextConfigurer[0] ) );
@@ -137,9 +132,9 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		}
 	}
 
-	private DataSource selectAcrossDataSource() {
-		if ( acrossDataSource != null ) {
-			return acrossDataSource;
+	private DataSource selectAcrossDataSource( Optional<DataSource> acrossDataSource ) {
+		if ( acrossDataSource.isPresent() ) {
+			return acrossDataSource.get();
 		}
 
 		Collection<DataSource> dataSources = BeanFactoryUtils.beansOfTypeIncludingAncestors( (ListableBeanFactory) beanFactory, DataSource.class, false, false )

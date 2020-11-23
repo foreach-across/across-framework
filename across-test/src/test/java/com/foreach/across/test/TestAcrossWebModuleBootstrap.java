@@ -128,8 +128,8 @@ public class TestAcrossWebModuleBootstrap
 	public void dynamicConfigurationButDisabledThroughProperties() {
 		try (
 				AcrossTestWebContext ctx = web()
-						.property( "spring.http.multipart.enabled", "false" )
-						.property( "spring.http.encoding.enabled", "false" )
+						.property( "spring.servlet.multipart.enabled", "false" )
+						.property( "server.servlet.encoding.enabled", "false" )
 						.property( "across.web.resources.versioning.enabled", "false" )
 						.modules( AcrossWebModule.NAME )
 						.build()

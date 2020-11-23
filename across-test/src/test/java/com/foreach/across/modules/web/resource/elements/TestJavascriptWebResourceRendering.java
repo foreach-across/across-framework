@@ -19,7 +19,7 @@ import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.TextViewElementBuilder;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import java.util.HashMap;

@@ -16,7 +16,7 @@
 package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for AX-218 - inline expressions being parsed in view elements.

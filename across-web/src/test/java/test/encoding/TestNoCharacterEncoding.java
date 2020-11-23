@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @author Arne Vandamme
  */
 @ContextConfiguration(classes = TestDefaultCharacterEncoding.Config.class)
-@TestPropertySource(properties = "spring.http.encoding.enabled=false")
+@TestPropertySource(properties = "server.servlet.encoding.enabled=false")
 public class TestNoCharacterEncoding extends AbstractWebIntegrationTest
 {
 	@Test

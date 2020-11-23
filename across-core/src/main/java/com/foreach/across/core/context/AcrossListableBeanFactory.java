@@ -77,10 +77,12 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 		AcrossLifecycleProcessor lifecycleProcessor = new AcrossLifecycleProcessor();
 		lifecycleProcessor.setBeanFactory( this );
 		registerSingleton( LIFECYCLE_PROCESSOR_BEAN_NAME, lifecycleProcessor );
+		setAutowireCandidateResolver( new LazyCompositeAutowireCandidateResolver() );
 	}
 
 	public AcrossListableBeanFactory( BeanFactory parentBeanFactory ) {
 		setParentBeanFactory( parentBeanFactory );
+		setAutowireCandidateResolver( new LazyCompositeAutowireCandidateResolver() );
 	}
 
 	@Override
@@ -489,7 +491,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	}
 
 	@Override
-	public boolean isTypeMatch( String name, ResolvableType typeToMatch ) throws NoSuchBeanDefinitionException {
+	public boolean isTypeMatch( String name, ResolvableType typeToMatch, boolean allowFactoryBeanInit ) throws NoSuchBeanDefinitionException {
 		if ( isFactoryDereference( name ) ) {
 			String beanName = BeanFactoryUtils.transformedBeanName( name );
 			if ( isExposedBean( beanName ) ) {
@@ -502,11 +504,11 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 				RootBeanDefinition originalBd = moduleBeanFactory.getMergedLocalBeanDefinition( mbd.getOriginalBeanName() );
 
 				return moduleBeanFactory.isFactoryBean( mbd.getOriginalBeanName(), originalBd )
-						&& moduleBeanFactory.isTypeMatch( FACTORY_BEAN_PREFIX + mbd.getOriginalBeanName(), typeToMatch );
+						&& moduleBeanFactory.isTypeMatch( FACTORY_BEAN_PREFIX + mbd.getOriginalBeanName(), typeToMatch, allowFactoryBeanInit );
 			}
 		}
 
-		return super.isTypeMatch( name, typeToMatch );
+		return super.isTypeMatch( name, typeToMatch, allowFactoryBeanInit );
 	}
 
 	@Override

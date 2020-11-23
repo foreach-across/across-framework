@@ -17,7 +17,7 @@ package com.foreach.across.modules.web.ui.elements;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.test.support.AbstractViewElementTemplateTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
