@@ -24,11 +24,11 @@ import com.foreach.across.core.filters.BeanFilter;
 import com.foreach.across.core.installers.InstallerSettings;
 import com.foreach.across.core.transformers.ExposedBeanDefinitionTransformer;
 import com.foreach.across.core.util.ClassLoadingUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 public class AcrossBootstrapConfig
 {
 	private final AcrossContext context;
-	private final Collection<ModuleBootstrapConfig> modules;
+	private final Map<String, ModuleBootstrapConfig> modules;
 	private final ModuleConfigurationSet moduleConfigurationSet;
 
 	private InstallerSettings installerSettings;
@@ -46,14 +46,14 @@ public class AcrossBootstrapConfig
 	private ExposedBeanDefinitionTransformer exposeTransformer;
 
 	public AcrossBootstrapConfig( AcrossContext context,
-	                              Collection<ModuleBootstrapConfig> modules,
+	                              Map<String, ModuleBootstrapConfig> modules,
 	                              ModuleConfigurationSet moduleConfigurationSet ) {
 		this.context = context;
 		this.moduleConfigurationSet = moduleConfigurationSet;
 		setInstallerSettings( context.getInstallerSettings() );
 
 		// Modifying the module collection itself is no longer allowed in bootstrap phase
-		this.modules = Collections.unmodifiableCollection( modules );
+		this.modules = Collections.unmodifiableMap( modules );
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class AcrossBootstrapConfig
 	 * @return Collection of the module configurations that will be bootstrapped.
 	 */
 	public Collection<ModuleBootstrapConfig> getModules() {
-		return modules;
+		return modules.values();
 	}
 
 	/**
@@ -99,13 +99,7 @@ public class AcrossBootstrapConfig
 	 * @return Bootstrap configuration instance for that module.
 	 */
 	public ModuleBootstrapConfig getModule( String moduleName ) {
-		for ( ModuleBootstrapConfig config : modules ) {
-			if ( StringUtils.equals( moduleName, config.getModuleName() ) ) {
-				return config;
-			}
-		}
-
-		return null;
+		return modules.get( moduleName );
 	}
 
 	public ExposedBeanDefinitionTransformer getExposeTransformer() {

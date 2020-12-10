@@ -567,7 +567,7 @@ public class AcrossBootstrapper
 	 * Builds the bootstrap configuration entities.
 	 */
 	private AcrossBootstrapConfig createBootstrapConfiguration( ConfigurableAcrossContextInfo contextInfo ) {
-		List<ModuleBootstrapConfig> configs = new LinkedList<>();
+		Map<String, ModuleBootstrapConfig> configs = new LinkedHashMap<>();
 
 		ApplicationContext applicationContext = contextInfo.getApplicationContext();
 		MetadataReaderFactory metadataReaderFactory
@@ -627,7 +627,7 @@ public class AcrossBootstrapper
 			config.addInstallerContextConfigurers( contextInfo.getContext().getInstallerContextConfigurers() );
 			config.addInstallerContextConfigurers( AcrossContextUtils.getInstallerContextConfigurers( module ) );
 
-			configs.add( config );
+			configs.put( config.getModuleName(), config );
 
 			( (ConfigurableAcrossModuleInfo) moduleInfo ).setBootstrapConfiguration( config );
 		}
