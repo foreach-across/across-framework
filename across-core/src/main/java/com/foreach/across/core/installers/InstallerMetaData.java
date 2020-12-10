@@ -172,7 +172,7 @@ public class InstallerMetaData
 		InstallerMetaData profile = new InstallerMetaData();
 		profile.setInstallerClass( actual );
 
-		if ( StringUtils.isEmpty( metadata.name() ) ) {
+		if ( !StringUtils.hasLength( metadata.name() ) ) {
 			profile.setName( actual.getName() );
 		}
 		else {

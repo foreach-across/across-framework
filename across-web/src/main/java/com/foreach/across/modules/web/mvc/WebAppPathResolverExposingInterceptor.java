@@ -18,7 +18,7 @@ package com.foreach.across.modules.web.mvc;
 import com.foreach.across.modules.web.context.WebAppPathResolver;
 import com.foreach.across.modules.web.resource.WebResourceUtils;
 import lombok.NonNull;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +33,7 @@ import java.io.IOException;
  * @see com.foreach.across.modules.web.context.PrefixingPathRegistry
  * @see com.foreach.across.modules.web.context.PrefixingPathContext
  */
-public class WebAppPathResolverExposingInterceptor extends HandlerInterceptorAdapter
+public class WebAppPathResolverExposingInterceptor implements HandlerInterceptor
 {
 	private final WebAppPathResolver webAppPathResolver;
 

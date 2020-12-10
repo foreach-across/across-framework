@@ -20,7 +20,7 @@ import com.foreach.across.modules.web.resource.WebResourceUtils;
 import com.foreach.across.modules.web.support.LocalizedTextResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Arne Vandamme
  * @since 2.0.0
  */
-public class ViewElementBuilderContextInterceptor extends HandlerInterceptorAdapter
+public class ViewElementBuilderContextInterceptor implements HandlerInterceptor
 {
 	private WebAppLinkBuilder webAppLinkBuilder;
 	private MessageSource messageSource;

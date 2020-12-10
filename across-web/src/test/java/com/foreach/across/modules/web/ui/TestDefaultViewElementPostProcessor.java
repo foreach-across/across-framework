@@ -48,7 +48,7 @@ public class TestDefaultViewElementPostProcessor
 		DefaultViewElementPostProcessor.INSTANCE.postProcess( builderContext, element );
 
 		verify( two ).postProcess( builderContext, element );
-		verifyZeroInteractions( one );
+		verifyNoInteractions( one );
 	}
 
 	@Test
@@ -66,7 +66,7 @@ public class TestDefaultViewElementPostProcessor
 		DefaultViewElementPostProcessor.INSTANCE.postProcess( builderContextOne, element );
 
 		verify( one ).postProcess( builderContextOne, element );
-		verifyZeroInteractions( two );
+		verifyNoInteractions( two );
 
 		DefaultViewElementPostProcessor.INSTANCE.postProcess( builderContextTwo, element );
 		verify( one ).postProcess( builderContextOne, element );
