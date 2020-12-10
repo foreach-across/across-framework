@@ -15,13 +15,12 @@
  */
 package com.foreach.across.config;
 
+import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
@@ -29,6 +28,10 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.util.ClassUtils;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Disables the auto-configuration package of the main application class,
@@ -41,37 +44,32 @@ import org.springframework.core.type.AnnotationMetadata;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 final class ApplicationAutoConfigurationPackage implements ImportBeanDefinitionRegistrar, AcrossBootstrapConfigurer
 {
-	private static final String BEAN = AutoConfigurationPackages.class.getName();
+	public static final String FAKE_APPLICATION_PACKAGE = "should.only.match.application.package";
 
 	@Getter(AccessLevel.PACKAGE)
 	private String applicationModulePackage = "application";
 
 	@Override
 	public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {
-		if ( !registry.containsBeanDefinition( BEAN ) ) {
-			AutoConfigurationPackages.register( registry );
-		}
-
-		BeanDefinition beanDefinition = registry.getBeanDefinition( BEAN );
-		ConstructorArgumentValues constructorArguments = beanDefinition.getConstructorArgumentValues();
-		String[] existing = (String[]) constructorArguments.getIndexedArgumentValue( 0, String[].class ).getValue();
-
-		if ( existing.length > 0 ) {
-			applicationModulePackage = existing[0] + ".application";
+		List<String> packages = AutoConfigurationPackages.get( (BeanFactory) registry );
+		if ( !packages.isEmpty() && Objects.equals( FAKE_APPLICATION_PACKAGE, packages.get( 0 ) ) ) {
+			String defaultPackage = ClassUtils.getPackageName( importingClassMetadata.getClassName() );
+			applicationModulePackage = defaultPackage + ".application";
 			LOG.info( "Disabling @AutoConfigurationPackage on the root package - Across applications support only the application module" );
-			constructorArguments.addIndexedArgumentValue( 0, new String[0] );
-
-			AcrossDynamicModulesConfiguration.verifyNoConflictingComponentScans( importingClassMetadata, existing[0] );
+			AcrossDynamicModulesConfiguration.verifyNoConflictingComponentScans( importingClassMetadata, defaultPackage );
 		}
-
-		if ( registry instanceof BeanFactory ) {
-			LOG.trace( "Eager instantiation of AutoConfigurationPackages singleton" );
-			AutoConfigurationPackages.get( (BeanFactory) registry );
+		else {
+			throw new AcrossException( "Unsupported package configuration" );
 		}
 
 		SingletonBeanRegistry singletonBeanRegistry = (SingletonBeanRegistry) registry;
 		if ( !singletonBeanRegistry.containsSingleton( ApplicationAutoConfigurationPackage.class.getName() ) ) {
 			singletonBeanRegistry.registerSingleton( ApplicationAutoConfigurationPackage.class.getName(), this );
 		}
+	}
+
+	public static boolean hasOnlyFakeApplicationPackage( BeanFactory registry ) {
+		List<String> packages = AutoConfigurationPackages.get( registry );
+		return !packages.isEmpty() && Objects.equals( FAKE_APPLICATION_PACKAGE, packages.get( 0 ) );
 	}
 }

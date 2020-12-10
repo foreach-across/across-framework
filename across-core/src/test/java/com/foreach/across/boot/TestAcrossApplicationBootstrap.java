@@ -22,13 +22,14 @@ import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import lombok.Getter;
-import org.assertj.core.api.Assertions;
+import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,6 +47,7 @@ import org.springframework.validation.Validator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -116,7 +118,12 @@ public class TestAcrossApplicationBootstrap
 		HierarchicalBeanFactory ctx = (HierarchicalBeanFactory) contextInfo.getApplicationContext().getAutowireCapableBeanFactory();
 
 		do {
-			assertFalse( AutoConfigurationPackages.has( ctx ) );
+			if ( "ax:expose-parent".equals( ( (DefaultListableBeanFactory) ctx ).getSerializationId() ) ) {
+				assertThat( AutoConfigurationPackages.has( ctx ) ).isFalse();
+			}
+			else {
+				assertThat( AutoConfigurationPackages.get( ctx ) ).hasSize( 1 ).contains( "should.only.match.application.package", Index.atIndex( 0 ) );
+			}
 			ctx = (HierarchicalBeanFactory) ctx.getParentBeanFactory();
 		}
 		while ( ctx != null );
@@ -127,16 +134,16 @@ public class TestAcrossApplicationBootstrap
 		RootComponent applicationComponent = contextInfo.getModuleInfo( "SampleApplicationModule" ).getApplicationContext().getBean( RootComponent.class );
 		SampleApplication application = applicationContext.getBean( SampleApplication.class );
 
-		Assertions.assertThat( application.getEventsReceived() )
-		          .hasSize( 1 )
-		          .containsKey( ApplicationReadyEvent.class.getName() );
+		assertThat( application.getEventsReceived() )
+				.hasSize( 1 )
+				.containsKey( ApplicationReadyEvent.class.getName() );
 
-		Assertions.assertThat( applicationComponent.getEventsReceived() )
-		          .hasSize( 1 )
-		          .containsKey( ApplicationReadyEvent.class.getName() );
+		assertThat( applicationComponent.getEventsReceived() )
+				.hasSize( 1 )
+				.containsKey( ApplicationReadyEvent.class.getName() );
 
-		Assertions.assertThat( application.getEventsReceived().get( ApplicationReadyEvent.class.getName() ) )
-		          .isGreaterThan( applicationComponent.getEventsReceived().get( ApplicationReadyEvent.class.getName() ) );
+		assertThat( application.getEventsReceived().get( ApplicationReadyEvent.class.getName() ) )
+				.isGreaterThan( applicationComponent.getEventsReceived().get( ApplicationReadyEvent.class.getName() ) );
 	}
 
 	@AcrossApplication
@@ -156,8 +163,8 @@ public class TestAcrossApplicationBootstrap
 	{
 		@Override
 		public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {
-			assertFalse( AutoConfigurationPackages.has( (BeanFactory) registry ),
-			             "AutoConfigurationPackages on application itself should always be empty" );
+			assertThat( AutoConfigurationPackages.get( (BeanFactory) registry ) ).hasSize( 1 ).contains( "should.only.match.application.package",
+			                                                                                             Index.atIndex( 0 ) );
 		}
 	}
 }

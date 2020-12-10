@@ -22,6 +22,7 @@ import com.foreach.across.modules.web.context.WebAppPathResolver;
 import com.foreach.across.test.ExposeForTest;
 import com.foreach.across.test.application.app.DummyApplication;
 import com.foreach.across.test.application.app.application.controllers.NonExposedComponent;
+import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -43,6 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -122,7 +124,7 @@ public class TestSpringBootWebIntegration
 
 	@Test
 	public void defaultAutoConfigurationPackageShouldNotBeRegisteredInMainContext() {
-		assertEquals( Collections.emptyList(), AutoConfigurationPackages.get( beanFactory ) );
+		assertThat( AutoConfigurationPackages.get( beanFactory ) ).hasSize( 1 ).contains( "should.only.match.application.package", Index.atIndex( 0 ) );
 	}
 
 	@Test
