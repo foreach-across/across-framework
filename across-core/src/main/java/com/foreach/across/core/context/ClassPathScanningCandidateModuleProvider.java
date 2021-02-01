@@ -15,6 +15,7 @@
  */
 package com.foreach.across.core.context;
 
+import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.util.ClassLoadingUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -106,6 +107,12 @@ public class ClassPathScanningCandidateModuleProvider extends AbstractClassPathS
 										moduleClass
 								);
 							}
+						}
+						catch ( NoClassDefFoundError noClassDefFoundError ) {
+							LOG.error( "Cannot load module class: {}, are you referencing another class which is not on the classpath?",
+							           classMetadata.getClassName(), noClassDefFoundError );
+							throw new AcrossException( "Cannot load module class: " + classMetadata
+									.getClassName() + ", are you referencing another class which is not on the classpath?", noClassDefFoundError );
 						}
 						catch ( ClassNotFoundException | IllegalStateException e ) {
 							LOG.trace( "Unable to determine module name for {}", classMetadata.getClassName(), e );

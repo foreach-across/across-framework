@@ -25,7 +25,7 @@ public abstract class ClassLoadingUtils
 	private ClassLoadingUtils() {
 	}
 
-	public static Class loadClass( String className ) throws ClassNotFoundException {
+	public static Class loadClass( String className ) throws ClassNotFoundException, NoClassDefFoundError {
 		return Class.forName( className, true, Thread.currentThread().getContextClassLoader() );
 	}
 
