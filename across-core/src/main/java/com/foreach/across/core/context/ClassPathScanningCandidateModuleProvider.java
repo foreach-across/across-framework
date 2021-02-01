@@ -17,6 +17,7 @@ package com.foreach.across.core.context;
 
 import com.foreach.across.core.AcrossException;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.support.AcrossContextBuilder;
 import com.foreach.across.core.util.ClassLoadingUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -63,8 +65,10 @@ public class ClassPathScanningCandidateModuleProvider extends AbstractClassPathS
 		Map<String, Supplier<AcrossModule>> candidates = new HashMap<>();
 
 		for ( String basePackage : basePackages ) {
+			String resourcePattern = Objects.equals( basePackage,
+			                                         AcrossContextBuilder.STANDARD_MODULES_PACKAGE ) ? STANDARD_MODULES_PACKAGE_DEFAULT_RESOURCE_PATTERN : DEFAULT_RESOURCE_PATTERN;
 			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
-					ClassUtils.convertClassNameToResourcePath( basePackage ) + "/" + DEFAULT_RESOURCE_PATTERN;
+					ClassUtils.convertClassNameToResourcePath( basePackage ) + "/" + resourcePattern;
 
 			try {
 				Resource[] resources = getResources( packageSearchPath );
@@ -75,7 +79,7 @@ public class ClassPathScanningCandidateModuleProvider extends AbstractClassPathS
 
 					if ( isAcrossModuleClass( classMetadata, false ) ) {
 						try {
-							Class moduleClass = ClassLoadingUtils.loadClass( classMetadata.getClassName() );
+							Class<?> moduleClass = ClassLoadingUtils.loadClass( classMetadata.getClassName() );
 
 							if ( hasParameterlessConstructor( moduleClass ) ) {
 								String moduleName = retrieveModuleName( moduleClass );
@@ -128,7 +132,7 @@ public class ClassPathScanningCandidateModuleProvider extends AbstractClassPathS
 		return candidates;
 	}
 
-	private String retrieveModuleName( Class moduleClass ) {
+	private String retrieveModuleName( Class<?> moduleClass ) {
 		Field nameField = ReflectionUtils.findField( moduleClass, "NAME" );
 
 		if ( nameField != null ) {
@@ -145,7 +149,7 @@ public class ClassPathScanningCandidateModuleProvider extends AbstractClassPathS
 
 	protected boolean hasParameterlessConstructor( Class<?> moduleClass ) {
 		try {
-			Constructor constructor = moduleClass.getConstructor();
+			Constructor<?> constructor = moduleClass.getConstructor();
 
 			if ( Modifier.isPublic( constructor.getModifiers() ) ) {
 				return true;
@@ -160,6 +164,12 @@ public class ClassPathScanningCandidateModuleProvider extends AbstractClassPathS
 	protected boolean isAcrossModuleClass( ClassMetadata classMetadata, boolean canBeAbstract ) {
 		if ( ( canBeAbstract || classMetadata.isConcrete() ) && classMetadata.hasSuperClass() ) {
 			String superClassName = classMetadata.getSuperClassName();
+
+			if ( StringUtils.startsWith( superClassName, "java.lang." ) || Objects.equals( superClassName,
+			                                                                               "com.foreach.across.modules.hibernate.business.SettableIdBasedEntity" ) ) {
+				// Quick return methods to avoid too much recursion
+				return false;
+			}
 
 			if ( StringUtils.equals( MODULE_CLASS, superClassName ) ) {
 				return true;

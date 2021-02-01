@@ -34,6 +34,7 @@ import java.io.IOException;
 public abstract class AbstractClassPathScanningProvider
 {
 	protected static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
+	protected static final String STANDARD_MODULES_PACKAGE_DEFAULT_RESOURCE_PATTERN = "**/*Module.class";
 
 	private final ResourcePatternResolver resourcePatternResolver;
 	private final MetadataReaderFactory metadataReaderFactory;
