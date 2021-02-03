@@ -33,6 +33,7 @@ import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
@@ -125,6 +126,15 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 					scanner.scan( packages );
 				}
 		);
+	}
+
+	@Override
+	protected ClassPathBeanDefinitionScanner getClassPathBeanDefinitionScanner( DefaultListableBeanFactory beanFactory ) {
+		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner( beanFactory, true, getEnvironment() );
+		// Overwrite the default by our SharedMetadataReaderFactory
+		MetadataReaderFactory bean = beanFactory.getBean( SharedMetadataReaderFactory.BEAN_NAME, MetadataReaderFactory.class );
+		scanner.setMetadataReaderFactory( bean );
+		return scanner;
 	}
 
 	@Override
