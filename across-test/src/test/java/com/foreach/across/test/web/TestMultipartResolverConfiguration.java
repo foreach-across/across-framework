@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartResolver;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.MultipartConfigElement;
@@ -32,8 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
@@ -91,6 +91,7 @@ public class TestMultipartResolverConfiguration
 
 			Filter multipartFilter = registration.getFilter();
 			HttpServletRequest request = mock( HttpServletRequest.class );
+			when( request.getDispatcherType() ).thenReturn( DispatcherType.REQUEST );
 			HttpServletResponse response = mock( HttpServletResponse.class );
 
 			multipartFilter.doFilter( request, response, mock( FilterChain.class ) );
