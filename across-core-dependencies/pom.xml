@@ -60,7 +60,8 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<!-- Overriden from spring-boot-dependencies -->
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<liquibase.version>4.2.2</liquibase.version>
+		<!-- https://github.com/liquibase/liquibase/issues/1639 -->
+		<liquibase.version>4.3.1</liquibase.version>
 		<!-- Across properties -->
 		<revision>5.2.0-SNAPSHOT</revision>
 		<maven.deploy.skip>false</maven.deploy.skip>
@@ -102,14 +103,19 @@
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
 	            <version>${testcontainers-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+	            <type>pom</type>
+	            <scope>import</scope>
             </dependency>
 			<!-- Non-spring managed -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-collections4</artifactId>
 				<version>${commons-collections4.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-core</artifactId>
+				<version>${liquibase.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.mattbertolini</groupId>
