@@ -54,14 +54,16 @@ final class ApplicationAutoConfigurationPackage implements ImportBeanDefinitionR
 
 		BeanDefinition beanDefinition = registry.getBeanDefinition( BEAN );
 		ConstructorArgumentValues constructorArguments = beanDefinition.getConstructorArgumentValues();
-		String[] existing = (String[]) constructorArguments.getIndexedArgumentValue( 0, String[].class ).getValue();
 
-		if ( existing.length > 0 ) {
-			applicationModulePackage = existing[0] + ".application";
-			LOG.info( "Disabling @AutoConfigurationPackage on the root package - Across applications support only the application module" );
-			constructorArguments.addIndexedArgumentValue( 0, new String[0] );
+		if ( constructorArguments.hasIndexedArgumentValue( 0 ) ) {
+			String[] existing = (String[]) constructorArguments.getIndexedArgumentValue( 0, String[].class ).getValue();
+			if ( existing != null && existing.length > 0 ) {
+				applicationModulePackage = existing[0] + ".application";
+				LOG.info( "Disabling @AutoConfigurationPackage on the root package - Across applications support only the application module" );
+				constructorArguments.addIndexedArgumentValue( 0, new String[0] );
 
-			AcrossDynamicModulesConfiguration.verifyNoConflictingComponentScans( importingClassMetadata, existing[0] );
+				AcrossDynamicModulesConfiguration.verifyNoConflictingComponentScans( importingClassMetadata, existing[0] );
+			}
 		}
 
 		if ( registry instanceof BeanFactory ) {
