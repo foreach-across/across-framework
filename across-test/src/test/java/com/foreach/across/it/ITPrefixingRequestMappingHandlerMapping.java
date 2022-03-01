@@ -43,6 +43,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -98,12 +99,12 @@ public class ITPrefixingRequestMappingHandlerMapping
 				(RequestMappingHandlerMapping) ctx.getBean( "prefixingRequestMappingHandlerMapping" );
 		assertNotNull( requestMappingHandlerMapping );
 		Object mappingRegistry = ReflectionTestUtils.getField( requestMappingHandlerMapping, "mappingRegistry" );
-		MultiValueMap<String, LinkedList<?>> urlLookup =
-				(MultiValueMap<String, LinkedList<?>>) ReflectionTestUtils.getField( mappingRegistry, "urlLookup" );
+		MultiValueMap<String, ArrayList<?>> pathLookup =
+				(MultiValueMap<String, ArrayList<?>>) ReflectionTestUtils.getField( mappingRegistry, "pathLookup" );
 		for ( String expectedPath : expectedPaths ) {
 
-			LinkedList<?> mappings = (LinkedList<?>) urlLookup.get( expectedPath );
-			assertNotNull( mappings, "Could not find url " + expectedPath + " in urlLookup" );
+			ArrayList<?> mappings = (ArrayList<?>) pathLookup.get( expectedPath );
+			assertNotNull( mappings, "Could not find url " + expectedPath + " in pathLookup" );
 			HttpServletRequest request = new MockHttpServletRequest( "GET", expectedPath );
 			HandlerExecutionChain chain = requestMappingHandlerMapping.getHandler( request );
 			assertNotNull( chain );
