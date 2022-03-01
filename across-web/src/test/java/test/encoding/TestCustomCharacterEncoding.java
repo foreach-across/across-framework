@@ -36,6 +36,6 @@ public class TestCustomCharacterEncoding extends AbstractWebIntegrationTest
 
 	@Test
 	public void filterShouldBeRegistered() {
-		assertEquals( "true", get( "filtered?name=characterEncodingFilter" ) );
+		assertEquals( "true", get( "/filtered?name=characterEncodingFilter" ) );
 	}
 }
