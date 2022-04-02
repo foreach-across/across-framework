@@ -62,7 +62,7 @@
 	    <!-- Overriden from spring-boot-dependencies -->
 	    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 	    <!-- Across properties -->
-	    <revision>5.1.1.RELEASE</revision>
+	    <revision>5.1.2-SNAPSHOT</revision>
 	    <maven.deploy.skip>false</maven.deploy.skip>
 	    <foreach.common.version>1.1</foreach.common.version>
 	    <commons-collections4.version>4.4</commons-collections4.version>
@@ -71,6 +71,9 @@
 	    <commons-io.version>2.6</commons-io.version>
 	    <oracle-ojdbc6.version>11.2.0</oracle-ojdbc6.version>
 	    <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+	    <!-- To deal with: https://spring.io/blog/2022/03/31/spring-framework-rce-early-announcement: -->
+	    <spring-framework.version>5.2.20.RELEASE</spring-framework.version>
+	    <tomcat.version>9.0.62</tomcat.version>
     </properties>
 
 	<repositories>
