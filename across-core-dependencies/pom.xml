@@ -18,7 +18,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<!-- For pom parent/child relations, see: https://lucid.app/lucidchart/6db459e7-417a-4761-9bc5-824ebb411ff5/edit -->
+
 	<parent>
+		<!--
+		When upgrading, review the overridden properties below, so we don't accidentally stay at an old version of a dependency.
+		Note that this parent declaration is duplicated in across-application-parent (in the across-platform repository),
+		which must be kept in sync with the version here.
+		One reason this pom probably cannot inherit from spring-boot-starter-parent, is that spring-boot-starter-parent
+		defines a non-standard resource delimiter for the maven-resources-plugin.
+		-->
 		<artifactId>spring-boot-dependencies</artifactId>
 		<groupId>org.springframework.boot</groupId>
 		<version>2.3.12.RELEASE</version>
@@ -59,8 +68,7 @@
 	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	    <maven.compiler.source>${java.version}</maven.compiler.source>
 	    <maven.compiler.target>${java.version}</maven.compiler.target>
-	    <!-- Overriden from spring-boot-dependencies -->
-	    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+
 	    <!-- Across properties -->
 	    <revision>5.1.2-SNAPSHOT</revision>
 	    <maven.deploy.skip>false</maven.deploy.skip>
@@ -69,8 +77,20 @@
 	    <testcontainers-bom.version>1.14.3</testcontainers-bom.version>
 	    <liquibase-slf4j.version>2.0.0</liquibase-slf4j.version>
 	    <commons-io.version>2.6</commons-io.version>
+	    <!-- Spring Boot does define: ojdbc.version, but Marc explicitly configured an older version below: -->
 	    <oracle-ojdbc6.version>11.2.0</oracle-ojdbc6.version>
+
+	    <!-- Across-specific maven plugin properties need to be duplicated in across-application-parent (across-platform repo) -->
+	    <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 	    <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+
+	    <!--
+	    Overridden from spring-boot-dependencies:
+	    - These need to be duplicated in across-application-parent (across-platform repo), because that pom does not inherit from this one.
+	    - With every upgrade of Spring Boot, these need to be reviewed, so we don't accidentally stay at an old version of a dependency.
+	    -->
+	    <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
+	    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 	    <!-- https://www.cve.org/CVERecord?id=CVE-2022-22965: Spring remote code execution vulnerability: -->
 	    <!-- https://spring.io/blog/2022/03/31/spring-framework-rce-early-announcement: -->
 	    <spring-framework.version>5.2.20.RELEASE</spring-framework.version>
@@ -190,6 +210,11 @@
 				</plugin>
 				<!-- Non-spring managed plugins -->
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>${maven-gpg-plugin.version}</version>
+				</plugin>
+				<plugin>
 					<groupId>org.projectlombok</groupId>
 					<artifactId>lombok-maven-plugin</artifactId>
 					<version>${lombok.version}.0</version>
@@ -241,7 +266,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>${maven-gpg-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -274,7 +298,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>${maven-gpg-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
