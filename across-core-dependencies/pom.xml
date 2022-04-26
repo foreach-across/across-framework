@@ -62,7 +62,7 @@
 	    <!-- Overriden from spring-boot-dependencies -->
 	    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 	    <!-- Across properties -->
-	    <revision>5.1.3-SNAPSHOT</revision>
+	    <revision>5.1.3.RELEASE</revision>
 	    <maven.deploy.skip>false</maven.deploy.skip>
 	    <foreach.common.version>1.1</foreach.common.version>
 	    <commons-collections4.version>4.4</commons-collections4.version>
