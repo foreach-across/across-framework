@@ -52,28 +52,33 @@
 		<url>https://bitbucket.org/beforeach/across</url>
 	</scm>
 
-	<properties>
-		<!-- Maven/IDE specific -->
-		<java.version>1.8</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<!-- Overriden from spring-boot-dependencies -->
-		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<!-- https://github.com/liquibase/liquibase/issues/1639 -->
-		<liquibase.version>4.3.1</liquibase.version>
-		<!-- Across properties -->
-		<revision>5.2.1-SNAPSHOT</revision>
-		<maven.deploy.skip>false</maven.deploy.skip>
-		<foreach.common.version>1.1</foreach.common.version>
-		<commons-collections4.version>4.4</commons-collections4.version>
-		<testcontainers-bom.version>1.15.0</testcontainers-bom.version>
-		<liquibase-slf4j.version>2.0.0</liquibase-slf4j.version>
-		<commons-io.version>2.6</commons-io.version>
-		<oracle-ojdbc6.version>11.2.0</oracle-ojdbc6.version>
-		<maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-	</properties>
+    <properties>
+        <!-- Maven/IDE specific -->
+        <java.version>1.8</java.version>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	    <maven.compiler.source>${java.version}</maven.compiler.source>
+	    <maven.compiler.target>${java.version}</maven.compiler.target>
+	    <!-- Overriden from spring-boot-dependencies -->
+	    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+	    <!-- Across properties -->
+	    <revision>5.2.1-SNAPSHOT</revision>
+	    <maven.deploy.skip>false</maven.deploy.skip>
+	    <foreach.common.version>1.1</foreach.common.version>
+	    <commons-collections4.version>4.4</commons-collections4.version>
+	    <testcontainers-bom.version>1.15.0</testcontainers-bom.version>
+	    <liquibase-slf4j.version>2.0.0</liquibase-slf4j.version>
+	    <commons-io.version>2.6</commons-io.version>
+	    <oracle-ojdbc6.version>11.2.0</oracle-ojdbc6.version>
+	    <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+	    <!-- https://github.com/liquibase/liquibase/issues/1639 -->
+	    <liquibase.version>4.3.1</liquibase.version>
+	    <!-- https://www.cve.org/CVERecord?id=CVE-2022-22965: Spring remote code execution vulnerability: -->
+	    <!-- https://spring.io/blog/2022/03/31/spring-framework-rce-early-announcement: -->
+	    <spring-framework.version>5.3.20</spring-framework.version>
+	    <!-- https://spring.io/blog/2022/04/01/spring-framework-rce-mitigation-alternative: -->
+	    <tomcat.version>10.0.21</tomcat.version>
+    </properties>
 
 	<repositories>
 		<repository>
