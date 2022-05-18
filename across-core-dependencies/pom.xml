@@ -199,7 +199,11 @@
 				<plugin>
 					<groupId>org.projectlombok</groupId>
 					<artifactId>lombok-maven-plugin</artifactId>
+					<!-- Spring Boot now comes with Lombok 1.18.22, but there is no corresponding version
+					     of the (de)lombok-maven-plugin, so we stay with the old version for now:
 					<version>${lombok.version}.0</version>
+					-->
+					<version>1.18.20.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
