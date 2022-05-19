@@ -6,6 +6,6 @@ alias mci='mvn clean install'
 alias miwt='mvn install -DskipTests'
 alias mciwt='mvn clean install -DskipTests'
 
-export JAVA8_HOME=~/.jdks/temurin-1.8.0_322
+export JAVA8_HOME=~/.jdks/temurin-1.8.0_332
 export JAVA_HOME=${JAVA8_HOME}
 export PATH=$JAVA_HOME/bin:$PATH
