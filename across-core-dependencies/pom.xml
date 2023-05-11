@@ -21,7 +21,7 @@
 	<parent>
 		<artifactId>spring-boot-dependencies</artifactId>
 		<groupId>org.springframework.boot</groupId>
-		<version>2.4.3</version>
+		<version>2.4.13</version>
 		<relativePath/>
 	</parent>
 
@@ -73,10 +73,7 @@
 		<commons-io.version>2.6</commons-io.version>
 		<oracle-ojdbc6.version>11.2.0</oracle-ojdbc6.version>
 		<maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-		<!-- https://www.cve.org/CVERecord?id=CVE-2022-22965: Spring remote code execution vulnerability: -->
-		<!-- https://spring.io/blog/2022/03/31/spring-framework-rce-early-announcement: -->
-		<!--spring-framework.version>5.2.21.RELEASE</spring-framework.version-->
-		<!-- https://spring.io/blog/2022/04/01/spring-framework-rce-mitigation-alternative: -->
+		<spring-framework.version>5.3.27</spring-framework.version>
 		<tomcat.version>9.0.75</tomcat.version>
 	</properties>
 

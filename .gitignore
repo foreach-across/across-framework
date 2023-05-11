@@ -1,6 +1,7 @@
 .DS_Store
 target
 .idea/workspace.xml
+.idea/jarRepositories.xml
 .idea/excludeFromValidation
 .idea/libraries
 .idea/template/template_variable_settings.xml
