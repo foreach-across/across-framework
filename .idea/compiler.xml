@@ -39,6 +39,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="across-base" options="" />
       <module name="across-core" options="" />
+      <module name="across-core-dependencies" options="" />
       <module name="across-experimental" options="" />
       <module name="across-standard-module-parent" options="" />
       <module name="across-test" options="" />

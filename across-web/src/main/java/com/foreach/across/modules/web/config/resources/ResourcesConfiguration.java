@@ -175,7 +175,7 @@ public class ResourcesConfiguration implements WebMvcConfigurer
 
 		@Bean
 		public ResourceUrlProvider mvcResourceUrlProvider() {
-			return new ResourceUrlProvider();
+			return new AcrossResourceUrlProvider();
 		}
 
 		@Bean
