@@ -75,6 +75,13 @@
 		<maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
 		<spring-framework.version>5.3.27</spring-framework.version>
 		<tomcat.version>9.0.75</tomcat.version>
+		<flatten-maven-plugin.version>1.4.1</flatten-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+		<!-- Spring Boot now comes with Lombok 1.18.22, but there is no corresponding version
+			 of the (de)lombok-maven-plugin, so we stay with the old version for now:
+		<version>${lombok.version}.0</version>
+		-->
+		<lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
 	</properties>
 
 	<repositories>
@@ -103,13 +110,13 @@
 				<artifactId>across-web</artifactId>
 				<version>${revision}</version>
 			</dependency>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-	            <version>${testcontainers-bom.version}</version>
-	            <type>pom</type>
-	            <scope>import</scope>
-            </dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>testcontainers-bom</artifactId>
+				<version>${testcontainers-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<!-- Non-spring managed -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -194,9 +201,19 @@
 				</plugin>
 				<!-- Non-spring managed plugins -->
 				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>flatten-maven-plugin</artifactId>
+					<version>${flatten-maven-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco-maven-plugin.version}</version>
+				</plugin>
+				<plugin>
 					<groupId>org.projectlombok</groupId>
 					<artifactId>lombok-maven-plugin</artifactId>
-					<version>${lombok.version}.0</version>
+					<version>${lombok-maven-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
