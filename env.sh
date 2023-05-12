@@ -3,7 +3,7 @@ export JAVA_HOME=${JAVA8_HOME}
 export PATH=$JAVA_HOME/bin:$PATH
 
 # Keep this in sync with across-bamboo-specs/docker-compose-ax-5.yml
-export MAVEN_HOME=~/tools/apache-maven-3.5.2
+export MAVEN_HOME=~/tools/apache-maven-3.8.6
 export PATH=$MAVEN_HOME/bin:$PATH
 
 echo "Warning: Across is still using old plugins that are not multi-thread safe"
