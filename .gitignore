@@ -9,3 +9,11 @@ target
 pom.xml.versionsBackup
 .flattened-pom.xml
 *~
+
+# Maven:
+.effective-pom.xml
+.dependency-tree.txt
+.foreach-deps.txt
+
+# Emacs:
+*~
