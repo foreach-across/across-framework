@@ -220,8 +220,10 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 
 			if ( typeInfo != null ) {
 				boolean hasCustomCondition = info.getCustomCondition() != null || typeInfo.getCustomCondition() != null;
-				boolean hasNoPatterns = info.getPatternsCondition().getPatterns().isEmpty()
-						&& typeInfo.getPatternsCondition().getPatterns().isEmpty();
+				boolean hasNoPatterns = info.getPatternsCondition() == null
+						|| typeInfo.getPatternsCondition() == null
+						|| (info.getPatternsCondition().getPatterns().isEmpty()
+								&& typeInfo.getPatternsCondition().getPatterns().isEmpty());
 
 				info = typeInfo.combine( info );
 

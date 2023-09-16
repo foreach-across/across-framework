@@ -276,10 +276,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <!--
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <systemPropertyVariables>
+                        <spring.main.allow-circular-references>true</spring.main.allow-circular-references>
+                    </systemPropertyVariables>
                 </configuration>
+                -->
                 <executions>
                     <execution>
                         <goals>

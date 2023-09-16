@@ -276,9 +276,14 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+				<!--
 				<configuration>
 					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+					<systemPropertyVariables>
+						<spring.main.allow-circular-references>true</spring.main.allow-circular-references>
+					</systemPropertyVariables>
 				</configuration>
+				-->
 				<executions>
 					<execution>
 						<goals>
@@ -298,6 +303,13 @@
 						<version>${junit-jupiter.version}</version>
 					</dependency>
 				</dependencies>
+<!--
+				<configuration>
+					<systemPropertyVariables>
+						<spring.main.allow-circular-references>true</spring.main.allow-circular-references>
+					</systemPropertyVariables>
+				</configuration>
+-->
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
