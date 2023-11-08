@@ -73,8 +73,8 @@
 		<commons-io.version>2.11.0</commons-io.version>
 		<!--oracle-ojdbc6.version>11.2.0</oracle-ojdbc6.version-->
 		<maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
-		<spring-framework.version>5.3.27</spring-framework.version>
-		<tomcat.version>9.0.75</tomcat.version>
+		<spring-framework.version>5.3.30</spring-framework.version>
+		<tomcat.version>9.0.82</tomcat.version>
 		<flatten-maven-plugin.version>1.4.1</flatten-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
 		<!-- Spring Boot now comes with Lombok 1.18.22, but there is no corresponding version
