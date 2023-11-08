@@ -281,6 +281,7 @@
 					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
 					<systemPropertyVariables>
 						<spring.main.allow-circular-references>true</spring.main.allow-circular-references>
+						<spring.mvc.pathmatch.matching-strategy>ant-path-matcher</spring.mvc.pathmatch.matching-strategy>
 					</systemPropertyVariables>
 				</configuration>
 				-->
@@ -307,6 +308,7 @@
 				<configuration>
 					<systemPropertyVariables>
 						<spring.main.allow-circular-references>true</spring.main.allow-circular-references>
+						<spring.mvc.pathmatch.matching-strategy>ant-path-matcher</spring.mvc.pathmatch.matching-strategy>
 					</systemPropertyVariables>
 				</configuration>
 -->

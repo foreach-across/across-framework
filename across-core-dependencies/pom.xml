@@ -208,6 +208,7 @@
 					<configuration>
 						<systemPropertyVariables>
 							<spring.main.allow-circular-references>true</spring.main.allow-circular-references>
+							<spring.mvc.pathmatch.matching-strategy>ant-path-matcher</spring.mvc.pathmatch.matching-strategy>
 						</systemPropertyVariables>
 					</configuration>
 				</plugin>
@@ -218,7 +219,10 @@
 					<version>${maven-surefire-plugin.version}</version>
 					<configuration>
 						<systemPropertyVariables>
+							<!-- Use backward compatibility settings as documented in the release notes:
+							     https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.6-Release-Notes -->
 							<spring.main.allow-circular-references>true</spring.main.allow-circular-references>
+							<spring.mvc.pathmatch.matching-strategy>ant-path-matcher</spring.mvc.pathmatch.matching-strategy>
 						</systemPropertyVariables>
 					</configuration>
 				</plugin>
