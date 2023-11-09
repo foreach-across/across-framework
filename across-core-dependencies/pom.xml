@@ -76,7 +76,7 @@
 		<spring-framework.version>5.3.30</spring-framework.version>
 		<tomcat.version>9.0.82</tomcat.version>
 		<flatten-maven-plugin.version>1.4.1</flatten-maven-plugin.version>
-		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
 		<!-- Spring Boot now comes with Lombok 1.18.22, but there is no corresponding version
 			 of the (de)lombok-maven-plugin, so we stay with the old version for now:
 		<version>${lombok.version}.0</version>
