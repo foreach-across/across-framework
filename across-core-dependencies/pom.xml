@@ -62,7 +62,7 @@
 		<!-- Overriden from spring-boot-dependencies -->
 		<maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
 		<!-- https://github.com/liquibase/liquibase/issues/1639 -->
-		<liquibase.version>4.9.1</liquibase.version>
+		<liquibase.version>4.17.0</liquibase.version>
 		<!-- Across properties -->
 		<revision>5.3-SNAPSHOT</revision>
 		<maven.deploy.skip>false</maven.deploy.skip>
@@ -277,6 +277,11 @@
 								<goals>
 									<goal>sign</goal>
 								</goals>
+								<configuration>
+									<keyname>${env.ACROSS_GPG_KEY_NAME}</keyname>
+									<passphrase>${env.ACROSS_GPG_PASSPHRASE}</passphrase>
+									<defaultKeyring>true</defaultKeyring>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
@@ -310,6 +315,11 @@
 								<goals>
 									<goal>sign</goal>
 								</goals>
+								<configuration>
+									<keyname>${env.ACROSS_GPG_KEY_NAME}</keyname>
+									<passphrase>${env.ACROSS_GPG_PASSPHRASE}</passphrase>
+									<defaultKeyring>true</defaultKeyring>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>

@@ -24,15 +24,6 @@
         <module name="across-web" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="across-base" target="1.8" />
-      <module name="across-core" target="1.8" />
-      <module name="across-core-dependencies" target="1.8" />
-      <module name="across-experimental" target="1.8" />
-      <module name="across-standard-module-parent" target="1.8" />
-      <module name="across-test" target="1.8" />
-      <module name="across-web" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:unchecked" />

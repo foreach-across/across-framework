@@ -8,6 +8,7 @@
       <item index="3" class="java.lang.String" itemvalue="org.springframework.stereotype.Component" />
     </list>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/demo-web" />
     <file type="web" url="file://$PROJECT_DIR$/test-web" />
@@ -52,7 +53,10 @@
   <component name="ProjectResources">
     <resource url="http://www.thymeleaf.org" location="$MAVEN_REPOSITORY$/org/thymeleaf/thymeleaf/2.1.2.RELEASE/thymeleaf-2.1.2.RELEASE.jar!/org/thymeleaf/dtd/standard/xhtml5-legacy-wildcard.dtd" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/target" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="jpab" />
   </component>
 </project>
