@@ -60,7 +60,8 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<!-- Overriden from spring-boot-dependencies -->
-		<maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
+		<maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>3.2.2</maven-failsafe-plugin.version>
 		<!-- https://github.com/liquibase/liquibase/issues/1639 -->
 		<liquibase.version>4.17.0</liquibase.version>
 		<!-- Across properties -->
@@ -202,11 +203,6 @@
 					</configuration>
 				</plugin>
 				<!-- Non-spring managed plugins -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>${maven-surefire-plugin.version}</version>
-				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>flatten-maven-plugin</artifactId>
