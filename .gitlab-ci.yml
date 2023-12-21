@@ -77,7 +77,6 @@ cache:
     reports:
       junit:
         - '**/target/surefire-reports/TEST-*.xml'
-        - '**/target/failsafe-reports/TEST-*.xml'
 #  except:
 #    variables:
 #      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -113,7 +112,6 @@ verify:jdk8:
     when: always
     reports:
       junit:
-        - '**/target/surefire-reports/TEST-*.xml'
         - '**/target/failsafe-reports/TEST-*.xml'
 
 itest:h2:
