@@ -4,6 +4,7 @@ ch.qos.logback:logback-core:jar:1.2.7:compile
 com.fasterxml:classmate:jar:1.5.1:compile
 com.foreach.libs:common-concurrent:jar:1.1:compile
 com.google.code.findbugs:jsr305:jar:3.0.2:provided
+com.opencsv:opencsv:jar:5.6:compile
 com.sun.activation:jakarta.activation:jar:1.2.2:test
 com.sun.istack:istack-commons-runtime:jar:3.0.12:test
 com.zaxxer:HikariCP:jar:3.4.5:test
@@ -16,7 +17,9 @@ javax.servlet:javax.servlet-api:jar:4.0.1:provided
 javax.xml.bind:jaxb-api:jar:2.3.1:compile
 net.bytebuddy:byte-buddy-agent:jar:1.10.22:test
 net.bytebuddy:byte-buddy:jar:1.10.22:test
+org.apache.commons:commons-collections4:jar:4.4:compile
 org.apache.commons:commons-lang3:jar:3.11:compile
+org.apache.commons:commons-text:jar:1.9:compile
 org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
 org.apache.logging.log4j:log4j-to-slf4j:jar:2.13.3:compile
 org.apiguardian:apiguardian-api:jar:1.1.0:test
@@ -41,7 +44,7 @@ org.junit.jupiter:junit-jupiter-api:jar:5.7.2:test
 org.junit.jupiter:junit-jupiter-engine:jar:5.7.2:test
 org.junit.platform:junit-platform-commons:jar:1.7.2:test
 org.junit.platform:junit-platform-engine:jar:1.7.2:test
-org.liquibase:liquibase-core:jar:4.9.1:compile
+org.liquibase:liquibase-core:jar:4.17.0:compile
 org.mockito:mockito-core:jar:3.6.28:test
 org.mockito:mockito-junit-jupiter:jar:3.6.28:test
 org.objenesis:objenesis:jar:3.1:test

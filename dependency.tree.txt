@@ -1,4 +1,4 @@
-com.foreach.across:across-base:pom:5.2.2.RELEASE
+com.foreach.across:across-base:pom:5.3-SNAPSHOT
 +- org.junit.jupiter:junit-jupiter-engine:jar:5.7.2:test
 |  +- org.apiguardian:apiguardian-api:jar:1.1.0:test
 |  +- org.junit.platform:junit-platform-engine:jar:1.7.2:test
