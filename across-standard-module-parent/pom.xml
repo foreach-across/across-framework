@@ -263,6 +263,23 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>delombok</goal>
+                                </goals>
+                                <configuration>
+                                    <addOutputDirectory>false</addOutputDirectory>
+                                    <outputDirectory>target/delombok</outputDirectory>
+                                    <sourceDirectory>src/main/java</sourceDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
@@ -277,7 +294,13 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <configuration>
+                                    <sourcepath>
+                                        target/delombok;target/generated-sources
+                                    </sourcepath>
+                                </configuration>
                             </execution>
+                            <!--
                             <execution>
                                 <id>aggregate</id>
                                 <phase>prepare-package</phase>
@@ -291,16 +314,18 @@
                                     <destDir>${project.version}/javadoc</destDir>
                                 </configuration>
                             </execution>
+                            -->
                         </executions>
                     </plugin>
+                    <!--
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <inherited>true</inherited>
                         <configuration>
                             <finalName>${project.artifactId}</finalName>
-                            <!-- assemblies are only made for javadoc, so skip if we are skipping javadoc -->
+                            &lt;!&ndash; assemblies are only made for javadoc, so skip if we are skipping javadoc &ndash;&gt;
                             <skipAssembly>${maven.javadoc.skip}</skipAssembly>
-                            <!-- Place it under root/target folder -->
+                            &lt;!&ndash; Place it under root/target folder &ndash;&gt;
                             <outputDirectory>../target</outputDirectory>
                             <descriptors>
                                 <descriptor>site.xml</descriptor>
@@ -309,15 +334,16 @@
                         <executions>
                             <execution>
                                 <id>make-assembly</id>
-                                <!-- this is used for inheritance merges -->
+                                &lt;!&ndash; this is used for inheritance merges &ndash;&gt;
                                 <phase>package</phase>
-                                <!-- bind to the packaging phase -->
+                                &lt;!&ndash; bind to the packaging phase &ndash;&gt;
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
+                    -->
                 </plugins>
             </build>
         </profile>
