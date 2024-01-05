@@ -30,8 +30,9 @@
 	<version>${revision}</version>
 	<packaging>pom</packaging>
 
-	<name>Across Core Dependencies.</name>
-	<description>Across Core Dependencies.</description>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>Across Core Dependencies</description>
+
 	<url>https://across.dev</url>
 	<licenses>
 		<license>
