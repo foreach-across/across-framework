@@ -104,7 +104,29 @@
 		                      columnDataType="java.sql.Types.VARCHAR(120)"/>
 	</changeSet>
 
-	<changeSet id="201406141453B" author="arne">
+	<!--
+	https://learn.microsoft.com/en-us/azure/mysql/flexible-server/whats-new#august-2023
+	https://learn.microsoft.com/en-us/azure/mysql/flexible-server/concepts-limitations#generated-invisible-primary-keys
+	https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_sql_generate_invisible_primary_key
+	-->
+	<changeSet id="201406141453B-mysql" author="dvsp" dbms="mysql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<primaryKeyExists tableName="ACROSSMODULES" primaryKeyName="PK_ACROSS_MODULES"/>
+			</not>
+		</preConditions>
+
+		<comment>Migrate old table: create primary key on id columns (Azure MySQL Flexible Server)</comment>
+
+		<!-- Drop/add PK must be done in one command when sql_generate_invisible_primary_key=ON: -->
+		<sql>
+			alter table ACROSSMODULES
+				drop primary key,
+				add constraint PK_ACROSS_MODULES primary key (module_id, installer_id)
+		</sql>
+	</changeSet>
+
+	<changeSet id="201406141453B" author="arne" dbms="!mysql">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<primaryKeyExists tableName="ACROSSMODULES" primaryKeyName="PK_ACROSS_MODULES"/>
