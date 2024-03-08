@@ -33,7 +33,7 @@
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Across Core Dependencies</description>
 
-	<url>https://across.dev</url>
+	<url>https://foreach-across.github.io/</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
@@ -50,7 +50,7 @@
 	</developers>
 
 	<scm>
-		<url>https://github.com/foreachos/across-framework</url>
+		<url>https://github.com/foreach-across/across-framework</url>
 	</scm>
 
 	<properties>
@@ -76,9 +76,9 @@
 		<liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
 		<commons-io.version>2.11.0</commons-io.version>
 		<maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
-		<spring-framework.version>5.3.31</spring-framework.version>
+		<spring-framework.version>5.3.32</spring-framework.version>
 		<!--spring-security.version>5.6.12</spring-security.version-->
-		<tomcat.version>9.0.84</tomcat.version>
+		<tomcat.version>9.0.86</tomcat.version>
 		<flatten-maven-plugin.version>1.4.1</flatten-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
 		<!-- Spring Boot now comes with Lombok 1.18.22, but there is no corresponding version

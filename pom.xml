@@ -36,7 +36,7 @@
 		configuration files. Every module defines its own Spring application context and can share one or more beans
 		with other modules.
 	</description>
-	<url>https://across.dev</url>
+	<url>https://foreach-across.github.io/</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
@@ -73,7 +73,7 @@
 	</modules>
 
 	<scm>
-		<url>https://github.com/foreachos/across-framework</url>
+		<url>https://github.com/foreach-across/across-framework</url>
 	</scm>
 
 	<dependencyManagement>

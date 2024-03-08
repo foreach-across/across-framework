@@ -3,6 +3,6 @@
  //_\\ / __| '__/ _ \/ __/ __|
 /  _  \ (__| | | (_) \__ \__ \
 \_/ \_/\___|_|  \___/|___/___/
-           https://across.dev
+https://foreach-across.github.io
 
 :: Powered by Spring Boot :: ${spring-boot.version}
