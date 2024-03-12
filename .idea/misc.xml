@@ -31,6 +31,7 @@
         <option value="$PROJECT_DIR$/standard-module-bom/pom.xml" />
       </set>
     </option>
+    <option name="workspaceImportForciblyTurnedOn" value="true" />
   </component>
   <component name="ModuleEditorState">
     <option name="LAST_EDITED_MODULE_NAME" />
