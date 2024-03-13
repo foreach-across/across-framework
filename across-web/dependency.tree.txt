@@ -1,4 +1,4 @@
-com.foreach.across:across-web:jar:5.4-SNAPSHOT
+com.foreach.across:across-web:jar:5.4.2
 +- org.springframework.boot:spring-boot-starter-web:jar:2.6.15:compile
 |  +- org.springframework.boot:spring-boot-starter:jar:2.6.15:compile
 |  |  \- org.springframework.boot:spring-boot-starter-logging:jar:2.6.15:compile
@@ -16,7 +16,7 @@ com.foreach.across:across-web:jar:5.4-SNAPSHOT
 |  |  \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
 |  \- org.slf4j:slf4j-api:jar:1.7.36:compile
 +- org.thymeleaf.extras:thymeleaf-extras-java8time:jar:3.0.4.RELEASE:compile
-+- com.foreach.across:across-core:jar:5.4-SNAPSHOT:compile
++- com.foreach.across:across-core:jar:5.4.2:compile
 |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
 |  +- org.springframework:spring-context:jar:5.3.32:compile
 |  +- org.springframework:spring-jdbc:jar:5.3.32:compile
