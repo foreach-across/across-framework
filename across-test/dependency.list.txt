@@ -6,8 +6,8 @@ com.fasterxml.jackson.core:jackson-databind:jar:2.13.5:test
 com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.5:compile
 com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.13.5:compile
 com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.13.5:compile
-com.foreach.across:across-core:jar:5.5-SNAPSHOT:compile
-com.foreach.across:across-web:jar:5.5-SNAPSHOT:compile
+com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
+com.foreach.across:across-web:jar:dev-SNAPSHOT:compile
 com.foreach.libs:common-concurrent:jar:1.1:compile
 com.github.docker-java:docker-java-api:jar:3.3.4:compile
 com.github.docker-java:docker-java-transport-zerodep:jar:3.3.4:compile

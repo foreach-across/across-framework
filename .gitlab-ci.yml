@@ -5,3 +5,6 @@ include:
       - '/gitlab-ci/unit-tests.gitlab-ci.yml'
       - '/gitlab-ci/integration-tests.gitlab-ci.yml'
       - '/gitlab-ci/deploy.gitlab-ci.yml'
+
+variables:
+  REVISION: 5.5-SNAPSHOT

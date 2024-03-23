@@ -1,4 +1,4 @@
-com.foreach.across:across-core:jar:5.5-SNAPSHOT
+com.foreach.across:across-core:jar:dev-SNAPSHOT
 +- org.springframework.boot:spring-boot-autoconfigure:jar:2.7.18:compile
 |  \- org.springframework.boot:spring-boot:jar:2.7.18:compile
 +- org.yaml:snakeyaml:jar:1.30:compile

@@ -1,4 +1,4 @@
-com.foreach.across:across-base:pom:5.5-SNAPSHOT
+com.foreach.across:across-base:pom:dev-SNAPSHOT
 +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
 |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
 |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test

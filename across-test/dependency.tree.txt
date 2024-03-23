@@ -1,4 +1,4 @@
-com.foreach.across:across-test:jar:5.5-SNAPSHOT
+com.foreach.across:across-test:jar:dev-SNAPSHOT
 +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:compile
 |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:compile
 |  |  +- org.opentest4j:opentest4j:jar:1.2.0:compile
@@ -8,7 +8,7 @@ com.foreach.across:across-test:jar:5.5-SNAPSHOT
 +- org.junit.jupiter:junit-jupiter:jar:5.8.2:compile
 |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:compile
 |  \- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:compile
-+- com.foreach.across:across-core:jar:5.5-SNAPSHOT:compile
++- com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
 |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.7.18:compile
 |  +- org.yaml:snakeyaml:jar:1.30:compile
 |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
@@ -27,7 +27,7 @@ com.foreach.across:across-test:jar:5.5-SNAPSHOT
 |     \- com.opencsv:opencsv:jar:5.6:compile
 |        +- org.apache.commons:commons-text:jar:1.9:compile
 |        \- org.apache.commons:commons-collections4:jar:4.4:compile
-+- com.foreach.across:across-web:jar:5.5-SNAPSHOT:compile
++- com.foreach.across:across-web:jar:dev-SNAPSHOT:compile
 |  +- org.springframework.boot:spring-boot-starter-web:jar:2.7.18:compile
 |  |  +- org.springframework.boot:spring-boot-starter:jar:2.7.18:compile
 |  |  |  \- org.springframework.boot:spring-boot-starter-logging:jar:2.7.18:compile
