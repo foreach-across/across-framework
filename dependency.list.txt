@@ -14,6 +14,6 @@ org.mockito:mockito-junit-jupiter:jar:4.5.1:test
 org.objenesis:objenesis:jar:3.2:test
 org.opentest4j:opentest4j:jar:1.2.0:test
 org.projectlombok:lombok:jar:1.18.30:provided
-org.springframework:spring-core:jar:5.3.32:test
-org.springframework:spring-jcl:jar:5.3.32:test
-org.springframework:spring-test:jar:5.3.32:test
+org.springframework:spring-core:jar:5.3.33:test
+org.springframework:spring-jcl:jar:5.3.33:test
+org.springframework:spring-test:jar:5.3.33:test
