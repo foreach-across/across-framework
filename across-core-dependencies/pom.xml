@@ -93,7 +93,7 @@
 		<repository>
 			<id>across</id>
 			<name>Across Repository</name>
-			<url>https://repository.foreach.be/nexus/repository/public/</url>
+			<url>https://repository.antwerpen.io-external.com/nexus/repository/public/</url>
 		</repository>
 	</repositories>
 
@@ -341,12 +341,12 @@
 				<repository>
 					<id>across</id>
 					<name>Across Releases Repository</name>
-					<url>https://repository.foreach.be/nexus/repository/across-releases/</url>
+					<url>https://repository.antwerpen.io-external.com/nexus/repository/across-releases/</url>
 				</repository>
 				<snapshotRepository>
 					<id>across</id>
 					<name>Across Snapshot Repository</name>
-					<url>https://repository.foreach.be/nexus/repository/across-snapshots/</url>
+					<url>https://repository.antwerpen.io-external.com/nexus/repository/across-snapshots/</url>
 				</snapshotRepository>
 			</distributionManagement>
 		</profile>
