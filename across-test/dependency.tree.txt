@@ -12,10 +12,10 @@ com.foreach.across:across-test:jar:dev-SNAPSHOT
 |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.15:compile
 |  +- org.yaml:snakeyaml:jar:1.29:compile
 |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
-|  +- org.springframework:spring-context:jar:5.3.32:compile
-|  |  +- org.springframework:spring-aop:jar:5.3.32:compile
-|  |  \- org.springframework:spring-expression:jar:5.3.32:compile
-|  +- org.springframework:spring-jdbc:jar:5.3.32:compile
+|  +- org.springframework:spring-context:jar:5.3.33:compile
+|  |  +- org.springframework:spring-aop:jar:5.3.33:compile
+|  |  \- org.springframework:spring-expression:jar:5.3.33:compile
+|  +- org.springframework:spring-jdbc:jar:5.3.33:compile
 |  +- ch.qos.logback:logback-classic:jar:1.2.12:compile
 |  |  \- ch.qos.logback:logback-core:jar:1.2.12:compile
 |  +- org.slf4j:slf4j-api:jar:1.7.36:compile
@@ -37,23 +37,23 @@ com.foreach.across:across-test:jar:dev-SNAPSHOT
 |  |  +- org.springframework.boot:spring-boot-starter-json:jar:2.6.15:compile
 |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.5:compile
 |  |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.13.5:compile
-|  |  \- org.springframework:spring-web:jar:5.3.32:compile
+|  |  \- org.springframework:spring-web:jar:5.3.33:compile
 |  +- org.thymeleaf:thymeleaf-spring5:jar:3.0.15.RELEASE:compile
 |  |  \- org.thymeleaf:thymeleaf:jar:3.0.15.RELEASE:compile
 |  |     +- org.attoparser:attoparser:jar:2.0.5.RELEASE:compile
 |  |     \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
 |  +- org.thymeleaf.extras:thymeleaf-extras-java8time:jar:3.0.4.RELEASE:compile
-|  +- org.springframework:spring-webmvc:jar:5.3.32:compile
+|  +- org.springframework:spring-webmvc:jar:5.3.33:compile
 |  \- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.13.5:compile
 +- com.zaxxer:HikariCP:jar:4.0.3:compile
-+- org.springframework:spring-test:jar:5.3.32:compile
-|  \- org.springframework:spring-core:jar:5.3.32:compile
-|     \- org.springframework:spring-jcl:jar:5.3.32:compile
++- org.springframework:spring-test:jar:5.3.33:compile
+|  \- org.springframework:spring-core:jar:5.3.33:compile
+|     \- org.springframework:spring-jcl:jar:5.3.33:compile
 +- org.springframework.boot:spring-boot-test:jar:2.6.15:compile
 |  \- org.springframework.boot:spring-boot:jar:2.6.15:compile
-+- org.springframework:spring-orm:jar:5.3.32:compile
-|  +- org.springframework:spring-beans:jar:5.3.32:compile
-|  \- org.springframework:spring-tx:jar:5.3.32:compile
++- org.springframework:spring-orm:jar:5.3.33:compile
+|  +- org.springframework:spring-beans:jar:5.3.33:compile
+|  \- org.springframework:spring-tx:jar:5.3.33:compile
 +- org.hsqldb:hsqldb:jar:2.5.2:compile
 +- com.mysql:mysql-connector-j:jar:8.0.33:test
 +- org.postgresql:postgresql:jar:42.3.8:test
