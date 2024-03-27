@@ -1,1 +1,1 @@
-com.foreach.across:across-core-dependencies:pom:5.4.2
+com.foreach.across:across-core-dependencies:pom:dev-SNAPSHOT
