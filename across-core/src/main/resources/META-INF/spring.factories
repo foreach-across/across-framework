@@ -1,6 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.foreach.across.config.AcrossWebApplicationAutoConfiguration
-
 org.springframework.boot.diagnostics.FailureAnalyzer=\
   com.foreach.across.core.diagnostics.AcrossConfigurationExceptionFailureAnalyzer,\
   com.foreach.across.core.diagnostics.AcrossInstallerExceptionFailureAnalyzer,\
