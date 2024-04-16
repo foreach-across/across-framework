@@ -61,32 +61,34 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<!-- Overriden from spring-boot-dependencies -->
-		<maven-surefire-plugin.version>3.2.3</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>3.2.3</maven-failsafe-plugin.version>
-		<maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+
+		<!-- Keep in sync with across-application-parent -->
+		<!-- Overridden from spring-boot-dependencies -->
+		<liquibase.version>4.27.0</liquibase.version>
+		<logback.version>1.2.13</logback.version> <!-- Overrule 1.2.12 from Spring Boot 2.7.18, because of a CVE: https://logback.qos.ch/news.html#1.2.13 -->
+		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
+		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
 		<maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-		<!-- https://github.com/liquibase/liquibase/issues/1639 -->
-		<liquibase.version>4.17.0</liquibase.version>
+		<spring-framework.version>5.3.34</spring-framework.version>
+		<spring-security.version>5.8.12</spring-security.version>
+		<tomcat.version>9.0.87</tomcat.version>
 		<!-- Across properties -->
 		<maven.deploy.skip>false</maven.deploy.skip>
 		<foreach.common.version>1.1</foreach.common.version>
 		<commons-collections4.version>4.4</commons-collections4.version>
-		<testcontainers-bom.version>1.19.3</testcontainers-bom.version>
+		<testcontainers-bom.version>1.19.7</testcontainers-bom.version>
 		<liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
-		<commons-io.version>2.11.0</commons-io.version>
-		<maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
-		<spring-framework.version>5.3.33</spring-framework.version>
-		<spring-security.version>5.8.11</spring-security.version>
-		<tomcat.version>9.0.86</tomcat.version>
-		<flatten-maven-plugin.version>1.4.1</flatten-maven-plugin.version>
-		<jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
+		<commons-io.version>2.16.1</commons-io.version>
+		<maven-gpg-plugin.version>3.2.3</maven-gpg-plugin.version>
+		<flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
 		<!-- Spring Boot now comes with Lombok 1.18.22, but there is no corresponding version
 			 of the (de)lombok-maven-plugin, so we stay with the old version for now:
 		<version>${lombok.version}.0</version>
 		-->
 		<lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
-		<maven-artifact-plugin.version>3.5.0</maven-artifact-plugin.version>
+		<maven-artifact-plugin.version>3.5.1</maven-artifact-plugin.version>
 	</properties>
 
 	<repositories>
