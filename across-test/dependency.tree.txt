@@ -1,4 +1,4 @@
-com.foreach.across:across-test:jar:5.5.0-beta-1
+com.foreach.across:across-test:jar:5.5-SNAPSHOT
 +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:compile
 |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:compile
 |  |  +- org.opentest4j:opentest4j:jar:1.2.0:compile
@@ -8,7 +8,7 @@ com.foreach.across:across-test:jar:5.5.0-beta-1
 +- org.junit.jupiter:junit-jupiter:jar:5.8.2:compile
 |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:compile
 |  \- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:compile
-+- com.foreach.across:across-core:jar:5.5.0-beta-1:compile
++- com.foreach.across:across-core:jar:5.5-SNAPSHOT:compile
 |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.7.18:compile
 |  +- org.yaml:snakeyaml:jar:1.30:compile
 |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
@@ -26,7 +26,7 @@ com.foreach.across:across-test:jar:5.5.0-beta-1
 |     +- org.apache.commons:commons-text:jar:1.11.0:compile
 |     +- org.apache.commons:commons-collections4:jar:4.4:compile
 |     \- javax.xml.bind:jaxb-api:jar:2.3.1:compile
-+- com.foreach.across:across-web:jar:5.5.0-beta-1:compile
++- com.foreach.across:across-web:jar:5.5-SNAPSHOT:compile
 |  +- org.springframework.boot:spring-boot-starter-web:jar:2.7.18:compile
 |  |  +- org.springframework.boot:spring-boot-starter:jar:2.7.18:compile
 |  |  |  \- org.springframework.boot:spring-boot-starter-logging:jar:2.7.18:compile
@@ -63,8 +63,6 @@ com.foreach.across:across-test:jar:5.5.0-beta-1
 +- javax.servlet:javax.servlet-api:jar:4.0.1:provided
 +- org.xmlunit:xmlunit-matchers:jar:2.9.1:compile
 |  \- org.xmlunit:xmlunit-core:jar:2.9.1:compile
-|     \- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:compile
-|        \- jakarta.activation:jakarta.activation-api:jar:1.2.2:compile
 +- org.mockito:mockito-core:jar:4.5.1:compile
 |  +- net.bytebuddy:byte-buddy:jar:1.12.23:compile
 |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.23:compile
