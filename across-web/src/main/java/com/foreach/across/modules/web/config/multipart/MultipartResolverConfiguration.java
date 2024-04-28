@@ -67,10 +67,10 @@ import java.util.Collections;
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE + 1)
 @RequiredArgsConstructor
-@Configuration
-@ConditionalOnClass({ Servlet.class, StandardServletMultipartResolver.class, MultipartConfigElement.class })
-@ConditionalOnProperty(prefix = "spring.servlet.multipart", name = "enabled", matchIfMissing = true)
-@EnableConfigurationProperties(MultipartProperties.class)
+//@Configuration
+//@ConditionalOnClass({ Servlet.class, StandardServletMultipartResolver.class, MultipartConfigElement.class })
+//@ConditionalOnProperty(prefix = "spring.servlet.multipart", name = "enabled", matchIfMissing = true)
+//@EnableConfigurationProperties(MultipartProperties.class)
 public class MultipartResolverConfiguration
 {
 	public static final String FILTER_NAME = "multipartFilter";

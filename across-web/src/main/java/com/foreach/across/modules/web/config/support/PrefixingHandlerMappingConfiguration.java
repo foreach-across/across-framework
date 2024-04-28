@@ -24,7 +24,10 @@ import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 
 import java.util.Collection;
 
@@ -48,9 +51,9 @@ public abstract class PrefixingHandlerMappingConfiguration
 	 */
 	public static final int DEFAULT_ORDER_OFFSET = 100;
 
-	@Autowired
-	@Module(AcrossModule.CURRENT_MODULE)
-	private AcrossModuleInfo currentModule;
+//	@Autowired
+//	@Module(AcrossModule.CURRENT_MODULE)
+//	private AcrossModuleInfo currentModule;
 
 	@RefreshableCollection(includeModuleInternals = true)
 	private Collection<PrefixingHandlerMappingConfigurer> configurers;
@@ -82,7 +85,9 @@ public abstract class PrefixingHandlerMappingConfiguration
 	 * @return order for the handler mapping - defaults to module bootstrap index
 	 */
 	protected int getHandlerMappingOrder() {
-		return currentModule.getIndex() - DEFAULT_ORDER_OFFSET;
+		//return currentModule.getIndex() - DEFAULT_ORDER_OFFSET;
+		//return Ordered.LOWEST_PRECEDENCE;
+		return Ordered.HIGHEST_PRECEDENCE;
 	}
 
 	/**
@@ -91,11 +96,13 @@ public abstract class PrefixingHandlerMappingConfiguration
 	 * @return unique name of the mapper - defaults to module name
 	 */
 	protected String getHandlerMapperName() {
-		return currentModule.getName();
+		//return currentModule.getName();
+		return "hardcoded-module-name";
 	}
 
+/*
 	@EventListener
-	protected final void configureHandlerMapping( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
+	protected final void configureHandlerMapping(ContextRefreshedEvent event) {
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
 		PrefixingRequestMappingHandlerMapping mapping = controllerHandlerMapping();
 		String handlerMapperName = getHandlerMapperName();
@@ -109,4 +116,5 @@ public abstract class PrefixingHandlerMappingConfiguration
 		mapping.setInterceptors( interceptorRegistry.getInterceptors().toArray() );
 		mapping.reload();
 	}
+*/
 }

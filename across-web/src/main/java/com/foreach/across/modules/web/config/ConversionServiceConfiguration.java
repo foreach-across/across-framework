@@ -42,7 +42,7 @@ import org.springframework.web.servlet.handler.ConversionServiceExposingIntercep
  * @author Arne Vandamme
  * @since 1.1.2
  */
-@Configuration
+//@Configuration
 public class ConversionServiceConfiguration
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ConversionServiceConfiguration.class );

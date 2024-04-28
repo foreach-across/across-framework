@@ -24,8 +24,10 @@ import com.foreach.across.modules.web.resource.WebResourceRegistryInterceptor;
 import com.foreach.across.modules.web.template.LayoutSupportingExceptionHandlerExceptionResolver;
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -57,9 +59,10 @@ import java.util.List;
 @ModuleConfiguration(AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE)
 @Import(WebMvcAutoConfiguration.class)
 @RequiredArgsConstructor
+@Slf4j
 public class EnableWebMvcConfiguration implements WebMvcRegistrations
 {
-	private final AcrossContextBeanRegistry beanRegistry;
+	private final BeanFactory beanRegistry;
 
 	/**
 	 * Create custom request mapping handler mapping that only matches on @Controller instead of anything with @RequestMapping.
@@ -80,10 +83,16 @@ public class EnableWebMvcConfiguration implements WebMvcRegistrations
 	public ExceptionHandlerExceptionResolver getExceptionHandlerExceptionResolver() {
 		LayoutSupportingExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver = new LayoutSupportingExceptionHandlerExceptionResolver();
 
-		beanRegistry.findBeanOfTypeFromModule( AcrossWebModule.NAME, WebResourceRegistryInterceptor.class )
-		            .ifPresent( exceptionHandlerExceptionResolver::setWebResourceRegistryInterceptor );
-		beanRegistry.findBeanOfTypeFromModule( AcrossWebModule.NAME, WebTemplateInterceptor.class )
-		            .ifPresent( exceptionHandlerExceptionResolver::setWebTemplateInterceptor );
+        try {
+            exceptionHandlerExceptionResolver.setWebResourceRegistryInterceptor(beanRegistry.getBean(WebResourceRegistryInterceptor.class));
+        } catch (BeansException e) {
+            LOG.info("{} not registered.", WebResourceRegistryInterceptor.class);
+        }
+        try {
+            exceptionHandlerExceptionResolver.setWebTemplateInterceptor(beanRegistry.getBean(WebTemplateInterceptor.class));
+        } catch (BeansException e) {
+            LOG.info("{} not registered.", WebTemplateInterceptor.class);
+        }
 
 		return exceptionHandlerExceptionResolver;
 	}
@@ -98,12 +107,12 @@ public class EnableWebMvcConfiguration implements WebMvcRegistrations
 	 * @param beanRegistry to get the conversion service
 	 * @return existing instance
 	 */
-	@Bean
-	public FormattingConversionService mvcConversionService( AcrossContextBeanRegistry beanRegistry, List<WebMvcConfigurer> configurers ) {
-		FormattingConversionService conversionService = beanRegistry.getBeanFromModule( AcrossWebModule.NAME, AcrossWebModule.CONVERSION_SERVICE_BEAN );
-		configurers.forEach( c -> c.addFormatters( conversionService ) );
-		return conversionService;
-	}
+//	@Bean
+//	public FormattingConversionService mvcConversionService( BeanFactory beanRegistry, List<WebMvcConfigurer> configurers ) {
+//		FormattingConversionService conversionService = beanRegistry.getBean( AcrossWebModule.CONVERSION_SERVICE_BEAN, FormattingConversionService.class );
+//		configurers.forEach( c -> c.addFormatters( conversionService ) );
+//		return conversionService;
+//	}
 
 	/**
 	 * Inject {@link ServerProperties} for {@link ErrorMvcAutoConfiguration} to work.

@@ -56,8 +56,8 @@ public class AcrossDevelopmentMode
 	@Autowired
 	private Environment environment;
 
-	@Autowired
-	private AcrossContextInfo contextInfo;
+//	@Autowired
+//	private AcrossContextInfo contextInfo;
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -75,7 +75,7 @@ public class AcrossDevelopmentMode
 
 			Resource developmentProperties = applicationContext.getResource( propertiesResourceLocation );
 
-			registerDynamicModuleResourcesRelativeToWorkingDirectory();
+			//registerDynamicModuleResourcesRelativeToWorkingDirectory();
 
 			if ( developmentProperties.exists() ) {
 				LOG.info( "Loading development properties from {}", developmentProperties );
@@ -92,10 +92,11 @@ public class AcrossDevelopmentMode
 				}
 			}
 
-			registerEnvironmentModuleResources();
+			//registerEnvironmentModuleResources();
 		}
 	}
 
+/*
 	private void registerDynamicModuleResourcesRelativeToWorkingDirectory() {
 		File basePath = Paths.get( "src/main/resources" ).toFile();
 		if ( basePath.exists() ) {
@@ -119,6 +120,7 @@ public class AcrossDevelopmentMode
 			}
 		}
 	}
+*/
 
 	private void registerModuleProperties( Properties properties ) {
 		for ( Map.Entry<Object, Object> entry : properties.entrySet() ) {
@@ -140,7 +142,8 @@ public class AcrossDevelopmentMode
 	 * @return True if development mode is enabled on the context.
 	 */
 	public boolean isActive() {
-		return contextInfo.getContext().isDevelopmentMode();
+		//return contextInfo.getContext().isDevelopmentMode();
+		return true;
 	}
 
 	/**
@@ -174,6 +177,7 @@ public class AcrossDevelopmentMode
 	public Map<String, String> getDevelopmentLocations( String path ) {
 		Map<String, String> locations = new HashMap<>();
 
+/*
 		if ( isActive() ) {
 			for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 				String resourceKey = moduleInfo.getResourcesKey();
@@ -189,6 +193,7 @@ public class AcrossDevelopmentMode
 				}
 			}
 		}
+*/
 
 		return locations;
 	}
@@ -216,6 +221,7 @@ public class AcrossDevelopmentMode
 	public Map<String, String> getDevelopmentLocationsForResourcePath( String path ) {
 		Map<String, String> locations = new HashMap<>();
 
+/*
 		if ( isActive() ) {
 			for ( AcrossModuleInfo moduleInfo : contextInfo.getModules() ) {
 				String resourceKey = moduleInfo.getResourcesKey();
@@ -231,6 +237,7 @@ public class AcrossDevelopmentMode
 				}
 			}
 		}
+*/
 
 		return locations;
 	}

@@ -39,7 +39,8 @@ public @interface ConditionalOnDevelopmentMode
 	{
 		@Override
 		public boolean matches( ConditionContext context, AnnotatedTypeMetadata metadata ) {
-			return context.getBeanFactory().getBean( AcrossContextInfo.class ).getContext().isDevelopmentMode();
+			//return context.getBeanFactory().getBean( AcrossContextInfo.class ).getContext().isDevelopmentMode();
+			return true;
 		}
 	}
 }

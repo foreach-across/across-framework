@@ -36,9 +36,9 @@ public class ResourceVersioningProperties
 	@Autowired
 	private Environment environment;
 
-	@Autowired
-	@Module(AcrossModule.CURRENT_MODULE)
-	private AcrossModuleInfo moduleInfo;
+	//@Autowired
+	//@Module(AcrossModule.CURRENT_MODULE)
+	//private AcrossModuleInfo moduleInfo;
 
 	/**
 	 * Auto configure versioning of the default resource resolvers.
@@ -60,7 +60,7 @@ public class ResourceVersioningProperties
 
 	public String getVersion() {
 		if ( StringUtils.isEmpty( version ) ) {
-			return environment.getProperty( "build.number", moduleInfo.getVersionInfo().getVersion() );
+			//return environment.getProperty( "build.number", moduleInfo.getVersionInfo().getVersion() );
 		}
 
 		return version;
