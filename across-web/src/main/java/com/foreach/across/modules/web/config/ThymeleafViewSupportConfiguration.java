@@ -92,7 +92,8 @@ public class ThymeleafViewSupportConfiguration
 		return engine;
 	}
 
-	@PostRefresh
+	//@PostRefresh
+	@Autowired
 	public void refreshTemplateResolvers( SpringTemplateEngine engine ) {
 		if ( !refreshed ) {
 			refreshed = true;

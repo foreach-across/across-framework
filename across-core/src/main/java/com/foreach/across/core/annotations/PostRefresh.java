@@ -27,6 +27,7 @@ import java.lang.annotation.*;
  * It's perfectly possible to use both {@link org.springframework.beans.factory.annotation.Autowired}
  * and {@link PostRefresh} on the same method, in which case it will execute twice.
  */
+// TODO anything that uses this must be adapted, probably just be replacing it with @Autowired
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

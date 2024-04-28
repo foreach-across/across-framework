@@ -26,6 +26,7 @@ import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -111,11 +112,8 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	}
 
 	@EventListener
-	public void rescan( AcrossContextBootstrappedEvent event ) {
-		for ( AcrossModuleInfo moduleInfo : event.getContext().getBootstrappedModules() ) {
-			scan( moduleInfo.getApplicationContext(), false );
-		}
-		scan( event.getContext().getApplicationContext(), true );
+	public void rescan( ContextRefreshedEvent event ) {
+		scan( event.getApplicationContext(), true );
 	}
 
 	public void reload() {

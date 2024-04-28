@@ -58,7 +58,7 @@ import java.util.List;
 @Configuration
 @OrderInModule(1)
 @Import({ JacksonAutoConfiguration.class, GsonAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class, RestTemplateAutoConfiguration.class })
-class AcrossWebConfiguration implements WebMvcConfigurer
+public class AcrossWebConfiguration implements WebMvcConfigurer
 {
 	@Autowired
 	private PrefixingPathRegistry prefixingPathRegistry;

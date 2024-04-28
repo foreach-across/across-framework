@@ -22,6 +22,8 @@ import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -45,6 +47,8 @@ import java.util.Collection;
  */
 public abstract class PrefixingHandlerMappingConfiguration
 {
+	private static final Logger LOG = LoggerFactory.getLogger(PrefixingHandlerMappingConfiguration.class);
+
 	/**
 	 * Default order of the fallback handler mapping is 0.  Prefixing mappings should come before that,
 	 * preferably in module order.  The offset is the number that is subtracted from the module index.
@@ -97,10 +101,11 @@ public abstract class PrefixingHandlerMappingConfiguration
 	 */
 	protected String getHandlerMapperName() {
 		//return currentModule.getName();
-		return "hardcoded-module-name";
+		String result = "DebugWebModule"; // TODO
+		LOG.warn("Using hardcoded module name: {}", result);
+		return result;
 	}
 
-/*
 	@EventListener
 	protected final void configureHandlerMapping(ContextRefreshedEvent event) {
 		InterceptorRegistry interceptorRegistry = new InterceptorRegistry();
@@ -116,5 +121,4 @@ public abstract class PrefixingHandlerMappingConfiguration
 		mapping.setInterceptors( interceptorRegistry.getInterceptors().toArray() );
 		mapping.reload();
 	}
-*/
 }
