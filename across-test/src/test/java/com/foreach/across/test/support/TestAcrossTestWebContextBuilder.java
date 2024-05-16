@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.hamcrest.CoreMatchers.is;

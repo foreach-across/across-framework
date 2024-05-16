@@ -51,11 +51,13 @@ public class TestViewElementBuilderContextWebArgument
 		   .andExpect( status().isOk() )
 		   .andExpect( content().string(
 				   containsString(
-						   "[builderContext:builderContextA,builderContextB," +
-								   "com.foreach.across.modules.web.context.WebAppLinkBuilder," +
-								   "com.foreach.across.modules.web.resource.WebResourceRegistry," +
-								   "com.foreach.across.modules.web.support.LocalizedTextResolver," +
-								   "org.springframework.context.MessageSource]"
+						   """
+						   [builderContext:builderContextA,builderContextB,\
+						   com.foreach.across.modules.web.context.WebAppLinkBuilder,\
+						   com.foreach.across.modules.web.resource.WebResourceRegistry,\
+						   com.foreach.across.modules.web.support.LocalizedTextResolver,\
+						   org.springframework.context.MessageSource]\
+						   """
 				   )
 		   ) );
 	}

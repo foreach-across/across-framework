@@ -19,6 +19,7 @@ import com.foreach.across.boot.ConditionalOnAutoConfiguration;
 import com.foreach.across.core.context.AcrossContextUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -28,7 +29,6 @@ import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;
 import org.springframework.boot.web.server.ErrorPageRegistry;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.Ordered;
@@ -41,7 +41,7 @@ import org.springframework.core.type.AnnotationMetadata;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@Configuration
+@AutoConfiguration
 @RequiredArgsConstructor
 @ConditionalOnWebApplication
 @ConditionalOnBean(ErrorPageRegistry.class)

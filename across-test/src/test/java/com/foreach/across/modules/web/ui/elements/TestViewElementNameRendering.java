@@ -50,10 +50,12 @@ public class TestViewElementNameRendering extends AbstractViewElementTemplateTes
 
 		node.addChild( new NodeViewElement( "li" ) );
 
-		renderAndExpect( node, "<ul data-ax-dev-view-element='parent'>" +
-				"<li test='value' data-ax-dev-view-element='child'></li>" +
-				"child text" +
-				"<li></li></ul>" );
+		renderAndExpect( node, """
+				<ul data-ax-dev-view-element='parent'>\
+				<li test='value' data-ax-dev-view-element='child'></li>\
+				child text\
+				<li></li></ul>\
+				""" );
 	}
 
 	@Test
@@ -81,11 +83,13 @@ public class TestViewElementNameRendering extends AbstractViewElementTemplateTes
 
 		container.addChild( subContainer );
 		assertEquals(
-				"<!--[ax:containerName]-->one, " +
-						"<!--[ax:subContainerName]-->two, " +
-						"<!--[ax:bold]--><b data-ax-dev-view-element=\"bold\">bold text</b><!--[/ax:bold]-->" +
-						"<!--[/ax:subContainerName]-->" +
-						"<!--[/ax:containerName]-->",
+				"""
+				<!--[ax:containerName]-->one, \
+				<!--[ax:subContainerName]-->two, \
+				<!--[ax:bold]--><b data-ax-dev-view-element="bold">bold text</b><!--[/ax:bold]-->\
+				<!--[/ax:subContainerName]-->\
+				<!--[/ax:containerName]-->\
+				""",
 				render( container )
 		);
 	}

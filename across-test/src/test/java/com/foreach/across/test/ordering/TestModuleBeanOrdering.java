@@ -22,13 +22,11 @@ import com.foreach.across.test.ordering.one.ModuleOne;
 import com.foreach.across.test.ordering.two.ModuleTwo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
@@ -55,10 +53,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = TestModuleBeanOrdering.Config.class)
+@SpringJUnitConfig(classes = TestModuleBeanOrdering.Config.class)
 class TestModuleBeanOrdering
 {
 	@Autowired

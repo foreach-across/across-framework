@@ -23,8 +23,8 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +33,7 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.properties.settings.PropertiesModule;
 import test.properties.settings.SetPropertyConfig;
 
@@ -44,8 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * DevelopmentModeCondition property setting and spring expression language conditionals.
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestPropertyPlaceholders.Config.class)
+@SpringJUnitConfig(classes = TestPropertyPlaceholders.Config.class)
 @DirtiesContext
 public class TestPropertyPlaceholders
 {
@@ -123,7 +121,8 @@ public class TestPropertyPlaceholders
 	public static class Config
 	{
 		@Bean
-		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+		@DependsOnDatabaseInitialization
+		public AcrossContext acrossContext(ConfigurableApplicationContext applicationContext) throws Exception {
 			AcrossContext acrossContext = new AcrossContext( applicationContext );
 			acrossContext.setInstallerAction( InstallerAction.DISABLED );
 

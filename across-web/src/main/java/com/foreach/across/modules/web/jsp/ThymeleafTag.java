@@ -28,17 +28,20 @@ import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebExpressionContext;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.spring5.expression.ThymeleafEvaluationContext;
-import org.thymeleaf.spring5.naming.SpringContextVariableNames;
+import org.thymeleaf.spring6.expression.ThymeleafEvaluationContext;
+import org.thymeleaf.spring6.naming.SpringContextVariableNames;
 import org.thymeleaf.standard.expression.FragmentExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.tagext.TagSupport;
+import org.thymeleaf.web.IWebExchange;
+import org.thymeleaf.web.servlet.JakartaServletWebApplication;
+
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
@@ -175,9 +178,10 @@ public class ThymeleafTag extends BodyTagSupport
 			request.setAttribute( ThymeleafEvaluationContext.THYMELEAF_EVALUATION_CONTEXT_CONTEXT_VARIABLE_NAME,
 			                      evaluationContext );
 
-			context = new WebExpressionContext( configuration, request, response, pageContext.getServletContext(),
-			                                    LocaleContextHolder
-					                                    .getLocale(), new HashMap<String, Object>( 30 ) );
+			IWebExchange webExchange = JakartaServletWebApplication
+					.buildApplication( pageContext.getServletContext() ).buildExchange( request, response );
+			context = new WebExpressionContext( configuration, webExchange,
+			                                    LocaleContextHolder.getLocale(), new HashMap<>( 30 ) );
 			request.setAttribute( WebExpressionContext.class.getName(), context );
 		}
 		return context;

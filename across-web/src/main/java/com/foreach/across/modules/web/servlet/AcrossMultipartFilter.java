@@ -1,9 +1,8 @@
 package com.foreach.across.modules.web.servlet;
 
+import jakarta.annotation.PreDestroy;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.MultipartFilter;
-
-import javax.annotation.PreDestroy;
 
 public class AcrossMultipartFilter extends MultipartFilter
 {

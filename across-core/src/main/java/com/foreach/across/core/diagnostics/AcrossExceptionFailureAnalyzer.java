@@ -41,6 +41,6 @@ class AcrossExceptionFailureAnalyzer extends AbstractAcrossFailureAnalyzer<Acros
 			                      cause.getModuleBeingProcessed(), cause.getMessage() );
 
 		}
-		return String.format( "An error occurred when starting the Across context.%n%s", cause.getMessage() );
+		return  "An error occurred when starting the Across context.%n%s".formatted( cause.getMessage() );
 	}
 }

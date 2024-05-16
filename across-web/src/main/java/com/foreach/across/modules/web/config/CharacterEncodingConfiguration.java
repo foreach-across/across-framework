@@ -26,7 +26,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import javax.servlet.DispatcherType;
+import jakarta.servlet.DispatcherType;
 import java.util.Collections;
 
 /**

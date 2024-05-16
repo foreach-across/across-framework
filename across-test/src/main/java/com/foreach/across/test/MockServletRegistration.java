@@ -15,14 +15,14 @@
  */
 package com.foreach.across.test;
 
-import javax.servlet.*;
+import jakarta.servlet.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Mock version of a {@link javax.servlet.ServletRegistration.Dynamic} that does nothing but keep a number
+ * Mock version of a {@link jakarta.servlet.ServletRegistration.Dynamic} that does nothing but keep a number
  * of configured properties.  Support is limited and only intended in combination with {@link MockAcrossServletContext}.
  *
  * @author Marc Vanbrabant, Arne Vandamme

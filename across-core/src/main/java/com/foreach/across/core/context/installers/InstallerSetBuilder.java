@@ -76,8 +76,8 @@ public class InstallerSetBuilder
 		}
 
 		Collections.sort( installers, ( left, right ) -> {
-			Class<?> leftType = left instanceof Class ? (Class<?>) left : left.getClass();
-			Class<?> rightType = right instanceof Class ? (Class<?>) right : right.getClass();
+			Class<?> leftType = left instanceof Class c ? c : left.getClass();
+			Class<?> rightType = right instanceof Class c ? c : right.getClass();
 
 			int leftOrder = OrderUtils.getOrder( leftType, 0 );
 			int rightOrder = OrderUtils.getOrder( rightType, 0 );
@@ -118,8 +118,8 @@ public class InstallerSetBuilder
 	}
 
 	private Class<?> installerClass( Object installer ) {
-		if ( installer instanceof Class ) {
-			return (Class<?>) installer;
+		if ( installer instanceof Class class1 ) {
+			return class1;
 		}
 
 		return installer.getClass();

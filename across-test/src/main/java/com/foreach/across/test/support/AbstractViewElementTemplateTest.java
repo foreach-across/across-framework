@@ -24,12 +24,10 @@ import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.modules.webtest.WebTestModule;
 import com.foreach.across.test.modules.webtest.controllers.RenderViewElementController;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.XmlExpectationsHelper;
 import org.springframework.test.web.servlet.MockMvc;
@@ -52,10 +50,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * </p>
  * <p>See the {@link #renderAndExpect(Object, java.lang.String)} method.</p>
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration(value = "classpath:")
-@ContextConfiguration(classes = AbstractViewElementTemplateTest.Config.class)
+@SpringJUnitConfig(classes = AbstractViewElementTemplateTest.Config.class)
 public abstract class AbstractViewElementTemplateTest
 {
 	/**
@@ -139,8 +136,8 @@ public abstract class AbstractViewElementTemplateTest
 
 				       try {
 					       new XmlExpectationsHelper().assertXmlEqual(
-							       String.format( pattern, expectedContent ),
-							       String.format( pattern, receivedContent )
+									 pattern.formatted( expectedContent ),
+									 pattern.formatted( receivedContent )
 					       );
 				       }
 				       catch ( AssertionError | Exception e ) {

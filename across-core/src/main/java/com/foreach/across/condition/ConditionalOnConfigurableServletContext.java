@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 
 /**
  * {@link Conditional} that only matches when the application context is a web application
- * context and the {@link javax.servlet.ServletContext} that it is a part of allows customization.
+ * context and the {@link jakarta.servlet.ServletContext} that it is a part of allows customization.
  *
  * @author Arne Vandamme
  * @since 2.0.0

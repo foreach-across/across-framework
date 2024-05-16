@@ -37,7 +37,7 @@ public class TestAcrossConfigurationExceptionFailureAnalyzer
 		FailureAnalysis analysis = analyzer.analyze( null, ae );
 		assertThat( analysis.getAction() ).isNull();
 		assertThat( analysis.getDescription() )
-				.isEqualTo( String.format( "A configuration problem was detected on the Across context.%nsomething happened" ) );
+				.isEqualTo(  "A configuration problem was detected on the Across context.%nsomething happened".formatted() );
 	}
 
 	@Test
@@ -48,7 +48,7 @@ public class TestAcrossConfigurationExceptionFailureAnalyzer
 		FailureAnalysis analysis = analyzer.analyze( null, ae );
 		assertThat( analysis.getAction() ).isNull();
 		assertThat( analysis.getDescription() )
-				.isEqualTo( String.format( "A configuration problem with module MyModule was detected.%nsomething happened" ) );
+				.isEqualTo(  "A configuration problem with module MyModule was detected.%nsomething happened".formatted() );
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class TestAcrossConfigurationExceptionFailureAnalyzer
 		FailureAnalysis analysis = analyzer.analyze( null, ae );
 		assertThat( analysis.getAction() ).isNull();
 		assertThat( analysis.getDescription() )
-				.startsWith( String.format( "A configuration problem was detected on the Across context.%nsomething happened" ) )
+				.startsWith(  "A configuration problem was detected on the Across context.%nsomething happened".formatted() )
 				.contains( "Stacktrace:" );
 	}
 }

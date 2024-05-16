@@ -58,10 +58,12 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 		renderAndExpect(
 				table,
-				"<table>" +
-						"<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>" +
-						"<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>" +
-						"</table>"
+				"""
+				<table>\
+				<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>\
+				<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>\
+				</table>\
+				"""
 		);
 	}
 
@@ -98,10 +100,12 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 		renderAndExpect(
 				table,
-				"<table>" +
-						"<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>" +
-						"<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>" +
-						"</table>"
+				"""
+				<table>\
+				<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>\
+				<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>\
+				</table>\
+				"""
 		);
 
 		email.setCustomTemplate( CUSTOM_TEMPLATE );
@@ -156,10 +160,12 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 		renderAndExpect(
 				table,
-				"<table>" +
-						"<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>" +
-						"<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>" +
-						"</table>"
+				"""
+				<table>\
+				<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>\
+				<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>\
+				</table>\
+				"""
 		);
 	}
 
@@ -190,10 +196,12 @@ public class TestViewElementGeneration extends AbstractViewElementTemplateTest
 
 		renderAndExpect(
 				table,
-				"<table>" +
-						"<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>" +
-						"<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>" +
-						"</table>"
+				"""
+				<table>\
+				<tr><td id='name-cell'>John Doe</td><td id='email-cell'>john@doe.com</td></tr>\
+				<tr><td id='name-cell1'>Jane Doe</td><td id='email-cell1'>jane@doe.com</td></tr>\
+				</table>\
+				"""
 		);
 	}
 

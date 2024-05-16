@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * Configures a {@link MockMvc} bean that supports testing a bootstrapped {@link com.foreach.across.core.AcrossContext}
  * with the registered filters of a {@link MockAcrossServletContext}.
  * <p>
- * This requires that the created {@link javax.servlet.ServletContext} is of type {@link MockAcrossServletContext}.
+ * This requires that the created {@link jakarta.servlet.ServletContext} is of type {@link MockAcrossServletContext}.
  * If the latter is not the case, a standard configured {@link MockMvc} instance will still be available,
  * but an error message will be logged.
  *

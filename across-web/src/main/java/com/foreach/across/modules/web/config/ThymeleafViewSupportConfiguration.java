@@ -50,10 +50,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.util.MimeType;
 import org.thymeleaf.dialect.IDialect;
-import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.util.*;
@@ -118,10 +117,12 @@ public class ThymeleafViewSupportConfiguration
 		return new AcrossWebDialect();
 	}
 
+/*
 	@Bean
 	public Java8TimeDialect java8TimeDialect() {
 		return new Java8TimeDialect();
 	}
+*/
 
 	@Bean
 	@Exposed

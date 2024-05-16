@@ -52,7 +52,7 @@ public abstract class AcrossTestBuilders
 
 	/**
 	 * Create a new builder for a web based {@link com.foreach.across.core.AcrossContext}.
-	 * This will ensure a {@link javax.servlet.ServletContext} is initialized and Spring
+	 * This will ensure a {@link jakarta.servlet.ServletContext} is initialized and Spring
 	 * {@link org.springframework.web.context.WebApplicationContext} is being used.
 	 * This builder will create a {@link com.foreach.across.test.AcrossTestWebContext} with support for
 	 * {@link org.springframework.test.web.servlet.MockMvc}.
@@ -66,7 +66,7 @@ public abstract class AcrossTestBuilders
 
 	/**
 	 * Create a new builder for a web based {@link com.foreach.across.core.AcrossContext}.
-	 * This will ensure a {@link javax.servlet.ServletContext} is initialized and Spring
+	 * This will ensure a {@link jakarta.servlet.ServletContext} is initialized and Spring
 	 * {@link org.springframework.web.context.WebApplicationContext} is being used.
 	 * This builder will create a {@link com.foreach.across.test.AcrossTestWebContext} with support for
 	 * {@link org.springframework.test.web.servlet.MockMvc}.

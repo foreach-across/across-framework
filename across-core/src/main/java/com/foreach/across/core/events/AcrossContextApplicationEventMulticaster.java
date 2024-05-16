@@ -75,8 +75,8 @@ public final class AcrossContextApplicationEventMulticaster extends SimpleApplic
 
 	@Override
 	public void addApplicationListener( ApplicationListener<?> listener ) {
-		if ( listener instanceof ApplicationListenerMethodAdapter ) {
-			adjustMethodEventListener( (ApplicationListenerMethodAdapter) listener, null );
+		if ( listener instanceof ApplicationListenerMethodAdapter adapter ) {
+			adjustMethodEventListener( adapter, null );
 		}
 		super.addApplicationListener( listener );
 	}
@@ -143,8 +143,8 @@ public final class AcrossContextApplicationEventMulticaster extends SimpleApplic
 
 		@Override
 		public void addApplicationListener( ApplicationListener<?> listener ) {
-			if ( listener instanceof ApplicationListenerMethodAdapter ) {
-				contextApplicationEventMulticaster.adjustMethodEventListener( (ApplicationListenerMethodAdapter) listener, moduleIndex );
+			if ( listener instanceof ApplicationListenerMethodAdapter adapter ) {
+				contextApplicationEventMulticaster.adjustMethodEventListener( adapter, moduleIndex );
 			}
 
 			super.addApplicationListener( listener );

@@ -272,8 +272,7 @@ public final class AcrossConfiguration
 		String destinationModuleName = null;
 
 		if ( rule != null ) {
-			if ( rule instanceof Map ) {
-				Map data = (Map) rule;
+			if ( rule instanceof Map data ) {
 				disabled = isFalse( data.get( "enabled" ) );
 				adapterClassName = (String) data.get( "adapter" );
 				destinationModuleName = (String) data.get( "destination" );
@@ -287,6 +286,6 @@ public final class AcrossConfiguration
 	}
 
 	private static boolean isFalse( Object value ) {
-		return Boolean.FALSE.equals( value ) || new Integer( 0 ).equals( value );
+		return Boolean.FALSE.equals( value ) || Integer.valueOf( 0 ).equals( value );
 	}
 }

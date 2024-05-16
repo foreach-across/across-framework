@@ -20,15 +20,14 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.modules.exposing.EqualBean;
 import test.modules.exposing.ExposingModule;
 import test.modules.exposing.MyPrototypeBean;
@@ -43,8 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Arne Vandamme
  * @since 1.1.3
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { TestAcrossContextBeanRegistry.Config.class })
+@SpringJUnitConfig(classes = {TestAcrossContextBeanRegistry.Config.class})
 @DirtiesContext
 public class TestAcrossContextBeanRegistry
 {
@@ -82,7 +80,8 @@ public class TestAcrossContextBeanRegistry
 		}
 
 		@Bean
-		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
+		@DependsOnDatabaseInitialization
+		public AcrossContext acrossContext(ConfigurableApplicationContext applicationContext) {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
 			context.setInstallerAction( InstallerAction.DISABLED );

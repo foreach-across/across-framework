@@ -31,8 +31,8 @@ import org.springframework.web.filter.CorsFilter;
 import test.modules.TestModules;
 import test.modules.testResources.TestResourcesModule;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

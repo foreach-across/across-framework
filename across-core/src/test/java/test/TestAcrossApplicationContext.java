@@ -20,7 +20,6 @@ import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -153,7 +152,6 @@ public class TestAcrossApplicationContext
 	{
 		final SomeBean someBean;
 
-		@Autowired
 		public BeanReference( SomeBean someBean ) {
 			this.someBean = someBean;
 		}
@@ -162,7 +160,6 @@ public class TestAcrossApplicationContext
 	@ConditionalOnExpression("@someBean != null")
 	static class ConditionalBeanReference extends BeanReference
 	{
-		@Autowired
 		public ConditionalBeanReference( SomeBean someBean ) {
 			super( someBean );
 		}

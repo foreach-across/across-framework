@@ -66,8 +66,8 @@ public abstract class AbstractClassPathScanningProvider
 	}
 
 	public void clearCache() {
-		if ( metadataReaderFactory instanceof CachingMetadataReaderFactory ) {
-			( (CachingMetadataReaderFactory) metadataReaderFactory ).clearCache();
+		if ( metadataReaderFactory instanceof CachingMetadataReaderFactory factory ) {
+			 factory.clearCache();
 		}
 	}
 }

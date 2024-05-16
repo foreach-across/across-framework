@@ -21,8 +21,6 @@ import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Method;
 
-import static java.lang.String.format;
-
 /**
  * Specialization of {@link AcrossException} for an exception that occurred during the execution of an installer.
  *
@@ -42,7 +40,7 @@ public class AcrossInstallerException extends AcrossException
 	private InstallerMetaData installerMetaData;
 
 	public AcrossInstallerException( String moduleName, InstallerMetaData installerMetaData, Object installer, Method method, Throwable cause ) {
-		super( format("Exception executing installer %s for module %s", installerMetaData.getName(), moduleName), cause );
+		super( "Exception executing installer %s for module %s".formatted( installerMetaData.getName(), moduleName ), cause );
 
 		setModuleBeingProcessed( moduleName );
 		this.installerMetaData = installerMetaData;

@@ -37,8 +37,8 @@ public class AcrossLifecycleProcessor extends DefaultLifecycleProcessor
 	public void setBeanFactory( BeanFactory beanFactory ) {
 		super.setBeanFactory( beanFactory );
 
-		if ( beanFactory instanceof AcrossListableBeanFactory ) {
-			lbf = (AcrossListableBeanFactory) beanFactory;
+		if ( beanFactory instanceof AcrossListableBeanFactory factory ) {
+			lbf = factory;
 		}
 	}
 

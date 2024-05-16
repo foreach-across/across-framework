@@ -22,13 +22,11 @@ import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.scan.packageOne.ExtendedValidModule;
 import test.scan.packageOne.ValidModule;
 import test.scan.packageTwo.OtherValidModule;
@@ -39,9 +37,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestEnableAcrossContextDefaults.Config.class)
+@SpringJUnitConfig(classes = TestEnableAcrossContextDefaults.Config.class)
 public class TestEnableAcrossContextDefaults
 {
 	@Autowired

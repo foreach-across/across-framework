@@ -38,6 +38,6 @@ class AcrossConfigurationExceptionFailureAnalyzer extends AbstractAcrossFailureA
 			                      cause.getModuleBeingProcessed(), cause.getMessage() );
 
 		}
-		return String.format( "A configuration problem was detected on the Across context.%n%s", cause.getMessage() );
+		return  "A configuration problem was detected on the Across context.%n%s".formatted( cause.getMessage() );
 	}
 }

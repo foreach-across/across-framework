@@ -31,8 +31,8 @@ public abstract class AbstractAcrossFailureAnalyzer<T extends Throwable> extends
 	protected FailureAnalysis buildAnalysis( String description, String actions, Throwable cause ) {
 		StringBuilder stacktrace = new StringBuilder();
 		if ( cause != null ) {
-			stacktrace.append( String.format( "%n%nStacktrace:%n%n" ) );
-			stacktrace.append( String.format( "%s%n", ExceptionUtils.getStackTrace( cause ) ) );
+			stacktrace.append(  "%n%nStacktrace:%n%n".formatted() );
+			stacktrace.append(  "%s%n".formatted( ExceptionUtils.getStackTrace( cause ) ) );
 		}
 
 		if ( actions == null ) {

@@ -54,11 +54,11 @@ public class HtmlIdStore
 	public String retrieveHtmlId( ITemplateContext context, ViewElement control ) {
 		String htmlId = null;
 
-		if ( control instanceof HtmlViewElement ) {
+		if ( control instanceof HtmlViewElement element ) {
 			htmlId = generatedIds.get( control );
 
 			if ( htmlId == null ) {
-				htmlId = ( (HtmlViewElement) control ).getHtmlId();
+				htmlId =  element.getHtmlId();
 
 				if ( htmlId != null ) {
 					int idCount = context.getIdentifierSequences().getAndIncrementIDSeq( htmlId );

@@ -22,20 +22,19 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.context.support.AcrossModuleMessageSource;
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -48,8 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestMessageSourceBehavior.Config.class)
+@SpringJUnitConfig(classes = TestMessageSourceBehavior.Config.class)
 public class TestMessageSourceBehavior
 {
 	@Autowired
@@ -61,7 +59,7 @@ public class TestMessageSourceBehavior
 	@Test
 	public void messageFromAdditionalMessageSource() {
 		assertEquals( "size must be between {min} and {max}",
-		              message( "javax.validation.constraints.Size.message" ) );
+		              message( "jakarta.validation.constraints.Size.message" ) );
 	}
 
 	@Test
@@ -183,6 +181,7 @@ public class TestMessageSourceBehavior
 		}
 
 		@Bean
+		@DependsOnDatabaseInitialization
 		public AcrossContext acrossContext() {
 			AcrossContext ctx = new AcrossContext( parent );
 			ctx.addModule( new ConfiguredMessageModule( "module1", false ) );

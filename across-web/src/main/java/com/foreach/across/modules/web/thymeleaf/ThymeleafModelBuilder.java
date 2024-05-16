@@ -201,9 +201,9 @@ public final class ThymeleafModelBuilder
 
 	private void renderCustomTemplate( ViewElement viewElement, ITemplateContext context ) {
 		writePendingTag();
-		if ( context instanceof IEngineContext ) {
+		if ( context instanceof IEngineContext engineContext ) {
 			String attributeName = attributeNameGenerator.generateAttributeName();
-			( (IEngineContext) context ).setVariable( attributeName, viewElement );
+			 engineContext.setVariable( attributeName, viewElement );
 			String templateWithFragment = StringUtils.replace(
 					appendFragmentIfRequired( viewElement.getCustomTemplate() ), "${component", "${" + attributeName
 			);

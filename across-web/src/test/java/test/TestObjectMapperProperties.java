@@ -20,12 +20,10 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.modules.web.AcrossWebModule;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -39,8 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestAcrossWebModuleBootstrap.Config.class)
+@SpringJUnitConfig(classes = TestAcrossWebModuleBootstrap.Config.class)
 @TestPropertySource(properties = "spring.jackson.date-format=yyyy-MM-dd-HH-mm")
 public class TestObjectMapperProperties extends AbstractWebIntegrationTest
 {

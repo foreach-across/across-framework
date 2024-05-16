@@ -165,10 +165,10 @@ public class AcrossWebApplicationContext extends AnnotationConfigWebApplicationC
 		final ApplicationContext parent = getParent();
 		if ( parent instanceof AcrossConfigurableApplicationContext && !containsLocalBean( APPLICATION_EVENT_MULTICASTER_BEAN_NAME ) ) {
 			final ApplicationEventMulticaster multicaster = parent.getBean( APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class );
-			if ( multicaster instanceof AcrossContextApplicationEventMulticaster ) {
+			if ( multicaster instanceof AcrossContextApplicationEventMulticaster eventMulticaster ) {
 				getBeanFactory().registerSingleton(
 						APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
-						( (AcrossContextApplicationEventMulticaster) multicaster ).createModuleMulticaster( moduleIndex, getBeanFactory() )
+						 eventMulticaster.createModuleMulticaster( moduleIndex, getBeanFactory() )
 				);
 			}
 		}

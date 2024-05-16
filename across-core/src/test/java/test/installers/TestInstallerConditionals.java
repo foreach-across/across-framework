@@ -24,8 +24,8 @@ import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.SingletonBeanConfigurer;
 import com.foreach.across.core.installers.InstallerPhase;
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -38,11 +38,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,9 +50,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestInstallerConditionals.Config.class)
+@SpringJUnitConfig(classes = TestInstallerConditionals.Config.class)
 @ActiveProfiles("dev")
 @TestPropertySource(properties = "active.value=true")
 public class TestInstallerConditionals

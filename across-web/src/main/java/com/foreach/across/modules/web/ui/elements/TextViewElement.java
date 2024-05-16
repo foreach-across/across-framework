@@ -90,12 +90,12 @@ public class TextViewElement extends ViewElementSupport implements ConfigurableT
 	 */
 	@Override
 	public void applyTo( ViewElement target ) {
-		if ( target instanceof ConfigurableTextViewElement ) {
-			( (ConfigurableTextViewElement) target ).setText( text );
+		if ( target instanceof ConfigurableTextViewElement element ) {
+			 element.setText( text );
 		}
-		else if ( target instanceof ContainerViewElement ) {
+		else if ( target instanceof ContainerViewElement element ) {
 			if ( text != null ) {
-				( (ContainerViewElement) target ).addFirstChild( this );
+				 element.addFirstChild( this );
 			}
 		}
 		else {

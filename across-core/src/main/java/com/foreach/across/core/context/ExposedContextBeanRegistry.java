@@ -45,8 +45,8 @@ public class ExposedContextBeanRegistry extends AbstractExposedBeanRegistry
 
 		this.beanFactory = beanFactory;
 
-		if ( beanFactory instanceof BeanDefinitionRegistry ) {
-			beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
+		if ( beanFactory instanceof BeanDefinitionRegistry registry ) {
+			beanDefinitionRegistry = registry;
 		}
 		else {
 			beanDefinitionRegistry = null;

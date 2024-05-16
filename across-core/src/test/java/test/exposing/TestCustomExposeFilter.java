@@ -24,9 +24,9 @@ import com.foreach.across.core.installers.InstallerAction;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -34,8 +34,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.modules.exposing.*;
 import test.modules.module1.SomeInterface;
 
@@ -45,8 +44,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestCustomExposeFilter.Config.class)
+@SpringJUnitConfig(classes = TestCustomExposeFilter.Config.class)
 @DirtiesContext
 public class TestCustomExposeFilter
 {
@@ -118,7 +116,7 @@ public class TestCustomExposeFilter
 	@Test
 	@SuppressWarnings("all")
 	public void factoryExposingExposesAllTargetsAsWell() {
-		val moduleContext = AcrossContextUtils.getApplicationContext( mybeanModule );
+		final var moduleContext = AcrossContextUtils.getApplicationContext( mybeanModule );
 		assertNotNull( moduleContext.getBean( SimpleConfiguration.SomeOtherInterface.class ) );
 		assertNotNull( moduleContext.getBean( SimpleConfiguration.SomeFactoryInterface.class ) );
 		assertArrayEquals( new String[] { "someOtherInterfaceBean" }, moduleContext.getBeanNamesForType( SimpleConfiguration.SomeOtherInterface.class ) );
@@ -144,7 +142,8 @@ public class TestCustomExposeFilter
 		}
 
 		@Bean
-		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
+		@DependsOnDatabaseInitialization
+		public AcrossContext acrossContext(ConfigurableApplicationContext applicationContext) {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
 			context.setInstallerAction( InstallerAction.EXECUTE );

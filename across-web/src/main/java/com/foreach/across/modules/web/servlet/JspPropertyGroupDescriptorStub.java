@@ -15,12 +15,12 @@
  */
 package com.foreach.across.modules.web.servlet;
 
-import javax.servlet.descriptor.JspPropertyGroupDescriptor;
+import jakarta.servlet.descriptor.JspPropertyGroupDescriptor;
 import java.util.Collection;
 import java.util.Collections;
 
 /**
- * This is a stub implementation for the {@link javax.servlet.descriptor.JspPropertyGroupDescriptor} from the servlet 3.0 spec.
+ * This is a stub implementation for the {@link jakarta.servlet.descriptor.JspPropertyGroupDescriptor} from the servlet 3.0 spec.
  * This simplifies configuring your own jsp-property-group in servlet configuration by providing sane defaults.
  *
  * @author niels
@@ -35,6 +35,11 @@ public abstract class JspPropertyGroupDescriptorStub implements JspPropertyGroup
 
 	@Override
 	public String getElIgnored() {
+		return null;
+	}
+
+	@Override
+	public String getErrorOnELNotFound() {
 		return null;
 	}
 

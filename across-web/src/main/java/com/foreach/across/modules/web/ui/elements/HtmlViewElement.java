@@ -80,11 +80,11 @@ public interface HtmlViewElement extends MutableViewElement
 		 */
 		static WitherSetter tagName( String name ) {
 			return e -> {
-				if ( e instanceof AbstractNodeViewElement ) {
-					( (AbstractNodeViewElement) e ).setTagName( name );
+				if ( e instanceof AbstractNodeViewElement element ) {
+					 element.setTagName( name );
 				}
-				else if ( e instanceof AbstractVoidNodeViewElement ) {
-					( (AbstractVoidNodeViewElement) e ).setTagName( name );
+				else if ( e instanceof AbstractVoidNodeViewElement element ) {
+					 element.setTagName( name );
 				}
 				else {
 					throw new IllegalArgumentException( "Setting tag name only possible on AbstractNodeViewElement or AbstractVoidNodeViewElement" );

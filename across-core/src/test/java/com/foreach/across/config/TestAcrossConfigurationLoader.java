@@ -41,20 +41,20 @@ public class TestAcrossConfigurationLoader
 
 		assertThat( configuration.getGroup( "bad" ) ).isNull();
 
-		val core = configuration.getGroup( "across.core" );
+		final var core = configuration.getGroup( "across.core" );
 		assertThat( core ).isNotNull();
 		assertThat( core.getPriority() ).isEqualTo( 0 );
 
-		val test = configuration.getGroup( "test" );
+		final var test = configuration.getGroup( "test" );
 		assertThat( test ).isNotNull();
 		assertThat( test.getPriority() ).isEqualTo( 1000 );
 
 		assertThat( test.getExposeRules() ).containsExactlyInAnyOrder( "my.class", "your.class" );
 		assertThat( core.getExposeRules() ).isNotEmpty();
 		assertThat( configuration.getExposeRules() )
-				.contains( "my.class", "your.class", "com.foreach.across.core.annotations.Exposed", "javax.servlet.Filter" );
+				.contains( "my.class", "your.class", "com.foreach.across.core.annotations.Exposed", "jakarta.servlet.Filter" );
 
-		val classes = test.getAutoConfigurationClasses();
+		final var classes = test.getAutoConfigurationClasses();
 		assertThat( classes )
 				.hasSize( 8 )
 				.contains( new AutoConfigurationClass( "enabled.class", true, null, null ) )

@@ -7,4 +7,4 @@ include:
       - '/gitlab-ci/deploy.gitlab-ci.yml'
 
 variables:
-  REVISION: 5.5-SNAPSHOT
+  REVISION: 6.0-SNAPSHOT

@@ -30,11 +30,15 @@ public class AcrossInstallerRepositoryImpl implements AcrossInstallerRepository
 	static final String SQL_SELECT_VERSION =
 			"select version from {schema}ACROSSMODULES where module_id = ? and installer_id = ?";
 	static final String SQL_UPDATE_VERSION =
-			"update {schema}ACROSSMODULES set version = ?, description = ?, created = ? " +
-					"where module_id = ? and installer_id = ?";
+			"""
+			update {schema}ACROSSMODULES set version = ?, description = ?, created = ? \
+			where module_id = ? and installer_id = ?\
+			""";
 	static final String SQL_INSERT_VERSION =
-			"insert into {schema}ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) " +
-					"VALUES (?, ?, ?, ?, ?, ?, ?)";
+			"""
+			insert into {schema}ACROSSMODULES (module, module_id, installer, installer_id, version, created, description) \
+			VALUES (?, ?, ?, ?, ?, ?, ?)\
+			""";
 	private static final String SQL_RENAME_INSTALLER_FOR_MODULE =
 			"update {schema}ACROSSMODULES set installer = ?, installer_id = ? where module_id = ? and installer_id = ?";
 	private static final String SQL_RENAME_INSTALLER =

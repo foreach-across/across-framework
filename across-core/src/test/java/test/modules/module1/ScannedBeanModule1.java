@@ -18,6 +18,7 @@ package test.modules.module1;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
+import jakarta.annotation.PostConstruct;
 import test.modules.TestContextEventListener;
 import test.modules.module2.ScannedBeanModule2;
 import test.modules.module2.TestModule2;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Component;
 import test.modules.module2.ScannedBeanModule2;
 import test.modules.module2.TestModule2;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component

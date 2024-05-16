@@ -22,10 +22,10 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRegistration;
 
 /**
  * Initializes a single dispatcher servlet with a root Application context that is initialized upon creation.

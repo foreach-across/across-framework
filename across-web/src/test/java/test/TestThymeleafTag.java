@@ -23,7 +23,6 @@ import com.foreach.across.modules.web.jsp.ThymeleafTag;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -32,23 +31,21 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockPageContext;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 import java.io.UnsupportedEncodingException;
 
 /**
  * @author Marc Vanbrabant
  * @since 1.1.3
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = TestThymeleafTag.Config.class)
+@SpringJUnitConfig(classes = TestThymeleafTag.Config.class)
 public class TestThymeleafTag
 {
 	@Autowired

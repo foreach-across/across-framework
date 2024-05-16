@@ -36,14 +36,14 @@ public interface AcrossLifecycleListener extends ApplicationListener<AcrossLifec
 {
 	@Override
 	default void onApplicationEvent( AcrossLifecycleEvent event ) {
-		if ( event instanceof AcrossModuleBeforeBootstrapEvent ) {
-			onAcrossModuleBeforeBootstrapEvent( (AcrossModuleBeforeBootstrapEvent) event );
+		if ( event instanceof AcrossModuleBeforeBootstrapEvent bootstrapEvent ) {
+			onAcrossModuleBeforeBootstrapEvent( bootstrapEvent );
 		}
-		else if ( event instanceof AcrossModuleBootstrappedEvent ) {
-			onAcrossModuleBootstrappedEvent( (AcrossModuleBootstrappedEvent) event );
+		else if ( event instanceof AcrossModuleBootstrappedEvent bootstrappedEvent ) {
+			onAcrossModuleBootstrappedEvent( bootstrappedEvent );
 		}
-		else if ( event instanceof AcrossContextBootstrappedEvent ) {
-			onAcrossContextBootstrappedEvent( (AcrossContextBootstrappedEvent) event );
+		else if ( event instanceof AcrossContextBootstrappedEvent bootstrappedEvent ) {
+			onAcrossContextBootstrappedEvent( bootstrappedEvent );
 		}
 	}
 

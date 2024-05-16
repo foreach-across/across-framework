@@ -22,13 +22,11 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.scan.overriding.MyComponent;
 
 import java.util.Date;
@@ -44,9 +42,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Arne Vandamme
  * @since 1.1.3
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration
+@SpringJUnitConfig
 public class TestBeanOverriding
 {
 	@Autowired

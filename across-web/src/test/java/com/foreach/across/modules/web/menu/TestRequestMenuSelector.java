@@ -83,7 +83,7 @@ public class TestRequestMenuSelector
 
 	@Test
 	public void simpleSelectByPath() {
-		val menu = menu( "/one", "/two" );
+		final var menu = menu( "/one", "/two" );
 		assertSelected( menu, "http://localhost:8103/context/one", "/one" );
 		assertSelected( menu, "http://localhost:8103/context/two", "/two" );
 		assertSelected( menu, "http://localhost:8103/context/two/One", "/two" );
@@ -91,7 +91,7 @@ public class TestRequestMenuSelector
 
 	@Test
 	public void longestPathPrefixIsUsed() {
-		val menu = menu( "/one", "/two", "/one/two", "/two/three" );
+		final var menu = menu( "/one", "/two", "/one/two", "/two/three" );
 		assertSelected( menu, "http://localhost:8103/context/one", "/one" );
 		assertSelected( menu, "http://localhost:8103/context/two", "/two" );
 		assertSelected( menu, "http://localhost:8103/context/one/two", "/one/two" );
@@ -103,7 +103,7 @@ public class TestRequestMenuSelector
 
 	@Test
 	public void noMatchOnItemsThatRequireQueryParameter() {
-		val menu = menu( "/one?x=y" );
+		final var menu = menu( "/one?x=y" );
 		assertSelected( menu, "http://localhost:8103/context/other", null );
 		assertSelected( menu, "http://localhost:8103/context/one", null );
 		assertSelected( menu, "http://localhost:8103/context/one?a=b", null );

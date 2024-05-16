@@ -110,8 +110,8 @@ class AcrossDataSourceRegistrar implements BeanDefinitionRegistryPostProcessor
 		while ( parent != null ) {
 			beanNames.addAll( Arrays.asList( parent.getBeanNamesForType( DataSource.class ) ) );
 
-			if ( parent instanceof HierarchicalBeanFactory ) {
-				parent = (ListableBeanFactory) ( (HierarchicalBeanFactory) parent ).getParentBeanFactory();
+			if ( parent instanceof HierarchicalBeanFactory factory ) {
+				parent = (ListableBeanFactory)  factory.getParentBeanFactory();
 			}
 			else {
 				parent = null;
@@ -129,8 +129,8 @@ class AcrossDataSourceRegistrar implements BeanDefinitionRegistryPostProcessor
 				return bf;
 			}
 
-			if ( bf instanceof HierarchicalBeanFactory ) {
-				bf = (BeanDefinitionRegistry) ( (HierarchicalBeanFactory) bf ).getParentBeanFactory();
+			if ( bf instanceof HierarchicalBeanFactory factory ) {
+				bf = (BeanDefinitionRegistry)  factory.getParentBeanFactory();
 			}
 			else {
 				bf = null;

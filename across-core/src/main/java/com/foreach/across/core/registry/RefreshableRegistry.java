@@ -19,10 +19,10 @@ package com.foreach.across.core.registry;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**

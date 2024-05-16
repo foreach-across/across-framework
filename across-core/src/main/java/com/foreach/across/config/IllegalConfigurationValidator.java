@@ -89,7 +89,7 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 
 	@Override
 	public void setBeanClassLoader( ClassLoader classLoader ) {
-		val entries = AcrossConfiguration.get( classLoader ).getIllegalConfigurations();
+		final var entries = AcrossConfiguration.get( classLoader ).getIllegalConfigurations();
 
 		entries.forEach( configuration -> {
 			configuration.getConfigurations()
@@ -244,15 +244,15 @@ public class IllegalConfigurationValidator implements AcrossBootstrapConfigurer,
 					      if ( beanType != null ) {
 						      IllegalConfigurationEntry illegal = illegalConfigurationValidator.isIllegalUse( beanType, moduleInfo );
 						      if ( illegal != null ) {
-							      String description = String.format(
-									      "A bean definition of type '%s' was detected.%n - Bean name: '%s'%n - Bean type: '%s'",
-									      illegal.illegalType.getName(), beanName, beanType.getName()
-							      );
+							      String description = 
+											"A bean definition of type '%s' was detected.%n - Bean name: '%s'%n - Bean type: '%s'".formatted(
+											illegal.illegalType.getName(), beanName, beanType.getName()
+									);
 
 							      String contextDescription = illegal.context.getDescription();
 
 							      if ( contextDescription != null ) {
-								      description = String.format( "%s%n%n%s", description, contextDescription );
+								      description =  "%s%n%n%s".formatted( description, contextDescription );
 							      }
 
 							      throw new AcrossConfigurationException( description, illegal.context.getAction() );

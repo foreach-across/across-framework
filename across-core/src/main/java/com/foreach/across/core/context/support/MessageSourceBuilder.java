@@ -57,8 +57,7 @@ public class MessageSourceBuilder
 			HierarchicalMessageSource source = findHighestAvailableMessageSource( beanFactory.getBean( BEAN_NAME,
 			                                                                                           MessageSource.class ) );
 
-			if ( source != null && parent != null && parent instanceof AcrossContextOrderedMessageSource ) {
-				AcrossContextOrderedMessageSource parentSource = (AcrossContextOrderedMessageSource) parent;
+			if ( source != null && parent != null && parent instanceof AcrossContextOrderedMessageSource parentSource ) {
 				parentSource.push( source );
 
 				// Remove the original bean definition and singleton from the registry
@@ -66,8 +65,10 @@ public class MessageSourceBuilder
 			}
 			else {
 				LOG.trace(
-						"Not pushing MessageSource to context level as it is either not a HierarchicalMessageSource " +
-								"or the parent is not an AcrossContextMessageSource" );
+						"""
+						Not pushing MessageSource to context level as it is either not a HierarchicalMessageSource \
+						or the parent is not an AcrossContextMessageSource\
+						""" );
 			}
 
 		}
@@ -113,8 +114,7 @@ public class MessageSourceBuilder
 	}
 
 	public static HierarchicalMessageSource findHighestAvailableMessageSource( MessageSource current ) {
-		if ( current instanceof HierarchicalMessageSource ) {
-			HierarchicalMessageSource source = (HierarchicalMessageSource) current;
+		if ( current instanceof HierarchicalMessageSource source ) {
 
 			if ( source.getParentMessageSource() != null ) {
 				return findHighestAvailableMessageSource( source.getParentMessageSource() );

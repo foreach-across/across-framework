@@ -24,7 +24,6 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import lombok.Getter;
 import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.HierarchicalBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.SmartValidator;
 import org.springframework.validation.Validator;
 
@@ -53,7 +51,6 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @TestPropertySource(properties = "across.displayName=My Application")
 @SpringBootTest(classes = { TestAcrossApplicationBootstrap.SampleApplication.class })

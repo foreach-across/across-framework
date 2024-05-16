@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.annotation.*;
 import java.util.ArrayList;
 import java.util.Set;

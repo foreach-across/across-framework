@@ -92,9 +92,9 @@ public class AnnotationBeanFilter implements BeanFilter
 				return true;
 			}
 
-			if ( bean instanceof FactoryBean ) {
+			if ( bean instanceof FactoryBean factoryBean ) {
 				// in case of a factory bean, check it as well
-				targetClass = ( (FactoryBean) bean ).getObjectType();
+				targetClass =  factoryBean.getObjectType();
 
 				if ( hasAnnotation( targetClass ) ) {
 					return true;
@@ -164,8 +164,8 @@ public class AnnotationBeanFilter implements BeanFilter
 			}
 
 			// Still possible that we are dealing with a ScopedProxyFactoryBean, in which case we need to check the target
-			if ( definition instanceof RootBeanDefinition ) {
-				BeanDefinitionHolder targetHolder = ( (RootBeanDefinition) definition ).getDecoratedDefinition();
+			if ( definition instanceof RootBeanDefinition beanDefinition ) {
+				BeanDefinitionHolder targetHolder =  beanDefinition.getDecoratedDefinition();
 
 				if ( targetHolder != null ) {
 					Object targetBean = beanFactory.getSingleton( targetHolder.getBeanName() );

@@ -62,7 +62,8 @@ public class TestDefaultWebjarConfiguration extends AbstractWebIntegrationTest
 		ResponseEntity<String> response = restTemplate.getForEntity( host + resolvedLink, String.class );
 		assertEquals( HttpStatus.OK, response.getStatusCode() );
 		assertTrue( StringUtils.contains( response.getBody(), "jQuery JavaScript Library v3.3.0" ) );
-		assertEquals( "application/javascript;charset=UTF-8", response.getHeaders().getFirst( "Content-Type" ) );
+		// https://stackoverflow.com/questions/21098865/text-javascript-vs-application-javascript
+		assertEquals( "text/javascript;charset=UTF-8", response.getHeaders().getFirst( "Content-Type" ) );
 	}
 
 	@Configuration

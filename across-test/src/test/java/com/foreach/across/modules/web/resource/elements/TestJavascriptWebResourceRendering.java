@@ -107,10 +107,12 @@ public class TestJavascriptWebResourceRendering extends AbstractViewElementTempl
 								           .add( JavascriptWebResourceBuilder.globalJsonData( "MyApp.one", 1 ) )
 								           .add( JavascriptWebResourceBuilder.globalJsonData( "MyApp.two", 2 ) )
 				           ),
-				"<script type='text/javascript'>" +
-						"(function( _data ) { _data[ \"one\" ] = 1; })( window[\"MyApp\"] = window[\"MyApp\"] || {} );" +
-						"(function( _data ) { _data[ \"two\" ] = 2; })( window[\"MyApp\"] = window[\"MyApp\"] || {} );" +
-						"</script>"
+				"""
+				<script type='text/javascript'>\
+				(function( _data ) { _data[ "one" ] = 1; })( window["MyApp"] = window["MyApp"] || {} );\
+				(function( _data ) { _data[ "two" ] = 2; })( window["MyApp"] = window["MyApp"] || {} );\
+				</script>\
+				"""
 		);
 	}
 
@@ -118,9 +120,11 @@ public class TestJavascriptWebResourceRendering extends AbstractViewElementTempl
 	public void globalJsonDataScript() {
 		renderAndExpect(
 				WebResource.globalJsonData( "MyApp.Settings.Enabled", true ),
-				"<script type='text/javascript'>" +
-						"(function( _data ) { _data[ \"Settings.Enabled\" ] = true; })( window[\"MyApp\"] = window[\"MyApp\"] || {} );" +
-						"</script>"
+				"""
+				<script type='text/javascript'>\
+				(function( _data ) { _data[ "Settings.Enabled" ] = true; })( window["MyApp"] = window["MyApp"] || {} );\
+				</script>\
+				"""
 		);
 	}
 }

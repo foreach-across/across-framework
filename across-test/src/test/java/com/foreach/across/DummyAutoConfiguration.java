@@ -15,8 +15,8 @@
  */
 package com.foreach.across;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
 
@@ -26,7 +26,7 @@ import java.math.BigDecimal;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@Configuration
+@AutoConfiguration
 public class DummyAutoConfiguration
 {
 	@Bean

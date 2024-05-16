@@ -103,8 +103,10 @@ public class AcrossDynamicModulesConfiguration extends AcrossDynamicModulesConfi
 								"The latter is a dynamic module package and components should only be scanned within that module. "
 				);
 				configurationException.setActionToTake(
-						"Remove the use of @ComponentScan on your @AcrossApplication or @EnableAcrossContext class. " +
-								"Review your configuration and package layout, and ensure you do not scan any beans that are part of an Across module package. "
+						"""
+						Remove the use of @ComponentScan on your @AcrossApplication or @EnableAcrossContext class. \
+						Review your configuration and package layout, and ensure you do not scan any beans that are part of an Across module package. \
+						"""
 				);
 				throw configurationException;
 			}

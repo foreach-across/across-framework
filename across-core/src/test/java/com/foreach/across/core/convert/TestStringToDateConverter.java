@@ -108,8 +108,13 @@ public class TestStringToDateConverter
 	public void localDateTimeLocalized() {
 		converter.setLocale( Locale.GERMANY );
 		LocalDateTime date = LocalDateTime.parse( "2017-01-07 12:01", DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm" ) );
-		assertThat( convert( "Samstag, Jan 07, 2017 12:01", LOCALDATETIME_DESCRIPTOR ) ).isEqualTo( date );
-		assertThat( convert( "Samstag, Jan 07, 2017 12:01:00", LOCALDATETIME_DESCRIPTOR ) ).isEqualTo( date );
+		// German month formatting changed in JDK9: a dot is added to month abbreviations. See for instance:
+		// https://bugs.openjdk.org/browse/JDK-8194289
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy HH:mm").withLocale(Locale.GERMANY);
+		assertThat(date.format(formatter)).isEqualTo("Samstag, Jan. 07, 2017 12:01");
+		assertThat( convert( "Samstag, Jan. 07, 2017 12:01", LOCALDATETIME_DESCRIPTOR ) ).isEqualTo( date );
+		assertThat( convert( "Samstag, Jan. 07, 2017 12:01:00", LOCALDATETIME_DESCRIPTOR ) ).isEqualTo( date );
+
 		converter.setLocale( Locale.FRANCE );
 		date = LocalDateTime.parse( "2017-05-07 12:01", DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm" ) );
 		assertThat( convert( "Dimanche, Mai 07, 2017 12:01", LOCALDATETIME_DESCRIPTOR ) ).isEqualTo( date );

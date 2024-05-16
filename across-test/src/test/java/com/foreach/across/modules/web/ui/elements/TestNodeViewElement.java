@@ -121,10 +121,12 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 
 		renderAndExpect(
 				node,
-				"<div " +
-						"data-json='{\"name\":\"myname for you\",\"age\":34,\"nested\":{\"name\":\"inside\",\"time\":666}}' " +
-						"data-extra='{\"name\":\"extra\",\"time\":123456789}' " +
-						"/>"
+				"""
+				<div \
+				data-json='{"name":"myname for you","age":34,"nested":{"name":"inside","time":666}}' \
+				data-extra='{"name":"extra","time":123456789}' \
+				/>\
+				"""
 		);
 	}
 
@@ -153,10 +155,12 @@ public class TestNodeViewElement extends AbstractViewElementTemplateTest
 		one.addChild( otherOne );
 
 		renderAndExpect( one,
-		                 "<div id='one'>" +
-				                 "<div id='one1'></div>" +
-				                 "<div id='one1'></div>" +
-				                 "</div>" );
+		                 """
+		                 <div id='one'>\
+		                 <div id='one1'></div>\
+		                 <div id='one1'></div>\
+		                 </div>\
+		                 """ );
 	}
 
 	@Test

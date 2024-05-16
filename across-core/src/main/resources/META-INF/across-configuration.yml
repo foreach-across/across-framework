@@ -11,9 +11,9 @@ across.core:
   #
   exposed:
     - com.foreach.across.core.annotations.Exposed
-    - javax.servlet.Servlet
-    - javax.servlet.Filter
-    - javax.servlet.MultipartConfigElement
+    - jakarta.servlet.Servlet
+    - jakarta.servlet.Filter
+    - jakarta.servlet.MultipartConfigElement
     - org.springframework.stereotype.Service
     - org.springframework.stereotype.Controller
     - org.springframework.web.servlet.HandlerMapping

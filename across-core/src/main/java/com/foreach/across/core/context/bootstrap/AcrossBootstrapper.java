@@ -196,7 +196,7 @@ public class AcrossBootstrapper
 					bootstrapConfigurers.forEach( configurer -> configurer.configureModule( config ) );
 
 					LOG.info( "" );
-					LOG.info( "{} - {} {} [resources: {}]", String.format( "%2s", moduleInfo.getIndex() ), moduleInfo.getName(),
+					LOG.info( "{} - {} {} [resources: {}]",  "%2s".formatted( moduleInfo.getIndex() ), moduleInfo.getName(),
 					          moduleInfo.getVersionInfo().getVersion(), moduleInfo.getResourcesKey() );
 					LOG.info( "     {}", moduleInfo.getModule().getClass() );
 					LOG.info( "" );
@@ -299,7 +299,7 @@ public class AcrossBootstrapper
 
 			destroyAllCreatedApplicationContexts();
 
-			AcrossException ae = e instanceof AcrossException ? (AcrossException) e : new AcrossBootstrapException( e );
+			AcrossException ae = e instanceof AcrossException ae1 ? ae1 : new AcrossBootstrapException( e );
 
 			if ( ae.getModuleBeingProcessed() == null ) {
 				ae.setModuleBeingProcessed( moduleBeingProcessed );
@@ -428,8 +428,8 @@ public class AcrossBootstrapper
 			if ( !( beanFactory instanceof AcrossListableBeanFactory ) && currentApplicationContext.getParent() != null ) {
 				ApplicationContext parent = currentApplicationContext.getParent();
 
-				if ( parent instanceof ConfigurableApplicationContext ) {
-					beanFactory = ( (ConfigurableApplicationContext) parent ).getBeanFactory();
+				if ( parent instanceof ConfigurableApplicationContext applicationContext ) {
+					beanFactory =  applicationContext.getBeanFactory();
 				}
 			}
 
@@ -438,9 +438,9 @@ public class AcrossBootstrapper
 				AcrossConfigurableApplicationContext parentApplicationContext = applicationContextFactory.createApplicationContext();
 				parentApplicationContext.setId( EXPOSE_SUPPORTING_APPLICATION_CONTEXT );
 
-				if ( parentApplicationContext instanceof WebApplicationContext && rootContext instanceof WebApplicationContext ) {
+				if ( parentApplicationContext instanceof WebApplicationContext && rootContext instanceof WebApplicationContext applicationContext ) {
 					( (ConfigurableWebApplicationContext) parentApplicationContext )
-							.setServletContext( ( (WebApplicationContext) rootContext ).getServletContext() );
+							.setServletContext(  applicationContext.getServletContext() );
 				}
 
 				ProvidedBeansMap providedBeansMap = new ProvidedBeansMap();

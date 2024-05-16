@@ -136,8 +136,8 @@ public class AttributeOverridingSupport extends AttributeSupport
 			return new InheritedAttributeValue<>( Optional.ofNullable( super.getAttribute( attributeName, attributeType ) ), attributeName, ancestorLevel );
 		}
 		else if ( parent != null ) {
-			if ( parent instanceof AttributeOverridingSupport ) {
-				return ( (AttributeOverridingSupport) parent ).findAttribute( attributeName, attributeType, ancestorLevel + 1 );
+			if ( parent instanceof AttributeOverridingSupport support ) {
+				return  support.findAttribute( attributeName, attributeType, ancestorLevel + 1 );
 			}
 			else if ( parent.hasAttribute( attributeName ) ) {
 				return new InheritedAttributeValue<>( Optional.ofNullable( parent.getAttribute( attributeName, attributeType ) ), attributeName,

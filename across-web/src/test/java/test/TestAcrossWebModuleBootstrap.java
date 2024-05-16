@@ -24,7 +24,6 @@ import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.modules.web.resource.WebResourceTranslator;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -38,8 +37,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.validation.SmartValidator;
 import org.springframework.validation.Validator;
 import org.springframework.web.method.support.UriComponentsContributor;
@@ -48,8 +46,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.ServletContext;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.ServletContext;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,8 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestAcrossWebModuleBootstrap.Config.class)
+@SpringJUnitConfig(classes = TestAcrossWebModuleBootstrap.Config.class)
 public class TestAcrossWebModuleBootstrap extends AbstractWebIntegrationTest
 {
 	@Autowired

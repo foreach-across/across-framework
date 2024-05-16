@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.servlet.resource.AppCacheManifestTransformer;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
@@ -97,7 +96,6 @@ public class TestNoResourceVersioning extends AbstractWebIntegrationTest
 	@Test
 	public void versioningRelatedBeansShouldNotExist() {
 		assertNoWebBean( VersionResourceResolver.class );
-		assertNoWebBean( AppCacheManifestTransformer.class );
 		assertNoWebBean( ResourceUrlProvider.class );
 		assertNoWebBean( ResourceUrlProviderExposingInterceptor.class );
 	}

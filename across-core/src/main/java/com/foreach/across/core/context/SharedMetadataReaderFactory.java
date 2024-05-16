@@ -39,8 +39,10 @@ public class SharedMetadataReaderFactory
 {
 	public static final String BEAN_NAME = "com.foreach.across.core.context.sharedMetadataReaderFactory";
 
-	private static final String SPRING_BOOT_SHARED_METADATA_FACTORY = "org.springframework.boot.autoconfigure."
-			+ "internalCachingMetadataReaderFactory";
+	private static final String SPRING_BOOT_SHARED_METADATA_FACTORY = """
+			org.springframework.boot.autoconfigure.\
+			internalCachingMetadataReaderFactory\
+			""";
 
 	/**
 	 * {@link FactoryBean} to create the shared {@link MetadataReaderFactory}.
@@ -89,7 +91,7 @@ public class SharedMetadataReaderFactory
 	}
 
 	private static void register( BeanDefinitionRegistry registry ) {
-		if ( registry instanceof ListableBeanFactory && ( (ListableBeanFactory) registry ).containsBean( BEAN_NAME ) ) {
+		if ( registry instanceof ListableBeanFactory factory &&  factory.containsBean( BEAN_NAME ) ) {
 			return;
 		}
 

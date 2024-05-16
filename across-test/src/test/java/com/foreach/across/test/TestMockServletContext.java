@@ -19,11 +19,11 @@ import com.foreach.across.modules.web.servlet.AbstractAcrossServletInitializer;
 import com.foreach.across.modules.web.servlet.JspPropertyGroupDescriptorStub;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.descriptor.JspConfigDescriptor;
-import javax.servlet.descriptor.JspPropertyGroupDescriptor;
+import jakarta.servlet.Filter;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.descriptor.JspConfigDescriptor;
+import jakarta.servlet.descriptor.JspPropertyGroupDescriptor;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;

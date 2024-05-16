@@ -25,7 +25,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * {@link Condition} that checks for the presence of a {@link WebApplicationContext} and a {@link ServletContext}

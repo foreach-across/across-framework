@@ -20,7 +20,9 @@ import com.foreach.across.config.EnableAcrossContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import test.AbstractWebIntegrationTest;
 import test.modules.TestModules;
@@ -51,6 +53,7 @@ public class TestCustomCharacterEncodingBean extends AbstractWebIntegrationTest
 	)
 	public static class Config
 	{
+		@Primary
 		@Bean
 		public CharacterEncodingFilter characterEncodingFilter() {
 			CharacterEncodingFilter filter = new CharacterEncodingFilter();

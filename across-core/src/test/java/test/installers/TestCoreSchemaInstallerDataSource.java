@@ -23,7 +23,6 @@ import com.foreach.common.concurrent.locks.distributed.DistributedLockException;
 import com.foreach.common.concurrent.locks.distributed.DistributedLockRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -34,17 +33,15 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestCoreSchemaInstallerDataSource.Config.class)
+@SpringJUnitConfig(classes = TestCoreSchemaInstallerDataSource.Config.class)
 public class TestCoreSchemaInstallerDataSource
 {
 	@Autowired

@@ -163,11 +163,11 @@ public final class AcrossContextUtils
 	 * @return ApplicationContext defined in the holder or null if none.
 	 */
 	public static AcrossConfigurableApplicationContext getApplicationContext( AcrossEntity contextOrModule ) {
-		if ( contextOrModule instanceof AcrossModuleInfo ) {
-			return getApplicationContext( ( (AcrossModuleInfo) contextOrModule ).getModule() );
+		if ( contextOrModule instanceof AcrossModuleInfo info ) {
+			return getApplicationContext(  info.getModule() );
 		}
-		if ( contextOrModule instanceof AcrossContextInfo ) {
-			return getApplicationContext( ( (AcrossContextInfo) contextOrModule ).getContext() );
+		if ( contextOrModule instanceof AcrossContextInfo info ) {
+			return getApplicationContext(  info.getContext() );
 		}
 
 		AbstractAcrossEntity aEntity = (AbstractAcrossEntity) contextOrModule;
@@ -239,14 +239,14 @@ public final class AcrossContextUtils
 	 * @return Across application context information.
 	 */
 	public static AcrossApplicationContextHolder getAcrossApplicationContextHolder( AcrossEntity contextOrModule ) {
-		if ( contextOrModule instanceof AbstractAcrossEntity ) {
-			return ( (AbstractAcrossEntity) contextOrModule ).getAcrossApplicationContextHolder();
+		if ( contextOrModule instanceof AbstractAcrossEntity entity ) {
+			return  entity.getAcrossApplicationContextHolder();
 		}
-		else if ( contextOrModule instanceof AcrossModuleInfo ) {
-			return ( (AcrossModuleInfo) contextOrModule ).getModule().getAcrossApplicationContextHolder();
+		else if ( contextOrModule instanceof AcrossModuleInfo info ) {
+			return  info.getModule().getAcrossApplicationContextHolder();
 		}
-		else if ( contextOrModule instanceof AcrossContextInfo ) {
-			return ( (AcrossContextInfo) contextOrModule ).getContext().getAcrossApplicationContextHolder();
+		else if ( contextOrModule instanceof AcrossContextInfo info ) {
+			return  info.getContext().getAcrossApplicationContextHolder();
 		}
 
 		return null;
@@ -362,9 +362,7 @@ public final class AcrossContextUtils
 		if ( AopUtils.isJdkDynamicProxy( instance ) ) {
 			TargetSource targetSource = ( (Advised) instance ).getTargetSource();
 
-			if ( targetSource instanceof AbstractLazyCreationTargetSource ) {
-				AbstractLazyCreationTargetSource lazyCreationTargetSource
-						= (AbstractLazyCreationTargetSource) targetSource;
+			if ( targetSource instanceof AbstractLazyCreationTargetSource lazyCreationTargetSource ) {
 
 				if ( lazyCreationTargetSource.isInitialized() ) {
 					return getProxyTarget( lazyCreationTargetSource.getTarget() );
@@ -378,8 +376,7 @@ public final class AcrossContextUtils
 				LOG.trace( "Skipping LazyInitTargetSource - unable to access proxy target without possible throwing exception" );
 				return null;
 			}
-			else if ( targetSource instanceof SimpleBeanTargetSource ) {
-				SimpleBeanTargetSource beanTargetSource = (SimpleBeanTargetSource) targetSource;
+			else if ( targetSource instanceof SimpleBeanTargetSource beanTargetSource ) {
 				String targetBeanName = beanTargetSource.getTargetBeanName();
 
 				if ( StringUtils.isEmpty( targetBeanName )
@@ -405,9 +402,9 @@ public final class AcrossContextUtils
 	public static void registerBeanDefinitionAlias( AliasRegistry registry, String name, String alias ) {
 		if ( registry != null ) {
 			registry.registerAlias( name, alias );
-			if( registry instanceof AbstractBeanFactory ) {
+			if( registry instanceof AbstractBeanFactory factory ) {
 				// getAliases() would fail because this gets cached before the registrar is called
-				(( AbstractBeanFactory) registry).clearMetadataCache();
+				factory.clearMetadataCache();
 			}
 		}
 	}

@@ -21,7 +21,6 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.web.AcrossWebModule;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -33,8 +32,7 @@ import org.springframework.format.Formatter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -49,10 +47,9 @@ import static org.mockito.Mockito.*;
  *
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = TestMultipleConversionServices.Config.class)
+@SpringJUnitConfig(classes = TestMultipleConversionServices.Config.class)
 public class TestMultipleConversionServices
 {
 	private static final Formatter<String> FORMATTER = new Formatter<String>()

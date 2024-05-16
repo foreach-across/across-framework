@@ -18,12 +18,11 @@ package com.foreach.across.core.events;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.AcrossContextUtils;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Takes care of actions that need to happen whenever the parent Spring ApplicationContext

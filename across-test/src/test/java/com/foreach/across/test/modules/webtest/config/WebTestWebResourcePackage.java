@@ -18,6 +18,7 @@ package com.foreach.across.test.modules.webtest.config;
 import com.foreach.across.modules.web.resource.SimpleWebResourcePackage;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourcePackageManager;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

@@ -59,9 +59,9 @@ public abstract class AbstractClassBasedBeanFilter<T> implements BeanFilter
 				}
 			}
 
-			if ( bean instanceof FactoryBean ) {
+			if ( bean instanceof FactoryBean factoryBean ) {
 				// in case of a factory bean, check it as well
-				targetClass = ( (FactoryBean) bean ).getObjectType();
+				targetClass =  factoryBean.getObjectType();
 
 				for ( T allowed : allowedItems ) {
 					if ( matches( targetClass, allowed ) ) {

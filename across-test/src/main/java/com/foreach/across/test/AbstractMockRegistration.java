@@ -17,7 +17,7 @@ package com.foreach.across.test;
 
 import lombok.NonNull;
 
-import javax.servlet.Registration;
+import jakarta.servlet.Registration;
 import java.util.*;
 import java.util.stream.Collectors;
 

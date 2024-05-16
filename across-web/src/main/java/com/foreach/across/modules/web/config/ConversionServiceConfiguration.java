@@ -58,9 +58,9 @@ public class ConversionServiceConfiguration
 			Object conversionService
 					= beanRegistry.getBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
 
-			if ( conversionService instanceof FormattingConversionService ) {
+			if ( conversionService instanceof FormattingConversionService service ) {
 				LOG.info( "Using the default ConversionService as {}", AcrossWebModule.CONVERSION_SERVICE_BEAN );
-				return (FormattingConversionService) conversionService;
+				return service;
 			}
 		}
 

@@ -22,16 +22,15 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ResolvableType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.modules.EventPubSub;
 import test.modules.module1.ReplyEvent;
 import test.modules.module1.TestModule1;
@@ -43,8 +42,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestEventFilters.Config.class)
+@SpringJUnitConfig(classes = TestEventFilters.Config.class)
 @DirtiesContext
 public class TestEventFilters
 {
@@ -62,16 +60,16 @@ public class TestEventFilters
 
 	@Test
 	public void eventsAreReceivedByAllModules() {
-		val event = publisherModuleOne.publish( "event1" );
+		final var event = publisherModuleOne.publish( "event1" );
 		assertEquals( Arrays.asList( "moduleOne", "moduleTwo" ), event.getReceivedBy() );
 
-		val event2 = publisherModuleTwo.publish( "event2" );
+		final var event2 = publisherModuleTwo.publish( "event2" );
 		assertEquals( Arrays.asList( "moduleOne", "moduleTwo" ), event2.getReceivedBy() );
 	}
 
 	@Test
 	public void replyIsAlsoReceivedByAllModules() {
-		val original = new ReplyEvent();
+		final var original = new ReplyEvent();
 		assertNull( original.getByName() );
 
 		context.publishEvent( original );
@@ -239,8 +237,9 @@ public class TestEventFilters
 		}
 
 		@Bean
+		@DependsOnDatabaseInitialization
 		@Autowired
-		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
+		public AcrossContext acrossContext(ConfigurableApplicationContext applicationContext) {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setDataSource( acrossDataSource() );
 			context.setInstallerAction( InstallerAction.DISABLED );

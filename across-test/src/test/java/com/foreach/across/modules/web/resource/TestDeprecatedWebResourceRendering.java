@@ -29,13 +29,12 @@ import com.foreach.across.test.modules.webtest.controllers.WebResourceController
 import com.foreach.across.test.modules.webtest.controllers.WebResourcePackageController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -44,10 +43,9 @@ import static com.foreach.across.utils.CustomResultMatchers.jsoup;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @AcrossWebAppConfiguration
-@ContextConfiguration(classes = TestDeprecatedWebResourceRendering.Config.class)
+@SpringJUnitConfig(classes = TestDeprecatedWebResourceRendering.Config.class)
 public class TestDeprecatedWebResourceRendering
 {
 	@Autowired
@@ -73,11 +71,13 @@ public class TestDeprecatedWebResourceRendering
 		       .andExpect( jsoup().elementById( "inline-javascript" ).valueIgnoringLineEndings( "<script src=\"test-javascript-inline\"></script>" ) )
 		       .andExpect( jsoup().elementById( "not-inline-and-data-javascript" ).valueIgnoringLineEndings(
 				       "<script src=\"test-javascript-external\"></script>\n<script src=\"/across/resources/test-javascript-views\"></script>\n<script src=\"test-javascript-relative\"></script>" ) )
-		       .andExpect( jsoup().elementById( "data-javascript" ).valueIgnoringLineEndings( "<script type=\"text/javascript\">\n" +
-				                                                                                      "        (function ( Across ) {\n" +
-				                                                                                      "            Across['' + \"test-javascript-data\"] = \"test-javascript-data-value\";\n" +
-				                                                                                      "        })( window.Across = window.Across || {} );\n" +
-				                                                                                      "    </script>" ) )
+		       .andExpect( jsoup().elementById( "data-javascript" ).valueIgnoringLineEndings( """
+				                                                                                      <script type="text/javascript">
+				                                                                                              (function ( Across ) {
+				                                                                                                  Across['' + "test-javascript-data"] = "test-javascript-data-value";
+				                                                                                              })( window.Across = window.Across || {} );
+				                                                                                          </script>\
+				                                                                                      """ ) )
 
 		       // Assert foot javascript
 		       .andExpect( jsoup().elementById( "javascript-page-end" ).valueIgnoringLineEndings(
@@ -100,11 +100,13 @@ public class TestDeprecatedWebResourceRendering
 	public void cssBucket() throws Exception {
 		mockMvc.perform( get( WebResourceController.PATH ) )
 		       .andExpect( jsoup().elementById( "bucket-css" ).htmlMatches(
-				       "<link rel='stylesheet' href='test-css-external' type='text/css'>" +
-						       "<link rel='stylesheet' href='/across/resources/test-css-views' type='text/css'>" +
-						       "<style type='text/css'>test-css-inline</style>" +
-						       "<style type='text/css'>test-css-data</style>" +
-						       "<link rel='stylesheet' href='/test-css-relative' type='text/css'>"
+				       """
+				       <link rel='stylesheet' href='test-css-external' type='text/css'>\
+				       <link rel='stylesheet' href='/across/resources/test-css-views' type='text/css'>\
+				       <style type='text/css'>test-css-inline</style>\
+				       <style type='text/css'>test-css-data</style>\
+				       <link rel='stylesheet' href='/test-css-relative' type='text/css'>\
+				       """
 		       ) );
 	}
 
@@ -112,11 +114,13 @@ public class TestDeprecatedWebResourceRendering
 	public void javascriptBucket() throws Exception {
 		mockMvc.perform( get( WebResourceController.PATH ) )
 		       .andExpect( jsoup().elementById( "bucket-javascript" ).htmlMatches(
-				       "<script type='text/javascript'>test-javascript-inline</script>" +
-						       "<script type='text/javascript'>(function( _data ) { _data[ \"test-javascript-data\" ] = \"test-javascript-data-value\"; })( window[\"Across\"] = window[\"Across\"] || {} );</script>" +
-						       "<script src='test-javascript-external' type='text/javascript'></script>" +
-						       "<script src='/across/resources/test-javascript-views' type='text/javascript'></script>" +
-						       "<script src='/test-javascript-relative' type='text/javascript'></script>"
+				       """
+				       <script type='text/javascript'>test-javascript-inline</script>\
+				       <script type='text/javascript'>(function( _data ) { _data[ "test-javascript-data" ] = "test-javascript-data-value"; })( window["Across"] = window["Across"] || {} );</script>\
+				       <script src='test-javascript-external' type='text/javascript'></script>\
+				       <script src='/across/resources/test-javascript-views' type='text/javascript'></script>\
+				       <script src='/test-javascript-relative' type='text/javascript'></script>\
+				       """
 		       ) );
 	}
 
@@ -124,11 +128,13 @@ public class TestDeprecatedWebResourceRendering
 	public void javascriptPageEndBucket() throws Exception {
 		mockMvc.perform( get( WebResourceController.PATH ) )
 		       .andExpect( jsoup().elementById( "bucket-javascript-page-end" ).htmlMatches(
-				       "<script src='test-javascript-end-external' type='text/javascript'></script>" +
-						       "<script src='/across/resources/test-javascript-end-views' type='text/javascript'></script>" +
-						       "<script src='/test-javascript-end-relative' type='text/javascript'></script>" +
-						       "<script type='text/javascript'>(function( _data ) { _data[ \"test-javascript-end-data\" ] = \"test-javascript-end-data-value\"; })( window[\"Across\"] = window[\"Across\"] || {} );</script>" +
-						       "<script type='text/javascript'>test-javascript-end-inline</script>"
+				       """
+				       <script src='test-javascript-end-external' type='text/javascript'></script>\
+				       <script src='/across/resources/test-javascript-end-views' type='text/javascript'></script>\
+				       <script src='/test-javascript-end-relative' type='text/javascript'></script>\
+				       <script type='text/javascript'>(function( _data ) { _data[ "test-javascript-end-data" ] = "test-javascript-end-data-value"; })( window["Across"] = window["Across"] || {} );</script>\
+				       <script type='text/javascript'>test-javascript-end-inline</script>\
+				       """
 		       ) );
 	}
 

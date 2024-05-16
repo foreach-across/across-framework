@@ -18,7 +18,7 @@ package com.foreach.across.modules.web.mvc.condition;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.mvc.condition.AbstractRequestCondition;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**

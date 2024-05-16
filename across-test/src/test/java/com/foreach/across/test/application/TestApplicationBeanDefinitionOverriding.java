@@ -23,11 +23,9 @@ import com.foreach.across.test.application.app.modules.MyInterface;
 import com.foreach.across.test.application.app.modules.two.ComponentFromTwo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +33,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Arne Vandamme
  * @since 3.2.1
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @SpringBootTest(classes = OverrideApplication.class)
 class TestApplicationBeanDefinitionOverriding

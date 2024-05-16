@@ -30,13 +30,11 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import javax.sql.DataSource;
 import java.io.Closeable;
@@ -48,9 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration
+@SpringJUnitConfig
 public class ITDistributedLockRepository
 {
 	private static final int BATCHES = 3;
@@ -213,8 +210,8 @@ public class ITDistributedLockRepository
 			}
 			finally {
 				context.destroy();
-				if ( dataSource instanceof Closeable ) {
-					( (Closeable) dataSource ).close();
+				if ( dataSource instanceof Closeable closeable ) {
+					 closeable.close();
 				}
 			}
 		}

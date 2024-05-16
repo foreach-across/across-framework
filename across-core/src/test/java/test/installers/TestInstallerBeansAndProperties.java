@@ -23,7 +23,6 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.installers.InstallerPhase;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -33,9 +32,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,9 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestInstallerBeansAndProperties.Config.class)
+@SpringJUnitConfig(classes = TestInstallerBeansAndProperties.Config.class)
 @TestPropertySource(properties = { "parent.value=parent", "module.value=parent" })
 public class TestInstallerBeansAndProperties
 {
@@ -158,7 +155,6 @@ public class TestInstallerBeansAndProperties
 		@Value("${module.value}")
 		private String moduleValue;
 
-		@Autowired
 		public BeforeContextBootstrapInstaller( String myInstallerBean, String moduleBean ) {
 			this.myInstallerBean = myInstallerBean;
 			this.moduleBean = moduleBean;

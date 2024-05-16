@@ -18,6 +18,7 @@ package com.foreach.across.core.context.support;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.ClassUtils;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;

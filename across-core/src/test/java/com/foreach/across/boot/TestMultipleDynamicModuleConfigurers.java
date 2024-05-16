@@ -22,13 +22,11 @@ import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,9 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Arne Vandamme
  * @since 1.1.2
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration
+@SpringJUnitConfig
 public class TestMultipleDynamicModuleConfigurers
 {
 	@Autowired

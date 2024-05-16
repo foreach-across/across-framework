@@ -27,7 +27,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
-import javax.servlet.DispatcherType;
+import jakarta.servlet.DispatcherType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;

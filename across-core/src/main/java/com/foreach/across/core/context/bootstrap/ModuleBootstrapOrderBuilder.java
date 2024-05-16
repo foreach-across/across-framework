@@ -405,8 +405,8 @@ public class ModuleBootstrapOrderBuilder
 	}
 
 	public int getOrderInRole( AcrossModule module ) {
-		if ( module instanceof Ordered ) {
-			return ( (Ordered) module ).getOrder();
+		if ( module instanceof Ordered ordered ) {
+			return  ordered.getOrder();
 		}
 
 		Annotation role = AnnotationUtils.getAnnotation( module.getClass(), AcrossRole.class );

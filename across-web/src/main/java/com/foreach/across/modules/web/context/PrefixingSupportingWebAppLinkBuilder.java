@@ -21,9 +21,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Default implementation of {@link WebAppLinkBuilder} that will resolve any prefixed url
@@ -105,14 +105,14 @@ public class PrefixingSupportingWebAppLinkBuilder implements WebAppLinkBuilder
 	}
 
 	private String encodeUrl( CharSequence link ) {
-		val response = getResponse();
+		final var response = getResponse();
 		return response != null ? response.encodeURL( link.toString() ) : link.toString();
 	}
 
 	private String getContextPath() {
-		val ra = RequestContextHolder.getRequestAttributes();
-		String contextPath = ra != null && ra instanceof ServletRequestAttributes
-				? ( (ServletRequestAttributes) ra ).getRequest().getContextPath()
+		final var ra = RequestContextHolder.getRequestAttributes();
+		String contextPath = ra != null && ra instanceof ServletRequestAttributes sra
+				?  sra.getRequest().getContextPath()
 				: servletContext.getContextPath();
 		contextPath = StringUtils.defaultString( contextPath );
 		if ( "/".equals( contextPath ) ) {
@@ -123,7 +123,7 @@ public class PrefixingSupportingWebAppLinkBuilder implements WebAppLinkBuilder
 	}
 
 	private HttpServletResponse getResponse() {
-		val ra = RequestContextHolder.getRequestAttributes();
-		return ra != null && ra instanceof ServletRequestAttributes ? ( (ServletRequestAttributes) ra ).getResponse() : null;
+		final var ra = RequestContextHolder.getRequestAttributes();
+		return ra != null && ra instanceof ServletRequestAttributes sra ?  sra.getResponse() : null;
 	}
 }

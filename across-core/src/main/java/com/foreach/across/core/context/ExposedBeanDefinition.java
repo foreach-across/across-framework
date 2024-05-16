@@ -137,8 +137,8 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 
 		setAutowireCandidate( original.isAutowireCandidate() );
 
-		if ( original instanceof RootBeanDefinition ) {
-			originalRootBeanDefinition = (RootBeanDefinition) original;
+		if ( original instanceof RootBeanDefinition definition ) {
+			originalRootBeanDefinition = definition;
 			if ( ResolvableType.forClass( beanClass ).getGenerics().length > 0 ) {
 				Method method = getResolvedFactoryMethod();
 				if ( method != null ) {
@@ -148,8 +148,7 @@ public class ExposedBeanDefinition extends RootBeanDefinition
 		}
 
 		// Add detailed information
-		if ( original instanceof AbstractBeanDefinition ) {
-			AbstractBeanDefinition originalAbstract = (AbstractBeanDefinition) original;
+		if ( original instanceof AbstractBeanDefinition originalAbstract ) {
 
 			for ( AutowireCandidateQualifier qualifier : originalAbstract.getQualifiers() ) {
 				addQualifier( qualifier );

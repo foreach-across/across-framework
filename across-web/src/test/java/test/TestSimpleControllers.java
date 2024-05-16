@@ -17,10 +17,8 @@ package test;
 
 import com.foreach.across.config.EnableAcrossContext;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.modules.simple.SimpleWebModule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,8 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestSimpleControllers.Config.class)
+@SpringJUnitConfig(classes = TestSimpleControllers.Config.class)
 public class TestSimpleControllers extends AbstractWebIntegrationTest
 {
 	@Test

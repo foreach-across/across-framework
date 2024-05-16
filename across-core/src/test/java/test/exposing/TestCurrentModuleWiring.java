@@ -27,21 +27,19 @@ import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.across.core.transformers.BeanPrefixingTransformer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.AbstractInlineModule;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestCurrentModuleWiring.Config.class)
+@SpringJUnitConfig(classes = TestCurrentModuleWiring.Config.class)
 @DirtiesContext
 public class TestCurrentModuleWiring
 {
@@ -96,7 +94,8 @@ public class TestCurrentModuleWiring
 	protected static class Config
 	{
 		@Bean
-		public AcrossContext acrossContext( ApplicationContext applicationContext ) {
+		@DependsOnDatabaseInitialization
+		public AcrossContext acrossContext(ApplicationContext applicationContext) {
 			AcrossContext context = new AcrossContext( applicationContext );
 			context.setInstallerAction( InstallerAction.DISABLED );
 

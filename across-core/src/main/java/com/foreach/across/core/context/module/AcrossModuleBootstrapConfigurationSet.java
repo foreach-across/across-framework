@@ -126,7 +126,7 @@ public class AcrossModuleBootstrapConfigurationSet implements Iterable<AcrossMod
 				                                                                      .map( configurationsByModuleName::get )
 				                                                                      .filter( Objects::nonNull )
 				                                                                      .findFirst();
-				if ( !target.isPresent() ) {
+				if ( target.isEmpty() ) {
 					LOG.warn( "Ignoring module {} as none of the target modules were present, expected one of: {}",
 					          moduleDescriptor.getModuleName(), moduleDescriptor.getExtensionTargets() );
 				}

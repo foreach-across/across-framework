@@ -186,8 +186,8 @@ public class AcrossBootstrapInstallerRegistry
 			if ( installer.isPresent() ) {
 				Object target = installer.get();
 
-				if ( action == InstallerAction.EXECUTE && target instanceof InstallerActionResolver ) {
-					Optional<InstallerAction> newAction = ( (InstallerActionResolver) target )
+				if ( action == InstallerAction.EXECUTE && target instanceof InstallerActionResolver resolver ) {
+					Optional<InstallerAction> newAction =  resolver
 							.resolve( module.getName(), installerMetaData );
 
 					if ( newAction.isPresent() && InstallerAction.EXECUTE != newAction.get() ) {
@@ -282,7 +282,7 @@ public class AcrossBootstrapInstallerRegistry
 	                                           Optional<Object> installerInstance ) {
 		AcrossConfigurableApplicationContext installerContext = getInstallerContext( module );
 
-		if ( !installerInstance.isPresent() ) {
+		if ( installerInstance.isEmpty() ) {
 			try {
 				return Optional.ofNullable( BeanFactoryUtils.beanOfType( installerContext, installerClass ) );
 			}
@@ -399,7 +399,7 @@ public class AcrossBootstrapInstallerRegistry
 	}
 
 	private Class determineInstallerClass( Object installerOrClass ) {
-		return installerOrClass instanceof Class ? (Class) installerOrClass : installerOrClass.getClass();
+		return installerOrClass instanceof Class c ? c : installerOrClass.getClass();
 	}
 
 	private Optional<Object> determineInstallerInstance( Object installerOrClass ) {

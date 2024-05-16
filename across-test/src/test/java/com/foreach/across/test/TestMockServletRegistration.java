@@ -19,9 +19,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.Servlet;
-import javax.servlet.ServletSecurityElement;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletSecurityElement;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;

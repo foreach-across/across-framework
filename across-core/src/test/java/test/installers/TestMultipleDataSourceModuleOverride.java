@@ -21,22 +21,19 @@ import com.foreach.across.core.context.beans.PrimarySingletonBean;
 import com.foreach.across.core.context.beans.ProvidedBeansMap;
 import com.foreach.across.core.context.configurer.ConfigurerScope;
 import com.foreach.across.core.context.configurer.ProvidedBeansConfigurer;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestMultipleDataSourceModuleOverride.Config.class)
+@SpringJUnitConfig(classes = TestMultipleDataSourceModuleOverride.Config.class)
 public class TestMultipleDataSourceModuleOverride extends AbstractInstallerDataSourceTest
 {
 	@Override

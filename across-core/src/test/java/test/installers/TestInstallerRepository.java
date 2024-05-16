@@ -21,7 +21,6 @@ import com.foreach.across.core.installers.InstallerMetaData;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,8 +29,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.installers.scan.installers.InstallerOne;
 import test.installers.scan.installers.InstallerTwo;
 
@@ -40,9 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestInstallerRepository.Config.class)
+@SpringJUnitConfig(classes = TestInstallerRepository.Config.class)
 public class TestInstallerRepository
 {
 	@Autowired

@@ -29,8 +29,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
-import javax.validation.Validator;
-import javax.validation.executable.ExecutableValidator;
+import jakarta.validation.Validator;
+import jakarta.validation.executable.ExecutableValidator;
 
 /**
  * Base configuration for a module {@link org.springframework.context.ApplicationContext}.
@@ -55,7 +55,7 @@ public class CommonModuleConfiguration
 	@Configuration
 	@ConditionalOnClass(ExecutableValidator.class)
 	@ConditionalOnBean(Validator.class)
-	@ConditionalOnResource(resources = "classpath:META-INF/services/javax.validation.spi.ValidationProvider")
+	@ConditionalOnResource(resources = "classpath:META-INF/services/jakarta.validation.spi.ValidationProvider")
 	static class MethodValidationConfiguration
 	{
 		@Bean

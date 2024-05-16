@@ -19,8 +19,8 @@ import com.foreach.across.test.MockFilterRegistration.MappingRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.Filter;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -23,15 +23,13 @@ import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import javax.sql.DataSource;
 import java.util.Set;
@@ -42,9 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = AbstractInstallerDataSourceTest.Config.class)
+@SpringJUnitConfig(classes = AbstractInstallerDataSourceTest.Config.class)
 public abstract class AbstractInstallerDataSourceTest
 {
 	protected static final String MODULE_DS = "expectedModuleDataSource";
@@ -151,7 +148,6 @@ public abstract class AbstractInstallerDataSourceTest
 		public final DataSource acrossDataSource;
 		public final DataSource installerDataSource;
 
-		@Autowired
 		public InstallerModuleBean( DataSource acrossDataSource, DataSource installerDataSource ) {
 			this.acrossDataSource = acrossDataSource;
 			this.installerDataSource = installerDataSource;

@@ -111,15 +111,16 @@ public abstract class AbstractExposedBeanRegistry
 	}
 
 	public void copyTo( ConfigurableListableBeanFactory beanFactory, boolean ignoreExistingBeanName ) {
-		if ( beanFactory instanceof BeanDefinitionRegistry ) {
-			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+		if ( beanFactory instanceof BeanDefinitionRegistry registry ) {
 
 			copyBeanDefinitions( beanFactory, registry, ignoreExistingBeanName );
 		}
 		else {
 			LOG.warn(
-					"Unable to copy exposed bean definitions to bean factory {}, " +
-							"it is not a BeanDefinitionRegistry",
+					"""
+					Unable to copy exposed bean definitions to bean factory {}, \
+					it is not a BeanDefinitionRegistry\
+					""",
 					beanFactory );
 		}
 	}

@@ -24,12 +24,10 @@ import com.foreach.across.core.development.AcrossDevelopmentMode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
@@ -44,9 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Marc Vanbrabant
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestCustomPropertiesFile.Config.class)
+@SpringJUnitConfig(classes = TestCustomPropertiesFile.Config.class)
 public class TestCustomPropertiesFile
 {
 	private static final String MODULE_ONE = "one";

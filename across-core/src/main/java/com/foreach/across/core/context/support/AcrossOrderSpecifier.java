@@ -66,8 +66,8 @@ public class AcrossOrderSpecifier
 	 * @return order value
 	 */
 	public Integer getOrder( Object instance, Integer defaultValue ) {
-		if ( instance instanceof Ordered ) {
-			return ( (Ordered) instance ).getOrder();
+		if ( instance instanceof Ordered ordered ) {
+			return  ordered.getOrder();
 		}
 		return order != null ? order : defaultValue;
 	}
@@ -94,8 +94,8 @@ public class AcrossOrderSpecifier
 	 * @return order in module value
 	 */
 	public Integer getOrderInModule( Object instance, Integer defaultValue ) {
-		if ( instance instanceof OrderedInModule ) {
-			return ( (OrderedInModule) instance ).getOrderInModule();
+		if ( instance instanceof OrderedInModule module ) {
+			return  module.getOrderInModule();
 		}
 		return orderInModule != null ? orderInModule : defaultValue;
 	}

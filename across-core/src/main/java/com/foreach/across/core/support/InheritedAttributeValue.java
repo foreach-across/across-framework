@@ -115,6 +115,6 @@ public class InheritedAttributeValue<T>
 	 * @return true if a value is set for the attribute
 	 */
 	public boolean isEmpty() {
-		return !valueHolder.isPresent();
+		return valueHolder.isEmpty();
 	}
 }

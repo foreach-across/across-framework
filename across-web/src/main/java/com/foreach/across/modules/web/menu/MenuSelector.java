@@ -19,7 +19,7 @@ package com.foreach.across.modules.web.menu;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A MenuSelector is a strategy interface that searches a Menu tree and returns at most one Menu item that matches it.

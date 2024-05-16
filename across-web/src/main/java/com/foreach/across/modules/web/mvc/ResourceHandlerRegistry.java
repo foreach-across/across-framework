@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.util.Collections;
 import java.util.Map;
 

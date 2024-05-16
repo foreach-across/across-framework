@@ -81,7 +81,7 @@ public final class AcrossLifecycleBootstrapHandler
 				printModuleSummary( moduleInfo, true );
 
 				LOG.info( "" );
-				LOG.info( "<<< {} - {} {}", String.format( "%2s", moduleInfo.getIndex() ), moduleInfo.getName(), moduleInfo.getVersionInfo().getVersion() );
+				LOG.info( "<<< {} - {} {}",  "%2s".formatted( moduleInfo.getIndex() ), moduleInfo.getName(), moduleInfo.getVersionInfo().getVersion() );
 			} );
 
 			LOG.info( "" );
@@ -119,7 +119,7 @@ public final class AcrossLifecycleBootstrapHandler
 		}
 
 		final String modulePrefix = detailed ? ">>> " : "";
-		LOG.info( "{}{} - {} {} [resources: {}]", modulePrefix, String.format( "%2s", moduleInfo.getIndex() ), moduleInfo.getName(),
+		LOG.info( "{}{} - {} {} [resources: {}]", modulePrefix,  "%2s".formatted( moduleInfo.getIndex() ), moduleInfo.getName(),
 		          moduleInfo.getVersionInfo().getVersion(), moduleInfo.getResourcesKey() );
 
 		Collection<AcrossModuleConfiguration> extensions = moduleInfo.getModuleBootstrapConfiguration().getExtensions();

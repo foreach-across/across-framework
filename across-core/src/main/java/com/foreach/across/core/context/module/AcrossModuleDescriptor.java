@@ -227,8 +227,8 @@ public class AcrossModuleDescriptor
 			orderInRole = (int) attributes.get( "order" );
 		}
 
-		if ( acrossModule instanceof Ordered ) {
-			orderInRole = ( (Ordered) acrossModule ).getOrder();
+		if ( acrossModule instanceof Ordered ordered ) {
+			orderInRole =  ordered.getOrder();
 		}
 
 		HashMap<String, Object> properties = new HashMap<>();

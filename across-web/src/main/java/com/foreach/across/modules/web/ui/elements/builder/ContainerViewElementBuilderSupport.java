@@ -82,8 +82,8 @@ public abstract class ContainerViewElementBuilderSupport<T extends ContainerView
 
 		for ( Object child : children ) {
 			if ( child != null ) {
-				if ( child instanceof ViewElement ) {
-					container.addChild( (ViewElement) child );
+				if ( child instanceof ViewElement element ) {
+					container.addChild( element );
 				}
 				else {
 					container.addChild( ( (ViewElementBuilder) child ).build( builderContext ) );

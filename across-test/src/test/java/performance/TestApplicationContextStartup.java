@@ -123,13 +123,13 @@ class TestApplicationContextStartup
 			System.out.println( "+----------------------------------------------------+------+" );
 
 			String pattern = "| %-50s | %4.0f |";
-			System.out.println( String.format( pattern, "Single AnnotationConfigApplicationContext", singleAnnotationConfigApplicationContext ) );
-			System.out.println( String.format( pattern, "Single AcrossApplicationContext", singleAcrossApplicationContext ) );
+			System.out.println(  pattern.formatted( "Single AnnotationConfigApplicationContext", singleAnnotationConfigApplicationContext ) );
+			System.out.println(  pattern.formatted( "Single AcrossApplicationContext", singleAcrossApplicationContext ) );
 			//System.out.println( String.format( pattern, "Single AnnotationConfigWebApplicationContext", singleAnnotationConfigWebApplicationContext ) );
-			System.out.println( String.format( pattern, "Multiple AnnotationConfigApplicationContext", multipleAnnotationConfigApplicationContexts ) );
-			System.out.println( String.format( pattern, "Multiple AcrossApplicationContext", multipleAcrossApplicationContexts ) );
-			System.out.println( String.format( pattern, "AcrossContext without exposed beans", acrossContextWithoutExposed ) );
-			System.out.println( String.format( pattern, "AcrossContext with exposed beans", acrossContextWithExposed ) );
+			System.out.println(  pattern.formatted( "Multiple AnnotationConfigApplicationContext", multipleAnnotationConfigApplicationContexts ) );
+			System.out.println(  pattern.formatted( "Multiple AcrossApplicationContext", multipleAcrossApplicationContexts ) );
+			System.out.println(  pattern.formatted( "AcrossContext without exposed beans", acrossContextWithoutExposed ) );
+			System.out.println(  pattern.formatted( "AcrossContext with exposed beans", acrossContextWithExposed ) );
 			System.out.println( "+----------------------------------------------------+------+" );
 		}
 		finally {
@@ -183,9 +183,9 @@ class TestApplicationContextStartup
 		System.out.println( "+----------------------------------------------------+------+" );
 
 		String pattern = "| %-50s | %4.0f |";
-		System.out.println( String.format( pattern, "Only exposed beans", BigDecimal.valueOf( exposedOnly ) ) );
-		System.out.println( String.format( pattern, "With module internals", BigDecimal.valueOf( moduleInternals ) ) );
-		System.out.println( String.format( pattern, "Non-existing module internals", BigDecimal.valueOf( nonExisting ) ) );
+		System.out.println(  pattern.formatted( "Only exposed beans", BigDecimal.valueOf( exposedOnly ) ) );
+		System.out.println(  pattern.formatted( "With module internals", BigDecimal.valueOf( moduleInternals ) ) );
+		System.out.println(  pattern.formatted( "Non-existing module internals", BigDecimal.valueOf( nonExisting ) ) );
 		System.out.println( "+----------------------------------------------------+------+" );
 	}
 
@@ -220,10 +220,10 @@ class TestApplicationContextStartup
 			System.out.println( "+----------------------------------------------------+------+" );
 
 			String pattern = "| %-50s | %4.0f |";
-			System.out.println( String.format( pattern, "Simple RefreshableCollection", simpleRefreshableCollection ) );
-			System.out.println( String.format( pattern, "Incremental RefreshableCollection", incrementalRefreshableCollection ) );
-			System.out.println( String.format( pattern, "RefreshableCollection with internals", simpleWithInternals ) );
-			System.out.println( String.format( pattern, "Incremental RefreshableCollection with internals", incrementalWithInternals ) );
+			System.out.println(  pattern.formatted( "Simple RefreshableCollection", simpleRefreshableCollection ) );
+			System.out.println(  pattern.formatted( "Incremental RefreshableCollection", incrementalRefreshableCollection ) );
+			System.out.println(  pattern.formatted( "RefreshableCollection with internals", simpleWithInternals ) );
+			System.out.println(  pattern.formatted( "Incremental RefreshableCollection with internals", incrementalWithInternals ) );
 			System.out.println( "+----------------------------------------------------+------+" );
 		}
 		finally {

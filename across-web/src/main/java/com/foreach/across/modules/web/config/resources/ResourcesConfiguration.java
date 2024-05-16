@@ -37,7 +37,7 @@ import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 
-import javax.servlet.DispatcherType;
+import jakarta.servlet.DispatcherType;
 import java.io.File;
 import java.util.Collections;
 import java.util.Map;

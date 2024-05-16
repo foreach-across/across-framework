@@ -24,6 +24,7 @@ import com.foreach.across.core.installers.AcrossInstallerRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -55,10 +56,12 @@ public class AcrossInstallerConfig
 	@DependsOn("acrossCoreSchemaInstaller")
 	public AcrossInstallerRepository installerRepository( @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource,
 	                                                      CoreSchemaConfigurationHolder schemaHolder ) {
-		if ( !acrossDataSource.isPresent() ) {
+		if ( acrossDataSource.isEmpty() ) {
 			throw new AcrossConfigurationException(
-					"Unable to create the AcrossInstallerRepository because there is no DataSource configured. " +
-							"A DataSource is required if there is at least one non-disabled installer.",
+					"""
+					Unable to create the AcrossInstallerRepository because there is no DataSource configured. \
+					A DataSource is required if there is at least one non-disabled installer.\
+					""",
 					"Define a datasource for Across. If you have multiple datasources mark one as @Primary or name the bean 'acrossDataSource'."
 			);
 		}
@@ -70,15 +73,18 @@ public class AcrossInstallerConfig
 	}
 
 	@Bean
+	@DependsOnDatabaseInitialization
 	@Lazy
 	@SuppressWarnings("all")
-	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller( @Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource,
+	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller(@Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource,
 	                                                            CoreSchemaConfigurationHolder schemaHolder,
-	                                                            AcrossContext acrossContext ) {
-		if ( !installerDataSource.isPresent() ) {
+	                                                            AcrossContext acrossContext) {
+		if ( installerDataSource.isEmpty() ) {
 			throw new AcrossConfigurationException(
-					"Unable to create the AcrossCoreSchemaInstaller because there is no DataSource configured. " +
-							"A DataSource is required if there is at least one non-disabled installer.",
+					"""
+					Unable to create the AcrossCoreSchemaInstaller because there is no DataSource configured. \
+					A DataSource is required if there is at least one non-disabled installer.\
+					""",
 					"Define a datasource for Across. If you have multiple datasources mark one as @Primary or name the bean 'acrossDataSource'."
 			);
 		}

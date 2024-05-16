@@ -47,17 +47,17 @@ public class DefaultViewElementAttributeConverter implements ViewElementAttribut
 
 	@Override
 	public String apply( Object baseValue ) {
-		Object value = baseValue instanceof Supplier ? ( (Supplier) baseValue ).get() : baseValue;
+		Object value = baseValue instanceof Supplier s ?  s.get() : baseValue;
 
 		if ( value != null ) {
-			if ( value instanceof String ) {
-				return (String) value;
+			if ( value instanceof String string ) {
+				return string;
 			}
 			if ( ClassUtils.isPrimitiveOrWrapper( value.getClass() ) || value instanceof Number ) {
 				return value.toString();
 			}
-			if ( value instanceof Date ) {
-				return DATE_FORMAT.format( (Date) value );
+			if ( value instanceof Date date ) {
+				return DATE_FORMAT.format( date );
 			}
 
 			try {

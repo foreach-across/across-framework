@@ -31,7 +31,6 @@
         <option value="$PROJECT_DIR$/standard-module-bom/pom.xml" />
       </set>
     </option>
-    <option name="workspaceImportForciblyTurnedOn" value="true" />
   </component>
   <component name="ModuleEditorState">
     <option name="LAST_EDITED_MODULE_NAME" />
@@ -40,7 +39,7 @@
   <component name="ProjectResources">
     <resource url="http://www.thymeleaf.org" location="$MAVEN_REPOSITORY$/org/thymeleaf/thymeleaf/2.1.2.RELEASE/thymeleaf-2.1.2.RELEASE.jar!/org/thymeleaf/dtd/standard/xhtml5-legacy-wildcard.dtd" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/target" />
   </component>
   <component name="ProjectType">

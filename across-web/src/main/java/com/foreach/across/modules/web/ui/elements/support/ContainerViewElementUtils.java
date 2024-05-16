@@ -114,8 +114,8 @@ public final class ContainerViewElementUtils
 			                      if ( StringUtils.equals( elementName, element.getName() ) && requiredType.isInstance( element ) ) {
 				                      return requiredType.cast( element );
 			                      }
-			                      else if ( element instanceof ContainerViewElement ) {
-				                      Optional<V> foundInChild = find( (ContainerViewElement) element, elementName, requiredType );
+			                      else if ( element instanceof ContainerViewElement viewElement ) {
+				                      Optional<V> foundInChild = find( viewElement, elementName, requiredType );
 
 				                      if ( foundInChild.isPresent() ) {
 					                      return foundInChild.get();
@@ -190,8 +190,8 @@ public final class ContainerViewElementUtils
 				builder.accept( child );
 			}
 
-			if ( child instanceof ContainerViewElement ) {
-				appendElementsToStream( (ContainerViewElement) child, predicate, builder );
+			if ( child instanceof ContainerViewElement element ) {
+				appendElementsToStream( element, predicate, builder );
 			}
 		} );
 	}
@@ -214,8 +214,8 @@ public final class ContainerViewElementUtils
 			                      if ( child.equals( element ) ) {
 				                      return container;
 			                      }
-			                      else if ( element instanceof ContainerViewElement ) {
-				                      Optional<ContainerViewElement> foundInChild = findParent( (ContainerViewElement) element, child );
+			                      else if ( element instanceof ContainerViewElement viewElement ) {
+				                      Optional<ContainerViewElement> foundInChild = findParent( viewElement, child );
 
 				                      if ( foundInChild.isPresent() ) {
 					                      return foundInChild.get();
@@ -303,7 +303,7 @@ public final class ContainerViewElementUtils
 	 */
 	public static Optional<ViewElement> remove( ContainerViewElement container, String elementName ) {
 		Optional<ViewElement> element = find( container, elementName );
-		if ( !element.isPresent() || !remove( container, element.get() ) ) {
+		if ( element.isEmpty() || !remove( container, element.get() ) ) {
 			return Optional.empty();
 		}
 

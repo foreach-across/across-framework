@@ -17,14 +17,12 @@ package test.properties;
 
 import com.foreach.across.config.EnableAcrossContext;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test.properties.boot.SpringBootPropertiesModule;
 import test.properties.boot.config.BeanWithProps;
 
@@ -35,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @SpringBootTest(classes = TestSpringBootProperties.Config.class, properties = {
 		"boot.properties.directValue=parent",

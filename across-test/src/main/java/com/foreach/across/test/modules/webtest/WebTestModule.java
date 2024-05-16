@@ -31,7 +31,9 @@ public class WebTestModule extends AcrossModule
 
 	@Override
 	public String getDescription() {
-		return "Helper module for integration testing Web UI related components. " +
-				"See reference documentation for more information.";
+		return """
+				Helper module for integration testing Web UI related components. \
+				See reference documentation for more information.\
+				""";
 	}
 }

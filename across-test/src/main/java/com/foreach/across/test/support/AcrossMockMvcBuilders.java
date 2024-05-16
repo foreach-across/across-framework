@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.util.Collection;
 
 /**
@@ -75,8 +75,7 @@ public class AcrossMockMvcBuilders
 		DefaultMockMvcBuilder mockMvcBuilder = MockMvcBuilders.webAppContextSetup( wac );
 
 		ServletContext servletContext = wac.getServletContext();
-		if ( servletContext instanceof MockAcrossServletContext ) {
-			MockAcrossServletContext sc = (MockAcrossServletContext) servletContext;
+		if ( servletContext instanceof MockAcrossServletContext sc ) {
 			sc.getFilterRegistrations()
 			  .values()
 			  .stream()
@@ -90,8 +89,10 @@ public class AcrossMockMvcBuilders
 			  } );
 		}
 		else {
-			LOG.error( "Creating a MockMvc instance but impossible to add dynamically registered filters" +
-					           " as the ServletContext is not a MockAcrossServletContext." );
+			LOG.error( """
+					           Creating a MockMvc instance but impossible to add dynamically registered filters\
+					            as the ServletContext is not a MockAcrossServletContext.\
+					           """ );
 			LOG.error( "Did you forget to annotate your test class with @AcrossWebAppConfiguration?" );
 
 			// Set the web application context attribute to AcrossContext anyway for maximum functionality
@@ -107,8 +108,8 @@ public class AcrossMockMvcBuilders
 	private static WebApplicationContext webApplicationContext( AcrossContextInfo contextInfo ) {
 		ApplicationContext acrossApplicationContext = contextInfo.getApplicationContext();
 
-		if ( acrossApplicationContext instanceof WebApplicationContext ) {
-			return (WebApplicationContext) acrossApplicationContext;
+		if ( acrossApplicationContext instanceof WebApplicationContext context ) {
+			return context;
 		}
 
 		return (WebApplicationContext) acrossApplicationContext.getParent();

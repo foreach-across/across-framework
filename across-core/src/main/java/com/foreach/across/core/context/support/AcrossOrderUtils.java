@@ -67,34 +67,34 @@ public abstract class AcrossOrderUtils
 	 * @return null if no order specified.
 	 */
 	public static Integer findOrderInModule( Object obj ) {
-		Integer order = ( obj instanceof OrderedInModule ? ( (OrderedInModule) obj ).getOrderInModule() : null );
+		Integer order = ( obj instanceof OrderedInModule oim ?  oim.getOrderInModule() : null );
 
 		if ( order != null ) {
 			return order;
 		}
 
-		if ( obj instanceof Class ) {
-			OrderInModule ann = AnnotationUtils.findAnnotation( (Class) obj, OrderInModule.class );
+		if ( obj instanceof Class class1 ) {
+			OrderInModule ann = AnnotationUtils.findAnnotation( class1, OrderInModule.class );
 			if ( ann != null ) {
 				return ann.value();
 			}
 		}
-		else if ( obj instanceof Method ) {
-			OrderInModule ann = AnnotationUtils.findAnnotation( (Method) obj, OrderInModule.class );
+		else if ( obj instanceof Method method ) {
+			OrderInModule ann = AnnotationUtils.findAnnotation( method, OrderInModule.class );
 			if ( ann != null ) {
 				return ann.value();
 			}
 		}
-		else if ( obj instanceof AnnotatedElement ) {
-			OrderInModule ann = AnnotationUtils.getAnnotation( (AnnotatedElement) obj, OrderInModule.class );
+		else if ( obj instanceof AnnotatedElement element ) {
+			OrderInModule ann = AnnotationUtils.getAnnotation( element, OrderInModule.class );
 			if ( ann != null ) {
 				return ann.value();
 			}
 		}
 		else if ( obj != null ) {
 			order = findOrderInModule( obj.getClass() );
-			if ( order == null && obj instanceof DecoratingProxy ) {
-				order = findOrderInModule( ( (DecoratingProxy) obj ).getDecoratedClass() );
+			if ( order == null && obj instanceof DecoratingProxy proxy ) {
+				order = findOrderInModule(  proxy.getDecoratedClass() );
 			}
 		}
 
@@ -105,8 +105,7 @@ public abstract class AcrossOrderUtils
 		if ( beanDefinition == null ) {
 			return null;
 		}
-		if ( beanDefinition instanceof ExposedBeanDefinition ) {
-			ExposedBeanDefinition exposed = (ExposedBeanDefinition) beanDefinition;
+		if ( beanDefinition instanceof ExposedBeanDefinition exposed ) {
 
 			BeanDefinition originating = exposed.getOriginatingBeanDefinition();
 			if ( originating != null ) {
@@ -116,8 +115,7 @@ public abstract class AcrossOrderUtils
 			return AcrossOrderSpecifier.forSources( Collections.singletonList( exposed.getTargetType() ) ).moduleIndex( exposed.getModuleIndex() ).build();
 		}
 
-		if ( beanDefinition instanceof RootBeanDefinition ) {
-			RootBeanDefinition rootBeanDefinition = (RootBeanDefinition) beanDefinition;
+		if ( beanDefinition instanceof RootBeanDefinition rootBeanDefinition ) {
 
 			List<Object> sources = new ArrayList<Object>( 2 );
 			Method factoryMethod = rootBeanDefinition.getResolvedFactoryMethod();

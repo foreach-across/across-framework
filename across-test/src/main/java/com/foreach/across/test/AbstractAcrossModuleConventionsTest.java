@@ -81,8 +81,10 @@ public abstract class AbstractAcrossModuleConventionsTest
 
 				Field resourcesKeyField = ReflectionUtils.findField( moduleClass, "RESOURCES" );
 
-				String resourcesKeyMsg = "Module does not define a valid public static final RESOURCES field.  " +
-						"This is advised if the resources key is not the same as the module name.";
+				String resourcesKeyMsg = """
+						Module does not define a valid public static final RESOURCES field.  \
+						This is advised if the resources key is not the same as the module name.\
+						""";
 
 				assertNotNull( resourcesKeyField, resourcesKeyMsg );
 				assertTrue( ReflectionUtils.isPublicStaticFinal( resourcesKeyField ), resourcesKeyMsg );

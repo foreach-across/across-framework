@@ -5,27 +5,24 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.web.AcrossWebModule;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = TestExistingMultipartResolver.Config.class)
+@SpringJUnitConfig(classes = TestExistingMultipartResolver.Config.class)
 public class TestExistingMultipartResolver
 {
 	private static MultipartResolver FAKE_RESOLVER = new MultipartResolver()

@@ -23,13 +23,11 @@ import com.foreach.across.core.events.AcrossLifecycleListener;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,9 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestEventHandlersFromParent.Config.class)
+@SpringJUnitConfig(classes = TestEventHandlersFromParent.Config.class)
 public class TestEventHandlersFromParent
 {
 	@Autowired

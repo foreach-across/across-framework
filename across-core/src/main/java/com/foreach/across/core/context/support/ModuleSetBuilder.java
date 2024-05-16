@@ -61,7 +61,7 @@ public class ModuleSetBuilder
 				);
 			}
 			Optional<AcrossModule> module = dependencyResolver.resolveModule( moduleName, true );
-			if ( !module.isPresent() ) {
+			if ( module.isEmpty() ) {
 				throw new AcrossConfigurationException(
 						"Unable to resolve module " + moduleName + ".",
 						"Either declare the module as a @Bean in the parent context or configure module scanning and check your module has a 'public static final String NAME' constant."

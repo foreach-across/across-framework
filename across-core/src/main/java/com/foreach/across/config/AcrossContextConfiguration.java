@@ -27,6 +27,7 @@ import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.SpringApplicationEvent;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.type.classreading.ConcurrentReferenceCachingMetadataReaderFactory;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.context.ApplicationContext;
@@ -93,10 +94,11 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	}
 
 	@Bean
-	public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext,
+	@DependsOnDatabaseInitialization
+	public AcrossContext acrossContext(ConfigurableApplicationContext applicationContext,
 	                                    @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource,
 	                                    @Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource
-	                                    ) {
+	) {
 		Map<String, Object> configuration = importMetadata.getAnnotationAttributes( ANNOTATION_TYPE );
 
 		AcrossContextBuilder contextBuilder = new AcrossContextBuilder()
@@ -123,9 +125,9 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 		if ( event instanceof SpringApplicationEvent || event instanceof WebServerInitializedEvent ) {
 			// todo: extend across-configuration to allow specifying which events should be forwarded
 			if ( acrossContext != null ) {
-				val multicaster = AcrossContextUtils.getContextInfo( acrossContext )
-				                                    .getApplicationContext()
-				                                    .getBean( ApplicationEventMulticaster.class );
+				final var multicaster = AcrossContextUtils.getContextInfo( acrossContext )
+						.getApplicationContext()
+						.getBean( ApplicationEventMulticaster.class );
 
 				multicaster.multicastEvent( event );
 			}
@@ -146,8 +148,10 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 			}
 			else {
 				LOG.warn(
-						"Unable to select AcrossContext datasource - multiple beans but none named 'acrossDataSource', " +
-								"please put an explicit qualifier on the correct datasource instance." );
+						"""
+						Unable to select AcrossContext datasource - multiple beans but none named 'acrossDataSource', \
+						please put an explicit qualifier on the correct datasource instance.\
+						""" );
 			}
 		}
 		else {

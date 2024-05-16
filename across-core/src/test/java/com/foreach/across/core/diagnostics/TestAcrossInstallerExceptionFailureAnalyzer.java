@@ -49,16 +49,18 @@ public class TestAcrossInstallerExceptionFailureAnalyzer
 		FailureAnalysis analysis = analyzer.analyze( null, ae );
 		assertThat( analysis.getAction() ).isNull();
 		assertThat( analysis.getDescription() )
-				.startsWith( String.format( "A error occurred when executing an installer for module MyModule:%n" +
-						                            " - Installer name: CustomInstallerName%n" +
-						                            " - Description: with group%n" +
-						                            " - Installer class: %s%n" +
-						                            " - Installer group: someGroup%n" +
-						                            " - Installer phase: AfterModuleBootstrap%n" +
-						                            " - Run condition: VersionDifferent (version: -2)%n" +
-						                            " - Installer method: %s",
-				                            Long.class.getName(),
-				                            INSTALLER_METHOD.toString() ) );
+				.startsWith( ("""
+				A error occurred when executing an installer for module MyModule:%n\
+				 - Installer name: CustomInstallerName%n\
+				 - Description: with group%n\
+				 - Installer class: %s%n\
+				 - Installer group: someGroup%n\
+				 - Installer phase: AfterModuleBootstrap%n\
+				 - Run condition: VersionDifferent (version: -2)%n\
+				 - Installer method: %s\
+				""").formatted(
+				Long.class.getName(),
+				INSTALLER_METHOD.toString() ) );
 	}
 
 	@SuppressWarnings("unused")

@@ -16,6 +16,7 @@
 
 package com.foreach.across.core.installers;
 
+import jakarta.annotation.PostConstruct;
 import liquibase.exception.LiquibaseException;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.Date;
 

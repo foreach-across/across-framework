@@ -36,7 +36,7 @@ public class TestAcrossExceptionFailureAnalyzer
 		FailureAnalysis analysis = analyzer.analyze( null, ae );
 		assertThat( analysis.getAction() ).isNull();
 		assertThat( analysis.getDescription() )
-				.startsWith( String.format("An error occurred when starting the Across context.%nsomething happened") );
+				.startsWith( "An error occurred when starting the Across context.%nsomething happened".formatted() );
 	}
 
 	@Test
@@ -47,6 +47,6 @@ public class TestAcrossExceptionFailureAnalyzer
 		FailureAnalysis analysis = analyzer.analyze( null, ae );
 		assertThat( analysis.getAction() ).isNull();
 		assertThat( analysis.getDescription() )
-				.startsWith( String.format("There was an error with module MyModule when starting the Across context.%nsomething happened") );
+				.startsWith( "There was an error with module MyModule when starting the Across context.%nsomething happened".formatted() );
 	}
 }

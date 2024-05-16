@@ -20,8 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
 
-import javax.servlet.*;
-import javax.servlet.descriptor.JspConfigDescriptor;
+import jakarta.servlet.*;
+import jakarta.servlet.descriptor.JspConfigDescriptor;
 import java.util.*;
 
 /**

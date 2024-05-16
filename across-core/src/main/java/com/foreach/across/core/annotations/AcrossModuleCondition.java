@@ -73,7 +73,7 @@ class AcrossModuleCondition extends SpringBootCondition
 		}
 
 		BeanFactory parentFactory = beanFactory.getParentBeanFactory();
-		return parentFactory instanceof ConfigurableListableBeanFactory ? findAcrossContextInfo( (ConfigurableListableBeanFactory) parentFactory ) : null;
+		return parentFactory instanceof ConfigurableListableBeanFactory clbf ? findAcrossContextInfo( clbf ) : null;
 	}
 
 	/**

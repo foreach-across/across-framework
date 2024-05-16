@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;

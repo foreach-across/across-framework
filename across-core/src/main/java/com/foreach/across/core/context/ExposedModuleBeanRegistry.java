@@ -42,8 +42,8 @@ public class ExposedModuleBeanRegistry extends AbstractExposedBeanRegistry
 	                                  ExposedBeanDefinitionTransformer transformer ) {
 		super( contextBeanRegistry, moduleInfo.getName(), moduleInfo.getIndex(), transformer );
 
-		if ( child instanceof BeanDefinitionRegistry ) {
-			beanDefinitionRegistry = (BeanDefinitionRegistry) child;
+		if ( child instanceof BeanDefinitionRegistry registry ) {
+			beanDefinitionRegistry = registry;
 		}
 		else {
 			beanDefinitionRegistry = null;

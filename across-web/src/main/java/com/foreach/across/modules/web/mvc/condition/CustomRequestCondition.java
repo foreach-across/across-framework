@@ -17,7 +17,7 @@ package com.foreach.across.modules.web.mvc.condition;
 
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
 
 /**

@@ -16,6 +16,7 @@
 package com.foreach.across;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * {@link SpringApplicationBuilder} extension that will use an {@link AcrossApplicationRunner}
@@ -31,7 +32,7 @@ public class AcrossApplicationRunnerBuilder extends SpringApplicationBuilder
 	}
 
 	@Override
-	protected AcrossApplicationRunner createSpringApplication( Class<?>... sources ) {
+	protected AcrossApplicationRunner createSpringApplication( ResourceLoader rl, Class<?>... sources ) {
 		return new AcrossApplicationRunner( sources );
 	}
 }

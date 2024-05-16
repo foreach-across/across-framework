@@ -19,6 +19,7 @@ import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.context.AcrossModuleEntity;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

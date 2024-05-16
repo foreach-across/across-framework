@@ -150,8 +150,8 @@ public class AcrossDynamicModulesConfigurer implements AcrossContextConfigurer
 			configurePostProcessorModule( context, basePackage + ".postprocessor", baseModuleName );
 		}
 
-		if ( !metadataReaderFactoryConfigured && metadataReaderFactory instanceof CachingMetadataReaderFactory ) {
-			( (CachingMetadataReaderFactory) metadataReaderFactory ).clearCache();
+		if ( !metadataReaderFactoryConfigured && metadataReaderFactory instanceof CachingMetadataReaderFactory factory ) {
+			 factory.clearCache();
 		}
 	}
 

@@ -29,8 +29,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 
 /**
  * {@link ServletContextInitializer} that ensures that the {@link AcrossContext} is bootstrapped before the
@@ -91,8 +91,8 @@ public class AcrossServletContextInitializer
 			AcrossContext acrossContext = applicationContext.getBean( AcrossContext.class );
 
 			// Register the root application context
-			if ( applicationContext instanceof WebApplicationContext ) {
-				ServletContext servletContext = ( (WebApplicationContext) applicationContext ).getServletContext();
+			if ( applicationContext instanceof WebApplicationContext context ) {
+				ServletContext servletContext =  context.getServletContext();
 				servletContext.setAttribute( WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
 				                             AcrossContextUtils.getApplicationContext( acrossContext ) );
 			}

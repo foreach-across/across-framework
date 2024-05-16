@@ -62,7 +62,9 @@ public class TestInlineExpressionsOnViewElements extends AbstractViewElementTemp
 		container.addChild( TextViewElement.html( "[[test]]" ) );
 
 		renderAndExpect( container, ( model ) -> model.addAttribute( "otherElement", childContainer ),
-		                 "unwrapped[[1/0]]<div>" +
-				                 "initial text: [[33/0]]other text</div>[[test]]3" );
+		                 """
+		                 unwrapped[[1/0]]<div>\
+		                 initial text: [[33/0]]other text</div>[[test]]3\
+		                 """ );
 	}
 }

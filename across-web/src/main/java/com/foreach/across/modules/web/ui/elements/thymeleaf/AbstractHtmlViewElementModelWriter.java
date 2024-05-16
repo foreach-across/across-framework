@@ -44,8 +44,8 @@ public abstract class AbstractHtmlViewElementModelWriter<T extends HtmlViewEleme
 	}
 
 	protected void writeChildren( T viewElement, ThymeleafModelBuilder model ) {
-		if ( viewElement instanceof AbstractNodeViewElement ) {
-			( (AbstractNodeViewElement) viewElement ).getChildren().forEach( model::addViewElement );
+		if ( viewElement instanceof AbstractNodeViewElement element ) {
+			 element.getChildren().forEach( model::addViewElement );
 		}
 	}
 

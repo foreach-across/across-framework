@@ -135,14 +135,14 @@ public class AcrossAutoConfigurationImportSelector extends AutoConfigurationImpo
 	private Group createGroup( @Nullable Class<? extends Group> type ) {
 		Group group = BeanUtils.instantiateClass( type );
 
-		if ( group instanceof ResourceLoaderAware ) {
-			( (ResourceLoaderAware) group ).setResourceLoader( getResourceLoader() );
+		if ( group instanceof ResourceLoaderAware aware ) {
+			 aware.setResourceLoader( getResourceLoader() );
 		}
-		if ( group instanceof BeanClassLoaderAware ) {
-			( (BeanClassLoaderAware) group ).setBeanClassLoader( getBeanClassLoader() );
+		if ( group instanceof BeanClassLoaderAware aware ) {
+			 aware.setBeanClassLoader( getBeanClassLoader() );
 		}
-		if ( group instanceof BeanFactoryAware ) {
-			( (BeanFactoryAware) group ).setBeanFactory( getBeanFactory() );
+		if ( group instanceof BeanFactoryAware aware ) {
+			 aware.setBeanFactory( getBeanFactory() );
 		}
 
 		return group;

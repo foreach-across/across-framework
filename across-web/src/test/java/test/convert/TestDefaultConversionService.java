@@ -22,7 +22,6 @@ import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.core.context.web.StandardAcrossServletEnvironment;
 import com.foreach.across.modules.web.AcrossWebModule;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -31,8 +30,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,10 +42,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  *
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = TestDefaultConversionService.Config.class)
+@SpringJUnitConfig(classes = TestDefaultConversionService.Config.class)
 public class TestDefaultConversionService
 {
 	@Autowired(required = false)

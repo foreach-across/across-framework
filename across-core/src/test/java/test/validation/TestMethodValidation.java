@@ -21,22 +21,20 @@ import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,9 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestMethodValidation.Config.class)
+@SpringJUnitConfig(classes = TestMethodValidation.Config.class)
 public class TestMethodValidation
 {
 	@Autowired
@@ -82,7 +79,7 @@ public class TestMethodValidation
 	}
 
 	private void hasConstraintMessage( ConstraintViolationException exception, String message ) {
-		val violations = exception.getConstraintViolations();
+		final var violations = exception.getConstraintViolations();
 		assertEquals( 1, violations.size() );
 		ConstraintViolation violation = violations.iterator().next();
 		assertEquals( message, violation.getMessage() );

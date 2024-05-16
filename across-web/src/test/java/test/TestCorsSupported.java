@@ -17,20 +17,15 @@ package test;
 
 import com.foreach.across.config.EnableAcrossContext;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import sun.net.www.protocol.http.HttpURLConnection;
 import test.modules.cors.CorsModule;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,31 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = TestCorsSupported.Config.class)
 public class TestCorsSupported extends AbstractWebIntegrationTest
 {
-	private RestTemplate restTemplate;
+	// The default RestTemplate uses HttpURLConnection, which requires lots of hacking to get CORS to work.
+    // Using the JDK11 HttpClient is much cleaner:
+	private RestTemplate restTemplate = new RestTemplate(new JdkClientHttpRequestFactory());
 	private String URL = "/cors/78";
-
-	@BeforeEach
-	public void allowRestrictedHeaders() throws NoSuchFieldException, IllegalAccessException {
-		restTemplate = new RestTemplate();
-		// RestTemplate uses HttpURLConnection, which disallows CORS headers by default.
-		// Since it is a private static final field, we need some trickery to make RestTemplate work okay with CORS
-		setAllowRestrictedHeaders( true );
-	}
-
-	@AfterEach
-	public void resetRestrictedHeaders() throws NoSuchFieldException, IllegalAccessException {
-		setAllowRestrictedHeaders(
-				Boolean.parseBoolean( System.getProperty( "sun.net.http.allowRestrictedHeaders" ) ) );
-	}
-
-	public void setAllowRestrictedHeaders( Object value ) throws NoSuchFieldException, IllegalAccessException {
-		Field field = ReflectionUtils.findField( HttpURLConnection.class, "allowRestrictedHeaders" );
-		ReflectionUtils.makeAccessible( field );
-		Field modifierField = Field.class.getDeclaredField( "modifiers" );
-		ReflectionUtils.makeAccessible( modifierField );
-		modifierField.setInt( field, field.getModifiers() & ~Modifier.FINAL );
-		ReflectionUtils.setField( field, null, value );
-	}
 
 	@Test
 	public void preflightIsNotAllowedForOtherOrigin() throws Exception {

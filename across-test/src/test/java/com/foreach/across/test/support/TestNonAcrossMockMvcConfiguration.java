@@ -20,14 +20,12 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.MockAcrossServletContext;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -43,10 +41,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Arne Vandamme
  * @since Mar 2016
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration
+@SpringJUnitConfig
 @TestPropertySource(properties = {
 		"build.number=unit-test",
 		"spring.http.encoding.force=true"

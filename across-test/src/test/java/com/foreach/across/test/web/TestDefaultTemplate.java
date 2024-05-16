@@ -18,6 +18,7 @@ package com.foreach.across.test.web;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import com.foreach.across.test.web.module.WebControllersModule;
+import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.util.NestedServletException;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -89,16 +89,16 @@ public class TestDefaultTemplate
 	}
 
 	@Test
-	public void defaultTemplateWithDefaultExceptionHandlerShouldHaveCorrectNestedException() throws Exception {
-		NestedServletException e = Assertions.assertThrows( NestedServletException.class, () -> {
+	public void defaultTemplateWithDefaultExceptionHandlerShouldHaveCorrectNestedException() {
+		ServletException e = Assertions.assertThrows( ServletException.class, () -> {
 			mvc.perform( get( "/runtimeError" ) );
 		} );
 		assertThat( e.getMessage(), containsString( "Runtime error occurred." ) );
 	}
 
 	@Test
-	public void defaultTemplateWithPartialOnDefaultExceptionHandlerShouldHaveCorrectNestedException() throws Exception {
-		NestedServletException e = Assertions.assertThrows( NestedServletException.class, () -> {
+	public void defaultTemplateWithPartialOnDefaultExceptionHandlerShouldHaveCorrectNestedException() {
+		ServletException e = Assertions.assertThrows( ServletException.class, () -> {
 			mvc.perform( get( "/runtimeError?_partial=content" ) );
 		} );
 		assertThat( e.getMessage(), containsString( "Runtime error occurred." ) );

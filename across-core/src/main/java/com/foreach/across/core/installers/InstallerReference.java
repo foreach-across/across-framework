@@ -58,11 +58,11 @@ public abstract class InstallerReference
 	 */
 	@NonNull
 	public static InstallerReference from( @NonNull @lombok.NonNull Object installer ) {
-		if ( installer instanceof String ) {
-			return from( (String) installer );
+		if ( installer instanceof String string ) {
+			return from( string );
 		}
-		if ( installer instanceof Class ) {
-			return from( (Class) installer );
+		if ( installer instanceof Class class1 ) {
+			return from( class1 );
 		}
 
 		return new InstallerBean( installer );

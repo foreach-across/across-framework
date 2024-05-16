@@ -19,11 +19,11 @@ package com.foreach.across.modules.web.resource;
 import com.foreach.across.core.events.BuildRegistryEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -31,7 +31,7 @@ import java.util.LinkedList;
  * Configures a WebResourceRegistry for the request.  Will initialize using the default
  * registry provided and will fire the registry build events.
  */
-public class WebResourceRegistryInterceptor extends HandlerInterceptorAdapter
+public class WebResourceRegistryInterceptor implements HandlerInterceptor
 {
 	private final WebResourcePackageManager webResourcePackageManager;
 

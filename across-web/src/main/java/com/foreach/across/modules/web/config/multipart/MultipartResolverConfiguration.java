@@ -45,11 +45,10 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.MultipartFilter;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
-import javax.servlet.*;
+import jakarta.servlet.*;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -62,7 +61,6 @@ import java.util.Collections;
  * be used.  This requires the web container to support multipart resolving.</p>
  *
  * @see org.springframework.web.multipart.support.StandardServletMultipartResolver
- * @see org.springframework.web.multipart.commons.CommonsMultipartResolver
  */
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE + 1)
@@ -91,14 +89,7 @@ public class MultipartResolverConfiguration
 	@Bean
 	@ConditionalOnMissingBean
 	public MultipartResolver filterMultipartResolver( MultipartConfigElement multipartConfigElement, ServletContext servletContext ) {
-		boolean useCommons = ClassUtils.isPresent( COMMONS_FILE_UPLOAD, beanFactory.getBeanClassLoader() );
-
-		if ( useCommons ) {
-			return createCommonsMultipartResolver( multipartConfigElement, servletContext );
-		}
-		else {
-			return createStandardServletMultipartResolver();
-		}
+		return createStandardServletMultipartResolver();
 	}
 
 	@Autowired
@@ -144,20 +135,4 @@ public class MultipartResolverConfiguration
 		return multipartResolver;
 	}
 
-	@SneakyThrows
-	private MultipartResolver createCommonsMultipartResolver( MultipartConfigElement multipartConfig, ServletContext servletContext ) {
-		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver( servletContext );
-		multipartResolver.setMaxUploadSize( multipartConfig.getMaxFileSize() );
-		multipartResolver.setMaxInMemorySize( multipartConfig.getFileSizeThreshold() );
-		multipartResolver.setResolveLazily( multipartProperties.isResolveLazily() );
-
-		try {
-			multipartResolver.setUploadTempDir( new FileSystemResource( multipartConfig.getLocation() ) );
-		}
-		catch ( IOException ioe ) {
-			throw new ServletException( "Illegal location for multipart uploads: " + multipartConfig.getLocation() );
-		}
-
-		return multipartResolver;
-	}
 }

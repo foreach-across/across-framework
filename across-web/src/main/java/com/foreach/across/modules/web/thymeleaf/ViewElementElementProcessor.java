@@ -20,6 +20,7 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementAttributeConverter;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
@@ -32,6 +33,9 @@ import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.web.IWebRequest;
+
+import java.lang.reflect.Field;
 
 /**
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
@@ -60,7 +64,8 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 		structureHandler.setInliner( NoOpInliner.INSTANCE );
 
 		ViewElement viewElement = retrieveViewElementFromAttribute( context, tag );
-		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
+		HttpServletRequest request = getRequest(context);
+		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( request );
 		ViewElementModelWriterRegistry registry = appCtx.getBean( ViewElementModelWriterRegistry.class );
 		ViewElementAttributeConverter attributeConverter = appCtx.getBean( ViewElementAttributeConverter.class );
 		HtmlIdStore idStore = HtmlIdStore.fetch( context );
@@ -74,6 +79,30 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 		structureHandler.replaceWith( builder.retrieveModel(), true );
 	}
 
+	private static final Field HTTP_REQUEST;
+
+	static {
+		try {
+			HTTP_REQUEST = Class.forName( "org.thymeleaf.web.servlet.JakartaServletWebRequest" )
+			                    .getDeclaredField( "request" );
+			HTTP_REQUEST.setAccessible( true );
+		}
+		catch ( NoSuchFieldException | ClassNotFoundException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	private HttpServletRequest getRequest( ITemplateContext context ) {
+		WebEngineContext webEngineContext = (WebEngineContext) context;
+		IWebRequest request = webEngineContext.getExchange().getRequest();
+		try {
+			return (HttpServletRequest) HTTP_REQUEST.get( request );
+		}
+		catch ( IllegalAccessException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
 	private ViewElement retrieveViewElementFromAttribute( ITemplateContext context, IProcessableElementTag element ) {
 		String expr = element.getAttributeValue( ATTRIBUTE_ITEM );
 		IStandardExpressionParser parser = StandardExpressions.getExpressionParser( context.getConfiguration() );
@@ -81,11 +110,11 @@ class ViewElementElementProcessor extends AbstractElementTagProcessor
 
 		Object viewElement = expression.execute( context );
 
-		if ( viewElement instanceof ViewElement ) {
-			return (ViewElement) viewElement;
+		if ( viewElement instanceof ViewElement viewElement1 ) {
+			return viewElement1;
 		}
-		else if ( viewElement instanceof ViewElementBuilder ) {
-			return ( (ViewElementBuilder) viewElement ).build();
+		else if ( viewElement instanceof ViewElementBuilder builder ) {
+			return  builder.build();
 		}
 
 		throw new IllegalArgumentException(

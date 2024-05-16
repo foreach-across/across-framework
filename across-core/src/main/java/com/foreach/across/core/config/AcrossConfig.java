@@ -36,6 +36,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.HierarchicalMessageSource;
@@ -139,9 +140,10 @@ public class AcrossConfig
 	@Bean(destroyMethod = "close")
 	@Lazy
 	@DependsOn("acrossCoreSchemaInstaller")
+	@DependsOnDatabaseInitialization
 	@SuppressWarnings("all")
-	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager( @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource ) {
-		if ( !acrossDataSource.isPresent() ) {
+	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager(@Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource) {
+		if ( acrossDataSource.isEmpty() ) {
 			throw new AcrossConfigurationException(
 					"Unable to create the DistributedLockRepository because there is no DataSource configured.",
 					"Define a datasource for Across. If you have multiple datasources mark one as @Primary or name the bean 'acrossDataSource'."

@@ -117,8 +117,8 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	 */
 	@Override
 	protected RootBeanDefinition getMergedBeanDefinition( String beanName, BeanDefinition bd, BeanDefinition containingBd ) {
-		if ( bd instanceof ExposedBeanDefinition ) {
-			return (ExposedBeanDefinition) bd;
+		if ( bd instanceof ExposedBeanDefinition definition ) {
+			return definition;
 		}
 
 		return super.getMergedBeanDefinition( beanName, bd, containingBd );
@@ -174,18 +174,19 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	}
 
 	@Override
-	protected Class<?> getTypeForFactoryBean( String beanName, RootBeanDefinition mbd ) {
+	protected ResolvableType getTypeForFactoryBean( String beanName, RootBeanDefinition mbd, boolean allowFactoryBeanInit ) {
 		if ( mbd instanceof ExposedBeanDefinition ) {
 			List<ConstructorArgumentValues.ValueHolder> factoryArguments =
 					mbd.getConstructorArgumentValues().getGenericArgumentValues();
 
-			return acrossContextBeanRegistry( mbd.getFactoryBeanName() ).getBeanTypeFromModule(
+			var result = acrossContextBeanRegistry( mbd.getFactoryBeanName() ).getBeanTypeFromModule(
 					(String) factoryArguments.get( 0 ).getValue(),
 					(String) factoryArguments.get( 1 ).getValue()
 			);
+			return ResolvableType.forClass( result );
 		}
 
-		return super.getTypeForFactoryBean( beanName, mbd );
+		return super.getTypeForFactoryBean( beanName, mbd, allowFactoryBeanInit );
 	}
 
 	@Override
@@ -468,8 +469,7 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 			}
 		}
 
-		if ( bd instanceof ExposedBeanDefinition ) {
-			ExposedBeanDefinition ebd = (ExposedBeanDefinition) bd;
+		if ( bd instanceof ExposedBeanDefinition ebd ) {
 			AcrossContextInfo contextInfo = acrossContextBeanRegistry( ebd.getFactoryBeanName() ).getContextInfo();
 			try {
 				AcrossListableBeanFactory moduleBeanFactory =

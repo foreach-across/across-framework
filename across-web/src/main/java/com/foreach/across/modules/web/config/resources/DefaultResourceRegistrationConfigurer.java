@@ -25,12 +25,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
-import org.springframework.web.servlet.resource.AppCacheManifestTransformer;
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.ResourceTransformerChain;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -89,7 +88,7 @@ public class DefaultResourceRegistrationConfigurer
 		if ( shouldApplyFixedVersion() ) {
 			registration.resourceChain( cacheResourceResolving() )
 			            .addResolver( versionResourceResolver() )
-			            .addTransformer( appCacheManifestTransformer() )
+			            //.addTransformer( appCacheManifestTransformer() ) // https://github.com/spring-projects/spring-framework/issues/25733
 			            .addTransformer( new NoOpCssLinkTransformer() );
 		}
 	}
@@ -137,10 +136,13 @@ public class DefaultResourceRegistrationConfigurer
 				.addFixedVersionStrategy( getFixedVersion(), "/**" );
 	}
 
+	// https://github.com/spring-projects/spring-framework/issues/25733
+	/*
 	@Bean
 	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)
 	@ConditionalOnMissingBean(value = AppCacheManifestTransformer.class, search = SearchStrategy.CURRENT)
 	public AppCacheManifestTransformer appCacheManifestTransformer() {
 		return new AppCacheManifestTransformer();
 	}
+	*/
 }

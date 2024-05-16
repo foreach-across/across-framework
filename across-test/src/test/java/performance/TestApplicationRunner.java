@@ -161,9 +161,9 @@ class TestApplicationRunner
 					"+--------------------------+------+--------------------------------+------------------------+------------------------------+" );
 
 			String pattern = "| %-24s | %4.0f | %30.0f | %22.0f | %28.0f |";
-			System.out.println( String.format( pattern, "Simple", simpleBootAvg, simpleBootAsAcrossApp, simpleAcrossAsBootAvg, simpleAcrossAvg ) );
+			System.out.println(  pattern.formatted( "Simple", simpleBootAvg, simpleBootAsAcrossApp, simpleAcrossAsBootAvg, simpleAcrossAvg ) );
 			System.out.println(
-					String.format( pattern, "Simple Web", simpleWebBootAvg, simpleWebBootAsAcrossApp, simpleWebAcrossAsBootAvg, simpleWebAcrossAvg ) );
+					 pattern.formatted( "Simple Web", simpleWebBootAvg, simpleWebBootAsAcrossApp, simpleWebAcrossAsBootAvg, simpleWebAcrossAvg ) );
 			System.out.println(
 					"+--------------------------+------+--------------------------------+------------------------+------------------------------+" );
 		}

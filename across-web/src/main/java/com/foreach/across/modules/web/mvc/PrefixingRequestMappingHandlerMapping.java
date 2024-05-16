@@ -179,7 +179,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	}
 
 	protected void detectHandlerMethods( ApplicationContext context, final Object handler ) {
-		Class<?> handlerType = ( handler instanceof String ) ? context.getType( (String) handler ) : handler.getClass();
+		Class<?> handlerType = ( handler instanceof String s ) ? context.getType( s ) : handler.getClass();
 
 		final Class<?> userType = ClassUtils.getUserClass( handlerType );
 
@@ -197,8 +197,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	@Override
 	protected HandlerMethod createHandlerMethod( Object handler, Method method ) {
 		HandlerMethod handlerMethod;
-		if ( handler instanceof String ) {
-			String beanName = (String) handler;
+		if ( handler instanceof String beanName ) {
 			handlerMethod = new HandlerMethod( beanName, contextBeingScanned, method );
 		}
 		else {
@@ -258,8 +257,8 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 	// Replaced so a request mapping that is composed only by a custom condition can be returned
 	private RequestMappingInfo createRequestMappingInfo( AnnotatedElement element ) {
 		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation( element, RequestMapping.class );
-		RequestCondition<?> condition = ( element instanceof Class ?
-				getCustomTypeCondition( (Class<?>) element ) : getCustomMethodCondition( (Method) element ) );
+		RequestCondition<?> condition = ( element instanceof Class c ?
+				getCustomTypeCondition( c ) : getCustomMethodCondition( (Method) element ) );
 
 		return createRequestMappingInfo( requestMapping, condition );
 	}

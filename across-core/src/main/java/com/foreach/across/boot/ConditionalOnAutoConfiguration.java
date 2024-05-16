@@ -65,7 +65,7 @@ public @interface ConditionalOnAutoConfiguration
 		@Override
 		public boolean matches( ConditionContext context, AnnotatedTypeMetadata metadata ) {
 			AnnotationAttributes attributes = (AnnotationAttributes) metadata.getAnnotationAttributes( ConditionalOnAutoConfiguration.class.getName(), true );
-			val registry = AcrossApplicationAutoConfiguration.retrieve( context.getBeanFactory(), context.getClassLoader() );
+			final var registry = AcrossApplicationAutoConfiguration.retrieve( context.getBeanFactory(), context.getClassLoader() );
 
 			List<String> required = new ArrayList<>();
 			String[] classNames = attributes.getStringArray( "value" );

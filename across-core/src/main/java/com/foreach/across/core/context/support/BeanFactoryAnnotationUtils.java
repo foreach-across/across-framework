@@ -44,14 +44,13 @@ public class BeanFactoryAnnotationUtils
 	public static Optional<AnnotationAttributes> findAnnotationOnBean( BeanFactory beanFactory,
 	                                                                   String beanName,
 	                                                                   Class<? extends Annotation> annotationType ) {
-		if ( beanFactory instanceof ConfigurableListableBeanFactory ) {
-			ConfigurableListableBeanFactory bf = (ConfigurableListableBeanFactory) beanFactory;
+		if ( beanFactory instanceof ConfigurableListableBeanFactory bf ) {
 
 			if ( bf.containsBean( beanName ) ) {
 				try {
 					BeanDefinition bd = bf.getMergedBeanDefinition( beanName );
-					if ( bd instanceof RootBeanDefinition ) {
-						Method factoryMethod = ( (RootBeanDefinition) bd ).getResolvedFactoryMethod();
+					if ( bd instanceof RootBeanDefinition definition ) {
+						Method factoryMethod =  definition.getResolvedFactoryMethod();
 						if ( factoryMethod != null ) {
 							Annotation targetAnnotation
 									= AnnotationUtils.getAnnotation( factoryMethod, annotationType );

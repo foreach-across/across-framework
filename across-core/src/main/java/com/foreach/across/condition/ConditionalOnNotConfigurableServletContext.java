@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 
 /**
  * {@link Conditional} that only matches when the application context is not a web application, or
- * the {@link javax.servlet.ServletContext} is already fully initialized.
+ * the {@link jakarta.servlet.ServletContext} is already fully initialized.
  *
  * @author Arne Vandamme
  * @since 2.0.0

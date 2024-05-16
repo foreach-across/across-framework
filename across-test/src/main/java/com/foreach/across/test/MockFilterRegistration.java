@@ -15,16 +15,16 @@
  */
 package com.foreach.across.test;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
-import javax.servlet.FilterRegistration;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.FilterRegistration;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Mock version of a {@link javax.servlet.FilterRegistration.Dynamic} that does nothing but keep a number
+ * Mock version of a {@link jakarta.servlet.FilterRegistration.Dynamic} that does nothing but keep a number
  * of configured properties.  Support is limited and only intended in combination with {@link MockAcrossServletContext}.
  *
  * @author Marc Vanbrabant, Arne Vandamme

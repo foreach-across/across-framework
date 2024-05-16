@@ -20,19 +20,18 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.installers.InstallerAction;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.modules.TestContextEventListener;
 import test.modules.TestEvent;
 import test.modules.module1.*;
@@ -44,8 +43,7 @@ import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { TestAcrossContextBoot.Config.class, PropertyPlaceholderAutoConfiguration.class })
+@SpringJUnitConfig(classes = {TestAcrossContextBoot.Config.class, PropertyPlaceholderAutoConfiguration.class})
 @DirtiesContext
 public class TestAcrossContextBoot
 {
@@ -222,8 +220,9 @@ public class TestAcrossContextBoot
 		}
 
 		@Bean
+		@DependsOnDatabaseInitialization
 		@Autowired
-		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) {
+		public AcrossContext acrossContext(ConfigurableApplicationContext applicationContext) {
 			ScannedBeanModule1.CONSTRUCTION_COUNTER.set( 0 );
 			ScannedBeanModule2.CONSTRUCTION_COUNTER.set( 0 );
 

@@ -18,13 +18,11 @@ package test.scan;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.scan.packageOne.ValidModule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,9 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestComponentScanOfModules.Config.class)
+@SpringJUnitConfig(classes = TestComponentScanOfModules.Config.class)
 public class TestComponentScanOfModules
 {
 	@Autowired

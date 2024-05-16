@@ -26,22 +26,19 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.menu.RequestMenuBuilder;
 import com.foreach.across.modules.web.menu.RequestMenuStore;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = TestRequestScopedBeans.Config.class)
+@SpringJUnitConfig(classes = TestRequestScopedBeans.Config.class)
 public class TestRequestScopedBeans
 {
 	@Autowired(required = false)

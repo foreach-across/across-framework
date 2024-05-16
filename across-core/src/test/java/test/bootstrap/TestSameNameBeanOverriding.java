@@ -22,14 +22,12 @@ import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import test.bootstrap.one.CustomConfiguration;
 
 import java.util.Map;
@@ -45,9 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Arne Vandamme
  * @since 3.0.0
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = TestSameNameBeanOverriding.Config.class)
+@SpringJUnitConfig(classes = TestSameNameBeanOverriding.Config.class)
 class TestSameNameBeanOverriding
 {
 	private ApplicationContext module;

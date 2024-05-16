@@ -39,18 +39,18 @@ class AcrossInstallerExceptionFailureAnalyzer extends AbstractAcrossFailureAnaly
 		StringBuilder description = new StringBuilder();
 		description.append( String.format( "A error occurred when executing an installer for module %s:%n", cause.getModuleBeingProcessed() ) );
 		InstallerMetaData installerMetaData = cause.getInstallerMetaData();
-		description.append( String.format( " - Installer name: %s%n", installerMetaData.getName() ) );
-		description.append( String.format( " - Description: %s%n", installerMetaData.getDescription() ) );
+		description.append(  " - Installer name: %s%n".formatted( installerMetaData.getName() ) );
+		description.append(  " - Description: %s%n".formatted( installerMetaData.getDescription() ) );
 		description.append( String.format( " - Installer class: %s%n", cause.getInstallerClass().getName() ) );
 		if ( !StringUtils.isEmpty( installerMetaData.getGroup() ) ) {
-			description.append( String.format( " - Installer group: %s%n", installerMetaData.getGroup() ) );
+			description.append(  " - Installer group: %s%n".formatted( installerMetaData.getGroup() ) );
 		}
-		description.append( String.format( " - Installer phase: %s%n", installerMetaData.getInstallerPhase() ) );
+		description.append(  " - Installer phase: %s%n".formatted( installerMetaData.getInstallerPhase() ) );
 		description.append(
-				String.format( " - Run condition: %s%s%n",
-				               installerMetaData.getRunCondition(),
-				               installerMetaData.getRunCondition() == InstallerRunCondition.VersionDifferent
-						               ? String.format( " (version: %s)", installerMetaData.getVersion() ) : ""
+				 " - Run condition: %s%s%n".formatted(
+						installerMetaData.getRunCondition(),
+						installerMetaData.getRunCondition() == InstallerRunCondition.VersionDifferent
+								?  " (version: %s)".formatted( installerMetaData.getVersion() ) : ""
 				)
 		);
 		description.append( String.format( " - Installer method: %s", cause.getInstallerMethod() ) );

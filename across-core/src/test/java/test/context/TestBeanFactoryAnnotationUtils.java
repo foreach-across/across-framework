@@ -19,15 +19,13 @@ import com.foreach.across.core.annotations.Module;
 import com.foreach.across.core.context.support.BeanFactoryAnnotationUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Optional;
 
@@ -37,10 +35,9 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Arne Vandamme
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = { TestBeanFactoryAnnotationUtils.Config.class,
-                                  TestBeanFactoryAnnotationUtils.OtherConfig.class })
+@SpringJUnitConfig(classes = {TestBeanFactoryAnnotationUtils.Config.class,
+		TestBeanFactoryAnnotationUtils.OtherConfig.class})
 public class TestBeanFactoryAnnotationUtils
 {
 	@Autowired

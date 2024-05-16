@@ -26,7 +26,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotationMetadata;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;

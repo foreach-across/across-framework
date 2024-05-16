@@ -19,7 +19,7 @@ package com.foreach.across.modules.web.servlet;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextEvent;
 
 /**
  * Only supports the context destroyed ServletContextEvent, as it assumes

@@ -69,8 +69,8 @@ public class WebResourceReference
 	}
 
 	private String resolveDefaultKey( ViewElementBuilder viewElementBuilder ) {
-		return viewElementBuilder instanceof WebResourceKeyProvider
-				? ( (WebResourceKeyProvider) viewElementBuilder ).getWebResourceKey().orElse( null )
+		return viewElementBuilder instanceof WebResourceKeyProvider wrkp
+				?  wrkp.getWebResourceKey().orElse( null )
 				: null;
 	}
 }

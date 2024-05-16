@@ -26,12 +26,12 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
@@ -57,7 +57,7 @@ import java.util.concurrent.Callable;
  * @see com.foreach.across.modules.web.template.Template
  * @see com.foreach.across.modules.web.template.ClearTemplate
  */
-public class WebTemplateInterceptor extends HandlerInterceptorAdapter
+public class WebTemplateInterceptor implements HandlerInterceptor
 {
 	public static final String PROCESSOR_ATTRIBUTE = WebTemplateProcessor.class.toString();
 	public static final String PARTIAL_PARAMETER = "_partial";
@@ -172,8 +172,7 @@ public class WebTemplateInterceptor extends HandlerInterceptorAdapter
 	}
 
 	private String determineTemplateName( Object handler ) {
-		if ( handler instanceof HandlerMethod ) {
-			HandlerMethod handlerMethod = (HandlerMethod) handler;
+		if ( handler instanceof HandlerMethod handlerMethod ) {
 
 			if ( supportsTemplate( handlerMethod ) ) {
 				Template templateAnnotation = handlerMethod.getMethodAnnotation( Template.class );

@@ -25,9 +25,9 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,8 +37,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.hibernate5.SessionFactoryUtils;
 import org.springframework.orm.hibernate5.SessionHolder;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import test.modules.hibernate1.Hibernate1Module;
@@ -53,8 +52,7 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestTransactionalWithoutBaseModule.Config.class)
+@SpringJUnitConfig(classes = TestTransactionalWithoutBaseModule.Config.class)
 @DirtiesContext
 public class TestTransactionalWithoutBaseModule
 {
@@ -160,6 +158,7 @@ public class TestTransactionalWithoutBaseModule
 		}
 
 		@Bean
+		@DependsOnDatabaseInitialization
 		public LocalSessionFactoryBean sessionFactory() {
 			LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 			sessionFactory.setDataSource( dataSource() );
@@ -175,7 +174,8 @@ public class TestTransactionalWithoutBaseModule
 		}
 
 		@Bean
-		public HibernateTransactionManager transactionManager( SessionFactory sessionFactory ) {
+		@DependsOnDatabaseInitialization
+		public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
 			return new HibernateTransactionManager( sessionFactory );
 		}
 
@@ -185,7 +185,8 @@ public class TestTransactionalWithoutBaseModule
 		}
 
 		@Bean
-		public AcrossContext acrossContext( ConfigurableApplicationContext applicationContext ) throws Exception {
+		@DependsOnDatabaseInitialization
+		public AcrossContext acrossContext(ConfigurableApplicationContext applicationContext) throws Exception {
 			AcrossContext acrossContext = new AcrossContext( applicationContext );
 			acrossContext.setDataSource( dataSource() );
 			acrossContext.addModule( hibernate1Module() );

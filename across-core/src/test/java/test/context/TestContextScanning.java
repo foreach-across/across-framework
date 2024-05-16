@@ -356,7 +356,6 @@ public class TestContextScanning
 	{
 		private Set<ConversionService> conversionServiceSet;
 
-		@Autowired
 		public BeanWithNormalAutowiredConstructor( Set<ConversionService> conversionServiceSet ) {
 			this.conversionServiceSet = conversionServiceSet;
 		}
@@ -372,7 +371,6 @@ public class TestContextScanning
 		final Collection<GenericBean<Long, List<Integer>>> integerLists, otherIntegerLists;
 		Collection<GenericBean<String, List<Date>>> dateLists, otherDateLists;
 
-		@Autowired
 		public BeanWithRefreshables(
 				@RefreshableCollection(includeModuleInternals = true) Collection<GenericBean<Long, List<Integer>>> integerLists,
 				@RefreshableCollection(incremental = true, includeModuleInternals = true) Collection<GenericBean<Long, List<Integer>>> otherIntegerLists ) {

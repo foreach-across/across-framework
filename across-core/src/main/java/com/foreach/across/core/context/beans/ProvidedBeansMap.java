@@ -60,8 +60,8 @@ public class ProvidedBeansMap extends HashMap<String, Object>
 		for ( Map.Entry<String, Object> bean : entrySet() ) {
 			Object value = bean.getValue();
 
-			if ( value instanceof SingletonBean ) {
-				singletons.put( bean.getKey(), ( (SingletonBean) value ).getObject() );
+			if ( value instanceof SingletonBean singletonBean ) {
+				singletons.put( bean.getKey(),  singletonBean.getObject() );
 			}
 			else if ( !( value instanceof BeanDefinition ) ) {
 				singletons.put( bean.getKey(), value );
@@ -80,14 +80,14 @@ public class ProvidedBeansMap extends HashMap<String, Object>
 		for ( Map.Entry<String, Object> bean : entrySet() ) {
 			Object value = bean.getValue();
 
-			if ( value instanceof SingletonBean ) {
-				BeanDefinition definition = ( (SingletonBean) value ).getBeanDefinition();
+			if ( value instanceof SingletonBean singletonBean ) {
+				BeanDefinition definition =  singletonBean.getBeanDefinition();
 				if ( definition != null ) {
 					definitions.put( bean.getKey(), definition );
 				}
 			}
-			else if ( value instanceof BeanDefinition ) {
-				definitions.put( bean.getKey(), (BeanDefinition) value );
+			else if ( value instanceof BeanDefinition definition ) {
+				definitions.put( bean.getKey(), definition );
 			}
 
 		}

@@ -44,7 +44,7 @@ class ApplicationModuleAutoConfigurationPackageRegistrar
 	{
 		@Override
 		public void registerBeanDefinitions( AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry ) {
-			val autoConfigurationPackage = ( (HierarchicalBeanFactory) registry ).getParentBeanFactory().getBean( ApplicationAutoConfigurationPackage.class );
+			final var autoConfigurationPackage = ((HierarchicalBeanFactory) registry).getParentBeanFactory().getBean( ApplicationAutoConfigurationPackage.class );
 			LOG.info( "Registering AutoConfigurationPackage {}", autoConfigurationPackage.getApplicationModulePackage() );
 			AutoConfigurationPackages.register( registry, autoConfigurationPackage.getApplicationModulePackage() );
 		}
