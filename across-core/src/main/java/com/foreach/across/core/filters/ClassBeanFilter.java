@@ -38,7 +38,8 @@ public class ClassBeanFilter extends AbstractClassBasedBeanFilter<Class>
 	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean matches( Class beanClass, Class expected ) {
-		return expected.isAssignableFrom( beanClass );
+		// Null checks needed to prevent NPE in TestMultipleDataSourceApplicationWithLazyRepositories
+		return expected != null && beanClass != null && expected.isAssignableFrom( beanClass );
 	}
 
 	@Override

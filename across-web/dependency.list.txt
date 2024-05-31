@@ -1,5 +1,5 @@
-ch.qos.logback:logback-classic:jar:1.2.13:compile
-ch.qos.logback:logback-core:jar:1.2.13:compile
+ch.qos.logback:logback-classic:jar:1.4.14:compile
+ch.qos.logback:logback-core:jar:1.4.14:compile
 com.fasterxml.jackson.core:jackson-annotations:jar:2.15.4:compile
 com.fasterxml.jackson.core:jackson-core:jar:2.15.4:compile
 com.fasterxml.jackson.core:jackson-databind:jar:2.15.4:compile

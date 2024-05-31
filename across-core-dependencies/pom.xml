@@ -65,7 +65,7 @@
 		<!-- Keep in sync with across-application-parent -->
 		<!-- Overridden from spring-boot-dependencies -->
 		<liquibase.version>4.27.0</liquibase.version>
-		<logback.version>1.2.13</logback.version> <!-- Overrule 1.2.12 from Spring Boot 2.7.18, because of a CVE: https://logback.qos.ch/news.html#1.2.13 -->
+		<!--logback.version>1.2.13</logback.version--> <!-- Overrule 1.2.12 from Spring Boot 2.7.18, because of a CVE: https://logback.qos.ch/news.html#1.2.13 -->
 		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
 		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
@@ -103,6 +103,7 @@
 
 	<dependencyManagement>
 		<dependencies>
+
 			<!-- Across core -->
 			<dependency>
 				<groupId>com.foreach.across</groupId>
@@ -181,12 +182,33 @@
 				</exclusions>
 			</dependency>
 
+			<!-- querydsl-bom does not specify versions for the jakarta variants, and neither does Spring Boot -->
+			<dependency>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-apt</artifactId>
+				<version>${querydsl.version}</version>
+				<classifier>jakarta</classifier>
+			</dependency>
+			<dependency>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-jpa</artifactId>
+				<version>${querydsl.version}</version>
+				<classifier>jakarta</classifier>
+			</dependency>
+			<dependency>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-sql</artifactId>
+				<version>${querydsl.version}</version>
+				<classifier>jakarta</classifier>
+			</dependency>
+
 			<!-- Backwards compatibility with Spring Platform -->
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>${commons-io.version}</version>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

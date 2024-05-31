@@ -1,5 +1,5 @@
-ch.qos.logback:logback-classic:jar:1.2.13:compile
-ch.qos.logback:logback-core:jar:1.2.13:compile
+ch.qos.logback:logback-classic:jar:1.4.14:compile
+ch.qos.logback:logback-core:jar:1.4.14:compile
 com.fasterxml:classmate:jar:1.6.0:compile
 com.foreach.libs:common-concurrent:jar:2.0-SNAPSHOT:compile
 com.google.code.findbugs:jsr305:jar:3.0.2:provided
