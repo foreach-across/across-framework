@@ -240,6 +240,7 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 		}
 
 		if ( info != null && prefixPath != null ) {
+/*
 			RequestMappingInfo other = new RequestMappingInfo( new PatternsRequestCondition( prefixPath ),
 			                                                   new RequestMethodsRequestCondition(),
 			                                                   new ParamsRequestCondition(),
@@ -247,6 +248,10 @@ public class PrefixingRequestMappingHandlerMapping extends RequestMappingHandler
 			                                                   new ConsumesRequestCondition(),
 			                                                   new ProducesRequestCondition(),
 			                                                   new CompositeCustomRequestCondition() );
+*/
+			// Use PathPatternsRequestCondition instead of PatternsRequestCondition to avoid the
+			// "Neither PathPatterns nor String patterns condition" assertion in the constructor of RequestMappingInfo:
+			RequestMappingInfo other = RequestMappingInfo.paths( prefixPath ).build();
 
 			info = other.combine( info );
 		}
