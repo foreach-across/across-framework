@@ -51,6 +51,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Objects.requireNonNull;
 import static org.springframework.beans.factory.BeanFactoryUtils.isFactoryDereference;
 import static org.springframework.context.support.AbstractApplicationContext.LIFECYCLE_PROCESSOR_BEAN_NAME;
 
@@ -538,16 +539,20 @@ public class AcrossListableBeanFactory extends DefaultListableBeanFactory
 	 */
 	private class AcrossOrderComparator extends OrderComparator
 	{
-		private Field instancesField;
+		private final Map<Class<?>, Field> instancesFields = new ConcurrentHashMap<>();
 
 		@SneakyThrows
 		@SuppressWarnings("unchecked")
 		@Override
 		public Comparator<Object> withSourceProvider( OrderSourceProvider sourceProvider ) {
-			if ( instancesField == null ) {
-				instancesField = ReflectionUtils.findField( sourceProvider.getClass(), "instancesToBeanNames" );
-				instancesField.setAccessible( true );
-			}
+			// As of Spring Boot 3: need to deal with multiple implementations of OrderSourceProvider,
+			// but in both classes, the field has the same name:
+			Field instancesField = instancesFields
+					.computeIfAbsent( sourceProvider.getClass(), clazz -> {
+						var result = requireNonNull( ReflectionUtils.findField( clazz, "instancesToBeanNames" ) );
+						result.setAccessible( true );
+						return result;
+					} );
 
 			Map<Object, String> instancesToBeanNames = (Map<Object, String>) instancesField.get( sourceProvider );
 
