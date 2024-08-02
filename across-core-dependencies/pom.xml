@@ -75,7 +75,7 @@
 		<tomcat.version>9.0.87</tomcat.version>
 		<!-- Across properties -->
 		<maven.deploy.skip>false</maven.deploy.skip>
-		<foreach.common.version>1.1</foreach.common.version>
+		<foreach.common.version>2.0.0-beta-1</foreach.common.version>
 		<commons-collections4.version>4.4</commons-collections4.version>
 		<testcontainers-bom.version>1.19.7</testcontainers-bom.version>
 		<liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
@@ -154,17 +154,17 @@
 			<!-- Foreach commons -->
 			<dependency>
 				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-concurrent</artifactId>
+				<version>${foreach.common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
 				<artifactId>common-spring</artifactId>
 				<version>${foreach.common.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.libs</groupId>
 				<artifactId>common-web</artifactId>
-				<version>${foreach.common.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-concurrent</artifactId>
 				<version>${foreach.common.version}</version>
 			</dependency>
 
