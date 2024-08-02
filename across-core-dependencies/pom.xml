@@ -167,17 +167,6 @@
 				<artifactId>common-concurrent</artifactId>
 				<version>${foreach.common.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-test</artifactId>
-				<version>${foreach.common.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.mockito</groupId>
-						<artifactId>mockito-all</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 
 			<!-- Backwards compatibility with Spring Platform -->
 			<dependency>
