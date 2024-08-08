@@ -2,7 +2,7 @@ antlr:antlr:jar:2.7.7:test
 ch.qos.logback:logback-classic:jar:1.2.13:compile
 ch.qos.logback:logback-core:jar:1.2.13:compile
 com.fasterxml:classmate:jar:1.5.1:compile
-com.foreach.libs:common-concurrent:jar:2.0.0-beta-1:compile
+com.foreach.libs:common-concurrent:jar:2.0.0-beta-2:compile
 com.google.code.findbugs:jsr305:jar:3.0.2:provided
 com.opencsv:opencsv:jar:5.9:compile
 com.sun.activation:jakarta.activation:jar:1.2.2:test
