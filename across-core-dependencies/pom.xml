@@ -212,7 +212,6 @@
 						<systemPropertyVariables>
 							<spring.main.allow-circular-references>true</spring.main.allow-circular-references>
 							<spring.mvc.pathmatch.matching-strategy>ant-path-matcher</spring.mvc.pathmatch.matching-strategy>
-							<java.locale.providers>COMPAT</java.locale.providers> <!-- https://openjdk.org/jeps/252 -->
 						</systemPropertyVariables>
 					</configuration>
 				</plugin>
@@ -227,7 +226,6 @@
 							     https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.6-Release-Notes -->
 							<spring.main.allow-circular-references>true</spring.main.allow-circular-references>
 							<spring.mvc.pathmatch.matching-strategy>ant-path-matcher</spring.mvc.pathmatch.matching-strategy>
-							<java.locale.providers>COMPAT</java.locale.providers> <!-- https://openjdk.org/jeps/252 -->
 						</systemPropertyVariables>
 					</configuration>
 				</plugin>
