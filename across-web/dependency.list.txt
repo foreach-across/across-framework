@@ -8,7 +8,7 @@ com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.15.4:compile
 com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.15.4:compile
 com.fasterxml:classmate:jar:1.6.0:test
 com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
-com.foreach.libs:common-concurrent:jar:2.0-SNAPSHOT:compile
+com.foreach.libs:common-concurrent:jar:3.0-SNAPSHOT:compile
 com.google.code.findbugs:jsr305:jar:3.0.2:provided
 com.opencsv:opencsv:jar:5.9:compile
 io.micrometer:micrometer-commons:jar:1.12.5:compile

@@ -74,7 +74,7 @@
 		<!--<liquibase.version>4.17.0</liquibase.version>-->
 		<!-- Across properties -->
 		<maven.deploy.skip>false</maven.deploy.skip>
-		<foreach.common.version>2.0-SNAPSHOT</foreach.common.version>
+		<foreach-common-bom.version>3.0-SNAPSHOT</foreach-common-bom.version>
 		<commons-collections4.version>4.4</commons-collections4.version>
 		<testcontainers-bom.version>1.19.7</testcontainers-bom.version>
 		<liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
@@ -157,29 +157,10 @@
 			<!-- Foreach commons -->
 			<dependency>
 				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-spring</artifactId>
-				<version>${foreach.common.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-web</artifactId>
-				<version>${foreach.common.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-concurrent</artifactId>
-				<version>${foreach.common.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-test</artifactId>
-				<version>${foreach.common.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.mockito</groupId>
-						<artifactId>mockito-all</artifactId>
-					</exclusion>
-				</exclusions>
+				<artifactId>common-bom</artifactId>
+				<version>${foreach-common-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 
 			<!-- querydsl-bom does not specify versions for the jakarta variants, and neither does Spring Boot -->

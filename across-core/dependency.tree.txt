@@ -2,7 +2,7 @@ com.foreach.across:across-core:jar:dev-SNAPSHOT
 +- org.springframework.boot:spring-boot-autoconfigure:jar:3.2.5:compile
 |  \- org.springframework.boot:spring-boot:jar:3.2.5:compile
 +- org.yaml:snakeyaml:jar:2.2:compile
-+- com.foreach.libs:common-concurrent:jar:2.0-SNAPSHOT:compile
++- com.foreach.libs:common-concurrent:jar:3.0-SNAPSHOT:compile
 +- org.springframework:spring-context:jar:6.1.6:compile
 |  +- org.springframework:spring-aop:jar:6.1.6:compile
 |  +- org.springframework:spring-beans:jar:6.1.6:compile
