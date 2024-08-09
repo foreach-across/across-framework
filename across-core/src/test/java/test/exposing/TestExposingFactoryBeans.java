@@ -41,6 +41,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("all")
 public class TestExposingFactoryBeans
 {
+	private static final String INTERNAL = "&org.springframework.boot.context.internalConfigurationPropertiesBinder";
+
 	private AcrossContext context;
 
 	@BeforeEach
@@ -79,7 +81,7 @@ public class TestExposingFactoryBeans
 		assertThat( originalBeans.isTypeMatch( "&myFactoryBean", MyFactoryBeanImpl.class ) ).isTrue();
 
 		String[] beanNames = originalBeans.getBeanNamesForType( FactoryBean.class, false, false );
-		assertThat( beanNames ).containsExactly( "&myFactoryBean" );
+		assertThat( beanNames ).containsExactly( INTERNAL, "&myFactoryBean" );
 		beanNames = originalBeans.getBeanNamesForType( String.class, false, false );
 		assertThat( beanNames ).containsExactly( "myFactoryBean" );
 
@@ -108,7 +110,7 @@ public class TestExposingFactoryBeans
 		assertThat( exposedBeans.isTypeMatch( "&myFactoryBean", MyFactoryBeanImpl.class ) ).isTrue();
 
 		String[] beanNames = exposedBeans.getBeanNamesForType( FactoryBean.class, false, false );
-		assertThat( beanNames ).containsExactly( "&myFactoryBean" );
+		assertThat( beanNames ).containsExactly( INTERNAL, "&myFactoryBean" );
 		beanNames = exposedBeans.getBeanNamesForType( String.class, false, false );
 		assertThat( beanNames ).containsExactly( "myFactoryBean" );
 
