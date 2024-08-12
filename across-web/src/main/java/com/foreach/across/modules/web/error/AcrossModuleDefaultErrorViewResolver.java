@@ -16,6 +16,7 @@
 package com.foreach.across.modules.web.error;
 
 import com.foreach.across.core.context.info.AcrossModuleInfo;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.web.servlet.error.DefaultErrorViewResolver;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
@@ -25,7 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

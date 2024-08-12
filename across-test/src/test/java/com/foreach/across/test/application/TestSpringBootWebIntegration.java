@@ -104,17 +104,17 @@ public class TestSpringBootWebIntegration
 
 	@Test
 	public void customErrorViewForRuntimeExceptions() {
-		assertTrue( getAsHtml( "/exception" ).contains( "something broke" ) );
+		assertThat( getAsHtml( "/exception" ) ).contains( "something broke" );
 	}
 
 	@Test
 	public void detectedErrorTemplateForUnauthorized() {
-		assertTrue( getAsHtml( "/unauthorized" ).contains( "you are not authorized" ) );
+		assertThat( getAsHtml( "/unauthorized" ) ).contains( "you are not authorized" );
 	}
 
 	@Test
 	public void pageNotFound() {
-		assertTrue( getAsHtml( "/page-does-not-exist" ).contains( "no explicit mapping" ) );
+		assertThat( getAsHtml( "/page-does-not-exist" ) ).contains( "no explicit mapping" );
 	}
 
 	@Test
