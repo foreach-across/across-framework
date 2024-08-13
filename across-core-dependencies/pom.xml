@@ -85,11 +85,9 @@
 		<!-- Spring Boot now comes with Lombok 1.18.22, but there is no corresponding version
 			 of the (de)lombok-maven-plugin, so we stay with the old version for now:
 		<version>${lombok.version}.0</version>
-		&ndash;&gt;
+		-->
 		<lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
 		<maven-artifact-plugin.version>3.5.1</maven-artifact-plugin.version>
-		-->
-		<flatten-maven-plugin.version>1.4.1</flatten-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
 	</properties>
 
@@ -243,6 +241,13 @@
 					<groupId>org.projectlombok</groupId>
 					<artifactId>lombok-maven-plugin</artifactId>
 					<version>${lombok-maven-plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 			</plugins>
 		</pluginManagement>
