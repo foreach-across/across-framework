@@ -65,7 +65,6 @@
 		<!-- Keep in sync with across-application-parent -->
 		<!-- Overridden from spring-boot-dependencies -->
 		<liquibase.version>4.27.0</liquibase.version>
-		<!--logback.version>1.2.13</logback.version--> <!-- Overrule 1.2.12 from Spring Boot 2.7.18, because of a CVE: https://logback.qos.ch/news.html#1.2.13 -->
 		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
 		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
@@ -77,7 +76,6 @@
 		<foreach-common-bom.version>3.0-SNAPSHOT</foreach-common-bom.version>
 		<commons-collections4.version>4.4</commons-collections4.version>
 		<testcontainers-bom.version>1.19.7</testcontainers-bom.version>
-		<liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
 		<commons-io.version>2.16.1</commons-io.version>
 		<maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
 		<flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
@@ -135,21 +133,6 @@
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-core</artifactId>
 				<version>${liquibase.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.mattbertolini</groupId>
-				<artifactId>liquibase-slf4j</artifactId>
-				<version>${liquibase-slf4j.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.liquibase</groupId>
-						<artifactId>liquibase-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 			<!-- Foreach commons -->
