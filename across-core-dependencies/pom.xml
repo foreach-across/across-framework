@@ -70,12 +70,12 @@
 		<maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
 		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
 		<maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-		<spring-framework.version>5.3.34</spring-framework.version>
-		<spring-security.version>5.8.12</spring-security.version>
-		<tomcat.version>9.0.87</tomcat.version>
+		<spring-framework.version>5.3.39</spring-framework.version>
+		<spring-security.version>5.8.14</spring-security.version>
+		<tomcat.version>9.0.94</tomcat.version>
 		<!-- Across properties -->
 		<maven.deploy.skip>false</maven.deploy.skip>
-		<foreach-common-bom.version>2.0.0-beta-2</foreach-common-bom.version>
+		<foreach-common-bom.version>2.0.0</foreach-common-bom.version>
 		<commons-collections4.version>4.4</commons-collections4.version>
 		<testcontainers-bom.version>1.19.7</testcontainers-bom.version>
 		<liquibase-slf4j.version>4.1.0</liquibase-slf4j.version>
