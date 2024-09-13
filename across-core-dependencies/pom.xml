@@ -91,14 +91,6 @@
 		<maven-artifact-plugin.version>3.5.1</maven-artifact-plugin.version>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>across</id>
-			<name>Across Repository</name>
-			<url>https://repository.antwerpen.io-external.com/nexus/repository/public/</url>
-		</repository>
-	</repositories>
-
 	<dependencyManagement>
 		<dependencies>
 			<!-- Across core -->
