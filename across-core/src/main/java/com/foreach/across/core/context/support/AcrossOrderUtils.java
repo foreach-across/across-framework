@@ -21,14 +21,15 @@ import com.foreach.across.core.context.ExposedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.DecoratingProxy;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Utility class for resolving order annotations.
@@ -134,4 +135,18 @@ public abstract class AcrossOrderUtils
 
 		return AcrossOrderSpecifier.builder().moduleIndex( moduleIndex ).build();
 	}
+
+	public static <T> Comparator<T> comparingOrder(Function<? super T, Integer> keyExtractor) {
+		Objects.requireNonNull(keyExtractor);
+		return (Comparator<T> & Serializable)
+				(c1, c2) -> {
+                    Integer i1 = keyExtractor.apply(c1);
+                    Integer i2 = keyExtractor.apply(c2);
+		        	return Integer.compare(
+                            i1 != null ? i1 : Ordered.LOWEST_PRECEDENCE,
+                            i2 != null ? i2 : Ordered.LOWEST_PRECEDENCE
+                    );
+				};
+	}
+
 }

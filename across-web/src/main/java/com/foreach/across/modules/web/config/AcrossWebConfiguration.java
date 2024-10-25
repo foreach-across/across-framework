@@ -45,6 +45,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
 
+// TODO: Much of what's in here, is already in DelegatingWebMvcConfiguration, which is what's included by @EnableWebMvc
 /**
  * Creates the Across Web infrastructure for the module itself.
  * Beans created here can usually be accessed directly in dependant modules, whereas
@@ -80,6 +81,7 @@ public class AcrossWebConfiguration implements WebMvcConfigurer
 	/**
 	 * Manually create and expose the handler mapping introspector early, so (f.i.) security modules can use it.
 	 */
+/*
 	@Bean
 	@Lazy
 	@Exposed
@@ -87,6 +89,7 @@ public class AcrossWebConfiguration implements WebMvcConfigurer
 	public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
 		return new HandlerMappingIntrospector();
 	}
+*/
 
 	@Bean
 	@Exposed
@@ -113,13 +116,13 @@ public class AcrossWebConfiguration implements WebMvcConfigurer
 		return new RefreshableRegistry<>( WebResourceTranslator.class, true );
 	}
 
+	// TODO This assumes there is one MenuFactory per module (so per ApplicationContext, but that doesn't work anymore now of course)
 	@Bean
 	@Exposed
 	public MenuFactory menuFactory( MenuBuilder requestMenuBuilder, MenuStore requestMenuStore ) {
 		MenuFactory menuFactory = new MenuFactory();
 		menuFactory.setDefaultMenuBuilder( requestMenuBuilder );
 		menuFactory.setDefaultMenuStore( requestMenuStore );
-
 		return menuFactory;
 	}
 

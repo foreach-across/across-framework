@@ -115,6 +115,7 @@ public class ResourcesConfiguration implements WebMvcConfigurer
 	 * @param applicationContext      triggering the reload
 	 */
 	// todo: fix resources! @PostRefresh
+/*
 	public void reload( com.foreach.across.modules.web.mvc.ResourceHandlerRegistry resourceHandlerRegistry,
 	                    ApplicationContext applicationContext,
 	                    Map<String, CorsConfiguration> corsConfigurations ) {
@@ -132,13 +133,16 @@ public class ResourcesConfiguration implements WebMvcConfigurer
 			resourceUrlProvider.onApplicationEvent( new ContextRefreshedEvent( applicationContext ) );
 		}
 	}
+*/
 
+/*
 	@Bean
 	public SimpleUrlHandlerMapping resourceHandlerMapping() {
 		SimpleUrlHandlerMapping resourceHandlerMapping = new SimpleUrlHandlerMapping();
 		resourceHandlerMapping.setOrder( 1000 );
 		return resourceHandlerMapping;
 	}
+*/
 
 	@Bean
 	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)

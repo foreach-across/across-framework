@@ -19,6 +19,7 @@ package com.foreach.across.modules.web.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.PostRefresh;
+import com.foreach.across.core.context.support.AcrossOrderUtils;
 import com.foreach.across.core.development.AcrossDevelopmentMode;
 import com.foreach.across.modules.web.AcrossWebModuleSettings;
 import com.foreach.across.modules.web.context.PrefixingPathRegistry;
@@ -108,7 +109,7 @@ public class ThymeleafViewSupportConfiguration
 			resolvers.addAll( applicationContext.getBeansOfType( ITemplateResolver.class ).values() );
 
 			resolvers.stream()
-			         .sorted( Comparator.comparingInt( ITemplateResolver::getOrder ) )
+			         .sorted( AcrossOrderUtils.comparingOrder( ITemplateResolver::getOrder ) )
 			         .filter( r -> !engine.getTemplateResolvers().contains( r ) )
 			         .forEach( engine::addTemplateResolver );
 		}
