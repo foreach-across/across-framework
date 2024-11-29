@@ -89,14 +89,6 @@
 		<jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>across</id>
-			<name>Across Repository</name>
-			<url>https://repository.antwerpen.io-external.com/nexus/repository/public/</url>
-		</repository>
-	</repositories>
-
 	<dependencyManagement>
 		<dependencies>
 
