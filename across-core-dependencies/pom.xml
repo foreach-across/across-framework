@@ -68,7 +68,7 @@
 		<maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
 		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
-		<maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.11.1</maven-javadoc-plugin.version>
 		<!-- https://github.com/liquibase/liquibase/issues/1639 -->
 		<!--<liquibase.version>4.17.0</liquibase.version>-->
 		<!-- Across properties -->

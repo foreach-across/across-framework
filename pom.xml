@@ -60,8 +60,8 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<!-- Across properties -->
-		<maven.javadoc.skip>false</maven.javadoc.skip>
-		<maven.deploy.skip>false</maven.deploy.skip>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		<maven.deploy.skip>true</maven.deploy.skip>
 	</properties>
 
 	<modules>
@@ -285,7 +285,9 @@
 					- Modules:
 					  - The attached javadoc jar are now systematically based on delombok'd sources.
 					  - The per-module attached tar distribution has been removed, since it's redundant with the javadoc jar.
-					-->
+					Update 2024-11-29: The latest javadoc and/or maven-javadoc-plugin crashes on the not-delombok'd sources.
+					Since we're only using them in the assembly, and that only contains the combined javadocs,
+					and we don't use that assembly for anything, we just stop building and publishing it.
 					<plugin>
 						<groupId>org.projectlombok</groupId>
 						<artifactId>lombok-maven-plugin</artifactId>
@@ -323,42 +325,9 @@
 									</sourcepath>
 								</configuration>
 							</execution>
-							<execution>
-								<id>aggregate</id>
-								<inherited>false</inherited>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>aggregate-no-fork</goal>
-								</goals>
-								<configuration>
-									<reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
-									<destDir>${project.version}/javadoc</destDir>
-								</configuration>
-							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<inherited>false</inherited>
-						<configuration>
-							<finalName>${project.artifactId}</finalName>
-							<skipAssembly>${maven.javadoc.skip}</skipAssembly>
-							<descriptors>
-								<descriptor>assembly.xml</descriptor>
-							</descriptors>
-						</configuration>
-						<executions>
-							<execution>
-								<id>make-assembly</id>
-								<!-- this is used for inheritance merges -->
-								<phase>package</phase>
-								<!-- bind to the packaging phase -->
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
+					-->
 				</plugins>
 			</build>
 		</profile>
