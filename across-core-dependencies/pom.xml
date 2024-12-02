@@ -21,7 +21,7 @@
 	<parent>
 		<artifactId>spring-boot-dependencies</artifactId>
 		<groupId>org.springframework.boot</groupId>
-		<version>3.2.8</version>
+		<version>3.2.12</version>
 		<relativePath/>
 	</parent>
 
@@ -64,9 +64,9 @@
 
 		<!-- Keep in sync with across-application-parent -->
 		<!-- Overridden from spring-boot-dependencies -->
-		<liquibase.version>4.27.0</liquibase.version>
-		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
+		<liquibase.version>4.30.0</liquibase.version>
+		<maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
 		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
 		<maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
 		<!-- https://github.com/liquibase/liquibase/issues/1639 -->
@@ -75,9 +75,9 @@
 		<maven.deploy.skip>false</maven.deploy.skip>
 		<foreach-common-bom.version>3.0-SNAPSHOT</foreach-common-bom.version>
 		<commons-collections4.version>4.4</commons-collections4.version>
-		<testcontainers-bom.version>1.19.7</testcontainers-bom.version>
-		<commons-io.version>2.16.1</commons-io.version>
-		<maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
+		<testcontainers-bom.version>1.19.8</testcontainers-bom.version>
+		<commons-io.version>2.18.0</commons-io.version>
+		<maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
 		<flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
 		<!-- Spring Boot now comes with Lombok 1.18.22, but there is no corresponding version
@@ -85,8 +85,7 @@
 		<version>${lombok.version}.0</version>
 		-->
 		<lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
-		<maven-artifact-plugin.version>3.5.1</maven-artifact-plugin.version>
-		<jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
+		<maven-artifact-plugin.version>3.5.3</maven-artifact-plugin.version>
 	</properties>
 
 	<dependencyManagement>
