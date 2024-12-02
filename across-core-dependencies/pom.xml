@@ -75,7 +75,7 @@
 		<maven.deploy.skip>false</maven.deploy.skip>
 		<foreach-common-bom.version>3.0-SNAPSHOT</foreach-common-bom.version>
 		<commons-collections4.version>4.4</commons-collections4.version>
-		<testcontainers-bom.version>1.19.8</testcontainers-bom.version>
+		<testcontainers-bom.version>1.20.4</testcontainers-bom.version>
 		<commons-io.version>2.18.0</commons-io.version>
 		<maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
 		<flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
