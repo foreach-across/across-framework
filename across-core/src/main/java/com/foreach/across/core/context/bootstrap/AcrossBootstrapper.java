@@ -295,7 +295,7 @@ public class AcrossBootstrapper
 			resetCommonCaches();
 		}
 		catch ( RuntimeException e ) {
-			LOG.debug( "Exception during bootstrapping, destroying all created ApplicationContext instances" );
+			LOG.error( "Exception during bootstrapping, destroying all created ApplicationContext instances", e );
 
 			destroyAllCreatedApplicationContexts();
 
