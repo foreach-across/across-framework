@@ -81,6 +81,10 @@ public class AcrossCoreSchemaInstaller
 	}
 
 	private int getInstalledVersion() {
+		// It is incredibly difficult to determine whether a table exists or not, when you have to support all database vendors and releases:
+		// Just see liquibase.precondition.core.TableExistsPrecondition.
+		// This is why we just run the select, and if that fails, we assume we need to run the liquibase databaseChangeLog,
+		// which will do the real check.
 		try {
 			return jdbcTemplate.queryForObject(
 					applySchema( AcrossInstallerRepositoryImpl.SQL_SELECT_VERSION ),
@@ -89,7 +93,23 @@ public class AcrossCoreSchemaInstaller
 					INSTALLER_NAME
 			);
 		}
-		catch ( Exception ignore ) {
+		catch ( Exception e ) {
+			// We need some logging for this exception, because in most cases, the query above will be the very first one that gets run,
+			// and if that fails for an exotic reason, we need those details.
+			// By default, we don't log the exception stack trace in the warning, because that pollutes the logs for the integration tests too much.
+			// The message and classname of the exception should give a sufficient hint in most cases.
+			// You can however enable the trace level for this specific logger to get the exception stack trace if you really need it.
+			if ( LOG.isTraceEnabled() ) {
+				// Even though we check whether the trace logging is enabled, we still log it as a warning:
+				LOG.warn( "Assuming {} needs to run, because there was an exception retrieving its version from ACROSSMODULES:",
+				          INSTALLER_NAME, e );
+			}
+			else {
+				Throwable cause = e.getCause();
+				LOG.warn( "Assuming {} needs to run, because there was an exception retrieving its version from ACROSSMODULES: {}: {}; Cause: {}: {}",
+				          INSTALLER_NAME, e.getClass().getName(), e.getMessage(),
+				          cause != null ? cause.getClass().getName() : null, cause != null ? cause.getMessage() : null );
+			}
 			return -1;
 		}
 	}
