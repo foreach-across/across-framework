@@ -73,12 +73,14 @@
 		<!--<liquibase.version>4.17.0</liquibase.version>-->
 		<!-- Across properties -->
 		<maven.deploy.skip>false</maven.deploy.skip>
-		<foreach-common-bom.version>3.0-SNAPSHOT</foreach-common-bom.version>
+		<foreach-common-bom.version>3.0.0</foreach-common-bom.version>
 		<commons-collections4.version>4.4</commons-collections4.version>
-		<testcontainers-bom.version>1.20.4</testcontainers-bom.version>
+		<dozer-spring-boot-starter.version>6.5.2</dozer-spring-boot-starter.version>
 		<commons-io.version>2.18.0</commons-io.version>
 		<maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
 		<flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
+		<httpclient4.version>4.5.14</httpclient4.version>
+		<testcontainers-bom.version>1.20.4</testcontainers-bom.version>
 		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
 		<!-- Spring Boot now comes with Lombok 1.18.22, but there is no corresponding version
 			 of the (de)lombok-maven-plugin, so we stay with the old version for now:
@@ -120,6 +122,44 @@
 				<artifactId>commons-collections4</artifactId>
 				<version>${commons-collections4.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>fluent-hc</artifactId>
+				<version>${httpclient4.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>${httpclient4.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient-cache</artifactId>
+				<version>${httpclient4.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient-osgi</artifactId>
+				<version>${httpclient4.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient-win</artifactId>
+				<version>${httpclient4.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpmime</artifactId>
+				<version>${httpclient4.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-core</artifactId>
@@ -133,6 +173,24 @@
 				<version>${foreach-common-bom.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.github.dozermapper</groupId>
+				<artifactId>dozer-spring-boot-starter</artifactId>
+				<version>${dozer-spring-boot-starter.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.code.findbugs</groupId>
+				<artifactId>jsr305</artifactId>
+				<version>3.0.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>33.3.1-jre</version>
 			</dependency>
 
 			<!-- querydsl-bom does not specify versions for the jakarta variants, and neither does Spring Boot -->
@@ -160,6 +218,49 @@
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>${commons-io.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.el</groupId>
+				<artifactId>javax.el-api</artifactId>
+				<version>3.0.1-b06</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.java.dev.jna</groupId>
+				<artifactId>jna</artifactId>
+				<!--
+				Spring Boot has removed this as managed dependency:
+				https://github.com/spring-projects/spring-boot/issues/21313
+				https://github.com/spring-projects/spring-boot/commit/3325709a78d15511a35691fef87fa79329bfb04b
+				-->
+				<version>5.15.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.atteo</groupId>
+				<artifactId>evo-inflector</artifactId>
+				<version>1.3</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.checkerframework</groupId>
+				<artifactId>checker-qual</artifactId>
+				<version>3.48.3</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jsoup</groupId>
+				<artifactId>jsoup</artifactId>
+				<version>1.18.3</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>xmlunit</groupId>
+				<artifactId>xmlunit</artifactId>
+				<version>1.6</version>
+				<scope>test</scope>
 			</dependency>
 
 		</dependencies>

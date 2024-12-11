@@ -1,7 +1,7 @@
 ch.qos.logback:logback-classic:jar:1.4.14:compile
 ch.qos.logback:logback-core:jar:1.4.14:compile
 com.fasterxml:classmate:jar:1.6.0:compile
-com.foreach.libs:common-concurrent:jar:3.0-SNAPSHOT:compile
+com.foreach.libs:common-concurrent:jar:3.0.0:compile
 com.google.code.findbugs:jsr305:jar:3.0.2:provided
 com.opencsv:opencsv:jar:5.9:compile
 com.sun.istack:istack-commons-runtime:jar:4.1.2:test

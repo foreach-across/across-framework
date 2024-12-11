@@ -55,13 +55,13 @@ public class TestDefaultWebjarConfiguration extends AbstractWebIntegrationTest
 	@Test
 	public void defaultWebjarsPathIsSlashWebjars() {
 		assertEquals( "/custom/servlet", serverProperties.getServlet().getContextPath() );
-		String resolvedPath = pathResolver.path( "@webjars:/jquery/3.3.0/jquery.js" );
-		String resolvedLink = linkBuilder.buildLink( "@webjars:/jquery/3.3.0/jquery.js" );
-		assertEquals( "/webjars/jquery/3.3.0/jquery.js", resolvedPath );
-		assertEquals( "/custom/servlet/webjars/jquery/3.3.0/jquery.js", resolvedLink );
+		String resolvedPath = pathResolver.path( "@webjars:/jquery/3.4.1/jquery.js" );
+		String resolvedLink = linkBuilder.buildLink( "@webjars:/jquery/3.4.1/jquery.js" );
+		assertEquals( "/webjars/jquery/3.4.1/jquery.js", resolvedPath );
+		assertEquals( "/custom/servlet/webjars/jquery/3.4.1/jquery.js", resolvedLink );
 		ResponseEntity<String> response = restTemplate.getForEntity( host + resolvedLink, String.class );
 		assertEquals( HttpStatus.OK, response.getStatusCode() );
-		assertTrue( StringUtils.contains( response.getBody(), "jQuery JavaScript Library v3.3.0" ) );
+		assertTrue( StringUtils.contains( response.getBody(), "jQuery JavaScript Library v3.4.1" ) );
 		// https://stackoverflow.com/questions/21098865/text-javascript-vs-application-javascript
 		assertEquals( "text/javascript;charset=UTF-8", response.getHeaders().getFirst( "Content-Type" ) );
 	}

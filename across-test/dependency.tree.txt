@@ -11,7 +11,7 @@ com.foreach.across:across-test:jar:dev-SNAPSHOT
 +- com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
 |  +- org.springframework.boot:spring-boot-autoconfigure:jar:3.2.12:compile
 |  +- org.yaml:snakeyaml:jar:2.2:compile
-|  +- com.foreach.libs:common-concurrent:jar:3.0-SNAPSHOT:compile
+|  +- com.foreach.libs:common-concurrent:jar:3.0.0:compile
 |  +- org.springframework:spring-context:jar:6.1.15:compile
 |  |  +- org.springframework:spring-aop:jar:6.1.15:compile
 |  |  +- org.springframework:spring-expression:jar:6.1.15:compile
@@ -57,7 +57,7 @@ com.foreach.across:across-test:jar:dev-SNAPSHOT
 +- org.hsqldb:hsqldb:jar:2.7.3:compile
 +- com.mysql:mysql-connector-j:jar:8.3.0:test
 +- org.postgresql:postgresql:jar:42.6.2:test
-|  \- org.checkerframework:checker-qual:jar:3.31.0:test
+|  \- org.checkerframework:checker-qual:jar:3.48.3:test
 +- com.h2database:h2:jar:2.2.224:test
 +- com.oracle.database.jdbc:ojdbc8:jar:21.9.0.0:test
 +- com.microsoft.sqlserver:mssql-jdbc:jar:12.4.2.jre11:test
@@ -81,7 +81,7 @@ com.foreach.across:across-test:jar:dev-SNAPSHOT
 |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:10.1.33:test
 |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:10.1.33:test
 |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:10.1.33:test
-+- org.jsoup:jsoup:jar:1.9.1:test
++- org.jsoup:jsoup:jar:1.18.3:test
 +- org.testcontainers:testcontainers:jar:1.20.4:compile
 |  +- org.apache.commons:commons-compress:jar:1.24.0:compile
 |  +- org.rnorth.duct-tape:duct-tape:jar:1.0.8:compile
@@ -89,7 +89,7 @@ com.foreach.across:across-test:jar:dev-SNAPSHOT
 |  +- com.github.docker-java:docker-java-api:jar:3.4.0:compile
 |  \- com.github.docker-java:docker-java-transport-zerodep:jar:3.4.0:compile
 |     +- com.github.docker-java:docker-java-transport:jar:3.4.0:compile
-|     \- net.java.dev.jna:jna:jar:5.13.0:compile
+|     \- net.java.dev.jna:jna:jar:5.15.0:compile
 +- org.testcontainers:mysql:jar:1.20.4:compile
 |  \- org.testcontainers:jdbc:jar:1.20.4:compile
 |     \- org.testcontainers:database-commons:jar:1.20.4:compile

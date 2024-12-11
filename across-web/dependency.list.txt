@@ -8,7 +8,7 @@ com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.15.4:compile
 com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.15.4:compile
 com.fasterxml:classmate:jar:1.6.0:test
 com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
-com.foreach.libs:common-concurrent:jar:3.0-SNAPSHOT:compile
+com.foreach.libs:common-concurrent:jar:3.0.0:compile
 com.google.code.findbugs:jsr305:jar:3.0.2:provided
 com.opencsv:opencsv:jar:5.9:compile
 commons-io:commons-io:jar:2.18.0:compile
@@ -77,5 +77,5 @@ org.springframework:spring-websocket:jar:6.1.15:compile
 org.thymeleaf:thymeleaf-spring6:jar:3.1.2.RELEASE:compile
 org.thymeleaf:thymeleaf:jar:3.1.2.RELEASE:compile
 org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
-org.webjars:jquery:jar:3.3.0:test
+org.webjars:jquery:jar:3.4.1:test
 org.yaml:snakeyaml:jar:2.2:compile

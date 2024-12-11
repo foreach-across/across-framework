@@ -21,7 +21,7 @@ com.foreach.across:across-web:jar:dev-SNAPSHOT
 |  |  \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
 |  \- org.slf4j:slf4j-api:jar:2.0.16:compile
 +- com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
-|  +- com.foreach.libs:common-concurrent:jar:3.0-SNAPSHOT:compile
+|  +- com.foreach.libs:common-concurrent:jar:3.0.0:compile
 |  +- org.springframework:spring-context:jar:6.1.15:compile
 |  +- org.springframework:spring-jdbc:jar:6.1.15:compile
 |  |  \- org.springframework:spring-tx:jar:6.1.15:compile
@@ -60,7 +60,7 @@ com.foreach.across:across-web:jar:dev-SNAPSHOT
 |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:10.1.33:test
 |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:10.1.33:test
 +- org.springframework.boot:spring-boot-test:jar:3.2.12:test
-+- org.webjars:jquery:jar:3.3.0:test
++- org.webjars:jquery:jar:3.4.1:test
 +- org.springframework.boot:spring-boot-configuration-processor:jar:3.2.12:compile
 +- org.springframework.boot:spring-boot-devtools:jar:3.2.12:compile
 +- org.junit.jupiter:junit-jupiter-engine:jar:5.10.5:test
