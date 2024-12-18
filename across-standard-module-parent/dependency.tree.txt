@@ -1,4 +1,4 @@
-com.foreach.across:across-standard-module-parent:pom:6.0.0
+com.foreach.across:across-standard-module-parent:pom:dev-SNAPSHOT
 +- org.projectlombok:lombok:jar:1.18.36:provided
 \- org.assertj:assertj-core:jar:3.24.2:test
    \- net.bytebuddy:byte-buddy:jar:1.14.19:test
