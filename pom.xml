@@ -60,8 +60,8 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<!-- Across properties -->
-		<maven.javadoc.skip>true</maven.javadoc.skip>
-		<maven.deploy.skip>true</maven.deploy.skip>
+		<maven.javadoc.skip>false</maven.javadoc.skip>
+		<maven.deploy.skip>false</maven.deploy.skip>
 	</properties>
 
 	<modules>
@@ -288,6 +288,7 @@
 					Update 2024-11-29: The latest javadoc and/or maven-javadoc-plugin crashes on the not-delombok'd sources.
 					Since we're only using them in the assembly, and that only contains the combined javadocs,
 					and we don't use that assembly for anything, we just stop building and publishing it.
+					-->
 					<plugin>
 						<groupId>org.projectlombok</groupId>
 						<artifactId>lombok-maven-plugin</artifactId>
@@ -327,7 +328,6 @@
 							</execution>
 						</executions>
 					</plugin>
-					-->
 				</plugins>
 			</build>
 		</profile>
