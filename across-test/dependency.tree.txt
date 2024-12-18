@@ -26,25 +26,25 @@ com.foreach.across:across-test:jar:dev-SNAPSHOT
 |     +- org.apache.commons:commons-collections4:jar:4.4:compile
 |     +- org.apache.commons:commons-text:jar:1.12.0:compile
 |     \- commons-io:commons-io:jar:2.18.0:compile
-+- com.foreach.across:across-web:jar:dev-SNAPSHOT:compile
-|  +- org.springframework.boot:spring-boot-starter-web:jar:3.2.12:compile
-|  |  +- org.springframework.boot:spring-boot-starter:jar:3.2.12:compile
-|  |  |  \- org.springframework.boot:spring-boot-starter-logging:jar:3.2.12:compile
-|  |  |     +- ch.qos.logback:logback-classic:jar:1.4.14:compile
-|  |  |     |  \- ch.qos.logback:logback-core:jar:1.4.14:compile
-|  |  |     +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.21.1:compile
-|  |  |     |  \- org.apache.logging.log4j:log4j-api:jar:2.21.1:compile
-|  |  |     \- org.slf4j:jul-to-slf4j:jar:2.0.16:compile
-|  |  +- org.springframework.boot:spring-boot-starter-json:jar:3.2.12:compile
-|  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.15.4:compile
-|  |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.15.4:compile
-|  |  \- org.springframework:spring-web:jar:6.1.15:compile
-|  +- org.thymeleaf:thymeleaf-spring6:jar:3.1.2.RELEASE:compile
-|  |  \- org.thymeleaf:thymeleaf:jar:3.1.2.RELEASE:compile
-|  |     +- org.attoparser:attoparser:jar:2.0.7.RELEASE:compile
-|  |     \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
-|  +- org.springframework:spring-webmvc:jar:6.1.15:compile
-|  \- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.15.4:compile
++- com.foreach.across:across-web:jar:dev-SNAPSHOT:compile (optional)
+|  +- org.springframework.boot:spring-boot-starter-web:jar:3.2.12:compile (optional)
+|  |  +- org.springframework.boot:spring-boot-starter:jar:3.2.12:compile (optional)
+|  |  |  \- org.springframework.boot:spring-boot-starter-logging:jar:3.2.12:compile (optional)
+|  |  |     +- ch.qos.logback:logback-classic:jar:1.4.14:compile (optional)
+|  |  |     |  \- ch.qos.logback:logback-core:jar:1.4.14:compile (optional)
+|  |  |     +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.21.1:compile (optional)
+|  |  |     |  \- org.apache.logging.log4j:log4j-api:jar:2.21.1:compile (optional)
+|  |  |     \- org.slf4j:jul-to-slf4j:jar:2.0.16:compile (optional)
+|  |  +- org.springframework.boot:spring-boot-starter-json:jar:3.2.12:compile (optional)
+|  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.15.4:compile (optional)
+|  |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.15.4:compile (optional)
+|  |  \- org.springframework:spring-web:jar:6.1.15:compile (optional)
+|  +- org.thymeleaf:thymeleaf-spring6:jar:3.1.2.RELEASE:compile (optional)
+|  |  \- org.thymeleaf:thymeleaf:jar:3.1.2.RELEASE:compile (optional)
+|  |     +- org.attoparser:attoparser:jar:2.0.7.RELEASE:compile (optional)
+|  |     \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile (optional)
+|  +- org.springframework:spring-webmvc:jar:6.1.15:compile (optional)
+|  \- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.15.4:compile (optional)
 +- com.zaxxer:HikariCP:jar:5.0.1:compile
 +- org.springframework:spring-test:jar:6.1.15:compile
 |  \- org.springframework:spring-core:jar:6.1.15:compile

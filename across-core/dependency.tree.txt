@@ -21,21 +21,21 @@ com.foreach.across:across-core:jar:dev-SNAPSHOT
 |  +- org.apache.commons:commons-collections4:jar:4.4:compile
 |  +- org.apache.commons:commons-text:jar:1.12.0:compile
 |  \- commons-io:commons-io:jar:2.18.0:compile
-+- org.springframework:spring-webmvc:jar:6.1.15:compile
-|  \- org.springframework:spring-web:jar:6.1.15:compile
++- org.springframework:spring-webmvc:jar:6.1.15:compile (optional)
+|  \- org.springframework:spring-web:jar:6.1.15:compile (optional)
 +- jakarta.servlet:jakarta.servlet-api:jar:6.0.0:provided
-+- org.springframework.boot:spring-boot-starter-validation:jar:3.2.12:compile
-|  +- org.springframework.boot:spring-boot-starter:jar:3.2.12:compile
-|  |  +- org.springframework.boot:spring-boot-starter-logging:jar:3.2.12:compile
-|  |  |  +- ch.qos.logback:logback-classic:jar:1.4.14:compile
-|  |  |  |  \- ch.qos.logback:logback-core:jar:1.4.14:compile
-|  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.21.1:compile
-|  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.21.1:compile
-|  |  |  \- org.slf4j:jul-to-slf4j:jar:2.0.16:compile
-|  |  \- jakarta.annotation:jakarta.annotation-api:jar:2.1.1:compile
-|  +- org.apache.tomcat.embed:tomcat-embed-el:jar:10.1.33:compile
-|  \- org.hibernate.validator:hibernate-validator:jar:8.0.1.Final:compile
-|     \- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile
++- org.springframework.boot:spring-boot-starter-validation:jar:3.2.12:compile (optional)
+|  +- org.springframework.boot:spring-boot-starter:jar:3.2.12:compile (optional)
+|  |  +- org.springframework.boot:spring-boot-starter-logging:jar:3.2.12:compile (optional)
+|  |  |  +- ch.qos.logback:logback-classic:jar:1.4.14:compile (optional)
+|  |  |  |  \- ch.qos.logback:logback-core:jar:1.4.14:compile (optional)
+|  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.21.1:compile (optional)
+|  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.21.1:compile (optional)
+|  |  |  \- org.slf4j:jul-to-slf4j:jar:2.0.16:compile (optional)
+|  |  \- jakarta.annotation:jakarta.annotation-api:jar:2.1.1:compile (optional)
+|  +- org.apache.tomcat.embed:tomcat-embed-el:jar:10.1.33:compile (optional)
+|  \- org.hibernate.validator:hibernate-validator:jar:8.0.1.Final:compile (optional)
+|     \- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile (optional)
 +- org.springframework:spring-orm:jar:6.1.15:test
 +- org.aspectj:aspectjweaver:jar:1.9.22.1:test
 +- com.zaxxer:HikariCP:jar:5.0.1:test
