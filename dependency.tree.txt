@@ -12,9 +12,9 @@ com.foreach.across:across-base:pom:dev-SNAPSHOT
 |  +- net.bytebuddy:byte-buddy-agent:jar:1.14.19:test
 |  \- org.objenesis:objenesis:jar:3.3:test
 +- org.mockito:mockito-junit-jupiter:jar:5.7.0:test
-+- org.springframework:spring-test:jar:6.1.15:test
-|  \- org.springframework:spring-core:jar:6.1.15:test
-|     \- org.springframework:spring-jcl:jar:6.1.15:test
++- org.springframework:spring-test:jar:6.1.16:test
+|  \- org.springframework:spring-core:jar:6.1.16:test
+|     \- org.springframework:spring-jcl:jar:6.1.16:test
 +- org.assertj:assertj-core:jar:3.24.2:test
 +- org.projectlombok:lombok:jar:1.18.36:provided
 \- com.google.code.findbugs:jsr305:jar:3.0.2:provided

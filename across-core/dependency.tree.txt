@@ -3,16 +3,16 @@ com.foreach.across:across-core:jar:dev-SNAPSHOT
 |  \- org.springframework.boot:spring-boot:jar:3.2.12:compile
 +- org.yaml:snakeyaml:jar:2.2:compile
 +- com.foreach.libs:common-concurrent:jar:3.0.0:compile
-+- org.springframework:spring-context:jar:6.1.15:compile
-|  +- org.springframework:spring-aop:jar:6.1.15:compile
-|  +- org.springframework:spring-beans:jar:6.1.15:compile
-|  +- org.springframework:spring-core:jar:6.1.15:compile
-|  |  \- org.springframework:spring-jcl:jar:6.1.15:compile
-|  +- org.springframework:spring-expression:jar:6.1.15:compile
++- org.springframework:spring-context:jar:6.1.16:compile
+|  +- org.springframework:spring-aop:jar:6.1.16:compile
+|  +- org.springframework:spring-beans:jar:6.1.16:compile
+|  +- org.springframework:spring-core:jar:6.1.16:compile
+|  |  \- org.springframework:spring-jcl:jar:6.1.16:compile
+|  +- org.springframework:spring-expression:jar:6.1.16:compile
 |  \- io.micrometer:micrometer-observation:jar:1.12.13:compile
 |     \- io.micrometer:micrometer-commons:jar:1.12.13:compile
-+- org.springframework:spring-jdbc:jar:6.1.15:compile
-|  \- org.springframework:spring-tx:jar:6.1.15:compile
++- org.springframework:spring-jdbc:jar:6.1.16:compile
+|  \- org.springframework:spring-tx:jar:6.1.16:compile
 +- org.slf4j:slf4j-api:jar:2.0.16:compile
 +- org.apache.commons:commons-lang3:jar:3.13.0:compile
 +- org.liquibase:liquibase-core:jar:4.30.0:compile
@@ -21,8 +21,8 @@ com.foreach.across:across-core:jar:dev-SNAPSHOT
 |  +- org.apache.commons:commons-collections4:jar:4.4:compile
 |  +- org.apache.commons:commons-text:jar:1.12.0:compile
 |  \- commons-io:commons-io:jar:2.18.0:compile
-+- org.springframework:spring-webmvc:jar:6.1.15:compile (optional)
-|  \- org.springframework:spring-web:jar:6.1.15:compile (optional)
++- org.springframework:spring-webmvc:jar:6.1.16:compile (optional)
+|  \- org.springframework:spring-web:jar:6.1.16:compile (optional)
 +- jakarta.servlet:jakarta.servlet-api:jar:6.0.0:provided
 +- org.springframework.boot:spring-boot-starter-validation:jar:3.2.12:compile (optional)
 |  +- org.springframework.boot:spring-boot-starter:jar:3.2.12:compile (optional)
@@ -36,7 +36,7 @@ com.foreach.across:across-core:jar:dev-SNAPSHOT
 |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:10.1.33:compile (optional)
 |  \- org.hibernate.validator:hibernate-validator:jar:8.0.1.Final:compile (optional)
 |     \- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile (optional)
-+- org.springframework:spring-orm:jar:6.1.15:test
++- org.springframework:spring-orm:jar:6.1.16:test
 +- org.aspectj:aspectjweaver:jar:1.9.22.1:test
 +- com.zaxxer:HikariCP:jar:5.0.1:test
 +- org.hsqldb:hsqldb:jar:2.7.3:test
@@ -70,7 +70,7 @@ com.foreach.across:across-core:jar:dev-SNAPSHOT
 |  +- net.bytebuddy:byte-buddy-agent:jar:1.14.19:test
 |  \- org.objenesis:objenesis:jar:3.3:test
 +- org.mockito:mockito-junit-jupiter:jar:5.7.0:test
-+- org.springframework:spring-test:jar:6.1.15:test
++- org.springframework:spring-test:jar:6.1.16:test
 +- org.assertj:assertj-core:jar:3.24.2:test
 +- org.projectlombok:lombok:jar:1.18.36:provided
 \- com.google.code.findbugs:jsr305:jar:3.0.2:provided

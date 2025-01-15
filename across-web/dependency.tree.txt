@@ -10,7 +10,7 @@ com.foreach.across:across-web:jar:dev-SNAPSHOT
 |  +- org.springframework.boot:spring-boot-starter-json:jar:3.2.12:compile
 |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.15.4:compile
 |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.15.4:compile
-|  \- org.springframework:spring-web:jar:6.1.15:compile
+|  \- org.springframework:spring-web:jar:6.1.16:compile
 |     \- io.micrometer:micrometer-observation:jar:1.12.13:compile
 |        \- io.micrometer:micrometer-commons:jar:1.12.13:compile
 +- jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:jar:3.0.2:compile (optional)
@@ -22,9 +22,9 @@ com.foreach.across:across-web:jar:dev-SNAPSHOT
 |  \- org.slf4j:slf4j-api:jar:2.0.16:compile
 +- com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
 |  +- com.foreach.libs:common-concurrent:jar:3.0.0:compile
-|  +- org.springframework:spring-context:jar:6.1.15:compile
-|  +- org.springframework:spring-jdbc:jar:6.1.15:compile
-|  |  \- org.springframework:spring-tx:jar:6.1.15:compile
+|  +- org.springframework:spring-context:jar:6.1.16:compile
+|  +- org.springframework:spring-jdbc:jar:6.1.16:compile
+|  |  \- org.springframework:spring-tx:jar:6.1.16:compile
 |  +- org.apache.commons:commons-lang3:jar:3.13.0:compile
 |  \- org.liquibase:liquibase-core:jar:4.30.0:compile
 |     +- com.opencsv:opencsv:jar:5.9:compile
@@ -32,12 +32,12 @@ com.foreach.across:across-web:jar:dev-SNAPSHOT
 |     +- org.apache.commons:commons-collections4:jar:4.4:compile
 |     +- org.apache.commons:commons-text:jar:1.12.0:compile
 |     \- commons-io:commons-io:jar:2.18.0:compile
-+- org.springframework:spring-webmvc:jar:6.1.15:compile
-|  +- org.springframework:spring-aop:jar:6.1.15:compile
-|  +- org.springframework:spring-beans:jar:6.1.15:compile
-|  +- org.springframework:spring-core:jar:6.1.15:compile
-|  |  \- org.springframework:spring-jcl:jar:6.1.15:compile
-|  \- org.springframework:spring-expression:jar:6.1.15:compile
++- org.springframework:spring-webmvc:jar:6.1.16:compile
+|  +- org.springframework:spring-aop:jar:6.1.16:compile
+|  +- org.springframework:spring-beans:jar:6.1.16:compile
+|  +- org.springframework:spring-core:jar:6.1.16:compile
+|  |  \- org.springframework:spring-jcl:jar:6.1.16:compile
+|  \- org.springframework:spring-expression:jar:6.1.16:compile
 +- jakarta.servlet:jakarta.servlet-api:jar:6.0.0:provided
 +- jakarta.servlet.jsp:jakarta.servlet.jsp-api:jar:3.1.1:provided
 +- com.fasterxml.jackson.core:jackson-core:jar:2.15.4:compile
@@ -50,8 +50,8 @@ com.foreach.across:across-web:jar:dev-SNAPSHOT
 |  \- org.hibernate.validator:hibernate-validator:jar:8.0.1.Final:test
 |     +- org.jboss.logging:jboss-logging:jar:3.5.3.Final:test
 |     \- com.fasterxml:classmate:jar:1.6.0:test
-+- org.springframework:spring-messaging:jar:6.1.15:compile (optional)
-+- org.springframework:spring-websocket:jar:6.1.15:compile (optional)
++- org.springframework:spring-messaging:jar:6.1.16:compile (optional)
++- org.springframework:spring-websocket:jar:6.1.16:compile (optional)
 +- org.springframework.boot:spring-boot-autoconfigure:jar:3.2.12:compile
 |  \- org.springframework.boot:spring-boot:jar:3.2.12:compile
 +- org.yaml:snakeyaml:jar:2.2:compile
@@ -76,7 +76,7 @@ com.foreach.across:across-web:jar:dev-SNAPSHOT
 |  +- net.bytebuddy:byte-buddy-agent:jar:1.14.19:test
 |  \- org.objenesis:objenesis:jar:3.3:test
 +- org.mockito:mockito-junit-jupiter:jar:5.7.0:test
-+- org.springframework:spring-test:jar:6.1.15:test
++- org.springframework:spring-test:jar:6.1.16:test
 +- org.assertj:assertj-core:jar:3.24.2:test
 +- org.projectlombok:lombok:jar:1.18.36:provided
 \- com.google.code.findbugs:jsr305:jar:3.0.2:provided
