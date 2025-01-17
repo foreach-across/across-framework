@@ -30,28 +30,28 @@ import test.modules.EventPubSub;
 public class TestModule1Config
 {
 	@Bean
-	public ConstructedBeanModule1 constructedBeanModule1() {
+	ConstructedBeanModule1 constructedBeanModule1() {
 		return new ConstructedBeanModule1Impl( "helloFromModule1" );
 	}
 
 	@Bean(name = "refreshable")
 	@Refreshable
-	public ConstructedBeanModule1 refreshableConstructedBeanModule1() {
+	ConstructedBeanModule1 refreshableConstructedBeanModule1() {
 		return new ConstructedBeanModule1Impl( "helloFromModule1-refreshable" );
 	}
 
 	@Bean
-	public SomeInterfaceImplOne someInterfaceImplOne() {
+	SomeInterfaceImplOne someInterfaceImplOne() {
 		return new SomeInterfaceImplOne();
 	}
 
 	@Bean
-	public Interceptor interceptor() {
+	Interceptor interceptor() {
 		return new Interceptor();
 	}
 
 	@Bean
-	public EventPubSub publisherModuleOne( ApplicationEventPublisher eventPublisher ) {
+	EventPubSub publisherModuleOne(ApplicationEventPublisher eventPublisher) {
 		return new EventPubSub( "moduleOne", eventPublisher );
 	}
 }

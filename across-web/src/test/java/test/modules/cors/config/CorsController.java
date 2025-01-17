@@ -30,7 +30,7 @@ public class CorsController
 		return id;
 	}
 
-	@RequestMapping(value = "/global/{id}", method = RequestMethod.GET)
+	@GetMapping("/global/{id}")
 	public Long retrieveWithGlobalCorsConfig( @PathVariable Long id ) {
 		return id;
 	}

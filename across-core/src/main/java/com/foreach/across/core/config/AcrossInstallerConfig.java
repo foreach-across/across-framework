@@ -54,8 +54,8 @@ public class AcrossInstallerConfig
 	@Bean
 	@Lazy
 	@DependsOn("acrossCoreSchemaInstaller")
-	public AcrossInstallerRepository installerRepository( @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource,
-	                                                      CoreSchemaConfigurationHolder schemaHolder ) {
+	AcrossInstallerRepository installerRepository(@Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource,
+																			CoreSchemaConfigurationHolder schemaHolder) {
 		if ( acrossDataSource.isEmpty() ) {
 			throw new AcrossConfigurationException(
 					"""
@@ -76,9 +76,9 @@ public class AcrossInstallerConfig
 	@DependsOnDatabaseInitialization
 	@Lazy
 	@SuppressWarnings("all")
-	public AcrossCoreSchemaInstaller acrossCoreSchemaInstaller(@Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource,
-	                                                            CoreSchemaConfigurationHolder schemaHolder,
-	                                                            AcrossContext acrossContext) {
+	AcrossCoreSchemaInstaller acrossCoreSchemaInstaller(@Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource,
+																					CoreSchemaConfigurationHolder schemaHolder,
+																					AcrossContext acrossContext) {
 		if ( installerDataSource.isEmpty() ) {
 			throw new AcrossConfigurationException(
 					"""

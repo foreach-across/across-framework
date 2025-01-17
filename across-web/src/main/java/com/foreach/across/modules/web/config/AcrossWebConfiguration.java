@@ -84,24 +84,24 @@ class AcrossWebConfiguration implements WebMvcConfigurer
 	@Lazy
 	@Exposed
 	@Primary
-	public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+	HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
 		return new HandlerMappingIntrospector();
 	}
 
 	@Bean
 	@Exposed
-	public AcrossWebArgumentResolver acrossWebArgumentResolver() {
+	AcrossWebArgumentResolver acrossWebArgumentResolver() {
 		return new AcrossWebArgumentResolver();
 	}
 
 	@Bean
 	@Exposed
-	public WebResourcePackageManager webResourcePackageManager() {
+	WebResourcePackageManager webResourcePackageManager() {
 		return new WebResourcePackageManager();
 	}
 
 	@Bean
-	public WebResourceRegistryInterceptor webResourceRegistryInterceptor() {
+	WebResourceRegistryInterceptor webResourceRegistryInterceptor() {
 		WebResourceRegistryInterceptor interceptor = new WebResourceRegistryInterceptor( webResourcePackageManager() );
 		interceptor.setWebResourceTranslators( webResourceTranslatorRegistry() );
 
@@ -109,13 +109,13 @@ class AcrossWebConfiguration implements WebMvcConfigurer
 	}
 
 	@Bean
-	protected RefreshableRegistry<WebResourceTranslator> webResourceTranslatorRegistry() {
+	RefreshableRegistry<WebResourceTranslator> webResourceTranslatorRegistry() {
 		return new RefreshableRegistry<>( WebResourceTranslator.class, true );
 	}
 
 	@Bean
 	@Exposed
-	public MenuFactory menuFactory( MenuBuilder requestMenuBuilder, MenuStore requestMenuStore ) {
+	MenuFactory menuFactory(MenuBuilder requestMenuBuilder, MenuStore requestMenuStore) {
 		MenuFactory menuFactory = new MenuFactory();
 		menuFactory.setDefaultMenuBuilder( requestMenuBuilder );
 		menuFactory.setDefaultMenuStore( requestMenuStore );
@@ -125,8 +125,8 @@ class AcrossWebConfiguration implements WebMvcConfigurer
 
 	@Bean
 	@Exposed
-	@SuppressWarnings( "deprecation" )
-	public WebResourceTranslator viewsWebResourceTranslator() {
+	@SuppressWarnings("deprecation")
+	WebResourceTranslator viewsWebResourceTranslator() {
 		if ( resourceConfigurationProperties.getPath() != null ) {
 			return new WebResourceTranslator()
 			{
@@ -147,7 +147,7 @@ class AcrossWebConfiguration implements WebMvcConfigurer
 
 	@Bean
 	@Exposed
-	public MessageCodeSupportingLocalizedTextResolver localizedTextResolver() {
+	MessageCodeSupportingLocalizedTextResolver localizedTextResolver() {
 		return new MessageCodeSupportingLocalizedTextResolver();
 	}
 }

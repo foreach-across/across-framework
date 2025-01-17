@@ -32,7 +32,7 @@ public class JstlViewSupportConfiguration
 {
 	@Bean
 	@Exposed
-	public ViewResolver jstlViewResolver() {
+	ViewResolver jstlViewResolver() {
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 		resolver.setPrefix( "/WEB-INF/jsp/" );
 		resolver.setSuffix( ".jsp" );

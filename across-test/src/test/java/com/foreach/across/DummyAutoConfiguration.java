@@ -30,7 +30,7 @@ import java.math.BigDecimal;
 public class DummyAutoConfiguration
 {
 	@Bean
-	public BigDecimal dummyDecimal() {
+	BigDecimal dummyDecimal() {
 		return new BigDecimal( "666.999" );
 	}
 }

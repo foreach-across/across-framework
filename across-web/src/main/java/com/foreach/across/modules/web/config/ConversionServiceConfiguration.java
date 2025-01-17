@@ -53,7 +53,7 @@ public class ConversionServiceConfiguration
 	@Bean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
 	@Exposed
 	@ConditionalOnMissingBean(name = AcrossWebModule.CONVERSION_SERVICE_BEAN)
-	public FormattingConversionService mvcConversionService() {
+	FormattingConversionService mvcConversionService() {
 		if ( beanRegistry.containsBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME ) ) {
 			Object conversionService
 					= beanRegistry.getBean( ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );

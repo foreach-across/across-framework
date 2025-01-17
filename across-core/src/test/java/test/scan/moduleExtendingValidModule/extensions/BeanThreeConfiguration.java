@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 public class BeanThreeConfiguration
 {
 	@Bean
-	public String beanThree() {
+	String beanThree() {
 		return "beanThree";
 	}
 }

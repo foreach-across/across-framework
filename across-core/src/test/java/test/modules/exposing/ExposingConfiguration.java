@@ -36,13 +36,13 @@ public class ExposingConfiguration
 	}
 
 	@Bean
-	public MyBean beanFromExposingConfiguration() {
+	MyBean beanFromExposingConfiguration() {
 		return new MyBean();
 	}
 
 	@Bean
 	@Scope("prototype")
-	public MyPrototypeBean myPrototypeBean() {
+	MyPrototypeBean myPrototypeBean() {
 		return new MyPrototypeBean();
 	}
 }

@@ -8,4 +8,4 @@ include:
 
 variables:
   JAVA_VERSION: 17
-  REVISION: 6.0-SNAPSHOT
+  REVISION: 6.1-SNAPSHOT

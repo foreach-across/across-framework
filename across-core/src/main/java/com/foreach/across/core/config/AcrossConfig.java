@@ -65,17 +65,17 @@ public class AcrossConfig
 	 */
 	@Primary
 	@Bean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
-	public AcrossContextApplicationEventMulticaster acrossEventMulticaster( BeanFactory beanFactory ) {
+	AcrossContextApplicationEventMulticaster acrossEventMulticaster(BeanFactory beanFactory) {
 		return new AcrossContextApplicationEventMulticaster( beanFactory );
 	}
 
 	@Bean
-	public SpringContextRefreshedEventListener refreshedEventListener() {
+	SpringContextRefreshedEventListener refreshedEventListener() {
 		return new SpringContextRefreshedEventListener();
 	}
 
 	@Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
-	public MessageSource messageSource( ApplicationContext applicationContext ) {
+	MessageSource messageSource(ApplicationContext applicationContext) {
 		ApplicationContext parent = applicationContext.getParent();
 		HierarchicalMessageSource endpoint = null;
 
@@ -93,7 +93,7 @@ public class AcrossConfig
 	@Bean
 	@Lazy
 	@Exposed
-	public AcrossCompositeCacheManager cacheManager( AcrossContext acrossContext ) {
+	AcrossCompositeCacheManager cacheManager(AcrossContext acrossContext) {
 		return new AcrossCompositeCacheManager( acrossContext.isDisableNoOpCacheManager() );
 	}
 
@@ -103,7 +103,7 @@ public class AcrossConfig
 	@Bean(name = ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
 	@Exposed
 	@ConditionalOnMissingBean(name = ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME)
-	public DefaultFormattingConversionService conversionService() {
+	DefaultFormattingConversionService conversionService() {
 		LOG.info( "Creating a default ConversionService as no valid bean '{}' is present",
 		          ConfigurableApplicationContext.CONVERSION_SERVICE_BEAN_NAME );
 
@@ -114,21 +114,21 @@ public class AcrossConfig
 	}
 
 	@Bean
-	public StringToDateTimeConverter defaultDateTimeConverter( ConversionService conversionService ) {
+	StringToDateTimeConverter defaultDateTimeConverter(ConversionService conversionService) {
 		return new StringToDateTimeConverter( conversionService );
 	}
 
 	@Bean
 	@Lazy
 	@Primary
-	public AcrossDevelopmentMode acrossDevelopmentMode() {
+	AcrossDevelopmentMode acrossDevelopmentMode() {
 		return new AcrossDevelopmentMode();
 	}
 
 	@Bean
 	@Lazy
-	@DependsOn({ "sqlBasedDistributedLockManager" })
-	public DistributedLockRepository distributedLockRepository( SqlBasedDistributedLockManager sqlBasedDistributedLockManager, AcrossContext acrossContext ) {
+	@DependsOn({"sqlBasedDistributedLockManager"})
+	DistributedLockRepository distributedLockRepository(SqlBasedDistributedLockManager sqlBasedDistributedLockManager, AcrossContext acrossContext) {
 		String ownerId =
 				StringUtils.substring( acrossContext.getDisplayName() + "@" + StringUtils.defaultString( getHostNameFromServer(), "unknown-host" ), 0, 80 )
 						+ "[" + UUID.randomUUID().toString() + "]";
@@ -142,7 +142,7 @@ public class AcrossConfig
 	@DependsOn("acrossCoreSchemaInstaller")
 	@DependsOnDatabaseInitialization
 	@SuppressWarnings("all")
-	public SqlBasedDistributedLockManager sqlBasedDistributedLockManager(@Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource) {
+	SqlBasedDistributedLockManager sqlBasedDistributedLockManager(@Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource) {
 		if ( acrossDataSource.isEmpty() ) {
 			throw new AcrossConfigurationException(
 					"Unable to create the DistributedLockRepository because there is no DataSource configured.",
@@ -158,7 +158,7 @@ public class AcrossConfig
 
 	@Bean
 	@Lazy
-	public SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration( CoreSchemaConfigurationHolder schemaConfigurationHolder ) {
+	SqlBasedDistributedLockConfiguration sqlBasedDistributedLockConfiguration(CoreSchemaConfigurationHolder schemaConfigurationHolder) {
 		String tablePrefix = "";
 		String defaultSchema = schemaConfigurationHolder.getDefaultSchema();
 		if ( !StringUtils.isBlank( defaultSchema ) ) {
@@ -169,7 +169,7 @@ public class AcrossConfig
 
 	@Bean
 	@Lazy
-	public CoreSchemaConfigurationHolder schemaConfigurationHolder() {
+	CoreSchemaConfigurationHolder schemaConfigurationHolder() {
 		return new CoreSchemaConfigurationHolder();
 	}
 

@@ -45,7 +45,7 @@ public class MockMvcConfiguration
 {
 	@Bean
 	@Lazy
-	public MockMvc mockMvc( AcrossContextInfo contextInfo ) {
+	MockMvc mockMvc(AcrossContextInfo contextInfo) {
 		return AcrossMockMvcBuilders.acrossContextSetup( contextInfo ).build();
 	}
 }

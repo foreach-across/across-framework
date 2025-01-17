@@ -28,7 +28,7 @@ import test.scan.packageOne.ValidModule;
 public class BeanTwoConfiguration
 {
 	@Bean
-	public String beanTwo() {
+	String beanTwo() {
 		return "beanTwo";
 	}
 }

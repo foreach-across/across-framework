@@ -28,7 +28,7 @@ class DevModeOnlyBeanConfiguration
 {
 	@Bean
 	@Exposed
-	public String devModeOnlyBean() {
+	String devModeOnlyBean() {
 		return "devModeOnlyBean";
 	}
 }

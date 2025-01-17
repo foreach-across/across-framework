@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Bean;
 public class OtherDummyApplication
 {
 	@Bean
-	public EmptyAcrossModule emptyModule() {
+	EmptyAcrossModule emptyModule() {
 		return new EmptyAcrossModule( "emptyModule" );
 	}
 }

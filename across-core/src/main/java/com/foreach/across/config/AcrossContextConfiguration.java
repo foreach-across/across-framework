@@ -95,9 +95,9 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 
 	@Bean
 	@DependsOnDatabaseInitialization
-	public AcrossContext acrossContext(ConfigurableApplicationContext applicationContext,
-	                                    @Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource,
-	                                    @Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource
+	AcrossContext acrossContext(ConfigurableApplicationContext applicationContext,
+													@Qualifier(AcrossContext.DATASOURCE) Optional<DataSource> acrossDataSource,
+													@Qualifier(AcrossContext.INSTALLER_DATASOURCE) Optional<DataSource> installerDataSource
 	) {
 		Map<String, Object> configuration = importMetadata.getAnnotationAttributes( ANNOTATION_TYPE );
 
@@ -194,13 +194,13 @@ public class AcrossContextConfiguration implements ImportAware, EnvironmentAware
 	}
 
 	@Bean(SharedMetadataReaderFactory.BEAN_NAME)
-	public ConcurrentReferenceCachingMetadataReaderFactory sharedMetadataReaderFactory() {
+	ConcurrentReferenceCachingMetadataReaderFactory sharedMetadataReaderFactory() {
 		return new ConcurrentReferenceCachingMetadataReaderFactory( beanClassLoader );
 	}
 
 	@Bean
 	@Lazy
-	public ModuleDependencyResolver moduleDependencyResolver( ApplicationContext applicationContext ) {
+	ModuleDependencyResolver moduleDependencyResolver(ApplicationContext applicationContext) {
 		final ClassPathScanningCandidateModuleProvider candidateModuleProvider = new ClassPathScanningCandidateModuleProvider(
 				applicationContext, applicationContext.getBean( SharedMetadataReaderFactory.BEAN_NAME, MetadataReaderFactory.class )
 		);

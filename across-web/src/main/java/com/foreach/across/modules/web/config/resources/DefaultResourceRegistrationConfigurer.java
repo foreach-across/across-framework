@@ -131,7 +131,7 @@ public class DefaultResourceRegistrationConfigurer
 	@Bean
 	@ConditionalOnProperty(prefix = "across.web.resources.versioning", value = "enabled", matchIfMissing = true)
 	@ConditionalOnMissingBean(value = VersionResourceResolver.class, search = SearchStrategy.CURRENT)
-	public VersionResourceResolver versionResourceResolver() {
+	VersionResourceResolver versionResourceResolver() {
 		return new VersionResourceResolver()
 				.addFixedVersionStrategy( getFixedVersion(), "/**" );
 	}

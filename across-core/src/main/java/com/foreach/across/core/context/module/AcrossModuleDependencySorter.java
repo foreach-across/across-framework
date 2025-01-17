@@ -21,7 +21,6 @@ import com.foreach.across.core.context.bootstrap.ModuleBootstrapOrderBuilder;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -45,7 +44,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  * @see ModuleBootstrapOrderBuilder
  */
-@NotThreadSafe
+
 @Slf4j
 class AcrossModuleDependencySorter
 {

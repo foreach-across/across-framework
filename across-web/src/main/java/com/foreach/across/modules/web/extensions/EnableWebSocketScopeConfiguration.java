@@ -33,7 +33,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 class EnableWebSocketScopeConfiguration
 {
 	@Bean
-	public static CustomScopeConfigurer webSocketScopeConfigurer() {
+	static CustomScopeConfigurer webSocketScopeConfigurer() {
 		CustomScopeConfigurer configurer = new CustomScopeConfigurer();
 		configurer.addScope( "websocket", new SimpSessionScope() );
 		return configurer;

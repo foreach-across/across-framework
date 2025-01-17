@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 public class WebTestControllersConfiguration
 {
 	@Bean
-	public RenderViewElementController renderViewElementController() {
+	RenderViewElementController renderViewElementController() {
 		return new RenderViewElementController();
 	}
 }

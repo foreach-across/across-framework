@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -97,7 +96,7 @@ public class AcrossDevelopmentMode
 	}
 
 	private void registerDynamicModuleResourcesRelativeToWorkingDirectory() {
-		File basePath = Paths.get( "src/main/resources" ).toFile();
+		File basePath = Path.of( "src/main/resources" ).toFile();
 		if ( basePath.exists() ) {
 			contextInfo
 					.getModules()
@@ -181,7 +180,7 @@ public class AcrossDevelopmentMode
 				String location = moduleResourcePaths.get( moduleInfo.getName() );
 
 				if ( location != null ) {
-					Path dir = Paths.get( location ).resolve( path );
+					Path dir = Path.of( location ).resolve( path );
 
 					if ( dir.toFile().exists() ) {
 						locations.put( resourceKey, dir.toString() );
@@ -223,7 +222,7 @@ public class AcrossDevelopmentMode
 				String location = moduleResourcePaths.get( moduleInfo.getName() );
 
 				if ( location != null ) {
-					Path resourcePath = Paths.get( location ).resolve( path ).resolve( resourceKey );
+					Path resourcePath = Path.of( location ).resolve( path ).resolve( resourceKey );
 
 					if ( resourcePath.toFile().exists() ) {
 						locations.put( resourceKey, resourcePath.toString() );

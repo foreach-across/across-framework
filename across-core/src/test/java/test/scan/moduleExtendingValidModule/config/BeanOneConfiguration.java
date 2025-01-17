@@ -26,7 +26,7 @@ import test.scan.moduleExtendingValidModule.ModuleExtendingValidModule;
 public class BeanOneConfiguration
 {
 	@Bean
-	public String beanOne() {
+	String beanOne() {
 		return "beanOne";
 	}
 }

@@ -40,7 +40,7 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 public class AcrossWebApplicationAutoConfiguration
 {
 	@Bean
-	public static AcrossServletContextInitializer embeddedAcrossServletContextInitializer( ConfigurableWebApplicationContext webApplicationContext ) {
+	static AcrossServletContextInitializer embeddedAcrossServletContextInitializer(ConfigurableWebApplicationContext webApplicationContext) {
 		return new AcrossServletContextInitializer( webApplicationContext );
 	}
 }

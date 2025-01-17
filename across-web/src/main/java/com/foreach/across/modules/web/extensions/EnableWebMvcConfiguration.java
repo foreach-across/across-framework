@@ -99,7 +99,7 @@ public class EnableWebMvcConfiguration implements WebMvcRegistrations
 	 * @return existing instance
 	 */
 	@Bean
-	public FormattingConversionService mvcConversionService( AcrossContextBeanRegistry beanRegistry, List<WebMvcConfigurer> configurers ) {
+	FormattingConversionService mvcConversionService(AcrossContextBeanRegistry beanRegistry, List<WebMvcConfigurer> configurers) {
 		FormattingConversionService conversionService = beanRegistry.getBeanFromModule( AcrossWebModule.NAME, AcrossWebModule.CONVERSION_SERVICE_BEAN );
 		configurers.forEach( c -> c.addFormatters( conversionService ) );
 		return conversionService;

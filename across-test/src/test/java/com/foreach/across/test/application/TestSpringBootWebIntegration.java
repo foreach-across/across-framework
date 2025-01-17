@@ -24,7 +24,6 @@ import com.foreach.across.test.application.app.DummyApplication;
 import com.foreach.across.test.application.app.application.controllers.NonExposedComponent;
 import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
@@ -53,7 +51,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Arne Vandamme
  * @since 1.1.2
  */
-@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DummyApplication.class)

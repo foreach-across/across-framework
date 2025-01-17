@@ -90,7 +90,7 @@ public class ClassPathScanningCandidateModuleProvider extends AbstractClassPathS
 
 									candidates.put( moduleName, () -> {
 										try {
-											return (AcrossModule) moduleClass.newInstance();
+											return (AcrossModule) moduleClass.getDeclaredConstructor().newInstance();
 										}
 										catch ( Exception e ) {
 											LOG.error( "Exception instantiating module {}", moduleName, e );

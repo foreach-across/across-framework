@@ -40,7 +40,7 @@ public class GlobalViewElementBuilderContextConfiguration implements WebMvcConfi
 	}
 
 	@Bean
-	public ViewElementBuilderContextInterceptor viewElementBuilderContextInterceptor() {
+	ViewElementBuilderContextInterceptor viewElementBuilderContextInterceptor() {
 		return new ViewElementBuilderContextInterceptor();
 	}
 }

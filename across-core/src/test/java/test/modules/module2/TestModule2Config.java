@@ -27,24 +27,24 @@ public class TestModule2Config
 {
 	@Bean
 	@Exposed
-	public ConstructedBeanModule2 constructedBeanModule2() {
+	ConstructedBeanModule2 constructedBeanModule2() {
 		return new ConstructedBeanModule2( "helloFromModule2" );
 	}
 
 	@Bean
 	@Exposed
-	public SomeInterfaceImplTwo someInterfaceImplTwo() {
+	SomeInterfaceImplTwo someInterfaceImplTwo() {
 		return new SomeInterfaceImplTwo();
 	}
 
 	@Bean
 	@Exposed
-	public CustomEventHandlers customEventHandlers() {
+	CustomEventHandlers customEventHandlers() {
 		return new CustomEventHandlers();
 	}
 
 	@Bean
-	public EventPubSub publisherModuleTwo( ApplicationEventPublisher eventPublisher ) {
+	EventPubSub publisherModuleTwo(ApplicationEventPublisher eventPublisher) {
 		return new EventPubSub( "moduleTwo", eventPublisher );
 	}
 }

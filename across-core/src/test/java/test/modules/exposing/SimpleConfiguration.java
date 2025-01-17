@@ -28,18 +28,18 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SimpleConfiguration
 {
 	@Bean
-	public MyBean nonExposedBean() {
+	MyBean nonExposedBean() {
 		return new MyBean();
 	}
 
-	@Bean(name = { "exposedBean", "aliasedExposedBean" })
+	@Bean(name = {"exposedBean", "aliasedExposedBean"})
 	@Exposed
-	public MyBean exposedBean() {
+	MyBean exposedBean() {
 		return new MyBean();
 	}
 
 	@Bean
-	public FactoryBean<SomeInterface> someInterfaceFactory() {
+	FactoryBean<SomeInterface> someInterfaceFactory() {
 		return new FactoryBean<SomeInterface>()
 		{
 			@Override
@@ -61,19 +61,19 @@ public class SimpleConfiguration
 
 	@Bean
 	@Exposed
-	public SomeOtherInterfaceFactory someOtherInterfaceBean() {
+	SomeOtherInterfaceFactory someOtherInterfaceBean() {
 		return new SomeOtherInterfaceFactory();
 	}
 
 	@Bean
 	@Exposed
-	public AtomicReference<Integer> integerAtomicReference() {
+	AtomicReference<Integer> integerAtomicReference() {
 		return new AtomicReference<>( 1 );
 	}
 
 	@Bean
 	@Exposed
-	public AtomicReference<String> stringAtomicReference() {
+	AtomicReference<String> stringAtomicReference() {
 		return new AtomicReference<>( "value" );
 	}
 

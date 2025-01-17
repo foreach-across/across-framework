@@ -79,7 +79,7 @@ public class MultipartResolverConfiguration
 
 	@Bean
 	@ConditionalOnMissingBean
-	public MultipartConfigElement multipartConfigElement( @Value("${java.io.tmpdir}") String tempDirectory ) {
+	MultipartConfigElement multipartConfigElement(@Value("${java.io.tmpdir}") String tempDirectory) {
 		if ( !StringUtils.hasText( multipartProperties.getLocation() ) && StringUtils.hasText( tempDirectory ) ) {
 			multipartProperties.setLocation( tempDirectory );
 		}
@@ -88,7 +88,7 @@ public class MultipartResolverConfiguration
 
 	@Bean
 	@ConditionalOnMissingBean
-	public MultipartResolver filterMultipartResolver( MultipartConfigElement multipartConfigElement, ServletContext servletContext ) {
+	MultipartResolver filterMultipartResolver(MultipartConfigElement multipartConfigElement, ServletContext servletContext) {
 		return createStandardServletMultipartResolver();
 	}
 
@@ -111,9 +111,9 @@ public class MultipartResolverConfiguration
 	@Bean
 	@ConditionalOnConfigurableServletContext
 	@ConditionalOnBean(name = "filterMultipartResolver")
-	public FilterRegistrationBean multipartFilterRegistration( ServletContext servletContext,
-	                                                           MultipartConfigElement multipartConfigElement,
-	                                                           @Qualifier("filterMultipartResolver") MultipartResolver multipartResolver ) {
+	FilterRegistrationBean multipartFilterRegistration(ServletContext servletContext,
+																					MultipartConfigElement multipartConfigElement,
+																					@Qualifier("filterMultipartResolver") MultipartResolver multipartResolver) {
 		servletContext.setAttribute( AbstractAcrossServletInitializer.ATTRIBUTE_DYNAMIC_MULTIPART_CONFIG, multipartConfigElement );
 
 		MultipartFilter multipartFilter = new AcrossMultipartFilter( multipartResolver );

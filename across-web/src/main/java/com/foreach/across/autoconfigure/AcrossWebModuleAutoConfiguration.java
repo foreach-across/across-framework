@@ -67,7 +67,7 @@ public class AcrossWebModuleAutoConfiguration
 	 * Configure the error pages.
 	 */
 	@Bean
-	public ErrorPageCustomizer acrossErrorPageCustomizer() {
+	ErrorPageCustomizer acrossErrorPageCustomizer() {
 		return new ErrorPageCustomizer( this.serverProperties, this.dispatcherServletPath );
 	}
 

@@ -51,7 +51,7 @@ public class UrlPrefixingConfiguration
 	@Bean
 	@Primary
 	@Exposed
-	public PrefixingPathRegistry prefixingPathRegistry( ResourceConfigurationProperties resourcesConfiguration ) {
+	PrefixingPathRegistry prefixingPathRegistry(ResourceConfigurationProperties resourcesConfiguration) {
 		PrefixingPathRegistry prefixingPathRegistry = new PrefixingPathRegistry();
 		PrefixingPathContext resourceContext = new PrefixingPathContext( resourcesConfiguration.getPath() );
 		prefixingPathRegistry.add( RESOURCE, resourceContext );
@@ -63,7 +63,7 @@ public class UrlPrefixingConfiguration
 
 	@Bean
 	@Exposed
-	public WebAppLinkBuilder webAppLinkBuilder( PrefixingPathRegistry prefixingPathRegistry, ServletContext servletContext ) {
+	WebAppLinkBuilder webAppLinkBuilder(PrefixingPathRegistry prefixingPathRegistry, ServletContext servletContext) {
 		return new PrefixingSupportingWebAppLinkBuilder( prefixingPathRegistry, servletContext );
 	}
 }

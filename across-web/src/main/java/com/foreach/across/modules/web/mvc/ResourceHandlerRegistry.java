@@ -42,8 +42,8 @@ public class ResourceHandlerRegistry extends org.springframework.web.servlet.con
 	public Map<String, ?> getUrlMap() {
 		AbstractHandlerMapping mapping = getHandlerMapping();
 
-		if ( mapping instanceof SimpleUrlHandlerMapping ) {
-			return ( (SimpleUrlHandlerMapping) mapping ).getUrlMap();
+		if ( mapping instanceof SimpleUrlHandlerMapping handlerMapping ) {
+			return handlerMapping.getUrlMap();
 		}
 
 		return Collections.emptyMap();

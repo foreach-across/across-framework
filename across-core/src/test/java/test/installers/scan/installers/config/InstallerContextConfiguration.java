@@ -27,7 +27,7 @@ public class InstallerContextConfiguration
 {
 	@Lazy
 	@Bean
-	public String someBean() {
+	String someBean() {
 		return "fromInstallerContext";
 	}
 }

@@ -36,7 +36,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class SpringCloudApplication
 {
 	@Bean
-	public AcrossModule cloudApplicationModule() {
+	AcrossModule cloudApplicationModule() {
 		return new AcrossModule()
 		{
 			@Override

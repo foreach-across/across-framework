@@ -49,7 +49,7 @@ public class CharacterEncodingConfiguration
 
 	@Bean
 	@ConditionalOnConfigurableServletContext
-	public FilterRegistrationBean characterEncodingFilterRegistration( CharacterEncodingFilter characterEncodingFilter ) {
+	FilterRegistrationBean characterEncodingFilterRegistration(CharacterEncodingFilter characterEncodingFilter) {
 		FilterRegistrationBean<CharacterEncodingFilter> registration = new FilterRegistrationBean<>( characterEncodingFilter );
 		registration.setName( FILTER_NAME );
 		registration.setAsyncSupported( true );

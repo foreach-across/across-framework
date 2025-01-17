@@ -59,12 +59,12 @@ public class AcrossWebTemplateConfig implements WebMvcConfigurer
 
 	@Bean
 	@Exposed
-	public WebTemplateRegistry webTemplateRegistry() {
+	WebTemplateRegistry webTemplateRegistry() {
 		return new WebTemplateRegistry();
 	}
 
 	@Bean
-	public WebTemplateInterceptor webTemplateInterceptor() {
+	WebTemplateInterceptor webTemplateInterceptor() {
 		return new WebTemplateInterceptor( webTemplateRegistry() );
 	}
 

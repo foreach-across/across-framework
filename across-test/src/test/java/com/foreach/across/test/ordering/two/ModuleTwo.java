@@ -46,13 +46,13 @@ public class ModuleTwo extends AcrossModule
 	}
 
 	@Bean
-	public List<MyComponent> componentList( List<MyComponent> components ) {
+	List<MyComponent> componentList(List<MyComponent> components) {
 		return components;
 	}
 
 	@Bean
 	@Order(1)
-	public ModuleTwoComponentOne moduleTwoComponentThree() {
+	ModuleTwoComponentOne moduleTwoComponentThree() {
 		return new ModuleTwoComponentOne();
 	}
 }
